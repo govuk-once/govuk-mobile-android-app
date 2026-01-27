@@ -90,14 +90,14 @@ private fun AnimatedChatEntry(
     }
 
     LaunchedEffect(showLoading) {
-        if (showLoading && !hasAnnouncedLoading) {
+        if (showLoading && !hasAnnouncedLoading && chatEntry.shouldAnimate) {
             hasAnnouncedLoading = true
             announcement = loadingText
         }
     }
 
     LaunchedEffect(showAnswer) {
-        if (showAnswer && !hasAnnouncedAnswer) {
+        if (showAnswer && !hasAnnouncedAnswer && chatEntry.shouldAnimate) {
             hasAnnouncedAnswer = true
             announcement = answerReceivedText
         }
