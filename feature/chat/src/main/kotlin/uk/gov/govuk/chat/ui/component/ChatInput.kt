@@ -27,11 +27,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +45,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -70,6 +73,14 @@ internal fun ChatInput(
 ) {
     val focusRequester = remember { FocusRequester() }
     var isFocused by rememberSaveable { mutableStateOf(false) }
+    var justSubmitted by remember { mutableStateOf(false) }
+
+    LaunchedEffect(justSubmitted) {
+        if (justSubmitted) {
+            delay(500)
+            justSubmitted = false
+        }
+    }
 
     Column(
         modifier = modifier
@@ -115,7 +126,13 @@ internal fun ChatInput(
                         .onFocusChanged {
                             isFocused = it.isFocused
                         }
-                        .semantics { this.traversalIndex = 0f },
+                        .then(
+                            if (justSubmitted) {
+                                Modifier.clearAndSetSemantics { }
+                            } else {
+                                Modifier.semantics { this.traversalIndex = 0f }
+                            }
+                        ),
                     cursorBrush = SolidColor(GovUkTheme.colourScheme.textAndIcons.primary),
                     decorationBox = { innerTextField ->
                         Row(
@@ -155,6 +172,7 @@ internal fun ChatInput(
                                         SubmitIconButton(
                                             onClick = {
                                                 onSubmit(uiState.question)
+                                                justSubmitted = true
                                                 focusRequester.requestFocus()
                                             },
                                             enabled = !uiState.displayCharacterError
