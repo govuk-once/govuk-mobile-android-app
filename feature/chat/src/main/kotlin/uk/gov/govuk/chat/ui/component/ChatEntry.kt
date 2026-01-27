@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.delay
@@ -63,6 +68,12 @@ private fun AnimatedChatEntry(
 ) {
     var showLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
     var showAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
+    var hasAnnouncedLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
+    var hasAnnouncedAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
+    var announcement by rememberSaveable(chatEntry.id) { mutableStateOf("") }
+
+    val loadingText = stringResource(R.string.loading_text)
+    val answerReceivedText = stringResource(R.string.answer_received)
 
     LaunchedEffect(chatEntry.answer) {
         if (chatEntry.answer.isNotBlank()) {
@@ -77,6 +88,29 @@ private fun AnimatedChatEntry(
             showLoading = true
         }
     }
+
+    LaunchedEffect(showLoading) {
+        if (showLoading && !hasAnnouncedLoading) {
+            hasAnnouncedLoading = true
+            announcement = loadingText
+        }
+    }
+
+    LaunchedEffect(showAnswer) {
+        if (showAnswer && !hasAnnouncedAnswer) {
+            hasAnnouncedAnswer = true
+            announcement = answerReceivedText
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .size(1.dp)
+            .semantics {
+                liveRegion = LiveRegionMode.Polite
+                contentDescription = announcement
+            }
+    )
 
     Column(modifier = modifier) {
         if (chatEntry.shouldAnimate) {
