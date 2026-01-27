@@ -155,6 +155,7 @@ internal fun ChatInput(
                                         SubmitIconButton(
                                             onClick = {
                                                 onSubmit(uiState.question)
+                                                focusRequester.requestFocus()
                                             },
                                             enabled = !uiState.displayCharacterError
                                                     && !uiState.isPiiError && !uiState.isLoading
