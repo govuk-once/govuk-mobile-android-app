@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,10 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.delay
@@ -70,7 +69,6 @@ private fun AnimatedChatEntry(
     var showAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
     var hasAnnouncedLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
     var hasAnnouncedAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
-    var announcement by rememberSaveable(chatEntry.id) { mutableStateOf("") }
 
     val loadingText = stringResource(R.string.loading_text)
     val answerReceivedText = stringResource(R.string.answer_received)
@@ -89,28 +87,36 @@ private fun AnimatedChatEntry(
         }
     }
 
-    LaunchedEffect(showLoading) {
-        if (showLoading && !hasAnnouncedLoading && chatEntry.shouldAnimate) {
+    val shouldAnnounceLoading = showLoading && !hasAnnouncedLoading && chatEntry.shouldAnimate
+    val shouldAnnounceAnswer = showAnswer && !hasAnnouncedAnswer && chatEntry.shouldAnimate
+
+    LaunchedEffect(shouldAnnounceLoading) {
+        if (shouldAnnounceLoading) {
+            delay(500)
             hasAnnouncedLoading = true
-            announcement = loadingText
         }
     }
 
-    LaunchedEffect(showAnswer) {
-        if (showAnswer && !hasAnnouncedAnswer && chatEntry.shouldAnimate) {
+    LaunchedEffect(shouldAnnounceAnswer) {
+        if (shouldAnnounceAnswer) {
+            delay(500)
             hasAnnouncedAnswer = true
-            announcement = answerReceivedText
         }
     }
 
-    Box(
-        modifier = Modifier
-            .size(1.dp)
-            .semantics {
-                liveRegion = LiveRegionMode.Polite
-                contentDescription = announcement
-            }
-    )
+    val loadingModifier = if (shouldAnnounceLoading) {
+        Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+            contentDescription = loadingText
+        }
+    } else Modifier
+
+    val answerModifier = if (shouldAnnounceAnswer) {
+        Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+            contentDescription = answerReceivedText
+        }
+    } else Modifier
 
     Column(modifier = modifier) {
         if (chatEntry.shouldAnimate) {
@@ -119,7 +125,7 @@ private fun AnimatedChatEntry(
                 enter = fadeIn(animationSpec = tween(animationDuration)),
                 exit = fadeOut(animationSpec = tween(animationDuration))
             ) {
-                Loading()
+                Loading(modifier = loadingModifier)
             }
 
             AnimatedVisibility(
@@ -131,7 +137,8 @@ private fun AnimatedChatEntry(
                     answer = chatEntry.answer,
                     sources = chatEntry.sources,
                     onMarkdownLinkClicked = onMarkdownLinkClicked,
-                    onSourcesExpanded = onSourcesExpanded
+                    onSourcesExpanded = onSourcesExpanded,
+                    modifier = answerModifier
                 )
             }
         } else {
