@@ -27,10 +27,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,7 +46,6 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.config.data.remote.model.ChatUrls
@@ -69,14 +66,6 @@ internal fun ChatInput(
     modifier: Modifier = Modifier
 ) {
     var isFocused by rememberSaveable { mutableStateOf(false) }
-    var justSubmitted by remember { mutableStateOf(false) }
-
-    LaunchedEffect(justSubmitted) {
-        if (justSubmitted) {
-            delay(500)
-            justSubmitted = false
-        }
-    }
 
     Column(
         modifier = modifier
