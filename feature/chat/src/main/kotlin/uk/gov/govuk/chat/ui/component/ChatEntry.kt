@@ -23,6 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.delay
@@ -63,6 +67,11 @@ private fun AnimatedChatEntry(
 ) {
     var showLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
     var showAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
+    var hasAnnouncedLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
+    var hasAnnouncedAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
+
+    val loadingText = stringResource(R.string.loading_text)
+    val answerReceivedText = stringResource(R.string.answer_received)
 
     LaunchedEffect(chatEntry.answer) {
         if (chatEntry.answer.isNotBlank()) {
@@ -78,6 +87,37 @@ private fun AnimatedChatEntry(
         }
     }
 
+    val shouldAnnounceLoading = showLoading && !hasAnnouncedLoading && chatEntry.shouldAnimate
+    val shouldAnnounceAnswer = showAnswer && !hasAnnouncedAnswer && chatEntry.shouldAnimate
+
+    LaunchedEffect(shouldAnnounceLoading) {
+        if (shouldAnnounceLoading) {
+            delay(500)
+            hasAnnouncedLoading = true
+        }
+    }
+
+    LaunchedEffect(shouldAnnounceAnswer) {
+        if (shouldAnnounceAnswer) {
+            delay(500)
+            hasAnnouncedAnswer = true
+        }
+    }
+
+    val loadingModifier = if (shouldAnnounceLoading) {
+        Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+            contentDescription = loadingText
+        }
+    } else Modifier
+
+    val answerModifier = if (shouldAnnounceAnswer) {
+        Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+            contentDescription = answerReceivedText
+        }
+    } else Modifier
+
     Column(modifier = modifier) {
         if (chatEntry.shouldAnimate) {
             AnimatedVisibility(
@@ -85,7 +125,7 @@ private fun AnimatedChatEntry(
                 enter = fadeIn(animationSpec = tween(animationDuration)),
                 exit = fadeOut(animationSpec = tween(animationDuration))
             ) {
-                Loading()
+                Loading(modifier = loadingModifier)
             }
 
             AnimatedVisibility(
@@ -97,7 +137,8 @@ private fun AnimatedChatEntry(
                     answer = chatEntry.answer,
                     sources = chatEntry.sources,
                     onMarkdownLinkClicked = onMarkdownLinkClicked,
-                    onSourcesExpanded = onSourcesExpanded
+                    onSourcesExpanded = onSourcesExpanded,
+                    modifier = answerModifier
                 )
             }
         } else {

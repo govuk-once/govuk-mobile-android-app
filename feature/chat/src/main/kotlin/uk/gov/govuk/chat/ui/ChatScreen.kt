@@ -264,14 +264,14 @@ private fun ChatScreen(
             if (answer.isEmpty()) {
                 // If the updated entry is the user's question then immediately scroll to the bottom
                 // wait for the loading text to fade in and then scroll to the bottom again if required
-                listState.animateScrollToItem(chatEntries.size + 1)
+                listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
                 delay(animationDuration.toLong() + 100)
-                listState.animateScrollToItem(chatEntries.size + 1)
+                listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
             } else {
                 // If the updated entry is the answer then wait for the answer to fade in and scroll to
                 // the entry
                 delay(animationDuration.toLong() + 100)
-                listState.animateScrollToItem(chatEntries.size)
+                listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
             }
         }
     }
