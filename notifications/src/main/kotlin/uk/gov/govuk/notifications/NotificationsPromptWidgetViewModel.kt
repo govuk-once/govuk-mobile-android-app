@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class NotificationsPromptWidgetViewModel @Inject constructor(
-    private val notificationsClient: NotificationsClient,
+    private val notificationsProvider: NotificationsProvider,
     private val notificationsDataStore: NotificationsDataStore
 ) : ViewModel() {
 
@@ -17,6 +17,6 @@ internal class NotificationsPromptWidgetViewModel @Inject constructor(
         viewModelScope.launch {
             notificationsDataStore.firstPermissionRequestCompleted()
         }
-        notificationsClient.requestPermission()
+        notificationsProvider.requestPermission()
     }
 }

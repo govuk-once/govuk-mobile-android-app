@@ -31,14 +31,14 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NotificationsClientTest {
+class OneSignalClientTest {
     private val context = mockk<Context>(relaxed = true)
 
-    private lateinit var notificationsClient: NotificationsClient
+    private lateinit var notificationsProvider: NotificationsProvider
 
     @Before
     fun setup() {
-        notificationsClient = NotificationsClient()
+        notificationsProvider = OneSignalClient(context)
 
         mockkStatic(OneSignal::class)
         mockkStatic(OneSignal.Debug::class)
@@ -57,7 +57,7 @@ class NotificationsClientTest {
         every { OneSignal.initWithContext(context, oneSignalAppId) } returns Unit
 
         runTest {
-            notificationsClient.initialise(context, oneSignalAppId)
+            notificationsProvider.initialise(oneSignalAppId)
 
             verify(exactly = 1) {
                 OneSignal.initWithContext(context, oneSignalAppId)
@@ -72,7 +72,7 @@ class NotificationsClientTest {
 
         runTest {
             val dispatcher = UnconfinedTestDispatcher()
-            notificationsClient.requestPermission(dispatcher)
+            notificationsProvider.requestPermission(dispatcher)
 
             coVerify(exactly = 1) {
                 OneSignal.Notifications.requestPermission(false)
@@ -83,7 +83,7 @@ class NotificationsClientTest {
     @Test
     fun `Given we have a notifications client, when give consent is called, then One Signal consent given is true`() {
         runTest {
-            notificationsClient.giveConsent()
+            notificationsProvider.giveConsent()
 
             assertTrue(OneSignal.consentGiven)
         }
@@ -92,7 +92,7 @@ class NotificationsClientTest {
     @Test
     fun `Given we have a notifications client, when remove consent is called, then One Signal consent given is false`() {
         runTest {
-            notificationsClient.removeConsent()
+            notificationsProvider.removeConsent()
 
             assertFalse(OneSignal.consentGiven)
         }
@@ -103,7 +103,7 @@ class NotificationsClientTest {
         every {OneSignal.consentGiven} returns true
 
         runTest {
-            assertTrue(notificationsClient.consentGiven())
+            assertTrue(notificationsProvider.consentGiven())
         }
     }
 
@@ -112,7 +112,7 @@ class NotificationsClientTest {
         every {OneSignal.consentGiven} returns false
 
         runTest {
-            assertFalse(notificationsClient.consentGiven())
+            assertFalse(notificationsProvider.consentGiven())
         }
     }
 
@@ -121,7 +121,7 @@ class NotificationsClientTest {
         every { NotificationManagerCompat.from(context).areNotificationsEnabled() } returns false
 
         runTest {
-            assertFalse(notificationsClient.permissionGranted(context))
+            assertFalse(notificationsProvider.permissionGranted())
         }
     }
 
@@ -130,7 +130,7 @@ class NotificationsClientTest {
         every { NotificationManagerCompat.from(context).areNotificationsEnabled() } returns true
 
         runTest {
-            assertTrue(notificationsClient.permissionGranted(context))
+            assertTrue(notificationsProvider.permissionGranted())
         }
     }
 
@@ -153,12 +153,12 @@ class NotificationsClientTest {
         }
 
         runTest {
-            notificationsClient.addClickListener(context)
+            notificationsProvider.addClickListener()
 
             verify(exactly = 1) {
                 OneSignal.Notifications.addClickListener(any())
 
-                notificationsClient.handleAdditionalData(context, notification.additionalData, null)
+                notificationsProvider.handleAdditionalData(notification.additionalData, null)
             }
         }
     }
@@ -180,7 +180,7 @@ class NotificationsClientTest {
         every { additionalData.optString("deeplink") } returns "scheme://host"
 
         runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+            notificationsProvider.handleAdditionalData(additionalData, intent)
 
             assertEquals("scheme", intent.data?.scheme)
             assertEquals("host", intent.data?.host)
@@ -200,7 +200,7 @@ class NotificationsClientTest {
         every { additionalData.has("deeplink") } returns false
 
         runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+            notificationsProvider.handleAdditionalData(additionalData, intent)
 
             verify(exactly = 0) {
                 context.startActivity(intent)
@@ -215,7 +215,7 @@ class NotificationsClientTest {
         val additionalData: JSONObject? = null
 
         runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+            notificationsProvider.handleAdditionalData(additionalData, intent)
 
             verify(exactly = 0) {
                 context.startActivity(intent)
@@ -231,7 +231,7 @@ class NotificationsClientTest {
         every { additionalData.optString("deeplink") } returns "deeplink"
 
         runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+            notificationsProvider.handleAdditionalData(additionalData, intent)
 
             verify(exactly = 0) {
                 context.startActivity(intent)

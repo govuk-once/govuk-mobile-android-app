@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal open class NotificationsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
-    private val notificationsClient: NotificationsClient,
+    private val notificationsProvider: NotificationsProvider,
     private val notificationsDataStore: NotificationsDataStore
 ) : ViewModel() {
 
@@ -32,8 +32,8 @@ internal open class NotificationsViewModel @Inject constructor(
         viewModelScope.launch {
             notificationsDataStore.firstPermissionRequestCompleted()
         }
-        notificationsClient.giveConsent()
-        notificationsClient.requestPermission {
+        notificationsProvider.giveConsent()
+        notificationsProvider.requestPermission {
             viewModelScope.launch {
                 onCompleted()
             }
@@ -50,7 +50,7 @@ internal open class NotificationsViewModel @Inject constructor(
     }
 
     internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
-        notificationsClient.giveConsent()
+        notificationsProvider.giveConsent()
         analyticsClient.buttonClick(
             text = text
         )
@@ -73,7 +73,7 @@ internal open class NotificationsViewModel @Inject constructor(
     }
 
     internal fun onContinueButtonClick(text: String) {
-        notificationsClient.removeConsent()
+        notificationsProvider.removeConsent()
         analyticsClient.buttonClick(text)
     }
 
