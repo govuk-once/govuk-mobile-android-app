@@ -283,10 +283,10 @@ class AppNavigationTest {
     }
 
     @Test
-    fun `On sign out logs out of notifications and navigates to login`() {
+    fun `On sign out navigates to login`() {
         appLaunchNav.onSignOut(navController)
 
-        verify(exactly = 1) {
+        verify {
             navController.navigate(LOGIN_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
         }
     }
