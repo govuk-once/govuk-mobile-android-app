@@ -1,6 +1,8 @@
 package uk.gov.govuk.data.flex
 
+import uk.gov.govuk.data.flex.model.FlexResponse
 import uk.gov.govuk.data.flex.remote.FlexApi
+import uk.gov.govuk.data.flex.remote.safeFlexApiCall
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -8,8 +10,7 @@ import javax.inject.Singleton
 class FlexRepo @Inject constructor(
     private val flexApi: FlexApi
 ) {
-    suspend fun getUserId(accessToken: String): String? {
-        val response = flexApi.getFlexPreferences("Bearer $accessToken")
-        return response.body()?.userId
+    suspend fun getFlexPreferences(): FlexResult<FlexResponse> {
+        return safeFlexApiCall(apiCall = { flexApi.getFlexPreferences() })
     }
 }

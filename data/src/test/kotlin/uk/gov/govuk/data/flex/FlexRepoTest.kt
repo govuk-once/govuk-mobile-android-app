@@ -1,13 +1,10 @@
 package uk.gov.govuk.data.flex
 
-import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.data.flex.model.FlexPreferencesResponse
 import uk.gov.govuk.data.flex.remote.FlexApi
 
 class FlexRepoTest {
@@ -22,26 +19,11 @@ class FlexRepoTest {
     }
 
     @Test
-    fun `Given a flex preferences response, when response body is null, then get user id returns null`() {
-        coEvery {
-            flexApi.getFlexPreferences("Bearer 12345").body()
-        } returns null
-
+    fun `Given get flex preferences is called, then get flex preferences is called on the api`() =
         runTest {
-            val response = flexRepo.getUserId("12345")
-            assertNull(response)
-        }
-    }
 
-    @Test
-    fun `Given a flex preferences response, when response body is not null, then get user id returns user id`() {
-        coEvery {
-            flexApi.getFlexPreferences("Bearer 12345").body()
-        } returns FlexPreferencesResponse("userId")
+            flexRepo.getFlexPreferences()
 
-        runTest {
-            val response = flexRepo.getUserId("12345")
-            assertEquals(response, "userId")
+            coVerify { flexApi.getFlexPreferences() }
         }
-    }
 }
