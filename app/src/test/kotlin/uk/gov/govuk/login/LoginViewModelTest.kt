@@ -72,7 +72,6 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
 
         runTest {
@@ -101,7 +100,6 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
 
         runTest {
@@ -129,7 +127,6 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
 
         runTest {
@@ -184,7 +181,6 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
 
         runTest {
@@ -213,7 +209,6 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Error()
 
         runTest {
@@ -293,7 +288,6 @@ class LoginViewModelTest {
     @Test
     fun `Given an auth response, when success, flex returns a user id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
-        every { authRepo.getAccessToken() } returns "12345"
         every { authRepo.getIdTokenIssuedAtDate() } returns null
         coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
 
@@ -325,7 +319,6 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
 
         runTest {
@@ -357,7 +350,6 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        every { authRepo.getAccessToken() } returns "12345"
         coEvery { notificationsRepo.login() } returns FlexResult.Error()
 
         runTest {
