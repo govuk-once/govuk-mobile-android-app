@@ -1,6 +1,7 @@
 package uk.gov.govuk.chat.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,12 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -38,7 +37,6 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 internal fun Markdown(
     text: String,
-    talkbackText: String,
     onMarkdownLinkClicked: (String, String) -> Unit,
     markdownLinkType: String,
     modifier: Modifier = Modifier
@@ -49,10 +47,7 @@ internal fun Markdown(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = GovUkTheme.spacing.medium)
-            .semantics {
-                contentDescription = talkbackText
-            },
+            .padding(horizontal = GovUkTheme.spacing.medium),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         elements.forEach { element ->
@@ -84,11 +79,13 @@ private fun HeadingItem(
     heading: MarkdownElement.Heading,
     onLinkClick: (String) -> Unit
 ) {
-    // Render headings as bold text (matching original behavior)
-    Text(
-        text = buildInlineAnnotatedString(heading.content, onLinkClick),
+    val firstLink = findFirstLink(heading.content)
+
+    ClickableText(
+        annotatedString = buildInlineAnnotatedString(heading.content),
         style = GovUkTheme.typography.bodyBold,
-        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        firstLinkUrl = firstLink,
+        onLinkClick = onLinkClick,
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -98,10 +95,13 @@ private fun ParagraphItem(
     paragraph: MarkdownElement.Paragraph,
     onLinkClick: (String) -> Unit
 ) {
-    Text(
-        text = buildInlineAnnotatedString(paragraph.content, onLinkClick),
+    val firstLink = findFirstLink(paragraph.content)
+
+    ClickableText(
+        annotatedString = buildInlineAnnotatedString(paragraph.content),
         style = GovUkTheme.typography.bodyRegular,
-        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        firstLinkUrl = firstLink,
+        onLinkClick = onLinkClick,
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -128,6 +128,8 @@ private fun BlockQuoteItem(
     blockQuote: MarkdownElement.BlockQuote,
     onLinkClick: (String) -> Unit
 ) {
+    val firstLink = findFirstLink(blockQuote.content)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,12 +145,13 @@ private fun BlockQuoteItem(
             modifier = Modifier.weight(1f),
             color = GovUkTheme.colourScheme.surfaces.background
         ) {
-            Text(
-                text = buildInlineAnnotatedString(blockQuote.content, onLinkClick),
+            ClickableText(
+                annotatedString = buildInlineAnnotatedString(blockQuote.content),
                 style = GovUkTheme.typography.bodyRegular.copy(
                     fontStyle = FontStyle.Italic
                 ),
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                firstLinkUrl = firstLink,
+                onLinkClick = onLinkClick,
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -166,11 +169,19 @@ private fun ListItemItem(
     } else {
         "\u2022"
     }
+    val firstLink = findFirstLink(listItem.content)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = indent)
+            .then(
+                if (firstLink != null) {
+                    Modifier.clickable { onLinkClick(firstLink) }
+                } else {
+                    Modifier
+                }
+            )
             .semantics(mergeDescendants = true) {}
     ) {
         Text(
@@ -180,7 +191,7 @@ private fun ListItemItem(
             modifier = Modifier.width(20.dp)
         )
         Text(
-            text = buildInlineAnnotatedString(listItem.content, onLinkClick),
+            text = buildInlineAnnotatedString(listItem.content),
             style = GovUkTheme.typography.bodyRegular,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             modifier = Modifier.weight(1f)
@@ -200,16 +211,49 @@ private fun ThematicBreakItem() {
 }
 
 @Composable
+private fun ClickableText(
+    annotatedString: AnnotatedString,
+    style: TextStyle,
+    firstLinkUrl: String?,
+    onLinkClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = annotatedString,
+        style = style,
+        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        modifier = modifier.then(
+            if (firstLinkUrl != null) {
+                Modifier.clickable { onLinkClick(firstLinkUrl) }
+            } else {
+                Modifier
+            }
+        )
+    )
+}
+
+private fun findFirstLink(content: List<InlineContent>): String? {
+    for (inline in content) {
+        when (inline) {
+            is InlineContent.Link -> return inline.url
+            is InlineContent.Emphasis -> findFirstLink(inline.content)?.let { return it }
+            is InlineContent.StrongEmphasis -> findFirstLink(inline.content)?.let { return it }
+            else -> { /* continue */ }
+        }
+    }
+    return null
+}
+
+@Composable
 private fun buildInlineAnnotatedString(
-    content: List<InlineContent>,
-    onLinkClick: (String) -> Unit
+    content: List<InlineContent>
 ): AnnotatedString {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText
     val codeBackground = GovUkTheme.colourScheme.surfaces.background
 
     return buildAnnotatedString {
         content.forEach { inline ->
-            appendInlineContent(inline, this, onLinkClick, linkColor, codeBackground)
+            appendInlineContent(inline, this, linkColor, codeBackground)
         }
     }
 }
@@ -217,7 +261,6 @@ private fun buildInlineAnnotatedString(
 private fun appendInlineContent(
     inline: InlineContent,
     builder: AnnotatedString.Builder,
-    onLinkClick: (String) -> Unit,
     linkColor: androidx.compose.ui.graphics.Color,
     codeBackground: androidx.compose.ui.graphics.Color
 ) {
@@ -237,33 +280,25 @@ private fun appendInlineContent(
 
         is InlineContent.Emphasis -> {
             builder.withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                inline.content.forEach { appendInlineContent(it, builder, onLinkClick, linkColor, codeBackground) }
+                inline.content.forEach { appendInlineContent(it, builder, linkColor, codeBackground) }
             }
         }
 
         is InlineContent.StrongEmphasis -> {
             builder.withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                inline.content.forEach { appendInlineContent(it, builder, onLinkClick, linkColor, codeBackground) }
+                inline.content.forEach { appendInlineContent(it, builder, linkColor, codeBackground) }
             }
         }
 
         is InlineContent.Link -> {
-            val linkStyle = TextLinkStyles(
-                style = SpanStyle(
+            builder.withStyle(
+                SpanStyle(
                     color = linkColor,
                     textDecoration = TextDecoration.Underline
                 )
-            )
-            val link = LinkAnnotation.Url(
-                url = inline.url,
-                styles = linkStyle,
-                linkInteractionListener = { _ ->
-                    onLinkClick(inline.url)
-                }
-            )
-            builder.pushLink(link)
-            inline.content.forEach { appendInlineContent(it, builder, onLinkClick, linkColor, codeBackground) }
-            builder.pop()
+            ) {
+                inline.content.forEach { appendInlineContent(it, builder, linkColor, codeBackground) }
+            }
         }
 
         is InlineContent.LineBreak -> {

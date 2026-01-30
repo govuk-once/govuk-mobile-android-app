@@ -107,14 +107,10 @@ internal fun Sources(
                     .fillMaxWidth()
             ) {
                 sources.forEachIndexed { index, _ ->
-                    val linkAddendumText = stringResource(id = R.string.sources_open_in_text)
-                    val linkText = "${sources[index]} $linkAddendumText"
-
                     SmallVerticalSpacer()
 
                     Markdown(
                         text = sources[index],
-                        talkbackText = linkText,
                         onMarkdownLinkClicked = onMarkdownLinkClicked,
                         markdownLinkType = Analytics.RESPONSE_SOURCE_LINK_CLICKED
                     )

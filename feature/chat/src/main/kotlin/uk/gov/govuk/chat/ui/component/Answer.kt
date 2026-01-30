@@ -6,9 +6,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -31,11 +29,8 @@ internal fun Answer(
     ) {
         MediumVerticalSpacer()
 
-        val altText = "${stringResource(R.string.bot_header_text)} $answer"
-
         Markdown(
             text = answer,
-            talkbackText = altText,
             onMarkdownLinkClicked = onMarkdownLinkClicked,
             markdownLinkType = Analytics.RESPONSE_LINK_CLICKED
         )
