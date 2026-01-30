@@ -1,13 +1,38 @@
 package uk.gov.govuk.chat.ui.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import dev.jeziellago.compose.markdowntext.MarkdownText
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import uk.gov.govuk.chat.parser.MarkdownParser
+import uk.gov.govuk.chat.parser.model.InlineContent
+import uk.gov.govuk.chat.parser.model.MarkdownElement
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -18,30 +43,234 @@ internal fun Markdown(
     markdownLinkType: String,
     modifier: Modifier = Modifier
 ) {
-    // Convert h1-h6 headers to bold
-    val headerRegex = "(#+ *)(.*)(\n)".toRegex()
-    val headerReplacement = "$3\\*\\*$2\\*\\*$3$3" // \n**header text**\n\n
+    val parser = remember { MarkdownParser() }
+    val elements = remember(text) { parser.parse(text) }
 
-    MarkdownText(
-        markdown = headerRegex.replace(text, headerReplacement),
-        linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText,
-        style = TextStyle(
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
-            fontSize = GovUkTheme.typography.bodyRegular.fontSize,
-            fontFamily = GovUkTheme.typography.bodyRegular.fontFamily,
-            fontWeight = GovUkTheme.typography.bodyRegular.fontWeight,
-            lineHeight = GovUkTheme.typography.bodyRegular.lineHeight
-        ),
-        enableSoftBreakAddsNewLine = false,
-        enableUnderlineForLink = true,
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = GovUkTheme.spacing.medium)
             .semantics {
                 contentDescription = talkbackText
             },
-        onLinkClicked = { url ->
-            onMarkdownLinkClicked(markdownLinkType, url)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        elements.forEach { element ->
+            MarkdownElementItem(
+                element = element,
+                onLinkClick = { url -> onMarkdownLinkClicked(markdownLinkType, url) }
+            )
         }
+    }
+}
+
+@Composable
+private fun MarkdownElementItem(
+    element: MarkdownElement,
+    onLinkClick: (String) -> Unit
+) {
+    when (element) {
+        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick)
+        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick)
+        is MarkdownElement.CodeBlock -> CodeBlockItem(element)
+        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick)
+        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick)
+        is MarkdownElement.ThematicBreak -> ThematicBreakItem()
+    }
+}
+
+@Composable
+private fun HeadingItem(
+    heading: MarkdownElement.Heading,
+    onLinkClick: (String) -> Unit
+) {
+    // Render headings as bold text (matching original behavior)
+    Text(
+        text = buildInlineAnnotatedString(heading.content, onLinkClick),
+        style = GovUkTheme.typography.bodyBold,
+        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        modifier = Modifier.fillMaxWidth()
     )
+}
+
+@Composable
+private fun ParagraphItem(
+    paragraph: MarkdownElement.Paragraph,
+    onLinkClick: (String) -> Unit
+) {
+    Text(
+        text = buildInlineAnnotatedString(paragraph.content, onLinkClick),
+        style = GovUkTheme.typography.bodyRegular,
+        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = GovUkTheme.colourScheme.surfaces.background
+    ) {
+        Text(
+            text = codeBlock.code,
+            style = GovUkTheme.typography.bodyRegular.copy(
+                fontFamily = FontFamily.Monospace
+            ),
+            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+private fun BlockQuoteItem(
+    blockQuote: MarkdownElement.BlockQuote,
+    onLinkClick: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+    ) {
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .fillMaxHeight()
+                .background(GovUkTheme.colourScheme.textAndIcons.primary)
+        )
+        Surface(
+            modifier = Modifier.weight(1f),
+            color = GovUkTheme.colourScheme.surfaces.background
+        ) {
+            Text(
+                text = buildInlineAnnotatedString(blockQuote.content, onLinkClick),
+                style = GovUkTheme.typography.bodyRegular.copy(
+                    fontStyle = FontStyle.Italic
+                ),
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ListItemItem(
+    listItem: MarkdownElement.ListItem,
+    onLinkClick: (String) -> Unit
+) {
+    val indent = (listItem.depth * 16).dp
+    val bullet = if (listItem.isOrdered) {
+        "${listItem.number}."
+    } else {
+        "\u2022"
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = indent)
+    ) {
+        Text(
+            text = bullet,
+            style = GovUkTheme.typography.bodyRegular,
+            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            modifier = Modifier.width(20.dp)
+        )
+        Text(
+            text = buildInlineAnnotatedString(listItem.content, onLinkClick),
+            style = GovUkTheme.typography.bodyRegular,
+            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun ThematicBreakItem() {
+    HorizontalDivider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        thickness = 1.dp,
+        color = GovUkTheme.colourScheme.strokes.listDivider
+    )
+}
+
+@Composable
+private fun buildInlineAnnotatedString(
+    content: List<InlineContent>,
+    onLinkClick: (String) -> Unit
+): AnnotatedString {
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText
+    val codeBackground = GovUkTheme.colourScheme.surfaces.background
+
+    return buildAnnotatedString {
+        content.forEach { inline ->
+            appendInlineContent(inline, this, onLinkClick, linkColor, codeBackground)
+        }
+    }
+}
+
+private fun appendInlineContent(
+    inline: InlineContent,
+    builder: AnnotatedString.Builder,
+    onLinkClick: (String) -> Unit,
+    linkColor: androidx.compose.ui.graphics.Color,
+    codeBackground: androidx.compose.ui.graphics.Color
+) {
+    when (inline) {
+        is InlineContent.Text -> builder.append(inline.text)
+
+        is InlineContent.Code -> {
+            builder.withStyle(
+                SpanStyle(
+                    fontFamily = FontFamily.Monospace,
+                    background = codeBackground
+                )
+            ) {
+                append(inline.code)
+            }
+        }
+
+        is InlineContent.Emphasis -> {
+            builder.withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                inline.content.forEach { appendInlineContent(it, builder, onLinkClick, linkColor, codeBackground) }
+            }
+        }
+
+        is InlineContent.StrongEmphasis -> {
+            builder.withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                inline.content.forEach { appendInlineContent(it, builder, onLinkClick, linkColor, codeBackground) }
+            }
+        }
+
+        is InlineContent.Link -> {
+            val linkStyle = TextLinkStyles(
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = TextDecoration.Underline
+                )
+            )
+            val link = LinkAnnotation.Url(
+                url = inline.url,
+                styles = linkStyle,
+                linkInteractionListener = { _ ->
+                    onLinkClick(inline.url)
+                }
+            )
+            builder.pushLink(link)
+            inline.content.forEach { appendInlineContent(it, builder, onLinkClick, linkColor, codeBackground) }
+            builder.pop()
+        }
+
+        is InlineContent.LineBreak -> {
+            if (inline.isSoft) {
+                builder.append(" ")
+            } else {
+                builder.append("\n")
+            }
+        }
+    }
 }
