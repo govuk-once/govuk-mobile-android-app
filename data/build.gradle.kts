@@ -24,7 +24,7 @@ android {
         buildConfigField("String", "AUTHORIZE_ENDPOINT", "\"authorize\"")
         buildConfigField("String", "TOKEN_ENDPOINT", "\"token\"")
         buildConfigField("String", "AUTH_REDIRECT", "\"govuk://govuk/login-auth-callback\"")
-        buildConfigField("String", "FLEX_BASE_URL", "\"https://qoorzgrk0l.execute-api.eu-west-2.amazonaws.com\"")
+        buildConfigField("String", "FLEX_BASE_URL", "\"https://d2nndycdmjjz2u.cloudfront.net\"")
     }
 
     buildTypes {

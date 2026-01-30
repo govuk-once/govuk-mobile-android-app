@@ -21,12 +21,12 @@ class ApiCallTest {
         runTest {
             coEvery { apiCall.invoke() } returns response
             every { response.isSuccessful } returns true
-            every { response.body() } returns FlexResponse(userId = "12345")
+            every { response.body() } returns FlexResponse(notificationId = "12345")
 
             val result = safeFlexApiCall(apiCall)
 
             assertTrue(result is Success)
-            assertEquals("12345", (result as Success).value.userId)
+            assertEquals("12345", (result as Success).value.notificationId)
         }
 
     @Test

@@ -40,7 +40,7 @@ class NotificationsRepoTest {
         runTest {
             val result = notificationsRepo.login()
             assert(result is Success)
-            assertEquals("12345", (result as Success).value.userId)
+            assertEquals("12345", (result as Success).value.notificationId)
 
             verify { notificationsProvider.login("12345") }
         }

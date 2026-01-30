@@ -17,7 +17,7 @@ class NotificationsRepo @Inject constructor(
     suspend fun login(): FlexResult<FlexResponse> {
         val result = flexRepo.getFlexPreferences()
         when (result) {
-            is FlexResult.Success -> notificationsProvider.login(result.value.userId)
+            is FlexResult.Success -> notificationsProvider.login(result.value.notificationId)
             else -> { /* Do nothing */ }
         }
         return result

@@ -18,7 +18,7 @@ interface NotificationsProvider {
     }
 
     fun initialise(appId: String)
-    fun login(userId: String)
+    fun login(notificationId: String)
     fun logout()
     fun giveConsent()
     fun removeConsent()

@@ -72,7 +72,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
+        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -100,7 +100,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
+        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -127,7 +127,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
+        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -181,7 +181,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
+        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -286,10 +286,10 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, flex returns a user id and id token issued at date is not stored, then emit loading and login event`() {
+    fun `Given an auth response, when success, flex returns a notification id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
+        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -315,11 +315,11 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, flex returns a user id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
+    fun `Given an auth response, when success, flex returns a notification id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(userId = "12345"))
+        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
