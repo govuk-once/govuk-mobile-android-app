@@ -171,6 +171,7 @@ private fun ListItemItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = indent)
+            .semantics(mergeDescendants = true) {}
     ) {
         Text(
             text = bullet,
