@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -33,6 +36,11 @@ import uk.gov.govuk.chat.parser.MarkdownParser
 import uk.gov.govuk.chat.parser.model.InlineContent
 import uk.gov.govuk.chat.parser.model.MarkdownElement
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+
+private data class ContentSegment(
+    val text: AnnotatedString,
+    val linkUrl: String? = null
+)
 
 @Composable
 internal fun Markdown(
@@ -79,12 +87,9 @@ private fun HeadingItem(
     heading: MarkdownElement.Heading,
     onLinkClick: (String) -> Unit
 ) {
-    val firstLink = findFirstLink(heading.content)
-
-    ClickableText(
-        annotatedString = buildInlineAnnotatedString(heading.content),
+    SegmentedText(
+        content = heading.content,
         style = GovUkTheme.typography.bodyBold,
-        firstLinkUrl = firstLink,
         onLinkClick = onLinkClick,
         modifier = Modifier.fillMaxWidth()
     )
@@ -95,12 +100,9 @@ private fun ParagraphItem(
     paragraph: MarkdownElement.Paragraph,
     onLinkClick: (String) -> Unit
 ) {
-    val firstLink = findFirstLink(paragraph.content)
-
-    ClickableText(
-        annotatedString = buildInlineAnnotatedString(paragraph.content),
+    SegmentedText(
+        content = paragraph.content,
         style = GovUkTheme.typography.bodyRegular,
-        firstLinkUrl = firstLink,
         onLinkClick = onLinkClick,
         modifier = Modifier.fillMaxWidth()
     )
@@ -128,8 +130,6 @@ private fun BlockQuoteItem(
     blockQuote: MarkdownElement.BlockQuote,
     onLinkClick: (String) -> Unit
 ) {
-    val firstLink = findFirstLink(blockQuote.content)
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,12 +145,11 @@ private fun BlockQuoteItem(
             modifier = Modifier.weight(1f),
             color = GovUkTheme.colourScheme.surfaces.background
         ) {
-            ClickableText(
-                annotatedString = buildInlineAnnotatedString(blockQuote.content),
+            SegmentedText(
+                content = blockQuote.content,
                 style = GovUkTheme.typography.bodyRegular.copy(
                     fontStyle = FontStyle.Italic
                 ),
-                firstLinkUrl = firstLink,
                 onLinkClick = onLinkClick,
                 modifier = Modifier.padding(8.dp)
             )
@@ -169,19 +168,11 @@ private fun ListItemItem(
     } else {
         "\u2022"
     }
-    val firstLink = findFirstLink(listItem.content)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = indent)
-            .then(
-                if (firstLink != null) {
-                    Modifier.clickable { onLinkClick(firstLink) }
-                } else {
-                    Modifier
-                }
-            )
             .semantics(mergeDescendants = true) {}
     ) {
         Text(
@@ -190,10 +181,10 @@ private fun ListItemItem(
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             modifier = Modifier.width(20.dp)
         )
-        Text(
-            text = buildInlineAnnotatedString(listItem.content),
+        SegmentedText(
+            content = listItem.content,
             style = GovUkTheme.typography.bodyRegular,
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            onLinkClick = onLinkClick,
             modifier = Modifier.weight(1f)
         )
     }
@@ -210,102 +201,176 @@ private fun ThematicBreakItem() {
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ClickableText(
-    annotatedString: AnnotatedString,
+private fun SegmentedText(
+    content: List<InlineContent>,
     style: TextStyle,
-    firstLinkUrl: String?,
     onLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = annotatedString,
-        style = style,
-        color = GovUkTheme.colourScheme.textAndIcons.primary,
-        modifier = modifier.then(
-            if (firstLinkUrl != null) {
-                Modifier.clickable { onLinkClick(firstLinkUrl) }
-            } else {
-                Modifier
-            }
-        )
-    )
-}
-
-private fun findFirstLink(content: List<InlineContent>): String? {
-    for (inline in content) {
-        when (inline) {
-            is InlineContent.Link -> return inline.url
-            is InlineContent.Emphasis -> findFirstLink(inline.content)?.let { return it }
-            is InlineContent.StrongEmphasis -> findFirstLink(inline.content)?.let { return it }
-            else -> { /* continue */ }
-        }
-    }
-    return null
-}
-
-@Composable
-private fun buildInlineAnnotatedString(
-    content: List<InlineContent>
-): AnnotatedString {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText
     val codeBackground = GovUkTheme.colourScheme.surfaces.background
+    val segments = remember(content) { splitIntoSegments(content, linkColor, codeBackground) }
 
-    return buildAnnotatedString {
-        content.forEach { inline ->
-            appendInlineContent(inline, this, linkColor, codeBackground)
+    if (segments.size == 1 && segments[0].linkUrl == null) {
+        // Simple case: no links, just render as a single Text
+        Text(
+            text = segments[0].text,
+            style = style,
+            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            modifier = modifier
+        )
+    } else {
+        // Multiple segments or has links: use FlowRow
+        FlowRow(
+            modifier = modifier
+        ) {
+            segments.forEach { segment ->
+                Text(
+                    text = segment.text,
+                    style = style,
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = if (segment.linkUrl != null) {
+                        Modifier.clickable { onLinkClick(segment.linkUrl) }
+                    } else {
+                        Modifier
+                    }
+                )
+            }
         }
     }
 }
 
-private fun appendInlineContent(
-    inline: InlineContent,
+private fun splitIntoSegments(
+    content: List<InlineContent>,
+    linkColor: Color,
+    codeBackground: Color
+): List<ContentSegment> {
+    val segments = mutableListOf<ContentSegment>()
+    val currentText = StringBuilder()
+    val currentStyles = mutableListOf<Pair<IntRange, SpanStyle>>()
+
+    fun flushCurrentText() {
+        if (currentText.isNotEmpty()) {
+            val annotatedString = buildAnnotatedString {
+                append(currentText.toString())
+                currentStyles.forEach { (range, style) ->
+                    addStyle(style, range.first, range.last.coerceAtMost(currentText.length))
+                }
+            }
+            segments.add(ContentSegment(annotatedString))
+            currentText.clear()
+            currentStyles.clear()
+        }
+    }
+
+    fun processContent(items: List<InlineContent>, inheritedStyles: List<SpanStyle> = emptyList()) {
+        for (item in items) {
+            when (item) {
+                is InlineContent.Text -> {
+                    val start = currentText.length
+                    currentText.append(item.text)
+                    val end = currentText.length
+                    inheritedStyles.forEach { style ->
+                        currentStyles.add(start until end to style)
+                    }
+                }
+
+                is InlineContent.Code -> {
+                    val start = currentText.length
+                    currentText.append(item.code)
+                    val end = currentText.length
+                    val codeStyle = SpanStyle(fontFamily = FontFamily.Monospace, background = codeBackground)
+                    currentStyles.add(start until end to codeStyle)
+                    inheritedStyles.forEach { style ->
+                        currentStyles.add(start until end to style)
+                    }
+                }
+
+                is InlineContent.Emphasis -> {
+                    val newStyles = inheritedStyles + SpanStyle(fontStyle = FontStyle.Italic)
+                    processContent(item.content, newStyles)
+                }
+
+                is InlineContent.StrongEmphasis -> {
+                    val newStyles = inheritedStyles + SpanStyle(fontWeight = FontWeight.Bold)
+                    processContent(item.content, newStyles)
+                }
+
+                is InlineContent.Link -> {
+                    // Flush any accumulated text before the link
+                    flushCurrentText()
+
+                    // Build the link text as its own segment
+                    val linkText = buildAnnotatedString {
+                        val linkStyle = SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)
+                        withStyle(linkStyle) {
+                            appendLinkContent(item.content, this@buildAnnotatedString, inheritedStyles, codeBackground)
+                        }
+                    }
+                    segments.add(ContentSegment(linkText, item.url))
+                }
+
+                is InlineContent.LineBreak -> {
+                    val start = currentText.length
+                    currentText.append(if (item.isSoft) " " else "\n")
+                    val end = currentText.length
+                    inheritedStyles.forEach { style ->
+                        currentStyles.add(start until end to style)
+                    }
+                }
+            }
+        }
+    }
+
+    processContent(content)
+    flushCurrentText()
+
+    return segments.ifEmpty { listOf(ContentSegment(AnnotatedString(""))) }
+}
+
+private fun appendLinkContent(
+    content: List<InlineContent>,
     builder: AnnotatedString.Builder,
-    linkColor: androidx.compose.ui.graphics.Color,
-    codeBackground: androidx.compose.ui.graphics.Color
+    inheritedStyles: List<SpanStyle>,
+    codeBackground: Color
 ) {
-    when (inline) {
-        is InlineContent.Text -> builder.append(inline.text)
-
-        is InlineContent.Code -> {
-            builder.withStyle(
-                SpanStyle(
-                    fontFamily = FontFamily.Monospace,
-                    background = codeBackground
-                )
-            ) {
-                append(inline.code)
+    for (item in content) {
+        when (item) {
+            is InlineContent.Text -> {
+                inheritedStyles.forEach { builder.pushStyle(it) }
+                builder.append(item.text)
+                repeat(inheritedStyles.size) { builder.pop() }
             }
-        }
 
-        is InlineContent.Emphasis -> {
-            builder.withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                inline.content.forEach { appendInlineContent(it, builder, linkColor, codeBackground) }
+            is InlineContent.Code -> {
+                val codeStyle = SpanStyle(fontFamily = FontFamily.Monospace, background = codeBackground)
+                builder.pushStyle(codeStyle)
+                inheritedStyles.forEach { builder.pushStyle(it) }
+                builder.append(item.code)
+                repeat(inheritedStyles.size + 1) { builder.pop() }
             }
-        }
 
-        is InlineContent.StrongEmphasis -> {
-            builder.withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                inline.content.forEach { appendInlineContent(it, builder, linkColor, codeBackground) }
+            is InlineContent.Emphasis -> {
+                builder.pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
+                appendLinkContent(item.content, builder, inheritedStyles, codeBackground)
+                builder.pop()
             }
-        }
 
-        is InlineContent.Link -> {
-            builder.withStyle(
-                SpanStyle(
-                    color = linkColor,
-                    textDecoration = TextDecoration.Underline
-                )
-            ) {
-                inline.content.forEach { appendInlineContent(it, builder, linkColor, codeBackground) }
+            is InlineContent.StrongEmphasis -> {
+                builder.pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
+                appendLinkContent(item.content, builder, inheritedStyles, codeBackground)
+                builder.pop()
             }
-        }
 
-        is InlineContent.LineBreak -> {
-            if (inline.isSoft) {
-                builder.append(" ")
-            } else {
-                builder.append("\n")
+            is InlineContent.Link -> {
+                // Nested links - just render the content
+                appendLinkContent(item.content, builder, inheritedStyles, codeBackground)
+            }
+
+            is InlineContent.LineBreak -> {
+                builder.append(if (item.isSoft) " " else "\n")
             }
         }
     }
