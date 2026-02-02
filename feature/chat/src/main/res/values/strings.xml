@@ -24,6 +24,7 @@
     <string name="bot_sources_header_text">GOV.UK Chat can make mistakes.\nCheck GOV.UK pages for important information.</string>
     <string name="bot_sources_list_description">GOV.UK pages used in this answer</string>
     <string name="sources_open_in_text">opens in web browser</string>
+    <string name="copy_text">Copy</string>
     <string name="error_page_header">There’s a problem</string>
     <string name="error_page_subtext">There’s a problem with GOV.UK Chat.</string>
     <string name="error_page_additional_text_intro">Try again later or return to the</string>
