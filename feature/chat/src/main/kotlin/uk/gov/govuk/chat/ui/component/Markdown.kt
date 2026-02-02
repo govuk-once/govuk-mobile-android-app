@@ -21,7 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import uk.gov.govuk.chat.R
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -50,6 +54,7 @@ internal fun Markdown(
 ) {
     val parser = remember { MarkdownParser() }
     val elements = remember(text) { parser.parse(text) }
+    val linkAccessibilityLabel = stringResource(R.string.sources_open_in_text)
 
     Column(
         modifier = modifier
@@ -60,7 +65,8 @@ internal fun Markdown(
         elements.forEach { element ->
             MarkdownElementItem(
                 element = element,
-                onLinkClick = { url -> onMarkdownLinkClicked(markdownLinkType, url) }
+                onLinkClick = { url -> onMarkdownLinkClicked(markdownLinkType, url) },
+                linkAccessibilityLabel = linkAccessibilityLabel
             )
         }
     }
@@ -69,14 +75,15 @@ internal fun Markdown(
 @Composable
 private fun MarkdownElementItem(
     element: MarkdownElement,
-    onLinkClick: (String) -> Unit
+    onLinkClick: (String) -> Unit,
+    linkAccessibilityLabel: String
 ) {
     when (element) {
-        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick)
-        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick)
+        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick, linkAccessibilityLabel)
+        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick, linkAccessibilityLabel)
         is MarkdownElement.CodeBlock -> CodeBlockItem(element)
-        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick)
-        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick)
+        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick, linkAccessibilityLabel)
+        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick, linkAccessibilityLabel)
         is MarkdownElement.ThematicBreak -> ThematicBreakItem()
     }
 }
@@ -84,26 +91,50 @@ private fun MarkdownElementItem(
 @Composable
 private fun HeadingItem(
     heading: MarkdownElement.Heading,
-    onLinkClick: (String) -> Unit
+    onLinkClick: (String) -> Unit,
+    linkAccessibilityLabel: String
 ) {
+    val hasLinks = hasLinks(heading.content)
+    val accessibilityText = if (hasLinks) {
+        "${heading.plainText}. $linkAccessibilityLabel"
+    } else null
+
     SegmentedText(
         content = heading.content,
         style = GovUkTheme.typography.bodyBold,
         onLinkClick = onLinkClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (accessibilityText != null) {
+                    Modifier.semantics { contentDescription = accessibilityText }
+                } else Modifier
+            )
     )
 }
 
 @Composable
 private fun ParagraphItem(
     paragraph: MarkdownElement.Paragraph,
-    onLinkClick: (String) -> Unit
+    onLinkClick: (String) -> Unit,
+    linkAccessibilityLabel: String
 ) {
+    val hasLinks = hasLinks(paragraph.content)
+    val accessibilityText = if (hasLinks) {
+        "${paragraph.plainText}. $linkAccessibilityLabel"
+    } else null
+
     SegmentedText(
         content = paragraph.content,
         style = GovUkTheme.typography.bodyRegular,
         onLinkClick = onLinkClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (accessibilityText != null) {
+                    Modifier.semantics { contentDescription = accessibilityText }
+                } else Modifier
+            )
     )
 }
 
@@ -127,12 +158,23 @@ private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
 @Composable
 private fun BlockQuoteItem(
     blockQuote: MarkdownElement.BlockQuote,
-    onLinkClick: (String) -> Unit
+    onLinkClick: (String) -> Unit,
+    linkAccessibilityLabel: String
 ) {
+    val hasLinks = hasLinks(blockQuote.content)
+    val accessibilityText = if (hasLinks) {
+        "${blockQuote.plainText}. $linkAccessibilityLabel"
+    } else null
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .then(
+                if (accessibilityText != null) {
+                    Modifier.semantics { contentDescription = accessibilityText }
+                } else Modifier
+            )
     ) {
         Box(
             modifier = Modifier
@@ -159,7 +201,8 @@ private fun BlockQuoteItem(
 @Composable
 private fun ListItemItem(
     listItem: MarkdownElement.ListItem,
-    onLinkClick: (String) -> Unit
+    onLinkClick: (String) -> Unit,
+    linkAccessibilityLabel: String
 ) {
     val indent = (listItem.depth * 16).dp
     val bullet = if (listItem.isOrdered) {
@@ -168,13 +211,23 @@ private fun ListItemItem(
         "\u2022 "
     }
 
+    val hasLinks = hasLinks(listItem.content)
+    val accessibilityText = if (hasLinks) {
+        "${listItem.plainText}. $linkAccessibilityLabel"
+    } else null
+
     SegmentedText(
         content = listItem.content,
         style = GovUkTheme.typography.bodyRegular,
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = indent),
+            .padding(start = indent)
+            .then(
+                if (accessibilityText != null) {
+                    Modifier.semantics { contentDescription = accessibilityText }
+                } else Modifier
+            ),
         prefix = bullet
     )
 }
@@ -254,6 +307,17 @@ private fun SegmentedText(
                     )
                 }
             }
+        }
+    }
+}
+
+private fun hasLinks(content: List<InlineContent>): Boolean {
+    return content.any { inline ->
+        when (inline) {
+            is InlineContent.Link -> true
+            is InlineContent.Emphasis -> hasLinks(inline.content)
+            is InlineContent.StrongEmphasis -> hasLinks(inline.content)
+            else -> false
         }
     }
 }
