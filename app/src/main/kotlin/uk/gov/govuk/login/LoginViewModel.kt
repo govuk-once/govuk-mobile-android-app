@@ -15,6 +15,8 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.login.data.LoginRepo
+import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.data.model.Result.Success
 import java.util.Date
 import javax.inject.Inject
 
@@ -24,7 +26,8 @@ internal data class LoginEvent(val isBiometricLogin: Boolean)
 internal class LoginViewModel @Inject constructor(
     private val authRepo: AuthRepo,
     private val loginRepo: LoginRepo,
-    private val configRepo: ConfigRepo
+    private val configRepo: ConfigRepo,
+    private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     private val _isLoading: MutableStateFlow<Boolean?> = MutableStateFlow(null)
@@ -49,8 +52,15 @@ internal class LoginViewModel @Inject constructor(
                             AuthRepo.RefreshStatus.LOADING -> {
                                 _isLoading.value = true
                             }
-                            AuthRepo.RefreshStatus.SUCCESS ->
-                                _loginCompleted.emit(LoginEvent(isBiometricLogin = true))
+                            AuthRepo.RefreshStatus.SUCCESS -> {
+                                val result = notificationsRepo.login()
+                                when (result) {
+                                    is Success -> _loginCompleted.emit(
+                                        LoginEvent(isBiometricLogin = true)
+                                    )
+                                    else -> _errorEvent.emit(ErrorEvent.UserApiError)
+                                }
+                            }
                             AuthRepo.RefreshStatus.ERROR -> {
                                 _isLoading.value = false
                             }
@@ -70,7 +80,13 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
-                _loginCompleted.emit(LoginEvent(isBiometricLogin = false))
+                val result = notificationsRepo.login()
+                when (result) {
+                    is Success -> _loginCompleted.emit(
+                        LoginEvent(isBiometricLogin = false)
+                    )
+                    else -> _errorEvent.emit(ErrorEvent.UserApiError)
+                }
             } else {
                 _errorEvent.emit(ErrorEvent.UnableToSignInError)
             }
