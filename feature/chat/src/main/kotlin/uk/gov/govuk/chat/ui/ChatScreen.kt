@@ -1,5 +1,8 @@
 package uk.gov.govuk.chat.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -25,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -149,6 +153,8 @@ private fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
     LaunchedEffect(uiState.isPiiError) {
         if (uiState.isPiiError) {
             showPiiErrorDialog = true
@@ -211,6 +217,11 @@ private fun ChatScreen(
                                 listState.animateScrollBy(128f)
                             }
                         },
+                        onCopyText = { text ->
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip = ClipData.newPlainText("Markdown content", text)
+                            clipboard.setPrimaryClip(clip)
+                        }
                     )
                 }
 
