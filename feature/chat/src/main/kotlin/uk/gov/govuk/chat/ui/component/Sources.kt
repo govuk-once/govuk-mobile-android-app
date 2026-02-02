@@ -106,16 +106,16 @@ internal fun Sources(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                sources.forEachIndexed { index, _ ->
+                sources.forEachIndexed { index, source ->
                     SmallVerticalSpacer()
 
                     Markdown(
-                        text = sources[index],
+                        text = source,
                         onMarkdownLinkClicked = onMarkdownLinkClicked,
                         markdownLinkType = Analytics.RESPONSE_SOURCE_LINK_CLICKED
                     )
 
-                    if (index < sources.size - 1) {
+                    if (index < sources.lastIndex) {
                         SmallVerticalSpacer()
                         ChatDivider(
                             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)

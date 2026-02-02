@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
-import uk.gov.govuk.chat.R
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.parser.MarkdownParser
 import uk.gov.govuk.chat.parser.model.InlineContent
 import uk.gov.govuk.chat.parser.model.MarkdownElement
@@ -264,7 +264,7 @@ private fun SegmentedText(
             val annotatedString = remember(content, prefix) {
                 buildAnnotatedString {
                     if (prefix != null) append(prefix)
-                    appendContent(content, this, emptyList(), linkColor, codeBackground)
+                    appendInlineContent(content, this, emptyList(), linkColor, codeBackground)
                 }
             }
             Text(
@@ -343,11 +343,11 @@ private fun collectLinks(content: List<InlineContent>): List<String> {
     return links
 }
 
-private fun appendContent(
+private fun appendInlineContent(
     items: List<InlineContent>,
     builder: AnnotatedString.Builder,
     inheritedStyles: List<SpanStyle>,
-    linkColor: Color,
+    linkColor: Color?,
     codeBackground: Color
 ) {
     for (item in items) {
@@ -366,19 +366,24 @@ private fun appendContent(
             }
             is InlineContent.Emphasis -> {
                 builder.pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
-                appendContent(item.content, builder, inheritedStyles, linkColor, codeBackground)
+                appendInlineContent(item.content, builder, inheritedStyles, linkColor, codeBackground)
                 builder.pop()
             }
             is InlineContent.StrongEmphasis -> {
                 builder.pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
-                appendContent(item.content, builder, inheritedStyles, linkColor, codeBackground)
+                appendInlineContent(item.content, builder, inheritedStyles, linkColor, codeBackground)
                 builder.pop()
             }
             is InlineContent.Link -> {
-                val linkStyle = SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)
-                builder.pushStyle(linkStyle)
-                appendContent(item.content, builder, inheritedStyles, linkColor, codeBackground)
-                builder.pop()
+                if (linkColor != null) {
+                    val linkStyle = SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)
+                    builder.pushStyle(linkStyle)
+                    appendInlineContent(item.content, builder, inheritedStyles, linkColor, codeBackground)
+                    builder.pop()
+                } else {
+                    // Nested link - just render content without additional styling
+                    appendInlineContent(item.content, builder, inheritedStyles, null, codeBackground)
+                }
             }
             is InlineContent.LineBreak -> {
                 builder.append(if (item.isSoft) " " else "\n")
@@ -451,7 +456,7 @@ private fun splitIntoSegments(
                     val linkText = buildAnnotatedString {
                         val linkStyle = SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)
                         withStyle(linkStyle) {
-                            appendLinkContent(item.content, this@buildAnnotatedString, inheritedStyles, codeBackground)
+                            appendInlineContent(item.content, this@buildAnnotatedString, inheritedStyles, null, codeBackground)
                         }
                     }
                     segments.add(ContentSegment(linkText, item.url))
@@ -475,48 +480,3 @@ private fun splitIntoSegments(
     return segments.ifEmpty { listOf(ContentSegment(AnnotatedString(""))) }
 }
 
-private fun appendLinkContent(
-    content: List<InlineContent>,
-    builder: AnnotatedString.Builder,
-    inheritedStyles: List<SpanStyle>,
-    codeBackground: Color
-) {
-    for (item in content) {
-        when (item) {
-            is InlineContent.Text -> {
-                inheritedStyles.forEach { builder.pushStyle(it) }
-                builder.append(item.text)
-                repeat(inheritedStyles.size) { builder.pop() }
-            }
-
-            is InlineContent.Code -> {
-                val codeStyle = SpanStyle(fontFamily = FontFamily.Monospace, background = codeBackground)
-                builder.pushStyle(codeStyle)
-                inheritedStyles.forEach { builder.pushStyle(it) }
-                builder.append(item.code)
-                repeat(inheritedStyles.size + 1) { builder.pop() }
-            }
-
-            is InlineContent.Emphasis -> {
-                builder.pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
-                appendLinkContent(item.content, builder, inheritedStyles, codeBackground)
-                builder.pop()
-            }
-
-            is InlineContent.StrongEmphasis -> {
-                builder.pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
-                appendLinkContent(item.content, builder, inheritedStyles, codeBackground)
-                builder.pop()
-            }
-
-            is InlineContent.Link -> {
-                // Nested links - just render the content
-                appendLinkContent(item.content, builder, inheritedStyles, codeBackground)
-            }
-
-            is InlineContent.LineBreak -> {
-                builder.append(if (item.isSoft) " " else "\n")
-            }
-        }
-    }
-}
