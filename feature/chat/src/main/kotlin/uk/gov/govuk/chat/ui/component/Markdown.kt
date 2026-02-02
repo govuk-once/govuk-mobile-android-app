@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -142,15 +143,16 @@ private fun ParagraphItem(
 private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = GovUkTheme.colourScheme.surfaces.background
+        color = GovUkTheme.colourScheme.surfaces.chatIntroCardBackground,
+        shape = RoundedCornerShape(8.dp)
     ) {
         Text(
             text = codeBlock.code,
-            style = GovUkTheme.typography.bodyRegular.copy(
+            style = GovUkTheme.typography.footnoteRegular.copy(
                 fontFamily = FontFamily.Monospace
             ),
             color = GovUkTheme.colourScheme.textAndIcons.primary,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(12.dp)
         )
     }
 }
@@ -184,7 +186,7 @@ private fun BlockQuoteItem(
         )
         Surface(
             modifier = Modifier.weight(1f),
-            color = GovUkTheme.colourScheme.surfaces.background
+            color = GovUkTheme.colourScheme.surfaces.chatIntroCardBackground
         ) {
             SegmentedText(
                 content = blockQuote.content,
@@ -192,7 +194,7 @@ private fun BlockQuoteItem(
                     fontStyle = FontStyle.Italic
                 ),
                 onLinkClick = onLinkClick,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(12.dp)
             )
         }
     }
