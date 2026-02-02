@@ -25,8 +25,8 @@ import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.ERROR
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.LOADING
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.SUCCESS
 import uk.gov.govuk.data.auth.ErrorEvent
-import uk.gov.govuk.data.user.UserApiResult
 import uk.gov.govuk.data.user.model.UserApiResponse
+import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import java.util.Date
@@ -72,7 +72,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns Result.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -100,7 +100,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns Result.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -127,7 +127,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns Result.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -181,7 +181,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns Result.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -209,7 +209,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns UserApiResult.Error()
+        coEvery { notificationsRepo.login() } returns Result.Error()
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -289,7 +289,7 @@ class LoginViewModelTest {
     fun `Given an auth response, when success, user api returns a notification id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
-        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns Result.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -319,7 +319,7 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns Result.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -350,7 +350,7 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { notificationsRepo.login() } returns UserApiResult.Error()
+        coEvery { notificationsRepo.login() } returns Result.Error()
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()

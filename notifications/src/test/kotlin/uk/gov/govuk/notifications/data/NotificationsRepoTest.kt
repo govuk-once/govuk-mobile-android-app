@@ -10,9 +10,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.model.Result.Error
+import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
-import uk.gov.govuk.data.user.UserApiResult.Error
-import uk.gov.govuk.data.user.UserApiResult.Success
 import uk.gov.govuk.data.user.model.UserApiResponse
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
@@ -35,7 +36,7 @@ class NotificationsRepoTest {
 
     @Test
     fun `Given login is success, then return success with correct values`() {
-        coEvery { userRepo.getUserPreferences() } returns Success(UserApiResponse("12345"))
+        coEvery { userRepo.getUserPreferences() } returns Result.Success(UserApiResponse("12345"))
 
         runTest {
             val result = notificationsRepo.login()

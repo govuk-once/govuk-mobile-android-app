@@ -14,9 +14,9 @@ import uk.gov.govuk.R
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
-import uk.gov.govuk.data.user.UserApiResult.Success
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.data.model.Result.Success
 import java.util.Date
 import javax.inject.Inject
 
