@@ -18,7 +18,7 @@ import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
-import uk.gov.govuk.notifications.NotificationsClient
+import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
@@ -35,7 +35,7 @@ class AppNavigationTest {
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val topicsFeature = mockk<TopicsFeature>(relaxed = true)
     private val deeplinkHandler = mockk<DeeplinkHandler>(relaxed = true)
-    private val notificationsClient = mockk<NotificationsClient>(relaxed = true)
+    private val notificationsProvider = mockk<NotificationsProvider>(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
     private val deeplink = mockk<Uri>(relaxed = true)
 
@@ -50,7 +50,7 @@ class AppNavigationTest {
             authRepo,
             topicsFeature,
             deeplinkHandler,
-            notificationsClient,
+            notificationsProvider,
             notificationsRepo
         )
     }
@@ -152,13 +152,13 @@ class AppNavigationTest {
     @Test
     fun `On navigate on resume, when notifications enabled and permission not granted, removes consent`() {
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns false
+        every { notificationsProvider.permissionGranted() } returns false
 
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
             verify(exactly = 1) {
-                notificationsClient.removeConsent()
+                notificationsProvider.removeConsent()
             }
             verify(exactly = 0) {
                 navController.popBackStack()
@@ -175,14 +175,14 @@ class AppNavigationTest {
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
         coEvery { topicsFeature.hasTopics() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns false
+        every { notificationsProvider.permissionGranted() } returns false
         every { navController.currentDestination?.route } returns NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
             verify(exactly = 1) {
-                notificationsClient.removeConsent()
+                notificationsProvider.removeConsent()
             }
             verify(exactly = 1) {
                 navController.popBackStack()
@@ -200,14 +200,14 @@ class AppNavigationTest {
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
         coEvery { topicsFeature.hasTopics() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns false
+        every { notificationsProvider.permissionGranted() } returns false
         every { navController.currentDestination?.route } returns HOME_GRAPH_ROUTE
 
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
             verify(exactly = 1) {
-                notificationsClient.removeConsent()
+                notificationsProvider.removeConsent()
             }
             verify(exactly = 0) {
                 navController.popBackStack()
@@ -220,7 +220,7 @@ class AppNavigationTest {
     @Test
     fun `On navigate on resume, when notifications enabled and permission granted, user session not active, doesn't navigate`() {
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns true
+        every { notificationsProvider.permissionGranted() } returns true
         every { authRepo.isUserSessionActive() } returns false
 
         runTest {
@@ -235,7 +235,7 @@ class AppNavigationTest {
     @Test
     fun `On navigate on resume, when notifications enabled, permission granted, user session active and notifications onboarding not completed, doesn't navigate`() {
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns true
+        every { notificationsProvider.permissionGranted() } returns true
         every { authRepo.isUserSessionActive() } returns true
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns false
 
@@ -251,10 +251,10 @@ class AppNavigationTest {
     @Test
     fun `On navigate on resume, when notifications enabled, permission granted, user session active, notifications onboarding completed and consent given, doesn't navigate`() {
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns true
+        every { notificationsProvider.permissionGranted() } returns true
         every { authRepo.isUserSessionActive() } returns true
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns false
-        coEvery { notificationsClient.consentGiven() } returns true
+        coEvery { notificationsProvider.consentGiven() } returns true
 
         runTest {
             appLaunchNav.navigateOnResume(navController)
@@ -268,10 +268,10 @@ class AppNavigationTest {
     @Test
     fun `On navigate on resume, when notifications enabled, permission granted, user session active, notifications onboarding completed and consent not given, navigates to consent`() {
         every { flagRepo.isNotificationsEnabled() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns true
+        every { notificationsProvider.permissionGranted() } returns true
         every { authRepo.isUserSessionActive() } returns true
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
-        coEvery { notificationsClient.consentGiven() } returns false
+        coEvery { notificationsProvider.consentGiven() } returns false
 
         runTest {
             appLaunchNav.navigateOnResume(navController)
@@ -283,10 +283,11 @@ class AppNavigationTest {
     }
 
     @Test
-    fun `On sign out navigates to login`() {
+    fun `On sign out logs out of notifications and navigates to login`() {
         appLaunchNav.onSignOut(navController)
 
-        verify {
+        verify(exactly = 1) {
+            notificationsProvider.logout()
             navController.navigate(LOGIN_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
         }
     }
@@ -422,8 +423,8 @@ class AppNavigationTest {
         every { flagRepo.isTopicsEnabled() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns true
-        every { notificationsClient.consentGiven() } returns false
+        every { notificationsProvider.permissionGranted() } returns true
+        every { notificationsProvider.consentGiven() } returns false
 
         appLaunchNav.onNext(navController)
 
@@ -436,8 +437,8 @@ class AppNavigationTest {
         every { flagRepo.isTopicsEnabled() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns true
-        every { notificationsClient.consentGiven() } returns true
+        every { notificationsProvider.permissionGranted() } returns true
+        every { notificationsProvider.consentGiven() } returns true
         every { flagRepo.isChatEnabled() } returns false
 
         appLaunchNav.onNext(navController)
@@ -452,7 +453,7 @@ class AppNavigationTest {
         every { flagRepo.isTopicsEnabled() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
-        every { notificationsClient.permissionGranted(any()) } returns false
+        every { notificationsProvider.permissionGranted() } returns false
         every { flagRepo.isChatEnabled() } returns false
 
         appLaunchNav.onNext(navController)

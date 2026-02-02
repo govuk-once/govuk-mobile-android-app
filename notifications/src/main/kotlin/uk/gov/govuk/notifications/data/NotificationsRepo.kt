@@ -1,13 +1,29 @@
 package uk.gov.govuk.notifications.data
 
+import uk.gov.govuk.data.user.UserRepo
+import uk.gov.govuk.data.user.model.UserApiResponse
+import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.model.Result.Success
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class NotificationsRepo @Inject constructor(
-    private val notificationsDataStore: NotificationsDataStore
+    private val notificationsDataStore: NotificationsDataStore,
+    private val notificationsProvider: NotificationsProvider,
+    private val userRepo: UserRepo
 ) {
+    suspend fun login(): Result<UserApiResponse> {
+        val result = userRepo.getUserPreferences()
+        when (result) {
+            is Success -> notificationsProvider.login(result.value.notificationId)
+            else -> { /* Do nothing */ }
+        }
+        return result
+    }
+
     suspend fun isNotificationsOnboardingCompleted() =
         notificationsDataStore.isNotificationsOnboardingCompleted()
 
