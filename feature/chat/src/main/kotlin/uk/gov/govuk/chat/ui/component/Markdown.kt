@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
@@ -206,32 +207,46 @@ private fun ListItemItem(
     onLinkClick: (String) -> Unit,
     linkAccessibilityLabel: String
 ) {
-    val indent = (listItem.depth * 16).dp
+    val indent = ((listItem.depth + 1) * 8).dp
     val bullet = if (listItem.isOrdered) {
-        "${listItem.number}. "
+        "${listItem.number}."
     } else {
-        "\u2022 "
+        "\u2022"
     }
 
     val hasLinks = hasLinks(listItem.content)
     val accessibilityText = if (hasLinks) {
         "${listItem.plainText}. $linkAccessibilityLabel"
-    } else null
+    } else {
+        null
+    }
 
-    SegmentedText(
-        content = listItem.content,
-        style = GovUkTheme.typography.bodyRegular,
-        onLinkClick = onLinkClick,
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = indent)
-            .then(
-                if (accessibilityText != null) {
-                    Modifier.semantics { contentDescription = accessibilityText }
-                } else Modifier
-            ),
-        prefix = bullet
-    )
+    ) {
+        Text(
+            text = bullet,
+            style = GovUkTheme.typography.bodyRegular,
+            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            modifier = Modifier
+                .clearAndSetSemantics { }
+        )
+        SegmentedText(
+            content = listItem.content,
+            style = GovUkTheme.typography.bodyRegular,
+            onLinkClick = onLinkClick,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+                .then(
+                    if (accessibilityText != null) {
+                        Modifier.semantics { contentDescription = accessibilityText }
+                    } else Modifier
+                )
+        )
+    }
 }
 
 @Composable
@@ -251,8 +266,7 @@ private fun SegmentedText(
     content: List<InlineContent>,
     style: TextStyle,
     onLinkClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    prefix: String? = null
+    modifier: Modifier = Modifier
 ) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText
     val codeBackground = GovUkTheme.colourScheme.surfaces.background
@@ -261,9 +275,8 @@ private fun SegmentedText(
     when {
         links.size <= 1 -> {
             // 0 or 1 link: render as single Text element
-            val annotatedString = remember(content, prefix) {
+            val annotatedString = remember(content) {
                 buildAnnotatedString {
-                    if (prefix != null) append(prefix)
                     appendInlineContent(content, this, emptyList(), linkColor, codeBackground)
                 }
             }
@@ -280,18 +293,8 @@ private fun SegmentedText(
         }
         else -> {
             // Multiple links: split into segments
-            val segments = remember(content, prefix) {
-                val rawSegments = splitIntoSegments(content, linkColor, codeBackground)
-                if (prefix != null && rawSegments.isNotEmpty()) {
-                    val first = rawSegments[0]
-                    val prefixedText = buildAnnotatedString {
-                        append(prefix)
-                        append(first.text)
-                    }
-                    listOf(ContentSegment(prefixedText, first.linkUrl)) + rawSegments.drop(1)
-                } else {
-                    rawSegments
-                }
+            val segments = remember(content) {
+                splitIntoSegments(content, linkColor, codeBackground)
             }
             FlowRow(
                 modifier = modifier
