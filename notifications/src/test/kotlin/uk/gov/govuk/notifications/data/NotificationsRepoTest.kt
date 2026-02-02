@@ -10,17 +10,17 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.data.flex.FlexRepo
-import uk.gov.govuk.data.flex.FlexResult.Error
-import uk.gov.govuk.data.flex.FlexResult.Success
-import uk.gov.govuk.data.flex.model.FlexResponse
+import uk.gov.govuk.data.user.UserRepo
+import uk.gov.govuk.data.user.UserApiResult.Error
+import uk.gov.govuk.data.user.UserApiResult.Success
+import uk.gov.govuk.data.user.model.UserApiResponse
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
 class NotificationsRepoTest {
     private val notificationsDataStore = mockk<NotificationsDataStore>(relaxed = true)
     private val notificationsProvider = mockk<NotificationsProvider>(relaxed = true)
-    private val flexRepo = mockk<FlexRepo>(relaxed = true)
+    private val userRepo = mockk<UserRepo>(relaxed = true)
 
     private lateinit var notificationsRepo: NotificationsRepo
 
@@ -29,13 +29,13 @@ class NotificationsRepoTest {
         notificationsRepo = NotificationsRepo(
             notificationsDataStore,
             notificationsProvider,
-            flexRepo
+            userRepo
         )
     }
 
     @Test
     fun `Given login is success, then return success with correct values`() {
-        coEvery { flexRepo.getFlexPreferences() } returns Success(FlexResponse("12345"))
+        coEvery { userRepo.getUserPreferences() } returns Success(UserApiResponse("12345"))
 
         runTest {
             val result = notificationsRepo.login()
@@ -48,7 +48,7 @@ class NotificationsRepoTest {
 
     @Test
     fun `Given login is unsuccessful, then return error`() {
-        coEvery { flexRepo.getFlexPreferences() } returns Error()
+        coEvery { userRepo.getUserPreferences() } returns Error()
 
         runTest {
             val result = notificationsRepo.login()

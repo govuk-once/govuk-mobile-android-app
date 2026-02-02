@@ -19,7 +19,7 @@ private const val LOGIN_SUCCESS_ROUTE = "login_success_route"
 private const val BIOMETRIC_ROUTE = "biometric_route"
 const val BIOMETRIC_SETTINGS_ROUTE = "biometric_settings_route"
 private const val ERROR_ROUTE = "login_error_route"
-private const val FLEX_ERROR_ROUTE = "flex_error_route"
+private const val USER_API_ERROR_ROUTE = "user_api_error_route"
 
 fun NavGraphBuilder.loginGraph(
     navController: NavController,
@@ -44,8 +44,8 @@ fun NavGraphBuilder.loginGraph(
                     when(event) {
                         is ErrorEvent.UnableToSignInError, ErrorEvent.UnableToSignOutError ->
                             navController.navigate(ERROR_ROUTE)
-                        is ErrorEvent.FlexError ->
-                            navController.navigate(FLEX_ERROR_ROUTE)
+                        is ErrorEvent.UserApiError ->
+                            navController.navigate(USER_API_ERROR_ROUTE)
                     }
                 },
                 modifier = modifier
@@ -85,7 +85,7 @@ fun NavGraphBuilder.loginGraph(
             )
         }
 
-        composable(route = FLEX_ERROR_ROUTE) {
+        composable(route = USER_API_ERROR_ROUTE) {
             AppUnavailableRoute()
         }
     }

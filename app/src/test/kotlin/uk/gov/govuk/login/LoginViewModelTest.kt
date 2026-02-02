@@ -25,8 +25,8 @@ import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.ERROR
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.LOADING
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.SUCCESS
 import uk.gov.govuk.data.auth.ErrorEvent
-import uk.gov.govuk.data.flex.FlexResult
-import uk.gov.govuk.data.flex.model.FlexResponse
+import uk.gov.govuk.data.user.UserApiResult
+import uk.gov.govuk.data.user.model.UserApiResponse
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import java.util.Date
@@ -72,7 +72,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -100,7 +100,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -127,7 +127,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -181,7 +181,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -203,13 +203,13 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given the user is signed in and the refresh token issued at date and refresh expiry seconds are null, the refresh token expiry date is in the future and getting the flex id is unsuccessful, then emit flex error`() {
+    fun `Given the user is signed in and the refresh token issued at date and refresh expiry seconds are null, the refresh token expiry date is in the future and getting the notifications id is unsuccessful, then emit user api error`() {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns Date().toInstant().epochSecond + 10000
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
-        coEvery { notificationsRepo.login() } returns FlexResult.Error()
+        coEvery { notificationsRepo.login() } returns UserApiResult.Error()
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -231,7 +231,7 @@ class LoginViewModelTest {
             }
             assertTrue(isLoading.last() == true)
             assertTrue(loginEvents.isEmpty())
-            assertEquals(ErrorEvent.FlexError, errorEvents.first())
+            assertEquals(ErrorEvent.UserApiError, errorEvents.first())
         }
     }
 
@@ -286,10 +286,10 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, flex returns a notification id and id token issued at date is not stored, then emit loading and login event`() {
+    fun `Given an auth response, when success, user api returns a notification id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -315,11 +315,11 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, flex returns a notification id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
+    fun `Given an auth response, when success, user api returns a notification id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { notificationsRepo.login() } returns FlexResult.Success(FlexResponse(notificationId = "12345"))
+        coEvery { notificationsRepo.login() } returns UserApiResult.Success(UserApiResponse(notificationId = "12345"))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -346,11 +346,11 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, id token issued at date is stored and flex returns error, then emit flex error`() {
+    fun `Given an auth response, when success, id token issued at date is stored and user api returns error, then emit user api error`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { notificationsRepo.login() } returns FlexResult.Error()
+        coEvery { notificationsRepo.login() } returns UserApiResult.Error()
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -373,7 +373,7 @@ class LoginViewModelTest {
 
             assertTrue(isLoading.last() == true)
             assertTrue(loginEvents.isEmpty())
-            assertEquals(ErrorEvent.FlexError, errorEvents.first())
+            assertEquals(ErrorEvent.UserApiError, errorEvents.first())
 
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()

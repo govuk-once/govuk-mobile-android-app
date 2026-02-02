@@ -14,7 +14,7 @@ import uk.gov.govuk.R
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
-import uk.gov.govuk.data.flex.FlexResult.Success
+import uk.gov.govuk.data.user.UserApiResult.Success
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import java.util.Date
@@ -58,7 +58,7 @@ internal class LoginViewModel @Inject constructor(
                                     is Success -> _loginCompleted.emit(
                                         LoginEvent(isBiometricLogin = true)
                                     )
-                                    else -> _errorEvent.emit(ErrorEvent.FlexError)
+                                    else -> _errorEvent.emit(ErrorEvent.UserApiError)
                                 }
                             }
                             AuthRepo.RefreshStatus.ERROR -> {
@@ -85,7 +85,7 @@ internal class LoginViewModel @Inject constructor(
                     is Success -> _loginCompleted.emit(
                         LoginEvent(isBiometricLogin = false)
                     )
-                    else -> _errorEvent.emit(ErrorEvent.FlexError)
+                    else -> _errorEvent.emit(ErrorEvent.UserApiError)
                 }
             } else {
                 _errorEvent.emit(ErrorEvent.UnableToSignInError)

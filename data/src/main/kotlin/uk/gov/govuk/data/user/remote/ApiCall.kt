@@ -1,13 +1,13 @@
-package uk.gov.govuk.data.flex.remote
+package uk.gov.govuk.data.user.remote
 
 import retrofit2.Response
-import uk.gov.govuk.data.flex.FlexResult
-import uk.gov.govuk.data.flex.FlexResult.Success
-import uk.gov.govuk.data.flex.FlexResult.Error
+import uk.gov.govuk.data.user.UserApiResult
+import uk.gov.govuk.data.user.UserApiResult.Success
+import uk.gov.govuk.data.user.UserApiResult.Error
 
-internal suspend fun <T> safeFlexApiCall(
+internal suspend fun <T> safeUserApiCall(
     apiCall: suspend () -> Response<T>
-): FlexResult<T> {
+): UserApiResult<T> {
     return try {
         val response = apiCall()
         val body = response.body()

@@ -1,4 +1,4 @@
-package uk.gov.govuk.data.flex.di
+package uk.gov.govuk.data.user.di
 
 import dagger.Module
 import dagger.Provides
@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uk.gov.govuk.data.BuildConfig
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.flex.remote.FlexApi
+import uk.gov.govuk.data.user.remote.UserApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,19 +29,19 @@ internal class AuthorizationInterceptor @Inject constructor(
 
 @InstallIn(SingletonComponent::class)
 @Module
-class FlexModule {
+class UserModule {
     @Provides
     @Singleton
-    fun providesFlexApi(authRepo: AuthRepo): FlexApi {
+    fun providesUserApi(authRepo: AuthRepo): UserApi {
         val client = OkHttpClient.Builder()
             .addInterceptor(AuthorizationInterceptor(authRepo))
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.FLEX_BASE_URL)
+            .baseUrl(BuildConfig.USER_API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-            .create(FlexApi::class.java)
+            .create(UserApi::class.java)
     }
 }

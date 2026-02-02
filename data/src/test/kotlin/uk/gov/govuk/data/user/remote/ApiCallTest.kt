@@ -1,4 +1,4 @@
-package uk.gov.govuk.data.flex.remote
+package uk.gov.govuk.data.user.remote
 
 import io.mockk.coEvery
 import io.mockk.every
@@ -8,22 +8,22 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.Response
-import uk.gov.govuk.data.flex.FlexResult.Success
-import uk.gov.govuk.data.flex.FlexResult.Error
-import uk.gov.govuk.data.flex.model.FlexResponse
+import uk.gov.govuk.data.user.UserApiResult.Success
+import uk.gov.govuk.data.user.UserApiResult.Error
+import uk.gov.govuk.data.user.model.UserApiResponse
 
 class ApiCallTest {
-    private val apiCall = mockk<suspend () -> Response<FlexResponse>>(relaxed = true)
-    private val response = mockk<Response<FlexResponse>>(relaxed = true)
+    private val apiCall = mockk<suspend () -> Response<UserApiResponse>>(relaxed = true)
+    private val response = mockk<Response<UserApiResponse>>(relaxed = true)
 
     @Test
     fun `Given the response is successful, when the body is not null, then return success`() =
         runTest {
             coEvery { apiCall.invoke() } returns response
             every { response.isSuccessful } returns true
-            every { response.body() } returns FlexResponse(notificationId = "12345")
+            every { response.body() } returns UserApiResponse(notificationId = "12345")
 
-            val result = safeFlexApiCall(apiCall)
+            val result = safeUserApiCall(apiCall)
 
             assertTrue(result is Success)
             assertEquals("12345", (result as Success).value.notificationId)
@@ -35,7 +35,7 @@ class ApiCallTest {
         every { response.isSuccessful } returns true
         every { response.body() } returns null
 
-        val result = safeFlexApiCall(apiCall)
+        val result = safeUserApiCall(apiCall)
 
         assertTrue(result is Error)
     }
@@ -45,7 +45,7 @@ class ApiCallTest {
         coEvery { apiCall.invoke() } returns response
         every { response.isSuccessful } returns false
 
-        val result = safeFlexApiCall(apiCall)
+        val result = safeUserApiCall(apiCall)
 
         assertTrue(result is Error)
     }
