@@ -7,6 +7,6 @@ import uk.gov.govuk.data.user.model.UserApiResponse
 interface UserApi {
     // Headers are added via interceptor in UserModule.kt
 
-    @GET("1.0/app/user")
+    @GET("app/v1/user")
     suspend fun getUserPreferences(): Response<UserApiResponse>
 }
