@@ -8,8 +8,6 @@ import androidx.core.net.toUri
 import com.onesignal.OneSignal
 import com.onesignal.notifications.INotificationClickEvent
 import com.onesignal.notifications.INotificationClickListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,10 +33,8 @@ class OneSignalClient @Inject constructor(
     override fun consentGiven() = OneSignal.consentGiven
 
     override suspend fun requestPermission() {
-        withContext(Dispatchers.IO) {
-            val consentGiven = OneSignal.Notifications.requestPermission(false)
-            OneSignal.consentGiven = consentGiven
-        }
+        val consentGiven = OneSignal.Notifications.requestPermission(false)
+        OneSignal.consentGiven = consentGiven
     }
 
     override fun addClickListener() {
