@@ -1,6 +1,8 @@
 package uk.gov.govuk.chat.ui
 
+import android.content.Context
 import android.content.res.Configuration
+import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -134,14 +138,15 @@ internal fun ChatRoute(
 }
 
 @Composable
-private fun ChatScreen(
+internal fun ChatScreen(
     uiState: ChatUiState.Default,
     launchBrowser: (url: String) -> Unit,
     hasConversation: Boolean,
     uiEvents: UiEvents,
     analyticsEvents: AnalyticsEvents,
     chatUrls: ChatUrls,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isTalkBackActive: Boolean = isTalkBackEnabled()
 ) {
     val listState = rememberLazyListState()
     val chatEntries = uiState.chatEntries.toList()
@@ -243,7 +248,8 @@ private fun ChatScreen(
                             .padding(
                                 top = GovUkTheme.spacing.small,
                                 bottom = GovUkTheme.spacing.medium
-                            )
+                            ),
+                        isTalkBackActive = isTalkBackActive
                     )
             }
         }
@@ -275,6 +281,30 @@ private fun ChatScreen(
             }
         }
     }
+}
+
+@Composable
+private fun isTalkBackEnabled(): Boolean {
+    val context = LocalContext.current
+    val accessibilityManager =
+        context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+
+    var isEnabled by remember {
+        mutableStateOf(accessibilityManager.isTouchExplorationEnabled)
+    }
+
+    DisposableEffect(accessibilityManager) {
+        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled ->
+            isEnabled = enabled
+        }
+        accessibilityManager.addTouchExplorationStateChangeListener(listener)
+
+        onDispose {
+            accessibilityManager.removeTouchExplorationStateChangeListener(listener)
+        }
+    }
+
+    return isEnabled
 }
 
 private fun analyticsEvents() = AnalyticsEvents(
