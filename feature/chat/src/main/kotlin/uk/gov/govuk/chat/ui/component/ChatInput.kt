@@ -14,31 +14,28 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -66,9 +63,9 @@ internal fun ChatInput(
     onQuestionUpdated: (String) -> Unit,
     onSubmit: (String) -> Unit,
     chatUrls: ChatUrls,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isTalkBackActive: Boolean
 ) {
-    val focusRequester = remember { FocusRequester() }
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -96,10 +93,14 @@ internal fun ChatInput(
                     .animateContentSize(
                         animationSpec = tween(durationMillis = 100)
                     )
+                    .background(
+                        color = GovUkTheme.colourScheme.surfaces.chatTextFieldBackground,
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    .clip(RoundedCornerShape(24.dp))
             ) {
-                val value = if (isFocused) uiState.question else ""
-                BasicTextField(
-                    value = value,
+                TextField(
+                    value = if (isFocused) uiState.question else "",
                     onValueChange = onQuestionUpdated,
                     textStyle = TextStyle(
                         color = GovUkTheme.colourScheme.textAndIcons.primary,
@@ -110,59 +111,32 @@ internal fun ChatInput(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(focusRequester)
                         .focusable(true)
                         .onFocusChanged {
                             isFocused = it.isFocused
                         }
+                        .height(IntrinsicSize.Min)
                         .semantics { this.traversalIndex = 0f },
-                    cursorBrush = SolidColor(GovUkTheme.colourScheme.textAndIcons.primary),
-                    decorationBox = { innerTextField ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min)
-                                .defaultMinSize(minHeight = 48.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                                .background(GovUkTheme.colourScheme.surfaces.chatTextFieldBackground)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(
-                                        start = 16.dp,
-                                        end = GovUkTheme.spacing.medium,
-                                    )
-                                    .padding(vertical = 8.dp)
-                                    .defaultMinSize(minHeight = 32.dp),
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                if (value.isEmpty()) {
-                                    PlaceholderText(question = uiState.question)
-                                }
-                                innerTextField()
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .padding(end = 8.dp)
-                                    .padding(vertical = 6.dp),
-                                contentAlignment = Alignment.BottomCenter
-                            ) {
-                                AnimateIcon(
-                                    focusedWithInput(isFocused, uiState),
-                                    {
-                                        SubmitIconButton(
-                                            onClick = {
-                                                onSubmit(uiState.question)
-                                            },
-                                            enabled = !uiState.displayCharacterError
-                                                    && !uiState.isPiiError && !uiState.isLoading
-                                        )
-                                    }
+                    shape = RoundedCornerShape(24.dp),
+                    singleLine = false,
+                    minLines = 1,
+                    placeholder = {
+                        PlaceholderText(question = uiState.question)
+                    },
+                    colors = inputTextFieldDefaults(),
+                    trailingIcon = {
+                        AnimateIcon(
+                            focusedWithInput(isFocused, uiState),
+                            {
+                                SubmitIconButton(
+                                    onClick = {
+                                        onSubmit(uiState.question)
+                                    },
+                                    enabled = !uiState.displayCharacterError
+                                            && !uiState.isPiiError && !uiState.isLoading
                                 )
                             }
-                        }
+                        )
                     }
                 )
             }
@@ -181,7 +155,8 @@ internal fun ChatInput(
                             onFunctionActionItemClicked(text, section, action)
                         },
                         chatUrls = chatUrls,
-                        modifier = Modifier.semantics { this.traversalIndex = 1f }
+                        modifier = Modifier.semantics { this.traversalIndex = 1f },
+                        isTalkBackActive = isTalkBackActive
                     )
                 }
             )
@@ -192,7 +167,7 @@ internal fun ChatInput(
 private fun focusedWithInput(
     isFocused: Boolean,
     uiState: ChatUiState.Default
-) : Boolean {
+): Boolean {
     return isFocused && uiState.question.isNotEmpty()
 }
 
@@ -219,28 +194,53 @@ private fun PlaceholderText(
 }
 
 @Composable
+private fun inputTextFieldDefaults() = TextFieldDefaults.colors(
+    cursorColor = GovUkTheme.colourScheme.textAndIcons.primary,
+    focusedTextColor = GovUkTheme.colourScheme.textAndIcons.primary,
+    unfocusedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary,
+    disabledTextColor = GovUkTheme.colourScheme.textAndIcons.secondary,
+    focusedContainerColor = GovUkTheme.colourScheme.surfaces.chatTextFieldBackground,
+    unfocusedContainerColor = GovUkTheme.colourScheme.surfaces.chatTextFieldBackground,
+    disabledContainerColor = GovUkTheme.colourScheme.surfaces.chatTextFieldBackground,
+    focusedIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent,
+    disabledIndicatorColor = Color.Transparent,
+    errorContainerColor = GovUkTheme.colourScheme.surfaces.chatTextFieldBackground,
+    errorLabelColor = GovUkTheme.colourScheme.textAndIcons.primary,
+    errorCursorColor = GovUkTheme.colourScheme.textAndIcons.primary,
+    errorIndicatorColor = Color.Transparent
+)
+
+@Composable
 private fun SubmitIconButton(
     onClick: () -> Unit,
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier
-            .clip(RoundedCornerShape(60.dp))
-            .size(36.dp),
-        enabled = enabled,
-        colors = IconButtonColors(
-            containerColor = GovUkTheme.colourScheme.surfaces.chatButtonBackgroundEnabled,
-            contentColor = GovUkTheme.colourScheme.textAndIcons.chatButtonIconEnabled,
-            disabledContainerColor = GovUkTheme.colourScheme.surfaces.chatButtonBackgroundDisabled,
-            disabledContentColor = GovUkTheme.colourScheme.textAndIcons.chatButtonIconDisabled
-        )
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(9.dp)
     ) {
-        Icon(
-            painter = painterResource(R.drawable.outline_arrow_upward_24),
-            contentDescription = stringResource(id = R.string.button_alt),
-        )
+        IconButton(
+            onClick = onClick,
+            modifier = modifier
+                .clip(RoundedCornerShape(60.dp))
+                .size(36.dp),
+            enabled = enabled,
+            colors = IconButtonColors(
+                containerColor = GovUkTheme.colourScheme.surfaces.chatButtonBackgroundEnabled,
+                contentColor = GovUkTheme.colourScheme.textAndIcons.chatButtonIconEnabled,
+                disabledContainerColor = GovUkTheme.colourScheme.surfaces.chatButtonBackgroundDisabled,
+                disabledContentColor = GovUkTheme.colourScheme.textAndIcons.chatButtonIconDisabled
+            )
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.outline_arrow_upward_24),
+                contentDescription = stringResource(id = R.string.button_alt),
+            )
+        }
     }
 }
 

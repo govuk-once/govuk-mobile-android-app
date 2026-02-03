@@ -16,6 +16,7 @@
     <string name="action_privacy">Privacy notice</string>
     <string name="action_feedback">Give feedback</string>
     <string name="action_clear">Clear chat</string>
+    <string name="action_close">Close menu</string>
     <string name="action_alt">More options</string>
     <string name="button_alt">Send message</string>
     <string name="answer_alt">You said</string>
@@ -34,6 +35,7 @@
     <string name="error_retry_page_additional_text">To continue using GOV.UK Chat, you need to start a new chat.</string>
     <string name="error_retry_button_text">Start a new chat</string>
     <string name="loading_text">Generating your answer</string>
+    <string name="answer_received">Answer received</string>
     <string name="clear_dialog_title">Do you want to clear your chat history?</string>
     <string name="clear_dialog_positive_button">Yes, clear chat</string>
     <string name="clear_dialog_negative_button">No, not now</string>
