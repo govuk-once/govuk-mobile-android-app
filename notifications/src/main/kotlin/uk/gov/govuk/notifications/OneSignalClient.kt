@@ -1,12 +1,14 @@
 package uk.gov.govuk.notifications
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import androidx.core.net.toUri
 import com.onesignal.OneSignal
 import com.onesignal.notifications.INotificationClickEvent
 import com.onesignal.notifications.INotificationClickListener
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,15 +40,9 @@ class OneSignalClient @Inject constructor(
 
     override fun consentGiven() = OneSignal.consentGiven
 
-    override fun requestPermission(
-        dispatcher: CoroutineDispatcher,
-        onCompleted: (() -> Unit)?
-    ) {
-        CoroutineScope(dispatcher).launch {
-            val consentGiven = OneSignal.Notifications.requestPermission(false)
-            OneSignal.consentGiven = consentGiven
-            onCompleted?.invoke()
-        }
+    override suspend fun requestPermission() {
+        val consentGiven = OneSignal.Notifications.requestPermission(false)
+        OneSignal.consentGiven = consentGiven
     }
 
     override fun addClickListener() {
@@ -55,5 +51,19 @@ class OneSignalClient @Inject constructor(
                 handleAdditionalData(event.notification.additionalData)
             }
         })
+    }
+
+    override fun handleAdditionalData(
+        additionalData: JSONObject?,
+        intent: Intent?
+    ) {
+        additionalData ?: return
+        intent ?: return
+        if (additionalData.has("deeplink")) {
+            val deepLink = additionalData.optString("deeplink")
+            intent.data = deepLink.toUri()
+            intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        }
     }
 }

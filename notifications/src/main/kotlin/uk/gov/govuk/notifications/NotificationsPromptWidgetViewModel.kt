@@ -16,7 +16,7 @@ internal class NotificationsPromptWidgetViewModel @Inject constructor(
     internal fun onClick() {
         viewModelScope.launch {
             notificationsDataStore.firstPermissionRequestCompleted()
+            notificationsProvider.requestPermission()
         }
-        notificationsProvider.requestPermission()
     }
 }

@@ -4,7 +4,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -84,14 +83,8 @@ class NotificationsViewModelTest {
     @Test
     fun `Given Allow notifications button click, then first permission request completed, request permission and log analytics`() {
         coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
+        coEvery { notificationsProvider.requestPermission() } returns Unit
         every { notificationsProvider.giveConsent() } returns Unit
-
-        val onCompleted = slot<() -> Unit>()
-        every {
-            notificationsProvider.requestPermission(onCompleted = capture(onCompleted))
-        } answers {
-            onCompleted.captured.invoke()
-        }
 
         viewModel.onAllowNotificationsClick("Title") {}
 
@@ -99,9 +92,9 @@ class NotificationsViewModelTest {
             coVerify(exactly = 1) {
                 notificationsDataStore.firstPermissionRequestCompleted()
             }
-            verify(exactly = 1) {
+            coVerify(exactly = 1) {
                 notificationsProvider.giveConsent()
-                notificationsProvider.requestPermission(onCompleted = any())
+                notificationsProvider.requestPermission()
 
                 analyticsClient.buttonClick("Title")
             }
