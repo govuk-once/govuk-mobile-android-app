@@ -53,7 +53,31 @@ class MarkdownParserTest {
             val heading = result[0] as MarkdownElement.Heading
             assertEquals(1, heading.level)
             assertEquals("Hello bold and italic", heading.plainText)
-            assertEquals(5, heading.content.size)
+            assertEquals(4, heading.content.size)
+
+            val text1 = heading.content[0] as InlineContent.Text
+            assertEquals("Hello ", text1.text)
+
+            val strong = heading.content[1] as InlineContent.StrongEmphasis
+            assertEquals(1, strong.content.size)
+            assertEquals("bold", (strong.content[0] as InlineContent.Text).text)
+
+            val text2 = heading.content[2] as InlineContent.Text
+            assertEquals(" and ", text2.text)
+
+            val emphasis = heading.content[3] as InlineContent.Emphasis
+            assertEquals(1, emphasis.content.size)
+            assertEquals("italic", (emphasis.content[0] as InlineContent.Text).text)
+        }
+
+        @Test
+        fun `parses heading with simple text content`() {
+            val result = parser.parse("# Simple heading")
+
+            val heading = result[0] as MarkdownElement.Heading
+            assertEquals(1, heading.content.size)
+            val text = heading.content[0] as InlineContent.Text
+            assertEquals("Simple heading", text.text)
         }
     }
 
@@ -67,6 +91,10 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("This is a paragraph.", paragraph.plainText)
+            assertEquals(1, paragraph.content.size)
+
+            val text = paragraph.content[0] as InlineContent.Text
+            assertEquals("This is a paragraph.", text.text)
         }
 
         @Test
@@ -88,7 +116,16 @@ class MarkdownParserTest {
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("This has bold text.", paragraph.plainText)
             assertEquals(3, paragraph.content.size)
-            assertTrue(paragraph.content[1] is InlineContent.StrongEmphasis)
+
+            val text1 = paragraph.content[0] as InlineContent.Text
+            assertEquals("This has ", text1.text)
+
+            val strong = paragraph.content[1] as InlineContent.StrongEmphasis
+            assertEquals(1, strong.content.size)
+            assertEquals("bold", (strong.content[0] as InlineContent.Text).text)
+
+            val text2 = paragraph.content[2] as InlineContent.Text
+            assertEquals(" text.", text2.text)
         }
 
         @Test
@@ -98,7 +135,17 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("This has italic text.", paragraph.plainText)
-            assertTrue(paragraph.content[1] is InlineContent.Emphasis)
+            assertEquals(3, paragraph.content.size)
+
+            val text1 = paragraph.content[0] as InlineContent.Text
+            assertEquals("This has ", text1.text)
+
+            val emphasis = paragraph.content[1] as InlineContent.Emphasis
+            assertEquals(1, emphasis.content.size)
+            assertEquals("italic", (emphasis.content[0] as InlineContent.Text).text)
+
+            val text2 = paragraph.content[2] as InlineContent.Text
+            assertEquals(" text.", text2.text)
         }
 
         @Test
@@ -108,8 +155,16 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("Use the println() function.", paragraph.plainText)
-            assertTrue(paragraph.content[1] is InlineContent.Code)
-            assertEquals("println()", (paragraph.content[1] as InlineContent.Code).code)
+            assertEquals(3, paragraph.content.size)
+
+            val text1 = paragraph.content[0] as InlineContent.Text
+            assertEquals("Use the ", text1.text)
+
+            val code = paragraph.content[1] as InlineContent.Code
+            assertEquals("println()", code.code)
+
+            val text2 = paragraph.content[2] as InlineContent.Text
+            assertEquals(" function.", text2.text)
         }
 
         @Test
@@ -119,10 +174,18 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals(3, paragraph.content.size)
+
+            val text1 = paragraph.content[0] as InlineContent.Text
+            assertEquals("Visit ", text1.text)
+
             val link = paragraph.content[1] as InlineContent.Link
             assertEquals("https://www.gov.uk", link.url)
+            assertNull(link.title)
             assertEquals(1, link.content.size)
             assertEquals("GOV.UK", (link.content[0] as InlineContent.Text).text)
+
+            val text2 = paragraph.content[2] as InlineContent.Text
+            assertEquals(" for more info.", text2.text)
         }
 
         @Test
@@ -132,6 +195,16 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("Line one Line two", paragraph.plainText)
+            assertEquals(3, paragraph.content.size)
+
+            val text1 = paragraph.content[0] as InlineContent.Text
+            assertEquals("Line one", text1.text)
+
+            val lineBreak = paragraph.content[1] as InlineContent.LineBreak
+            assertTrue(lineBreak.isSoft)
+
+            val text2 = paragraph.content[2] as InlineContent.Text
+            assertEquals("Line two", text2.text)
         }
 
         @Test
@@ -141,6 +214,16 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("Line one\nLine two", paragraph.plainText)
+            assertEquals(3, paragraph.content.size)
+
+            val text1 = paragraph.content[0] as InlineContent.Text
+            assertEquals("Line one", text1.text)
+
+            val lineBreak = paragraph.content[1] as InlineContent.LineBreak
+            assertEquals(false, lineBreak.isSoft)
+
+            val text2 = paragraph.content[2] as InlineContent.Text
+            assertEquals("Line two", text2.text)
         }
     }
 
@@ -198,6 +281,10 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val blockQuote = result[0] as MarkdownElement.BlockQuote
             assertEquals("Quote: This is a quote", blockQuote.plainText)
+            assertEquals(1, blockQuote.content.size)
+
+            val text = blockQuote.content[0] as InlineContent.Text
+            assertEquals("This is a quote", text.text)
         }
 
         @Test
@@ -208,7 +295,13 @@ class MarkdownParserTest {
             val blockQuote = result[0] as MarkdownElement.BlockQuote
             assertEquals("Quote: This is important", blockQuote.plainText)
             assertEquals(2, blockQuote.content.size)
-            assertTrue(blockQuote.content[1] is InlineContent.StrongEmphasis)
+
+            val text = blockQuote.content[0] as InlineContent.Text
+            assertEquals("This is ", text.text)
+
+            val strong = blockQuote.content[1] as InlineContent.StrongEmphasis
+            assertEquals(1, strong.content.size)
+            assertEquals("important", (strong.content[0] as InlineContent.Text).text)
         }
 
         @Test
@@ -235,6 +328,10 @@ class MarkdownParserTest {
                 assertNull(listItem.number)
                 assertEquals(0, listItem.depth)
                 assertEquals("\u2022 Item ${index + 1}", listItem.plainText)
+
+                assertEquals(1, listItem.content.size)
+                val text = listItem.content[0] as InlineContent.Text
+                assertEquals("Item ${index + 1}", text.text)
             }
         }
 
@@ -270,6 +367,37 @@ class MarkdownParserTest {
             assertEquals(1, result.size)
             val listItem = result[0] as MarkdownElement.ListItem
             assertEquals("\u2022 This is bold and italic", listItem.plainText)
+            assertEquals(4, listItem.content.size)
+
+            val text1 = listItem.content[0] as InlineContent.Text
+            assertEquals("This is ", text1.text)
+
+            val strong = listItem.content[1] as InlineContent.StrongEmphasis
+            assertEquals(1, strong.content.size)
+            assertEquals("bold", (strong.content[0] as InlineContent.Text).text)
+
+            val text2 = listItem.content[2] as InlineContent.Text
+            assertEquals(" and ", text2.text)
+
+            val emphasis = listItem.content[3] as InlineContent.Emphasis
+            assertEquals(1, emphasis.content.size)
+            assertEquals("italic", (emphasis.content[0] as InlineContent.Text).text)
+        }
+
+        @Test
+        fun `parses bullet list item with link`() {
+            val result = parser.parse("- Visit [GOV.UK](https://www.gov.uk)")
+
+            assertEquals(1, result.size)
+            val listItem = result[0] as MarkdownElement.ListItem
+            assertEquals(2, listItem.content.size)
+
+            val text = listItem.content[0] as InlineContent.Text
+            assertEquals("Visit ", text.text)
+
+            val link = listItem.content[1] as InlineContent.Link
+            assertEquals("https://www.gov.uk", link.url)
+            assertEquals("GOV.UK", (link.content[0] as InlineContent.Text).text)
         }
     }
 
@@ -279,6 +407,7 @@ class MarkdownParserTest {
         @Test
         fun `parses simple ordered list`() {
             val result = parser.parse("1. First\n2. Second\n3. Third")
+            val expectedTexts = listOf("First", "Second", "Third")
 
             assertEquals(3, result.size)
             result.forEachIndexed { index, element ->
@@ -286,6 +415,10 @@ class MarkdownParserTest {
                 assertEquals(true, listItem.isOrdered)
                 assertEquals(index + 1, listItem.number)
                 assertEquals(0, listItem.depth)
+
+                assertEquals(1, listItem.content.size)
+                val text = listItem.content[0] as InlineContent.Text
+                assertEquals(expectedTexts[index], text.text)
             }
         }
 
@@ -406,12 +539,23 @@ class MarkdownParserTest {
         private val parser = MarkdownParser()
 
         @Test
-        fun `parses nested emphasis`() {
+        fun `parses nested emphasis - bold containing italic`() {
             val result = parser.parse("This is ***bold and italic***")
 
             assertEquals(1, result.size)
             val paragraph = result[0] as MarkdownElement.Paragraph
             assertEquals("This is bold and italic", paragraph.plainText)
+            assertEquals(2, paragraph.content.size)
+
+            val text = paragraph.content[0] as InlineContent.Text
+            assertEquals("This is ", text.text)
+
+            val emphasis = paragraph.content[1] as InlineContent.Emphasis
+            assertEquals(1, emphasis.content.size)
+
+            val strong = emphasis.content[0] as InlineContent.StrongEmphasis
+            assertEquals(1, strong.content.size)
+            assertEquals("bold and italic", (strong.content[0] as InlineContent.Text).text)
         }
 
         @Test
@@ -419,9 +563,13 @@ class MarkdownParserTest {
             val result = parser.parse("[Link](https://example.com \"Title\")")
 
             val paragraph = result[0] as MarkdownElement.Paragraph
+            assertEquals(1, paragraph.content.size)
+
             val link = paragraph.content[0] as InlineContent.Link
             assertEquals("https://example.com", link.url)
             assertEquals("Title", link.title)
+            assertEquals(1, link.content.size)
+            assertEquals("Link", (link.content[0] as InlineContent.Text).text)
         }
 
         @Test
@@ -429,8 +577,69 @@ class MarkdownParserTest {
             val result = parser.parse("[**Bold link**](https://example.com)")
 
             val paragraph = result[0] as MarkdownElement.Paragraph
+            assertEquals(1, paragraph.content.size)
+
             val link = paragraph.content[0] as InlineContent.Link
-            assertTrue(link.content[0] is InlineContent.StrongEmphasis)
+            assertEquals("https://example.com", link.url)
+            assertEquals(1, link.content.size)
+
+            val strong = link.content[0] as InlineContent.StrongEmphasis
+            assertEquals(1, strong.content.size)
+            assertEquals("Bold link", (strong.content[0] as InlineContent.Text).text)
+        }
+
+        @Test
+        fun `parses italic text inside link`() {
+            val result = parser.parse("[*Italic link*](https://example.com)")
+
+            val paragraph = result[0] as MarkdownElement.Paragraph
+            val link = paragraph.content[0] as InlineContent.Link
+            assertEquals(1, link.content.size)
+
+            val emphasis = link.content[0] as InlineContent.Emphasis
+            assertEquals(1, emphasis.content.size)
+            assertEquals("Italic link", (emphasis.content[0] as InlineContent.Text).text)
+        }
+
+        @Test
+        fun `parses multiple inline elements in sequence`() {
+            val result = parser.parse("**bold** then *italic* then `code`")
+
+            val paragraph = result[0] as MarkdownElement.Paragraph
+            assertEquals(5, paragraph.content.size)
+
+            val strong = paragraph.content[0] as InlineContent.StrongEmphasis
+            assertEquals("bold", (strong.content[0] as InlineContent.Text).text)
+
+            val text1 = paragraph.content[1] as InlineContent.Text
+            assertEquals(" then ", text1.text)
+
+            val emphasis = paragraph.content[2] as InlineContent.Emphasis
+            assertEquals("italic", (emphasis.content[0] as InlineContent.Text).text)
+
+            val text2 = paragraph.content[3] as InlineContent.Text
+            assertEquals(" then ", text2.text)
+
+            val code = paragraph.content[4] as InlineContent.Code
+            assertEquals("code", code.code)
+        }
+
+        @Test
+        fun `parses link with multiple content elements`() {
+            val result = parser.parse("[Visit **GOV.UK** now](https://www.gov.uk)")
+
+            val paragraph = result[0] as MarkdownElement.Paragraph
+            val link = paragraph.content[0] as InlineContent.Link
+            assertEquals(3, link.content.size)
+
+            val text1 = link.content[0] as InlineContent.Text
+            assertEquals("Visit ", text1.text)
+
+            val strong = link.content[1] as InlineContent.StrongEmphasis
+            assertEquals("GOV.UK", (strong.content[0] as InlineContent.Text).text)
+
+            val text2 = link.content[2] as InlineContent.Text
+            assertEquals(" now", text2.text)
         }
     }
 }
