@@ -2,9 +2,7 @@ package uk.gov.govuk.notifications
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -37,7 +35,7 @@ class NotificationsPromptWidgetViewModelTest {
 
     @Test
     fun `Given on click, then call request permission`() {
-        every { notificationsProvider.requestPermission() } returns Unit
+        coEvery { notificationsProvider.requestPermission() } returns Unit
         coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
 
         runTest {
@@ -45,8 +43,6 @@ class NotificationsPromptWidgetViewModelTest {
 
             coVerify(exactly = 1) {
                 notificationsDataStore.firstPermissionRequestCompleted()
-            }
-            verify(exactly = 1) {
                 notificationsProvider.requestPermission()
             }
         }

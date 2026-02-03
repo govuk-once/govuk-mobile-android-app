@@ -19,9 +19,12 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -33,11 +36,14 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class OneSignalClientTest {
     private val context = mockk<Context>(relaxed = true)
+    private val dispatcher = UnconfinedTestDispatcher()
 
     private lateinit var notificationsProvider: NotificationsProvider
 
     @Before
     fun setup() {
+        Dispatchers.setMain(dispatcher)
+
         notificationsProvider = OneSignalClient(context)
 
         mockkStatic(OneSignal::class)
@@ -48,6 +54,7 @@ class OneSignalClientTest {
 
     @After
     fun tearDown() {
+        Dispatchers.resetMain()
         unmockkAll()
     }
 
@@ -71,8 +78,7 @@ class OneSignalClientTest {
         coEvery { OneSignal.Notifications.requestPermission(false) } returns false
 
         runTest {
-            val dispatcher = UnconfinedTestDispatcher()
-            notificationsProvider.requestPermission(dispatcher)
+            notificationsProvider.requestPermission()
 
             coVerify(exactly = 1) {
                 OneSignal.Notifications.requestPermission(false)

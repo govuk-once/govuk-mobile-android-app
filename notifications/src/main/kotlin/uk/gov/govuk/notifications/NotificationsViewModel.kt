@@ -31,12 +31,9 @@ internal open class NotificationsViewModel @Inject constructor(
     internal fun onAllowNotificationsClick(text: String, onCompleted: () -> Unit) {
         viewModelScope.launch {
             notificationsDataStore.firstPermissionRequestCompleted()
-        }
-        notificationsProvider.giveConsent()
-        notificationsProvider.requestPermission {
-            viewModelScope.launch {
-                onCompleted()
-            }
+            notificationsProvider.giveConsent()
+            notificationsProvider.requestPermission()
+            onCompleted()
         }
         analyticsClient.buttonClick(
             text = text
