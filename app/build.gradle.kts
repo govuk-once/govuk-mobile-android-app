@@ -84,7 +84,6 @@ android {
         }
 
         debug {
-            isDebuggable = false
             applicationIdSuffix = ".dev"
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
