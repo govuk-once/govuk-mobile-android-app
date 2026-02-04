@@ -214,7 +214,7 @@ private fun ListItemItem(
     onLinkClick: (String) -> Unit,
     linkAccessibilityLabel: String
 ) {
-    val indent = ((listItem.depth + 1) * 8).dp
+    val indent = ((listItem.depth + 1) * 16).dp
     val bullet = if (listItem.isOrdered) {
         "${listItem.number}."
     } else {
