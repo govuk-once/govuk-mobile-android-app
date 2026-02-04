@@ -23,8 +23,8 @@ object PlainTextExtractor {
         return when (element) {
             is MarkdownElement.Heading -> inlineToPlainText(element.content)
             is MarkdownElement.Paragraph -> inlineToPlainText(element.content)
-            is MarkdownElement.CodeBlock -> "Code: ${element.code}"
-            is MarkdownElement.BlockQuote -> "Quote: ${inlineToPlainText(element.content)}"
+            is MarkdownElement.CodeBlock -> element.code
+            is MarkdownElement.BlockQuote -> inlineToPlainText(element.content)
             is MarkdownElement.ListItem -> {
                 val prefix = if (element.isOrdered) "${element.number}." else "\u2022"
                 "$prefix ${inlineToPlainText(element.content)}"

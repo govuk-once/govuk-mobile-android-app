@@ -173,11 +173,6 @@ private fun BlockQuoteItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .then(
-                if (accessibilityText != null) {
-                    Modifier.semantics { contentDescription = accessibilityText }
-                } else Modifier
-            )
     ) {
         Box(
             modifier = Modifier
@@ -195,7 +190,13 @@ private fun BlockQuoteItem(
                     fontStyle = FontStyle.Italic
                 ),
                 onLinkClick = onLinkClick,
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
+                    .then(
+                        if (accessibilityText != null) {
+                            Modifier.semantics { contentDescription = accessibilityText }
+                        } else Modifier
+                    )
             )
         }
     }
