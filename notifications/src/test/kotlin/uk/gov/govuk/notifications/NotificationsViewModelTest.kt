@@ -2,7 +2,6 @@ package uk.gov.govuk.notifications
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +14,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -22,6 +22,7 @@ class NotificationsViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val notificationsProvider = mockk<NotificationsProvider>()
+    private val notificationsRepo = mockk<NotificationsRepo>()
     private val notificationsDataStore = mockk<NotificationsDataStore>()
 
     private lateinit var viewModel: NotificationsViewModel
@@ -29,7 +30,12 @@ class NotificationsViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = NotificationsViewModel(analyticsClient, notificationsProvider, notificationsDataStore)
+        viewModel = NotificationsViewModel(
+            analyticsClient,
+            notificationsProvider,
+            notificationsRepo,
+            notificationsDataStore
+        )
     }
 
     @After
@@ -54,13 +60,15 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, then give consent and log analytics`() {
-        every { notificationsProvider.giveConsent() } returns Unit
+        coEvery { notificationsRepo.giveConsent() } returns Unit
 
         viewModel.onGiveConsentClick("Title") {}
 
         runTest {
+            coVerify(exactly = 1) {
+                notificationsRepo.giveConsent()
+            }
             verify(exactly = 1) {
-                notificationsProvider.giveConsent()
                 analyticsClient.buttonClick("Title")
             }
         }
@@ -84,18 +92,17 @@ class NotificationsViewModelTest {
     fun `Given Allow notifications button click, then first permission request completed, request permission and log analytics`() {
         coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
         coEvery { notificationsProvider.requestPermission() } returns Unit
-        every { notificationsProvider.giveConsent() } returns Unit
+        coEvery { notificationsProvider.giveConsent() } returns Unit
 
         viewModel.onAllowNotificationsClick("Title") {}
 
         runTest {
             coVerify(exactly = 1) {
                 notificationsDataStore.firstPermissionRequestCompleted()
-            }
-            coVerify(exactly = 1) {
-                notificationsProvider.giveConsent()
                 notificationsProvider.requestPermission()
-
+            }
+            verify(exactly = 1) {
+                notificationsProvider.giveConsent()
                 analyticsClient.buttonClick("Title")
             }
         }
@@ -130,13 +137,15 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Continue button click, then remove consent and log analytics`() {
-        every { notificationsProvider.removeConsent() } returns Unit
+        coEvery { notificationsRepo.removeConsent() } returns Unit
 
         viewModel.onContinueButtonClick("Text")
 
         runTest {
+            coVerify(exactly = 1) {
+                notificationsRepo.removeConsent()
+            }
             verify(exactly = 1) {
-                notificationsProvider.removeConsent()
                 analyticsClient.buttonClick(
                     text = "Text"
                 )

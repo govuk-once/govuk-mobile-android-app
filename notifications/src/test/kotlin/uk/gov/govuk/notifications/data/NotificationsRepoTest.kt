@@ -14,7 +14,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
-import uk.gov.govuk.data.user.model.UserApiResponse
+import uk.gov.govuk.data.user.model.GetUserInfoResponse
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
@@ -36,7 +36,7 @@ class NotificationsRepoTest {
 
     @Test
     fun `Given login is success, then return success with correct values`() {
-        coEvery { userRepo.getUserPreferences() } returns Result.Success(UserApiResponse("12345"))
+        coEvery { userRepo.getUserInfo() } returns Result.Success(GetUserInfoResponse("12345"))
 
         runTest {
             val result = notificationsRepo.login()
@@ -48,8 +48,35 @@ class NotificationsRepoTest {
     }
 
     @Test
+    fun `Given give consent is called, then give consent is called on notifications provider and notifications consent is updated`() {
+        runTest {
+            notificationsRepo.giveConsent()
+            verify(exactly = 1)  {
+                notificationsProvider.giveConsent()
+            }
+            coVerify(exactly = 1)  {
+                userRepo.updateNotifications(true)
+            }
+        }
+    }
+
+
+    @Test
+    fun `Given remove consent is called, then remove consent is called on notifications provider and notifications consent is updated`() {
+        runTest {
+            notificationsRepo.removeConsent()
+            verify(exactly = 1) {
+                notificationsProvider.removeConsent()
+            }
+            coVerify(exactly = 1)  {
+                userRepo.updateNotifications(false)
+            }
+        }
+    }
+
+    @Test
     fun `Given login is unsuccessful, then return error`() {
-        coEvery { userRepo.getUserPreferences() } returns Error()
+        coEvery { userRepo.getUserInfo() } returns Error()
 
         runTest {
             val result = notificationsRepo.login()
