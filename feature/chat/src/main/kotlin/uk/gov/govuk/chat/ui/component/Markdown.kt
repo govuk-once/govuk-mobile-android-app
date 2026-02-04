@@ -97,27 +97,13 @@ private fun HeadingItem(
     onLinkClick: (String) -> Unit,
     linkAccessibilityLabel: String
 ) {
-    val hasLinks = hasLinks(heading.content)
-    val accessibilityText = if (hasLinks) {
-        "${heading.plainText}. $linkAccessibilityLabel"
-    } else null
-
     SegmentedText(
         content = heading.content,
         style = GovUkTheme.typography.bodyBold,
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
-            .then(
-                if (accessibilityText != null) {
-                    Modifier.semantics {
-                        heading()
-                        contentDescription = accessibilityText
-                    }
-                } else Modifier.semantics {
-                    heading()
-                }
-            )
+            .withLinkAccessibility(heading.content, heading.plainText, linkAccessibilityLabel, isHeading = true)
     )
 }
 
@@ -127,22 +113,13 @@ private fun ParagraphItem(
     onLinkClick: (String) -> Unit,
     linkAccessibilityLabel: String
 ) {
-    val hasLinks = hasLinks(paragraph.content)
-    val accessibilityText = if (hasLinks) {
-        "${paragraph.plainText}. $linkAccessibilityLabel"
-    } else null
-
     SegmentedText(
         content = paragraph.content,
         style = GovUkTheme.typography.bodyRegular,
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
-            .then(
-                if (accessibilityText != null) {
-                    Modifier.semantics { contentDescription = accessibilityText }
-                } else Modifier
-            )
+            .withLinkAccessibility(paragraph.content, paragraph.plainText, linkAccessibilityLabel)
     )
 }
 
@@ -170,11 +147,6 @@ private fun BlockQuoteItem(
     onLinkClick: (String) -> Unit,
     linkAccessibilityLabel: String
 ) {
-    val hasLinks = hasLinks(blockQuote.content)
-    val accessibilityText = if (hasLinks) {
-        "${blockQuote.plainText}. $linkAccessibilityLabel"
-    } else null
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -198,11 +170,7 @@ private fun BlockQuoteItem(
                 onLinkClick = onLinkClick,
                 modifier = Modifier
                     .padding(12.dp)
-                    .then(
-                        if (accessibilityText != null) {
-                            Modifier.semantics { contentDescription = accessibilityText }
-                        } else Modifier
-                    )
+                    .withLinkAccessibility(blockQuote.content, blockQuote.plainText, linkAccessibilityLabel)
             )
         }
     }
@@ -219,13 +187,6 @@ private fun ListItemItem(
         "${listItem.number}."
     } else {
         "\u2022"
-    }
-
-    val hasLinks = hasLinks(listItem.content)
-    val accessibilityText = if (hasLinks) {
-        "${listItem.plainText}. $linkAccessibilityLabel"
-    } else {
-        null
     }
 
     Row(
@@ -247,11 +208,7 @@ private fun ListItemItem(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp)
-                .then(
-                    if (accessibilityText != null) {
-                        Modifier.semantics { contentDescription = accessibilityText }
-                    } else Modifier
-                )
+                .withLinkAccessibility(listItem.content, listItem.plainText, linkAccessibilityLabel)
         )
     }
 }
@@ -331,6 +288,27 @@ private fun hasLinks(content: List<InlineContent>): Boolean {
             is InlineContent.StrongEmphasis -> hasLinks(inline.content)
             else -> false
         }
+    }
+}
+
+private fun Modifier.withLinkAccessibility(
+    content: List<InlineContent>,
+    plainText: String,
+    linkAccessibilityLabel: String,
+    isHeading: Boolean = false
+): Modifier {
+    val accessibilityText = if (hasLinks(content)) {
+        "$plainText. $linkAccessibilityLabel"
+    } else null
+
+    return when {
+        accessibilityText != null && isHeading -> this.semantics {
+            heading()
+            contentDescription = accessibilityText
+        }
+        accessibilityText != null -> this.semantics { contentDescription = accessibilityText }
+        isHeading -> this.semantics { heading() }
+        else -> this
     }
 }
 

@@ -11,7 +11,6 @@ sealed class MarkdownElement {
     /** Plain text representation for copy/paste and screen readers */
     abstract val plainText: String
 
-    // Todo - can we remove plain text??? Is there a way for it to announce "opens in web browser" after the content without this???
     data class Heading(
         override val id: String,
         val level: Int,
