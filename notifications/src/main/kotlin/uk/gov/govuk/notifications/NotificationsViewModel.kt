@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 import javax.inject.Inject
 
@@ -12,6 +13,7 @@ import javax.inject.Inject
 internal open class NotificationsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val notificationsProvider: NotificationsProvider,
+    private val notificationsRepo: NotificationsRepo,
     private val notificationsDataStore: NotificationsDataStore
 ) : ViewModel() {
 
@@ -47,11 +49,13 @@ internal open class NotificationsViewModel @Inject constructor(
     }
 
     internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
-        notificationsProvider.giveConsent()
+        viewModelScope.launch {
+            notificationsRepo.giveConsent()
+            onCompleted()
+        }
         analyticsClient.buttonClick(
             text = text
         )
-        onCompleted()
     }
 
     internal fun onTurnOffNotificationsClick(text: String) {
@@ -70,7 +74,9 @@ internal open class NotificationsViewModel @Inject constructor(
     }
 
     internal fun onContinueButtonClick(text: String) {
-        notificationsProvider.removeConsent()
+        viewModelScope.launch {
+            notificationsRepo.removeConsent()
+        }
         analyticsClient.buttonClick(text)
     }
 

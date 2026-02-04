@@ -1,7 +1,7 @@
 package uk.gov.govuk.notifications.data
 
 import uk.gov.govuk.data.user.UserRepo
-import uk.gov.govuk.data.user.model.UserApiResponse
+import uk.gov.govuk.data.user.model.GetUserInfoResponse
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 import uk.gov.govuk.data.model.Result
@@ -15,13 +15,23 @@ class NotificationsRepo @Inject constructor(
     private val notificationsProvider: NotificationsProvider,
     private val userRepo: UserRepo
 ) {
-    suspend fun login(): Result<UserApiResponse> {
-        val result = userRepo.getUserPreferences()
+    suspend fun login(): Result<GetUserInfoResponse> {
+        val result = userRepo.getUserInfo()
         when (result) {
             is Success -> notificationsProvider.login(result.value.notificationId)
             else -> { /* Do nothing */ }
         }
         return result
+    }
+
+    suspend fun giveConsent() {
+        notificationsProvider.giveConsent()
+        userRepo.updateNotifications(consented = true)
+    }
+
+    suspend fun removeConsent() {
+        notificationsProvider.removeConsent()
+        userRepo.updateNotifications(consented = false)
     }
 
     suspend fun isNotificationsOnboardingCompleted() =

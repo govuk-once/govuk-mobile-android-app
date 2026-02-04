@@ -157,8 +157,8 @@ class AppNavigationTest {
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
-            verify(exactly = 1) {
-                notificationsProvider.removeConsent()
+            coVerify(exactly = 1) {
+                notificationsRepo.removeConsent()
             }
             verify(exactly = 0) {
                 navController.popBackStack()
@@ -181,8 +181,8 @@ class AppNavigationTest {
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
-            verify(exactly = 1) {
-                notificationsProvider.removeConsent()
+            coVerify(exactly = 1) {
+                notificationsRepo.removeConsent()
             }
             verify(exactly = 1) {
                 navController.popBackStack()
@@ -206,8 +206,8 @@ class AppNavigationTest {
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
-            verify(exactly = 1) {
-                notificationsProvider.removeConsent()
+            coVerify(exactly = 1) {
+                notificationsRepo.removeConsent()
             }
             verify(exactly = 0) {
                 navController.popBackStack()
