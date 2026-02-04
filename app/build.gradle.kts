@@ -189,14 +189,3 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
 }
-
-// fix for blank OSS licenses
-androidComponents {
-    onVariants { variant ->
-        val taskProvider = tasks.named<LicensesTask>("${variant.name}OssLicensesTask")
-        variant.sources.res?.addGeneratedSourceDirectory(
-            taskProvider,
-            LicensesTask::getGeneratedDirectory
-        )
-    }
-}
