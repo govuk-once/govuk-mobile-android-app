@@ -1,9 +1,10 @@
+import com.google.android.gms.oss.licenses.plugin.LicensesTask
 import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
-    id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.oss.licenses)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
@@ -83,6 +84,7 @@ android {
         }
 
         debug {
+            isDebuggable = false
             applicationIdSuffix = ".dev"
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
@@ -187,4 +189,15 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
+}
+
+// fix for blank OSS licenses
+androidComponents {
+    onVariants { variant ->
+        val taskProvider = tasks.named<LicensesTask>("${variant.name}OssLicensesTask")
+        variant.sources.res?.addGeneratedSourceDirectory(
+            taskProvider,
+            LicensesTask::getGeneratedDirectory
+        )
+    }
 }

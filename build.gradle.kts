@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.realm) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.firebaseAppDistribution) apply false
+    alias(libs.plugins.oss.licenses) apply false
     alias(libs.plugins.sonarqube)
 }
 
