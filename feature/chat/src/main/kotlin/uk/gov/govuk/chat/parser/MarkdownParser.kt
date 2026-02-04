@@ -75,23 +75,25 @@ class MarkdownParser {
             }
 
             is FencedCodeBlock -> {
+                val plainText = extractPlainText(node)
                 elements.add(
                     MarkdownElement.CodeBlock(
                         id = generateId(),
                         code = node.literal.trimEnd(),
                         language = node.info.takeIf { it.isNotBlank() },
-                        plainText = "Code: ${node.literal.trimEnd()}"
+                        plainText = plainText
                     )
                 )
             }
 
             is IndentedCodeBlock -> {
+                val plainText = extractPlainText(node)
                 elements.add(
                     MarkdownElement.CodeBlock(
                         id = generateId(),
                         code = node.literal.trimEnd(),
                         language = null,
-                        plainText = "Code: ${node.literal.trimEnd()}"
+                        plainText = plainText
                     )
                 )
             }
@@ -101,7 +103,7 @@ class MarkdownParser {
                 while (child != null) {
                     if (child is Paragraph) {
                         val content = extractInlineContent(child)
-                        val plainText = "Quote: ${extractPlainText(child)}"
+                        val plainText = extractPlainText(child)
                         elements.add(
                             MarkdownElement.BlockQuote(
                                 id = generateId(),
