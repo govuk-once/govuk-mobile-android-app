@@ -37,7 +37,7 @@ class MarkdownParser {
         val elements = mutableListOf<MarkdownElement>()
         var child = document.firstChild
         while (child != null) {
-            extractElement(child, elements, listDepth = 0)
+            extractElement(child, elements)
             child = child.next
         }
         return elements
@@ -46,7 +46,6 @@ class MarkdownParser {
     private fun extractElement(
         node: Node,
         elements: MutableList<MarkdownElement>,
-        listDepth: Int
     ) {
         when (node) {
             is Heading -> {
@@ -121,7 +120,7 @@ class MarkdownParser {
                 var child = node.firstChild
                 while (child != null) {
                     if (child is ListItem) {
-                        extractListItem(child, elements, listDepth, isOrdered = false, number)
+                        extractListItem(child, elements, isOrdered = false, number)
                         number++
                     }
                     child = child.next
@@ -133,7 +132,7 @@ class MarkdownParser {
                 var child = node.firstChild
                 while (child != null) {
                     if (child is ListItem) {
-                        extractListItem(child, elements, listDepth, isOrdered = true, number)
+                        extractListItem(child, elements, isOrdered = true, number)
                         number++
                     }
                     child = child.next
@@ -149,9 +148,9 @@ class MarkdownParser {
     private fun extractListItem(
         item: ListItem,
         elements: MutableList<MarkdownElement>,
-        depth: Int,
         isOrdered: Boolean,
-        number: Int
+        number: Int,
+        depth: Int = 0
     ) {
         var child = item.firstChild
         while (child != null) {
@@ -180,9 +179,9 @@ class MarkdownParser {
                             extractListItem(
                                 nestedChild,
                                 elements,
-                                depth + 1,
                                 isOrdered = false,
-                                nestedNumber
+                                nestedNumber,
+                                depth = depth + 1
                             )
                             nestedNumber++
                         }
@@ -198,9 +197,9 @@ class MarkdownParser {
                             extractListItem(
                                 nestedChild,
                                 elements,
-                                depth + 1,
                                 isOrdered = true,
-                                nestedNumber
+                                nestedNumber,
+                                depth = depth + 1
                             )
                             nestedNumber++
                         }
