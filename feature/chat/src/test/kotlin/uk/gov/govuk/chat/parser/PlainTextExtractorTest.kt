@@ -69,13 +69,13 @@ class PlainTextExtractorTest {
                     id = "1",
                     code = "println(\"hello\")",
                     language = "kotlin",
-                    plainText = "Code: println(\"hello\")"
+                    plainText = "println(\"hello\")"
                 )
             )
 
             val result = PlainTextExtractor.extractAll(elements)
 
-            assertEquals("Code: println(\"hello\")", result)
+            assertEquals("println(\"hello\")", result)
         }
 
         @Test
@@ -84,13 +84,13 @@ class PlainTextExtractorTest {
                 MarkdownElement.BlockQuote(
                     id = "1",
                     content = listOf(InlineContent.Text("Important quote")),
-                    plainText = "Quote: Important quote"
+                    plainText = "Important quote"
                 )
             )
 
             val result = PlainTextExtractor.extractAll(elements)
 
-            assertEquals("Quote: Important quote", result)
+            assertEquals("Important quote", result)
         }
 
         @Test
