@@ -189,3 +189,21 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
 }
+
+// fixes for OSS Licenses plugin (v0.10.10) causing intermittent build crashes
+// and blank license screens on recent agp versions
+androidComponents.onVariants { variant ->
+    val taskName = "${variant.name}OssLicensesTask"
+    if (!tasks.names.contains(taskName)) return@onVariants
+    val ossTask = tasks.named<LicensesTask>(taskName)
+
+    variant.sources.res?.addGeneratedSourceDirectory(ossTask, LicensesTask::getGeneratedDirectory)
+
+    tasks.matching { it.name.contains(variant.name, ignoreCase = true) }.configureEach {
+        if (name.contains("OssLicensesCleanUp")) {
+            enabled = false
+        } else if (name.contains("Bundle") || name.contains("Package") || name.contains("Merge")) {
+            mustRunAfter(ossTask)
+        }
+    }
+}
