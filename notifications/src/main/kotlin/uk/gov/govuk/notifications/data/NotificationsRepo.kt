@@ -6,6 +6,7 @@ import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
+import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,14 +25,32 @@ class NotificationsRepo @Inject constructor(
         return result
     }
 
-    suspend fun giveConsent() {
-        notificationsProvider.giveConsent()
-        userRepo.updateNotifications(consented = true)
+    fun logout() {
+        notificationsProvider.logout()
     }
 
-    suspend fun removeConsent() {
+    suspend fun requestPermission() {
+        notificationsProvider.requestPermission()
+    }
+
+    fun permissionGranted() = notificationsProvider.permissionGranted()
+
+    fun consentGiven() = notificationsProvider.consentGiven()
+
+    fun giveConsent() {
+        notificationsProvider.giveConsent()
+    }
+
+    fun removeConsent() {
         notificationsProvider.removeConsent()
-        userRepo.updateNotifications(consented = false)
+    }
+
+    suspend fun sendConsent(): Result<UpdateUserDataResponse> {
+        return userRepo.updateNotifications(consented = true)
+    }
+
+    suspend fun sendRemoveConsent(): Result<UpdateUserDataResponse> {
+        return userRepo.updateNotifications(consented = false)
     }
 
     suspend fun isNotificationsOnboardingCompleted() =

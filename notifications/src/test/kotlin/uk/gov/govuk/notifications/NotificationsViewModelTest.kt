@@ -2,6 +2,7 @@ package uk.gov.govuk.notifications
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -13,17 +14,17 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.user.model.Preferences
+import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import uk.gov.govuk.notifications.data.NotificationsRepo
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotificationsViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
-    private val notificationsProvider = mockk<NotificationsProvider>()
     private val notificationsRepo = mockk<NotificationsRepo>()
-    private val notificationsDataStore = mockk<NotificationsDataStore>()
 
     private lateinit var viewModel: NotificationsViewModel
 
@@ -32,9 +33,7 @@ class NotificationsViewModelTest {
         Dispatchers.setMain(dispatcher)
         viewModel = NotificationsViewModel(
             analyticsClient,
-            notificationsProvider,
-            notificationsRepo,
-            notificationsDataStore
+            notificationsRepo
         )
     }
 
@@ -60,15 +59,21 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, then give consent and log analytics`() {
-        coEvery { notificationsRepo.giveConsent() } returns Unit
+        coEvery { notificationsRepo.sendConsent() } returns Success(
+            UpdateUserDataResponse(
+                Preferences(true, "updated at")
+            )
+        )
+        every { notificationsRepo.giveConsent() } returns Unit
 
         viewModel.onGiveConsentClick("Title") {}
 
         runTest {
             coVerify(exactly = 1) {
-                notificationsRepo.giveConsent()
+                notificationsRepo.sendConsent()
             }
             verify(exactly = 1) {
+                notificationsRepo.giveConsent()
                 analyticsClient.buttonClick("Title")
             }
         }
@@ -90,19 +95,19 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, then first permission request completed, request permission and log analytics`() {
-        coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
-        coEvery { notificationsProvider.requestPermission() } returns Unit
-        coEvery { notificationsProvider.giveConsent() } returns Unit
+        coEvery { notificationsRepo.firstPermissionRequestCompleted() } returns Unit
+        coEvery { notificationsRepo.requestPermission() } returns Unit
+        coEvery { notificationsRepo.giveConsent() } returns Unit
 
         viewModel.onAllowNotificationsClick("Title") {}
 
         runTest {
             coVerify(exactly = 1) {
-                notificationsDataStore.firstPermissionRequestCompleted()
-                notificationsProvider.requestPermission()
+                notificationsRepo.firstPermissionRequestCompleted()
+                notificationsRepo.requestPermission()
             }
             verify(exactly = 1) {
-                notificationsProvider.giveConsent()
+                notificationsRepo.giveConsent()
                 analyticsClient.buttonClick("Title")
             }
         }
@@ -137,15 +142,21 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Continue button click, then remove consent and log analytics`() {
-        coEvery { notificationsRepo.removeConsent() } returns Unit
+        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
+            UpdateUserDataResponse(
+                Preferences(false, "updated at")
+            )
+        )
+        every { notificationsRepo.removeConsent() } returns Unit
 
         viewModel.onContinueButtonClick("Text")
 
         runTest {
             coVerify(exactly = 1) {
-                notificationsRepo.removeConsent()
+                notificationsRepo.sendRemoveConsent()
             }
             verify(exactly = 1) {
+                notificationsRepo.removeConsent()
                 analyticsClient.buttonClick(
                     text = "Text"
                 )

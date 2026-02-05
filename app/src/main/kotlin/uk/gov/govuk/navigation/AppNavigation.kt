@@ -9,7 +9,6 @@ import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
-import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
@@ -27,7 +26,6 @@ internal class AppNavigation @Inject constructor(
     private val authRepo: AuthRepo,
     private val topicsFeature: TopicsFeature,
     private val deeplinkHandler: DeeplinkHandler,
-    private val notificationsProvider: NotificationsProvider,
     private val notificationsRepo: NotificationsRepo
 ) {
     fun setOnLaunchBrowser(onLaunchBrowser: (String) -> Unit) {
@@ -56,8 +54,8 @@ internal class AppNavigation @Inject constructor(
                 navigate(navController, NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE)
             flagRepo.isNotificationsEnabled() &&
                     notificationsRepo.isNotificationsOnboardingCompleted() &&
-                    notificationsProvider.permissionGranted() &&
-                    !notificationsProvider.consentGiven() ->
+                    notificationsRepo.permissionGranted() &&
+                    !notificationsRepo.consentGiven() ->
                 navigate(navController, NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE)
             else -> {
                 navigate(navController, HOME_GRAPH_ROUTE)
@@ -83,7 +81,11 @@ internal class AppNavigation @Inject constructor(
     }
 
     private suspend fun navigateNotificationsOnResume(navController: NavController) {
-        if (!notificationsProvider.permissionGranted()) {
+        if (!notificationsRepo.permissionGranted()) {
+            val result = notificationsRepo.sendRemoveConsent()
+            when (result) {
+                else -> { /* TODO: awaiting failure requirements */ }
+            }
             notificationsRepo.removeConsent()
             if (navController.currentDestination?.route == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
                 onNext(navController)
@@ -91,7 +93,7 @@ internal class AppNavigation @Inject constructor(
         } else if (
             authRepo.isUserSessionActive() &&
             notificationsRepo.isNotificationsOnboardingCompleted() &&
-            !notificationsProvider.consentGiven()
+            !notificationsRepo.consentGiven()
         ) {
             navController.navigate(NOTIFICATIONS_CONSENT_ROUTE)
         }
@@ -103,7 +105,7 @@ internal class AppNavigation @Inject constructor(
     }
 
     fun onSignOut(navController: NavController) {
-        notificationsProvider.logout()
+        notificationsRepo.logout()
         navController.navigate(LOGIN_GRAPH_ROUTE) {
             popUpTo(0) { inclusive = true }
         }

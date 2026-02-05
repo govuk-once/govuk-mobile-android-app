@@ -10,7 +10,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
@@ -36,7 +35,7 @@ class NotificationsRepoTest {
 
     @Test
     fun `Given login is success, then return success with correct values`() {
-        coEvery { userRepo.getUserInfo() } returns Result.Success(GetUserInfoResponse("12345"))
+        coEvery { userRepo.getUserInfo() } returns Success(GetUserInfoResponse("12345"))
 
         runTest {
             val result = notificationsRepo.login()
@@ -48,39 +47,94 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given give consent is called, then give consent is called on notifications provider and notifications consent is updated`() {
-        runTest {
-            notificationsRepo.giveConsent()
-            verify(exactly = 1)  {
-                notificationsProvider.giveConsent()
-            }
-            coVerify(exactly = 1)  {
-                userRepo.updateNotifications(true)
-            }
-        }
-    }
-
-
-    @Test
-    fun `Given remove consent is called, then remove consent is called on notifications provider and notifications consent is updated`() {
-        runTest {
-            notificationsRepo.removeConsent()
-            verify(exactly = 1) {
-                notificationsProvider.removeConsent()
-            }
-            coVerify(exactly = 1)  {
-                userRepo.updateNotifications(false)
-            }
-        }
-    }
-
-    @Test
     fun `Given login is unsuccessful, then return error`() {
         coEvery { userRepo.getUserInfo() } returns Error()
 
         runTest {
             val result = notificationsRepo.login()
             assert(result is Error)
+        }
+    }
+
+    @Test
+    fun `Given logout, then call logout`() {
+        runTest {
+            notificationsRepo.logout()
+            verify {
+                notificationsProvider.logout()
+            }
+        }
+    }
+
+    @Test
+    fun `Given request permission, then call request permission`() {
+        runTest {
+            notificationsRepo.requestPermission()
+            coVerify {
+                notificationsProvider.requestPermission()
+            }
+        }
+    }
+
+    @Test
+    fun `Given permission granted, then call request permission`() {
+        runTest {
+            notificationsRepo.permissionGranted()
+            verify {
+                notificationsProvider.permissionGranted()
+            }
+        }
+    }
+
+    @Test
+    fun `Given consent given, then call consent given`() {
+        runTest {
+            notificationsRepo.consentGiven()
+            verify {
+                notificationsProvider.consentGiven()
+            }
+        }
+    }
+
+    @Test
+    fun `Given give consent, then call give consent`() {
+        runTest {
+            notificationsRepo.giveConsent()
+            verify {
+                notificationsProvider.giveConsent()
+            }
+        }
+    }
+
+    @Test
+    fun `Given remove consent, then call remove consent`() {
+        runTest {
+            notificationsRepo.removeConsent()
+            verify {
+                notificationsProvider.removeConsent()
+            }
+        }
+    }
+
+    @Test
+    fun `Given give consent is called, then give consent is called on notifications provider and notifications consent is updated`() {
+        runTest {
+            notificationsRepo.sendConsent()
+
+            coVerify(exactly = 1)  {
+                userRepo.updateNotifications(true)
+            }
+        }
+    }
+
+    @Test
+    fun `Given remove consent is called, then remove consent is called on notifications provider and notifications consent is updated`() {
+        runTest {
+            notificationsRepo.sendRemoveConsent()
+
+            coVerify(exactly = 1)  {
+                userRepo.updateNotifications(false)
+            }
         }
     }
 

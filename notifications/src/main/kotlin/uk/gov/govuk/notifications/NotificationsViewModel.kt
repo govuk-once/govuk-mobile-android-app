@@ -6,15 +6,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.notifications.data.NotificationsRepo
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 import javax.inject.Inject
 
 @HiltViewModel
 internal open class NotificationsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
-    private val notificationsProvider: NotificationsProvider,
-    private val notificationsRepo: NotificationsRepo,
-    private val notificationsDataStore: NotificationsDataStore
+    private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     companion object {
@@ -32,9 +29,9 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onAllowNotificationsClick(text: String, onCompleted: () -> Unit) {
         viewModelScope.launch {
-            notificationsDataStore.firstPermissionRequestCompleted()
-            notificationsProvider.giveConsent()
-            notificationsProvider.requestPermission()
+            notificationsRepo.firstPermissionRequestCompleted()
+            notificationsRepo.giveConsent()
+            notificationsRepo.requestPermission()
             onCompleted()
         }
         analyticsClient.buttonClick(
@@ -50,6 +47,10 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
         viewModelScope.launch {
+            val result = notificationsRepo.sendConsent()
+            when (result) {
+                else -> { /* TODO: awaiting failure requirements */ }
+            }
             notificationsRepo.giveConsent()
             onCompleted()
         }
@@ -75,6 +76,10 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onContinueButtonClick(text: String) {
         viewModelScope.launch {
+            val result = notificationsRepo.sendRemoveConsent()
+            when (result) {
+                else -> { /* TODO: awaiting failure requirements */ }
+            }
             notificationsRepo.removeConsent()
         }
         analyticsClient.buttonClick(text)
