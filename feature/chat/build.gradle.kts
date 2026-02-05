@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.compose.markdown)
     implementation(libs.androidx.compose.animation)
 
+    implementation(libs.lottie.compose)
+
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
