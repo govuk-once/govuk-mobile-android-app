@@ -5,14 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import javax.inject.Inject
 
 @HiltViewModel
 internal open class NotificationsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
-    private val notificationsProvider: NotificationsProvider,
-    private val notificationsDataStore: NotificationsDataStore
+    private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     companion object {
@@ -30,9 +29,9 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onAllowNotificationsClick(text: String, onCompleted: () -> Unit) {
         viewModelScope.launch {
-            notificationsDataStore.firstPermissionRequestCompleted()
-            notificationsProvider.giveConsent()
-            notificationsProvider.requestPermission()
+            notificationsRepo.firstPermissionRequestCompleted()
+            notificationsRepo.giveConsent()
+            notificationsRepo.requestPermission()
             onCompleted()
         }
         analyticsClient.buttonClick(
@@ -47,11 +46,15 @@ internal open class NotificationsViewModel @Inject constructor(
     }
 
     internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
-        notificationsProvider.giveConsent()
+        viewModelScope.launch {
+            // TODO: awaiting failure requirements for sendConsent()
+            notificationsRepo.sendConsent()
+            notificationsRepo.giveConsent()
+            onCompleted()
+        }
         analyticsClient.buttonClick(
             text = text
         )
-        onCompleted()
     }
 
     internal fun onTurnOffNotificationsClick(text: String) {
@@ -70,7 +73,11 @@ internal open class NotificationsViewModel @Inject constructor(
     }
 
     internal fun onContinueButtonClick(text: String) {
-        notificationsProvider.removeConsent()
+        viewModelScope.launch {
+            // TODO: awaiting failure requirements for sendRemoveConsent()
+            notificationsRepo.sendRemoveConsent()
+            notificationsRepo.removeConsent()
+        }
         analyticsClient.buttonClick(text)
     }
 

@@ -14,22 +14,27 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
+import uk.gov.govuk.data.user.model.Preferences
+import uk.gov.govuk.data.user.model.UpdateUserDataResponse
+import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotificationsViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
-    private val notificationsProvider = mockk<NotificationsProvider>()
-    private val notificationsDataStore = mockk<NotificationsDataStore>()
+    private val notificationsRepo = mockk<NotificationsRepo>()
 
     private lateinit var viewModel: NotificationsViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = NotificationsViewModel(analyticsClient, notificationsProvider, notificationsDataStore)
+        viewModel = NotificationsViewModel(
+            analyticsClient,
+            notificationsRepo
+        )
     }
 
     @After
@@ -54,13 +59,21 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, then give consent and log analytics`() {
-        every { notificationsProvider.giveConsent() } returns Unit
+        coEvery { notificationsRepo.sendConsent() } returns Success(
+            UpdateUserDataResponse(
+                Preferences(true, "updated at")
+            )
+        )
+        every { notificationsRepo.giveConsent() } returns Unit
 
         viewModel.onGiveConsentClick("Title") {}
 
         runTest {
+            coVerify(exactly = 1) {
+                notificationsRepo.sendConsent()
+            }
             verify(exactly = 1) {
-                notificationsProvider.giveConsent()
+                notificationsRepo.giveConsent()
                 analyticsClient.buttonClick("Title")
             }
         }
@@ -82,20 +95,19 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, then first permission request completed, request permission and log analytics`() {
-        coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
-        coEvery { notificationsProvider.requestPermission() } returns Unit
-        every { notificationsProvider.giveConsent() } returns Unit
+        coEvery { notificationsRepo.firstPermissionRequestCompleted() } returns Unit
+        coEvery { notificationsRepo.requestPermission() } returns Unit
+        coEvery { notificationsRepo.giveConsent() } returns Unit
 
         viewModel.onAllowNotificationsClick("Title") {}
 
         runTest {
             coVerify(exactly = 1) {
-                notificationsDataStore.firstPermissionRequestCompleted()
+                notificationsRepo.firstPermissionRequestCompleted()
+                notificationsRepo.requestPermission()
             }
-            coVerify(exactly = 1) {
-                notificationsProvider.giveConsent()
-                notificationsProvider.requestPermission()
-
+            verify(exactly = 1) {
+                notificationsRepo.giveConsent()
                 analyticsClient.buttonClick("Title")
             }
         }
@@ -130,13 +142,21 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Continue button click, then remove consent and log analytics`() {
-        every { notificationsProvider.removeConsent() } returns Unit
+        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
+            UpdateUserDataResponse(
+                Preferences(false, "updated at")
+            )
+        )
+        every { notificationsRepo.removeConsent() } returns Unit
 
         viewModel.onContinueButtonClick("Text")
 
         runTest {
+            coVerify(exactly = 1) {
+                notificationsRepo.sendRemoveConsent()
+            }
             verify(exactly = 1) {
-                notificationsProvider.removeConsent()
+                notificationsRepo.removeConsent()
                 analyticsClient.buttonClick(
                     text = "Text"
                 )
