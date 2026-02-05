@@ -47,10 +47,7 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
         viewModelScope.launch {
-            val result = notificationsRepo.sendConsent()
-            when (result) {
-                else -> { /* TODO: awaiting failure requirements */ }
-            }
+            notificationsRepo.sendConsent()
             notificationsRepo.giveConsent()
             onCompleted()
         }
@@ -76,10 +73,7 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onContinueButtonClick(text: String) {
         viewModelScope.launch {
-            val result = notificationsRepo.sendRemoveConsent()
-            when (result) {
-                else -> { /* TODO: awaiting failure requirements */ }
-            }
+            notificationsRepo.sendRemoveConsent()
             notificationsRepo.removeConsent()
         }
         analyticsClient.buttonClick(text)

@@ -82,10 +82,7 @@ internal class AppNavigation @Inject constructor(
 
     private suspend fun navigateNotificationsOnResume(navController: NavController) {
         if (!notificationsRepo.permissionGranted()) {
-            val result = notificationsRepo.sendRemoveConsent()
-            when (result) {
-                else -> { /* TODO: awaiting failure requirements */ }
-            }
+            notificationsRepo.sendRemoveConsent()
             notificationsRepo.removeConsent()
             if (navController.currentDestination?.route == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
                 onNext(navController)
