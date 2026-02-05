@@ -17,7 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -35,7 +34,6 @@ import uk.gov.govuk.chat.ui.model.ChatEntry
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
-import uk.gov.govuk.design.ui.extension.areAnimationsEnabled
 
 @Composable
 internal fun ChatEntry(
@@ -162,25 +160,24 @@ private fun Loading(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (LocalContext.current.areAnimationsEnabled()) {
-            val composition by rememberLottieComposition(
-                LottieCompositionSpec.RawRes(R.raw.generating_answer)
-            )
+        val composition by rememberLottieComposition(
+            LottieCompositionSpec.RawRes(R.raw.generating_answer)
+        )
 
-            val progress by animateLottieCompositionAsState(
-                composition = composition,
-                iterations = LottieConstants.IterateForever,
-                isPlaying = LocalContext.current.areAnimationsEnabled()
-            )
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            isPlaying = true,
+            speed = 1.5f
+        )
 
-            LottieAnimation(
-                composition = composition,
-                progress = { progress },
-                modifier = Modifier.size(24.dp)
-            )
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(32.dp)
+        )
 
-            SmallHorizontalSpacer()
-        }
+        SmallHorizontalSpacer()
 
         BodyRegularLabel(
             text = stringResource(R.string.loading_text),
