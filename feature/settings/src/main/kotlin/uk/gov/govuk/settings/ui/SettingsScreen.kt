@@ -26,6 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CaptionRegularLabel
+import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
@@ -39,6 +40,7 @@ import uk.gov.govuk.design.ui.component.ToggleListItem
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SettingsUiState
 import uk.gov.govuk.settings.SettingsViewModel
@@ -276,10 +278,17 @@ private fun NotificationsAndPrivacy(
 
         SmallVerticalSpacer()
 
-        CaptionRegularLabel(
-            text = stringResource(R.string.privacy_description),
-            modifier = Modifier
-                .padding(horizontal = GovUkTheme.spacing.medium)
+        val description = stringResource(R.string.privacy_description)
+        val linkText = stringResource(R.string.privacy_read_more)
+        val altText = "$description $linkText ${stringResource(R.string.link_opens_in)}"
+
+        CaptionRegularLabelTrailingLink(
+            text = description,
+            linkText = linkText,
+            url = PRIVACY_POLICY_URL,
+            onClick = actions.onPrivacyPolicyClick,
+            altText = altText,
+            modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)
         )
     }
 }
