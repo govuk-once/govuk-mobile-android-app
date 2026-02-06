@@ -11,8 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -354,7 +356,6 @@ fun CaptionBoldLabel(
 fun CaptionRegularLabelTrailingLink(
     text: String,
     linkText: String,
-    url: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     altText: String? = null,
@@ -366,33 +367,27 @@ fun CaptionRegularLabelTrailingLink(
     val annotatedString = buildAnnotatedString {
         append(text)
         append(" ")
-
-        val link = LinkAnnotation.Url(
-            url = url,
+        val link = LinkAnnotation.Clickable(
+            tag = "link",
             styles = TextLinkStyles(
-                style = SpanStyle(
-                    color = linkColor,
-                    textDecoration = TextDecoration.None
-                ),
-                pressedStyle = SpanStyle(
-                    color = linkColor,
-                    textDecoration = TextDecoration.None,
-                    background = highlightColor
-                )
+                style = SpanStyle(color = linkColor, textDecoration = TextDecoration.None),
+                pressedStyle = SpanStyle(background = highlightColor)
             ),
             linkInteractionListener = { _ -> onClick() }
         )
-
-        withLink(link) {
-            append(linkText)
-        }
+        withLink(link) { append(linkText) }
     }
 
     CaptionRegularLabel(
         text = annotatedString,
-        modifier = modifier.semantics {
-            this.contentDescription = altText ?: "$text $linkText"
-        },
+        modifier = modifier
+            .clearAndSetSemantics {
+                contentDescription = altText ?: "$text $linkText"
+                onClick(action = {
+                    onClick()
+                    true
+                })
+            },
         color = textColor
     )
 }

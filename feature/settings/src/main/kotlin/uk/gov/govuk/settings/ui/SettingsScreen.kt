@@ -285,7 +285,6 @@ private fun NotificationsAndPrivacy(
         CaptionRegularLabelTrailingLink(
             text = description,
             linkText = linkText,
-            url = PRIVACY_POLICY_URL,
             onClick = actions.onPrivacyPolicyClick,
             altText = altText,
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)
