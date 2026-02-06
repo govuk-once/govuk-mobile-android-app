@@ -5,6 +5,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.user.model.UpdateAnalyticsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.remote.UserApi
 
@@ -41,5 +42,21 @@ class UserRepoTest {
             userRepo.updateNotifications(false)
 
             coVerify { userApi.updateNotifications(UpdateNotificationsRequest(false)) }
+        }
+
+    @Test
+    fun `Given update analytics is called, when consented, then update analytics is called on the api`() =
+        runTest {
+            userRepo.updateAnalytics(true)
+
+            coVerify { userApi.updateAnalytics(UpdateAnalyticsRequest(true)) }
+        }
+
+    @Test
+    fun `Given update analytics is called, when not consented, then update analytics is called on the api`() =
+        runTest {
+            userRepo.updateAnalytics(false)
+
+            coVerify { userApi.updateAnalytics(UpdateAnalyticsRequest(false)) }
         }
 }

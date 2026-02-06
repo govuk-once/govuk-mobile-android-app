@@ -23,10 +23,7 @@ import uk.gov.android.securestore.RetrievalEvent
 import uk.gov.android.securestore.SecureStore
 import uk.gov.android.securestore.authentication.AuthenticatorPromptConfiguration
 import uk.gov.android.securestore.error.SecureStorageError
-import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.BuildConfig
-import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.ERROR
-import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.SUCCESS
 import uk.gov.govuk.data.auth.model.Tokens
 import uk.gov.govuk.data.crypto.CryptoProvider
 import uk.gov.govuk.data.remote.AuthApi
@@ -47,7 +44,6 @@ class AuthRepo @Inject constructor(
     private val biometricManager: BiometricManager,
     private val sharedPreferences: SharedPreferences,
     private val authApi: AuthApi,
-    private val analyticsClient: AnalyticsClient,
     private val tokenRepo: TokenRepo,
     private val cryptoProvider: CryptoProvider
 ) {
@@ -75,8 +71,10 @@ class AuthRepo @Inject constructor(
         }
     }
 
-    enum class RefreshStatus {
-        LOADING, SUCCESS, ERROR
+    sealed interface RefreshStatus {
+        data object Loading : RefreshStatus
+        data object Success : RefreshStatus
+        data class Error(val exception: Exception? = null) : RefreshStatus
     }
 
     fun refreshTokens(
@@ -96,14 +94,13 @@ class AuthRepo @Inject constructor(
             val refreshToken = result.value[REFRESH_TOKEN_KEY]
             if (refreshToken.isNullOrBlank()) {
                 secureStore.delete(REFRESH_TOKEN_KEY)
-                analyticsClient.logException(IllegalArgumentException("refresh token is null or blank"))
-                emit(ERROR)
+                emit(RefreshStatus.Error(IllegalArgumentException("refresh token is null or blank")))
             } else {
-                emit(RefreshStatus.LOADING)
-                emit(if (refreshTokens(refreshToken)) SUCCESS else ERROR)
+                emit(RefreshStatus.Loading)
+                emit(if (refreshTokens(refreshToken)) RefreshStatus.Success else RefreshStatus.Error())
             }
         } else {
-            emit(ERROR)
+            emit(RefreshStatus.Error())
         }
     }
 

@@ -4,6 +4,7 @@ import uk.gov.govuk.data.remote.safeApiCall
 import uk.gov.govuk.data.user.model.GetUserInfoResponse
 import uk.gov.govuk.data.user.remote.UserApi
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.user.model.UpdateAnalyticsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
@@ -23,6 +24,16 @@ class UserRepo @Inject constructor(
         return safeApiCall(apiCall = {
             userApi.updateNotifications(
                 UpdateNotificationsRequest(consented = consented)
+            )
+        })
+    }
+
+    suspend fun updateAnalytics(
+        consented: Boolean
+    ): Result<UpdateUserDataResponse> {
+        return safeApiCall(apiCall = {
+            userApi.updateAnalytics(
+                UpdateAnalyticsRequest(consented = consented)
             )
         })
     }

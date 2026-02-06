@@ -5,6 +5,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -19,11 +20,12 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.ERROR
-import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.LOADING
-import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.SUCCESS
+import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Error
+import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Loading
+import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Success
 import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.data.user.model.GetUserInfoResponse
 import uk.gov.govuk.data.model.Result
@@ -39,6 +41,7 @@ class LoginViewModelTest {
     private val loginRepo = mockk<LoginRepo>(relaxed = true)
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
+    private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val activity = mockk<FragmentActivity>(relaxed = true)
     private val dispatcher = UnconfinedTestDispatcher()
 
@@ -47,7 +50,7 @@ class LoginViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = LoginViewModel(authRepo, loginRepo, configRepo, notificationsRepo)
+        viewModel = LoginViewModel(authRepo, loginRepo, configRepo, notificationsRepo, analyticsClient)
     }
 
     @After
@@ -71,7 +74,7 @@ class LoginViewModelTest {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
         coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
 
         runTest {
@@ -99,7 +102,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
         coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
 
         runTest {
@@ -126,7 +129,7 @@ class LoginViewModelTest {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
         coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
 
         runTest {
@@ -180,7 +183,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns Date().toInstant().epochSecond + 10000
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
         coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
 
         runTest {
@@ -208,7 +211,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns Date().toInstant().epochSecond + 10000
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, SUCCESS)
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
         coEvery { notificationsRepo.login() } returns Result.Error()
 
         runTest {
@@ -264,10 +267,11 @@ class LoginViewModelTest {
 
     @Test
     fun `Given the user is signed in, when init is unsuccessful, then emit loading`() {
+        val exception = Exception("exception")
         every { authRepo.isUserSignedIn() } returns true
         coEvery { configRepo.refreshTokenExpirySeconds } returns 10000L
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(LOADING, ERROR)
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Error(exception))
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -282,6 +286,8 @@ class LoginViewModelTest {
 
             assertTrue(isLoading.last() == false)
             assertTrue(events.isEmpty())
+
+            verify { analyticsClient.logException(exception) }
         }
     }
 

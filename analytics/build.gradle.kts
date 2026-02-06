@@ -46,6 +46,7 @@ sonar {
 }
 
 dependencies {
+    implementation(projects.data)
     implementation(projects.design)
 
     implementation(libs.androidx.navigation.compose)

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.R
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
@@ -27,7 +28,8 @@ internal class LoginViewModel @Inject constructor(
     private val authRepo: AuthRepo,
     private val loginRepo: LoginRepo,
     private val configRepo: ConfigRepo,
-    private val notificationsRepo: NotificationsRepo
+    private val notificationsRepo: NotificationsRepo,
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
     private val _isLoading: MutableStateFlow<Boolean?> = MutableStateFlow(null)
@@ -47,12 +49,14 @@ internal class LoginViewModel @Inject constructor(
         if (authRepo.isUserSignedIn()) {
             viewModelScope.launch {
                 if (shouldRefreshTokens()) {
-                    authRepo.refreshTokens(activity = activity, title = activity.getString(R.string.login_biometric_prompt_title)).collect { status ->
+                    authRepo.refreshTokens(
+                        activity = activity,
+                        title = activity.getString(R.string.login_biometric_prompt_title)).collect { status ->
                         when (status) {
-                            AuthRepo.RefreshStatus.LOADING -> {
+                            AuthRepo.RefreshStatus.Loading -> {
                                 _isLoading.value = true
                             }
-                            AuthRepo.RefreshStatus.SUCCESS -> {
+                            AuthRepo.RefreshStatus.Success -> {
                                 val result = notificationsRepo.login()
                                 when (result) {
                                     is Success -> _loginCompleted.emit(
@@ -61,7 +65,10 @@ internal class LoginViewModel @Inject constructor(
                                     else -> _errorEvent.emit(ErrorEvent.UserApiError)
                                 }
                             }
-                            AuthRepo.RefreshStatus.ERROR -> {
+                            is AuthRepo.RefreshStatus.Error -> {
+                                status.exception?.let {
+                                    analyticsClient.logException(it)
+                                }
                                 _isLoading.value = false
                             }
                         }
