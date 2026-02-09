@@ -101,11 +101,22 @@ fun ChatBanner(
                         .clickable { onClick(linkText) }
                 ) {
                     MediumVerticalSpacer()
-                    BodyRegularLabel(
-                        text = linkText,
-                        modifier = Modifier.padding(start = GovUkTheme.spacing.medium),
-                        color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BodyRegularLabel(
+                            text = linkText,
+                            modifier = Modifier
+                                .weight(1f),
+                            color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+                        )
+                        Icon(
+                            painter = painterResource(uk.gov.govuk.design.R.drawable.ic_arrow),
+                            contentDescription = null,
+                            tint = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+                        )
+                    }
                     MediumVerticalSpacer()
                 }
             }

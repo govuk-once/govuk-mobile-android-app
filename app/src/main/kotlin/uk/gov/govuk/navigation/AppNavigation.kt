@@ -9,7 +9,7 @@ import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
-import uk.gov.govuk.notifications.NotificationsClient
+import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
@@ -27,7 +27,7 @@ internal class AppNavigation @Inject constructor(
     private val authRepo: AuthRepo,
     private val topicsFeature: TopicsFeature,
     private val deeplinkHandler: DeeplinkHandler,
-    private val notificationsClient: NotificationsClient,
+    private val notificationsProvider: NotificationsProvider,
     private val notificationsRepo: NotificationsRepo
 ) {
     fun setOnLaunchBrowser(onLaunchBrowser: (String) -> Unit) {
@@ -56,8 +56,8 @@ internal class AppNavigation @Inject constructor(
                 navigate(navController, NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE)
             flagRepo.isNotificationsEnabled() &&
                     notificationsRepo.isNotificationsOnboardingCompleted() &&
-                    notificationsClient.permissionGranted(navController.context) &&
-                    !notificationsClient.consentGiven() ->
+                    notificationsProvider.permissionGranted() &&
+                    !notificationsProvider.consentGiven() ->
                 navigate(navController, NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE)
             else -> {
                 navigate(navController, HOME_GRAPH_ROUTE)
@@ -83,15 +83,15 @@ internal class AppNavigation @Inject constructor(
     }
 
     private suspend fun navigateNotificationsOnResume(navController: NavController) {
-        if (!notificationsClient.permissionGranted(navController.context)) {
-            notificationsClient.removeConsent()
+        if (!notificationsProvider.permissionGranted()) {
+            notificationsProvider.removeConsent()
             if (navController.currentDestination?.route == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
                 onNext(navController)
             }
         } else if (
             authRepo.isUserSessionActive() &&
             notificationsRepo.isNotificationsOnboardingCompleted() &&
-            !notificationsClient.consentGiven()
+            !notificationsProvider.consentGiven()
         ) {
             navController.navigate(NOTIFICATIONS_CONSENT_ROUTE)
         }

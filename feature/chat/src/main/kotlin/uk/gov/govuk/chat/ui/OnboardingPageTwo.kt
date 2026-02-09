@@ -91,8 +91,6 @@ private fun OnboardingPageTwoScreen(
 
     OnboardingPage(
         title = stringResource(id = R.string.onboarding_page_two_header),
-        image = painterResource(id = R.drawable.onboarding_page_two),
-        modifier = modifier,
         headerContent = {
             FullScreenHeader(
                 dismissStyle = HeaderDismissStyle.Back(onBack),
@@ -170,7 +168,9 @@ private fun OnboardingPageTwoScreen(
                 enabled = true,
                 externalLink = false
             )
-        }
+        },
+        modifier = modifier,
+        placeholderImage = painterResource(id = R.drawable.onboarding_page_two)
     )
 }
 

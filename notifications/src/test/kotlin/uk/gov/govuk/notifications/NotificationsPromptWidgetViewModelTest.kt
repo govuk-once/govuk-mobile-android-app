@@ -2,9 +2,7 @@ package uk.gov.govuk.notifications
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -19,7 +17,7 @@ import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotificationsPromptWidgetViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
-    private val notificationsClient = mockk<NotificationsClient>()
+    private val notificationsProvider = mockk<NotificationsProvider>()
     private val notificationsDataStore = mockk<NotificationsDataStore>()
 
     private lateinit var viewModel: NotificationsPromptWidgetViewModel
@@ -27,7 +25,7 @@ class NotificationsPromptWidgetViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = NotificationsPromptWidgetViewModel(notificationsClient, notificationsDataStore)
+        viewModel = NotificationsPromptWidgetViewModel(notificationsProvider, notificationsDataStore)
     }
 
     @After
@@ -37,7 +35,7 @@ class NotificationsPromptWidgetViewModelTest {
 
     @Test
     fun `Given on click, then call request permission`() {
-        every { notificationsClient.requestPermission() } returns Unit
+        coEvery { notificationsProvider.requestPermission() } returns Unit
         coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
 
         runTest {
@@ -45,9 +43,7 @@ class NotificationsPromptWidgetViewModelTest {
 
             coVerify(exactly = 1) {
                 notificationsDataStore.firstPermissionRequestCompleted()
-            }
-            verify(exactly = 1) {
-                notificationsClient.requestPermission()
+                notificationsProvider.requestPermission()
             }
         }
     }

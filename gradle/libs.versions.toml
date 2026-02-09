@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.2"
+agp = "8.13.2"
 biometric = "1.1.0"
 composeMarkdown = "0.5.7"
 kotlin = "2.0.21"
@@ -24,7 +24,7 @@ googlePlayServices = "4.4.4"
 crashlytics = "3.0.6"
 
 oneSignal = "5.4.1"
-ossLicenses = "0.10.6"
+ossLicenses = "0.10.10"
 retrofit = "3.0.0"
 
 firebaseBom = "34.6.0"
@@ -113,3 +113,4 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 firebaseAppDistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
+oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicenses" }

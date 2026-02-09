@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.compose.markdown)
     implementation(libs.androidx.compose.animation)
 
+    implementation(libs.lottie.compose)
+
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
@@ -75,5 +77,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
     testImplementation(kotlin("test"))
 }
