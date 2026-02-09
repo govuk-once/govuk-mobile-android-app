@@ -66,8 +66,6 @@ sonar {
 }
 
 dependencies {
-    implementation(projects.analytics)
-
     implementation(libs.hilt.android)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.biometric)

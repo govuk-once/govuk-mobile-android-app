@@ -27,11 +27,15 @@ class AnalyticsClient @Inject constructor(
 
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
+        // TODO: awaiting failure requirements for sendConsent()
+        analyticsRepo.sendConsent()
         firebaseAnalyticsClient.enable()
     }
 
     suspend fun disable() {
         analyticsRepo.analyticsDisabled()
+        // TODO: awaiting failure requirements for sendRemoveConsent()
+        analyticsRepo.sendRemoveConsent()
         firebaseAnalyticsClient.disable()
     }
 
