@@ -58,4 +58,8 @@
     <string name="biometric_settings_description_3">If you do not want to use biometrics, you can unlock the app with your GOV.UK One Login details.</string>
     <string name="biometric_settings_description_4">You can turn off biometrics at any time.</string>
 
+    <string name="timeout_warning_dialog_title">You\'ll be signed out soon</string>
+    <string name="timeout_warning_dialog_message">For your security, we sign you out when you have not used the app for a while</string>
+    <string name="timeout_warning_dialog_button">Stay signed in</string>
+
 </resources>

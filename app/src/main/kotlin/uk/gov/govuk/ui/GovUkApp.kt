@@ -146,12 +146,32 @@ private fun BottomNavScaffold(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentNavParentRoute = navBackStackEntry?.destination?.parent?.route
 
+    var showTimeoutWarningDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.signOutEvent.collect {
-                viewModel.appNavigation.onSignOut(navController)
+            viewModel.timeOutEvent.collect {
+                when (it) {
+                    AppViewModel.TimeoutEvent.WARNING -> showTimeoutWarningDialog = true
+                    AppViewModel.TimeoutEvent.TIMEOUT -> {
+                        showTimeoutWarningDialog = false
+                        viewModel.appNavigation.onSignOut(navController)
+                    }
+                }
             }
         }
+    }
+
+    if (showTimeoutWarningDialog) {
+        InfoAlert(
+            title = R.string.timeout_warning_dialog_title,
+            message = R.string.timeout_warning_dialog_message,
+            buttonText = R.string.timeout_warning_dialog_button,
+            onDismiss = {
+                viewModel.onUserInteraction()
+                showTimeoutWarningDialog = false
+            }
+        )
     }
 
     Scaffold(

@@ -25,13 +25,14 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.AppViewModel.TimeoutEvent
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
-import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
@@ -564,7 +565,7 @@ class AppViewModelTest {
         viewModel.onUserInteraction( 0L)
 
         verify {
-            timeoutManager.onUserInteraction(0L, onTimeout = any())
+            timeoutManager.onUserInteraction(0L, onWarning = any(), onTimeout = any())
         }
     }
 
@@ -573,7 +574,7 @@ class AppViewModelTest {
         clearAllMocks()
 
         val slot = slot<(() -> Unit)>()
-        every { timeoutManager.onUserInteraction(any(), onTimeout = capture(slot)) } returns Unit
+        every { timeoutManager.onUserInteraction(any(), onWarning = any(), onTimeout = capture(slot)) } returns Unit
         every { authRepo.isUserSessionActive() } returns false
 
         viewModel.onUserInteraction(0L)
@@ -586,18 +587,38 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given a user session is active, When the app times out, end user session and navigate`() = runTest {
+    fun `Given a user session is active, When the app is about to time out, emit warning`() = runTest {
         clearAllMocks()
 
         val slot = slot<(() -> Unit)>()
-        every { timeoutManager.onUserInteraction(any(), onTimeout = capture(slot)) } returns Unit
+        every { timeoutManager.onUserInteraction(any(), onWarning = capture(slot), onTimeout = any()) } returns Unit
         every { authRepo.isUserSessionActive() } returns true
 
         viewModel.onUserInteraction(0L)
         slot.captured.invoke()
 
-        val event = viewModel.signOutEvent.first()
-        assertEquals(Unit, event)
+        val event = viewModel.timeOutEvent.first()
+        assertEquals(TimeoutEvent.WARNING, event)
+
+        verify(exactly = 0) {
+            authRepo.endUserSession()
+            appNavigation.onSignOut(any())
+        }
+    }
+
+    @Test
+    fun `Given a user session is active, When the app times out, end user session and emit timeout`() = runTest {
+        clearAllMocks()
+
+        val slot = slot<(() -> Unit)>()
+        every { timeoutManager.onUserInteraction(any(), onWarning = any(), onTimeout = capture(slot)) } returns Unit
+        every { authRepo.isUserSessionActive() } returns true
+
+        viewModel.onUserInteraction(0L)
+        slot.captured.invoke()
+
+        val event = viewModel.timeOutEvent.first()
+        assertEquals(TimeoutEvent.TIMEOUT, event)
 
         coVerify {
             authRepo.endUserSession()
