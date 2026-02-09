@@ -40,7 +40,6 @@ import uk.gov.govuk.design.ui.component.ToggleListItem
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SettingsUiState
 import uk.gov.govuk.settings.SettingsViewModel
