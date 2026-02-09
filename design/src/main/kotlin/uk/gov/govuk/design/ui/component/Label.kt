@@ -11,13 +11,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
@@ -33,20 +42,39 @@ private fun BaseLabel(
     textAlign: TextAlign,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     ) {
-    val altText = text.replace(
+
+    BaseLabel(
+        text = AnnotatedString(text),
+        modifier = modifier,
+        style = style,
+        color = color,
+        textAlign = textAlign,
+        onTextLayout = onTextLayout
+    )
+}
+
+@Composable
+private fun BaseLabel(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    style: TextStyle,
+    color: Color,
+    textAlign: TextAlign,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+) {
+    val altText = text.text.replace(
         stringResource(R.string.gov_uk),
         stringResource(R.string.gov_uk_alt_text)
     )
     Text(
         text = text,
-        modifier = modifier
-            .semantics {
-                contentDescription = altText
-            },
+        modifier = modifier.semantics {
+            contentDescription = altText
+        },
         style = style.copy(hyphens = Hyphens.Auto),
         color = color,
         textAlign = textAlign,
-        onTextLayout = onTextLayout
+        onTextLayout = onTextLayout ?: {}
     )
 }
 
@@ -325,8 +353,64 @@ fun CaptionBoldLabel(
 }
 
 @Composable
+fun CaptionRegularLabelTrailingLink(
+    text: String,
+    linkText: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    altText: String? = null,
+    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary
+) {
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.link
+    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+
+    val annotatedString = buildAnnotatedString {
+        append(text)
+        append(" ")
+        val link = LinkAnnotation.Clickable(
+            tag = "link",
+            styles = TextLinkStyles(
+                style = SpanStyle(color = linkColor, textDecoration = TextDecoration.None),
+                pressedStyle = SpanStyle(background = highlightColor)
+            ),
+            linkInteractionListener = { _ -> onClick() }
+        )
+        withLink(link) { append(linkText) }
+    }
+
+    CaptionRegularLabel(
+        text = annotatedString,
+        modifier = modifier
+            .clearAndSetSemantics {
+                contentDescription = altText ?: "$text $linkText"
+                onClick(action = {
+                    onClick()
+                    true
+                })
+            },
+        color = textColor
+    )
+}
+
+@Composable
 fun CaptionRegularLabel(
     text: String,
+    modifier: Modifier = Modifier,
+    color: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    BaseLabel(
+        text = text,
+        modifier = modifier,
+        style = GovUkTheme.typography.captionRegular,
+        color = color,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun CaptionRegularLabel(
+    text: AnnotatedString,
     modifier: Modifier = Modifier,
     color: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
     textAlign: TextAlign = TextAlign.Start
@@ -347,10 +431,12 @@ fun ListHeadingLabel(
 ) {
     Title3BoldLabel(
         text = text,
-        modifier = modifier.padding(
-            start = GovUkTheme.spacing.medium,
-            end = GovUkTheme.spacing.medium,
-        ).semantics { heading() }
+        modifier = modifier
+            .padding(
+                start = GovUkTheme.spacing.medium,
+                end = GovUkTheme.spacing.medium,
+            )
+            .semantics { heading() }
     )
 }
 
