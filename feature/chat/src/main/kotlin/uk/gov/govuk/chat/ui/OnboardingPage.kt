@@ -1,13 +1,13 @@
 package uk.gov.govuk.chat.ui
 
 import android.content.res.Configuration
+import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,28 +15,36 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FixedContainerDivider
-import uk.gov.govuk.design.ui.component.LargeHorizontalSpacer
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.extension.areAnimationsEnabled
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 internal fun OnboardingPage(
     title: String,
-    image: Painter,
-    modifier: Modifier = Modifier,
     headerContent: @Composable () -> Unit,
     screenContent: @Composable ColumnScope.() -> Unit,
-    buttonContent: @Composable () -> Unit
+    buttonContent: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    @RawRes animationRes: Int? = null,
+    placeholderImage: Painter? = null // This will be removed when we play the ticket for onboarding screen 2
 ) {
     Column(
         modifier.fillMaxSize()
@@ -46,7 +54,7 @@ internal fun OnboardingPage(
     ) {
         headerContent()
 
-        Column(Modifier.weight(weight = 1f).fillMaxHeight()) {
+        Column(Modifier.weight(weight = 1f)) {
             Column(
                 Modifier
                     .verticalScroll(rememberScrollState())
@@ -58,17 +66,43 @@ internal fun OnboardingPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                val isLogoVisible = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+                val isImageVisible = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
-                if (isLogoVisible) {
-                    Image(
-                        painter = image,
-                        contentDescription = null,
-                        modifier = Modifier.height(IntrinsicSize.Min)
-                            .padding(all = GovUkTheme.spacing.medium)
-                    )
+                if (isImageVisible) {
+                    // This will be simplified when we play the ticket for onboarding screen 2
+                    when {
+                        animationRes != null -> {
+                            val animationsEnabled = LocalContext.current.areAnimationsEnabled()
 
-                    LargeHorizontalSpacer()
+                            val animationComposition by rememberLottieComposition(
+                                LottieCompositionSpec.RawRes(animationRes)
+                            )
+
+                            val animationState = animateLottieCompositionAsState(
+                                composition = animationComposition,
+                                isPlaying = animationsEnabled,
+                                restartOnPlay = false
+                            )
+
+                            LottieAnimation(
+                                composition = animationComposition,
+                                progress = {
+                                    if (animationsEnabled)
+                                        animationState.progress
+                                    else 1f
+                                }
+                            )
+                        }
+                        placeholderImage != null -> {
+                            Image(
+                                painter = placeholderImage,
+                                contentDescription = null,
+                                modifier = Modifier.height(IntrinsicSize.Min)
+                                    .padding(all = GovUkTheme.spacing.medium)
+                            )
+                            LargeVerticalSpacer()
+                        }
+                    }
                 }
 
                 LargeTitleBoldLabel(
@@ -76,7 +110,6 @@ internal fun OnboardingPage(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .semantics { heading() }
-                        .padding(horizontal = GovUkTheme.spacing.medium)
                 )
 
                 screenContent()

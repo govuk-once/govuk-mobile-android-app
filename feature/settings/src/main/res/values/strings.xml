@@ -8,10 +8,10 @@
   <string name="help_and_feedback_title">Help and feedback</string>
   <string name="version_setting">App version number</string>
   <string name="privacy_description">
-    You can share statistics with the GOV.UK app team about how you use the app so they can make improvements to it.
-    We will not use these statistics to directly identify you.
-    Read more about this in the privacy notice.
+    You can share statistics about how you use the app so we can make improvements to it. We will not use these statistics to directly identify you.
   </string>
+    <string name="privacy_read_more">Read more about this in the privacy notice.</string>
+
   <string name="share_setting">Share app usage statistics</string>
   <string name="link_opens_in">Opens in web browser</string>
   <string name="oss_licenses_title">Open source licenses</string>
