@@ -42,7 +42,7 @@ class UserRepo @Inject constructor(
         }
     }
 
-    suspend fun retry(errorCode: Int) = when (errorCode) {
+    private suspend fun retry(errorCode: Int) = when (errorCode) {
         401, 403 -> authRepo.refreshTokens()
         else -> false
     }
