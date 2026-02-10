@@ -18,14 +18,18 @@ internal class TimeoutManager @Inject constructor(
 
     fun onUserInteraction(
         interactionTime: Long = SystemClock.elapsedRealtime(),
+        warningInterval: Long = 13 * 60 * 1000L, // 13 mins
         timeoutInterval: Long = 15 * 60 * 1000L, // 15 mins
+        onWarning: () -> Unit,
         onTimeout: () -> Unit,
     ) {
         if (interactionTime - lastInteractionTime >= 1000) {
             lastInteractionTime = interactionTime
             job?.cancel()
             job = CoroutineScope(Dispatchers.Main).launch {
-                delay(timeoutInterval)
+                delay(warningInterval)
+                onWarning()
+                delay(timeoutInterval - warningInterval)
                 onTimeout()
             }
         }

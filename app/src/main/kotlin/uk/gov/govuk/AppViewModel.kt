@@ -52,8 +52,12 @@ internal class AppViewModel @Inject constructor(
     private val _homeWidgets: MutableStateFlow<List<HomeWidget>?> = MutableStateFlow(null)
     internal val homeWidgets = _homeWidgets.asStateFlow()
 
-    private val _signOutEvent = Channel<Unit>(Channel.CONFLATED)
-    val signOutEvent = _signOutEvent.receiveAsFlow()
+    enum class TimeoutEvent {
+        WARNING, TIMEOUT
+    }
+
+    private val _timeOutEvent = Channel<TimeoutEvent>(Channel.CONFLATED)
+    val timeOutEvent = _timeOutEvent.receiveAsFlow()
 
     init {
         analyticsClient.isUserSessionActive = { authRepo.isUserSessionActive() }
@@ -112,14 +116,22 @@ internal class AppViewModel @Inject constructor(
     fun onUserInteraction(
         interactionTime: Long = SystemClock.elapsedRealtime()
     ) {
-        timeoutManager.onUserInteraction(interactionTime) {
-            if (authRepo.isUserSessionActive()) {
-                authRepo.endUserSession()
+        timeoutManager.onUserInteraction(
+            interactionTime,
+            onWarning = {
                 viewModelScope.launch {
-                    _signOutEvent.trySend(Unit)
+                    _timeOutEvent.trySend(TimeoutEvent.WARNING)
+                }
+            },
+            onTimeout = {
+                if (authRepo.isUserSessionActive()) {
+                    authRepo.endUserSession()
+                    viewModelScope.launch {
+                        _timeOutEvent.trySend(TimeoutEvent.TIMEOUT)
+                    }
                 }
             }
-        }
+        )
     }
 
     fun onLogin(navController: NavController) {

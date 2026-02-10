@@ -1,13 +1,13 @@
 package uk.gov.govuk.topics.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,7 +18,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenHeader
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.topics.R
@@ -78,24 +77,20 @@ private fun TopicSelectionScreen(
 
         SmallVerticalSpacer()
 
-        LazyColumn(
+        Column(
             modifier = Modifier
-                .weight(1f, fill = false)
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = GovUkTheme.spacing.medium),
-            state = rememberLazyListState()
+            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
         ) {
-            item {
-                BodyRegularLabel(
-                    text = stringResource(R.string.topic_selection_description),
-                )
-            }
-            item {
-                MediumVerticalSpacer()
-            }
-            items(
-                items = uiState?.topics ?: emptyList(),
-                key = { item -> item.title }
-            ) { topic ->
+            BodyRegularLabel(
+                text = stringResource(R.string.topic_selection_description),
+            )
+
+            // loop over topics and add dynamically, has been changed from LazyColumn to overcome its
+            // talkback limitation with off-screen items
+            uiState?.topics?.forEach { topic ->
                 TopicSelectionCard(
                     icon = topic.icon,
                     title = topic.title,
@@ -103,10 +98,11 @@ private fun TopicSelectionScreen(
                     onClick = {
                         onClick(topic.ref, topic.title)
                     },
-                    modifier = modifier
+                    modifier = Modifier.fillMaxWidth()
                 )
-                MediumVerticalSpacer()
             }
+
+            SmallVerticalSpacer()
         }
 
         uiState?.let {

@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertFalse
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimeoutManagerTest {
@@ -32,19 +33,28 @@ class TimeoutManagerTest {
     }
 
     @Test
-    fun `Timeout is triggered after timeout interval`() {
+    fun `Warning and Timeout is triggered after interval`() {
         runTest {
+            var warning = false
             var timedOut = false
 
             timeoutManager.onUserInteraction(
                 interactionTime = 1000,
-                timeoutInterval = 10
-            ) {
-                timedOut = true
-            }
+                warningInterval = 10,
+                timeoutInterval = 20,
+                onWarning = {
+                    warning = true
+                },
+                onTimeout = {
+                    timedOut = true
+                }
+            )
 
             delay(11)
+            assertTrue(warning)
+            assertFalse(timedOut)
 
+            delay(10)
             assertTrue(timedOut)
         }
     }
@@ -56,19 +66,25 @@ class TimeoutManagerTest {
 
             timeoutManager.onUserInteraction(
                 interactionTime = 1000,
-                timeoutInterval = 10
-            ) {
-                timedOut = true
-            }
+                warningInterval = 5,
+                timeoutInterval = 10,
+                onWarning = { },
+                onTimeout = {
+                    timedOut = true
+                }
+            )
 
             delay(5)
 
             timeoutManager.onUserInteraction(
                 interactionTime = 1999,
-                timeoutInterval = 10
-            ) {
-                timedOut = true
-            }
+                warningInterval = 5,
+                timeoutInterval = 10,
+                onWarning = { },
+                onTimeout = {
+                    timedOut = true
+                }
+            )
 
             delay(6)
 
