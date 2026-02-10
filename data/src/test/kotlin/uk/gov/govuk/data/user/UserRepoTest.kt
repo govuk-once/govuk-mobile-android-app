@@ -65,9 +65,9 @@ class UserRepoTest {
         }
 
     @Test
-    fun `Given update analytics is called, when not consented and response code is 401, then update analytics is called on the api and refresh tokens is not called`() =
+    fun `Given update analytics is called, when not consented and response code is 402, then update analytics is called on the api and refresh tokens is not called`() =
         runTest {
-            every { response.code() } returns 500
+            every { response.code() } returns 402
             coEvery { userApi.updateAnalytics(UpdateAnalyticsRequest(false)) } returns response
 
             userRepo.updateAnalytics(false)
