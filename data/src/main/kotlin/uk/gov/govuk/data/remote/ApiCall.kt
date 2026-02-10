@@ -9,14 +9,21 @@ import uk.gov.govuk.data.model.Result.ServiceNotResponding
 import uk.gov.govuk.data.model.Result.Success
 import java.net.UnknownHostException
 
-suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
+suspend fun <T> safeApiCall(
+    retry: suspend (code: Int) -> Boolean = { false },
+    apiCall: suspend () -> Response<T>
+): Result<T> {
     return try {
         val response = apiCall()
         val body = response.body()
         return if (response.isSuccessful && body != null) {
             Success(body)
         } else {
-            Error()
+            if (retry(response.code())) {
+                safeApiCall(apiCall = apiCall)
+            } else {
+                Error()
+            }
         }
     } catch (e: Exception) {
         when (e) {
