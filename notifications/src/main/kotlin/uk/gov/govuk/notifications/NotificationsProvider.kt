@@ -16,8 +16,4 @@ interface NotificationsProvider {
         NotificationManagerCompat.from(context).areNotificationsEnabled()
     suspend fun requestPermission()
     fun addClickListener()
-    fun handleAdditionalData(
-        additionalData: JSONObject?,
-        intent: Intent? = context.packageManager.getLaunchIntentForPackage(context.packageName)
-    )
 }
