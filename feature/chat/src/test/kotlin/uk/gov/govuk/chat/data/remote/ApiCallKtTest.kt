@@ -65,7 +65,6 @@ class ApiCallKtTest {
     @Test
     fun `Returns auth error for 401 after token refresh failure`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false
         every { response.code() } returns 401
         coEvery { authRepo.refreshTokens() } returns false
 
@@ -90,7 +89,6 @@ class ApiCallKtTest {
     @Test
     fun `Returns auth error for 403 after token refresh failure`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false
         every { response.code() } returns 403
         coEvery { authRepo.refreshTokens() } returns false
 

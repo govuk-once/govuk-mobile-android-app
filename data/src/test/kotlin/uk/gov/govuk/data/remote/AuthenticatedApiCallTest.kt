@@ -5,106 +5,94 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import java.net.UnknownHostException
-import org.junit.Assert.assertEquals
 
 class AuthenticatedApiCallTest {
     private val apiCall = mockk<suspend () -> Response<String>>(relaxed = true)
     private val authRepo = mockk<AuthRepo>(relaxed = true)
     private val response = mockk<Response<String>>(relaxed = true)
 
-    // authenticatedApiCall tests
+    // withAuthRetry tests
 
     @Test
-    fun `authenticatedApiCall - returns Success with response for successful call`() = runTest {
+    fun `withAuthRetry - returns response for successful call`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 200
 
-        val result = authenticatedApiCall(apiCall, authRepo)
+        val result = withAuthRetry(apiCall, authRepo)
 
-        assertTrue(result is AuthApiResult.Success)
-        assertEquals(response, (result as AuthApiResult.Success).response)
+        assertEquals(response, result)
     }
 
     @Test
-    fun `authenticatedApiCall - returns Success for non-auth error codes`() = runTest {
+    fun `withAuthRetry - returns response for non-auth error codes`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 500
 
-        val result = authenticatedApiCall(apiCall, authRepo)
+        val result = withAuthRetry(apiCall, authRepo)
 
-        assertTrue(result is AuthApiResult.Success)
+        assertEquals(response, result)
     }
 
     @Test
-    fun `authenticatedApiCall - retries on 401 after successful token refresh`() = runTest {
+    fun `withAuthRetry - retries on 401 after successful token refresh`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 401 andThen 200
         coEvery { authRepo.refreshTokens() } returns true
 
-        val result = authenticatedApiCall(apiCall, authRepo)
+        withAuthRetry(apiCall, authRepo)
 
-        assertTrue(result is AuthApiResult.Success)
         coVerify(exactly = 2) { apiCall.invoke() }
     }
 
-    @Test
-    fun `authenticatedApiCall - returns AuthError on 401 after failed token refresh`() = runTest {
+    @Test(expected = AuthenticationException::class)
+    fun `withAuthRetry - throws AuthenticationException on 401 after failed token refresh`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 401
         coEvery { authRepo.refreshTokens() } returns false
 
-        val result = authenticatedApiCall(apiCall, authRepo)
-
-        assertTrue(result is AuthApiResult.AuthError)
+        withAuthRetry(apiCall, authRepo)
     }
 
-    @Test
-    fun `authenticatedApiCall - returns AuthError on 401 with retry disabled`() = runTest {
+    @Test(expected = AuthenticationException::class)
+    fun `withAuthRetry - throws AuthenticationException on 401 with retry disabled`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 401
 
-        val result = authenticatedApiCall(apiCall, authRepo, retry = false)
-
-        assertTrue(result is AuthApiResult.AuthError)
-        coVerify(exactly = 0) { authRepo.refreshTokens() }
+        withAuthRetry(apiCall, authRepo, retry = false)
     }
 
     @Test
-    fun `authenticatedApiCall - retries on 403 after successful token refresh`() = runTest {
+    fun `withAuthRetry - retries on 403 after successful token refresh`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 403 andThen 200
         coEvery { authRepo.refreshTokens() } returns true
 
-        val result = authenticatedApiCall(apiCall, authRepo)
+        withAuthRetry(apiCall, authRepo)
 
-        assertTrue(result is AuthApiResult.Success)
         coVerify(exactly = 2) { apiCall.invoke() }
     }
 
-    @Test
-    fun `authenticatedApiCall - returns AuthError on 403 after failed token refresh`() = runTest {
+    @Test(expected = AuthenticationException::class)
+    fun `withAuthRetry - throws AuthenticationException on 403 after failed token refresh`() = runTest {
         coEvery { apiCall.invoke() } returns response
         every { response.code() } returns 403
         coEvery { authRepo.refreshTokens() } returns false
 
-        val result = authenticatedApiCall(apiCall, authRepo)
-
-        assertTrue(result is AuthApiResult.AuthError)
+        withAuthRetry(apiCall, authRepo)
     }
 
-    @Test
-    fun `authenticatedApiCall - returns NetworkError on exception`() = runTest {
+    @Test(expected = UnknownHostException::class)
+    fun `withAuthRetry - propagates exceptions`() = runTest {
         coEvery { apiCall.invoke() } throws UnknownHostException()
 
-        val result = authenticatedApiCall(apiCall, authRepo)
-
-        assertTrue(result is AuthApiResult.NetworkError)
+        withAuthRetry(apiCall, authRepo)
     }
 
     // safeAuthApiCall tests
