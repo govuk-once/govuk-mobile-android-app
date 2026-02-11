@@ -24,6 +24,8 @@ class DeepLinkLauncherTest {
     fun setup() {
         deepLinkLauncher = DeepLinkLauncher(context)
 
+        io.mockk.mockkStatic("android.net.Uri")
+
         every { context.packageName } returns "uk.gov.govuk.app"
         every { context.packageManager } returns packageManager
         every { packageManager.getLaunchIntentForPackage("uk.gov.govuk.app") } returns mockIntent
