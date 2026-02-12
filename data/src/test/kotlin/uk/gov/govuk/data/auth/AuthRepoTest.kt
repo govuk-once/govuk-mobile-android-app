@@ -76,7 +76,6 @@ class AuthRepoTest {
             tokenResponseMapper,
             secureStore,
             biometricManager,
-            sharedPrefs,
             authApi,
             analyticsClient,
             tokenRepo,
