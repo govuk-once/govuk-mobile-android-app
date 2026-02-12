@@ -1,13 +1,11 @@
 package uk.gov.govuk.data.auth
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
