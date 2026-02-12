@@ -125,7 +125,7 @@ class AuthenticatedApiCallTest {
     @Test
     fun `safeAuthApiCall - returns Error when response is not successful`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.code() } returns 500
+        every { response.code() } returns 402
         every { response.isSuccessful } returns false
 
         val result = safeAuthApiCall(apiCall, authRepo)
