@@ -45,7 +45,6 @@ class AuthRepo @Inject constructor(
     private val tokenResponseMapper: TokenResponseMapper,
     private val secureStore: SecureStore,
     private val biometricManager: BiometricManager,
-    private val sharedPreferences: SharedPreferences,
     private val authApi: AuthApi,
     private val analyticsClient: AnalyticsClient,
     private val tokenRepo: TokenRepo,
@@ -239,22 +238,10 @@ class AuthRepo @Inject constructor(
     }
 
     suspend fun isDifferentUser(): Boolean {
-        migrateExistingSubIdToDataRepo()
-
         val newSubId = getSubId()
         val currentSubId = getDecryptedSubId()
         encryptAndSaveSubId(newSubId)
         return !currentSubId.isNullOrBlank() && currentSubId != newSubId
-    }
-
-    // TODO - Remove migration in future version
-    private suspend fun migrateExistingSubIdToDataRepo() {
-        if (sharedPreferences.contains(SUB_ID_KEY)) {
-            sharedPreferences.getString(SUB_ID_KEY, "")?.let { subId ->
-                encryptAndSaveSubId(subId)
-                sharedPreferences.edit(commit = true) { remove(SUB_ID_KEY) }
-            }
-        }
     }
 
     private suspend fun getDecryptedSubId(): String? {
