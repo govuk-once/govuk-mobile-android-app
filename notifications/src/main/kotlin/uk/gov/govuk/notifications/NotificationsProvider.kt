@@ -1,9 +1,7 @@
 package uk.gov.govuk.notifications
 
 import android.content.Context
-import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
-import org.json.JSONObject
 
 interface NotificationsProvider {
     val context: Context
