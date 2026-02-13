@@ -74,6 +74,8 @@ import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.loginGraph
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.navigation.TopLevelDestination
+import uk.gov.govuk.notificationcentre.navigation.navigateToNotificationCentre
+import uk.gov.govuk.notificationcentre.navigation.notificationCentreGraph
 import uk.gov.govuk.notifications.navigation.notificationsGraph
 import uk.gov.govuk.search.navigation.SEARCH_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.searchGraph
@@ -460,8 +462,12 @@ private fun GovUkNavHost(
                     )
                 }
             } else null,
+            {
+                navController.navigateToNotificationCentre()
+            },
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
         )
+        notificationCentreGraph(modifier = Modifier.padding(paddingValues))
         settingsGraph(
             navigateTo = { route -> navController.navigate(route) },
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
