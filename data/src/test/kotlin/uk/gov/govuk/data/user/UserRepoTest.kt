@@ -5,6 +5,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.user.model.UpdateAnalyticsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.remote.UserApi
@@ -12,12 +13,13 @@ import uk.gov.govuk.data.user.remote.UserApi
 class UserRepoTest {
 
     private val userApi = mockk<UserApi>(relaxed = true)
+    private val authRepo = mockk<AuthRepo>(relaxed = true)
 
     private lateinit var userRepo: UserRepo
 
     @Before
     fun setup() {
-        userRepo = UserRepo(userApi)
+        userRepo = UserRepo(userApi, authRepo)
     }
 
     @Test
