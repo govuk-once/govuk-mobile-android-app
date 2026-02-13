@@ -1,13 +1,11 @@
 package uk.gov.govuk.data.auth
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -42,7 +40,6 @@ class AuthRepo @Inject constructor(
     private val tokenResponseMapper: TokenResponseMapper,
     private val secureStore: SecureStore,
     private val biometricManager: BiometricManager,
-    private val sharedPreferences: SharedPreferences,
     private val authApi: AuthApi,
     private val tokenRepo: TokenRepo,
     private val cryptoProvider: CryptoProvider
@@ -236,22 +233,10 @@ class AuthRepo @Inject constructor(
     }
 
     suspend fun isDifferentUser(): Boolean {
-        migrateExistingSubIdToDataRepo()
-
         val newSubId = getSubId()
         val currentSubId = getDecryptedSubId()
         encryptAndSaveSubId(newSubId)
         return !currentSubId.isNullOrBlank() && currentSubId != newSubId
-    }
-
-    // TODO - Remove migration in future version
-    private suspend fun migrateExistingSubIdToDataRepo() {
-        if (sharedPreferences.contains(SUB_ID_KEY)) {
-            sharedPreferences.getString(SUB_ID_KEY, "")?.let { subId ->
-                encryptAndSaveSubId(subId)
-                sharedPreferences.edit(commit = true) { remove(SUB_ID_KEY) }
-            }
-        }
     }
 
     private suspend fun getDecryptedSubId(): String? {
