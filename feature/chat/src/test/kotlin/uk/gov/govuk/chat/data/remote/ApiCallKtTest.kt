@@ -63,20 +63,8 @@ class ApiCallKtTest {
     }
 
     @Test
-    fun `Returns auth error for 401 with no retry`() = runTest {
-        coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false
-        every { response.code() } returns 401
-
-        val result = safeChatApiCall(apiCall, authRepo, false)
-
-        assertTrue(result is AuthError)
-    }
-
-    @Test
     fun `Returns auth error for 401 after token refresh failure`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false
         every { response.code() } returns 401
         coEvery { authRepo.refreshTokens() } returns false
 
@@ -88,9 +76,9 @@ class ApiCallKtTest {
     @Test
     fun `Retries API call for 401 after token refresh success`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false andThen true
         every { response.code() } returns 401 andThen 200
-
+        every { response.isSuccessful } returns true
+        every { response.body() } returns answer
         coEvery { authRepo.refreshTokens() } returns true
 
         val result = safeChatApiCall(apiCall, authRepo)
@@ -99,20 +87,8 @@ class ApiCallKtTest {
     }
 
     @Test
-    fun `Returns auth error for 403 with no retry`() = runTest {
-        coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false
-        every { response.code() } returns 403
-
-        val result = safeChatApiCall(apiCall, authRepo, false)
-
-        assertTrue(result is AuthError)
-    }
-
-    @Test
     fun `Returns auth error for 403 after token refresh failure`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false
         every { response.code() } returns 403
         coEvery { authRepo.refreshTokens() } returns false
 
@@ -124,9 +100,9 @@ class ApiCallKtTest {
     @Test
     fun `Retries API call for 403 after token refresh success`() = runTest {
         coEvery { apiCall.invoke() } returns response
-        every { response.isSuccessful } returns false andThen true
         every { response.code() } returns 403 andThen 200
-
+        every { response.isSuccessful } returns true
+        every { response.body() } returns answer
         coEvery { authRepo.refreshTokens() } returns true
 
         val result = safeChatApiCall(apiCall, authRepo)
@@ -186,5 +162,4 @@ class ApiCallKtTest {
 
         assertTrue(result is DeviceOffline)
     }
-
 }

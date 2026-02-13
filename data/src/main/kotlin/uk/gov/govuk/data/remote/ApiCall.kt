@@ -3,6 +3,7 @@ package uk.gov.govuk.data.remote
 import retrofit2.HttpException
 import retrofit2.Response
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.model.Result.AuthError
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
@@ -20,6 +21,7 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
         }
     } catch (e: Exception) {
         when (e) {
+            is AuthenticationException -> AuthError()
             is UnknownHostException -> DeviceOffline()
             is HttpException -> ServiceNotResponding()
             else -> Error()
