@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="logo_alt_text">GOV dot UK Logo</string>
+  <string name="not_cen_button_description">Notification Centre</string>
 </resources>

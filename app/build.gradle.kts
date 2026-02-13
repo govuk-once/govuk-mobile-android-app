@@ -143,6 +143,7 @@ dependencies {
     implementation(projects.feature.chat)
     implementation(projects.feature.home)
     implementation(projects.feature.local)
+    implementation(projects.feature.notificationcentre)
     implementation(projects.feature.settings)
     implementation(projects.feature.search)
     implementation(projects.feature.topics)
