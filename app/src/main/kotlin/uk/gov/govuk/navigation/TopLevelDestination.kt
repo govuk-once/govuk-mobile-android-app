@@ -8,6 +8,8 @@ import uk.gov.govuk.design.R.drawable.ic_chat
 import uk.gov.govuk.design.R.drawable.ic_home
 import uk.gov.govuk.design.R.drawable.ic_settings
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
+import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_ROUTE
+import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_START_DESTINATION
 import uk.gov.govuk.settings.navigation.SETTINGS_GRAPH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPICS_ALL_STEP_BY_STEPS_ROUTE
 import uk.gov.govuk.topics.navigation.TOPIC_ROUTE
@@ -27,7 +29,8 @@ internal sealed class TopLevelDestination(
         associatedRoutes = listOf(
             VISITED_ROUTE,
             TOPIC_ROUTE,
-            TOPICS_ALL_STEP_BY_STEPS_ROUTE
+            TOPICS_ALL_STEP_BY_STEPS_ROUTE,
+            NOTIFICATION_CENTRE_GRAPH_START_DESTINATION
         )
     )
 

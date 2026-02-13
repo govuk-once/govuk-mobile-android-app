@@ -4,7 +4,9 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import uk.gov.govuk.config.data.local.model.HomeWidget
@@ -21,6 +23,7 @@ fun NavGraphBuilder.homeGraph(
     homeWidgets: List<HomeWidget>?,
     modifier: Modifier = Modifier,
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
+    onShowNotificationCentre: () -> Unit,
     transitionOverrideRoutes: List<String> = emptyList()
 ) {
     navigation(
@@ -48,7 +51,8 @@ fun NavGraphBuilder.homeGraph(
                 widgets = widgets,
                 homeWidgets = homeWidgets,
                 modifier = modifier,
-                headerWidget = headerWidget
+                headerWidget = headerWidget,
+                onShowNotificationCentre = onShowNotificationCentre
             )
         }
     }
