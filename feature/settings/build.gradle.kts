@@ -13,6 +13,8 @@ android {
     namespace = "uk.gov.govuk.settings"
     compileSdk = Version.COMPILE_SDK
 
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
     defaultConfig {
         minSdk = Version.MIN_SDK
 
@@ -82,4 +84,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(libs.androidx.ui.tooling)
 }

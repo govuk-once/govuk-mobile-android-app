@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.firebaseAppDistribution) apply false
     alias(libs.plugins.oss.licenses) apply false
     alias(libs.plugins.sonarqube)
+    alias(libs.plugins.compose.screenshot) apply false
 }
 
 buildscript {
