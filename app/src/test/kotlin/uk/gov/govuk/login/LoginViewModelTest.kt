@@ -20,6 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.ERROR
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.LOADING
@@ -32,6 +33,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
 
+    private val appRepo = mockk<AppRepo>(relaxed = true)
     private val authRepo = mockk<AuthRepo>(relaxed = true)
     private val loginRepo = mockk<LoginRepo>(relaxed = true)
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
@@ -43,7 +45,7 @@ class LoginViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = LoginViewModel(authRepo, loginRepo, configRepo)
+        viewModel = LoginViewModel(appRepo, authRepo, loginRepo, configRepo)
     }
 
     @After
@@ -81,7 +83,7 @@ class LoginViewModelTest {
             viewModel.init(activity)
 
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -105,7 +107,7 @@ class LoginViewModelTest {
             viewModel.init(activity)
 
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -128,7 +130,7 @@ class LoginViewModelTest {
             viewModel.init(activity)
 
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -178,7 +180,7 @@ class LoginViewModelTest {
             viewModel.init(activity)
 
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -249,7 +251,7 @@ class LoginViewModelTest {
             viewModel.onAuthResponse(null)
 
             assertTrue(isLoading.last() == true)
-            assertFalse(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 0) {
                 loginRepo.setRefreshTokenIssuedAtDate(any())
@@ -275,12 +277,71 @@ class LoginViewModelTest {
             viewModel.onAuthResponse(null)
 
             assertTrue(isLoading.last() == true)
-            assertFalse(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
             }
+        }
+    }
+
+    @Test
+    fun `Given a web login, when biometrics are enabled and have not been skipped, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { authRepo.isAuthenticationEnabled() } returns true
+        coEvery { appRepo.hasSkippedBiometrics() } returns false
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            val loginEvent = events.first() as LoginEvent.WebLogin
+            assertTrue(loginEvent.isBiometricsEnabled)
+        }
+    }
+
+    @Test
+    fun `Given a web login, when biometrics are enabled and have been skipped, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { authRepo.isAuthenticationEnabled() } returns true
+        coEvery { appRepo.hasSkippedBiometrics() } returns true
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            val loginEvent = events.first() as LoginEvent.WebLogin
+            assertFalse(loginEvent.isBiometricsEnabled)
+        }
+    }
+
+    @Test
+    fun `Given a web login, when biometrics are not enabled, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { authRepo.isAuthenticationEnabled() } returns false
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            val loginEvent = events.first() as LoginEvent.WebLogin
+            assertFalse(loginEvent.isBiometricsEnabled)
         }
     }
 
