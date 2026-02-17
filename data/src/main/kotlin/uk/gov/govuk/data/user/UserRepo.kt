@@ -6,7 +6,7 @@ import uk.gov.govuk.data.user.model.GetUserInfoResponse
 import uk.gov.govuk.data.user.remote.UserApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.remote.safeAuthApiCall
-import uk.gov.govuk.data.user.model.UpdateAnalyticsRequest
+import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
@@ -31,12 +31,12 @@ class UserRepo @Inject constructor(
         }, authRepo = authRepo)
     }
 
-    suspend fun updateAnalytics(
-        consented: Boolean
+    suspend fun updateTermsAndConditions(
+        accepted: Boolean
     ): Result<UpdateUserDataResponse> {
         return safeAuthApiCall(apiCall = {
-            userApi.updateAnalytics(
-                UpdateAnalyticsRequest(consented = consented)
+            userApi.updateTermsAndConditions(
+                UpdateTermsAndConditionsRequest(accepted = accepted)
             )
         }, authRepo = authRepo)
     }
