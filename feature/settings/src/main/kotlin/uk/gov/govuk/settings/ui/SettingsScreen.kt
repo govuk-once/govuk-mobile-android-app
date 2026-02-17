@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -64,10 +65,20 @@ internal fun SettingsRoute(
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    var notificationStatus by remember { mutableIntStateOf(R.string.off_button) }
+
+    LifecycleResumeEffect(Unit) {
+        val isEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        notificationStatus = if (isEnabled) R.string.on_button else R.string.off_button
+        onPauseOrDispose { }
+    }
     uiState?.let {
         SettingsScreen(
             uiState = it,
             appVersion = appVersion,
+            notificationStatusResId = notificationStatus,
             actions = SettingsActions(
                 onPageView = { viewModel.onPageView() },
                 onAccountClick = {
@@ -113,24 +124,25 @@ internal fun SettingsRoute(
     }
 }
 
-private class SettingsActions(
-    val onPageView: () -> Unit,
-    val onAccountClick: () -> Unit,
-    val onSignOutClick: () -> Unit,
-    val onNotificationsClick: () -> Unit,
-    val onBiometricsClick: (String) -> Unit,
-    val onAnalyticsConsentChange: (Boolean) -> Unit,
-    val onPrivacyPolicyClick: () -> Unit,
-    val onHelpClick: () -> Unit,
-    val onAccessibilityStatementClick: () -> Unit,
-    val onLicenseClick: () -> Unit,
-    val onTermsAndConditionsClick: () -> Unit,
+internal class SettingsActions(
+    val onPageView: () -> Unit = {},
+    val onAccountClick: () -> Unit = {},
+    val onSignOutClick: () -> Unit = {},
+    val onNotificationsClick: () -> Unit = {},
+    val onBiometricsClick: (String) -> Unit = {},
+    val onAnalyticsConsentChange: (Boolean) -> Unit = {},
+    val onPrivacyPolicyClick: () -> Unit = {},
+    val onHelpClick: () -> Unit = {},
+    val onAccessibilityStatementClick: () -> Unit = {},
+    val onLicenseClick: () -> Unit = {},
+    val onTermsAndConditionsClick: () -> Unit = {}
 )
 
 @Composable
-private fun SettingsScreen(
+internal fun SettingsScreen(
     uiState: SettingsUiState,
     appVersion: String,
+    notificationStatusResId: Int,
     actions: SettingsActions,
     modifier: Modifier = Modifier
 ) {
@@ -160,6 +172,7 @@ private fun SettingsScreen(
 
             NotificationsAndPrivacy(
                 uiState = uiState,
+                notificationStatusResId = notificationStatusResId,
                 actions = actions
             )
 
@@ -246,6 +259,7 @@ private fun ManageLogin(
 @Composable
 private fun NotificationsAndPrivacy(
     uiState: SettingsUiState,
+    notificationStatusResId: Int,
     actions: SettingsActions,
     modifier: Modifier = Modifier
 ) {
@@ -254,7 +268,8 @@ private fun NotificationsAndPrivacy(
     ) {
         if (uiState.isNotificationsEnabled) {
             Notifications(
-                onNotificationsClick = actions.onNotificationsClick
+                onNotificationsClick = actions.onNotificationsClick,
+                statusResId = notificationStatusResId
             )
         }
 
@@ -294,21 +309,9 @@ private fun NotificationsAndPrivacy(
 @Composable
 private fun Notifications(
     onNotificationsClick: () -> Unit,
+    statusResId: Int,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    fun getStatus() = if (NotificationManagerCompat.from(context)
-            .areNotificationsEnabled()
-    ) R.string.on_button else R.string.off_button
-
-    var status by remember { mutableIntStateOf(getStatus()) }
-
-    LifecycleResumeEffect(Unit) {
-        status = getStatus()
-        onPauseOrDispose {
-            // Do nothing
-        }
-    }
 
     InternalLinkListItem(
         title = stringResource(R.string.notifications_title),
@@ -316,7 +319,7 @@ private fun Notifications(
         modifier = modifier,
         isFirst = true,
         isLast = false,
-        style = InternalLinkListItemStyle.Status(stringResource(status))
+        style = InternalLinkListItemStyle.Status(stringResource(statusResId))
     )
 }
 
@@ -411,5 +414,34 @@ private fun TermsAndConditions(
         modifier = modifier,
         isFirst = false,
         isLast = true,
+    )
+}
+
+@Composable
+internal fun SettingsScreenWrapper(
+    state: SettingsUiState,
+    notificationStatusResId: Int = R.string.off_button
+) {
+    GovUkTheme {
+        SettingsScreen(
+            uiState = state,
+            appVersion = "1.0.0",
+            notificationStatusResId = notificationStatusResId,
+            actions = SettingsActions()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SettingsScreenPreview() {
+    SettingsScreenWrapper(
+        state = SettingsUiState(
+            userEmail = "user@gov.uk",
+            isNotificationsEnabled = true,
+            isAuthenticationEnabled = true,
+            isAnalyticsEnabled = true
+        ),
+        notificationStatusResId = R.string.on_button
     )
 }

@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+    alias(libs.plugins.compose.screenshot)
 }
 
 android {
@@ -86,4 +87,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.androidx.ui.tooling)
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-stdlib")) {
+            // force same kotlin version for dependencies to avoid version mismatch
+            useVersion("2.0.21")
+        }
+    }
 }
