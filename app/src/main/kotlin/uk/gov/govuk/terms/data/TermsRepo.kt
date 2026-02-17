@@ -10,7 +10,7 @@ class TermsRepo @Inject constructor(
 ) {
     internal suspend fun getTermsAcceptedDate() = termsDataStore.getTermsAcceptedDate()
 
-    internal suspend fun setTermsAcceptedDate(acceptedDate: Long) {
+    internal suspend fun termsAccepted(acceptedDate: Long = System.currentTimeMillis()) {
         termsDataStore.setTermsAcceptedDate(acceptedDate)
     }
 

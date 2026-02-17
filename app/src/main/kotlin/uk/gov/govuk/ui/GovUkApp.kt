@@ -386,8 +386,17 @@ private fun GovUkNavHost(
             }
         )
         termsGraph(
-            navController = navController,
-            onCompleted = { }
+            onCompleted = {
+                coroutineScope.launch {
+                    appNavigation.onNext(navController)
+                }
+            },
+            launchBrowser = { url ->
+                browserLauncher.launchPartial(
+                    context = context,
+                    url = url
+                ) { showBrowserNotFoundAlert = true }
+            }
         )
         analyticsGraph(
             analyticsConsentCompleted = {
