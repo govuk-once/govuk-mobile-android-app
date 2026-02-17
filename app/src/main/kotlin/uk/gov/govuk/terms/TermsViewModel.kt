@@ -8,11 +8,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import uk.gov.govuk.BuildConfig
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.terms.data.TermsRepo
 import javax.inject.Inject
 
-internal data class TermsUiState(val termsUrl: String)
+internal data class TermsUiState(
+    val termsUrl: String,
+    val privacyPolicyUrl: String
+)
 
 @HiltViewModel
 internal class TermsViewModel @Inject constructor(
@@ -27,7 +31,14 @@ internal class TermsViewModel @Inject constructor(
     val termsAccepted: SharedFlow<Unit> = _termsAccepted
 
     init {
-        _uiState.value = TermsUiState(configRepo.termsAndConditions?.url ?: "")
+        configRepo.termsAndConditions?.let { terms ->
+            _uiState.value = TermsUiState(
+                termsUrl = terms.url,
+                privacyPolicyUrl = BuildConfig.PRIVACY_POLICY_URL
+            )
+        } ?: run {
+            // Todo - display app unavailable, send non fatal to crashlytics
+        }
     }
 
     internal fun onTermsAccepted() {

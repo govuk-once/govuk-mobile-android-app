@@ -40,7 +40,7 @@ internal fun TermsRoute(
             onCompleted()
         },
         onTerms = { uiState?.let { launchBrowser(it.termsUrl) } },
-        onPrivacyPolicy = { }, // Todo - launch browser with privacy policy url
+        onPrivacyPolicy = { uiState?.let { launchBrowser(it.privacyPolicyUrl) } },
         modifier = modifier
     )
 
