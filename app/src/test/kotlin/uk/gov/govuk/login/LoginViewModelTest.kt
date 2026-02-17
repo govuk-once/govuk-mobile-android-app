@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Error
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Loading
@@ -37,6 +38,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
 
+    private val appRepo = mockk<AppRepo>(relaxed = true)
     private val authRepo = mockk<AuthRepo>(relaxed = true)
     private val loginRepo = mockk<LoginRepo>(relaxed = true)
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
@@ -50,7 +52,14 @@ class LoginViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = LoginViewModel(authRepo, loginRepo, configRepo, notificationsRepo, analyticsClient)
+        viewModel = LoginViewModel(
+            appRepo,
+            authRepo,
+            loginRepo,
+            configRepo,
+            notificationsRepo,
+            analyticsClient
+        )
     }
 
     @After
@@ -92,7 +101,7 @@ class LoginViewModelTest {
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -120,7 +129,7 @@ class LoginViewModelTest {
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -147,7 +156,7 @@ class LoginViewModelTest {
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -201,7 +210,7 @@ class LoginViewModelTest {
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
-            assertTrue(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
 
@@ -309,7 +318,7 @@ class LoginViewModelTest {
             viewModel.onAuthResponse(null)
 
             assertTrue(isLoading.last() == true)
-            assertFalse(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 1) {
                 notificationsRepo.login()
@@ -339,7 +348,7 @@ class LoginViewModelTest {
             viewModel.onAuthResponse(null)
 
             assertTrue(isLoading.last() == true)
-            assertFalse(events.first().isBiometricLogin)
+            assertTrue(events.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 1) {
                 notificationsRepo.login()
@@ -385,6 +394,68 @@ class LoginViewModelTest {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
             }
+        }
+    }
+
+    @Test
+    fun `Given a web login, when biometrics are enabled and have not been skipped, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { authRepo.isAuthenticationEnabled() } returns true
+        coEvery { appRepo.hasSkippedBiometrics() } returns false
+        coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            val loginEvent = events.first() as LoginEvent.WebLogin
+            assertTrue(loginEvent.isBiometricsEnabled)
+        }
+    }
+
+    @Test
+    fun `Given a web login, when biometrics are enabled and have been skipped, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { authRepo.isAuthenticationEnabled() } returns true
+        coEvery { appRepo.hasSkippedBiometrics() } returns true
+        coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            val loginEvent = events.first() as LoginEvent.WebLogin
+            assertFalse(loginEvent.isBiometricsEnabled)
+        }
+    }
+
+    @Test
+    fun `Given a web login, when biometrics are not enabled, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { authRepo.isAuthenticationEnabled() } returns false
+        coEvery { notificationsRepo.login() } returns Result.Success(GetUserInfoResponse(notificationId = "12345"))
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            val loginEvent = events.first() as LoginEvent.WebLogin
+            assertFalse(loginEvent.isBiometricsEnabled)
         }
     }
 

@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.R
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.login.data.LoginRepo
@@ -21,10 +22,14 @@ import uk.gov.govuk.data.model.Result.Success
 import java.util.Date
 import javax.inject.Inject
 
-internal data class LoginEvent(val isBiometricLogin: Boolean)
+internal sealed class LoginEvent {
+    internal data object BiometricLogin : LoginEvent()
+    internal data class WebLogin(val isBiometricsEnabled: Boolean): LoginEvent()
+}
 
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
+    private val appRepo: AppRepo,
     private val authRepo: AuthRepo,
     private val loginRepo: LoginRepo,
     private val configRepo: ConfigRepo,
@@ -59,9 +64,7 @@ internal class LoginViewModel @Inject constructor(
                             AuthRepo.RefreshStatus.Success -> {
                                 val result = notificationsRepo.login()
                                 when (result) {
-                                    is Success -> _loginCompleted.emit(
-                                        LoginEvent(isBiometricLogin = true)
-                                    )
+                                    is Success -> _loginCompleted.emit(LoginEvent.BiometricLogin)
                                     else -> _errorEvent.emit(ErrorEvent.UserApiError)
                                 }
                             }
@@ -90,7 +93,10 @@ internal class LoginViewModel @Inject constructor(
                 val result = notificationsRepo.login()
                 when (result) {
                     is Success -> _loginCompleted.emit(
-                        LoginEvent(isBiometricLogin = false)
+                        LoginEvent.WebLogin(
+                            isBiometricsEnabled = authRepo.isAuthenticationEnabled()
+                                    && !appRepo.hasSkippedBiometrics()
+                        )
                     )
                     else -> _errorEvent.emit(ErrorEvent.UserApiError)
                 }

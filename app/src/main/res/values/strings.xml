@@ -39,8 +39,6 @@
     <string name="login_back_and_try_again_button">Go back and try again</string>
     <string name="login_loading_accessibility_text">Signing you in</string>
 
-    <string name="login_success_title">You have successfully signed in</string>
-
     <string name="login_biometrics_title">Unlock the app with biometrics</string>
     <string name="login_biometrics_android_10_description_1">Anyone who can unlock your phone with their biometrics might be able to access your app.</string>
     <string name="login_biometrics_android_11_description_1">Anyone who can unlock your phone with their biometrics or with your phone’s PIN, pattern or password might be able to access your app.</string>

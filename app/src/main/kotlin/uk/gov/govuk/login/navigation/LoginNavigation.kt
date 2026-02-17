@@ -7,15 +7,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.login.ui.AppUnavailableRoute
+import uk.gov.govuk.login.LoginEvent
 import uk.gov.govuk.login.ui.BiometricRoute
 import uk.gov.govuk.login.ui.BiometricSettingsRoute
 import uk.gov.govuk.login.ui.ErrorRoute
 import uk.gov.govuk.login.ui.LoginRoute
-import uk.gov.govuk.login.ui.LoginSuccessRoute
 
 const val LOGIN_GRAPH_ROUTE = "login_graph_route"
 const val LOGIN_ROUTE = "login_route"
-private const val LOGIN_SUCCESS_ROUTE = "login_success_route"
 private const val BIOMETRIC_ROUTE = "biometric_route"
 const val BIOMETRIC_SETTINGS_ROUTE = "biometric_settings_route"
 private const val ERROR_ROUTE = "login_error_route"
@@ -33,11 +32,12 @@ fun NavGraphBuilder.loginGraph(
         composable(route = LOGIN_ROUTE) {
             LoginRoute(
                 onLoginCompleted = { loginEvent ->
-                    if (loginEvent.isBiometricLogin) {
-                        onLoginCompleted()
-                    } else {
+                    if (loginEvent is LoginEvent.WebLogin
+                        && loginEvent.isBiometricsEnabled) {
                         navController.popBackStack()
-                        navController.navigate(LOGIN_SUCCESS_ROUTE)
+                        navController.navigate(BIOMETRIC_ROUTE)
+                    } else {
+                        onLoginCompleted()
                     }
                 },
                 onError = { event ->
@@ -46,19 +46,6 @@ fun NavGraphBuilder.loginGraph(
                             navController.navigate(ERROR_ROUTE)
                         is ErrorEvent.UserApiError ->
                             navController.navigate(USER_API_ERROR_ROUTE)
-                    }
-                },
-                modifier = modifier
-            )
-        }
-        composable(route = LOGIN_SUCCESS_ROUTE) {
-            LoginSuccessRoute(
-                onLoginSuccessCompleted = { isBiometricsEnabled ->
-                    if (isBiometricsEnabled) {
-                        navController.popBackStack()
-                        navController.navigate(BIOMETRIC_ROUTE)
-                    } else {
-                        onLoginCompleted()
                     }
                 },
                 modifier = modifier
