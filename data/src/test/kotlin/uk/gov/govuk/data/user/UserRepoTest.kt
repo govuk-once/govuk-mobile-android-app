@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.user.model.UpdateAnalyticsRequest
+import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.remote.UserApi
 
@@ -47,18 +47,18 @@ class UserRepoTest {
         }
 
     @Test
-    fun `Given update analytics is called, when consented, then update analytics is called on the api`() =
+    fun `Given update terms and conditions is called, when consented, then update terms and conditions is called on the api`() =
         runTest {
-            userRepo.updateAnalytics(true)
+            userRepo.updateTermsAndConditions(true)
 
-            coVerify { userApi.updateAnalytics(UpdateAnalyticsRequest(true)) }
+            coVerify { userApi.updateTermsAndConditions(UpdateTermsAndConditionsRequest(true)) }
         }
 
     @Test
-    fun `Given update analytics is called, when not consented, then update analytics is called on the api`() =
+    fun `Given update terms and conditions is called, when not consented, then update terms and conditions is called on the api`() =
         runTest {
-            userRepo.updateAnalytics(false)
+            userRepo.updateTermsAndConditions(false)
 
-            coVerify { userApi.updateAnalytics(UpdateAnalyticsRequest(false)) }
+            coVerify { userApi.updateTermsAndConditions(UpdateTermsAndConditionsRequest(false)) }
         }
 }
