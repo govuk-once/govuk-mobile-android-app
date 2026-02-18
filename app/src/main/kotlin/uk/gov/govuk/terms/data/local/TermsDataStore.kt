@@ -10,7 +10,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-class TermsDataStore @Inject constructor(
+internal class TermsDataStore @Inject constructor(
     @param:Named("terms_prefs") private val dataStore: DataStore<Preferences>
 ) {
     companion object {

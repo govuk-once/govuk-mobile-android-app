@@ -57,7 +57,7 @@ class TermsRepoTest {
         coEvery { termsDataStore.getTermsAcceptedDate() } returns null
 
         runTest {
-            assertTrue(repo.shouldDisplayTerms())
+            assertTrue(repo.getTermsAcceptanceState())
         }
     }
 
@@ -66,7 +66,7 @@ class TermsRepoTest {
         coEvery { termsDataStore.getTermsAcceptedDate() } returns 123L
 
         runTest {
-            assertFalse(repo.shouldDisplayTerms())
+            assertFalse(repo.getTermsAcceptanceState())
         }
     }
 

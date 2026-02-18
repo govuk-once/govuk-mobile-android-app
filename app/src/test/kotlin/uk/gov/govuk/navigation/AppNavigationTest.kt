@@ -301,7 +301,7 @@ class AppNavigationTest {
 
     @Test
     fun `navigates to terms when terms required`() = runTest {
-        coEvery { termsRepo.shouldDisplayTerms() } returns true
+        coEvery { termsRepo.getTermsAcceptanceState() } returns true
 
         appLaunchNav.onNext(navController)
 
@@ -310,7 +310,7 @@ class AppNavigationTest {
 
     @Test
     fun `falls through to Home when terms not required`() = runTest {
-        coEvery { termsRepo.shouldDisplayTerms() } returns false
+        coEvery { termsRepo.getTermsAcceptanceState() } returns false
         every { analyticsClient.isAnalyticsConsentRequired() } returns false
         every { flagRepo.isTopicsEnabled() } returns false // force skip topics too
         every { flagRepo.isNotificationsEnabled() } returns false

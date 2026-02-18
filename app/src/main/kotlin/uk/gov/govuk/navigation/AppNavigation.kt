@@ -14,6 +14,7 @@ import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE
+import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.terms.navigation.TERMS_GRAPH_ROUTE
 import uk.gov.govuk.topics.TopicsFeature
@@ -50,7 +51,7 @@ internal class AppNavigation @Inject constructor(
 
     suspend fun onNext(navController: NavController) {
         when {
-            termsRepo.shouldDisplayTerms() -> navigate(navController, TERMS_GRAPH_ROUTE)
+            termsRepo.getTermsAcceptanceState() !is TermsAcceptanceState.Accepted -> navigate(navController, TERMS_GRAPH_ROUTE)
             analyticsClient.isAnalyticsConsentRequired() -> navigate(navController, ANALYTICS_GRAPH_ROUTE)
             flagRepo.isTopicsEnabled() &&
                     !appRepo.isTopicSelectionCompleted() &&

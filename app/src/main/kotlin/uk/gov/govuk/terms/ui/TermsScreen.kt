@@ -13,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.R
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
@@ -22,7 +21,10 @@ import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.theme.ThemePreviews
+import uk.gov.govuk.terms.TermsUiState
 import uk.gov.govuk.terms.TermsViewModel
 
 @Composable
@@ -34,15 +36,21 @@ internal fun TermsRoute(
     val viewModel: TermsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    TermsScreen(
-        onAccept = {
-            viewModel.onTermsAccepted()
-            onCompleted()
-        },
-        onTerms = { uiState?.let { launchBrowser(it.termsUrl) } },
-        onPrivacyPolicy = { uiState?.let { launchBrowser(it.privacyPolicyUrl) } },
-        modifier = modifier
-    )
+    uiState?.let {
+        when (it) {
+            is TermsUiState.Error -> AppUnavailableScreen()
+            is TermsUiState.Terms -> TermsScreen(
+                isUpdated = it.isUpdated,
+                onAccept = {
+                    viewModel.onTermsAccepted()
+                    onCompleted()
+                },
+                onTerms = { launchBrowser(it.termsUrl) },
+                onPrivacyPolicy = { launchBrowser(it.privacyPolicyUrl) },
+                modifier = modifier
+            )
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.termsAccepted.collect {
@@ -53,6 +61,7 @@ internal fun TermsRoute(
 
 @Composable
 private fun TermsScreen(
+    isUpdated: Boolean,
     onAccept: () -> Unit,
     onTerms: () -> Unit,
     onPrivacyPolicy: () -> Unit,
@@ -73,7 +82,8 @@ private fun TermsScreen(
             }
 
             LargeTitleBoldLabel(
-                text = stringResource(R.string.terms_new_user_title),
+                text = if (isUpdated) stringResource(R.string.terms_updated_title)
+                    else stringResource(R.string.terms_new_user_title),
                 modifier = Modifier.semantics { heading() },
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
                 textAlign = TextAlign.Center
@@ -104,11 +114,25 @@ private fun TermsScreen(
     )
 }
 
-@Preview(showBackground = true)
+@ThemePreviews
 @Composable
-private fun TermsPreview() {
+private fun TermsNewUserPreview() {
     GovUkTheme {
         TermsScreen(
+            isUpdated = false,
+            onAccept = { },
+            onTerms = { },
+            onPrivacyPolicy = { }
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TermsUpdatedPreview() {
+    GovUkTheme {
+        TermsScreen(
+            isUpdated = true,
             onAccept = { },
             onTerms = { },
             onPrivacyPolicy = { }

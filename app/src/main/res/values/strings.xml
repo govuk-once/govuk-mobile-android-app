@@ -49,6 +49,7 @@
     <string name="login_biometric_prompt_title">Confirm that it’s you</string>
 
     <string name="terms_new_user_title">Review the terms and conditions</string>
+    <string name="terms_updated_title">Review the updated terms and conditions</string>
     <string name="terms_and_conditions">Terms and conditions</string>
     <string name="terms_privacy_notice">Privacy notice</string>
     <string name="terms_accept">Accept and continue</string>

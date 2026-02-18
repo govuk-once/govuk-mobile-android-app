@@ -9,18 +9,23 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.BuildConfig
-import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import javax.inject.Inject
 
-internal data class TermsUiState(
-    val termsUrl: String,
-    val privacyPolicyUrl: String
-)
+internal sealed class TermsUiState {
+
+    data class Terms(
+        val termsUrl: String,
+        val privacyPolicyUrl: String,
+        val isUpdated: Boolean
+    ): TermsUiState()
+
+    data object Error: TermsUiState()
+}
 
 @HiltViewModel
 internal class TermsViewModel @Inject constructor(
-    configRepo: ConfigRepo,
     private val termsRepo: TermsRepo
 ) : ViewModel() {
 
@@ -31,13 +36,31 @@ internal class TermsViewModel @Inject constructor(
     val termsAccepted: SharedFlow<Unit> = _termsAccepted
 
     init {
-        configRepo.termsAndConditions?.let { terms ->
-            _uiState.value = TermsUiState(
-                termsUrl = terms.url,
-                privacyPolicyUrl = BuildConfig.PRIVACY_POLICY_URL
-            )
-        } ?: run {
-            // Todo - display app unavailable, send non fatal to crashlytics
+        viewModelScope.launch {
+            val state = termsRepo.getTermsAcceptanceState()
+
+            if (state is TermsAcceptanceState.Accepted) {
+                // Should never happen
+                _termsAccepted.emit(Unit)
+            } else {
+                _uiState.value = when (state) {
+                    is TermsAcceptanceState.NewUser ->
+                        TermsUiState.Terms(
+                            termsUrl = state.termsUrl,
+                            privacyPolicyUrl = BuildConfig.PRIVACY_POLICY_URL,
+                            isUpdated = false
+                        )
+
+                    is TermsAcceptanceState.Updated ->
+                        TermsUiState.Terms(
+                            termsUrl = state.termsUrl,
+                            privacyPolicyUrl = BuildConfig.PRIVACY_POLICY_URL,
+                            isUpdated = true
+                        )
+
+                    else -> TermsUiState.Error
+                }
+            }
         }
     }
 

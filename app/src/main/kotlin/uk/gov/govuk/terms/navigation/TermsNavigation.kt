@@ -9,7 +9,7 @@ import uk.gov.govuk.terms.ui.TermsRoute
 const val TERMS_GRAPH_ROUTE = "terms_graph_route"
 private const val TERMS_ROUTE = "terms_route"
 
-fun NavGraphBuilder.termsGraph(
+internal fun NavGraphBuilder.termsGraph(
     onCompleted: () -> Unit,
     launchBrowser: (url: String) -> Unit,
     modifier: Modifier = Modifier
