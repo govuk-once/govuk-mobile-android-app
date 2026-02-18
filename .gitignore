@@ -34,3 +34,5 @@ render.experimental.xml
 /.kotlin/
 /fastlane/README.md
 /fastlane/report.xml
+
+/gradle/gradle-daemon-jvm.properties
