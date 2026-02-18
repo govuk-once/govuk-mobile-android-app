@@ -1,33 +1,34 @@
 package uk.gov.govuk.terms
 
+import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
-import uk.gov.govuk.config.data.ConfigRepo
-import uk.gov.govuk.config.data.remote.model.TermsAndConditions
+import org.junit.Test
+import uk.gov.govuk.BuildConfig
+import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
-import java.util.Date
-import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TermsViewModelTest {
 
-    private val configRepo = mockk<ConfigRepo>(relaxed = true)
     private val termsRepo = mockk<TermsRepo>(relaxed = true)
     private val dispatcher = UnconfinedTestDispatcher()
-
 
     @Before
     fun setup() {
@@ -40,20 +41,65 @@ class TermsViewModelTest {
     }
 
     @Test
-    fun `Given terms and conditions are present in the config, when init, then emit ui state`() {
-        every { configRepo.termsAndConditions } returns TermsAndConditions(Date(), "termsUrl")
+    fun `Given terms acceptance state is new user, when init, then emit terms ui state with isUpdated false`() {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.NewUser("https://terms.url")
 
-        val viewModel = TermsViewModel(configRepo, termsRepo)
+        val viewModel = TermsViewModel(termsRepo)
 
         runTest {
-            val uiState = viewModel.uiState.first()
-            assertEquals("termsUrl", uiState?.termsUrl)
+            val uiState = viewModel.uiState.value as TermsUiState.Terms
+            assertEquals("https://terms.url", uiState.termsUrl)
+            assertEquals(BuildConfig.PRIVACY_POLICY_URL, uiState.privacyPolicyUrl)
+            assertFalse(uiState.isUpdated)
         }
     }
 
     @Test
-    fun `When terms are accepted, then update repot and emit event`() {
-        val viewModel = TermsViewModel(configRepo, termsRepo)
+    fun `Given terms acceptance state is updated, when init, then emit terms ui state with isUpdated true`() {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Updated("https://terms.url")
+
+        val viewModel = TermsViewModel(termsRepo)
+
+        runTest {
+            val uiState = viewModel.uiState.value as TermsUiState.Terms
+            assertEquals("https://terms.url", uiState.termsUrl)
+            assertEquals(BuildConfig.PRIVACY_POLICY_URL, uiState.privacyPolicyUrl)
+            assertTrue(uiState.isUpdated)
+        }
+    }
+
+    @Test
+    fun `Given terms acceptance state is error, when init, then emit error ui state`() {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Error
+
+        val viewModel = TermsViewModel(termsRepo)
+
+        runTest {
+            assertIs<TermsUiState.Error>(viewModel.uiState.value)
+        }
+    }
+
+    @Test
+    fun `Given terms acceptance state is accepted, when init, then terms accepted event is emitted`() = runTest {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Accepted
+
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+
+        val viewModel = TermsViewModel(termsRepo)
+
+        val events = mutableListOf<Unit>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.termsAccepted.toList(events)
+        }
+
+        advanceUntilIdle()
+
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun `When terms are accepted, then update repo and emit event`() {
+        val viewModel = TermsViewModel(termsRepo)
 
         runTest {
             val termsAccepted = mutableListOf<Unit>()
@@ -61,12 +107,11 @@ class TermsViewModelTest {
                 viewModel.termsAccepted.toList(termsAccepted)
             }
             viewModel.onTermsAccepted()
-            assertEquals(termsAccepted.size, 1)
+            assertEquals(1, termsAccepted.size)
         }
 
         coVerify {
             termsRepo.termsAccepted(any())
         }
     }
-
 }

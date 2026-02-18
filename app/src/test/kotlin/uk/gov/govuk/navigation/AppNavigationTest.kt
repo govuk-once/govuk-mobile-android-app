@@ -23,6 +23,7 @@ import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE
+import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.terms.navigation.TERMS_GRAPH_ROUTE
 import uk.gov.govuk.topics.TopicsFeature
@@ -300,8 +301,8 @@ class AppNavigationTest {
     // --- Terms ---
 
     @Test
-    fun `navigates to terms when terms required`() = runTest {
-        coEvery { termsRepo.getTermsAcceptanceState() } returns true
+    fun `navigates to terms when terms new user`() = runTest {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.NewUser("")
 
         appLaunchNav.onNext(navController)
 
@@ -309,8 +310,26 @@ class AppNavigationTest {
     }
 
     @Test
-    fun `falls through to Home when terms not required`() = runTest {
-        coEvery { termsRepo.getTermsAcceptanceState() } returns false
+    fun `navigates to terms when terms updated`() = runTest {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Updated("")
+
+        appLaunchNav.onNext(navController)
+
+        verify { navController.navigate(TERMS_GRAPH_ROUTE) }
+    }
+
+    @Test
+    fun `navigates to terms when terms error`() = runTest {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Error
+
+        appLaunchNav.onNext(navController)
+
+        verify { navController.navigate(TERMS_GRAPH_ROUTE) }
+    }
+
+    @Test
+    fun `falls through to Home when terms accepted`() = runTest {
+        coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Accepted
         every { analyticsClient.isAnalyticsConsentRequired() } returns false
         every { flagRepo.isTopicsEnabled() } returns false // force skip topics too
         every { flagRepo.isNotificationsEnabled() } returns false
