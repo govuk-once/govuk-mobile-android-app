@@ -11,7 +11,7 @@ import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
-import uk.gov.govuk.data.user.model.UpdateUser
+import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,7 +38,7 @@ class UserRepoImpl @Inject constructor(
 
     override suspend fun updateNotifications(
         consentStatus: ConsentStatus
-    ): Result<UpdateUser> {
+    ): Result<UpdateUserDataResponse> {
         return safeAuthApiCall(apiCall = {
             userApi.updateNotifications(
                 UpdateNotificationsRequest(consentStatus)
@@ -48,7 +48,7 @@ class UserRepoImpl @Inject constructor(
 
     override suspend fun updateTermsAndConditions(
         consentStatus: ConsentStatus
-    ): Result<UpdateUser> {
+    ): Result<UpdateUserDataResponse> {
         return safeAuthApiCall(apiCall = {
             userApi.updateTermsAndConditions(
                 UpdateTermsAndConditionsRequest(consentStatus)

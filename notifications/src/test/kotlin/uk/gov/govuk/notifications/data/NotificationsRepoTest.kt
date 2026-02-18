@@ -10,7 +10,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.data.user.UserRepoImpl
+import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
@@ -18,7 +18,7 @@ import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 class NotificationsRepoTest {
     private val notificationsDataStore = mockk<NotificationsDataStore>(relaxed = true)
     private val notificationsProvider = mockk<NotificationsProvider>(relaxed = true)
-    private val userRepo = mockk<UserRepoImpl>(relaxed = true)
+    private val userRepo = mockk<UserRepo>(relaxed = true)
 
     private lateinit var notificationsRepo: NotificationsRepo
 

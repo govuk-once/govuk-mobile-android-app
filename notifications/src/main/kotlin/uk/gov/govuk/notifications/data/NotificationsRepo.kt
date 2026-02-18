@@ -5,7 +5,7 @@ import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.model.ConsentStatus
-import uk.gov.govuk.data.user.model.UpdateUser
+import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,11 +53,11 @@ class NotificationsRepo @Inject constructor(
         notificationsProvider.removeConsent()
     }
 
-    suspend fun sendConsent(): Result<UpdateUser> {
+    suspend fun sendConsent(): Result<UpdateUserDataResponse> {
         return userRepo.updateNotifications(ConsentStatus.ACCEPTED)
     }
 
-    suspend fun sendRemoveConsent(): Result<UpdateUser> {
+    suspend fun sendRemoveConsent(): Result<UpdateUserDataResponse> {
         return userRepo.updateNotifications(ConsentStatus.DENIED)
     }
 

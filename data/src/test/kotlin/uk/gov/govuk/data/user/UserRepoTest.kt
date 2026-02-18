@@ -106,9 +106,8 @@ class UserRepoTest {
 
     @Test
     fun `Given no user init, when any user property is requested, then throw exception`() {
-        val repo = UserRepoImpl(userApi, authRepo)
         val exception = assertThrows(IllegalStateException::class.java) {
-            repo.notificationId
+            userRepo.notificationId
         }
 
         Assert.assertEquals("You must init user successfully before use!!!", exception.message)
