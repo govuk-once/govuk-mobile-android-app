@@ -7,11 +7,14 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+    alias(libs.plugins.compose.screenshot)
 }
 
 android {
     namespace = "uk.gov.govuk.settings"
     compileSdk = Version.COMPILE_SDK
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     defaultConfig {
         minSdk = Version.MIN_SDK
@@ -82,4 +85,15 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(libs.androidx.ui.tooling)
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-stdlib")) {
+            // force same kotlin version for dependencies to avoid version mismatch
+            useVersion(libs.versions.kotlin.get())
+        }
+    }
 }

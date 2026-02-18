@@ -17,6 +17,7 @@ androidxHilt = "1.3.0"
 adaptiveAndroid = "1.2.0"
 hilt = "2.57.2"
 ksp = "2.0.21-1.0.28"
+compose-screenshot = "0.0.1-alpha13"
 
 datastorePreferences = "1.2.0"
 googlePlayServices = "4.4.4"
@@ -96,6 +97,7 @@ google-accompanist = { group = "com.google.accompanist", name = "accompanist-per
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation" }
 google-crypto-tink = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tink" }
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "compose-screenshot"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -112,3 +114,4 @@ firebaseAppDistribution = { id = "com.google.firebase.appdistribution", version.
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicenses" }
+compose-screenshot = { id = "com.android.compose.screenshot", version.ref = "compose-screenshot" }
