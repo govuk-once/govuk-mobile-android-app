@@ -23,6 +23,8 @@ import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE
+import uk.gov.govuk.terms.data.TermsRepo
+import uk.gov.govuk.terms.navigation.TERMS_GRAPH_ROUTE
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.topics.navigation.TOPIC_SELECTION_GRAPH_ROUTE
 
@@ -32,6 +34,7 @@ class AppNavigationTest {
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val appRepo = mockk<AppRepo>(relaxed = true)
     private val authRepo = mockk<AuthRepo>(relaxed = true)
+    private val termsRepo = mockk<TermsRepo>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val topicsFeature = mockk<TopicsFeature>(relaxed = true)
     private val deeplinkHandler = mockk<DeeplinkHandler>(relaxed = true)
@@ -48,6 +51,7 @@ class AppNavigationTest {
             analyticsClient,
             appRepo,
             authRepo,
+            termsRepo,
             topicsFeature,
             deeplinkHandler,
             notificationsProvider,
@@ -292,6 +296,31 @@ class AppNavigationTest {
     }
 
     // --- onNext ---
+
+    // --- Terms ---
+
+    @Test
+    fun `navigates to terms when terms required`() = runTest {
+        coEvery { termsRepo.shouldDisplayTerms() } returns true
+
+        appLaunchNav.onNext(navController)
+
+        verify { navController.navigate(TERMS_GRAPH_ROUTE) }
+    }
+
+    @Test
+    fun `falls through to Home when terms not required`() = runTest {
+        coEvery { termsRepo.shouldDisplayTerms() } returns false
+        every { analyticsClient.isAnalyticsConsentRequired() } returns false
+        every { flagRepo.isTopicsEnabled() } returns false // force skip topics too
+        every { flagRepo.isNotificationsEnabled() } returns false
+        every { flagRepo.isChatEnabled() } returns false
+
+        appLaunchNav.onNext(navController)
+
+        verify { navController.navigate(HOME_GRAPH_ROUTE) }
+        verify { deeplinkHandler.handleDeeplink(navController) }
+    }
 
     // --- Analytics ---
 
