@@ -93,7 +93,7 @@ configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-stdlib")) {
             // force same kotlin version for dependencies to avoid version mismatch
-            useVersion("2.0.21")
+            useVersion(libs.versions.kotlin.get())
         }
     }
 }
