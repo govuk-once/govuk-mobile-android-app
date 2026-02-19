@@ -10,8 +10,9 @@ const val TERMS_GRAPH_ROUTE = "terms_graph_route"
 private const val TERMS_ROUTE = "terms_route"
 
 internal fun NavGraphBuilder.termsGraph(
-    onCompleted: () -> Unit,
     launchBrowser: (url: String) -> Unit,
+    onCompleted: () -> Unit,
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -20,8 +21,9 @@ internal fun NavGraphBuilder.termsGraph(
     ) {
         composable(route = TERMS_ROUTE) {
             TermsRoute(
-                onCompleted = onCompleted,
                 launchBrowser = launchBrowser,
+                onCompleted = onCompleted,
+                onSignOut = onSignOut,
                 modifier = modifier
             )
         }
