@@ -48,6 +48,13 @@
 
     <string name="login_biometric_prompt_title">Confirm that it’s you</string>
 
+    <string name="terms_new_user_title">Review the terms and conditions</string>
+    <string name="terms_updated_title">Review the updated terms and conditions</string>
+    <string name="terms_and_conditions">Terms and conditions</string>
+    <string name="terms_privacy_notice">Privacy notice</string>
+    <string name="terms_accept">Accept and continue</string>
+    <string name="terms_do_not_accept">Do not accept</string>
+
     <string name="biometric_settings_title">Biometrics</string>
     <string name="biometric_settings_toggle">Unlock app with biometrics</string>
     <string name="biometric_settings_description_1">If you have biometrics turned on, you’ll be able to use your fingerprint, face or iris to unlock the app.</string>

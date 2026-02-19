@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.compose)
 }
 
+val privacyPolicyUrl: String by project
+
 android {
     namespace = "uk.gov.govuk.design"
     compileSdk = Version.COMPILE_SDK
@@ -15,7 +17,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://www.gov.uk/government/publications/govuk-app-privacy-notice-how-we-use-your-data\"")
+        buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
     }
 
     compileOptions {

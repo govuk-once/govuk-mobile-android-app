@@ -1,4 +1,4 @@
-package uk.gov.govuk.di
+package uk.gov.govuk.terms.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -17,17 +17,17 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal class LoginModule {
+internal class TermsModule {
 
     @Singleton
     @Provides
-    @Named("login_prefs")
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+    @Named("terms_prefs")
+    fun provideTermsDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.preferencesDataStoreFile("login_prefs") }
+            produceFile = { context.preferencesDataStoreFile("terms_prefs") }
         )
     }
 }

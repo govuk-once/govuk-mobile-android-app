@@ -3,12 +3,13 @@ package uk.gov.govuk.config.data
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import uk.gov.govuk.config.data.remote.model.ChatBanner
-import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
-import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
+import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
+import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
 import javax.inject.Inject
@@ -96,6 +97,9 @@ class ConfigRepoImpl @Inject constructor(
 
     override val chatBanner: ChatBanner?
         get() = safeConfig.chatBanner
+
+    override val termsAndConditions: TermsAndConditions?
+        get() = safeConfig.termsAndConditions
 
     override suspend fun clearRemoteConfigValues() {
         firebaseDataSource.clearRemoteValues()
