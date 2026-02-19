@@ -11,5 +11,4 @@ interface UserRepo {
 
     suspend fun initUser(): Result<Unit>
     suspend fun updateNotifications(consentStatus: ConsentStatus): Result<UpdateUserDataResponse>
-    suspend fun updateTermsAndConditions(consentStatus: ConsentStatus): Result<UpdateUserDataResponse>
 }

@@ -15,7 +15,6 @@ import uk.gov.govuk.data.user.model.Consent
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.data.user.model.Preferences
-import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.remote.UserApi
 
@@ -74,34 +73,6 @@ class UserRepoTest {
             userRepo.updateNotifications(ConsentStatus.DENIED)
 
             coVerify { userApi.updateNotifications(UpdateNotificationsRequest(ConsentStatus.DENIED)) }
-        }
-
-    @Test
-    fun `Given update terms and conditions is called, when consented, then update terms and conditions is called on the api`() =
-        runTest {
-            userRepo.updateTermsAndConditions(ConsentStatus.ACCEPTED)
-
-            coVerify {
-                userApi.updateTermsAndConditions(
-                    UpdateTermsAndConditionsRequest(
-                        ConsentStatus.ACCEPTED
-                    )
-                )
-            }
-        }
-
-    @Test
-    fun `Given update terms and conditions is called, when not consented, then update terms and conditions is called on the api`() =
-        runTest {
-            userRepo.updateTermsAndConditions(ConsentStatus.DENIED)
-
-            coVerify {
-                userApi.updateTermsAndConditions(
-                    UpdateTermsAndConditionsRequest(
-                        ConsentStatus.DENIED
-                    )
-                )
-            }
         }
 
     @Test

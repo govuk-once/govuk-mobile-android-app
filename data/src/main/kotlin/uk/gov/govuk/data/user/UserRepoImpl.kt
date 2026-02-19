@@ -9,7 +9,6 @@ import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.data.user.model.Preferences
-import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
@@ -24,6 +23,12 @@ class UserRepoImpl @Inject constructor(
     private var _user: User? = null
     private val safeUser: User
         get() = checkNotNull(_user) { "You must init user successfully before use!!!" }
+
+    override val notificationId: String
+        get() = safeUser.notificationId
+
+    override val preferences: Preferences
+        get() = safeUser.preferences
 
     override suspend fun initUser(): Result<Unit> {
         val result = safeApiCall(apiCall = { userApi.getUserInfo() })
@@ -45,20 +50,4 @@ class UserRepoImpl @Inject constructor(
             )
         }, authRepo = authRepo)
     }
-
-    override suspend fun updateTermsAndConditions(
-        consentStatus: ConsentStatus
-    ): Result<UpdateUserDataResponse> {
-        return safeAuthApiCall(apiCall = {
-            userApi.updateTermsAndConditions(
-                UpdateTermsAndConditionsRequest(consentStatus)
-            )
-        }, authRepo = authRepo)
-    }
-
-    override val notificationId: String
-        get() = safeUser.notificationId
-
-    override val preferences: Preferences
-        get() = safeUser.preferences
 }
