@@ -93,14 +93,16 @@ private fun TermsScreen(
 
             SecondaryButton(
                 stringResource(R.string.terms_and_conditions),
-                onClick = onTerms
+                onClick = onTerms,
+                externalLink = true
             )
 
             SmallVerticalSpacer()
 
             SecondaryButton(
                 stringResource(R.string.terms_privacy_notice),
-                onClick = onPrivacyPolicy
+                onClick = onPrivacyPolicy,
+                externalLink = true
             )
         },
         footerContent = {
