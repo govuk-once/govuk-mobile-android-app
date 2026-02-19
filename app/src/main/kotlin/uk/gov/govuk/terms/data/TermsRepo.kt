@@ -28,7 +28,7 @@ internal class TermsRepo @Inject constructor(
 
         return try {
             val termsUpdatedAt = Instant.parse(terms.lastUpdated)
-            if (termsUpdatedAt.toEpochMilli() > termsAcceptedAt) {
+            if (termsUpdatedAt.isAfter(Instant.ofEpochMilli(termsAcceptedAt))) {
                 TermsAcceptanceState.Updated(terms.url)
             } else {
                 TermsAcceptanceState.Accepted
