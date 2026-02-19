@@ -18,7 +18,7 @@ internal class TermsRepo @Inject constructor(
     private val termsDataStore: TermsDataStore,
     private val configRepo: ConfigRepo
 ) {
-    internal suspend fun termsAccepted(acceptedDate: Long = System.currentTimeMillis()) {
+    internal suspend fun termsAccepted(acceptedDate: Long = Instant.now().toEpochMilli()) {
         termsDataStore.setTermsAcceptedDate(acceptedDate)
     }
 
