@@ -70,7 +70,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.biometric)
-    implementation(libs.androidx.security.crypto)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.appcheck.play)

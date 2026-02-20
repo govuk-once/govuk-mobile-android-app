@@ -300,7 +300,8 @@ private fun VerticalConnectedButtonGroup(
                 onActiveStateChange(FIRST)
             },
             active = activeButton == FIRST,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         )
         SmallVerticalSpacer()
         ConnectedButton(
@@ -309,7 +310,8 @@ private fun VerticalConnectedButtonGroup(
                 onActiveStateChange(SECOND)
             },
             active = activeButton == SECOND,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         )
     }
 }

@@ -15,7 +15,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isAppAvailable,
-            remoteFlag = configRepo.config.available
+            remoteFlag = configRepo.isAvailable
         )
     }
 
@@ -25,7 +25,7 @@ class FlagRepo @Inject constructor(
             debugFlag = debugFlags.minimumVersion?.let {
                 appVersion.isVersionLessThan(it)
             },
-            remoteFlag = appVersion.isVersionLessThan(configRepo.config.minimumVersion)
+            remoteFlag = appVersion.isVersionLessThan(configRepo.minimumVersion)
         )
     }
 
@@ -35,7 +35,7 @@ class FlagRepo @Inject constructor(
             debugFlag = debugFlags.recommendedVersion?.let {
                 appVersion.isVersionLessThan(it)
             },
-            remoteFlag = appVersion.isVersionLessThan(configRepo.config.recommendedVersion)
+            remoteFlag = appVersion.isVersionLessThan(configRepo.recommendedVersion)
         )
     }
 
@@ -43,7 +43,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isSearchEnabled,
-            remoteFlag = configRepo.config.releaseFlags.search
+            remoteFlag = configRepo.isSearchEnabled
         )
     }
 
@@ -51,7 +51,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isRecentActivityEnabled,
-            remoteFlag = configRepo.config.releaseFlags.recentActivity
+            remoteFlag = configRepo.isRecentActivityEnabled
         )
     }
 
@@ -59,7 +59,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isTopicsEnabled,
-            remoteFlag = configRepo.config.releaseFlags.topics
+            remoteFlag = configRepo.isTopicsEnabled
         )
     }
 
@@ -67,7 +67,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isNotificationsEnabled,
-            remoteFlag = configRepo.config.releaseFlags.notifications
+            remoteFlag = configRepo.isNotificationsEnabled
         )
     }
 
@@ -75,7 +75,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isLocalServicesEnabled,
-            remoteFlag = configRepo.config.releaseFlags.localServices
+            remoteFlag = configRepo.isLocalServicesEnabled
         )
     }
 
@@ -83,15 +83,15 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isExternalBrowserEnabled,
-            remoteFlag = configRepo.config.releaseFlags.externalBrowser
+            remoteFlag = configRepo.isExternalBrowserEnabled
         )
     }
 
     fun isChatEnabled(): Boolean {
         return isEnabled(
             debugEnabled = debugEnabled,
-            debugFlag = false, // Dev only flag, only set to true when actively working on chat
-            remoteFlag = false // Dev only flag, always off for production builds!!!
+            debugFlag = debugFlags.isChatEnabled,
+            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
         )
     }
 }

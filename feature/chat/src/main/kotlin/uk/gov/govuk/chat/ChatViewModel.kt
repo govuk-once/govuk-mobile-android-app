@@ -57,7 +57,7 @@ internal class ChatViewModel @Inject constructor(
     private val _authError = MutableSharedFlow<Unit>()
     val authError: SharedFlow<Unit> = _authError
 
-    val chatUrls = configRepo.config.chatUrls
+    val chatUrls = configRepo.chatUrls
 
     init {
         viewModelScope.launch {

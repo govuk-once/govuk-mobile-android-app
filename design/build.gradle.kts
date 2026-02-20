@@ -35,16 +35,6 @@ android {
     }
 }
 
-// TODO - remove on completion of design refresh!!!
-sonar {
-    properties {
-        property(
-            "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/ListLegacy.*" + ",**/CardLegacy.*"
-        )
-    }
-}
-
 dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

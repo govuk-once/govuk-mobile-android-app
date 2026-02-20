@@ -19,6 +19,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
@@ -42,6 +43,7 @@ class SettingsViewModelTest {
     private val authRepo = mockk<AuthRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
+    private val configRepo = mockk<ConfigRepo>(relaxed = true)
 
     private lateinit var viewModel: SettingsViewModel
 
@@ -54,7 +56,7 @@ class SettingsViewModelTest {
         coEvery { analyticsClient.isAnalyticsEnabled() } returns true
         coEvery { flagRepo.isNotificationsEnabled() } returns true
 
-        viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient)
+        viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
     }
 
     @After
@@ -74,7 +76,7 @@ class SettingsViewModelTest {
     fun `Given analytics are disabled, When init, then return analytics disabled`() {
         coEvery { analyticsClient.isAnalyticsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -94,7 +96,7 @@ class SettingsViewModelTest {
     fun `Given notifications are disabled, When init, then return notifications disabled`() {
         coEvery { flagRepo.isNotificationsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -114,7 +116,7 @@ class SettingsViewModelTest {
     fun `Given authentication is disabled, When init, then return authentication disabled`() {
         every { authRepo.isAuthenticationEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -158,7 +160,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `Given analytics have been disabled, then update and emit ui state`() {
+    fun `Given analytics have been disabled, then update, clear remote config and emit ui state`() {
         viewModel.onAnalyticsConsentChanged(false)
 
         runTest {
@@ -167,6 +169,7 @@ class SettingsViewModelTest {
 
             coVerify {
                 analyticsClient.disable()
+                configRepo.clearRemoteConfigValues()
             }
         }
     }

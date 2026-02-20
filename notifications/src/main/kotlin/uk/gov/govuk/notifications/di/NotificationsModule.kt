@@ -12,6 +12,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import uk.gov.govuk.notifications.OneSignalClient
+import uk.gov.govuk.notifications.NotificationsProvider
+import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -31,4 +34,11 @@ class NotificationsModule {
         )
     }
 
+    @Singleton
+    @Provides
+    fun provideNotificationsProvider(
+        @ApplicationContext context: Context,
+        deepLinkLauncher: DeepLinkLauncher
+    ): NotificationsProvider =
+        OneSignalClient(context, deepLinkLauncher)
 }

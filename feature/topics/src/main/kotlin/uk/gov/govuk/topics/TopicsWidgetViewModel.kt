@@ -28,12 +28,6 @@ internal class TopicsWidgetViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient
 ): ViewModel() {
 
-    companion object {
-        private const val LIST_ID = "Homepage"
-        private const val LIST_NAME = "HomeScreen"
-        private const val ITEM_CATEGORY = "Topics"
-    }
-
     private val _uiState: MutableStateFlow<TopicsWidgetUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
 

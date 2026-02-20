@@ -29,14 +29,11 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
@@ -52,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.config.data.remote.model.ChatUrls
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import kotlin.math.abs
 
@@ -65,41 +63,27 @@ internal fun ChatInput(
     onQuestionUpdated: (String) -> Unit,
     onSubmit: (String) -> Unit,
     chatUrls: ChatUrls,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isTalkBackActive: Boolean
 ) {
-    val focusRequester = remember { FocusRequester() }
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .semantics { isTraversalGroup = true }
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = GovUkTheme.spacing.medium)
-                .height(32.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            if (isFocused) {
-                CharacterCountMessage(
-                    charactersRemaining = uiState.charactersRemaining,
-                    displayCharacterWarning = uiState.displayCharacterWarning,
-                    displayCharacterError = uiState.displayCharacterError
-                )
-            }
+        if (isFocused) {
+            CharacterCountMessage(
+                charactersRemaining = uiState.charactersRemaining,
+                displayCharacterWarning = uiState.displayCharacterWarning,
+                displayCharacterError = uiState.displayCharacterError
+            )
         }
 
         Row(
-            modifier = Modifier
-                .padding(
-                    start = GovUkTheme.spacing.medium,
-                    end = GovUkTheme.spacing.medium,
-                    bottom = GovUkTheme.spacing.medium
-                ),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Box(
                 modifier = Modifier
@@ -116,6 +100,8 @@ internal fun ChatInput(
                     .clip(RoundedCornerShape(24.dp))
             ) {
                 TextField(
+                    value = if (isFocused) uiState.question else "",
+                    onValueChange = onQuestionUpdated,
                     textStyle = TextStyle(
                         color = GovUkTheme.colourScheme.textAndIcons.primary,
                         fontSize = GovUkTheme.typography.bodyRegular.fontSize,
@@ -125,22 +111,18 @@ internal fun ChatInput(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(focusRequester)
                         .focusable(true)
                         .onFocusChanged {
                             isFocused = it.isFocused
                         }
                         .height(IntrinsicSize.Min)
                         .semantics { this.traversalIndex = 0f },
-                    value = if (isFocused) uiState.question else "",
                     shape = RoundedCornerShape(24.dp),
                     singleLine = false,
                     minLines = 1,
-                    onValueChange = onQuestionUpdated,
                     placeholder = {
                         PlaceholderText(question = uiState.question)
                     },
-                    isError = uiState.isPiiError,
                     colors = inputTextFieldDefaults(),
                     trailingIcon = {
                         AnimateIcon(
@@ -173,7 +155,8 @@ internal fun ChatInput(
                             onFunctionActionItemClicked(text, section, action)
                         },
                         chatUrls = chatUrls,
-                        modifier = Modifier.semantics { this.traversalIndex = 1f }
+                        modifier = Modifier.semantics { this.traversalIndex = 1f },
+                        isTalkBackActive = isTalkBackActive
                     )
                 }
             )
@@ -184,7 +167,7 @@ internal fun ChatInput(
 private fun focusedWithInput(
     isFocused: Boolean,
     uiState: ChatUiState.Default
-) : Boolean {
+): Boolean {
     return isFocused && uiState.question.isNotEmpty()
 }
 
@@ -269,36 +252,36 @@ private fun CharacterCountMessage(
     modifier: Modifier = Modifier
 ) {
     val charactersRemaining = abs(charactersRemaining)
-    var color = GovUkTheme.colourScheme.textAndIcons.primary
-    var text = ""
+    val paddingModifier = modifier
+        .padding(horizontal = GovUkTheme.spacing.medium)
+        .padding(bottom = 12.dp)
 
     when {
         displayCharacterWarning -> {
-            text = pluralStringResource(
+            val text = pluralStringResource(
                 id = R.plurals.characterCountUnderOrAtLimit,
                 count = charactersRemaining,
                 charactersRemaining
             )
+            BodyRegularLabel(
+                text = text,
+                modifier = paddingModifier,
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
         }
         displayCharacterError -> {
-            text = pluralStringResource(
+            val text = pluralStringResource(
                 id = R.plurals.characterCountOverLimit,
                 count = charactersRemaining,
                 charactersRemaining
             )
-            color = GovUkTheme.colourScheme.textAndIcons.textFieldError
+            BodyRegularLabel(
+                text = text,
+                modifier = paddingModifier,
+                color = GovUkTheme.colourScheme.textAndIcons.textFieldError
+            )
         }
     }
-
-    Text(
-        text = text,
-        color = color,
-        fontSize = GovUkTheme.typography.bodyRegular.fontSize,
-        fontWeight = GovUkTheme.typography.bodyRegular.fontWeight,
-        fontFamily = GovUkTheme.typography.bodyRegular.fontFamily,
-        lineHeight = GovUkTheme.typography.bodyRegular.lineHeight,
-        modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium)
-    )
 }
 
 @Composable

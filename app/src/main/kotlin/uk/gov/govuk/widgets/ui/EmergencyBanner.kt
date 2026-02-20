@@ -16,17 +16,24 @@ fun EmergencyBanner(
     modifier: Modifier = Modifier
 ) {
     val analyticsText = emergencyBanner.link?.title ?: emergencyBanner.id
+    val linkUrl = emergencyBanner.link?.url
+
     HomeBannerCard(
         modifier = modifier,
         title = emergencyBanner.title,
         description = emergencyBanner.body,
         linkTitle = emergencyBanner.link?.title,
-        linkUrl = emergencyBanner.link?.url,
         isDismissible = emergencyBanner.allowsDismissal,
         dismissAltText = emergencyBanner.dismissAltText,
         type = (emergencyBanner.type ?: EmergencyBannerType.INFORMATION).toEmergencyBannerUiType(),
-        onClick = { onClick(analyticsText, emergencyBanner.link?.url) },
-        launchBrowser = launchBrowser,
+        onClick = if (linkUrl != null) {
+            {
+                onClick(analyticsText, linkUrl)
+                launchBrowser(linkUrl)
+            }
+        } else {
+            null
+        },
         onSuppressClick = { onSuppressClick(emergencyBanner.id, analyticsText) }
     )
 }

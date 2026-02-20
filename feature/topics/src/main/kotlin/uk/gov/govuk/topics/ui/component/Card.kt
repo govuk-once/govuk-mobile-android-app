@@ -21,11 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
@@ -51,24 +49,26 @@ fun TopicSelectionCard(
 
     val selected = stringResource(R.string.selected_alt_text)
     val notSelected = stringResource(R.string.not_selected_alt_text)
-    val select = stringResource(R.string.select_alt_text)
-    val deselect = stringResource(R.string.deselect_alt_text)
+
+    val clickLabel = if (isSelected) {
+        stringResource(R.string.deselect_alt_text)
+    } else {
+        stringResource(R.string.select_alt_text)
+    }
 
     val topicAltText = "$title, ${if (isSelected) selected else notSelected}"
 
     Card(
         modifier = modifier
-            .clearAndSetSemantics {
+            .semantics(mergeDescendants = true) {
                 contentDescription = topicAltText
-                liveRegion = LiveRegionMode.Polite
-                onClick(label = if (isSelected) deselect else select, action = null)
             }
             .clickable(
                 interactionSource = interactionSource,
-                indication = null
-            ) {
-                onClick()
-            },
+                indication = null,
+                onClickLabel = clickLabel,
+                onClick = onClick
+            ),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Row(
@@ -114,9 +114,11 @@ fun TopicSelectionCard(
             } else {
                 GovUkTheme.colourScheme.textAndIcons.listUnselected
             }
+
             BodyBoldLabel(
                 text = title,
-                color = textColour
+                color = textColour,
+                modifier = Modifier.clearAndSetSemantics { } // announced in parent
             )
         }
     }

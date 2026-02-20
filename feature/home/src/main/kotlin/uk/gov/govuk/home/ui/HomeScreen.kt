@@ -102,15 +102,14 @@ private fun HomeScreen(
                 .padding(horizontal = GovUkTheme.spacing.medium),
             state = rememberLazyListState()
         ) {
-            item{
-                LargeVerticalSpacer()
-            }
             items(widgets) { widget ->
+                LargeVerticalSpacer()
                 widget(Modifier
                     .fillMaxWidth()
                     .animateItem())
             }
             item {
+                LargeVerticalSpacer()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
@@ -128,7 +127,7 @@ private fun HomeScreen(
                         {
                             Icon(
                                 painter = painterResource(id = uk.gov.govuk.design.R.drawable.crown),
-                                contentDescription = stringResource(id = uk.gov.govuk.design.R.string.crown_alt_text),
+                                contentDescription = null,
                                 tint = GovUkTheme.colourScheme.textAndIcons.logoCrown,
                                 modifier = Modifier
                                     .height(iconHeight)

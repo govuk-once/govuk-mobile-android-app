@@ -342,7 +342,7 @@ class TopicsLocalDataSourceTest {
             val topics = realm.query<LocalTopicItem>().find().toList()
 
             for (topic in topics) {
-                assertTrue(topic.isSelected)
+                assertFalse(topic.isSelected)
             }
 
             coVerify { dataStore.clear() }

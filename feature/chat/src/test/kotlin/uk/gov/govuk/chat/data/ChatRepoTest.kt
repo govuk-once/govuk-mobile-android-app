@@ -101,7 +101,7 @@ class ChatRepoTest {
     fun `Get answer retries and returns answer when api returns an answer`() = runTest {
         coEvery { chatApi.getAnswer(any(), any()) } returns answerResponse
         every { answerResponse.isSuccessful } returns true
-        every { answerResponse.code() } returns 202 andThen 200
+        every { answerResponse.code() } returns 202 andThen 202 andThen 200
         every { answerResponse.body() } returns answer
 
         val expected = Success(answer)
@@ -113,7 +113,7 @@ class ChatRepoTest {
     fun `Get answer retries and returns error when api returns an error`() = runTest {
         coEvery { chatApi.getAnswer(any(), any()) } returns answerResponse
         every { answerResponse.isSuccessful } returns true andThen false
-        every { answerResponse.code() } returns 202 andThen 404
+        every { answerResponse.code() } returns 202 andThen 202 andThen 404
 
         val result = chatRepo.getAnswer("123", "abc", wait = 1.0)
 

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.2"
+agp = "8.13.2"
 biometric = "1.1.0"
 composeMarkdown = "0.5.7"
 kotlin = "2.0.21"
@@ -7,7 +7,6 @@ junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 mockwebserver = "4.12.0"
-securityCrypto = "1.1.0"
 testRules = "1.7.0"
 activityCompose = "1.12.0"
 lottieCompose = "6.7.1"
@@ -24,7 +23,7 @@ googlePlayServices = "4.4.4"
 crashlytics = "3.0.6"
 
 oneSignal = "5.4.1"
-ossLicenses = "0.10.6"
+ossLicenses = "0.10.10"
 retrofit = "3.0.0"
 
 firebaseBom = "34.6.0"
@@ -68,12 +67,12 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", name = "adaptive-android", version.ref = "adaptiveAndroid" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
-androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-appcheck-play = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
+firebase-remote-config = { group = "com.google.firebase", name = "firebase-config" }
 
 mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutineTest" }
@@ -112,3 +111,4 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 firebaseAppDistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
+oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicenses" }

@@ -25,10 +25,14 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.AppViewModel.TimeoutEvent
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.remote.model.ChatBanner
+import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
@@ -384,6 +388,71 @@ class AppViewModelTest {
     }
 
     @Test
+    fun `Given the config has no chat banner, When init, then home widgets do not contain a chat banner`() {
+        every { configRepo.chatBanner } returns null
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            assertFalse(homeWidgets.any { it is HomeWidget.Chat })
+        }
+    }
+
+    @Test
+    fun `Given the chat feature is disabled, When init, then home widgets do not contain a chat banner`() {
+        every { configRepo.chatBanner } returns ChatBanner("", "", "", Link("", ""))
+        coEvery { flagRepo.isChatEnabled() } returns false
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            assertFalse(homeWidgets.any { it is HomeWidget.Chat })
+        }
+    }
+
+    @Test
+    fun `Given the chat banner has been suppressed, When init, then home widgets do not contain a chat banner`() {
+        every { configRepo.chatBanner } returns ChatBanner("chat_banner_id", "", "", Link("", ""))
+        coEvery { flagRepo.isChatEnabled() } returns true
+        every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("chat_banner_id"))
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            assertFalse(homeWidgets.any { it is HomeWidget.Chat })
+        }
+    }
+
+    @Test
+    fun `Given a chat banner, When init, then home widgets contains a chat banner`() {
+        val chatBanner = ChatBanner(
+            "id",
+            "title",
+            "body",
+            Link(
+                "title",
+                "url"
+            )
+        )
+        every { configRepo.chatBanner } returns chatBanner
+        coEvery { flagRepo.isChatEnabled() } returns true
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            assertTrue(homeWidgets.any { it == HomeWidget.Chat(chatBanner) })
+        }
+    }
+
+    @Test
     fun `Given the local feature is disabled, When init, then emit local disabled state`() {
         coEvery { flagRepo.isLocalServicesEnabled() } returns false
 
@@ -413,7 +482,7 @@ class AppViewModelTest {
 
     @Test
     fun `Given the local feature is enabled and a local authority is selected, When init, then emit local enabled state`() {
-        every { configRepo.config.userFeedbackBanner } returns null
+        every { configRepo.userFeedbackBanner } returns null
         coEvery { flagRepo.isLocalServicesEnabled() } returns true
         coEvery { flagRepo.isTopicsEnabled() } returns true
         every { localFeature.hasLocalAuthority() } returns flowOf(true)
@@ -432,7 +501,7 @@ class AppViewModelTest {
     fun `Given the config has a user feedback banner, When init, then user feedback is the last home widget`() {
         val userFeedbackBanner = UserFeedbackBanner("body", Link("title", "url"))
         coEvery { flagRepo.isLocalServicesEnabled() } returns true
-        every { configRepo.config.userFeedbackBanner } returns userFeedbackBanner
+        every { configRepo.userFeedbackBanner } returns userFeedbackBanner
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
             searchFeature, visited, chatFeature, analyticsClient, appNavigation)
@@ -493,10 +562,10 @@ class AppViewModelTest {
 
     @Test
     fun `Given a user has interacted with the app, When on user interaction, then call timeout manager`() {
-        viewModel.onUserInteraction(navController, 0L)
+        viewModel.onUserInteraction( 0L)
 
         verify {
-            timeoutManager.onUserInteraction(0L, onTimeout = any())
+            timeoutManager.onUserInteraction(0L, onWarning = any(), onTimeout = any())
         }
     }
 
@@ -505,10 +574,10 @@ class AppViewModelTest {
         clearAllMocks()
 
         val slot = slot<(() -> Unit)>()
-        every { timeoutManager.onUserInteraction(any(), onTimeout = capture(slot)) } returns Unit
+        every { timeoutManager.onUserInteraction(any(), onWarning = any(), onTimeout = capture(slot)) } returns Unit
         every { authRepo.isUserSessionActive() } returns false
 
-        viewModel.onUserInteraction(navController, 0L)
+        viewModel.onUserInteraction(0L)
         slot.captured.invoke()
 
         coVerify(exactly = 0) {
@@ -518,18 +587,44 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given a user session is active, When the app times out, end user session and navigate`() {
+    fun `Given a user session is active, When the app is about to time out, emit warning`() = runTest {
         clearAllMocks()
 
         val slot = slot<(() -> Unit)>()
-        every { timeoutManager.onUserInteraction(any(), onTimeout = capture(slot)) } returns Unit
+        every { timeoutManager.onUserInteraction(any(), onWarning = capture(slot), onTimeout = any()) } returns Unit
         every { authRepo.isUserSessionActive() } returns true
 
-        viewModel.onUserInteraction(navController, 0L)
+        viewModel.onUserInteraction(0L)
         slot.captured.invoke()
+
+        val event = viewModel.timeOutEvent.first()
+        assertEquals(TimeoutEvent.WARNING, event)
+
+        verify(exactly = 0) {
+            authRepo.endUserSession()
+            appNavigation.onSignOut(any())
+        }
+    }
+
+    @Test
+    fun `Given a user session is active, When the app times out, end user session and emit timeout`() = runTest {
+        clearAllMocks()
+
+        val slot = slot<(() -> Unit)>()
+        every { timeoutManager.onUserInteraction(any(), onWarning = any(), onTimeout = capture(slot)) } returns Unit
+        every { authRepo.isUserSessionActive() } returns true
+
+        viewModel.onUserInteraction(0L)
+        slot.captured.invoke()
+
+        val event = viewModel.timeOutEvent.first()
+        assertEquals(TimeoutEvent.TIMEOUT, event)
 
         coVerify {
             authRepo.endUserSession()
+        }
+
+        verify(exactly = 0) {
             appNavigation.onSignOut(any())
         }
     }
@@ -558,5 +653,76 @@ class AppViewModelTest {
 
         val uiState = viewModel.uiState.first() as AppUiState.Default
         assertFalse(uiState.isChatEnabled)
+    }
+
+    @Test
+    fun `Given analytics is enabled, when analytics consent completed, then refresh remote config`() {
+        every { analyticsClient.isAnalyticsEnabled() } returns true
+
+        runTest {
+            viewModel.onAnalyticsConsentCompleted()
+            coVerify { configRepo.refreshRemoteConfig() }
+        }
+    }
+
+    @Test
+    fun `Given analytics is disabled, when analytics consent completed, then do not activate remote config`() {
+        every { analyticsClient.isAnalyticsEnabled() } returns false
+
+        runTest {
+            viewModel.onAnalyticsConsentCompleted()
+            coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
+            coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
+        }
+    }
+
+    @Test
+    fun `Given a returning user with analytics enabled, when initialising with config, then activate remote config`() {
+        every { analyticsClient.isAnalyticsEnabled() } returns true
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+
+        runTest {
+            viewModel.uiState.first()
+            coVerify { configRepo.activateRemoteConfig() }
+        }
+    }
+
+    @Test
+    fun `Given multiple emergency banners where one is suppressed, When init, then show only unsuppressed banners`() {
+        val banner1 = EmergencyBanner(
+            id = "id1",
+            title = "Title 1",
+            body = "Body 1",
+            link = Link("Link Title", "http://url1"),
+            type = EmergencyBannerType.INFORMATION,
+            allowsDismissal = true,
+            dismissAltText = "Dismiss"
+        )
+
+        val banner2 = EmergencyBanner(
+            id = "id2",
+            title = "Title 2",
+            body = "Body 2",
+            link = Link("Link Title", "http://url2"),
+            type = EmergencyBannerType.NATIONAL_EMERGENCY,
+            allowsDismissal = false
+        )
+
+        coEvery { flagRepo.isLocalServicesEnabled() } returns true
+        every { configRepo.emergencyBanners } returns listOf(banner1, banner2)
+        every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("id1"))
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.first { it != null }!!
+            val bannerWidget1 = HomeWidget.Banner(banner1)
+            val bannerWidget2 = HomeWidget.Banner(banner2)
+            assertFalse("Suppressed banner (id1) should NOT be shown", homeWidgets.contains(bannerWidget1))
+            assertTrue("Unsuppressed banner (id2) SHOULD be shown", homeWidgets.contains(bannerWidget2))
+        }
     }
 }

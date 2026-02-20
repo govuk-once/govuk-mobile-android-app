@@ -66,6 +66,9 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.scalars)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.remote.config)
+
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)

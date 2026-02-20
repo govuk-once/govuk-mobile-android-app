@@ -205,7 +205,7 @@ class FlagRepoTest {
     @Test
     fun `Given the remote minimum version is 0_0_2, When the app version is 0_0_1, then return true`() {
         every { debugFlags.minimumVersion } returns null
-        every { configRepo.config.minimumVersion } returns "0.0.2"
+        every { configRepo.minimumVersion } returns "0.0.2"
 
         assertTrue(flagRepo.isForcedUpdate("0.0.1"))
     }
@@ -213,7 +213,7 @@ class FlagRepoTest {
     @Test
     fun `Given the remote minimum version is 0_0_2, When the app version is 0_0_2, then return false`() {
         every { debugFlags.minimumVersion } returns null
-        every { configRepo.config.minimumVersion } returns "0.0.2"
+        every { configRepo.minimumVersion } returns "0.0.2"
 
         assertFalse(flagRepo.isForcedUpdate("0.0.2"))
     }
@@ -221,7 +221,7 @@ class FlagRepoTest {
     @Test
     fun `Given the remote minimum version is 0_0_1, When the app version is 0_0_2, then return false`() {
         every { debugFlags.minimumVersion } returns null
-        every { configRepo.config.minimumVersion } returns "0.0.1"
+        every { configRepo.minimumVersion } returns "0.0.1"
 
         assertFalse(flagRepo.isForcedUpdate("0.0.2"))
     }
@@ -250,7 +250,7 @@ class FlagRepoTest {
     @Test
     fun `Given the remote recommended version is 0_0_2, When the app version is 0_0_1, then return true`() {
         every { debugFlags.recommendedVersion } returns null
-        every { configRepo.config.recommendedVersion } returns "0.0.2"
+        every { configRepo.recommendedVersion } returns "0.0.2"
 
         assertTrue(flagRepo.isRecommendUpdate("0.0.1"))
     }
@@ -258,7 +258,7 @@ class FlagRepoTest {
     @Test
     fun `Given the remote recommended version is 0_0_2, When the app version is 0_0_2, then return false`() {
         every { debugFlags.recommendedVersion } returns null
-        every { configRepo.config.recommendedVersion } returns "0.0.2"
+        every { configRepo.recommendedVersion } returns "0.0.2"
 
         assertFalse(flagRepo.isRecommendUpdate("0.0.2"))
     }
@@ -266,7 +266,7 @@ class FlagRepoTest {
     @Test
     fun `Given the remote recommended version is 0_0_1, When the app version is 0_0_2, then return false`() {
         every { debugFlags.recommendedVersion } returns null
-        every { configRepo.config.recommendedVersion } returns "0.0.1"
+        every { configRepo.recommendedVersion } returns "0.0.1"
 
         assertFalse(flagRepo.isRecommendUpdate("0.0.2"))
     }
@@ -349,13 +349,6 @@ class FlagRepoTest {
         every { isEnabled(any(), any(), any()) } returns false
 
         assertFalse(flagRepo.isLocalServicesEnabled())
-    }
-
-    @Test
-    fun `Given a debug build, When chat is enabled, then return false`() {
-        flagRepo = FlagRepo(true, debugFlags, configRepo)
-
-        assertFalse(flagRepo.isChatEnabled())
     }
 
     @Test

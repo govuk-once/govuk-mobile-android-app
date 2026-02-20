@@ -23,6 +23,7 @@ import uk.gov.govuk.chat.DefaultChatFeature
 import uk.gov.govuk.chat.data.ChatRepo
 import uk.gov.govuk.chat.data.remote.ChatApi
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.remote.AuthorizationInterceptor
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -31,18 +32,6 @@ internal class HeaderInterceptor @Inject constructor(): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val currentRequest = chain.request().newBuilder()
         currentRequest.addHeader("Content-Type", "application/json")
-
-        val newRequest = currentRequest.build()
-        return chain.proceed(newRequest)
-    }
-}
-
-internal class AuthorizationInterceptor @Inject constructor(
-    private val authRepo: AuthRepo
-): Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val currentRequest = chain.request().newBuilder()
-        currentRequest.addHeader("Authorization", "Bearer ${authRepo.getAccessToken()}")
 
         val newRequest = currentRequest.build()
         return chain.proceed(newRequest)

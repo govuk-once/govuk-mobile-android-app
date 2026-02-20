@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -53,7 +54,8 @@ internal fun ActionMenu(
     onNavigationItemClicked: (String, String) -> Unit,
     onFunctionItemClicked: (String, String, String) -> Unit,
     chatUrls: ChatUrls,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isTalkBackActive: Boolean
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -103,6 +105,19 @@ internal fun ActionMenu(
                     }
                 }
         ) {
+            val feedbackText = stringResource(R.string.action_feedback)
+            MenuItem(
+                onClick = {
+                    onNavigationItemClicked(feedbackText, chatUrls.feedback)
+                    expanded = false
+                },
+                buttonText = feedbackText,
+                icon = R.drawable.outline_feedback_24,
+                modifier = Modifier
+            )
+
+            HorizontalDivider()
+
             val aboutText = stringResource(R.string.action_about)
             MenuItem(
                 onClick = {
@@ -125,27 +140,21 @@ internal fun ActionMenu(
                 modifier = Modifier
             )
 
-            val feedbackText = stringResource(R.string.action_feedback)
-            MenuItem(
-                onClick = {
-                    onNavigationItemClicked(feedbackText, chatUrls.feedback)
+            ClearMenuItem(
+                hasConversation = hasConversation,
+                enabled = !isLoading,
+                onClear = {
+                    onClear()
                     expanded = false
                 },
-                buttonText = feedbackText,
-                icon = R.drawable.outline_feedback_24,
-                modifier = Modifier
+                onFunctionItemClicked = onFunctionItemClicked
             )
 
-            if (hasConversation) {
-                ClearMenuItem(
-                    enabled = !isLoading,
-                    onClear = {
-                        onClear()
-                        expanded = false
-                    },
-                    onFunctionItemClicked = onFunctionItemClicked
-                )
-            }
+            CloseMenuItem(
+                isTalkBackActive = isTalkBackActive,
+                onClick = { expanded = false },
+                modifier = Modifier
+            )
         }
 
         LaunchedEffect(expanded) {
@@ -157,88 +166,109 @@ internal fun ActionMenu(
 }
 
 @Composable
+private fun CloseMenuItem(
+    isTalkBackActive: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (isTalkBackActive) {
+        val closeText = stringResource(R.string.action_close)
+        HorizontalDivider()
+        MenuItem(
+            onClick = onClick,
+            buttonText = closeText,
+            icon = R.drawable.outline_close_24,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
 private fun ClearMenuItem(
+    hasConversation: Boolean,
     enabled: Boolean,
     onClear: () -> Unit,
     onFunctionItemClicked: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val openDialog = rememberSaveable { mutableStateOf(false) }
-    val buttonText = stringResource(id = R.string.action_clear)
+    if (hasConversation) {
+        val openDialog = rememberSaveable { mutableStateOf(false) }
+        val buttonText = stringResource(id = R.string.action_clear)
 
-    val colours = MenuDefaults.itemColors().copy(
-        textColor = GovUkTheme.colourScheme.textAndIcons.buttonDestructive,
-        trailingIconColor = GovUkTheme.colourScheme.textAndIcons.buttonDestructive,
-        disabledTextColor = GovUkTheme.colourScheme.textAndIcons.buttonRemoveDisabled,
-        disabledTrailingIconColor = GovUkTheme.colourScheme.textAndIcons.buttonRemoveDisabled
-    )
+        val colours = MenuDefaults.itemColors().copy(
+            textColor = GovUkTheme.colourScheme.textAndIcons.buttonDestructive,
+            trailingIconColor = GovUkTheme.colourScheme.textAndIcons.buttonDestructive,
+            disabledTextColor = GovUkTheme.colourScheme.textAndIcons.buttonRemoveDisabled,
+            disabledTrailingIconColor = GovUkTheme.colourScheme.textAndIcons.buttonRemoveDisabled
+        )
 
-    MenuItem(
-        onClick = {
-            openDialog.value = true
-            onFunctionItemClicked(
-                buttonText,
-                Analytics.ACTION_MENU,
-                Analytics.ACTION_MENU_CLEAR_ACTION
-            )
-        },
-        buttonText = buttonText,
-        icon = R.drawable.outline_delete_24,
-        modifier = modifier,
-        enabled = enabled,
-        colours = colours
-    )
-
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = { openDialog.value = false },
-            shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-            text = {
-                BodyBoldLabel(
-                    text = stringResource(id = R.string.clear_dialog_title),
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
+        MenuItem(
+            onClick = {
+                openDialog.value = true
+                onFunctionItemClicked(
+                    buttonText,
+                    Analytics.ACTION_MENU,
+                    Analytics.ACTION_MENU_CLEAR_ACTION
                 )
             },
-            confirmButton = {
-                val buttonText = stringResource(id = R.string.clear_dialog_positive_button)
-
-                TextButton(
-                    onClick = {
-                        onFunctionItemClicked(
-                            buttonText,
-                            Analytics.ACTION_MENU,
-                            Analytics.ACTION_MENU_CLEAR_YES
-                        )
-                        onClear()
-                        openDialog.value = false
-                    }
-                ) {
-                    BodyBoldLabel(
-                        text = buttonText,
-                        color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-                    )
-                }
-            },
-            dismissButton = {
-                val buttonText = stringResource(id = R.string.clear_dialog_negative_button)
-                TextButton(
-                    onClick = {
-                        onFunctionItemClicked(
-                            buttonText,
-                            Analytics.ACTION_MENU,
-                            Analytics.ACTION_MENU_CLEAR_NO
-                        )
-                        openDialog.value = false
-                    }
-                ) {
-                    BodyRegularLabel(
-                        text = buttonText,
-                        color = GovUkTheme.colourScheme.textAndIcons.link
-                    )
-                }
-            },
-            containerColor = GovUkTheme.colourScheme.surfaces.alert
+            buttonText = buttonText,
+            icon = R.drawable.outline_delete_24,
+            modifier = modifier,
+            enabled = enabled,
+            colours = colours
         )
+
+        if (openDialog.value) {
+            AlertDialog(
+                onDismissRequest = { openDialog.value = false },
+                shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
+                text = {
+                    BodyBoldLabel(
+                        text = stringResource(id = R.string.clear_dialog_title),
+                        color = GovUkTheme.colourScheme.textAndIcons.primary
+                    )
+                },
+                confirmButton = {
+                    val buttonText = stringResource(id = R.string.clear_dialog_positive_button)
+
+                    TextButton(
+                        onClick = {
+                            onFunctionItemClicked(
+                                buttonText,
+                                Analytics.ACTION_MENU,
+                                Analytics.ACTION_MENU_CLEAR_YES
+                            )
+                            onClear()
+                            openDialog.value = false
+                        }
+                    ) {
+                        BodyBoldLabel(
+                            text = buttonText,
+                            color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+                        )
+                    }
+                },
+                dismissButton = {
+                    val buttonText = stringResource(id = R.string.clear_dialog_negative_button)
+                    TextButton(
+                        onClick = {
+                            onFunctionItemClicked(
+                                buttonText,
+                                Analytics.ACTION_MENU,
+                                Analytics.ACTION_MENU_CLEAR_NO
+                            )
+                            openDialog.value = false
+                        }
+                    ) {
+                        BodyRegularLabel(
+                            text = buttonText,
+                            color = GovUkTheme.colourScheme.textAndIcons.link
+                        )
+                    }
+                },
+                containerColor = GovUkTheme.colourScheme.surfaces.alert
+            )
+        }
     }
 }
 

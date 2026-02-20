@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,8 +69,6 @@ private fun OnboardingPageOneScreen(
 
     OnboardingPage(
         title = stringResource(id = R.string.onboarding_page_one_header),
-        image = painterResource(id = R.drawable.onboarding_page_one),
-        modifier = modifier,
         headerContent = {
             FullScreenHeader(
                 actionStyle = HeaderActionStyle.ActionButton(
@@ -97,7 +94,9 @@ private fun OnboardingPageOneScreen(
                 enabled = true,
                 externalLink = false
             )
-        }
+        },
+        modifier = modifier,
+        animationRes = R.raw.chat_onboarding_one
     )
 }
 

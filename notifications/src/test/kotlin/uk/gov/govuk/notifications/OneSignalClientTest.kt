@@ -1,10 +1,6 @@
 package uk.gov.govuk.notifications
 
 import android.content.Context
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.net.Uri
 import androidx.core.app.NotificationManagerCompat
 import com.onesignal.OneSignal
 import com.onesignal.notifications.INotification
@@ -16,38 +12,44 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
-import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.json.JSONObject
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NotificationsClientTest {
+class OneSignalClientTest {
     private val context = mockk<Context>(relaxed = true)
+    private val deepLinkLauncher = mockk<DeepLinkLauncher>(relaxed = true)
+    private val dispatcher = UnconfinedTestDispatcher()
 
-    private lateinit var notificationsClient: NotificationsClient
+    private lateinit var notificationsProvider: NotificationsProvider
 
     @Before
     fun setup() {
-        notificationsClient = NotificationsClient()
+        Dispatchers.setMain(dispatcher)
+
+        notificationsProvider = OneSignalClient(context, deepLinkLauncher)
 
         mockkStatic(OneSignal::class)
         mockkStatic(OneSignal.Debug::class)
-        mockkStatic(Uri::class)
         mockkStatic(NotificationManagerCompat::class)
     }
 
     @After
     fun tearDown() {
+        Dispatchers.resetMain()
         unmockkAll()
     }
 
@@ -57,7 +59,7 @@ class NotificationsClientTest {
         every { OneSignal.initWithContext(context, oneSignalAppId) } returns Unit
 
         runTest {
-            notificationsClient.initialise(context, oneSignalAppId)
+            notificationsProvider.initialise(oneSignalAppId)
 
             verify(exactly = 1) {
                 OneSignal.initWithContext(context, oneSignalAppId)
@@ -71,8 +73,7 @@ class NotificationsClientTest {
         coEvery { OneSignal.Notifications.requestPermission(false) } returns false
 
         runTest {
-            val dispatcher = UnconfinedTestDispatcher()
-            notificationsClient.requestPermission(dispatcher)
+            notificationsProvider.requestPermission()
 
             coVerify(exactly = 1) {
                 OneSignal.Notifications.requestPermission(false)
@@ -83,7 +84,7 @@ class NotificationsClientTest {
     @Test
     fun `Given we have a notifications client, when give consent is called, then One Signal consent given is true`() {
         runTest {
-            notificationsClient.giveConsent()
+            notificationsProvider.giveConsent()
 
             assertTrue(OneSignal.consentGiven)
         }
@@ -92,7 +93,7 @@ class NotificationsClientTest {
     @Test
     fun `Given we have a notifications client, when remove consent is called, then One Signal consent given is false`() {
         runTest {
-            notificationsClient.removeConsent()
+            notificationsProvider.removeConsent()
 
             assertFalse(OneSignal.consentGiven)
         }
@@ -103,7 +104,7 @@ class NotificationsClientTest {
         every {OneSignal.consentGiven} returns true
 
         runTest {
-            assertTrue(notificationsClient.consentGiven())
+            assertTrue(notificationsProvider.consentGiven())
         }
     }
 
@@ -112,7 +113,7 @@ class NotificationsClientTest {
         every {OneSignal.consentGiven} returns false
 
         runTest {
-            assertFalse(notificationsClient.consentGiven())
+            assertFalse(notificationsProvider.consentGiven())
         }
     }
 
@@ -121,7 +122,7 @@ class NotificationsClientTest {
         every { NotificationManagerCompat.from(context).areNotificationsEnabled() } returns false
 
         runTest {
-            assertFalse(notificationsClient.permissionGranted(context))
+            assertFalse(notificationsProvider.permissionGranted())
         }
     }
 
@@ -130,22 +131,20 @@ class NotificationsClientTest {
         every { NotificationManagerCompat.from(context).areNotificationsEnabled() } returns true
 
         runTest {
-            assertTrue(notificationsClient.permissionGranted(context))
+            assertTrue(notificationsProvider.permissionGranted())
         }
     }
 
     @Test
     fun `Given we have a notifications client, when add click listener is called, then the correct functions are called`() {
-        val uri = mockk<Uri>()
+        val additionalData = mockk<JSONObject>()
         val event = mockk<INotificationClickEvent>()
         val notification = mockk<INotification>()
         val clickListener = slot<INotificationClickListener>()
-        every { Uri.parse("") } returns uri
-        every { event.notification.additionalData } returns null
+
         every { event.notification } returns notification
-        every { notification.additionalData } returns null
-        every { notification.additionalData?.has("deeplink") } returns true
-        every { notification.additionalData?.optString("deeplink") } returns ""
+        every { notification.additionalData } returns additionalData
+        every { notification.additionalData?.optString("deeplink") } returns "https://gov.uk"
         every {
             OneSignal.Notifications.addClickListener(listener = capture(clickListener))
         } answers {
@@ -153,88 +152,62 @@ class NotificationsClientTest {
         }
 
         runTest {
-            notificationsClient.addClickListener(context)
+            notificationsProvider.addClickListener()
 
             verify(exactly = 1) {
                 OneSignal.Notifications.addClickListener(any())
-
-                notificationsClient.handleAdditionalData(context, notification.additionalData, null)
-            }
+                deepLinkLauncher.launchDeepLink("https://gov.uk")            }
         }
     }
 
-    @Test
-    fun `Given we have a notifications client, when handle additional data function is called with valid additional data, then a new activity is started with an intent`() {
-        val uri = mockk<Uri>()
-        val intent = spyk<Intent>()
-        val additionalData = mockk<JSONObject>()
 
-        every { uri.scheme } returns "scheme"
-        every { uri.host } returns "host"
-        every { Uri.parse("scheme://host") } returns uri
-        every { intent.setData(uri) } returns intent
-        every { intent.data } returns uri
-        every { intent.setFlags(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK) } returns intent
-        every { intent.flags } returns (FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK)
-        every { additionalData.has("deeplink") } returns true
-        every { additionalData.optString("deeplink") } returns "scheme://host"
-
-        runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
-
-            assertEquals("scheme", intent.data?.scheme)
-            assertEquals("host", intent.data?.host)
-            assertEquals(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK, intent.flags)
-
-            verify(exactly = 1) {
-                context.startActivity(intent)
-            }
-        }
-    }
 
     @Test
-    fun `Given we have a notifications client, when handle additional data function is called without a deep link, then start activity is not called`() {
-        val intent = spyk<Intent>()
+    fun `Given a notification click without a deep link, then the launcher is not called`() {
         val additionalData = mockk<JSONObject>()
+        val event = mockk<INotificationClickEvent>()
+        val notification = mockk<INotification>()
+        val clickListenerSlot = slot<INotificationClickListener>()
 
-        every { additionalData.has("deeplink") } returns false
+        every { event.notification } returns notification
+        every { notification.additionalData } returns additionalData
+
+        every { additionalData.optString("deeplink") } returns ""
+
+        every {
+            OneSignal.Notifications.addClickListener(capture(clickListenerSlot))
+        } returns Unit
 
         runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+            notificationsProvider.addClickListener()
+            clickListenerSlot.captured.onClick(event)
 
             verify(exactly = 0) {
-                context.startActivity(intent)
+                deepLinkLauncher.launchDeepLink(any())
             }
         }
     }
 
     @Test
-    fun `Given we have a notifications client, when handle additional data function is called and additional data is null, then start activity is not called`() {
-        val intent = spyk<Intent>()
+    fun `Given a notification click where additional data is null, then the launcher is not called`() {
+        val event = mockk<INotificationClickEvent>()
+        val notification = mockk<INotification>()
+        val clickListenerSlot = slot<INotificationClickListener>()
 
-        val additionalData: JSONObject? = null
+        every { event.notification } returns notification
 
-        runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+        every { notification.additionalData } returns null
 
-            verify(exactly = 0) {
-                context.startActivity(intent)
-            }
-        }
-    }
-
-    @Test
-    fun `Given we have a notifications client, when handle additional data function is called and intent is null, then start activity is not called`() {
-        val intent: Intent? = null
-        val additionalData = mockk<JSONObject>()
-
-        every { additionalData.optString("deeplink") } returns "deeplink"
+        every {
+            OneSignal.Notifications.addClickListener(capture(clickListenerSlot))
+        } returns Unit
 
         runTest {
-            notificationsClient.handleAdditionalData(context, additionalData, intent)
+            notificationsProvider.addClickListener()
+            clickListenerSlot.captured.onClick(event)
 
             verify(exactly = 0) {
-                context.startActivity(intent)
+                deepLinkLauncher.launchDeepLink(any())
             }
         }
     }

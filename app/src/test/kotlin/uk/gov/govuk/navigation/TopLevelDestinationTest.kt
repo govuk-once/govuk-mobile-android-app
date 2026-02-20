@@ -5,6 +5,7 @@ import org.junit.Test
 
 class TopLevelDestinationTest {
 
+    @Test
     fun `Values includes Chat when chat is enabled`() {
         val result = TopLevelDestination.values(isChatEnabled = true)
 

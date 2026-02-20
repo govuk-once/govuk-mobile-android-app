@@ -1,5 +1,8 @@
 package uk.gov.govuk.config.di
 
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -11,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import uk.gov.govuk.config.BuildConfig
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.config.data.ConfigRepoImpl
 import uk.gov.govuk.config.data.flags.DebugFlags
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.config.data.remote.ConfigApi
@@ -20,6 +24,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class ConfigModule {
+
+    @Provides
+    @Singleton
+    fun provideConfigRepo(configRepo: ConfigRepoImpl): ConfigRepo {
+        return configRepo
+    }
 
     @Provides
     @Singleton
@@ -36,7 +46,10 @@ class ConfigModule {
     @Singleton
     fun providesGson(): Gson {
         return GsonBuilder()
-            .registerTypeAdapter(EmergencyBannerTypeAdapter::class.java, EmergencyBannerTypeAdapter())
+            .registerTypeAdapter(
+                EmergencyBannerTypeAdapter::class.java,
+                EmergencyBannerTypeAdapter()
+            )
             .create()
     }
 
@@ -52,4 +65,9 @@ class ConfigModule {
             configRepo = configRepo
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig = Firebase.remoteConfig
+
 }

@@ -24,7 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
@@ -164,25 +166,6 @@ fun ExternalLinkListItem(
 }
 
 @Composable
-private fun ShowSubText(subText: String) {
-    if (subText.isNotEmpty()) {
-        Row(
-            modifier = Modifier.padding(
-                start = GovUkTheme.spacing.medium,
-                top = 0.dp,
-                bottom = GovUkTheme.spacing.medium
-            ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SubheadlineRegularLabel(
-                text = subText,
-                color = GovUkTheme.colourScheme.textAndIcons.primary
-            )
-        }
-    }
-}
-
-@Composable
 fun ToggleListItem(
     title: String,
     checked: Boolean,
@@ -191,6 +174,10 @@ fun ToggleListItem(
     isFirst: Boolean = true,
     isLast: Boolean = true
 ) {
+
+    val status = stringResource(if (checked) R.string.on_button else R.string.off_button)
+    val altText = "$title, $status"
+
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
@@ -200,16 +187,21 @@ fun ToggleListItem(
             modifier = Modifier
                 .padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(vertical = GovUkTheme.spacing.small)
-                .toggleable(
-                    value = checked,
-                    onValueChange = onCheckedChange,
+                .clickable(
+                    onClick = { onCheckedChange(!checked) },
+                    onClickLabel = stringResource(R.string.action_toggle)
+                )
+                .semantics(mergeDescendants = true) {
+                    contentDescription = altText
                     role = Role.Switch
-                ),
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             BodyRegularLabel(
                 text = title,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clearAndSetSemantics { }
             )
 
             MediumHorizontalSpacer()
@@ -218,7 +210,7 @@ fun ToggleListItem(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 testDescription = title,
-                Modifier.clearAndSetSemantics {  }
+                Modifier.clearAndSetSemantics { }
             )
         }
     }

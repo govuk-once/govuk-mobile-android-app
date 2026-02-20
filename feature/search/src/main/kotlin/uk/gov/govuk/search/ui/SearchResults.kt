@@ -60,14 +60,17 @@ internal fun SearchResults(
             )
         }
         itemsIndexed(searchResults) { index, searchResult ->
+            val title = StringUtils.collapseWhitespace(searchResult.title)
+            val description = searchResult.description?.let { StringUtils.collapseWhitespace(it) }
+            val url = StringUtils.buildFullUrl(searchResult.link)
             SearchResultCard(
-                title = StringUtils.collapseWhitespace(searchResult.title),
-                description = searchResult.description?.let { StringUtils.collapseWhitespace(it) },
-                url = StringUtils.buildFullUrl(searchResult.link),
+                title = title,
+                description = description,
                 onClick = {
                     onClick(searchResult, index)
+                    launchBrowser(url)
                 },
-                launchBrowser = launchBrowser,
+
                 modifier = Modifier.padding(
                     GovUkTheme.spacing.medium,
                     GovUkTheme.spacing.medium,

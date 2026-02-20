@@ -4,6 +4,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 
 class HomeViewModelTest {
 

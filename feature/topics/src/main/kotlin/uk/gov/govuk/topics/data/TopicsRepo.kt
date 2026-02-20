@@ -18,8 +18,8 @@ internal class TopicsRepo @Inject constructor(
     private val localDataSource: TopicsLocalDataSource,
 ) {
 
-    private lateinit var _stepBySteps: List<RemoteTopicContent>
-    private lateinit var _popularPages: List<RemoteTopicContent>
+    private var _stepBySteps: List<RemoteTopicContent> = emptyList()
+    private var _popularPages: List<RemoteTopicContent> = emptyList()
 
     val stepBySteps
         get() = _stepBySteps

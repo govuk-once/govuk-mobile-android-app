@@ -23,7 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -203,9 +206,18 @@ fun ConnectedButton(
             GovUkTheme.colourScheme.textAndIcons.secondary
         }
 
+    val altText = if (active) {
+        "$text + ${stringResource(R.string.selected_alt_text)}"
+    } else {
+        text
+    }
+
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.clearAndSetSemantics {
+            role = Role.Button
+            contentDescription = altText
+        },
         shape = RoundedCornerShape(15.dp),
         colors = buttonColors(
             containerColor = containerColour,

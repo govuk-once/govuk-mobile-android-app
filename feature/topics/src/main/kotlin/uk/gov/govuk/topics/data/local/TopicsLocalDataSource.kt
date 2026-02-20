@@ -51,7 +51,9 @@ internal class TopicsLocalDataSource @Inject constructor(
                         // Previous impl initially marked all topics as selected by default,
                         // we need to clear this for the new impl
                         // if the user has not actively customised their topics
-                        this.isSelected = if (isTopicsCustomised) this.isSelected else false
+                        if (!isTopicsCustomised) {
+                            this.isSelected = false
+                        }
                     } ?: copyToRealm(
                         LocalTopicItem().apply {
                             this.ref = topic.ref
@@ -99,7 +101,8 @@ internal class TopicsLocalDataSource @Inject constructor(
 
             for (topic in localTopics) {
                 topic.apply {
-                    this.isSelected = true
+                    // next user starts with all topics unselected
+                    this.isSelected = false
                 }
             }
         }

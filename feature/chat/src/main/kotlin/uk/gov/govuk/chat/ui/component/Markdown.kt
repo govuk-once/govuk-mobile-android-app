@@ -24,7 +24,7 @@ internal fun Markdown(
 
     MarkdownText(
         markdown = headerRegex.replace(text, headerReplacement),
-        linkColor = GovUkTheme.colourScheme.textAndIcons.link,
+        linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText,
         style = TextStyle(
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             fontSize = GovUkTheme.typography.bodyRegular.fontSize,
@@ -33,7 +33,7 @@ internal fun Markdown(
             lineHeight = GovUkTheme.typography.bodyRegular.lineHeight
         ),
         enableSoftBreakAddsNewLine = false,
-        enableUnderlineForLink = false,
+        enableUnderlineForLink = true,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = GovUkTheme.spacing.medium)

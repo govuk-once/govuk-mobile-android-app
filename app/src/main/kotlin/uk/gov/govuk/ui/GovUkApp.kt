@@ -48,6 +48,7 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -62,6 +63,7 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
+import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -136,12 +138,41 @@ private fun BottomNavScaffold(
     homeWidgets: List<HomeWidget>?
 ) {
     val navController = rememberNavController()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val layoutDirection = LocalLayoutDirection.current
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val section = stringResource(R.string.homepage)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentNavParentRoute = navBackStackEntry?.destination?.parent?.route
+
+    var showTimeoutWarningDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.timeOutEvent.collect {
+                when (it) {
+                    AppViewModel.TimeoutEvent.WARNING -> showTimeoutWarningDialog = true
+                    AppViewModel.TimeoutEvent.TIMEOUT -> {
+                        showTimeoutWarningDialog = false
+                        viewModel.appNavigation.onSignOut(navController)
+                    }
+                }
+            }
+        }
+    }
+
+    if (showTimeoutWarningDialog) {
+        InfoAlert(
+            title = R.string.timeout_warning_dialog_title,
+            message = R.string.timeout_warning_dialog_message,
+            buttonText = R.string.timeout_warning_dialog_button,
+            onDismiss = {
+                viewModel.onUserInteraction()
+                showTimeoutWarningDialog = false
+            }
+        )
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -164,7 +195,7 @@ private fun BottomNavScaffold(
                     awaitPointerEventScope {
                         while (true) {
                             awaitPointerEvent()
-                            viewModel.onUserInteraction(navController)
+                            viewModel.onUserInteraction()
                         }
                     }
                 },
@@ -356,6 +387,7 @@ private fun GovUkNavHost(
         analyticsGraph(
             analyticsConsentCompleted = {
                 coroutineScope.launch {
+                    viewModel.onAnalyticsConsentCompleted()
                     appNavigation.onNext(navController)
                 }
             },
@@ -478,7 +510,8 @@ private fun GovUkNavHost(
     if (showDeepLinkNotFoundAlert) {
         InfoAlert(
             title = R.string.deep_link_not_found_alert_title,
-            message = R.string.deep_link_not_found_alert_message
+            message = R.string.deep_link_not_found_alert_message,
+            buttonText = R.string.close_alert_button
         ) {
             showDeepLinkNotFoundAlert = false
         }
@@ -487,7 +520,8 @@ private fun GovUkNavHost(
     if (showBrowserNotFoundAlert) {
         InfoAlert(
             title = R.string.browser_not_found_alert_title,
-            message = R.string.browser_not_found_alert_message
+            message = R.string.browser_not_found_alert_message,
+            buttonText = R.string.close_alert_button
         ) {
             showBrowserNotFoundAlert = false
         }

@@ -3,6 +3,6 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 
--keep class uk.govuk.app.local.data.remote.model.Address
+-keep class uk.govuk.app.local.data.remote.model.RemoteAddress
 -keep class uk.govuk.app.local.data.remote.model.LocalAuthorityResponse
 -keep class uk.govuk.app.local.data.remote.model.RemoteLocalAuthority

@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.ChatFeature
@@ -50,6 +52,13 @@ internal class AppViewModel @Inject constructor(
     private val _homeWidgets: MutableStateFlow<List<HomeWidget>?> = MutableStateFlow(null)
     internal val homeWidgets = _homeWidgets.asStateFlow()
 
+    enum class TimeoutEvent {
+        WARNING, TIMEOUT
+    }
+
+    private val _timeOutEvent = Channel<TimeoutEvent>(Channel.CONFLATED)
+    val timeOutEvent = _timeOutEvent.receiveAsFlow()
+
     init {
         analyticsClient.isUserSessionActive = { authRepo.isUserSessionActive() }
 
@@ -60,6 +69,12 @@ internal class AppViewModel @Inject constructor(
 
     private suspend fun initWithConfig() {
         val configResult = configRepo.initConfig()
+
+        // returning users
+        if (analyticsClient.isAnalyticsEnabled()) {
+            configRepo.activateRemoteConfig()
+        }
+
         when (configResult) {
             is Success -> {
                 if (!flagRepo.isAppAvailable()) {
@@ -99,17 +114,24 @@ internal class AppViewModel @Inject constructor(
     }
 
     fun onUserInteraction(
-        navController: NavController,
         interactionTime: Long = SystemClock.elapsedRealtime()
     ) {
-        timeoutManager.onUserInteraction(interactionTime) {
-            if (authRepo.isUserSessionActive()) {
-                authRepo.endUserSession()
+        timeoutManager.onUserInteraction(
+            interactionTime,
+            onWarning = {
                 viewModelScope.launch {
-                    appNavigation.onSignOut(navController)
+                    _timeOutEvent.trySend(TimeoutEvent.WARNING)
+                }
+            },
+            onTimeout = {
+                if (authRepo.isUserSessionActive()) {
+                    authRepo.endUserSession()
+                    viewModelScope.launch {
+                        _timeOutEvent.trySend(TimeoutEvent.TIMEOUT)
+                    }
                 }
             }
-        }
+        )
     }
 
     fun onLogin(navController: NavController) {
@@ -124,8 +146,15 @@ internal class AppViewModel @Inject constructor(
                 visitedFeature.clear()
                 chatFeature.clear()
                 analyticsClient.clear()
+                configRepo.clearRemoteConfigValues()
             }
             appNavigation.onNext(navController)
+        }
+    }
+
+    suspend fun onAnalyticsConsentCompleted() {
+        if (analyticsClient.isAnalyticsEnabled()) {
+            configRepo.refreshRemoteConfig()
         }
     }
 
@@ -143,9 +172,16 @@ internal class AppViewModel @Inject constructor(
                     widgets.add(HomeWidget.Search)
                 }
 
-                configRepo.config.emergencyBanners?.forEach { emergencyBanner ->
+                configRepo.emergencyBanners?.forEach { emergencyBanner ->
                     if (!suppressedWidgets.contains(emergencyBanner.id)) {
                         widgets.add(HomeWidget.Banner(emergencyBanner = emergencyBanner))
+                    }
+                }
+
+                configRepo.chatBanner?.let { chatBanner ->
+                    if (isChatEnabled() &&
+                        !suppressedWidgets.contains(chatBanner.id)) {
+                        widgets.add(HomeWidget.Chat(chatBanner))
                     }
                 }
 
@@ -158,7 +194,7 @@ internal class AppViewModel @Inject constructor(
                 if (isRecentActivityEnabled()) {
                     widgets.add(HomeWidget.RecentActivity)
                 }
-                configRepo.config.userFeedbackBanner?.let { userFeedbackBanner ->
+                configRepo.userFeedbackBanner?.let { userFeedbackBanner ->
                     widgets.add(HomeWidget.UserFeedback(userFeedbackBanner = userFeedbackBanner))
                 }
                 _homeWidgets.value = widgets

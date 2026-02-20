@@ -8,7 +8,6 @@ import uk.gov.govuk.design.ui.theme.GovUkColourScheme.TextAndIcons
 
 private val BluePrimary = Color(0xFF1D70B8)
 private val BlueAccent = Color(0xFF11E0F1)
-private val Blue2 = Color(0xFF259AFF)
 private val Blue99 = Color(0xFF092237)
 
 private val BlueLighter25 = Color(0xFF5694CA)
@@ -43,7 +42,6 @@ private val GreenDarker25 = Color(0xFF0D6544)
 private val GreenDarker50 = Color(0xFF09442D)
 private val GreenDarker80 = Color(0xFF031B12)
 
-private val Grey850 = Color(0xFF262626)
 private val Grey800 = Color(0xFF333333)
 private val Grey700 = Color(0xFF4D4D4D)
 private val Grey600 = Color(0xFF666666)
@@ -117,6 +115,7 @@ data class GovUkColourScheme(
         val chatUserMessageText: Color,
         val chatBotMessageText: Color,
         val chatBotHeaderText: Color,
+        val chatBotLinkText: Color,
         val chatLoadingTextLight: Color,
         val chatLoadingIcon: Color,
         val cardCarousel: Color,
@@ -135,13 +134,11 @@ data class GovUkColourScheme(
         val cardEmergencyNational: Color,
         val cardEmergencyLocal: Color,
         val cardEmergencyInformation: Color,
-        val cardHighlight: Color, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         val cardNonTappable: Color,
         val cardSelected: Color,
         val cardCarousel: Color,
         val cardCarouselFocused: Color,
         val list: Color,
-        val listBlue: Color, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         val listHeadingBlue: Color,
         val listSelected: Color,
         val listUnselected: Color,
@@ -203,7 +200,6 @@ data class GovUkColourScheme(
         val cardBlue: Color,
         val cardDefault: Color,
         val cardSelected: Color,
-        val listBlue: Color, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         val switchOn: Color,
         val switchOff: Color,
         val buttonCompactHighlight: Color,
@@ -265,9 +261,10 @@ internal val LightColorScheme = GovUkColourScheme(
         textFieldError = RedPrimary,
         chatButtonIconDisabled = Grey600,
         chatButtonIconEnabled = White,
-        chatUserMessageText = Black,
+        chatUserMessageText = White,
         chatBotMessageText = Black,
         chatBotHeaderText = Grey700,
+        chatBotLinkText = BluePrimary,
         chatLoadingTextLight = Grey300,
         chatLoadingIcon = BluePrimary,
         cardCarousel = White,
@@ -285,13 +282,11 @@ internal val LightColorScheme = GovUkColourScheme(
         cardEmergencyNational = RedPrimary,
         cardEmergencyLocal = TealPrimary,
         cardEmergencyInformation = White,
-        cardHighlight = Grey400, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         cardNonTappable = BlueLighter80,
         cardSelected = GreenLighter95,
         cardCarousel = BluePrimary,
         cardCarouselFocused = YellowPrimary,
         list = White,
-        listBlue = BlueLighter95, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         listHeadingBlue = BlueLighter95,
         listSelected = BluePrimary,
         listUnselected = BlueLighter90,
@@ -340,7 +335,7 @@ internal val LightColorScheme = GovUkColourScheme(
         chatTextFieldBackground = White,
         chatButtonBackgroundDisabled = Grey100,
         chatButtonBackgroundEnabled = BluePrimary,
-        chatUserMessageBackground = WhiteAlpha50,
+        chatUserMessageBackground = BlueDarker50,
         chatBotMessageBackground = White,
         chatIntroCardBackground = BlueLighter95,
         screenBackground = BlueLighter90
@@ -358,7 +353,6 @@ internal val LightColorScheme = GovUkColourScheme(
         cardBlue = BlueLighter50,
         cardDefault = BlueLighter80,
         cardSelected = GreenPrimary,
-        listBlue = BlueLighter50, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         switchOn = GreenPrimary,
         switchOff = BlackLighter50,
         buttonCompactHighlight = BlueLighter25,
@@ -423,6 +417,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatUserMessageText = White,
         chatBotMessageText = White,
         chatBotHeaderText = Grey300,
+        chatBotLinkText = BlueAccent,
         chatLoadingTextLight = BlueLighter80,
         chatLoadingIcon = BluePrimary,
         cardCarousel = White,
@@ -440,13 +435,11 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardEmergencyNational = RedPrimary,
         cardEmergencyLocal = TealPrimary,
         cardEmergencyInformation = BlueDarkMode,
-        cardHighlight = Grey850, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         cardNonTappable = BlueDarker65,
         cardSelected = GreenDarker50,
         cardCarousel = BlueDarker50,
         cardCarouselFocused = YellowPrimary,
         list = BlueDarker65,
-        listBlue = BlueDarker80, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         listHeadingBlue = BlueDarker50,
         listSelected = BlueDarker25,
         listUnselected = BlueDarker65,
@@ -492,11 +485,11 @@ internal val DarkColorScheme = GovUkColourScheme(
         radioSelected = GreenAccent,
         radioUnselected = Grey500,
         chatBackground = BlueDarker80,
-        chatTextFieldBackground = BlueDarker80,
+        chatTextFieldBackground = BlueDarker50,
         chatButtonBackgroundDisabled = Grey400,
         chatButtonBackgroundEnabled = BlueAccent,
-        chatUserMessageBackground = BlueDarker80Alpha50,
-        chatBotMessageBackground = BlueDarker80,
+        chatUserMessageBackground = BluePrimary,
+        chatBotMessageBackground = Blue99,
         chatIntroCardBackground = Blue99,
         screenBackground = BlueDarker80
     ),
@@ -513,7 +506,6 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardBlue = BlueDarker25,
         cardDefault = BlueDarkMode,
         cardSelected = GreenAccent,
-        listBlue = BluePrimary, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
         switchOn = GreenPrimary,
         switchOff = BlackLighter50,
         buttonCompactHighlight = BlueDarker25,
@@ -579,6 +571,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatUserMessageText = Color.Unspecified,
             chatBotMessageText = Color.Unspecified,
             chatBotHeaderText = Color.Unspecified,
+            chatBotLinkText = Color.Unspecified,
             chatLoadingTextLight = Color.Unspecified,
             chatLoadingIcon = Color.Unspecified,
             cardCarousel = Color.Unspecified,
@@ -596,13 +589,11 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardEmergencyNational = Color.Unspecified,
             cardEmergencyLocal = Color.Unspecified,
             cardEmergencyInformation = Color.Unspecified,
-            cardHighlight = Color.Unspecified, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
             cardNonTappable = Color.Unspecified,
             cardSelected = Color.Unspecified,
             cardCarousel = Color.Unspecified,
             cardCarouselFocused = Color.Unspecified,
             list = Color.Unspecified,
-            listBlue = Color.Unspecified, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
             listHeadingBlue = Color.Unspecified,
             listSelected = Color.Unspecified,
             listUnselected = Color.Unspecified,
@@ -663,7 +654,6 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardBlue = Color.Unspecified,
             cardDefault = Color.Unspecified,
             cardSelected = Color.Unspecified,
-            listBlue = Color.Unspecified, // TODO - DELETE ON COMPLETION OF DESIGN REFRESH!!!
             switchOn = Color.Unspecified,
             switchOff = Color.Unspecified,
             buttonCompactHighlight = Color.Unspecified,

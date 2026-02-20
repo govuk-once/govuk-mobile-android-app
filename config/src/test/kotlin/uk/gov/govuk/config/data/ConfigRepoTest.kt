@@ -1,246 +1,151 @@
 package uk.gov.govuk.config.data
 
-import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import okhttp3.Headers
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
 import org.junit.Test
-import retrofit2.Response
-import uk.gov.govuk.config.SignatureValidator
-import uk.gov.govuk.config.data.remote.ConfigApi
 import uk.gov.govuk.config.data.remote.model.Config
-import uk.gov.govuk.config.data.remote.model.ConfigResponse
-import uk.gov.govuk.data.model.Result.DeviceOffline
-import uk.gov.govuk.data.model.Result.Error
-import uk.gov.govuk.data.model.Result.InvalidSignature
+import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
+import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
+import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
+import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
-import java.io.IOException
-import java.net.UnknownHostException
 
 class ConfigRepoTest {
 
-    private val configApi = mockk<ConfigApi>(relaxed = true)
-    private val response = mockk<Response<String>>(relaxed = true)
-    private val configResponse = mockk<ConfigResponse>(relaxed = true)
+    private val govUkDataSource = mockk<GovUkConfigDataSource>(relaxed = true)
+    private val firebaseDataSource = mockk<FirebaseConfigDataSource>(relaxed = true)
     private val config = mockk<Config>(relaxed = true)
-    private val gson = mockk<Gson>(relaxed = true)
-    private val signatureValidator = mockk<SignatureValidator>(relaxed = true)
 
     @Test
-    fun `Given a successful config init, when config is requested, then return config`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
+    fun `Given a successful config init, when config properties are requested, then return correct values`() {
+        coEvery { govUkDataSource.fetchConfig() } returns Success(config)
+        coEvery { firebaseDataSource.fetch() } returns true
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
 
         runTest {
             repo.initConfig()
-            assertEquals(config, repo.config)
+            assertEquals(config.available, repo.isAvailable)
+            assertEquals(config.minimumVersion, repo.minimumVersion)
+            assertEquals(config.releaseFlags.search, repo.isSearchEnabled)
+            assertEquals(config.chatUrls, repo.chatUrls)
         }
     }
 
     @Test
-    fun `Given no config init, when config is requested, then throw exception`() {
-        coEvery { configApi.getConfig() } returns response
-        coEvery { response.isSuccessful } returns true
-        coEvery { response.body() } returns configResponse.toString()
-        coEvery { configResponse.config } returns config
+    fun `Given govuk config fetch fails, when initConfig, then return failure result`() = runTest {
+        coEvery { govUkDataSource.fetchConfig() } returns Result.DeviceOffline()
+        coEvery { firebaseDataSource.fetch() } returns true
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+        val result = repo.initConfig()
 
+        assert(result is Result.DeviceOffline)
+    }
+
+    @Test
+    fun `Given no config init, when any config property is requested, then throw exception`() {
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
         val exception = assertThrows(IllegalStateException::class.java) {
-            repo.config
+            repo.isAvailable
         }
 
         assertEquals("You must init config successfully before use!!!", exception.message)
     }
 
     @Test
-    fun `Given initialized config, when config is requested multiple times, then return same instance`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
+    fun `When activateRemoteConfig is called, then activate firebase data source`() = runTest {
+        coEvery { firebaseDataSource.activate() } returns true
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val result = repo.activateRemoteConfig()
+
+        assert(result)
+        coVerify { firebaseDataSource.activate() }
+    }
+
+    @Test
+    fun `Given initialized config, when object properties are requested multiple times, they remain consistent`() {
+        coEvery { govUkDataSource.fetchConfig() } returns Success(config)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
 
         runTest {
             repo.initConfig()
-            val firstCall = repo.config
-            val secondCall = repo.config
+            val firstCall = repo.chatUrls
+            val secondCall = repo.chatUrls
 
-            assertEquals(config, firstCall)
-            assertEquals(config, secondCall)
-            assertEquals(firstCall, secondCall)
+            assertSame(firstCall, secondCall)
         }
     }
 
     @Test
-    fun `Given a successful config response with a body, then return success`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            assertTrue(repo.initConfig() is Success)
-        }
-    }
-
-    @Test
-    fun `Given a successful config response with an empty body, then return failure`() {
-        coEvery { configApi.getConfig() } returns response
-        coEvery { response.isSuccessful } returns true
-        coEvery { response.body() } returns null
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            assertTrue(repo.initConfig() is Error)
-        }
-    }
-
-    @Test
-    fun `Given an unsuccessful config response, then return failure`() {
-        coEvery { configApi.getConfig() } returns response
-        coEvery { response.isSuccessful } returns false
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            assertTrue(repo.initConfig() is Error)
-        }
-    }
-
-    @Test
-    fun `Given an unknown host exception is thrown fetching the config response, then return device offline failure`() {
-        coEvery { configApi.getConfig() } throws UnknownHostException()
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            assertTrue(repo.initConfig() is DeviceOffline)
-        }
-    }
-
-    @Test
-    fun `Given an exception is thrown fetching the config response, then return failure`() {
-        coEvery { configApi.getConfig() } throws IOException()
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            assertTrue(repo.initConfig() is Error)
-        }
-    }
-
-    @Test
-    fun `Given an invalid signature, when config is requested, then return failure`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns false
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            assertTrue(repo.initConfig() is InvalidSignature)
-        }
-    }
-
-    @Test
-    fun `Given a chat poll interval property, when retrieving the chat poll interval, then return property value`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
+    fun `Given a chat poll interval property, when retrieving the chat poll interval, then return property value`() = runTest {
         every { config.chatPollIntervalSeconds } returns 0.5
+        coEvery { govUkDataSource.fetchConfig() } returns Success(config)
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+        repo.initConfig()
 
-        runTest {
-            repo.initConfig()
-            assertEquals(0.5, repo.chatPollIntervalSeconds, 0.0)
-        }
+        assertEquals(0.5, repo.chatPollIntervalSeconds, 0.0)
     }
 
     @Test
-    fun `Given the chat poll interval property is missing, when retrieving the chat poll interval, then return fallback value`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
+    fun `Given the chat poll interval property is missing, when retrieving the chat poll interval, then return fallback value`() = runTest {
         every { config.chatPollIntervalSeconds } returns null
+        coEvery { govUkDataSource.fetchConfig() } returns Success(config)
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+        repo.initConfig()
 
-        runTest {
-            repo.initConfig()
-            assertEquals(3.0, repo.chatPollIntervalSeconds, 0.0)
-        }
+        assertEquals(3.0, repo.chatPollIntervalSeconds, 0.0)
     }
 
     @Test
-    fun `Given the chat poll interval property is 0, when retrieving the chat poll interval, then return fallback value`() {
-        coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
+    fun `Given the chat poll interval property is 0, when retrieving the chat poll interval, then return fallback value`() = runTest {
         every { config.chatPollIntervalSeconds } returns 0.0
+        coEvery { govUkDataSource.fetchConfig() } returns Success(config)
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+        repo.initConfig()
 
-        runTest {
-            repo.initConfig()
-            assertEquals(3.0, repo.chatPollIntervalSeconds, 0.0)
-        }
+        assertEquals(3.0, repo.chatPollIntervalSeconds, 0.0)
     }
 
     @Test
-    fun `Given a response with a signature header, the specific signature is extracted`() {
-        val specificSignature = "signature-123"
-        val headers = Headers.headersOf("x-amz-meta-govuk-sig", specificSignature)
+    fun `Given successful init, when accessing remaining properties, then return correct config values`() = runTest {
+        val mockBanners = listOf(mockk<EmergencyBanner>())
+        val mockFeedback = mockk<UserFeedbackBanner>()
 
-        coEvery { configApi.getConfig() } returns Response.success(
-            configResponse.toString(),
-            headers
-        )
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(
-            config,
-            "sig"
-        )
+        every { config.recommendedVersion } returns "2.0.0"
+        every { config.releaseFlags.recentActivity } returns true
+        every { config.releaseFlags.topics } returns true
+        every { config.releaseFlags.notifications } returns true
+        every { config.releaseFlags.localServices } returns true
+        every { config.releaseFlags.externalBrowser } returns true
+        every { config.refreshTokenExpirySeconds } returns 3600L
+        every { config.emergencyBanners } returns mockBanners
+        every { config.userFeedbackBanner } returns mockFeedback
+        coEvery { govUkDataSource.fetchConfig() } returns Success(config)
+        coEvery { firebaseDataSource.fetch() } returns true
 
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+        repo.initConfig()
 
-        runTest {
-            repo.initConfig()
-            coVerify { signatureValidator.isValidSignature(specificSignature, any()) }
-        }
-    }
-
-    @Test
-    fun `Given a response without a signature header, signature defaults to empty string`() {
-        val headers = Headers.headersOf() // Empty headers
-
-        coEvery { configApi.getConfig() } returns Response.success(
-            configResponse.toString(),
-            headers
-        )
-        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(
-            config,
-            "sig"
-        )
-
-        val repo = ConfigRepo(configApi, gson, signatureValidator)
-
-        runTest {
-            repo.initConfig()
-            coVerify { signatureValidator.isValidSignature("", any()) }
-        }
+        assertEquals("2.0.0", repo.recommendedVersion)
+        assertEquals(true, repo.isRecentActivityEnabled)
+        assertEquals(true, repo.isTopicsEnabled)
+        assertEquals(true, repo.isNotificationsEnabled)
+        assertEquals(true, repo.isLocalServicesEnabled)
+        assertEquals(true, repo.isExternalBrowserEnabled)
+        assertEquals(3600L, repo.refreshTokenExpirySeconds)
+        assertSame(mockBanners, repo.emergencyBanners)
+        assertSame(mockFeedback, repo.userFeedbackBanner)
     }
 }

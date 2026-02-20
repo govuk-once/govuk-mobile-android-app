@@ -17,3 +17,4 @@
 -keep class uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 -keep class uk.gov.govuk.config.data.remote.model.Link
 -keep class uk.gov.govuk.config.data.remote.model.ChatUrls
+-keep class uk.gov.govuk.config.data.remote.model.ChatBanner

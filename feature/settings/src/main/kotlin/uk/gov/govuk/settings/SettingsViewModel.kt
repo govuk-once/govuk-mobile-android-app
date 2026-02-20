@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
@@ -36,7 +37,8 @@ internal data class SettingsUiState(
 internal class SettingsViewModel @Inject constructor(
     authRepo: AuthRepo,
     flagRepo: FlagRepo,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    private val configRepo: ConfigRepo
 ): ViewModel() {
 
     companion object {
@@ -136,6 +138,7 @@ internal class SettingsViewModel @Inject constructor(
                 analyticsClient.enable()
             } else {
                 analyticsClient.disable()
+                configRepo.clearRemoteConfigValues()
             }
             _uiState.update { current ->
                 current?.copy(isAnalyticsEnabled = enabled)

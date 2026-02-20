@@ -1,4 +1,4 @@
-package uk.gov.govuk.ui
+package uk.gov.govuk.design.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
@@ -7,16 +7,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import uk.gov.govuk.R
-import uk.gov.govuk.design.ui.component.BodyBoldLabel
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun InfoAlert(
+fun InfoAlert(
     @StringRes title: Int,
     @StringRes message: Int,
+    @StringRes buttonText: Int,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
@@ -36,11 +33,9 @@ internal fun InfoAlert(
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
+            TextButton(onClick = onDismiss) {
                 BodyBoldLabel(
-                    text = stringResource(id = R.string.close_alert_button),
+                    text = stringResource(id = buttonText),
                     color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
                 )
             }
