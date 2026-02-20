@@ -155,14 +155,20 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    suspend fun onAnalyticsConsentCompleted() {
-        if (analyticsClient.isAnalyticsEnabled()) {
-            configRepo.refreshRemoteConfig()
+    fun onAnalyticsConsentCompleted(navController: NavController) {
+        viewModelScope.launch {
+            if (analyticsClient.isAnalyticsEnabled()) {
+                configRepo.refreshRemoteConfig()
+            }
+            appNavigation.onNext(navController)
         }
     }
 
-    suspend fun topicSelectionCompleted() {
-        appRepo.topicSelectionCompleted()
+    fun topicSelectionCompleted(navController: NavController) {
+        viewModelScope.launch {
+            appRepo.topicSelectionCompleted()
+            appNavigation.onNext(navController)
+        }
     }
 
     private fun updateHomeWidgets(

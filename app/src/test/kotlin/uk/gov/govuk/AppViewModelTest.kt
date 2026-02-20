@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -297,9 +298,12 @@ class AppViewModelTest {
     @Test
     fun `When topic selection completed, then call repo topic selection completed`() {
         runTest {
-            viewModel.topicSelectionCompleted()
+            viewModel.topicSelectionCompleted(navController)
 
-            coVerify { appRepo.topicSelectionCompleted() }
+            coVerify {
+                appRepo.topicSelectionCompleted()
+                appNavigation.onNext(navController)
+            }
         }
     }
 
@@ -664,8 +668,11 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsEnabled() } returns true
 
         runTest {
-            viewModel.onAnalyticsConsentCompleted()
-            coVerify { configRepo.refreshRemoteConfig() }
+            viewModel.onAnalyticsConsentCompleted(navController)
+            coVerify {
+                configRepo.refreshRemoteConfig()
+                appNavigation.onNext(navController)
+            }
         }
     }
 
@@ -674,9 +681,14 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsEnabled() } returns false
 
         runTest {
-            viewModel.onAnalyticsConsentCompleted()
+            viewModel.onAnalyticsConsentCompleted(navController)
+
+            advanceUntilIdle()
+
             coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
             coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
+
+            coVerify { appNavigation.onNext(navController) }
         }
     }
 

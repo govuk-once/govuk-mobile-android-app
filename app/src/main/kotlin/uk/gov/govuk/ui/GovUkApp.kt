@@ -400,10 +400,7 @@ private fun GovUkNavHost(
         )
         analyticsGraph(
             analyticsConsentCompleted = {
-                coroutineScope.launch {
-                    viewModel.onAnalyticsConsentCompleted()
-                    appNavigation.onNext(navController)
-                }
+                viewModel.onAnalyticsConsentCompleted(navController)
             },
             launchBrowser = { url ->
                 browserLauncher.launchPartial(
@@ -414,10 +411,7 @@ private fun GovUkNavHost(
         )
         topicSelectionGraph(
             topicSelectionCompleted = {
-                coroutineScope.launch {
-                    viewModel.topicSelectionCompleted()
-                    appNavigation.onNext(navController)
-                }
+                viewModel.topicSelectionCompleted(navController)
             }
         )
         topicsGraph(
