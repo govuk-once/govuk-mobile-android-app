@@ -297,9 +297,12 @@ class AppViewModelTest {
     @Test
     fun `When topic selection completed, then call repo topic selection completed`() {
         runTest {
-            viewModel.topicSelectionCompleted()
+            viewModel.topicSelectionCompleted(navController)
 
-            coVerify { appRepo.topicSelectionCompleted() }
+            coVerify {
+                appRepo.topicSelectionCompleted()
+                appNavigation.onNext(navController)
+            }
         }
     }
 
@@ -664,8 +667,11 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsEnabled() } returns true
 
         runTest {
-            viewModel.onAnalyticsConsentCompleted()
-            coVerify { configRepo.refreshRemoteConfig() }
+            viewModel.onAnalyticsConsentCompleted(navController)
+            coVerify {
+                configRepo.refreshRemoteConfig()
+                appNavigation.onNext(navController)
+            }
         }
     }
 
@@ -674,7 +680,7 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsEnabled() } returns false
 
         runTest {
-            viewModel.onAnalyticsConsentCompleted()
+            viewModel.onAnalyticsConsentCompleted(navController)
             coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
             coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
         }
