@@ -33,7 +33,7 @@ private val RedDarker25 = Color(0xFF982828)
 private val RedDarker50 = Color(0xFF651B1B)
 private val RedDarker80 = Color(0xFF280B0B)
 
-private val GreenPrimary = Color(0xFF11875A)
+private val GreenPrimary = Color(0xFF0F7A52)
 private val GreenAccent = Color(0xFF66F39E)
 private val GreenLighter25 = Color(0xFF4DA583)
 private val GreenLighter50 = Color(0xFF88C3AD)
