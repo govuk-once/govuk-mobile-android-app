@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.yield
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -297,17 +298,23 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `When topic selection completed, then call repo topic selection completed`() = runTest(dispatcher) {
-        coEvery { appRepo.topicSelectionCompleted() } coAnswers { yield() }
-        coEvery { appNavigation.onNext(any()) } coAnswers { yield() }
+    fun `When topic selection completed, then call repo topic selection completed`() {
+        // force the coroutine to queue
+        val testDispatcher = StandardTestDispatcher()
+        Dispatchers.setMain(testDispatcher)
 
-        viewModel.topicSelectionCompleted(navController)
+        runTest(testDispatcher) {
+            coEvery { appRepo.topicSelectionCompleted() } returns Unit
+            coEvery { appNavigation.onNext(any()) } returns Unit
 
-        advanceUntilIdle()
+            viewModel.topicSelectionCompleted(navController)
 
-        coVerify {
-            appRepo.topicSelectionCompleted()
-            appNavigation.onNext(navController)
+            advanceUntilIdle()
+
+            coVerify {
+                appRepo.topicSelectionCompleted()
+                appNavigation.onNext(navController)
+            }
         }
     }
 
