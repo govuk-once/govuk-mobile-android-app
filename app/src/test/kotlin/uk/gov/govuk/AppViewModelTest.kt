@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -296,14 +297,17 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `When topic selection completed, then call repo topic selection completed`() {
-        runTest {
-            viewModel.topicSelectionCompleted(navController)
+    fun `When topic selection completed, then call repo topic selection completed`() = runTest(dispatcher) {
+        coEvery { appRepo.topicSelectionCompleted() } coAnswers { yield() }
+        coEvery { appNavigation.onNext(any()) } coAnswers { yield() }
 
-            coVerify {
-                appRepo.topicSelectionCompleted()
-                appNavigation.onNext(navController)
-            }
+        viewModel.topicSelectionCompleted(navController)
+
+        advanceUntilIdle()
+
+        coVerify {
+            appRepo.topicSelectionCompleted()
+            appNavigation.onNext(navController)
         }
     }
 
@@ -664,32 +668,33 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given analytics is enabled, when analytics consent completed, then refresh remote config`() {
+    fun `Given analytics is enabled, when analytics consent completed, then refresh remote config`() = runTest(dispatcher) {
         every { analyticsClient.isAnalyticsEnabled() } returns true
 
-        runTest {
-            viewModel.onAnalyticsConsentCompleted(navController)
-            coVerify {
-                configRepo.refreshRemoteConfig()
-                appNavigation.onNext(navController)
-            }
+        coEvery { configRepo.refreshRemoteConfig() } coAnswers { yield() }
+        coEvery { appNavigation.onNext(any()) } coAnswers { yield() }
+
+        viewModel.onAnalyticsConsentCompleted(navController)
+        advanceUntilIdle()
+
+        coVerify {
+            configRepo.refreshRemoteConfig()
+            appNavigation.onNext(navController)
         }
     }
 
     @Test
-    fun `Given analytics is disabled, when analytics consent completed, then do not activate remote config`() {
+    fun `Given analytics is disabled, when analytics consent completed, then do not activate remote config`() = runTest(dispatcher) {
         every { analyticsClient.isAnalyticsEnabled() } returns false
 
-        runTest {
-            viewModel.onAnalyticsConsentCompleted(navController)
+        coEvery { appNavigation.onNext(any()) } coAnswers { yield() }
 
-            advanceUntilIdle()
+        viewModel.onAnalyticsConsentCompleted(navController)
+        advanceUntilIdle()
 
-            coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
-            coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
-
-            coVerify { appNavigation.onNext(navController) }
-        }
+        coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
+        coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
+        coVerify { appNavigation.onNext(navController) }
     }
 
     @Test
