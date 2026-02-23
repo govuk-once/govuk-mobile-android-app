@@ -51,6 +51,7 @@ import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
 import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
+import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppViewModelTest {
@@ -298,12 +299,7 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `When topic selection completed, then call repo topic selection completed`() {
-        // force the coroutine to queue
-        val testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
-
-        runTest(testDispatcher) {
+    fun `When topic selection completed, then call repo topic selection completed`() = runTest(dispatcher) {
             coEvery { appRepo.topicSelectionCompleted() } returns Unit
             coEvery { appNavigation.onNext(any()) } returns Unit
 
@@ -315,7 +311,19 @@ class AppViewModelTest {
                 appRepo.topicSelectionCompleted()
                 appNavigation.onNext(navController)
             }
-        }
+
+    }
+
+    @Test
+    fun `When topic selection completes and navigation is cancelled, then handle gracefully`() = runTest(dispatcher) {
+        coEvery { appRepo.topicSelectionCompleted() } returns Unit
+
+        coEvery { appNavigation.onNext(any()) } throws CancellationException("Cancelled")
+
+        viewModel.topicSelectionCompleted(navController)
+        advanceUntilIdle()
+
+        coVerify { appRepo.topicSelectionCompleted() }
     }
 
     @Test
