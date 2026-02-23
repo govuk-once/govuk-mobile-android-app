@@ -157,28 +157,18 @@ internal class AppViewModel @Inject constructor(
 
     fun onAnalyticsConsentCompleted(navController: NavController) {
         viewModelScope.launch {
-            handleAnalyticsConsent(navController)
+            if (analyticsClient.isAnalyticsEnabled()) {
+                configRepo.refreshRemoteConfig()
+            }
+            appNavigation.onNext(navController)
         }
-    }
-
-    // extracted to bypass Kover/JaCoCo synthetic branch bug
-    private suspend fun handleAnalyticsConsent(navController: NavController) {
-        if (analyticsClient.isAnalyticsEnabled()) {
-            configRepo.refreshRemoteConfig()
-        }
-        appNavigation.onNext(navController)
     }
 
     fun topicSelectionCompleted(navController: NavController) {
         viewModelScope.launch {
-            handleTopicSelection(navController)
+            appRepo.topicSelectionCompleted()
+            appNavigation.onNext(navController)
         }
-    }
-
-    // extracted to bypass Kover/JaCoCo synthetic branch bug
-    private suspend fun handleTopicSelection(navController: NavController) {
-        appRepo.topicSelectionCompleted()
-        appNavigation.onNext(navController)
     }
 
     private fun updateHomeWidgets(
