@@ -80,6 +80,7 @@ import uk.gov.govuk.search.navigation.searchGraph
 import uk.gov.govuk.search.ui.widget.SearchWidget
 import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
+import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.visited.navigation.visitedGraph
@@ -382,6 +383,19 @@ private fun GovUkNavHost(
             navController = navController,
             onLoginCompleted = {
                 viewModel.onLogin(navController)
+            }
+        )
+        termsGraph(
+            onCompleted = {
+                coroutineScope.launch {
+                    appNavigation.onNext(navController)
+                }
+            },
+            launchBrowser = { url ->
+                browserLauncher.launchPartial(
+                    context = context,
+                    url = url
+                ) { showBrowserNotFoundAlert = true }
             }
         )
         analyticsGraph(

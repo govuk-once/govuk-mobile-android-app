@@ -50,6 +50,7 @@ class ConfigModule {
                 EmergencyBannerTypeAdapter::class.java,
                 EmergencyBannerTypeAdapter()
             )
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .create()
     }
 
