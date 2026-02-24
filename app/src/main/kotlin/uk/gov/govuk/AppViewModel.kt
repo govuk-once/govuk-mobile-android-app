@@ -23,6 +23,7 @@ import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.search.SearchFeature
+import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
 import uk.gov.govuk.widgets.model.HomeWidget
@@ -34,6 +35,7 @@ internal class AppViewModel @Inject constructor(
     private val timeoutManager: TimeoutManager,
     private val appRepo: AppRepo,
     private val loginRepo: LoginRepo,
+    private val termsRepo: TermsRepo,
     private val configRepo: ConfigRepo,
     private val flagRepo: FlagRepo,
     private val authRepo: AuthRepo,
@@ -140,6 +142,7 @@ internal class AppViewModel @Inject constructor(
                 authRepo.clear()
                 appRepo.clear()
                 loginRepo.clear()
+                termsRepo.clear()
                 topicsFeature.clear()
                 localFeature.clear()
                 searchFeature.clear()
@@ -152,14 +155,20 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    suspend fun onAnalyticsConsentCompleted() {
-        if (analyticsClient.isAnalyticsEnabled()) {
-            configRepo.refreshRemoteConfig()
+    fun onAnalyticsConsentCompleted(navController: NavController) {
+        viewModelScope.launch {
+            if (analyticsClient.isAnalyticsEnabled()) {
+                configRepo.refreshRemoteConfig()
+            }
+            appNavigation.onNext(navController)
         }
     }
 
-    suspend fun topicSelectionCompleted() {
-        appRepo.topicSelectionCompleted()
+    fun topicSelectionCompleted(navController: NavController) {
+        viewModelScope.launch {
+            appRepo.topicSelectionCompleted()
+            appNavigation.onNext(navController)
+        }
     }
 
     private fun updateHomeWidgets(

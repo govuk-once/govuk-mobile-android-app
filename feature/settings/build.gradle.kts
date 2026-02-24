@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.kover)
 }
 
+val privacyPolicyUrl: String by project
+
 android {
     namespace = "uk.gov.govuk.settings"
     compileSdk = Version.COMPILE_SDK
@@ -34,7 +36,7 @@ android {
         buildConfigField("String", "NOTIFICATIONS_PERMISSION_EVENT", "\"NotificationsPermission\"")
 
         buildConfigField("String", "PRIVACY_POLICY_EVENT", "\"PrivacyPolicy\"")
-        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://www.gov.uk/government/publications/govuk-app-privacy-notice-how-we-use-your-data\"")
+        buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
 
         buildConfigField("String", "TERMS_AND_CONDITIONS_EVENT", "\"TermsAndConditions\"")
         buildConfigField("String", "TERMS_AND_CONDITIONS_URL", "\"http://www.gov.uk/government/publications/govuk-app-terms-and-conditions\"")

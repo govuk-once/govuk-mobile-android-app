@@ -9,8 +9,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
 import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
@@ -122,6 +124,8 @@ class ConfigRepoTest {
     fun `Given successful init, when accessing remaining properties, then return correct config values`() = runTest {
         val mockBanners = listOf(mockk<EmergencyBanner>())
         val mockFeedback = mockk<UserFeedbackBanner>()
+        val mockChatBanner = mockk<ChatBanner>()
+        val mockTerms = mockk<TermsAndConditions>()
 
         every { config.recommendedVersion } returns "2.0.0"
         every { config.releaseFlags.recentActivity } returns true
@@ -132,6 +136,8 @@ class ConfigRepoTest {
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
         every { config.userFeedbackBanner } returns mockFeedback
+        every { config.chatBanner } returns mockChatBanner
+        every { config.termsAndConditions } returns mockTerms
         coEvery { govUkDataSource.fetchConfig() } returns Success(config)
         coEvery { firebaseDataSource.fetch() } returns true
 
@@ -147,5 +153,7 @@ class ConfigRepoTest {
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
         assertSame(mockFeedback, repo.userFeedbackBanner)
+        assertSame(mockChatBanner, repo.chatBanner)
+        assertSame(mockTerms, repo.termsAndConditions)
     }
 }
