@@ -53,7 +53,8 @@ internal fun Markdown(
     text: String,
     onMarkdownLinkClicked: (String, String) -> Unit,
     markdownLinkType: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    accessibilityPrefix: String? = null
 ) {
     val parser = remember { MarkdownParser() }
     val elements = remember(text) { parser.parse(text) }
@@ -65,11 +66,12 @@ internal fun Markdown(
             .padding(horizontal = GovUkTheme.spacing.medium),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        elements.forEach { element ->
+        elements.forEachIndexed { index, element ->
             MarkdownElementItem(
                 element = element,
                 onLinkClick = { url -> onMarkdownLinkClicked(markdownLinkType, url) },
-                linkAccessibilityLabel = linkAccessibilityLabel
+                linkAccessibilityLabel = linkAccessibilityLabel,
+                accessibilityPrefix = if (index == 0) accessibilityPrefix else null
             )
         }
     }
@@ -79,14 +81,15 @@ internal fun Markdown(
 private fun MarkdownElementItem(
     element: MarkdownElement,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
+    linkAccessibilityLabel: String,
+    accessibilityPrefix: String? = null
 ) {
     when (element) {
-        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick, linkAccessibilityLabel)
-        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick, linkAccessibilityLabel)
-        is MarkdownElement.CodeBlock -> CodeBlockItem(element)
-        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick, linkAccessibilityLabel)
-        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick, linkAccessibilityLabel)
+        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
+        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
+        is MarkdownElement.CodeBlock -> CodeBlockItem(element, accessibilityPrefix)
+        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
+        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
         is MarkdownElement.ThematicBreak -> ThematicBreakItem()
     }
 }
@@ -95,7 +98,8 @@ private fun MarkdownElementItem(
 private fun HeadingItem(
     heading: MarkdownElement.Heading,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
+    linkAccessibilityLabel: String,
+    accessibilityPrefix: String? = null
 ) {
     SegmentedText(
         content = heading.content,
@@ -103,7 +107,13 @@ private fun HeadingItem(
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
-            .withLinkAccessibility(heading.content, heading.plainText, linkAccessibilityLabel, isHeading = true)
+            .withLinkAccessibility(
+                heading.content,
+                heading.plainText,
+                linkAccessibilityLabel,
+                accessibilityPrefix,
+                isHeading = true
+            )
     )
 }
 
@@ -111,7 +121,8 @@ private fun HeadingItem(
 private fun ParagraphItem(
     paragraph: MarkdownElement.Paragraph,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
+    linkAccessibilityLabel: String,
+    accessibilityPrefix: String? = null
 ) {
     SegmentedText(
         content = paragraph.content,
@@ -119,12 +130,22 @@ private fun ParagraphItem(
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
-            .withLinkAccessibility(paragraph.content, paragraph.plainText, linkAccessibilityLabel)
+            .withLinkAccessibility(
+                paragraph.content,
+                paragraph.plainText,
+                linkAccessibilityLabel,
+                accessibilityPrefix
+            )
     )
 }
 
 @Composable
-private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
+private fun CodeBlockItem(
+    codeBlock: MarkdownElement.CodeBlock,
+    accessibilityPrefix: String? = null
+) {
+    val accessibilityText = accessibilityPrefix?.let { "$it ${codeBlock.plainText}" }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = GovUkTheme.colourScheme.surfaces.chatIntroCardBackground,
@@ -136,7 +157,13 @@ private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
                 fontFamily = FontFamily.Monospace
             ),
             color = GovUkTheme.colourScheme.textAndIcons.primary,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier
+                .padding(12.dp)
+                .then(
+                    if (accessibilityText != null) {
+                        Modifier.semantics { contentDescription = accessibilityText }
+                    } else Modifier
+                )
         )
     }
 }
@@ -145,7 +172,8 @@ private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
 private fun BlockQuoteItem(
     blockQuote: MarkdownElement.BlockQuote,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
+    linkAccessibilityLabel: String,
+    accessibilityPrefix: String? = null
 ) {
     Row(
         modifier = Modifier
@@ -170,7 +198,12 @@ private fun BlockQuoteItem(
                 onLinkClick = onLinkClick,
                 modifier = Modifier
                     .padding(12.dp)
-                    .withLinkAccessibility(blockQuote.content, blockQuote.plainText, linkAccessibilityLabel)
+                    .withLinkAccessibility(
+                        blockQuote.content,
+                        blockQuote.plainText,
+                        linkAccessibilityLabel,
+                        accessibilityPrefix
+                    )
             )
         }
     }
@@ -180,7 +213,8 @@ private fun BlockQuoteItem(
 private fun ListItemItem(
     listItem: MarkdownElement.ListItem,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
+    linkAccessibilityLabel: String,
+    accessibilityPrefix: String? = null
 ) {
     val indent = ((listItem.depth + 1) * 16).dp
     val bullet = if (listItem.isOrdered) {
@@ -208,7 +242,12 @@ private fun ListItemItem(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp)
-                .withLinkAccessibility(listItem.content, listItem.plainText, linkAccessibilityLabel)
+                .withLinkAccessibility(
+                    listItem.content,
+                    listItem.plainText,
+                    linkAccessibilityLabel,
+                    accessibilityPrefix
+                )
         )
     }
 }
@@ -295,21 +334,24 @@ private fun Modifier.withLinkAccessibility(
     content: List<InlineContent>,
     plainText: String,
     linkAccessibilityLabel: String,
+    accessibilityPrefix: String? = null,
     isHeading: Boolean = false
 ): Modifier {
-    val accessibilityText = if (hasLinks(content)) {
-        "$plainText. $linkAccessibilityLabel"
+    val hasLinks = hasLinks(content)
+    val accessibilityText = if (accessibilityPrefix != null || hasLinks) {
+        buildString {
+            accessibilityPrefix?.let { append("$it. ") }
+            append(plainText)
+            if (hasLinks) append(". $linkAccessibilityLabel")
+        }
     } else null
 
-    return when {
-        accessibilityText != null && isHeading -> this.semantics {
-            heading()
-            contentDescription = accessibilityText
+    return if (accessibilityText != null || isHeading) {
+        this.semantics {
+            if (isHeading) heading()
+            accessibilityText?.let { contentDescription = it }
         }
-        accessibilityText != null -> this.semantics { contentDescription = accessibilityText }
-        isHeading -> this.semantics { heading() }
-        else -> this
-    }
+    } else this
 }
 
 private fun collectLinks(content: List<InlineContent>): List<String> {

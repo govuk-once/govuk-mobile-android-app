@@ -19,7 +19,8 @@
     <string name="action_close">Close menu</string>
     <string name="action_alt">More options</string>
     <string name="button_alt">Send message</string>
-    <string name="answer_alt">You said</string>
+    <string name="question_alt">You said</string>
+    <string name="answer_alt">GOV dot UK Chat replied</string>
     <string name="bot_header_text">GOV.UK Chat</string>
     <string name="bot_sources_header_text">GOV.UK Chat can make mistakes.\nCheck GOV.UK pages for important information.</string>
     <string name="bot_sources_list_description">GOV.UK pages used in this answer</string>

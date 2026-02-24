@@ -87,7 +87,8 @@ internal fun Answer(
             Markdown(
                 text = answer,
                 onMarkdownLinkClicked = onMarkdownLinkClicked,
-                markdownLinkType = Analytics.RESPONSE_LINK_CLICKED
+                markdownLinkType = Analytics.RESPONSE_LINK_CLICKED,
+                accessibilityPrefix = stringResource(R.string.answer_alt)
             )
 
             if (!sources.isNullOrEmpty()) {
