@@ -54,6 +54,11 @@
     <string name="terms_privacy_notice">Privacy notice</string>
     <string name="terms_accept">Accept and continue</string>
     <string name="terms_do_not_accept">Do not accept</string>
+    <string name="terms_dialog_title">Terms and conditions</string>
+    <string name="terms_dialog_message">You must accept to use the app. If you do not want to accept, you can sign out.</string>
+    <string name="terms_dialog_sign_out">Sign out</string>
+    <string name="terms_dialog_cancel">Cancel</string>
+
 
     <string name="biometric_settings_title">Biometrics</string>
     <string name="biometric_settings_toggle">Unlock app with biometrics</string>
