@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.BodyRegularLabelCenteredTrailingLink
+import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LargeHorizontalSpacer
@@ -116,13 +116,14 @@ private fun AdditionalText(
     val altText = "$intro $linkText ${stringResource(R.string.sources_open_in_text)} $outro"
     val uriHandler = LocalUriHandler.current
 
-    BodyRegularLabelCenteredTrailingLink(
+    BodyRegularLabelTrailingLink(
         introText = intro,
         outroText = " $outro",
         linkText = linkText,
         onClick = { uriHandler.openUri(url) },
         altText = altText,
         modifier = modifier,
-        textColor = GovUkTheme.colourScheme.textAndIcons.primary
+        textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+        textAlign = TextAlign.Center
     )
 }

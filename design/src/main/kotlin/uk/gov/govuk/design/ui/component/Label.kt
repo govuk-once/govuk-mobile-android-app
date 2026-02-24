@@ -257,14 +257,15 @@ fun BodyRegularLabel(
 }
 
 @Composable
-fun BodyRegularLabelCenteredTrailingLink(
+fun BodyRegularLabelTrailingLink(
     introText: String,
     outroText: String,
     linkText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     altText: String? = null,
-    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary
+    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
+    textAlign: TextAlign = TextAlign.Left
 ) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.link
     val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
@@ -286,7 +287,7 @@ fun BodyRegularLabelCenteredTrailingLink(
 
     BodyRegularLabel(
         text = annotatedString,
-        textAlign = TextAlign.Center,
+        textAlign = textAlign,
         modifier = modifier
             .clearAndSetSemantics {
                 contentDescription = altText ?: "$introText $linkText"

@@ -16,7 +16,7 @@ import uk.gov.govuk.chat.ChatViewModel
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.BodyRegularLabelCenteredTrailingLink
+import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
@@ -103,13 +103,14 @@ private fun OnboardingPageThreeScreen(
             val uriHandler = LocalUriHandler.current
             val url = BuildConfig.PRIVACY_POLICY_URL
 
-            BodyRegularLabelCenteredTrailingLink(
+            BodyRegularLabelTrailingLink(
                 introText = introText,
                 outroText = outroText,
                 linkText = linkText,
                 onClick = { uriHandler.openUri(url) },
                 altText = altText,
-                textColor = GovUkTheme.colourScheme.textAndIcons.primary
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+                textAlign = TextAlign.Center
             )
         },
         buttonContent = {
