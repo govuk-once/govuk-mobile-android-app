@@ -66,8 +66,8 @@ internal class AppViewModel @Inject constructor(
         object NavigateNext : NavigationEvent
     }
 
-    private val _navigationEvent = MutableSharedFlow<NavigationEvent>(extraBufferCapacity = 1)
-    val navigationEvent = _navigationEvent.asSharedFlow()
+    private val _navigationEvent = Channel<NavigationEvent>(Channel.BUFFERED)
+    val navigationEvent = _navigationEvent.receiveAsFlow()
 
     init {
         analyticsClient.isUserSessionActive = { authRepo.isUserSessionActive() }
@@ -159,7 +159,7 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
-            _navigationEvent.tryEmit(NavigationEvent.NavigateNext)
+            _navigationEvent.send(NavigationEvent.NavigateNext)
         }
     }
 
@@ -168,14 +168,14 @@ internal class AppViewModel @Inject constructor(
             if (analyticsClient.isAnalyticsEnabled()) {
                 configRepo.refreshRemoteConfig()
             }
-            _navigationEvent.tryEmit(NavigationEvent.NavigateNext)
+            _navigationEvent.send(NavigationEvent.NavigateNext)
         }
     }
 
     fun topicSelectionCompleted() {
         viewModelScope.launch {
             appRepo.topicSelectionCompleted()
-            _navigationEvent.tryEmit(NavigationEvent.NavigateNext)
+            _navigationEvent.send(NavigationEvent.NavigateNext)
         }
     }
 
