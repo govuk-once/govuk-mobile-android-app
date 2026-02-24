@@ -155,7 +155,7 @@ private fun DenialDialog(
                 }
             ) {
                 BodyRegularLabel(
-                    text = "Sign out",
+                    text = stringResource(R.string.terms_dialog_sign_out),
                     color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
                 )
             }
@@ -166,17 +166,17 @@ private fun DenialDialog(
                 onClick = onDismiss
             ) {
                 BodyBoldLabel(
-                    text = "Cancel",
+                    text = stringResource(R.string.terms_dialog_cancel),
                     color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
                 )
             }
         },
         title = {
-            BodyBoldLabel("Terms and conditions")
+            BodyBoldLabel(stringResource(R.string.terms_dialog_title))
         },
         text = {
             BodyRegularLabel(
-                text = "You must accept to use the app. If you do not want to accept, you can sign out.",
+                text = stringResource(R.string.terms_dialog_message),
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         },
