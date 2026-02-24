@@ -17,10 +17,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.ui.GovUkApp
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+
+    @Inject
+    internal lateinit var appNavigation: AppNavigation
 
     private val _intentFlow: MutableSharedFlow<Intent> =
         MutableSharedFlow(replay = 1)
@@ -47,7 +52,7 @@ class MainActivity : FragmentActivity() {
                             .fillMaxSize(),
                     color = GovUkTheme.colourScheme.surfaces.background
                 ) {
-                    GovUkApp(_intentFlow)
+                    GovUkApp(_intentFlow, appNavigation)
                 }
             }
         }

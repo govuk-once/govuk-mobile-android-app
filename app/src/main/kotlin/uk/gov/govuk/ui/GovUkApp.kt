@@ -90,7 +90,7 @@ import uk.gov.govuk.widgets.ui.homeWidgets
 import uk.govuk.app.local.navigation.localGraph
 
 @Composable
-internal fun GovUkApp(intentFlow: Flow<Intent>) {
+internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
     val viewModel: AppViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val homeWidgets by viewModel.homeWidgets.collectAsState()
@@ -116,6 +116,7 @@ internal fun GovUkApp(intentFlow: Flow<Intent>) {
                         BottomNavScaffold(
                             intentFlow = intentFlow,
                             viewModel = viewModel,
+                            appNavigation = appNavigation,
                             uiState = it,
                             homeWidgets = homeWidgets
                         )
@@ -135,6 +136,7 @@ internal fun GovUkApp(intentFlow: Flow<Intent>) {
 private fun BottomNavScaffold(
     intentFlow: Flow<Intent>,
     viewModel: AppViewModel,
+    appNavigation: AppNavigation,
     uiState: AppUiState.Default,
     homeWidgets: List<HomeWidget>?
 ) {
@@ -156,7 +158,7 @@ private fun BottomNavScaffold(
                     AppViewModel.TimeoutEvent.WARNING -> showTimeoutWarningDialog = true
                     AppViewModel.TimeoutEvent.TIMEOUT -> {
                         showTimeoutWarningDialog = false
-                        viewModel.appNavigation.onSignOut(navController)
+                        appNavigation.onSignOut(navController)
                     }
                 }
             }
@@ -207,6 +209,7 @@ private fun BottomNavScaffold(
                 GovUkNavHost(
                     intentFlow = intentFlow,
                     viewModel = viewModel,
+                    appNavigation = appNavigation,
                     navController = navController,
                     homeWidgets = homeWidgets,
                     onInternalWidgetClick = { text ->
@@ -232,7 +235,7 @@ private fun BottomNavScaffold(
                 )
                 HandleOnResumeNavigation(
                     navController = { navController },
-                    appNavigation = viewModel.appNavigation
+                    appNavigation = appNavigation
                 )
             }
         }
@@ -345,6 +348,7 @@ private fun BottomNav(
 private fun GovUkNavHost(
     intentFlow: Flow<Intent>,
     viewModel: AppViewModel,
+    appNavigation: AppNavigation,
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
     onInternalWidgetClick: (text: String) -> Unit,
@@ -353,13 +357,22 @@ private fun GovUkNavHost(
     shouldShowExternalBrowser: Boolean,
     paddingValues: PaddingValues
 ) {
-    val appNavigation = viewModel.appNavigation
     val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser)
     val context = LocalContext.current
     var showDeepLinkNotFoundAlert by remember { mutableStateOf(false) }
     var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                AppViewModel.NavigationEvent.NavigateNext -> {
+                    appNavigation.onNext(navController)
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         appNavigation.setOnLaunchBrowser { url ->
@@ -382,7 +395,7 @@ private fun GovUkNavHost(
         loginGraph(
             navController = navController,
             onLoginCompleted = {
-                viewModel.onLogin(navController)
+                viewModel.onLogin()
             }
         )
         termsGraph(
@@ -400,7 +413,7 @@ private fun GovUkNavHost(
         )
         analyticsGraph(
             analyticsConsentCompleted = {
-                viewModel.onAnalyticsConsentCompleted(navController)
+                viewModel.onAnalyticsConsentCompleted()
             },
             launchBrowser = { url ->
                 browserLauncher.launchPartial(
@@ -411,7 +424,7 @@ private fun GovUkNavHost(
         )
         topicSelectionGraph(
             topicSelectionCompleted = {
-                viewModel.topicSelectionCompleted(navController)
+                viewModel.topicSelectionCompleted()
             }
         )
         topicsGraph(
