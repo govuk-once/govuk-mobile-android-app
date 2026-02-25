@@ -241,6 +241,66 @@ fun BodyRegularLabel(
 }
 
 @Composable
+fun BodyRegularLabel(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    color: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    BaseLabel(
+        text = text,
+        modifier = modifier,
+        style = GovUkTheme.typography.bodyRegular,
+        color = color,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun BodyRegularLabelTrailingLink(
+    introText: String,
+    outroText: String,
+    linkText: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    altText: String? = null,
+    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
+    textAlign: TextAlign = TextAlign.Left
+) {
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.link
+    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+
+    val annotatedString = buildAnnotatedString {
+        append(introText)
+        append(" ")
+        val link = LinkAnnotation.Clickable(
+            tag = "link",
+            styles = TextLinkStyles(
+                style = SpanStyle(color = linkColor, textDecoration = TextDecoration.None),
+                pressedStyle = SpanStyle(background = highlightColor)
+            ),
+            linkInteractionListener = { _ -> onClick() }
+        )
+        withLink(link) { append(linkText) }
+        append(outroText)
+    }
+
+    BodyRegularLabel(
+        text = annotatedString,
+        textAlign = textAlign,
+        modifier = modifier
+            .clearAndSetSemantics {
+                contentDescription = altText ?: "$introText $linkText"
+                onClick(action = {
+                    onClick()
+                    true
+                })
+            },
+        color = textColor
+    )
+}
+
+@Composable
 fun CalloutBoldLabel(
     text: String,
     modifier: Modifier = Modifier,
