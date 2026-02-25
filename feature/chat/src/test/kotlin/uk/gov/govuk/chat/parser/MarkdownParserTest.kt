@@ -238,7 +238,7 @@ class MarkdownParserTest {
             val codeBlock = result[0] as MarkdownElement.CodeBlock
             assertEquals("val x = 1", codeBlock.code)
             assertNull(codeBlock.language)
-            assertEquals("Code: val x = 1", codeBlock.plainText)
+            assertEquals("val x = 1", codeBlock.plainText)
         }
 
         @Test
@@ -280,7 +280,7 @@ class MarkdownParserTest {
 
             assertEquals(1, result.size)
             val blockQuote = result[0] as MarkdownElement.BlockQuote
-            assertEquals("Quote: This is a quote", blockQuote.plainText)
+            assertEquals("This is a quote", blockQuote.plainText)
             assertEquals(1, blockQuote.content.size)
 
             val text = blockQuote.content[0] as InlineContent.Text
@@ -293,7 +293,7 @@ class MarkdownParserTest {
 
             assertEquals(1, result.size)
             val blockQuote = result[0] as MarkdownElement.BlockQuote
-            assertEquals("Quote: This is important", blockQuote.plainText)
+            assertEquals("This is important", blockQuote.plainText)
             assertEquals(2, blockQuote.content.size)
 
             val text = blockQuote.content[0] as InlineContent.Text
