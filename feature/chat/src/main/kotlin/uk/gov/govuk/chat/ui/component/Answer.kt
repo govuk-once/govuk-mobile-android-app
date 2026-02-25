@@ -23,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import uk.gov.govuk.chat.R
@@ -33,6 +33,7 @@ import uk.gov.govuk.chat.parser.MarkdownParser
 import uk.gov.govuk.chat.parser.PlainTextExtractor
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import kotlin.math.roundToInt
 
 @Composable
 internal fun Answer(
@@ -45,7 +46,6 @@ internal fun Answer(
 ) {
     var showContextMenu by remember { mutableStateOf(false) }
     var pressOffset by remember { mutableStateOf(Offset.Zero) }
-    val density = LocalDensity.current
     val interactionSource = remember { MutableInteractionSource() }
     val scope = rememberCoroutineScope()
 
@@ -104,10 +104,12 @@ internal fun Answer(
 
         Box(
             modifier = Modifier
-                .offset(
-                    x = with(density) { pressOffset.x.toDp() },
-                    y = with(density) { pressOffset.y.toDp() }
-                )
+                .offset {
+                    IntOffset(
+                        x = pressOffset.x.roundToInt(),
+                        y = pressOffset.y.roundToInt()
+                    )
+                }
         ) {
             DropdownMenu(
                 expanded = showContextMenu,

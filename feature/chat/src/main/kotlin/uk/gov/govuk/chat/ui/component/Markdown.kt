@@ -365,7 +365,7 @@ private fun collectLinks(content: List<InlineContent>): List<String> {
                 }
                 is InlineContent.Emphasis -> collect(item.content)
                 is InlineContent.StrongEmphasis -> collect(item.content)
-                else -> {}
+                else -> Unit
             }
         }
     }
