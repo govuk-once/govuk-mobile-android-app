@@ -46,6 +46,12 @@
     <string name="onboarding_page_two_text_one">GOV.UK Chat is an AI tool and can sometimes make mistakes.</string>
     <string name="onboarding_page_two_text_two">It’s simple to double-check information. Use the links provided with each answer.</string>
     <string name="onboarding_page_two_button">I understand</string>
+    <string name="onboarding_page_three_header">Your GOV.UK Chat conversation data</string>
+    <string name="onboarding_page_three_text_one">We analyse questions and answers to improve Chat, as we’re still developing it.</string>
+    <string name="onboarding_page_three_text_two">Find out more, including how to ask us to delete your data, in the</string>
+    <string name="onboarding_page_three_text_two_link_text">privacy notice</string>
+    <string name="onboarding_page_three_button">Agree and continue</string>
+    <string name="onboarding_page_three_decline_button">Exit GOV.UK Chat</string>
     <string name="onboarding_page_cancel_text">Cancel</string>
     <string name="chat_banner_title">Introducing GOV.UK Chat</string>
     <string name="chat_banner_desc">An experimental AI tool for finding quick answers</string>

@@ -1,23 +1,18 @@
 package uk.gov.govuk.chat.ui.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LargeHorizontalSpacer
@@ -118,40 +113,17 @@ private fun AdditionalText(
     val linkText = stringResource(id = R.string.error_page_additional_text_link_text)
     val outro = stringResource(id = R.string.error_page_additional_text_outro)
     val url = stringResource(id = R.string.error_page_additional_text_url)
-
+    val altText = "$intro $linkText ${stringResource(R.string.sources_open_in_text)} $outro"
     val uriHandler = LocalUriHandler.current
 
-    val annotatedString = buildAnnotatedString {
-        append(intro)
-        append(" ")
-        pushStringAnnotation(tag = "URL", annotation = url)
-        withStyle(
-            style = SpanStyle(
-                color = GovUkTheme.colourScheme.textAndIcons.link
-            )
-        ) {
-            append(linkText)
-            append(" ")
-        }
-        pop()
-        append(outro)
-    }
-
-    Text(
-        text = annotatedString,
-        style = GovUkTheme.typography.bodyRegular.copy(
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
-            textAlign = TextAlign.Center
-        ),
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable {
-                annotatedString
-                    .getStringAnnotations(tag = "URL", start = 0, end = annotatedString.length)
-                    .firstOrNull()
-                    ?.let { annotation ->
-                        uriHandler.openUri(annotation.item)
-                    }
-            }
+    BodyRegularLabelTrailingLink(
+        introText = intro,
+        outroText = " $outro",
+        linkText = linkText,
+        onClick = { uriHandler.openUri(url) },
+        altText = altText,
+        modifier = modifier,
+        textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+        textAlign = TextAlign.Center
     )
 }

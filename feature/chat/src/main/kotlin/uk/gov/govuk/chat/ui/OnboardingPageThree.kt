@@ -6,23 +6,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatViewModel
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
-import uk.gov.govuk.design.ui.model.HeaderActionStyle
+import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun OnboardingPageTwoRoute(
+internal fun OnboardingPageThreeRoute(
     onClick: () -> Unit,
     onCancel: () -> Unit,
     onBack: () -> Unit,
@@ -30,34 +33,35 @@ internal fun OnboardingPageTwoRoute(
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val cancelText = stringResource(id = R.string.onboarding_page_cancel_text)
-    val continueText = stringResource(id = R.string.onboarding_page_two_button)
+    val continueText = stringResource(R.string.onboarding_page_three_button)
 
-    OnboardingPageTwoScreen(
+    OnboardingPageThreeScreen(
         {
             viewModel.onPageView(
                 screenClass = Analytics.ONBOARDING_SCREEN_CLASS,
-                screenName = Analytics.ONBOARDING_SCREEN_TWO_NAME,
-                title = Analytics.ONBOARDING_SCREEN_TWO_TITLE
+                screenName = Analytics.ONBOARDING_SCREEN_THREE_NAME,
+                title = Analytics.ONBOARDING_SCREEN_THREE_TITLE
             )
         },
         onClick = {
             viewModel.onButtonClicked(
                 text = continueText,
-                section = Analytics.ONBOARDING_SCREEN_TWO_NAME
+                section = Analytics.ONBOARDING_SCREEN_THREE_NAME
             )
+            viewModel.setChatIntroSeen()
             onClick()
         },
         onCancel = {
             viewModel.onButtonClicked(
                 text = cancelText,
-                section = Analytics.ONBOARDING_SCREEN_TWO_NAME
+                section = Analytics.ONBOARDING_SCREEN_THREE_NAME
             )
             onCancel()
         },
         onBack = {
             viewModel.onButtonClicked(
-                text = Analytics.ONBOARDING_SCREEN_TWO_BACK_TEXT,
-                section = Analytics.ONBOARDING_SCREEN_TWO_NAME
+                text = Analytics.ONBOARDING_SCREEN_THREE_BACK_TEXT,
+                section = Analytics.ONBOARDING_SCREEN_THREE_NAME
             )
             onBack()
         },
@@ -66,7 +70,7 @@ internal fun OnboardingPageTwoRoute(
 }
 
 @Composable
-private fun OnboardingPageTwoScreen(
+private fun OnboardingPageThreeScreen(
     onPageView: () -> Unit,
     onClick: () -> Unit,
     onCancel: () -> Unit,
@@ -78,32 +82,40 @@ private fun OnboardingPageTwoScreen(
     }
 
     OnboardingPage(
-        title = stringResource(id = R.string.onboarding_page_two_header),
+        title = stringResource(id = R.string.onboarding_page_three_header),
         headerContent = {
             FullScreenHeader(
-                dismissStyle = HeaderDismissStyle.Back(onBack),
-                actionStyle = HeaderActionStyle.ActionButton(
-                    title = stringResource(id = R.string.onboarding_page_cancel_text),
-                    onClick = onCancel
-                )
+                dismissStyle = HeaderDismissStyle.Back(onBack)
             )
         },
         screenContent = {
             MediumVerticalSpacer()
             BodyRegularLabel(
-                text = stringResource(id = R.string.onboarding_page_two_text_one),
+                text = stringResource(id = R.string.onboarding_page_three_text_one),
                 textAlign = TextAlign.Center
             )
 
             MediumVerticalSpacer()
-            BodyRegularLabel(
-                text = stringResource(id = R.string.onboarding_page_two_text_two),
+            val introText = stringResource(id = R.string.onboarding_page_three_text_two)
+            val outroText = "."
+            val linkText = stringResource(id = R.string.onboarding_page_three_text_two_link_text)
+            val altText = "$introText $linkText ${stringResource(R.string.sources_open_in_text)}$outroText"
+            val uriHandler = LocalUriHandler.current
+            val url = BuildConfig.PRIVACY_POLICY_URL
+
+            BodyRegularLabelTrailingLink(
+                introText = introText,
+                outroText = outroText,
+                linkText = linkText,
+                onClick = { uriHandler.openUri(url) },
+                altText = altText,
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary,
                 textAlign = TextAlign.Center
             )
         },
         buttonContent = {
             PrimaryButton(
-                text = stringResource(id = R.string.onboarding_page_two_button),
+                text = stringResource(id = R.string.onboarding_page_three_button),
                 onClick = onClick,
                 modifier = Modifier
                     .padding(horizontal = GovUkTheme.spacing.medium)
@@ -111,9 +123,19 @@ private fun OnboardingPageTwoScreen(
                 enabled = true,
                 externalLink = false
             )
+            SecondaryButton(
+                text = stringResource(id = R.string.onboarding_page_three_decline_button),
+                onClick = onCancel,
+                modifier = Modifier
+                    .padding(
+                        start = GovUkTheme.spacing.medium,
+                        end = GovUkTheme.spacing.medium,
+                        top = GovUkTheme.spacing.medium
+                    )
+            )
         },
         modifier = modifier,
-        animationRes = R.raw.chat_onboarding_two
+        animationRes = R.raw.chat_onboarding_three
     )
 }
 
@@ -124,7 +146,7 @@ private fun OnboardingPageTwoScreen(
 @Composable
 private fun LightModePreview() {
     GovUkTheme {
-        OnboardingPageTwoScreen(
+        OnboardingPageThreeScreen(
             onPageView = {},
             onClick = {},
             onCancel = {},
@@ -140,7 +162,7 @@ private fun LightModePreview() {
 @Composable
 private fun DarkModePreview() {
     GovUkTheme {
-        OnboardingPageTwoScreen(
+        OnboardingPageThreeScreen(
             onPageView = {},
             onClick = {},
             onCancel = {},
