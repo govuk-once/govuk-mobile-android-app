@@ -159,7 +159,7 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
-            _navigationEvent.send(NavigationEvent.NavigateNext)
+            _navigationEvent.trySend(NavigationEvent.NavigateNext)
         }
     }
 
@@ -168,14 +168,14 @@ internal class AppViewModel @Inject constructor(
             if (analyticsClient.isAnalyticsEnabled()) {
                 configRepo.refreshRemoteConfig()
             }
-            _navigationEvent.send(NavigationEvent.NavigateNext)
+            _navigationEvent.trySend(NavigationEvent.NavigateNext)
         }
     }
 
     fun topicSelectionCompleted() {
         viewModelScope.launch {
             appRepo.topicSelectionCompleted()
-            _navigationEvent.send(NavigationEvent.NavigateNext)
+            _navigationEvent.trySend(NavigationEvent.NavigateNext)
         }
     }
 
