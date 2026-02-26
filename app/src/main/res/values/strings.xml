@@ -7,7 +7,7 @@
     <string name="device_offline_button_title">Try again</string>
 
     <string name="forced_update_button_title_update">Update</string>
-    <string name="forced_update_description">You\'re using an old version of the app. Update your app to continue.</string>
+    <string name="forced_update_description">You’re using an old version of the app. Update your app to continue.</string>
     <string name="forced_update_title">You need to update your app</string>
 
     <string name="home">Home</string>
@@ -19,5 +19,57 @@
     <string name="recommend_update_title">You’re using an old version of the app</string>
 
     <string name="settings">Settings</string>
+    <string name="chat">Chat</string>
+
+    <string name="deep_link_not_found_alert_title">Page not found</string>
+    <string name="deep_link_not_found_alert_message">Update the app to the latest version.\n\nIf you’re already using the latest version, try again later.</string>
+
+    <string name="browser_not_found_alert_title">No browser app found</string>
+    <string name="browser_not_found_alert_message">Please install a browser app and try again.</string>
+
+    <string name="close_alert_button">Close</string>
+
+    <string name="login_sign_in_error_header">There was a problem signing you in</string>
+    <string name="login_sign_in_error_sub_text">Try to sign in again</string>
+
+    <string name="login_title">Your GOV.UK app</string>
+    <string name="login_description">Government information and services for you</string>
+    <string name="version">Version</string>
+    <string name="login_continue_button">Continue</string>
+    <string name="login_back_and_try_again_button">Go back and try again</string>
+    <string name="login_loading_accessibility_text">Signing you in</string>
+
+    <string name="login_biometrics_title">Unlock the app with biometrics</string>
+    <string name="login_biometrics_android_10_description_1">Anyone who can unlock your phone with their biometrics might be able to access your app.</string>
+    <string name="login_biometrics_android_11_description_1">Anyone who can unlock your phone with their biometrics or with your phone’s PIN, pattern or password might be able to access your app.</string>
+    <string name="login_biometrics_description_2">If you do not want to use biometrics, you can unlock the app with your GOV.UK One Login details.</string>
+    <string name="login_biometrics_button">Use biometrics</string>
+    <string name="login_biometrics_skip_button">Skip</string>
+
+    <string name="login_biometric_prompt_title">Confirm that it’s you</string>
+
+    <string name="terms_new_user_title">Review the terms and conditions</string>
+    <string name="terms_updated_title">Review the updated terms and conditions</string>
+    <string name="terms_and_conditions">Terms and conditions</string>
+    <string name="terms_privacy_notice">Privacy notice</string>
+    <string name="terms_accept">Accept and continue</string>
+    <string name="terms_do_not_accept">Do not accept</string>
+    <string name="terms_dialog_title">Terms and conditions</string>
+    <string name="terms_dialog_message">You must accept to use the app. If you do not want to accept, you can sign out.</string>
+    <string name="terms_dialog_sign_out">Sign out</string>
+    <string name="terms_dialog_cancel">Cancel</string>
+
+
+    <string name="biometric_settings_title">Biometrics</string>
+    <string name="biometric_settings_toggle">Unlock app with biometrics</string>
+    <string name="biometric_settings_description_1">If you have biometrics turned on, you’ll be able to use your fingerprint, face or iris to unlock the app.</string>
+    <string name="biometric_settings_android_10_description_2">Anyone who can unlock your phone with their biometrics might be able to access your app.</string>
+    <string name="biometric_settings_android_11_description_2">Anyone who can unlock your phone with their biometrics or with your phone’s PIN, pattern or password might be able to access your app.</string>
+    <string name="biometric_settings_description_3">If you do not want to use biometrics, you can unlock the app with your GOV.UK One Login details.</string>
+    <string name="biometric_settings_description_4">You can turn off biometrics at any time.</string>
+
+    <string name="timeout_warning_dialog_title">You\'ll be signed out soon</string>
+    <string name="timeout_warning_dialog_message">For your security, we sign you out when you have not used the app for a while</string>
+    <string name="timeout_warning_dialog_button">Stay signed in</string>
 
 </resources>

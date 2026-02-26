@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="screen_title">Settings</string>
-  <string name="about_title">About the app</string>
+  <string name="manage_login_header_title">Your GOV.UK One Login</string>
+  <string name="manage_login_link">Manage your GOV.UK One Login</string>
+  <string name="manage_login_description">You might need to sign in again to manage your GOV.UK One Login details.</string>
+  <string name="manage_login_sign_out">Sign out</string>
   <string name="help_and_feedback_title">Help and feedback</string>
   <string name="version_setting">App version number</string>
-  <string name="privacy_title">Privacy and legal</string>
   <string name="privacy_description">
-    You can share statistics with the GOV.UK app team about
-    how you use the app so they can make improvements to it.
-    These statistics are anonymous and don’t contain any of
-    your personal information.
+    You can share statistics about how you use the app so we can make improvements to it. We will not use these statistics to directly identify you.
   </string>
-  <string name="privacy_read_more">Read more about this in the privacy notice.</string>
+    <string name="privacy_read_more">Read more about this in the privacy notice.</string>
+
   <string name="share_setting">Share app usage statistics</string>
   <string name="link_opens_in">Opens in web browser</string>
   <string name="oss_licenses_title">Open source licenses</string>
   <string name="accessibility_title">Accessibility statement</string>
   <string name="terms_and_conditions_title">Terms and conditions</string>
   <string name="privacy_policy_title">Privacy notice</string>
+  <string name="notifications_title">Notifications</string>
+  <string name="biometric_title">Biometrics</string>
 
   <string name="feedback_prompt_widget_title">Give feedback to help improve this app</string>
+
+  <string name="on_button">On</string>
+  <string name="off_button">Off</string>
+
+  <string name="sign_out_title">Are you sure you want to sign out?</string>
+  <string name="sign_out_body">
+    If you’re using your fingerprint, face or iris to unlock the app, this will be turned off.
+    You can turn it on again the next time you sign in.
+  </string>
+  <string name="sign_out_button">Sign out</string>
+  <string name="sign_out_cancel_button">Cancel</string>
+
+  <string name="sign_out_error_header">There was a problem signing you out</string>
+  <string name="sign_out_error_sub_text">Try again later.</string>
+  <string name="sign_out_error_additional_text">If you need to sign out right now, you can delete the app from your phone.</string>
+  <string name="sign_out_error_go_back_to_settings_button">Go back to settings</string>
 
 </resources>

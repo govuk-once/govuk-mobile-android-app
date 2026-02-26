@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -8,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "uk.govuk.app.home"
+    namespace = "uk.gov.govuk.home"
     compileSdk = Version.COMPILE_SDK
 
     defaultConfig {
@@ -18,12 +20,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
 
     buildFeatures {
@@ -34,6 +38,7 @@ android {
 dependencies {
     implementation(projects.design)
     implementation(projects.analytics)
+    implementation(projects.config)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

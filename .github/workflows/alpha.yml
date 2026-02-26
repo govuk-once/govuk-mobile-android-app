@@ -1,0 +1,57 @@
+name: Alpha build to Firebase
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-distribute:
+    name: Build and distribute
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
+        with:
+          fetch-depth: '0'
+
+      - name: Setup JDK
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 #4.2.1
+        with:
+          java-version: 17
+          distribution: oracle
+
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@00854ea68c109d98c75d956347303bf7c45b0277 #v3.2.1
+
+      - name: Generate release notes
+        run: |
+          echo "Branch: ${{ github.ref_name }}
+          Environment: alpha
+          Subject: $(git log --format=%s -n 1)
+          Body: $(git log --format=%b -n 1)" > releasenotes.txt
+
+      - name: Get Secrets
+        uses: bitwarden/sm-action@14f92f1d294ae3c2b6a3845d389cd2c318b0dfd8 # pin@v2.2.0
+        with:
+          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+          base_url: https://vault.bitwarden.eu
+          secrets: |
+            5a3468ee-c962-4535-9c8e-b32b00fadfe0 > FIREBASE_TOKEN
+            235aa3fe-7605-4337-ab29-b32c0085d539 > CI_ACCESS_USERNAME
+            16eca8c9-cccf-448b-a731-b32c0085e7ed > CI_ACCESS_TOKEN
+            e2b38f74-0d53-4d3a-a33d-b32c008ddcbd > ALPHA_KEY_PASSWORD
+            3cf30e82-cb2a-4838-b507-b32c008dc1ee > ALPHA_KEY_ALIAS
+            327b161e-f28d-4dce-94fb-b32c008df91d > ALPHA_KEYSTORE
+
+      - name: Decode keystore
+        run: |
+          echo $ALPHA_KEYSTORE | base64 -di > alpha.jks
+
+      - name: Build APK and distribute to firebase
+        run: ./gradlew assembleAlpha appDistributionAlpha

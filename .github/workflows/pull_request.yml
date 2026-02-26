@@ -3,7 +3,7 @@ name: Pull Request
 on:
   pull_request:
     types: [ opened, reopened, synchronize, ready_for_review ]
-    branches: [ develop, main ]
+    branches: [ main, release/*, feature/* ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -28,6 +28,16 @@ jobs:
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@00854ea68c109d98c75d956347303bf7c45b0277 #v3.2.1
 
+      - name: Get Secrets
+        uses: bitwarden/sm-action@14f92f1d294ae3c2b6a3845d389cd2c318b0dfd8 # pin@v2.2.0
+        with:
+          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+          base_url: https://vault.bitwarden.eu
+          secrets: |
+            cbf3007d-ada7-4ea0-b15c-b32b00faef23 > SONAR_TOKEN
+            235aa3fe-7605-4337-ab29-b32c0085d539 > CI_ACCESS_USERNAME
+            16eca8c9-cccf-448b-a731-b32c0085e7ed > CI_ACCESS_TOKEN
+
       - name: Lint
         run: ./gradlew lint
 
@@ -36,5 +46,3 @@ jobs:
 
       - name: Analyze
         run: ./gradlew sonar --info
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -1,0 +1,35 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    version_codes = google_play_track_version_codes(
+      package_name: "uk.gov.govuk",
+      track: "internal"
+    )
+
+    new_version_code = version_codes.last + 1
+    ENV["VERSION_CODE"] = "#{new_version_code}"
+
+    gradle(task: "clean bundleRelease")
+    upload_to_play_store(
+        track: "internal",
+        release_status: "draft"
+    )
+  end
+end

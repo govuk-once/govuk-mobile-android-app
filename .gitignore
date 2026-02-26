@@ -4,6 +4,7 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+github.properties
 
 # Log/OS Files
 *.log
@@ -30,3 +31,8 @@ render.experimental.xml
 *.hprof
 
 *.DS_Store
+/.kotlin/
+/fastlane/README.md
+/fastlane/report.xml
+
+/gradle/gradle-daemon-jvm.properties

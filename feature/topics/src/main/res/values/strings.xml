@@ -1,29 +1,32 @@
 <resources>
 
-    <string name="topicsWidgetTitle">Topics</string>
-    <string name="customisedTopicsWidgetTitle">Your topics</string>
-    <string name="editButton">Edit</string>
-    <string name="editButtonAltText">Edit your topics</string>
-    <string name="editTitle">Edit your topics</string>
-    <string name="editMessage">Topics you select will be shown on the app home page so you can find them more easily</string>
-    <string name="allTopicsButton">See all topics</string>
-    <string name="allTopicsTitle">All topics</string>
-    <string name="stepByStepGuidesTitle">Step by step guides</string>
-    <string name="popularPagesTitle">Popular pages in this topic</string>
-    <string name="servicesTitle">Services and information</string>
-    <string name="seeAllButton">See all</string>
-    <string name="browseTitle">Browse</string>
-    <string name="relatedTitle">Related</string>
-    <string name="topicSelectionTitle">Select relevant topics</string>
-    <string name="topicSelectionDescription">Topics you select will be shown on the app home page so you can find them more easily</string>
-    <string name="selectButton">Select</string>
-    <string name="selectedButton">Selected</string>
-    <string name="doneButton">Done</string>
-    <string name="skipButton">Skip</string>
-    <string name="removed_alt_text">Removed</string>
+    <!-- Widget-->
+    <string name="topics_widget_title">Topics</string>
+    <string name="your_topics">Your topics</string>
+    <string name="all_topics">All topics</string>
+    <string name="edit_button">Edit</string>
+    <string name="edit_button_alt_text">Edit your topics</string>
+    <string name="topics_error_message">Topics are not working at the moment. Try again later, or go to the GOV.UK website to find the page you’re looking for.</string>
+
+    <string name="edit_title">Edit your topics</string>
+    <string name="edit_message">Topics you select will be shown on the app home page so you can find them more easily</string>
+    <string name="step_by_step_guides_title">Step by step guides</string>
+    <string name="popular_pages_title">Popular pages</string>
+    <string name="services_title">Services and information</string>
+    <string name="see_all_button">See all</string>
+    <string name="browse_title">Browse</string>
+    <string name="related_title">Related</string>
+    <string name="topic_selection_title">Select relevant topics</string>
+    <string name="topic_selection_description">Topics you select will be shown on the app home page so you can find them more easily</string>
+    <string name="select_button">Select</string>
+    <string name="selected_button">Selected</string>
+    <string name="done_button">Done</string>
+    <string name="skip_button">Skip</string>
     <string name="selected_alt_text">Selected</string>
-    <string name="empty_topics">No topics selected</string>
-    <string name="topics_error_message">Topics are not working at the moment. Try again later, or go to the GOV.UK website to find the page you\'re looking for.</string>
+    <string name="not_selected_alt_text">Not selected</string>
+    <string name="select_alt_text">Select</string>
+    <string name="deselect_alt_text">Deselect</string>
+    <string name="empty_topics">Add your topics</string>
 
     <!-- Topic names -->
     <string name="benefits">Benefits</string>

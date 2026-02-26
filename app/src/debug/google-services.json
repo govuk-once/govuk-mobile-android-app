@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "299196369979",
     "project_id": "govuk-app",
-    "storage_bucket": "govuk-app.appspot.com"
+    "storage_bucket": "govuk-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:299196369979:android:c91745f9a66d1c0de3e01e",
+        "mobilesdk_app_id": "1:299196369979:android:e387a5e1c1390983e3e01e",
         "android_client_info": {
-          "package_name": "uk.govuk.app.dev"
+          "package_name": "uk.gov.govuk.dev"
         }
       },
       "oauth_client": [],

@@ -1,16 +1,12 @@
 <resources>
-  <string name="visited_items_title">Pages you\'ve visited</string>
+  <string name="visited_items_title">Pages you’ve visited</string>
 
-  <string name="visited_items_no_pages_title">No pages</string>
-  <string name="visited_items_no_pages_description">You haven\'t used the app to visit any GOV.UK pages yet</string>
+    <string name="visited_items_no_pages_description">Pages you visit in the app will appear here</string>
 
   <string name="visited_items_last_visited">Last visited on</string>
 
-  <string name="visited_items_edit_button">Edit</string>
-  <string name="visited_items_edit_button_alt_text">Edit pages you\'ve visited</string>
-  <string name="visited_items_editing_complete_button">Cancel</string>
-  <string name="visited_items_editing_complete_alt">Cancel editing pages you\'ve visited</string>
-  <string name="visited_items_select_all_button">Select all</string>
-  <string name="visited_items_deselect_all_button">Deselect all</string>
-  <string name="visited_items_remove_button">Remove</string>
+  <string name="visited_items_see_all">See all</string>
+  <string name="visited_items_remove_all">Remove all pages you’ve visited</string>
+  <string name="visited_items_remove_all_button">Remove all</string>
+  <string name="visited_items_cancel_button">Cancel</string>
 </resources>

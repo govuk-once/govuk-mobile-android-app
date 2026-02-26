@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1089984429349:android:5291c50af739e9ab35aecc",
+        "mobilesdk_app_id": "1:1089984429349:android:c347d5e69b4cf01f35aecc",
         "android_client_info": {
-          "package_name": "uk.govuk.app"
+          "package_name": "uk.gov.govuk"
         }
       },
       "oauth_client": [],

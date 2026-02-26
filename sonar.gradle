@@ -3,8 +3,8 @@ apply plugin: "org.sonarqube"
 sonar {
     properties {
         property("sonar.projectName", "govuk-mobile-android-app")
-        property("sonar.projectKey", "alphagov_govuk-mobile-android-app")
-        property("sonar.organization", "alphagov")
+        property("sonar.projectKey", "govuk-once_govuk-mobile-android-app")
+        property("sonar.organization", "govuk-once")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.qualitygate.wait", "true")

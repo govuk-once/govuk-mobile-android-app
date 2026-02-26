@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="content_desc_back">Back</string>
+    <string name="content_desc_close">Close</string>
+    <string name="content_desc_remove">Remove</string>
     <string name="gov_uk">GOV.UK</string>
     <string name="gov_uk_alt_text">GOV dot UK</string>
     <string name="opens_in_web_browser">Opens in web browser</string>
+    <string name="privacy_policy_read_more">Read more about this in the privacy notice</string>
+
+    <string name="on_button">On</string>
+    <string name="off_button">Off</string>
+    <string name="action_toggle">toggle</string>
 
     <!-- Error-->
     <string name="app_unavailable_description">You cannot use the GOV.UK app at the moment. Try again later.</string>
@@ -17,4 +24,5 @@
     <string name="problem_description">This page is not working. Try again later, or go to the GOV.UK website.</string>
 
     <string name="go_to_the_gov_uk_website">Go to the GOV.UK website</string>
+    <string name="selected_alt_text">Selected</string>
 </resources>

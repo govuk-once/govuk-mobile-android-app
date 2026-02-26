@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -9,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "uk.govuk.app.visited"
+    namespace = "uk.gov.govuk.visited"
     compileSdk = Version.COMPILE_SDK
 
     defaultConfig {
@@ -21,12 +23,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
 }
 
@@ -43,6 +47,10 @@ sonar {
     }
 }
 
+tasks.withType<Test>().all {
+    jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+}
+
 dependencies {
     implementation(projects.design)
     implementation(projects.analytics)
@@ -54,6 +62,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.ui.tooling)
     implementation(libs.realm.base)
 
     ksp(libs.hilt.compiler)
@@ -64,6 +73,4 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    debugImplementation(libs.androidx.ui.tooling)
 }

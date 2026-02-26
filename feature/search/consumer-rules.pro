@@ -3,6 +3,6 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 
--keep class uk.govuk.app.search.data.remote.model.AutocompleteResponse
--keep class uk.govuk.app.search.data.remote.model.SearchResponse
--keep class uk.govuk.app.search.data.remote.model.SearchResult
+-keep class uk.gov.govuk.search.data.remote.model.AutocompleteResponse
+-keep class uk.gov.govuk.search.data.remote.model.SearchResponse
+-keep class uk.gov.govuk.search.data.remote.model.SearchResult

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="allow_notifications_button">Allow notifications</string>
+    <string name="not_now_button">Not now</string>
+    <string name="turn_off_notifications_button">Turn off notifications</string>
+    <string name="onboarding_screen_title">Allow notifications?</string>
+    <string name="onboarding_screen_body">
+        Find out about things like important dates and deadlines, services you
+        might find useful and new features that have been added to the app.\n\n
+        By allowing notifications from the app, you also agree to share statistics
+        about how you use the app.\n\n
+        You can change your preferences at any time in the app settings.
+    </string>
+    <string name="onboarding_screen_no_consent_body">
+        You’ve turned on notifications for this app in your phone settings.\n\n
+        By allowing notifications from the app, you also agree to share
+        statistics about how you use the app.\n\n
+        You can change your preferences at any time in your phone’s notifications settings.
+    </string>
+    <string name="prompt_widget_title">Turn on notifications</string>
+
+    <string name="notifications_alert_title_on">Turn on notifications</string>
+    <string name="notifications_alert_title_off">Turn off notifications</string>
+    <string name="notifications_alert_message_on">
+    Continue to your phone’s notifications settings to turn on notifications from GOV.UK
+  </string>
+    <string name="notifications_alert_message_off">
+    Continue to your phone’s notifications settings to turn off notifications from GOV.UK
+  </string>
+    <string name="cancel_button">Cancel</string>
+    <string name="continue_button">Continue</string>
+</resources>

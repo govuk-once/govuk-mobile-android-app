@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="analytics_consent_title">Share statistics about how you use the GOV.UK app</string>
+    <string name="analytics_consent_title">Help improve the app by sharing statistics</string>
     <string name="analytics_consent_bullet_title">You can help us improve this app by agreeing to share statistics about:</string>
     <string name="analytics_consent_bullet_1">the pages you visit within the app</string>
     <string name="analytics_consent_bullet_2">how long you spend on each page</string>
-    <string name="analytics_consent_bullet_3">what you tap on while you\'re on each page</string>
+    <string name="analytics_consent_bullet_3">what you tap on while you’re on each page</string>
     <string name="analytics_consent_bullet_4">errors that happen</string>
-    <string name="analytics_consent_anonymous">These statistics are anonymous.</string>
+    <string name="analytics_consent_anonymous">We will not use these statistics to directly identify you.</string>
     <string name="analytics_consent_stop">You can stop sharing these statistics at any time by changing your app settings.</string>
-    <string name="analytics_consent_button_enable">Allow statistics sharing</string>
-    <string name="analytics_consent_button_disable">Don\'t allow statistics sharing</string>
-    <string name="analytics_consent_privacy_policy">Read more about this in the privacy notice</string>
-    <string name="analytics_consent_link_opens_in">Opens in web browser</string>
+    <string name="analytics_consent_button_enable">Share statistics</string>
+    <string name="analytics_consent_button_disable">Not now</string>
 </resources>
