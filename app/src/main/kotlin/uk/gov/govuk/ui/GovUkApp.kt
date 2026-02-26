@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -359,6 +360,14 @@ private fun GovUkNavHost(
     var showDeepLinkNotFoundAlert by remember { mutableStateOf(false) }
     var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
 
+    val imeBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    val sysNavBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val imeBottomPadding = maxOf(
+        paddingValues.calculateBottomPadding(),
+        (imeBottom - sysNavBottom).coerceAtLeast(0.dp)
+    )
+    val layoutDirection = LocalLayoutDirection.current
+
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -512,7 +521,12 @@ private fun GovUkNavHost(
             navController = navController,
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
             onAuthError = { appNavigation.onSignOut(navController) },
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding(),
+                start = paddingValues.calculateStartPadding(layoutDirection),
+                bottom = imeBottomPadding,
+                end = paddingValues.calculateEndPadding(layoutDirection)
+            )
         )
     }
 
