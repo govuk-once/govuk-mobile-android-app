@@ -408,7 +408,6 @@ class LoginViewModelTest {
         coEvery { appRepo.hasSkippedBiometrics() } returns false
         coEvery { userRepo.initUser() } returns Result.Success(Unit)
 
-
         runTest {
             val events = mutableListOf<LoginEvent>()
             backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
