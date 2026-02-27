@@ -1,5 +1,7 @@
 package uk.gov.govuk.chat.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.view.accessibility.AccessibilityManager
@@ -154,6 +156,8 @@ internal fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
     LaunchedEffect(uiState.isPiiError) {
         if (uiState.isPiiError) {
             showPiiErrorDialog = true
@@ -216,6 +220,11 @@ internal fun ChatScreen(
                                 listState.animateScrollBy(128f)
                             }
                         },
+                        onCopyText = { text ->
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip = ClipData.newPlainText("Markdown content", text)
+                            clipboard.setPrimaryClip(clip)
+                        }
                     )
                 }
 
