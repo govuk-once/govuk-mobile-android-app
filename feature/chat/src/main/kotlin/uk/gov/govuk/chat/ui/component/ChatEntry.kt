@@ -41,7 +41,8 @@ internal fun ChatEntry(
     onMarkdownLinkClicked: (String, String) -> Unit,
     onSourcesExpanded: () -> Unit,
     animationDuration: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCopyText: ((String) -> Unit)? = null
 ) {
     Column(modifier = modifier) {
         MediumVerticalSpacer()
@@ -51,7 +52,8 @@ internal fun ChatEntry(
             chatEntry = chatEntry,
             onMarkdownLinkClicked = onMarkdownLinkClicked,
             animationDuration = animationDuration,
-            onSourcesExpanded = onSourcesExpanded
+            onSourcesExpanded = onSourcesExpanded,
+            onCopyText = onCopyText
         )
     }
 }
@@ -62,7 +64,8 @@ private fun AnimatedChatEntry(
     onMarkdownLinkClicked: (String, String) -> Unit,
     onSourcesExpanded: () -> Unit,
     animationDuration: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCopyText: ((String) -> Unit)? = null
 ) {
     var showLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
     var showAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
@@ -137,7 +140,8 @@ private fun AnimatedChatEntry(
                     sources = chatEntry.sources,
                     onMarkdownLinkClicked = onMarkdownLinkClicked,
                     onSourcesExpanded = onSourcesExpanded,
-                    modifier = answerModifier
+                    modifier = answerModifier,
+                    onCopyText = onCopyText
                 )
             }
         } else {
@@ -146,7 +150,8 @@ private fun AnimatedChatEntry(
                 answer = chatEntry.answer,
                 sources = chatEntry.sources,
                 onMarkdownLinkClicked = onMarkdownLinkClicked,
-                onSourcesExpanded = onSourcesExpanded
+                onSourcesExpanded = onSourcesExpanded,
+                onCopyText = onCopyText
             )
         }
     }

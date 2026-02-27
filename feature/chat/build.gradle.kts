@@ -67,7 +67,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.realm.base)
 
-    implementation(libs.compose.markdown)
+    implementation(libs.commonmark)
     implementation(libs.androidx.compose.animation)
 
     implementation(libs.lottie.compose)
