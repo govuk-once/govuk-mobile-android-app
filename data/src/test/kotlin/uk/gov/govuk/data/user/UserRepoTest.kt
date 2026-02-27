@@ -1,12 +1,20 @@
 package uk.gov.govuk.data.user
 
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
+import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
+import uk.gov.govuk.data.user.model.User
+import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.remote.UserApi
 
@@ -19,46 +27,55 @@ class UserRepoTest {
 
     @Before
     fun setup() {
-        userRepo = UserRepo(userApi, authRepo)
+        userRepo = UserRepoImpl(userApi, authRepo)
     }
 
     @Test
-    fun `Given get user info is called, then get user info is called on the api`() =
+    fun `Given init is called, then get user info is called on the api`() =
         runTest {
-            userRepo.getUserInfo()
+            userRepo.initUser()
 
             coVerify { userApi.getUserInfo() }
         }
 
     @Test
+    fun `Given init is called, when the api response is successful, then the correct values are set`() =
+        runTest {
+            coEvery { userApi.getUserInfo() } returns Response.success(
+                User(
+                    "12345",
+                    Preferences(Notifications(ConsentStatus.ACCEPTED))
+                )
+            )
+
+            userRepo.initUser()
+
+            assertEquals("12345", userRepo.notificationId)
+            assertEquals(ConsentStatus.ACCEPTED, userRepo.preferences.notifications.consentStatus)
+        }
+
+    @Test
     fun `Given update notifications is called, when consented, then update notifications is called on the api`() =
         runTest {
-            userRepo.updateNotifications(true)
+            userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(true)) }
+            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.ACCEPTED)))) }
         }
 
     @Test
     fun `Given update notifications is called, when not consented, then update notifications is called on the api`() =
         runTest {
-            userRepo.updateNotifications(false)
+            userRepo.updateNotifications(ConsentStatus.DENIED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(false)) }
+            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.DENIED)))) }
         }
 
     @Test
-    fun `Given update terms and conditions is called, when consented, then update terms and conditions is called on the api`() =
-        runTest {
-            userRepo.updateTermsAndConditions(true)
-
-            coVerify { userApi.updateTermsAndConditions(UpdateTermsAndConditionsRequest(true)) }
+    fun `Given no user init, when any user property is requested, then throw exception`() {
+        val exception = assertThrows(IllegalStateException::class.java) {
+            userRepo.notificationId
         }
 
-    @Test
-    fun `Given update terms and conditions is called, when not consented, then update terms and conditions is called on the api`() =
-        runTest {
-            userRepo.updateTermsAndConditions(false)
-
-            coVerify { userApi.updateTermsAndConditions(UpdateTermsAndConditionsRequest(false)) }
-        }
+        Assert.assertEquals("You must init user successfully before use!!!", exception.message)
+    }
 }

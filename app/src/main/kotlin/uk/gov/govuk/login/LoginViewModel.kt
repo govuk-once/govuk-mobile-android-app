@@ -19,6 +19,7 @@ import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.data.model.Result.Success
+import uk.gov.govuk.data.user.UserRepo
 import java.util.Date
 import javax.inject.Inject
 
@@ -34,6 +35,7 @@ internal class LoginViewModel @Inject constructor(
     private val loginRepo: LoginRepo,
     private val configRepo: ConfigRepo,
     private val notificationsRepo: NotificationsRepo,
+    private val userRepo: UserRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
@@ -62,9 +64,12 @@ internal class LoginViewModel @Inject constructor(
                                 _isLoading.value = true
                             }
                             AuthRepo.RefreshStatus.Success -> {
-                                val result = notificationsRepo.login()
+                                val result = userRepo.initUser()
                                 when (result) {
-                                    is Success -> _loginCompleted.emit(LoginEvent.BiometricLogin)
+                                    is Success -> {
+                                        notificationsRepo.login()
+                                        _loginCompleted.emit(LoginEvent.BiometricLogin)
+                                    }
                                     else -> _errorEvent.emit(ErrorEvent.UserApiError)
                                 }
                             }
@@ -90,14 +95,17 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
-                val result = notificationsRepo.login()
+                val result = userRepo.initUser()
                 when (result) {
-                    is Success -> _loginCompleted.emit(
-                        LoginEvent.WebLogin(
-                            isBiometricsEnabled = authRepo.isAuthenticationEnabled()
-                                    && !appRepo.hasSkippedBiometrics()
+                    is Success -> {
+                        notificationsRepo.login()
+                        _loginCompleted.emit(
+                            LoginEvent.WebLogin(
+                                isBiometricsEnabled = authRepo.isAuthenticationEnabled()
+                                        && !appRepo.hasSkippedBiometrics()
+                            )
                         )
-                    )
+                    }
                     else -> _errorEvent.emit(ErrorEvent.UserApiError)
                 }
             } else {

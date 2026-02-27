@@ -1,43 +1,14 @@
 package uk.gov.govuk.data.user
 
-import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.remote.safeApiCall
-import uk.gov.govuk.data.user.model.GetUserInfoResponse
-import uk.gov.govuk.data.user.remote.UserApi
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.remote.safeAuthApiCall
-import uk.gov.govuk.data.user.model.UpdateTermsAndConditionsRequest
-import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
+import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateUserDataResponse
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class UserRepo @Inject constructor(
-    private val userApi: UserApi,
-    private val authRepo: AuthRepo
-) {
-    suspend fun getUserInfo(): Result<GetUserInfoResponse> {
-        return safeApiCall(apiCall = { userApi.getUserInfo() })
-    }
+interface UserRepo {
+    val notificationId: String
+    val preferences: Preferences
 
-    suspend fun updateNotifications(
-        consented: Boolean
-    ): Result<UpdateUserDataResponse> {
-        return safeAuthApiCall(apiCall = {
-            userApi.updateNotifications(
-                UpdateNotificationsRequest(consented = consented)
-            )
-        }, authRepo = authRepo)
-    }
-
-    suspend fun updateTermsAndConditions(
-        accepted: Boolean
-    ): Result<UpdateUserDataResponse> {
-        return safeAuthApiCall(apiCall = {
-            userApi.updateTermsAndConditions(
-                UpdateTermsAndConditionsRequest(accepted = accepted)
-            )
-        }, authRepo = authRepo)
-    }
+    suspend fun initUser(): Result<Unit>
+    suspend fun updateNotifications(consentStatus: ConsentStatus): Result<UpdateUserDataResponse>
 }

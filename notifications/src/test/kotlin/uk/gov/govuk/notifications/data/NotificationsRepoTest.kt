@@ -2,18 +2,16 @@ package uk.gov.govuk.notifications.data
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.data.model.Result.Error
-import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
-import uk.gov.govuk.data.user.model.GetUserInfoResponse
+import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
@@ -34,25 +32,60 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given login is success, then return success with correct values`() {
-        coEvery { userRepo.getUserInfo() } returns Success(GetUserInfoResponse("12345"))
+    fun `Given login, when notifications onboarding not completed, then verify correct functions called`() {
+        coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns false
+        coEvery { userRepo.notificationId } returns "12345"
 
         runTest {
-            val result = notificationsRepo.login()
-            assert(result is Success)
-            assertEquals("12345", (result as Success).value.notificationId)
+            notificationsRepo.login()
 
-            verify { notificationsProvider.login("12345") }
+            verify(exactly = 1) { notificationsProvider.login("12345") }
+            coVerify(exactly = 0) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
         }
     }
 
     @Test
-    fun `Given login is unsuccessful, then return error`() {
-        coEvery { userRepo.getUserInfo() } returns Error()
+    fun `Given login, when notifications onboarding completed, consent preference unknown and consent status accepted, then verify correct functions called`() {
+        coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
+        coEvery { userRepo.notificationId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns true
+        coEvery { userRepo.preferences.notifications.consentStatus } returns ConsentStatus.UNKNOWN
 
         runTest {
-            val result = notificationsRepo.login()
-            assert(result is Error)
+            notificationsRepo.login()
+
+            verify(exactly = 1) { notificationsProvider.login("12345") }
+            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
+        }
+    }
+
+    @Test
+    fun `Given login, when notifications onboarding completed, consent preference unknown and consent status denied, then verify correct functions called`() {
+        coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
+        coEvery { userRepo.notificationId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns false
+        coEvery { userRepo.preferences.notifications.consentStatus } returns ConsentStatus.UNKNOWN
+
+        runTest {
+            notificationsRepo.login()
+
+            verify(exactly = 1) { notificationsProvider.login("12345") }
+            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.DENIED) }
+        }
+    }
+
+    @Test
+    fun `Given login, when notifications onboarding completed, consent preference accepted and consent status any, then verify correct functions called`() {
+        coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
+        coEvery { userRepo.notificationId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns false
+        coEvery { userRepo.preferences.notifications.consentStatus } returns ConsentStatus.ACCEPTED
+
+        runTest {
+            notificationsRepo.login()
+
+            verify(exactly = 1) { notificationsProvider.login("12345") }
+            coVerify(exactly = 0) { userRepo.updateNotifications(any()) }
         }
     }
 
@@ -60,7 +93,7 @@ class NotificationsRepoTest {
     fun `Given logout, then call logout`() {
         runTest {
             notificationsRepo.logout()
-            verify {
+            verify(exactly = 1) {
                 notificationsProvider.logout()
             }
         }
@@ -70,7 +103,7 @@ class NotificationsRepoTest {
     fun `Given request permission, then call request permission`() {
         runTest {
             notificationsRepo.requestPermission()
-            coVerify {
+            coVerify(exactly = 1) {
                 notificationsProvider.requestPermission()
             }
         }
@@ -80,7 +113,7 @@ class NotificationsRepoTest {
     fun `Given permission granted, then call request permission`() {
         runTest {
             notificationsRepo.permissionGranted()
-            verify {
+            verify(exactly = 1) {
                 notificationsProvider.permissionGranted()
             }
         }
@@ -90,7 +123,7 @@ class NotificationsRepoTest {
     fun `Given consent given, then call consent given`() {
         runTest {
             notificationsRepo.consentGiven()
-            verify {
+            verify(exactly = 1) {
                 notificationsProvider.consentGiven()
             }
         }
@@ -100,7 +133,7 @@ class NotificationsRepoTest {
     fun `Given give consent, then call give consent`() {
         runTest {
             notificationsRepo.giveConsent()
-            verify {
+            verify(exactly = 1) {
                 notificationsProvider.giveConsent()
             }
         }
@@ -110,7 +143,7 @@ class NotificationsRepoTest {
     fun `Given remove consent, then call remove consent`() {
         runTest {
             notificationsRepo.removeConsent()
-            verify {
+            verify(exactly = 1) {
                 notificationsProvider.removeConsent()
             }
         }
@@ -121,8 +154,8 @@ class NotificationsRepoTest {
         runTest {
             notificationsRepo.sendConsent()
 
-            coVerify(exactly = 1)  {
-                userRepo.updateNotifications(true)
+            coVerify(exactly = 1) {
+                userRepo.updateNotifications(ConsentStatus.ACCEPTED)
             }
         }
     }
@@ -132,8 +165,8 @@ class NotificationsRepoTest {
         runTest {
             notificationsRepo.sendRemoveConsent()
 
-            coVerify(exactly = 1)  {
-                userRepo.updateNotifications(false)
+            coVerify(exactly = 1) {
+                userRepo.updateNotifications(ConsentStatus.DENIED)
             }
         }
     }
@@ -161,7 +194,7 @@ class NotificationsRepoTest {
         runTest {
             notificationsDataStore.notificationsOnboardingCompleted()
 
-            coVerify { notificationsRepo.notificationsOnboardingCompleted() }
+            coVerify(exactly = 1) { notificationsRepo.notificationsOnboardingCompleted() }
         }
     }
 
@@ -189,7 +222,7 @@ class NotificationsRepoTest {
         runTest {
             notificationsRepo.firstPermissionRequestCompleted()
 
-            coVerify { notificationsDataStore.firstPermissionRequestCompleted() }
+            coVerify(exactly = 1) { notificationsDataStore.firstPermissionRequestCompleted() }
         }
     }
 }

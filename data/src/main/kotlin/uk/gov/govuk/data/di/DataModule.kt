@@ -14,12 +14,20 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import uk.gov.govuk.data.crypto.CryptoProvider
 import uk.gov.govuk.data.crypto.TinkClient
+import uk.gov.govuk.data.user.UserRepo
+import uk.gov.govuk.data.user.UserRepoImpl
 import javax.inject.Named
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 internal class DataModule {
+
+    @Provides
+    @Singleton
+    fun provideUserRepo(userRepo: UserRepoImpl): UserRepo {
+        return userRepo
+    }
 
     @Singleton
     @Provides
@@ -47,5 +55,6 @@ internal class DataModule {
 
     @Singleton
     @Provides
-    fun provideCryptoProvider(@ApplicationContext context: Context): CryptoProvider = TinkClient(context)
+    fun provideCryptoProvider(@ApplicationContext context: Context): CryptoProvider =
+        TinkClient(context)
 }
