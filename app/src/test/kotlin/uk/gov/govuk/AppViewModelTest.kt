@@ -1,6 +1,5 @@
 package uk.gov.govuk
 
-import androidx.navigation.NavController
 import io.mockk.clearAllMocks
 import io.mockk.clearMocks
 import io.mockk.coEvery
@@ -11,18 +10,16 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.yield
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -45,14 +42,12 @@ import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.login.data.LoginRepo
-import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
 import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
-import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppViewModelTest {
@@ -71,8 +66,6 @@ class AppViewModelTest {
     private val visited = mockk<Visited>(relaxed = true)
     private val chatFeature = mockk<ChatFeature>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
-    private val appNavigation = mockk<AppNavigation>(relaxed = true)
-    private val navController = mockk<NavController>(relaxed = true)
 
     private lateinit var viewModel: AppViewModel
 
@@ -87,7 +80,7 @@ class AppViewModelTest {
         every { flagRepo.isAppAvailable() } returns true
 
         viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
     }
 
     @After
@@ -100,7 +93,7 @@ class AppViewModelTest {
         coEvery { configRepo.initConfig() } returns Error()
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -113,7 +106,7 @@ class AppViewModelTest {
         coEvery { configRepo.initConfig() } returns InvalidSignature()
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -126,7 +119,7 @@ class AppViewModelTest {
         every { flagRepo.isAppAvailable() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -147,7 +140,7 @@ class AppViewModelTest {
         every { flagRepo.isForcedUpdate(any()) } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -160,7 +153,7 @@ class AppViewModelTest {
         every { flagRepo.isForcedUpdate(any()) } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -173,7 +166,7 @@ class AppViewModelTest {
         every { flagRepo.isRecommendUpdate(any()) } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first() as AppUiState.Default
@@ -186,7 +179,7 @@ class AppViewModelTest {
         every { flagRepo.isRecommendUpdate(any()) } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first() as AppUiState.Default
@@ -199,7 +192,7 @@ class AppViewModelTest {
         every { flagRepo.isExternalBrowserEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first() as AppUiState.Default
@@ -212,7 +205,7 @@ class AppViewModelTest {
         every { flagRepo.isExternalBrowserEnabled() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val result = viewModel.uiState.first() as AppUiState.Default
@@ -225,7 +218,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isSearchEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -239,7 +232,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isSearchEnabled() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -252,7 +245,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isRecentActivityEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -265,7 +258,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isRecentActivityEnabled() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -278,7 +271,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isTopicsEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -291,7 +284,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isTopicsEnabled() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -301,17 +294,16 @@ class AppViewModelTest {
 
     @Test
     fun `When topic selection completed, then call repo topic selection completed`() = runTest(dispatcher) {
-        coEvery { appRepo.topicSelectionCompleted() } coAnswers { withContext(Dispatchers.Default) {} }
-        coEvery { appNavigation.onNext(any()) } coAnswers { withContext(Dispatchers.Default) {} }
+        val navEvent = async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
+        coEvery { appRepo.topicSelectionCompleted() } returns Unit
 
-        viewModel.topicSelectionCompleted(navController)
-
+        viewModel.topicSelectionCompleted()
         advanceUntilIdle()
 
         coVerify {
             appRepo.topicSelectionCompleted()
-            appNavigation.onNext(navController)
         }
+        assertEquals(AppViewModel.NavigationEvent.NavigateNext, navEvent.await())
     }
 
     @Test
@@ -405,7 +397,7 @@ class AppViewModelTest {
         every { configRepo.chatBanner } returns null
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -419,7 +411,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isChatEnabled() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -434,7 +426,7 @@ class AppViewModelTest {
         every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("chat_banner_id"))
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -457,7 +449,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isChatEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -470,7 +462,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isLocalServicesEnabled() } returns false
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -484,7 +476,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isTopicsEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -501,7 +493,7 @@ class AppViewModelTest {
         every { localFeature.hasLocalAuthority() } returns flowOf(true)
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -517,7 +509,7 @@ class AppViewModelTest {
         every { configRepo.userFeedbackBanner } returns userFeedbackBanner
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
@@ -527,11 +519,14 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given a new user or the same user has logged in, When on login, then navigate to next nav destination`() {
-        coEvery { authRepo.isDifferentUser() } returns false
+    fun `Given a new user or the same user has logged in, When on login, then navigate to next nav destination`() =
+        runTest(dispatcher) {
+            val navEvent =
+                async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
+            coEvery { authRepo.isDifferentUser() } returns false
 
-        runTest {
-            viewModel.onLogin(navController)
+            viewModel.onLogin()
+            advanceUntilIdle()
 
             coVerify(exactly = 0) {
                 authRepo.clear()
@@ -547,18 +542,19 @@ class AppViewModelTest {
                 configRepo.clearRemoteConfigValues()
             }
 
-            coVerify {
-                appNavigation.onNext(navController)
-            }
+            assertEquals(AppViewModel.NavigationEvent.NavigateNext, navEvent.await())
         }
-    }
+
 
     @Test
-    fun `Given a different user has logged in, When on login, then clear data and navigate to next destination`() {
-        coEvery { authRepo.isDifferentUser() } returns true
+    fun `Given a different user has logged in, When on login, then clear data and navigate to next destination`() =
+        runTest(dispatcher) {
+            val navEvent =
+                async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
+            coEvery { authRepo.isDifferentUser() } returns true
 
-        runTest {
-            viewModel.onLogin(navController)
+            viewModel.onLogin()
+            advanceUntilIdle()
 
             coVerify {
                 authRepo.clear()
@@ -570,10 +566,10 @@ class AppViewModelTest {
                 visited.clear()
                 chatFeature.clear()
                 analyticsClient.clear()
-                appNavigation.onNext(navController)
             }
+
+            assertEquals(AppViewModel.NavigationEvent.NavigateNext, navEvent.await())
         }
-    }
 
     @Test
     fun `Given a user has interacted with the app, When on user interaction, then call timeout manager`() {
@@ -585,8 +581,13 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given user session is not active, When the app times out, do nothing`() {
+    fun `Given user session is not active, When the app times out, do nothing`() = runTest(dispatcher) {
         clearAllMocks()
+
+        val events = mutableListOf<TimeoutEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.timeOutEvent.toList(events)
+        }
 
         val slot = slot<(() -> Unit)>()
         every { timeoutManager.onUserInteraction(any(), onWarning = any(), onTimeout = capture(slot)) } returns Unit
@@ -595,9 +596,11 @@ class AppViewModelTest {
         viewModel.onUserInteraction(0L)
         slot.captured.invoke()
 
+        advanceUntilIdle()
+
+        assertTrue(events.isEmpty())
         coVerify(exactly = 0) {
             authRepo.endUserSession()
-            appNavigation.onSignOut(any())
         }
     }
 
@@ -617,7 +620,6 @@ class AppViewModelTest {
 
         verify(exactly = 0) {
             authRepo.endUserSession()
-            appNavigation.onSignOut(any())
         }
     }
 
@@ -638,10 +640,6 @@ class AppViewModelTest {
         coVerify {
             authRepo.endUserSession()
         }
-
-        verify(exactly = 0) {
-            appNavigation.onSignOut(any())
-        }
     }
 
     @Test
@@ -650,7 +648,7 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation
+            localFeature, searchFeature, visited, chatFeature, analyticsClient
         )
 
         val uiState = viewModel.uiState.first() as AppUiState.Default
@@ -663,7 +661,7 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation
+            localFeature, searchFeature, visited, chatFeature, analyticsClient
         )
 
         val uiState = viewModel.uiState.first() as AppUiState.Default
@@ -672,32 +670,30 @@ class AppViewModelTest {
 
     @Test
     fun `Given analytics is enabled, when analytics consent completed, then refresh remote config`() = runTest(dispatcher) {
+        val navEvent = async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
         every { analyticsClient.isAnalyticsEnabled() } returns true
+        coEvery { configRepo.refreshRemoteConfig() } returns Unit
 
-        coEvery { configRepo.refreshRemoteConfig() } coAnswers { withContext(Dispatchers.Default) {} }
-        coEvery { appNavigation.onNext(any()) } coAnswers { withContext(Dispatchers.Default) {} }
-
-        viewModel.onAnalyticsConsentCompleted(navController)
+        viewModel.onAnalyticsConsentCompleted()
         advanceUntilIdle()
 
         coVerify {
             configRepo.refreshRemoteConfig()
-            appNavigation.onNext(navController)
         }
+        assertEquals(AppViewModel.NavigationEvent.NavigateNext, navEvent.await())
     }
 
     @Test
     fun `Given analytics is disabled, when analytics consent completed, then do not activate remote config`() = runTest(dispatcher) {
+        val navEvent = async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
         every { analyticsClient.isAnalyticsEnabled() } returns false
 
-        coEvery { appNavigation.onNext(any()) } coAnswers { withContext(Dispatchers.Default) {} }
-
-        viewModel.onAnalyticsConsentCompleted(navController)
+        viewModel.onAnalyticsConsentCompleted()
         advanceUntilIdle()
 
         coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
         coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
-        coVerify { appNavigation.onNext(navController) }
+        assertEquals(AppViewModel.NavigationEvent.NavigateNext, navEvent.await())
     }
 
     @Test
@@ -705,7 +701,7 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             viewModel.uiState.first()
@@ -739,7 +735,7 @@ class AppViewModelTest {
         every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("id1"))
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, appNavigation)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient)
 
         runTest {
             val homeWidgets = viewModel.homeWidgets.first { it != null }!!
