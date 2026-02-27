@@ -11,8 +11,8 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.user.model.Consent
 import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
@@ -44,19 +44,14 @@ class UserRepoTest {
             coEvery { userApi.getUserInfo() } returns Response.success(
                 User(
                     "12345",
-                    Preferences(
-                        Consent(
-                            ConsentStatus.ACCEPTED, "updated at"
-                        )
-                    )
+                    Preferences(Notifications(ConsentStatus.ACCEPTED))
                 )
             )
 
             userRepo.initUser()
 
             assertEquals("12345", userRepo.notificationId)
-            assertEquals(ConsentStatus.ACCEPTED, userRepo.preferences?.notifications?.consentStatus)
-            assertEquals("updated at", userRepo.preferences?.notifications?.updatedAt)
+            assertEquals(ConsentStatus.ACCEPTED, userRepo.preferences.notifications.consentStatus)
         }
 
     @Test
@@ -64,7 +59,7 @@ class UserRepoTest {
         runTest {
             userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(ConsentStatus.ACCEPTED)) }
+            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.ACCEPTED)))) }
         }
 
     @Test
@@ -72,7 +67,7 @@ class UserRepoTest {
         runTest {
             userRepo.updateNotifications(ConsentStatus.DENIED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(ConsentStatus.DENIED)) }
+            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.DENIED)))) }
         }
 
     @Test

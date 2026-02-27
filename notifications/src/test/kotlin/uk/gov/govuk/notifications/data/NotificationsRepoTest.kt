@@ -49,7 +49,7 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
         coEvery { userRepo.notificationId } returns "12345"
         every { notificationsProvider.consentGiven() } returns true
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
+        coEvery { userRepo.preferences.notifications.consentStatus } returns ConsentStatus.UNKNOWN
 
         runTest {
             notificationsRepo.login()
@@ -64,7 +64,7 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
         coEvery { userRepo.notificationId } returns "12345"
         every { notificationsProvider.consentGiven() } returns false
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
+        coEvery { userRepo.preferences.notifications.consentStatus } returns ConsentStatus.UNKNOWN
 
         runTest {
             notificationsRepo.login()
@@ -79,7 +79,7 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
         coEvery { userRepo.notificationId } returns "12345"
         every { notificationsProvider.consentGiven() } returns false
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns ConsentStatus.ACCEPTED
+        coEvery { userRepo.preferences.notifications.consentStatus } returns ConsentStatus.ACCEPTED
 
         runTest {
             notificationsRepo.login()

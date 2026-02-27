@@ -16,8 +16,8 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.user.model.Consent
 import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -62,9 +62,7 @@ class NotificationsViewModelTest {
     @Test
     fun `Given Allow notifications button click, then give consent and log analytics`() {
         coEvery { notificationsRepo.sendConsent() } returns Success(
-            UpdateUserDataResponse(
-                Preferences(Consent(ConsentStatus.ACCEPTED, "updated at"))
-            )
+            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.ACCEPTED)))
         )
         every { notificationsRepo.giveConsent() } returns Unit
 
@@ -145,9 +143,7 @@ class NotificationsViewModelTest {
     @Test
     fun `Given Continue button click, then remove consent and log analytics`() {
         coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
-            UpdateUserDataResponse(
-                Preferences(Consent(ConsentStatus.DENIED, "updated at"))
-            )
+            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.DENIED)))
         )
         every { notificationsRepo.removeConsent() } returns Unit
 

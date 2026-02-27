@@ -7,6 +7,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
@@ -44,9 +45,11 @@ class UserRepoImpl @Inject constructor(
     override suspend fun updateNotifications(
         consentStatus: ConsentStatus
     ): Result<UpdateUserDataResponse> {
+        val request = UpdateNotificationsRequest(Preferences(Notifications(consentStatus)))
+
         return safeAuthApiCall(apiCall = {
             userApi.updateNotifications(
-                UpdateNotificationsRequest(consentStatus)
+                request
             )
         }, authRepo = authRepo)
     }
