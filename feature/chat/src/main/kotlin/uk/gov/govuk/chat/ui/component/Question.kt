@@ -34,7 +34,7 @@ internal fun Question(
             shape = RoundedCornerShape(18.dp),
             modifier = Modifier.padding(start = 60.dp)
         ) {
-            val altText = "${stringResource(R.string.answer_alt)} $question"
+            val altText = "${stringResource(R.string.question_alt)} $question"
 
             BodyRegularLabel(
                 text = question,

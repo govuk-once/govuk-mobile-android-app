@@ -19,11 +19,13 @@
     <string name="action_close">Close menu</string>
     <string name="action_alt">More options</string>
     <string name="button_alt">Send message</string>
-    <string name="answer_alt">You said</string>
+    <string name="question_alt">You said</string>
+    <string name="answer_alt">GOV dot UK Chat replied</string>
     <string name="bot_header_text">GOV.UK Chat</string>
     <string name="bot_sources_header_text">GOV.UK Chat can make mistakes.\nCheck GOV.UK pages for important information.</string>
     <string name="bot_sources_list_description">GOV.UK pages used in this answer</string>
     <string name="sources_open_in_text">opens in web browser</string>
+    <string name="copy_text">Copy</string>
     <string name="error_page_header">There’s a problem</string>
     <string name="error_page_subtext">There’s a problem with GOV.UK Chat.</string>
     <string name="error_page_additional_text_intro">Try again later or return to the</string>
