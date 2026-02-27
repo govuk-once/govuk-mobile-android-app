@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -44,8 +46,7 @@ internal class AppViewModel @Inject constructor(
     private val searchFeature: SearchFeature,
     private val visitedFeature: Visited,
     private val chatFeature: ChatFeature,
-    private val analyticsClient: AnalyticsClient,
-    val appNavigation: AppNavigation
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -60,6 +61,13 @@ internal class AppViewModel @Inject constructor(
 
     private val _timeOutEvent = Channel<TimeoutEvent>(Channel.CONFLATED)
     val timeOutEvent = _timeOutEvent.receiveAsFlow()
+
+    sealed interface NavigationEvent {
+        object NavigateNext : NavigationEvent
+    }
+
+    private val _navigationEvent = Channel<NavigationEvent>(Channel.BUFFERED)
+    val navigationEvent = _navigationEvent.receiveAsFlow()
 
     init {
         analyticsClient.isUserSessionActive = { authRepo.isUserSessionActive() }
@@ -136,7 +144,7 @@ internal class AppViewModel @Inject constructor(
         )
     }
 
-    fun onLogin(navController: NavController) {
+    fun onLogin() {
         viewModelScope.launch {
             if (authRepo.isDifferentUser()) {
                 authRepo.clear()
@@ -151,23 +159,23 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
-            appNavigation.onNext(navController)
+            _navigationEvent.trySend(NavigationEvent.NavigateNext)
         }
     }
 
-    fun onAnalyticsConsentCompleted(navController: NavController) {
+    fun onAnalyticsConsentCompleted() {
         viewModelScope.launch {
             if (analyticsClient.isAnalyticsEnabled()) {
                 configRepo.refreshRemoteConfig()
             }
-            appNavigation.onNext(navController)
+            _navigationEvent.trySend(NavigationEvent.NavigateNext)
         }
     }
 
-    fun topicSelectionCompleted(navController: NavController) {
+    fun topicSelectionCompleted() {
         viewModelScope.launch {
             appRepo.topicSelectionCompleted()
-            appNavigation.onNext(navController)
+            _navigationEvent.trySend(NavigationEvent.NavigateNext)
         }
     }
 
