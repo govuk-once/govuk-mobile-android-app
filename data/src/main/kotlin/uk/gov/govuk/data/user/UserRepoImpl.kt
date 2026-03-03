@@ -21,20 +21,24 @@ class UserRepoImpl @Inject constructor(
     private val authRepo: AuthRepo
 ) : UserRepo {
 
-    private var _user: User? = null
-    private val safeUser: User
-        get() = checkNotNull(_user) { "You must init user successfully before use!!!" }
+    private var isFlexEnabled: Boolean = false
 
-    override val notificationId: String
-        get() = safeUser.notificationId
+    private var user: User? = null
 
-    override val preferences: Preferences
-        get() = safeUser.preferences
+    override val notificationId: String?
+        get() = user?.notificationId
 
-    override suspend fun initUser(): Result<Unit> {
+    override val preferences: Preferences?
+        get() = user?.preferences
+
+    override suspend fun initUser(isFlexEnabled: Boolean): Result<Unit> {
+        this.isFlexEnabled = isFlexEnabled
+        if (!isFlexEnabled) {
+            return Result.NotSent()
+        }
         val result = safeApiCall(apiCall = { userApi.getUserInfo() })
         return if (result is Success) {
-            _user = result.value
+            user = result.value
             Success(Unit)
         } else {
             @Suppress("UNCHECKED_CAST") // we know it's not a success
@@ -45,6 +49,9 @@ class UserRepoImpl @Inject constructor(
     override suspend fun updateNotifications(
         consentStatus: ConsentStatus
     ): Result<UpdateUserDataResponse> {
+        if (!isFlexEnabled) {
+            return Result.NotSent()
+        }
         val request = UpdateNotificationsRequest(Preferences(Notifications(consentStatus)))
 
         return safeAuthApiCall(apiCall = {

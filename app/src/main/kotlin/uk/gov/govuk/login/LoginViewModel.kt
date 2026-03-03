@@ -13,12 +13,14 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.R
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.data.model.Result.Success
+import uk.gov.govuk.data.model.Result.NotSent
 import uk.gov.govuk.data.user.UserRepo
 import java.util.Date
 import javax.inject.Inject
@@ -36,6 +38,7 @@ internal class LoginViewModel @Inject constructor(
     private val configRepo: ConfigRepo,
     private val notificationsRepo: NotificationsRepo,
     private val userRepo: UserRepo,
+    private val flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
@@ -64,9 +67,9 @@ internal class LoginViewModel @Inject constructor(
                                 _isLoading.value = true
                             }
                             AuthRepo.RefreshStatus.Success -> {
-                                val result = userRepo.initUser()
+                                val result = userRepo.initUser(flagRepo.isFlexEnabled())
                                 when (result) {
-                                    is Success -> {
+                                    is Success, is NotSent -> {
                                         notificationsRepo.login()
                                         _loginCompleted.emit(LoginEvent.BiometricLogin)
                                     }
@@ -95,9 +98,9 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
-                val result = userRepo.initUser()
+                val result = userRepo.initUser(flagRepo.isFlexEnabled())
                 when (result) {
-                    is Success -> {
+                    is Success, is NotSent -> {
                         notificationsRepo.login()
                         _loginCompleted.emit(
                             LoginEvent.WebLogin(

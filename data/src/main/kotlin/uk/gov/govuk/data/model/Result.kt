@@ -6,5 +6,6 @@ sealed class Result<T> {
     class ServiceNotResponding<T>: Result<T>()
     class AuthError<T>: Result<T>()
     class InvalidSignature<T>: Result<T>()
+    class NotSent<T>: Result<T>()
     class Error<T>: Result<T>()
 }
