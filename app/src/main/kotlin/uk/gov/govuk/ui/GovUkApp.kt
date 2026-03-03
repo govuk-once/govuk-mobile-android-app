@@ -56,7 +56,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import uk.gov.govuk.AppUiState
 import uk.gov.govuk.AppViewModel
 import uk.gov.govuk.BuildConfig
@@ -376,14 +375,29 @@ private fun GovUkNavHost(
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
-                AppViewModel.NavigationEvent.NavigateNext -> appNavigation.onNext(navController)
-                AppViewModel.NavigationEvent.NavigateToLogin -> appNavigation.navigateToLogin(
-                    navController
-                )
+                AppViewModel.NavigationEvent.NavigateToLogin ->
+                    appNavigation.navigateToLogin(navController)
 
-                AppViewModel.NavigationEvent.NavigateToNotificationsConsent -> appNavigation.navigateToNotificationsConsent(
-                    navController
-                )
+                AppViewModel.NavigationEvent.NavigateToNotificationsConsent ->
+                    appNavigation.navigateToNotificationsConsent(navController)
+
+                AppViewModel.NavigationEvent.NavigateToTerms ->
+                    appNavigation.navigateToTerms(navController)
+
+                AppViewModel.NavigationEvent.NavigateToAnalytics ->
+                    appNavigation.navigateToAnalytics(navController)
+
+                AppViewModel.NavigationEvent.NavigateToTopicSelection ->
+                    appNavigation.navigateToTopicSelection(navController)
+
+                AppViewModel.NavigationEvent.NavigateToNotificationsOnboarding ->
+                    appNavigation.navigateToNotificationsOnboarding(navController)
+
+                AppViewModel.NavigationEvent.NavigateToNotificationsConsentOnNext ->
+                    appNavigation.navigateToNotificationsConsentOnNext(navController)
+
+                AppViewModel.NavigationEvent.NavigateToHome ->
+                    appNavigation.navigateToHome(navController)
             }
         }
     }
@@ -420,9 +434,7 @@ private fun GovUkNavHost(
                 ) { showBrowserNotFoundAlert = true }
             },
             onCompleted = {
-                coroutineScope.launch {
-                    appNavigation.onNext(navController)
-                }
+                viewModel.onNext()
             },
             onSignOut = { appNavigation.onSignOut(navController) }
         )
@@ -449,14 +461,10 @@ private fun GovUkNavHost(
         )
         notificationsGraph(
             notificationsOnboardingCompleted = {
-                coroutineScope.launch {
-                    appNavigation.onNotificationsOnboardingCompleted(navController)
-                }
+                viewModel.onNotificationsOnboardingCompleted()
             },
             notificationsConsentOnNextCompleted = {
-                coroutineScope.launch {
-                    appNavigation.onNext(navController)
-                }
+                viewModel.onNext()
             },
             notificationsConsentCompleted = {
                 navController.popBackStack()
