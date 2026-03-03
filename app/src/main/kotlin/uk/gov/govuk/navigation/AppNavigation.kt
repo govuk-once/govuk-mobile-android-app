@@ -9,7 +9,6 @@ import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
-import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
@@ -31,7 +30,6 @@ internal class AppNavigation @Inject constructor(
     private val termsRepo: TermsRepo,
     private val topicsFeature: TopicsFeature,
     private val deeplinkHandler: DeeplinkHandler,
-    private val notificationsProvider: NotificationsProvider,
     private val notificationsRepo: NotificationsRepo
 ) {
     fun setOnLaunchBrowser(onLaunchBrowser: (String) -> Unit) {
@@ -61,8 +59,8 @@ internal class AppNavigation @Inject constructor(
                 navigate(navController, NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE)
             flagRepo.isNotificationsEnabled() &&
                     notificationsRepo.isNotificationsOnboardingCompleted() &&
-                    notificationsProvider.permissionGranted() &&
-                    !notificationsProvider.consentGiven() ->
+                    notificationsRepo.permissionGranted() &&
+                    !notificationsRepo.consentGiven() ->
                 navigate(navController, NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE)
             else -> {
                 navigate(navController, HOME_GRAPH_ROUTE)
@@ -76,30 +74,14 @@ internal class AppNavigation @Inject constructor(
         onNext(navController)
     }
 
-    suspend fun navigateOnResume(navController: NavController) {
-        if (!authRepo.isUserSessionActive()) {
-            navController.navigate(LOGIN_GRAPH_ROUTE) {
-                launchSingleTop = true
-            }
-        }
-        if (flagRepo.isNotificationsEnabled()) {
-            navigateNotificationsOnResume(navController)
+    fun navigateToLogin(navController: NavController) {
+        navController.navigate(LOGIN_GRAPH_ROUTE) {
+            launchSingleTop = true
         }
     }
 
-    private suspend fun navigateNotificationsOnResume(navController: NavController) {
-        if (!notificationsProvider.permissionGranted()) {
-            notificationsProvider.removeConsent()
-            if (navController.currentDestination?.route == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
-                onNext(navController)
-            }
-        } else if (
-            authRepo.isUserSessionActive() &&
-            notificationsRepo.isNotificationsOnboardingCompleted() &&
-            !notificationsProvider.consentGiven()
-        ) {
-            navController.navigate(NOTIFICATIONS_CONSENT_ROUTE)
-        }
+    fun navigateToNotificationsConsent(navController: NavController) {
+        navController.navigate(NOTIFICATIONS_CONSENT_ROUTE)
     }
 
     private fun navigate(navController: NavController, route: String) {

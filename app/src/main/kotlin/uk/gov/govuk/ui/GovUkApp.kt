@@ -236,7 +236,7 @@ private fun BottomNavScaffold(
                 )
                 HandleOnResumeNavigation(
                     navController = { navController },
-                    appNavigation = appNavigation
+                    viewModel = viewModel
                 )
             }
         }
@@ -246,7 +246,7 @@ private fun BottomNavScaffold(
 @Composable
 private fun HandleOnResumeNavigation(
     navController: () -> NavHostController,
-    appNavigation: AppNavigation
+    viewModel: AppViewModel
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -261,7 +261,7 @@ private fun HandleOnResumeNavigation(
                     // Nav graph has not been set
                     return@LaunchedEffect
                 }
-                appNavigation.navigateOnResume(controller)
+                viewModel.onResume(controller.currentDestination?.route)
             }
             else -> { /* Do nothing */ }
         }
@@ -376,9 +376,14 @@ private fun GovUkNavHost(
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
-                AppViewModel.NavigationEvent.NavigateNext -> {
-                    appNavigation.onNext(navController)
-                }
+                AppViewModel.NavigationEvent.NavigateNext -> appNavigation.onNext(navController)
+                AppViewModel.NavigationEvent.NavigateToLogin -> appNavigation.navigateToLogin(
+                    navController
+                )
+
+                AppViewModel.NavigationEvent.NavigateToNotificationsConsent -> appNavigation.navigateToNotificationsConsent(
+                    navController
+                )
             }
         }
     }

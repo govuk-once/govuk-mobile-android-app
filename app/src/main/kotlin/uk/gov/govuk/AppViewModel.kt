@@ -3,12 +3,9 @@ package uk.gov.govuk
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,7 +20,8 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.login.data.LoginRepo
-import uk.gov.govuk.navigation.AppNavigation
+import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
@@ -46,7 +44,8 @@ internal class AppViewModel @Inject constructor(
     private val searchFeature: SearchFeature,
     private val visitedFeature: Visited,
     private val chatFeature: ChatFeature,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -64,6 +63,8 @@ internal class AppViewModel @Inject constructor(
 
     sealed interface NavigationEvent {
         object NavigateNext : NavigationEvent
+        object NavigateToLogin : NavigationEvent
+        object NavigateToNotificationsConsent : NavigationEvent
     }
 
     private val _navigationEvent = Channel<NavigationEvent>(Channel.BUFFERED)
@@ -256,5 +257,33 @@ internal class AppViewModel @Inject constructor(
             hasDeepLink,
             url
         )
+    }
+
+    fun onResume(currentRoute: String?) {
+        viewModelScope.launch {
+            if (!authRepo.isUserSessionActive()) {
+                _navigationEvent.trySend(NavigationEvent.NavigateToLogin)
+            }
+
+            if (flagRepo.isNotificationsEnabled()) {
+                handleNotificationsOnResume(currentRoute)
+            }
+        }
+    }
+
+    private suspend fun handleNotificationsOnResume(currentRoute: String?) {
+        if (!notificationsRepo.permissionGranted()) {
+            notificationsRepo.removeConsent()
+
+            if (currentRoute == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
+                _navigationEvent.trySend(NavigationEvent.NavigateNext)
+            }
+        } else if (
+            authRepo.isUserSessionActive() &&
+            notificationsRepo.isNotificationsOnboardingCompleted() &&
+            !notificationsRepo.consentGiven()
+        ) {
+            _navigationEvent.trySend(NavigationEvent.NavigateToNotificationsConsent)
+        }
     }
 }
