@@ -70,7 +70,7 @@ internal class LoginViewModel @Inject constructor(
                         }
 
                         AuthRepo.RefreshStatus.Success -> {
-                            if (loggedIn()) {
+                            if (isUserInitialised()) {
                                 _loginCompleted.emit(LoginEvent.BiometricLogin)
                             } else {
                                 _errorEvent.emit(ErrorEvent.UserApiError)
@@ -98,7 +98,7 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
-                if (loggedIn()) {
+                if (isUserInitialised()) {
                     _loginCompleted.emit(
                         LoginEvent.WebLogin(
                             isBiometricsEnabled = authRepo.isAuthenticationEnabled()
@@ -114,22 +114,15 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loggedIn(): Boolean {
-        return if (flagRepo.isFlexEnabled()) {
-            val userInitialised = initUserWithSuccess()
-            if (userInitialised) {
-                notificationsRepo.login()
-            }
-            userInitialised
-        } else {
-            true
-        }
+    private suspend fun isUserInitialised(): Boolean {
+        if (!flagRepo.isFlexEnabled()) return true
+        return attemptUserInitialisation()
     }
 
-    private suspend fun initUserWithSuccess(): Boolean {
-        val result = userRepo.initUser()
-        return result is Success
-    }
+    private suspend fun attemptUserInitialisation(): Boolean =
+        (userRepo.initUser() is Success).also { success ->
+            if (success) notificationsRepo.login()
+        }
 
     private suspend fun shouldRefreshTokens(): Boolean {
         val tokenExpirySeconds = getTokenExpirySeconds()
