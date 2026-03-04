@@ -876,4 +876,21 @@ class AppViewModelTest {
 
         assertEquals(AppViewModel.NavigationEvent.NavigateToNotificationsConsent, navEvent.await())
     }
+
+
+
+    @Test
+    fun `When notifications onboarding completed, update repo and call onNext`() = runTest(dispatcher) {
+        val navEvent = async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
+        coEvery { notificationsRepo.notificationsOnboardingCompleted() } returns Unit
+
+        viewModel.onNotificationsOnboardingCompleted()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) {
+            notificationsRepo.notificationsOnboardingCompleted()
+        }
+
+        assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
+    }
 }
