@@ -55,35 +55,39 @@ internal class LoginViewModel @Inject constructor(
     }
 
     fun init(activity: FragmentActivity) {
-        if (authRepo.isUserSignedIn()) {
-            viewModelScope.launch {
-                if (shouldRefreshTokens()) {
-                    authRepo.refreshTokens(
-                        activity = activity,
-                        title = activity.getString(R.string.login_biometric_prompt_title)).collect { status ->
-                        when (status) {
-                            AuthRepo.RefreshStatus.Loading -> {
-                                _isLoading.value = true
-                            }
-                            AuthRepo.RefreshStatus.Success -> {
-                                if (loggedIn()) {
-                                    _loginCompleted.emit(LoginEvent.BiometricLogin)
-                                } else {
-                                    _errorEvent.emit(ErrorEvent.UserApiError)
-                                }
-                            }
-                            is AuthRepo.RefreshStatus.Error -> {
-                                status.exception?.let {
-                                    analyticsClient.logException(it)
-                                }
-                                _isLoading.value = false
+        if (!authRepo.isUserSignedIn()) {
+            return
+        }
+        viewModelScope.launch {
+            if (shouldRefreshTokens()) {
+                authRepo.refreshTokens(
+                    activity = activity,
+                    title = activity.getString(R.string.login_biometric_prompt_title)
+                ).collect { status ->
+                    when (status) {
+                        AuthRepo.RefreshStatus.Loading -> {
+                            _isLoading.value = true
+                        }
+
+                        AuthRepo.RefreshStatus.Success -> {
+                            if (loggedIn()) {
+                                _loginCompleted.emit(LoginEvent.BiometricLogin)
+                            } else {
+                                _errorEvent.emit(ErrorEvent.UserApiError)
                             }
                         }
+
+                        is AuthRepo.RefreshStatus.Error -> {
+                            status.exception?.let {
+                                analyticsClient.logException(it)
+                            }
+                            _isLoading.value = false
+                        }
                     }
-                } else {
-                    authRepo.endUserSession()
-                    authRepo.clear()
                 }
+            } else {
+                authRepo.endUserSession()
+                authRepo.clear()
             }
         }
     }
