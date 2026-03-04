@@ -330,6 +330,7 @@ private fun hasLinks(content: List<InlineContent>): Boolean {
     }
 }
 
+@Composable
 private fun Modifier.withLinkAccessibility(
     content: List<InlineContent>,
     plainText: String,
@@ -338,20 +339,20 @@ private fun Modifier.withLinkAccessibility(
     isHeading: Boolean = false
 ): Modifier {
     val hasLinks = hasLinks(content)
-    val accessibilityText = if (accessibilityPrefix != null || hasLinks) {
+    val accessibilityText =
         buildString {
             accessibilityPrefix?.let { append("$it. ") }
             append(plainText)
             if (hasLinks) append(". $linkAccessibilityLabel")
-        }
-    } else null
+        }.replace(
+            stringResource(uk.gov.govuk.design.R.string.gov_uk),
+            stringResource(uk.gov.govuk.design.R.string.gov_uk_alt_text)
+        )
 
-    return if (accessibilityText != null || isHeading) {
-        this.semantics {
-            if (isHeading) heading()
-            accessibilityText?.let { contentDescription = it }
-        }
-    } else this
+    return this.semantics {
+        if (isHeading) heading()
+        contentDescription = accessibilityText
+    }
 }
 
 private fun collectLinks(content: List<InlineContent>): List<String> {
