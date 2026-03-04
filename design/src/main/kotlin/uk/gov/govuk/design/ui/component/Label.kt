@@ -207,6 +207,22 @@ fun Title3RegularLabel(
 }
 
 @Composable
+fun HeadlineSemiboldLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    BaseLabel(
+        text = text,
+        modifier = modifier,
+        style = GovUkTheme.typography.headlineSemibold,
+        color = color,
+        textAlign = textAlign
+    )
+}
+
+@Composable
 fun BodyBoldLabel(
     text: String,
     modifier: Modifier = Modifier,
@@ -628,6 +644,15 @@ private fun Title3Regular() {
         Title3RegularLabel("Title 3 Regular Label")
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun HeadlineSemibold() {
+    GovUkTheme {
+        HeadlineSemiboldLabel("Headline Semibold Label")
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
