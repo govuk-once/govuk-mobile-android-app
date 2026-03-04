@@ -21,20 +21,18 @@ class UserRepoImpl @Inject constructor(
     private val authRepo: AuthRepo
 ) : UserRepo {
 
-    private var _user: User? = null
-    private val safeUser: User
-        get() = checkNotNull(_user) { "You must init user successfully before use!!!" }
+    private var user: User? = null
 
-    override val notificationId: String
-        get() = safeUser.notificationId
+    override val notificationId: String?
+        get() = user?.notificationId
 
-    override val preferences: Preferences
-        get() = safeUser.preferences
+    override val preferences: Preferences?
+        get() = user?.preferences
 
     override suspend fun initUser(): Result<Unit> {
         val result = safeApiCall(apiCall = { userApi.getUserInfo() })
         return if (result is Success) {
-            _user = result.value
+            user = result.value
             Success(Unit)
         } else {
             @Suppress("UNCHECKED_CAST") // we know it's not a success
@@ -46,7 +44,6 @@ class UserRepoImpl @Inject constructor(
         consentStatus: ConsentStatus
     ): Result<UpdateUserDataResponse> {
         val request = UpdateNotificationsRequest(Preferences(Notifications(consentStatus)))
-
         return safeAuthApiCall(apiCall = {
             userApi.updateNotifications(
                 request

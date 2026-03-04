@@ -5,13 +5,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import javax.inject.Inject
 
 @HiltViewModel
 internal open class NotificationsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
-    private val notificationsRepo: NotificationsRepo
+    private val notificationsRepo: NotificationsRepo,
+    private val flagRepo: FlagRepo
 ) : ViewModel() {
 
     companion object {
@@ -47,8 +49,10 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
         viewModelScope.launch {
-            // TODO: awaiting failure requirements for sendConsent()
-            notificationsRepo.sendConsent()
+            if (flagRepo.isFlexEnabled()) {
+                // TODO: awaiting failure requirements for sendConsent()
+                notificationsRepo.sendConsent()
+            }
             notificationsRepo.giveConsent()
             onCompleted()
         }
@@ -74,8 +78,10 @@ internal open class NotificationsViewModel @Inject constructor(
 
     internal fun onContinueButtonClick(text: String) {
         viewModelScope.launch {
-            // TODO: awaiting failure requirements for sendRemoveConsent()
-            notificationsRepo.sendRemoveConsent()
+            if (flagRepo.isFlexEnabled()) {
+                // TODO: awaiting failure requirements for sendRemoveConsent()
+                notificationsRepo.sendRemoveConsent()
+            }
             notificationsRepo.removeConsent()
         }
         analyticsClient.buttonClick(text)

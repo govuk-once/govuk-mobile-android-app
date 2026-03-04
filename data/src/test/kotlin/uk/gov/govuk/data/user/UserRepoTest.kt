@@ -4,9 +4,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
-import org.junit.Assert.assertThrows
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
@@ -50,8 +50,26 @@ class UserRepoTest {
 
             userRepo.initUser()
 
+            coVerify(exactly = 1) { userApi.getUserInfo() }
+
             assertEquals("12345", userRepo.notificationId)
-            assertEquals(ConsentStatus.ACCEPTED, userRepo.preferences.notifications.consentStatus)
+            assertEquals(ConsentStatus.ACCEPTED, userRepo.preferences?.notifications?.consentStatus)
+        }
+
+    @Test
+    fun `Given init is called, when the api response is unsuccessful, then the correct values are set`() =
+        runTest {
+            coEvery { userApi.getUserInfo() } returns Response.error(
+                500,
+                "Error".toResponseBody(null)
+            )
+
+            userRepo.initUser()
+
+            coVerify(exactly = 1) { userApi.getUserInfo() }
+
+            assertNull(userRepo.notificationId)
+            assertNull(userRepo.preferences?.notifications?.consentStatus)
         }
 
     @Test
@@ -59,7 +77,15 @@ class UserRepoTest {
         runTest {
             userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.ACCEPTED)))) }
+            coVerify {
+                userApi.updateNotifications(
+                    UpdateNotificationsRequest(
+                        Preferences(
+                            Notifications(ConsentStatus.ACCEPTED)
+                        )
+                    )
+                )
+            }
         }
 
     @Test
@@ -67,15 +93,21 @@ class UserRepoTest {
         runTest {
             userRepo.updateNotifications(ConsentStatus.DENIED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.DENIED)))) }
+            coVerify {
+                userApi.updateNotifications(
+                    UpdateNotificationsRequest(
+                        Preferences(
+                            Notifications(ConsentStatus.DENIED)
+                        )
+                    )
+                )
+            }
         }
 
     @Test
-    fun `Given no user init, when any user property is requested, then throw exception`() {
-        val exception = assertThrows(IllegalStateException::class.java) {
-            userRepo.notificationId
+    fun `Given init user is not called, then properties are null`() =
+        runTest {
+            assertNull(userRepo.notificationId)
+            assertNull(userRepo.preferences)
         }
-
-        Assert.assertEquals("You must init user successfully before use!!!", exception.message)
-    }
 }
