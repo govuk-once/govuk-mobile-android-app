@@ -467,7 +467,7 @@ private fun GovUkNavHost(
             },
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
         )
-        notificationCentreGraph(modifier = Modifier.padding(paddingValues))
+        notificationCentreGraph(navController, modifier = Modifier.padding(paddingValues))
         settingsGraph(
             navigateTo = { route -> navController.navigate(route) },
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
