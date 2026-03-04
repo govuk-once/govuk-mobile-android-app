@@ -89,7 +89,8 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -116,7 +117,8 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.NotSent()
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -144,7 +146,8 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -171,7 +174,8 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -225,7 +229,8 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -247,13 +252,42 @@ class LoginViewModelTest {
     }
 
     @Test
+    fun `Given the user is signed in, flex is not enabled and the refresh token issued at date and refresh expiry seconds are null and the refresh token expiry date is in the future, then emit loading and login event`() {
+        every { authRepo.isUserSignedIn() } returns true
+        coEvery { loginRepo.getRefreshTokenExpiryDate() } returns Date().toInstant().epochSecond + 10000
+        coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
+        coEvery { configRepo.refreshTokenExpirySeconds } returns null
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
+        every { flagRepo.isFlexEnabled() } returns false
+
+        runTest {
+            val isLoading = mutableListOf<Boolean?>()
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.isLoading.toList(isLoading)
+            }
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.init(activity)
+
+            coVerify(exactly = 0) {
+                notificationsRepo.login()
+            }
+            assertTrue(isLoading.last() == true)
+            assertTrue(events.first() is LoginEvent.BiometricLogin)
+        }
+    }
+
+    @Test
     fun `Given the user is signed in and the refresh token issued at date and refresh expiry seconds are null, the refresh token expiry date is in the future and initialising the user repo id is unsuccessful, then emit user api error`() {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns Date().toInstant().epochSecond + 10000
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Error()
+        coEvery { userRepo.initUser() } returns Result.Error()
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -336,7 +370,8 @@ class LoginViewModelTest {
     fun `Given an auth response, when success, user api returns a notification id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -366,7 +401,8 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -393,11 +429,43 @@ class LoginViewModelTest {
     }
 
     @Test
+    fun `Given an auth response, when success, flex is not enabled, user api returns a notification id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
+        every { configRepo.refreshTokenExpirySeconds } returns 601200L
+        every { flagRepo.isFlexEnabled() } returns false
+
+        runTest {
+            val isLoading = mutableListOf<Boolean?>()
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.isLoading.toList(isLoading)
+            }
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+
+            assertTrue(isLoading.last() == true)
+            assertTrue(events.first() is LoginEvent.WebLogin)
+
+            coVerify(exactly = 0) {
+                notificationsRepo.login()
+            }
+            coVerify(exactly = 1) {
+                authRepo.getIdTokenIssuedAtDate()
+                loginRepo.setRefreshTokenIssuedAtDate(12345L)
+            }
+        }
+    }
+
+    @Test
     fun `Given an auth response, when success, id token issued at date is stored and user api returns error, then emit user api error`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Error()
+        coEvery { userRepo.initUser() } returns Result.Error()
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val isLoading = mutableListOf<Boolean?>()
@@ -436,7 +504,8 @@ class LoginViewModelTest {
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
         every { authRepo.isAuthenticationEnabled() } returns true
         coEvery { appRepo.hasSkippedBiometrics() } returns false
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val events = mutableListOf<LoginEvent>()
@@ -457,7 +526,8 @@ class LoginViewModelTest {
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
         every { authRepo.isAuthenticationEnabled() } returns true
         coEvery { appRepo.hasSkippedBiometrics() } returns true
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val events = mutableListOf<LoginEvent>()
@@ -477,7 +547,8 @@ class LoginViewModelTest {
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
         every { authRepo.isAuthenticationEnabled() } returns false
-        coEvery { userRepo.initUser(flagRepo.isFlexEnabled()) } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
             val events = mutableListOf<LoginEvent>()

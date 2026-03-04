@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.Preferences
@@ -27,6 +28,7 @@ class NotificationsViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>()
+    private val flagRepo = mockk<FlagRepo>()
 
     private lateinit var viewModel: NotificationsViewModel
 
@@ -35,7 +37,8 @@ class NotificationsViewModelTest {
         Dispatchers.setMain(dispatcher)
         viewModel = NotificationsViewModel(
             analyticsClient,
-            notificationsRepo
+            notificationsRepo,
+            flagRepo
         )
     }
 
@@ -60,16 +63,38 @@ class NotificationsViewModelTest {
     }
 
     @Test
-    fun `Given Allow notifications button click, then give consent and log analytics`() {
+    fun `Given Allow notifications button click, when flex is enabled, then the correct functions are called`() {
         coEvery { notificationsRepo.sendConsent() } returns Success(
             UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.ACCEPTED)))
         )
         every { notificationsRepo.giveConsent() } returns Unit
+        every { flagRepo.isFlexEnabled() } returns true
 
         viewModel.onGiveConsentClick("Title") {}
 
         runTest {
             coVerify(exactly = 1) {
+                notificationsRepo.sendConsent()
+            }
+            verify(exactly = 1) {
+                notificationsRepo.giveConsent()
+                analyticsClient.buttonClick("Title")
+            }
+        }
+    }
+
+    @Test
+    fun `Given Allow notifications button click, when flex is not enabled, then the correct functions are called`() {
+        coEvery { notificationsRepo.sendConsent() } returns Success(
+            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.ACCEPTED)))
+        )
+        every { notificationsRepo.giveConsent() } returns Unit
+        every { flagRepo.isFlexEnabled() } returns false
+
+        viewModel.onGiveConsentClick("Title") {}
+
+        runTest {
+            coVerify(exactly = 0) {
                 notificationsRepo.sendConsent()
             }
             verify(exactly = 1) {
@@ -141,16 +166,40 @@ class NotificationsViewModelTest {
     }
 
     @Test
-    fun `Given Continue button click, then remove consent and log analytics`() {
+    fun `Given Continue button click, when flex is enabled, then the correct functions are called`() {
         coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
             UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.DENIED)))
         )
         every { notificationsRepo.removeConsent() } returns Unit
+        every { flagRepo.isFlexEnabled() } returns true
 
         viewModel.onContinueButtonClick("Text")
 
         runTest {
             coVerify(exactly = 1) {
+                notificationsRepo.sendRemoveConsent()
+            }
+            verify(exactly = 1) {
+                notificationsRepo.removeConsent()
+                analyticsClient.buttonClick(
+                    text = "Text"
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `Given Continue button click, when flex is not enabled, then the correct functions are called`() {
+        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
+            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.DENIED)))
+        )
+        every { notificationsRepo.removeConsent() } returns Unit
+        every { flagRepo.isFlexEnabled() } returns false
+
+        viewModel.onContinueButtonClick("Text")
+
+        runTest {
+            coVerify(exactly = 0) {
                 notificationsRepo.sendRemoveConsent()
             }
             verify(exactly = 1) {

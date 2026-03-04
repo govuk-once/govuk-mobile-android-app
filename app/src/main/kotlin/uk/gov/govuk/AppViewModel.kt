@@ -3,12 +3,9 @@ package uk.gov.govuk
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,7 +20,6 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.login.data.LoginRepo
-import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature

@@ -4,13 +4,13 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.User
@@ -31,19 +31,11 @@ class UserRepoTest {
     }
 
     @Test
-    fun `Given init is called, when flex is enabled, then get user info is called on the api`() =
+    fun `Given init is called, then get user info is called on the api`() =
         runTest {
-            userRepo.initUser(true)
+            userRepo.initUser()
 
             coVerify { userApi.getUserInfo() }
-        }
-
-    @Test
-    fun `Given init is called, when flex is not enabled, then get user info is not called on the api`() =
-        runTest {
-            userRepo.initUser(false)
-
-            coVerify(exactly = 0) { userApi.getUserInfo() }
         }
 
     @Test
@@ -56,7 +48,7 @@ class UserRepoTest {
                 )
             )
 
-            userRepo.initUser(true)
+            userRepo.initUser()
 
             coVerify(exactly = 1) { userApi.getUserInfo() }
 
@@ -65,11 +57,16 @@ class UserRepoTest {
         }
 
     @Test
-    fun `Given init is called, when flex is not enabled, then the correct values are set`() =
+    fun `Given init is called, when the api response is unsuccessful, then the correct values are set`() =
         runTest {
-            userRepo.initUser(false)
+            coEvery { userApi.getUserInfo() } returns Response.error(
+                500,
+                "Error".toResponseBody(null)
+            )
 
-            coVerify(exactly = 0) { userApi.getUserInfo() }
+            userRepo.initUser()
+
+            coVerify(exactly = 1) { userApi.getUserInfo() }
 
             assertNull(userRepo.notificationId)
             assertNull(userRepo.preferences?.notifications?.consentStatus)
@@ -78,31 +75,39 @@ class UserRepoTest {
     @Test
     fun `Given update notifications is called, when consented, then update notifications is called on the api`() =
         runTest {
-            userRepo.initUser(true)
-
             userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.ACCEPTED)))) }
+            coVerify {
+                userApi.updateNotifications(
+                    UpdateNotificationsRequest(
+                        Preferences(
+                            Notifications(ConsentStatus.ACCEPTED)
+                        )
+                    )
+                )
+            }
         }
 
     @Test
     fun `Given update notifications is called, when not consented, then update notifications is called on the api`() =
         runTest {
-            userRepo.initUser(true)
-
             userRepo.updateNotifications(ConsentStatus.DENIED)
 
-            coVerify { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.DENIED)))) }
+            coVerify {
+                userApi.updateNotifications(
+                    UpdateNotificationsRequest(
+                        Preferences(
+                            Notifications(ConsentStatus.DENIED)
+                        )
+                    )
+                )
+            }
         }
 
     @Test
-    fun `Given update notifications is called, when flex is not enabled, then return not sent`() =
+    fun `Given init user is not called, then properties are null`() =
         runTest {
-            userRepo.initUser(false)
-
-            val result = userRepo.updateNotifications(ConsentStatus.DENIED)
-            assert(result is Result.NotSent)
-
-            coVerify(exactly = 0) { userApi.updateNotifications(UpdateNotificationsRequest(Preferences(Notifications(ConsentStatus.DENIED)))) }
+            assertNull(userRepo.notificationId)
+            assertNull(userRepo.preferences)
         }
 }

@@ -9,6 +9,6 @@ interface UserRepo {
     val notificationId: String?
     val preferences: Preferences?
 
-    suspend fun initUser(isFlexEnabled: Boolean): Result<Unit>
+    suspend fun initUser(): Result<Unit>
     suspend fun updateNotifications(consentStatus: ConsentStatus): Result<UpdateUserDataResponse>
 }

@@ -39,6 +39,7 @@ dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
     implementation(projects.data)
+    implementation(projects.config)
 
     implementation(libs.one.signal)
     implementation(libs.hilt.android)

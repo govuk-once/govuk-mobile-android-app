@@ -21,8 +21,6 @@ class UserRepoImpl @Inject constructor(
     private val authRepo: AuthRepo
 ) : UserRepo {
 
-    private var isFlexEnabled: Boolean = false
-
     private var user: User? = null
 
     override val notificationId: String?
@@ -31,11 +29,7 @@ class UserRepoImpl @Inject constructor(
     override val preferences: Preferences?
         get() = user?.preferences
 
-    override suspend fun initUser(isFlexEnabled: Boolean): Result<Unit> {
-        this.isFlexEnabled = isFlexEnabled
-        if (!isFlexEnabled) {
-            return Result.NotSent()
-        }
+    override suspend fun initUser(): Result<Unit> {
         val result = safeApiCall(apiCall = { userApi.getUserInfo() })
         return if (result is Success) {
             user = result.value
@@ -49,11 +43,7 @@ class UserRepoImpl @Inject constructor(
     override suspend fun updateNotifications(
         consentStatus: ConsentStatus
     ): Result<UpdateUserDataResponse> {
-        if (!isFlexEnabled) {
-            return Result.NotSent()
-        }
         val request = UpdateNotificationsRequest(Preferences(Notifications(consentStatus)))
-
         return safeAuthApiCall(apiCall = {
             userApi.updateNotifications(
                 request

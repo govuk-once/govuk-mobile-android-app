@@ -20,7 +20,6 @@ import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.data.model.Result.Success
-import uk.gov.govuk.data.model.Result.NotSent
 import uk.gov.govuk.data.user.UserRepo
 import java.util.Date
 import javax.inject.Inject
@@ -67,13 +66,10 @@ internal class LoginViewModel @Inject constructor(
                                 _isLoading.value = true
                             }
                             AuthRepo.RefreshStatus.Success -> {
-                                val result = userRepo.initUser(flagRepo.isFlexEnabled())
-                                when (result) {
-                                    is Success, is NotSent -> {
-                                        notificationsRepo.login()
-                                        _loginCompleted.emit(LoginEvent.BiometricLogin)
-                                    }
-                                    else -> _errorEvent.emit(ErrorEvent.UserApiError)
+                                if (loggedIn()) {
+                                    _loginCompleted.emit(LoginEvent.BiometricLogin)
+                                } else {
+                                    _errorEvent.emit(ErrorEvent.UserApiError)
                                 }
                             }
                             is AuthRepo.RefreshStatus.Error -> {
@@ -98,23 +94,37 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
-                val result = userRepo.initUser(flagRepo.isFlexEnabled())
-                when (result) {
-                    is Success, is NotSent -> {
-                        notificationsRepo.login()
-                        _loginCompleted.emit(
-                            LoginEvent.WebLogin(
-                                isBiometricsEnabled = authRepo.isAuthenticationEnabled()
-                                        && !appRepo.hasSkippedBiometrics()
-                            )
+                if (loggedIn()) {
+                    _loginCompleted.emit(
+                        LoginEvent.WebLogin(
+                            isBiometricsEnabled = authRepo.isAuthenticationEnabled()
+                                    && !appRepo.hasSkippedBiometrics()
                         )
-                    }
-                    else -> _errorEvent.emit(ErrorEvent.UserApiError)
+                    )
+                } else {
+                    _errorEvent.emit(ErrorEvent.UserApiError)
                 }
             } else {
                 _errorEvent.emit(ErrorEvent.UnableToSignInError)
             }
         }
+    }
+
+    private suspend fun loggedIn(): Boolean {
+        return if (flagRepo.isFlexEnabled()) {
+            val userInitialised = initUserWithSuccess()
+            if (userInitialised) {
+                notificationsRepo.login()
+            }
+            userInitialised
+        } else {
+            true
+        }
+    }
+
+    private suspend fun initUserWithSuccess(): Boolean {
+        val result = userRepo.initUser()
+        return result is Success
     }
 
     private suspend fun shouldRefreshTokens(): Boolean {
