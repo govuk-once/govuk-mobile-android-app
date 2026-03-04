@@ -275,7 +275,7 @@ internal class AppViewModel @Inject constructor(
                     _navigationEvent.trySend(NavigationEvent.NavigateToAnalytics)
 
                 isTopicSelectionRequired() ->
-                    _navigationEvent.trySend(NavigationEvent.NavigateToTopicSelection) // <-- Updated!
+                    _navigationEvent.trySend(NavigationEvent.NavigateToTopicSelection)
 
                 isNotificationsOnboardingRequired() ->
                     _navigationEvent.trySend(NavigationEvent.NavigateToNotificationsOnboarding)
