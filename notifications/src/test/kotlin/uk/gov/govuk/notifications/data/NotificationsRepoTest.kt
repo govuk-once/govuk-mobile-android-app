@@ -208,6 +208,8 @@ class NotificationsRepoTest {
             notificationsDataStore.notificationsOnboardingCompleted()
 
             coVerify(exactly = 1) { notificationsRepo.notificationsOnboardingCompleted() }
+            notificationsRepo.firstPermissionRequestCompleted()
+            coVerify { notificationsDataStore.firstPermissionRequestCompleted()}
         }
     }
 
@@ -237,5 +239,40 @@ class NotificationsRepoTest {
 
             coVerify(exactly = 1) { notificationsDataStore.firstPermissionRequestCompleted() }
         }
+    }
+
+    @Test
+    fun `Given permission is granted, When checking permission granted, then return true`() {
+        every { notificationsProvider.permissionGranted() } returns true
+
+        assertTrue(notificationsRepo.permissionGranted())
+    }
+
+    @Test
+    fun `Given permission is not granted, When checking permission granted, then return false`() {
+        every { notificationsProvider.permissionGranted() } returns false
+
+        assertFalse(notificationsRepo.permissionGranted())
+    }
+
+    @Test
+    fun `Given consent is given, When checking consent given, then return true`() {
+        every { notificationsProvider.consentGiven() } returns true
+
+        assertTrue(notificationsRepo.consentGiven())
+    }
+
+    @Test
+    fun `Given consent is not given, When checking consent given, then return false`() {
+        every { notificationsProvider.consentGiven() } returns false
+
+        assertFalse(notificationsRepo.consentGiven())
+    }
+
+    @Test
+    fun `When removing consent, then call provider to remove consent`() {
+        notificationsRepo.removeConsent()
+
+        verify(exactly = 1) { notificationsProvider.removeConsent() }
     }
 }

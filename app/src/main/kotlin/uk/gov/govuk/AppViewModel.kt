@@ -20,7 +20,10 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.login.data.LoginRepo
+import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
+import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
@@ -42,7 +45,8 @@ internal class AppViewModel @Inject constructor(
     private val searchFeature: SearchFeature,
     private val visitedFeature: Visited,
     private val chatFeature: ChatFeature,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -59,7 +63,14 @@ internal class AppViewModel @Inject constructor(
     val timeOutEvent = _timeOutEvent.receiveAsFlow()
 
     sealed interface NavigationEvent {
-        object NavigateNext : NavigationEvent
+        object NavigateToLogin : NavigationEvent
+        object NavigateToNotificationsConsent : NavigationEvent
+        object NavigateToTerms : NavigationEvent
+        object NavigateToAnalytics : NavigationEvent
+        object NavigateToTopicSelection : NavigationEvent
+        object NavigateToNotificationsOnboarding : NavigationEvent
+        object NavigateToNotificationsConsentOnNext : NavigationEvent
+        object NavigateToHome : NavigationEvent
     }
 
     private val _navigationEvent = Channel<NavigationEvent>(Channel.BUFFERED)
@@ -155,7 +166,7 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
-            _navigationEvent.trySend(NavigationEvent.NavigateNext)
+            onNext()
         }
     }
 
@@ -164,14 +175,14 @@ internal class AppViewModel @Inject constructor(
             if (analyticsClient.isAnalyticsEnabled()) {
                 configRepo.refreshRemoteConfig()
             }
-            _navigationEvent.trySend(NavigationEvent.NavigateNext)
+            onNext()
         }
     }
 
     fun topicSelectionCompleted() {
         viewModelScope.launch {
             appRepo.topicSelectionCompleted()
-            _navigationEvent.trySend(NavigationEvent.NavigateNext)
+            onNext()
         }
     }
 
@@ -252,5 +263,93 @@ internal class AppViewModel @Inject constructor(
             hasDeepLink,
             url
         )
+    }
+
+    fun onNext() {
+        viewModelScope.launch {
+            when {
+                isTermsAcceptanceRequired() ->
+                    _navigationEvent.trySend(NavigationEvent.NavigateToTerms)
+
+                isAnalyticsConsentRequired() ->
+                    _navigationEvent.trySend(NavigationEvent.NavigateToAnalytics)
+
+                isTopicSelectionRequired() ->
+                    _navigationEvent.trySend(NavigationEvent.NavigateToTopicSelection)
+
+                isNotificationsOnboardingRequired() ->
+                    _navigationEvent.trySend(NavigationEvent.NavigateToNotificationsOnboarding)
+
+                isNotificationsConsentRequired() ->
+                    _navigationEvent.trySend(NavigationEvent.NavigateToNotificationsConsentOnNext)
+
+                else ->
+                    _navigationEvent.trySend(NavigationEvent.NavigateToHome)
+            }
+        }
+    }
+
+    private suspend fun isTermsAcceptanceRequired() =
+        termsRepo.getTermsAcceptanceState() !is TermsAcceptanceState.Accepted
+
+    private fun isAnalyticsConsentRequired() =
+        analyticsClient.isAnalyticsConsentRequired()
+
+    private suspend fun isTopicSelectionRequired() =
+        flagRepo.isTopicsEnabled() &&
+                !appRepo.isTopicSelectionCompleted() &&
+                topicsFeature.hasTopics()
+
+    private suspend fun isNotificationsOnboardingRequired() =
+        flagRepo.isNotificationsEnabled() &&
+                !notificationsRepo.isNotificationsOnboardingCompleted()
+
+    private suspend fun isNotificationsConsentRequired() =
+        flagRepo.isNotificationsEnabled() &&
+                notificationsRepo.isNotificationsOnboardingCompleted() &&
+                notificationsRepo.permissionGranted() &&
+                !notificationsRepo.consentGiven()
+
+
+    fun onResume(currentRoute: String?) {
+        viewModelScope.launch {
+            if (!authRepo.isUserSessionActive()) {
+                _navigationEvent.trySend(NavigationEvent.NavigateToLogin)
+            }
+
+            if (flagRepo.isNotificationsEnabled()) {
+                handleNotificationsOnResume(currentRoute)
+            }
+        }
+    }
+
+    fun onNotificationsOnboardingCompleted() {
+        viewModelScope.launch {
+            notificationsRepo.notificationsOnboardingCompleted()
+            onNext()
+        }
+    }
+
+    fun onSignOut() {
+        notificationsRepo.logout()
+    }
+
+    private suspend fun handleNotificationsOnResume(currentRoute: String?) {
+        if (!notificationsRepo.permissionGranted()) {
+            if (flagRepo.isFlexEnabled()) {
+                // TODO: awaiting failure requirements for sendRemoveConsent()
+                notificationsRepo.sendRemoveConsent()
+            }
+            notificationsRepo.removeConsent()
+            if (currentRoute == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
+                onNext()
+            }
+        } else if (
+            authRepo.isUserSessionActive() &&
+            notificationsRepo.isNotificationsOnboardingCompleted() &&
+            !notificationsRepo.consentGiven()
+        ) {
+            _navigationEvent.trySend(NavigationEvent.NavigateToNotificationsConsent)
+        }
     }
 }
