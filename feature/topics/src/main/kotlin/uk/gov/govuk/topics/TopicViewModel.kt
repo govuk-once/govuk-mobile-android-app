@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -142,6 +143,16 @@ internal class TopicViewModel @Inject constructor(
             selectedItemIndex = selectedItemIndex,
             totalItemCount = totalItemCount
         )
+    }
+
+    fun onPrimaryAction() {
+        viewModelScope.launch {
+            _uiState.value = TopicUiState.Loading()
+            // fake delay to mimic account linking
+            delay(3000)
+
+            getTopic()
+        }
     }
 
     private fun sendSelectItemEvent(

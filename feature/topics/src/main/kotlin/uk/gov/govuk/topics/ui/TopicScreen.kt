@@ -1,5 +1,6 @@
 package uk.gov.govuk.topics.ui
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -66,11 +68,15 @@ internal fun TopicRoute(
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
-    Box(modifier.fillMaxSize()
+    Box(modifier
+        .fillMaxSize()
         .background(GovUkTheme.colourScheme.surfaces.screenBackground)
     ) {
         uiState?.let {
             when (it) {
+                is TopicUiState.Loading -> {
+                    LoadingScreen(accessibilityText = "Linking DVLA account")
+                }
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
@@ -112,7 +118,8 @@ internal fun TopicRoute(
                             )
                             onSubtopic(ref)
                         },
-                        focusRequester = focusRequester
+                        focusRequester = focusRequester,
+                        onPrimaryAction = { viewModel.onPrimaryAction() }
                     )
                 }
 
@@ -145,7 +152,8 @@ private fun TopicScreen(
     onPopularPagesSeeAll: (section: String, text: String) -> Unit,
     onSubtopic: (text: String, ref: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
     focusRequester: FocusRequester,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPrimaryAction: () -> Unit = {}
 ) {
     val popularPagesIndex = 1
     val stepByStepsIndex = popularPagesIndex + topic.popularPages.size
@@ -190,6 +198,8 @@ private fun TopicScreen(
             icon = R.drawable.ic_topic_services_and_info
         )
 
+        val context = LocalContext.current
+
         LazyColumn {
             item {
                 Title(
@@ -201,6 +211,21 @@ private fun TopicScreen(
 
             item {
                 MediumVerticalSpacer()
+            }
+
+            if (topic.isDriving(context)) {
+                item {
+                    DrillInCard(
+                        title = "Add your driver and vehicles account",
+                        onClick = onPrimaryAction,
+                        modifier = Modifier
+                            .padding(horizontal = GovUkTheme.spacing.medium)
+                            .padding(
+                                top = GovUkTheme.spacing.medium,
+                                bottom = GovUkTheme.spacing.medium
+                            )
+                    )
+                }
             }
 
             val showHorizontalScrollView = false
@@ -305,7 +330,8 @@ private fun HorizontalScrollView(
     if (isFontScaledUp) {
         // vertical list
         Column(
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
+                .fillMaxWidth()
                 .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
             cards.forEach { item ->
@@ -320,7 +346,8 @@ private fun HorizontalScrollView(
         // horizontal list
         Box {
             LazyRow(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
                     .padding(horizontal = GovUkTheme.spacing.medium),
             ) {
                 itemsIndexed(cards) { index, item ->
@@ -420,6 +447,9 @@ private fun LazyListScope.subtopics(
         }
     }
 }
+
+private fun TopicUi.isDriving(context: Context) =
+    this.title.equals(context.getString(R.string.driving_and_transport), ignoreCase = true)
 
 @Composable
 private fun ErrorScreen(
