@@ -59,25 +59,6 @@ class ChatDataStoreTest {
     }
 
     @Test
-    fun `Returns false for chat intro seen if data store is empty`() = runTest {
-        assertFalse(chatDataStore.isChatIntroSeen())
-    }
-
-    @Test
-    fun `Returns true for chat intro seen if data store value is true`() = runTest {
-        chatDataStore.saveChatIntroSeen()
-        assertTrue(chatDataStore.isChatIntroSeen())
-    }
-
-    @Test
-    fun `Sets chat seen to true`() = runTest {
-        assertFalse(chatDataStore.isChatIntroSeen())
-
-        chatDataStore.saveChatIntroSeen()
-        assertTrue(chatDataStore.isChatIntroSeen())
-    }
-
-    @Test
     fun `isChatIntroSeen flow emits false when data store is empty`() = runTest {
         assertFalse(chatDataStore.isChatIntroSeen.first())
     }
@@ -94,11 +75,11 @@ class ChatDataStoreTest {
         chatDataStore.saveChatIntroSeen()
 
         assertEquals("123", chatDataStore.conversationId())
-        assertTrue(chatDataStore.isChatIntroSeen())
+        assertTrue(chatDataStore.isChatIntroSeen.first())
 
         chatDataStore.clear()
 
         assertNull(chatDataStore.conversationId())
-        assertFalse(chatDataStore.isChatIntroSeen())
+        assertFalse(chatDataStore.isChatIntroSeen.first())
     }
 }

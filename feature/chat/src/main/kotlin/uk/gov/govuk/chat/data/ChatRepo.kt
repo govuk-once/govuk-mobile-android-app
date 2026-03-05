@@ -28,6 +28,10 @@ internal class ChatRepo @Inject constructor(
 
     val isChatIntroSeen: Flow<Boolean> = dataStore.isChatIntroSeen
 
+    suspend fun saveChatIntroSeen() {
+        dataStore.saveChatIntroSeen()
+    }
+
     suspend fun getConversation(): ChatResult<Conversation>? {
         val conversationId = dataStore.conversationId()
         return if (conversationId != null) {

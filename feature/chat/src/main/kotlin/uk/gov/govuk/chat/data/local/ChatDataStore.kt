@@ -27,10 +27,6 @@ internal class ChatDataStore @Inject constructor(
         .map { it[booleanPreferencesKey(CHAT_INTRO_SEEN_KEY)] == true }
         .distinctUntilChanged()
 
-    internal suspend fun isChatIntroSeen(): Boolean {
-        return dataStore.data.firstOrNull()?.get(booleanPreferencesKey(CHAT_INTRO_SEEN_KEY)) == true
-    }
-
     internal suspend fun saveChatIntroSeen() {
         dataStore.edit { preferences ->
             preferences[booleanPreferencesKey(CHAT_INTRO_SEEN_KEY)] = true
