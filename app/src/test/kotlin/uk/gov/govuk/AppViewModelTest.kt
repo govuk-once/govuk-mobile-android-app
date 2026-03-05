@@ -240,7 +240,7 @@ class AppViewModelTest {
         coEvery { flagRepo.isSearchEnabled() } returns true
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient,notificationsRepo)
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo)
 
         runTest {
             viewModel.homeWidgets.first()
@@ -848,9 +848,10 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `When onResume, notifications enabled, permission denied, and current route is consent, then remove consent and call onNext`() = runTest(dispatcher) {
+    fun `When onResume, notifications enabled, permission denied, flex enabled and current route is consent, then remove consent and call onNext`() = runTest(dispatcher) {
         every { authRepo.isUserSessionActive() } returns true
         every { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isFlexEnabled() } returns true
         every { notificationsRepo.permissionGranted() } returns false
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
 
@@ -859,7 +860,26 @@ class AppViewModelTest {
         viewModel.onResume(uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE)
         advanceUntilIdle()
 
-        verify { notificationsRepo.removeConsent() }
+        coVerify(exactly = 1) { notificationsRepo.sendRemoveConsent() }
+        verify(exactly = 1) { notificationsRepo.removeConsent() }
+        assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
+    }
+
+    @Test
+    fun `When onResume, notifications enabled, permission denied, flex not enabled and current route is consent, then remove consent and call onNext`() = runTest(dispatcher) {
+        every { authRepo.isUserSessionActive() } returns true
+        every { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isFlexEnabled() } returns false
+        every { notificationsRepo.permissionGranted() } returns false
+        coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
+
+        val navEvent = async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
+
+        viewModel.onResume(uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { notificationsRepo.sendRemoveConsent() }
+        verify(exactly = 1) { notificationsRepo.removeConsent() }
         assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
     }
 
@@ -892,5 +912,14 @@ class AppViewModelTest {
         }
 
         assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
+    }
+
+    @Test
+    fun `When sign out, then logout of notifications`() = runTest(dispatcher) {
+        viewModel.onSignOut()
+
+        verify(exactly = 1) {
+            notificationsRepo.logout()
+        }
     }
 }

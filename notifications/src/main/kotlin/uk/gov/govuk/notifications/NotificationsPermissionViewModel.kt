@@ -11,12 +11,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import javax.inject.Inject
 
 @HiltViewModel
 internal class NotificationsPermissionViewModel @Inject constructor(
-    private val notificationsDataStore: NotificationsDataStore
+    private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<NotificationsUiState?> = MutableStateFlow(null)
@@ -31,7 +31,7 @@ internal class NotificationsPermissionViewModel @Inject constructor(
             val androidVersionIsGreaterThanTwelve = androidVersion >= Build.VERSION_CODES.TIRAMISU
             _uiState.value = if (androidVersionIsGreaterThanTwelve) {
                 if (!status.isGranted &&
-                    (!notificationsDataStore.isFirstPermissionRequestCompleted() ||
+                    (!notificationsRepo.isFirstPermissionRequestCompleted() ||
                             status.shouldShowRationale)
                 ) {
                     NotificationsUiState.Default

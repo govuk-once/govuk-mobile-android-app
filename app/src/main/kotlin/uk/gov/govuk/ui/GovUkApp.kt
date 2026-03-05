@@ -158,6 +158,7 @@ private fun BottomNavScaffold(
                     AppViewModel.TimeoutEvent.WARNING -> showTimeoutWarningDialog = true
                     AppViewModel.TimeoutEvent.TIMEOUT -> {
                         showTimeoutWarningDialog = false
+                        viewModel.onSignOut()
                         appNavigation.onSignOut(navController)
                     }
                 }

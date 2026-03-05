@@ -12,20 +12,19 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
+import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotificationsPromptWidgetViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
-    private val notificationsProvider = mockk<NotificationsProvider>()
-    private val notificationsDataStore = mockk<NotificationsDataStore>()
+    private val notificationsRepo = mockk<NotificationsRepo>()
 
     private lateinit var viewModel: NotificationsPromptWidgetViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = NotificationsPromptWidgetViewModel(notificationsProvider, notificationsDataStore)
+        viewModel = NotificationsPromptWidgetViewModel(notificationsRepo)
     }
 
     @After
@@ -35,15 +34,15 @@ class NotificationsPromptWidgetViewModelTest {
 
     @Test
     fun `Given on click, then call request permission`() {
-        coEvery { notificationsProvider.requestPermission() } returns Unit
-        coEvery { notificationsDataStore.firstPermissionRequestCompleted() } returns Unit
+        coEvery { notificationsRepo.firstPermissionRequestCompleted() } returns Unit
+        coEvery { notificationsRepo.requestPermission() } returns Unit
 
         runTest {
             viewModel.onClick()
 
             coVerify(exactly = 1) {
-                notificationsDataStore.firstPermissionRequestCompleted()
-                notificationsProvider.requestPermission()
+                notificationsRepo.firstPermissionRequestCompleted()
+                notificationsRepo.requestPermission()
             }
         }
     }

@@ -29,6 +29,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.BuildConfig
 import uk.gov.govuk.R
+import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.design.ui.component.CaptionRegularLabel
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
@@ -44,7 +45,7 @@ import uk.gov.govuk.login.LoginViewModel
 @Composable
 internal fun LoginRoute(
     onLoginCompleted: (LoginEvent) -> Unit,
-    onError: () -> Unit,
+    onError: (ErrorEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
@@ -67,7 +68,7 @@ internal fun LoginRoute(
                 try {
                     authLauncher.launch(viewModel.authIntent)
                 } catch (_: ActivityNotFoundException) {
-                    onError()
+                    onError(ErrorEvent.UnableToSignInError)
                 }
             },
             modifier = modifier
@@ -88,7 +89,7 @@ internal fun LoginRoute(
 
     LaunchedEffect(Unit) {
         viewModel.errorEvent.collect {
-            onError()
+            onError(it)
         }
     }
 }

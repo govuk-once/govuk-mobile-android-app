@@ -330,10 +330,17 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
+    fun onSignOut() {
+        notificationsRepo.logout()
+    }
+
     private suspend fun handleNotificationsOnResume(currentRoute: String?) {
         if (!notificationsRepo.permissionGranted()) {
+            if (flagRepo.isFlexEnabled()) {
+                // TODO: awaiting failure requirements for sendRemoveConsent()
+                notificationsRepo.sendRemoveConsent()
+            }
             notificationsRepo.removeConsent()
-
             if (currentRoute == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {
                 onNext()
             }
