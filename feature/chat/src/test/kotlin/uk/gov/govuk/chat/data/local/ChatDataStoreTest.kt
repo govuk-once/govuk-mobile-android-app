@@ -3,6 +3,7 @@ package uk.gov.govuk.chat.data.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -74,6 +75,17 @@ class ChatDataStoreTest {
 
         chatDataStore.saveChatIntroSeen()
         assertTrue(chatDataStore.isChatIntroSeen())
+    }
+
+    @Test
+    fun `isChatIntroSeen flow emits false when data store is empty`() = runTest {
+        assertFalse(chatDataStore.isChatIntroSeen.first())
+    }
+
+    @Test
+    fun `isChatIntroSeen flow emits true after saveChatIntroSeen`() = runTest {
+        chatDataStore.saveChatIntroSeen()
+        assertTrue(chatDataStore.isChatIntroSeen.first())
     }
 
     @Test

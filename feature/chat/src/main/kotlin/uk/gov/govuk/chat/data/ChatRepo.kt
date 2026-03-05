@@ -1,6 +1,7 @@
 package uk.gov.govuk.chat.data
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import uk.gov.govuk.chat.data.local.ChatDataStore
 import uk.gov.govuk.chat.data.remote.ChatApi
 import uk.gov.govuk.chat.data.remote.ChatResult
@@ -24,6 +25,8 @@ internal class ChatRepo @Inject constructor(
     private val configRepo: ConfigRepo,
     private val authRepo: AuthRepo
 ) {
+
+    val isChatIntroSeen: Flow<Boolean> = dataStore.isChatIntroSeen
 
     suspend fun getConversation(): ChatResult<Conversation>? {
         val conversationId = dataStore.conversationId()

@@ -80,6 +80,7 @@ class AppViewModelTest {
         coEvery { configRepo.initConfig() } returns Success(Unit)
         every { localFeature.hasLocalAuthority() } returns flowOf(false)
         every { appRepo.suppressedHomeWidgets } returns flowOf(emptySet())
+        every { chatFeature.shouldDisplayChatBanner } returns flowOf(true)
         every { flagRepo.isAppAvailable() } returns true
 
         coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Accepted
@@ -446,6 +447,21 @@ class AppViewModelTest {
         every { configRepo.chatBanner } returns ChatBanner("chat_banner_id", "", "", Link("", ""))
         coEvery { flagRepo.isChatEnabled() } returns true
         every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("chat_banner_id"))
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            assertFalse(homeWidgets.any { it is HomeWidget.Chat })
+        }
+    }
+
+    @Test
+    fun `Given the chat banner should not be displayed, When init, then home widgets do not contain a chat banner`() {
+        every { configRepo.chatBanner } returns ChatBanner("id", "", "", Link("", ""))
+        coEvery { flagRepo.isChatEnabled() } returns true
+        every { chatFeature.shouldDisplayChatBanner } returns flowOf(false)
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
             searchFeature, visited, chatFeature, analyticsClient, notificationsRepo)

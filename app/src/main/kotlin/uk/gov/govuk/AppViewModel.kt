@@ -103,17 +103,18 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        localFeature.hasLocalAuthority()
-                    ) { suppressedWidgets, localAuthority ->
-                        Pair(suppressedWidgets, localAuthority)
-                    }.collect {
+                        localFeature.hasLocalAuthority(),
+                        chatFeature.shouldDisplayChatBanner
+                    ) { suppressedWidgets, _, shouldDisplayChatBanner ->
+                        Pair(suppressedWidgets, shouldDisplayChatBanner)
+                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
                         _uiState.value = AppUiState.Default(
                             shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
                             shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
                             isChatEnabled = flagRepo.isChatEnabled()
                         )
 
-                        updateHomeWidgets(it.first)
+                        updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
                     }
                 }
             }
@@ -187,7 +188,8 @@ internal class AppViewModel @Inject constructor(
     }
 
     private fun updateHomeWidgets(
-        suppressedWidgets: Set<String>
+        suppressedWidgets: Set<String>,
+        shouldDisplayChatBanner: Boolean
     ) {
         viewModelScope.launch {
             with(flagRepo) {
@@ -204,6 +206,7 @@ internal class AppViewModel @Inject constructor(
 
                 configRepo.chatBanner?.let { chatBanner ->
                     if (isChatEnabled() &&
+                        shouldDisplayChatBanner &&
                         !suppressedWidgets.contains(chatBanner.id)) {
                         widgets.add(HomeWidget.Chat(chatBanner))
                     }
