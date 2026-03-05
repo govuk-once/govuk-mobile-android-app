@@ -101,19 +101,18 @@ internal class AppViewModel @Inject constructor(
                 } else {
                     topicsFeature.init()
 
+                    _uiState.value = AppUiState.Default(
+                        shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
+                        shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
+                        isChatEnabled = flagRepo.isChatEnabled()
+                    )
+
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        localFeature.hasLocalAuthority(),
                         chatFeature.shouldDisplayChatBanner
-                    ) { suppressedWidgets, _, shouldDisplayChatBanner ->
+                    ) { suppressedWidgets, shouldDisplayChatBanner ->
                         Pair(suppressedWidgets, shouldDisplayChatBanner)
                     }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
-                        _uiState.value = AppUiState.Default(
-                            shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
-                            shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
-                            isChatEnabled = flagRepo.isChatEnabled()
-                        )
-
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
                     }
                 }
