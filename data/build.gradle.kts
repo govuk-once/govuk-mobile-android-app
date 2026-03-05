@@ -24,6 +24,7 @@ android {
         buildConfigField("String", "AUTHORIZE_ENDPOINT", "\"authorize\"")
         buildConfigField("String", "TOKEN_ENDPOINT", "\"token\"")
         buildConfigField("String", "AUTH_REDIRECT", "\"govuk://govuk/login-auth-callback\"")
+        buildConfigField("String", "USER_API_BASE_URL", "\"https://staging.bl.once.service.gov.uk\"")
     }
 
     buildTypes {
@@ -65,8 +66,6 @@ sonar {
 }
 
 dependencies {
-    implementation(projects.analytics)
-
     implementation(libs.hilt.android)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.biometric)

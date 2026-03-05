@@ -94,6 +94,15 @@ class FlagRepo @Inject constructor(
             remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
         )
     }
+
+    fun isFlexEnabled(): Boolean {
+        return isEnabled(
+            debugEnabled = debugEnabled,
+            debugFlag = debugFlags.isFlexEnabled,
+            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
+        )
+    }
+
 }
 
 internal fun isEnabled(

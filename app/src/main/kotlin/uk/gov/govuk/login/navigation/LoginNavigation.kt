@@ -5,6 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import uk.gov.govuk.data.auth.ErrorEvent
+import uk.gov.govuk.login.ui.AppUnavailableRoute
 import uk.gov.govuk.login.LoginEvent
 import uk.gov.govuk.login.ui.BiometricRoute
 import uk.gov.govuk.login.ui.BiometricSettingsRoute
@@ -16,6 +18,7 @@ const val LOGIN_ROUTE = "login_route"
 private const val BIOMETRIC_ROUTE = "biometric_route"
 const val BIOMETRIC_SETTINGS_ROUTE = "biometric_settings_route"
 private const val ERROR_ROUTE = "login_error_route"
+private const val USER_API_ERROR_ROUTE = "user_api_error_route"
 
 fun NavGraphBuilder.loginGraph(
     navController: NavController,
@@ -37,10 +40,15 @@ fun NavGraphBuilder.loginGraph(
                         onLoginCompleted()
                     }
                 },
-                onError = {
-                    navController.navigate(ERROR_ROUTE)
+                onError = { event ->
+                    when(event) {
+                        is ErrorEvent.UnableToSignInError, ErrorEvent.UnableToSignOutError ->
+                            navController.navigate(ERROR_ROUTE)
+                        is ErrorEvent.UserApiError ->
+                            navController.navigate(USER_API_ERROR_ROUTE)
+                    }
                 },
-                modifier = modifier,
+                modifier = modifier
             )
         }
         composable(BIOMETRIC_ROUTE) {
@@ -62,6 +70,10 @@ fun NavGraphBuilder.loginGraph(
                 },
                 modifier = modifier
             )
+        }
+
+        composable(route = USER_API_ERROR_ROUTE) {
+            AppUnavailableRoute()
         }
     }
 }

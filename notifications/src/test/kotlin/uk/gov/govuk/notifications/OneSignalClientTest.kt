@@ -211,4 +211,30 @@ class OneSignalClientTest {
             }
         }
     }
+
+    @Test
+    fun `Given we have a notifications client, when login is called, then One Signal login is called`() {
+        every { OneSignal.login("12345") } returns Unit
+
+        runTest {
+            notificationsProvider.login("12345")
+
+            verify(exactly = 1) {
+                OneSignal.login("12345")
+            }
+        }
+    }
+
+    @Test
+    fun `Given we have a notifications client, when logout is called, then One Signal logout is called`() {
+        every { OneSignal.logout() } returns Unit
+
+        runTest {
+            notificationsProvider.logout()
+
+            verify(exactly = 1) {
+                OneSignal.logout()
+            }
+        }
+    }
 }

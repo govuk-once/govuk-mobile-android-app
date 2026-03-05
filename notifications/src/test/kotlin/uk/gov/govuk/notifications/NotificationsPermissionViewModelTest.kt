@@ -19,13 +19,13 @@ import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
+import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalCoroutinesApi::class)
 class NotificationsPermissionViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val permissionStatus = mockk<PermissionStatus>()
-    private val notificationsDataStore = mockk<NotificationsDataStore>()
+    private val notificationsRepo = mockk<NotificationsRepo>()
 
     private lateinit var viewModel: NotificationsPermissionViewModel
 
@@ -33,7 +33,7 @@ class NotificationsPermissionViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
         viewModel = NotificationsPermissionViewModel(
-            notificationsDataStore
+            notificationsRepo
         )
     }
 
@@ -45,7 +45,7 @@ class NotificationsPermissionViewModelTest {
     @Test
     fun `Given the Android version is greater than 12, permission status is not granted, first permission request is not completed and should show rationale is false, When init, then ui state should be default`() {
         every { permissionStatus.isGranted } returns false
-        coEvery { notificationsDataStore.isFirstPermissionRequestCompleted()} returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted()} returns false
         every { permissionStatus.shouldShowRationale } returns false
 
         runTest {
@@ -59,7 +59,7 @@ class NotificationsPermissionViewModelTest {
     @Test
     fun `Given the Android version is greater than 12, permission status is not granted, first permission request is completed and should show rationale is true, When init, then ui state should be default`() {
         every { permissionStatus.isGranted } returns false
-        coEvery { notificationsDataStore.isFirstPermissionRequestCompleted()} returns true
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted()} returns true
         every { permissionStatus.shouldShowRationale } returns true
 
         runTest {
@@ -73,7 +73,7 @@ class NotificationsPermissionViewModelTest {
     @Test
     fun `Given the Android version is greater than 12, permission status is not granted, first permission request is completed and should show rationale is false, When init, then ui state should be alert`() {
         every { permissionStatus.isGranted } returns false
-        coEvery { notificationsDataStore.isFirstPermissionRequestCompleted()} returns true
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted()} returns true
         every { permissionStatus.shouldShowRationale } returns false
 
         runTest {
@@ -87,7 +87,7 @@ class NotificationsPermissionViewModelTest {
     @Test
     fun `Given the Android version is greater than 12, permission status is granted, first permission request is not completed and should show rationale is false, When init, then ui state should be alert`() {
         every { permissionStatus.isGranted } returns true
-        coEvery { notificationsDataStore.isFirstPermissionRequestCompleted()} returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted()} returns false
         every { permissionStatus.shouldShowRationale } returns false
 
         runTest {
