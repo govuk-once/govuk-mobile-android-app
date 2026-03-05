@@ -152,14 +152,37 @@ class AppNavigationTest {
     }
 
     @Test
-    fun `On navigate on resume, when notifications enabled and permission not granted, removes consent`() {
+    fun `On navigate on resume, when notifications enabled, permission not granted and flex is enabled, removes consent`() {
         every { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isFlexEnabled() } returns true
         every { notificationsRepo.permissionGranted() } returns false
 
         runTest {
             appLaunchNav.navigateOnResume(navController)
 
             coVerify(exactly = 1) {
+                notificationsRepo.sendRemoveConsent()
+            }
+            verify(exactly = 1) {
+                notificationsRepo.removeConsent()
+            }
+            verify(exactly = 0) {
+                navController.popBackStack()
+                navController.navigate(NOTIFICATIONS_CONSENT_ROUTE)
+            }
+        }
+    }
+
+    @Test
+    fun `On navigate on resume, when notifications enabled, permission not granted and flex is not enabled, removes consent`() {
+        every { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isFlexEnabled() } returns false
+        every { notificationsRepo.permissionGranted() } returns false
+
+        runTest {
+            appLaunchNav.navigateOnResume(navController)
+
+            coVerify(exactly = 0) {
                 notificationsRepo.sendRemoveConsent()
             }
             verify(exactly = 1) {
@@ -180,6 +203,7 @@ class AppNavigationTest {
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
         coEvery { topicsFeature.hasTopics() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isFlexEnabled() } returns true
         every { notificationsRepo.permissionGranted() } returns false
         every { navController.currentDestination?.route } returns NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 
@@ -206,6 +230,7 @@ class AppNavigationTest {
         coEvery { notificationsRepo.isNotificationsOnboardingCompleted() } returns true
         coEvery { topicsFeature.hasTopics() } returns false
         every { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isFlexEnabled() } returns true
         every { notificationsRepo.permissionGranted() } returns false
         every { navController.currentDestination?.route } returns HOME_GRAPH_ROUTE
 
