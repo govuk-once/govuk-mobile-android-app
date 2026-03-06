@@ -142,6 +142,15 @@ class ChatRepoTest {
     }
 
     @Test
+    fun `Save chat intro seen delegates to the data store`() = runTest {
+        chatRepo.saveChatIntroSeen()
+
+        coVerify {
+            dataStore.saveChatIntroSeen()
+        }
+    }
+
+    @Test
     fun `Clear the data store`() = runTest {
         chatRepo.clear()
 

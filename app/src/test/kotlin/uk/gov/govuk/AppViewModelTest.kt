@@ -78,8 +78,8 @@ class AppViewModelTest {
 
         // Default setup state, overridden by individual tests if/when required
         coEvery { configRepo.initConfig() } returns Success(Unit)
-        every { localFeature.hasLocalAuthority() } returns flowOf(false)
         every { appRepo.suppressedHomeWidgets } returns flowOf(emptySet())
+        every { chatFeature.shouldDisplayChatBanner } returns flowOf(true)
         every { flagRepo.isAppAvailable() } returns true
 
         coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Accepted
@@ -457,6 +457,21 @@ class AppViewModelTest {
     }
 
     @Test
+    fun `Given the chat banner should not be displayed, When init, then home widgets do not contain a chat banner`() {
+        every { configRepo.chatBanner } returns ChatBanner("id", "", "", Link("", ""))
+        coEvery { flagRepo.isChatEnabled() } returns true
+        every { chatFeature.shouldDisplayChatBanner } returns flowOf(false)
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            assertFalse(homeWidgets.any { it is HomeWidget.Chat })
+        }
+    }
+
+    @Test
     fun `Given a chat banner, When init, then home widgets contains a chat banner`() {
         val chatBanner = ChatBanner(
             "id",
@@ -493,26 +508,9 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given the local feature is enabled and a local authority is not selected, When init, then emit local enabled state`() {
+    fun `Given the local feature is enabled, When init, then emit local enabled state`() {
         coEvery { flagRepo.isLocalServicesEnabled() } returns true
         coEvery { flagRepo.isTopicsEnabled() } returns true
-
-        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo)
-
-        runTest {
-            val homeWidgets = viewModel.homeWidgets.value!!
-            assertEquals(HomeWidget.Topics, homeWidgets[0])
-            assertEquals(HomeWidget.Local, homeWidgets[1])
-        }
-    }
-
-    @Test
-    fun `Given the local feature is enabled and a local authority is selected, When init, then emit local enabled state`() {
-        every { configRepo.userFeedbackBanner } returns null
-        coEvery { flagRepo.isLocalServicesEnabled() } returns true
-        coEvery { flagRepo.isTopicsEnabled() } returns true
-        every { localFeature.hasLocalAuthority() } returns flowOf(true)
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
             searchFeature, visited, chatFeature, analyticsClient, notificationsRepo)

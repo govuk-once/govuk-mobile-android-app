@@ -101,19 +101,19 @@ internal class AppViewModel @Inject constructor(
                 } else {
                     topicsFeature.init()
 
+                    _uiState.value = AppUiState.Default(
+                        shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
+                        shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
+                        isChatEnabled = flagRepo.isChatEnabled()
+                    )
+
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        localFeature.hasLocalAuthority()
-                    ) { suppressedWidgets, localAuthority ->
-                        Pair(suppressedWidgets, localAuthority)
-                    }.collect {
-                        _uiState.value = AppUiState.Default(
-                            shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
-                            shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
-                            isChatEnabled = flagRepo.isChatEnabled()
-                        )
-
-                        updateHomeWidgets(it.first)
+                        chatFeature.shouldDisplayChatBanner
+                    ) { suppressedWidgets, shouldDisplayChatBanner ->
+                        Pair(suppressedWidgets, shouldDisplayChatBanner)
+                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
+                        updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
                     }
                 }
             }
@@ -187,7 +187,8 @@ internal class AppViewModel @Inject constructor(
     }
 
     private fun updateHomeWidgets(
-        suppressedWidgets: Set<String>
+        suppressedWidgets: Set<String>,
+        shouldDisplayChatBanner: Boolean
     ) {
         viewModelScope.launch {
             with(flagRepo) {
@@ -204,6 +205,7 @@ internal class AppViewModel @Inject constructor(
 
                 configRepo.chatBanner?.let { chatBanner ->
                     if (isChatEnabled() &&
+                        shouldDisplayChatBanner &&
                         !suppressedWidgets.contains(chatBanner.id)) {
                         widgets.add(HomeWidget.Chat(chatBanner))
                     }
