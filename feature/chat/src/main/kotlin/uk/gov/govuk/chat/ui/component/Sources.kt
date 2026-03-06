@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
@@ -58,13 +58,12 @@ internal fun Sources(
                 .padding(
                     horizontal = GovUkTheme.spacing.medium,
                     vertical = GovUkTheme.spacing.small
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween
+                )
         ) {
-            Icon(
+            Image(
                 painter = painterResource(R.drawable.baseline_info_24),
                 contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.icon,
+                colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.icon),
                 modifier = Modifier
                     .padding(end = GovUkTheme.spacing.small),
             )
@@ -90,13 +89,16 @@ internal fun Sources(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             BodyRegularLabel(
-                text = stringResource(id = R.string.bot_sources_list_description)
+                text = stringResource(id = R.string.bot_sources_list_description),
+                modifier = Modifier.weight(1f)
             )
 
             Image(
                 painter = painterResource(R.drawable.outline_arrow_drop_up_24),
                 contentDescription = null,
-                modifier = Modifier.rotate(degrees),
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterVertically)
+                    .rotate(degrees),
                 colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.icon)
             )
         }
