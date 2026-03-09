@@ -65,6 +65,9 @@ internal fun OnboardingPageThreeRoute(
             )
             onBack()
         },
+        onPrivacyNoticeClick = { text, url ->
+            viewModel.onPrivacyPolicyView(text = text, url = url)
+        },
         modifier = modifier
     )
 }
@@ -75,6 +78,7 @@ private fun OnboardingPageThreeScreen(
     onClick: () -> Unit,
     onCancel: () -> Unit,
     onBack: () -> Unit,
+    onPrivacyNoticeClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
@@ -107,7 +111,10 @@ private fun OnboardingPageThreeScreen(
                 introText = introText,
                 outroText = outroText,
                 linkText = linkText,
-                onClick = { uriHandler.openUri(url) },
+                onClick = {
+                    onPrivacyNoticeClick(linkText, url)
+                    uriHandler.openUri(url)
+                },
                 altText = altText,
                 textColor = GovUkTheme.colourScheme.textAndIcons.primary,
                 textAlign = TextAlign.Center
@@ -150,7 +157,8 @@ private fun LightModePreview() {
             onPageView = {},
             onClick = {},
             onCancel = {},
-            onBack = {}
+            onBack = {},
+            onPrivacyNoticeClick = { _, _ -> }
         )
     }
 }
@@ -166,7 +174,8 @@ private fun DarkModePreview() {
             onPageView = {},
             onClick = {},
             onCancel = {},
-            onBack = {}
+            onBack = {},
+            onPrivacyNoticeClick = { _, _ -> }
         )
     }
 }
