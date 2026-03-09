@@ -145,16 +145,6 @@ internal class TopicViewModel @Inject constructor(
         )
     }
 
-    fun onPrimaryAction() {
-        viewModelScope.launch {
-            _uiState.value = TopicUiState.Loading()
-            // fake delay to mimic account linking
-            delay(3000)
-
-            getTopic()
-        }
-    }
-
     private fun sendSelectItemEvent(
         section: String,
         text: String,

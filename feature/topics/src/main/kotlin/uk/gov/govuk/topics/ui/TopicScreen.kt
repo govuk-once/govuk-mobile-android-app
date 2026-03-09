@@ -62,6 +62,7 @@ internal fun TopicRoute(
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
     onSubtopic: (ref: String) -> Unit,
+    onLinkDvlaAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
@@ -74,9 +75,6 @@ internal fun TopicRoute(
     ) {
         uiState?.let {
             when (it) {
-                is TopicUiState.Loading -> {
-                    LoadingScreen(accessibilityText = "Linking DVLA account")
-                }
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
@@ -119,7 +117,7 @@ internal fun TopicRoute(
                             onSubtopic(ref)
                         },
                         focusRequester = focusRequester,
-                        onPrimaryAction = { viewModel.onPrimaryAction() }
+                        onPrimaryAction = onLinkDvlaAccount
                     )
                 }
 
