@@ -3,7 +3,7 @@ package uk.gov.govuk.chat.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +40,7 @@ internal fun ChatEntry(
     chatEntry: ChatEntry,
     onMarkdownLinkClicked: (String, String) -> Unit,
     onSourcesExpanded: () -> Unit,
-    animationDuration: Int,
+    animationDelay: Int,
     modifier: Modifier = Modifier,
     onCopyText: ((String) -> Unit)? = null
 ) {
@@ -51,7 +51,7 @@ internal fun ChatEntry(
         AnimatedChatEntry(
             chatEntry = chatEntry,
             onMarkdownLinkClicked = onMarkdownLinkClicked,
-            animationDuration = animationDuration,
+            animationDelay = animationDelay,
             onSourcesExpanded = onSourcesExpanded,
             onCopyText = onCopyText
         )
@@ -63,7 +63,7 @@ private fun AnimatedChatEntry(
     chatEntry: ChatEntry,
     onMarkdownLinkClicked: (String, String) -> Unit,
     onSourcesExpanded: () -> Unit,
-    animationDuration: Int,
+    animationDelay: Int,
     modifier: Modifier = Modifier,
     onCopyText: ((String) -> Unit)? = null
 ) {
@@ -72,6 +72,7 @@ private fun AnimatedChatEntry(
     var hasAnnouncedLoading by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
     var hasAnnouncedAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
 
+    val animationDuration = 200
     val loadingText = stringResource(R.string.loading_text)
     val answerReceivedText = stringResource(R.string.answer_received)
 
@@ -79,12 +80,12 @@ private fun AnimatedChatEntry(
         if (chatEntry.answer.isNotBlank()) {
             if (showLoading && chatEntry.shouldAnimate) {
                 showLoading = false
-                delay(animationDuration.toLong())
+                delay(animationDelay.toLong())
             }
             showAnswer = true
         } else {
             showAnswer = false
-            delay(animationDuration.toLong())
+            delay(animationDelay.toLong())
             showLoading = true
         }
     }
@@ -94,14 +95,14 @@ private fun AnimatedChatEntry(
 
     LaunchedEffect(shouldAnnounceLoading) {
         if (shouldAnnounceLoading) {
-            delay(500)
+            delay(animationDelay.toLong())
             hasAnnouncedLoading = true
         }
     }
 
     LaunchedEffect(shouldAnnounceAnswer) {
         if (shouldAnnounceAnswer) {
-            delay(500)
+            delay(animationDelay.toLong())
             hasAnnouncedAnswer = true
         }
     }
@@ -121,19 +122,20 @@ private fun AnimatedChatEntry(
     } else Modifier
 
     Column(modifier = modifier) {
+        if (showLoading) Loading()
+
         if (chatEntry.shouldAnimate) {
             AnimatedVisibility(
-                visible = showLoading,
-                enter = fadeIn(animationSpec = tween(animationDuration)),
-                exit = fadeOut(animationSpec = tween(animationDuration))
-            ) {
-                Loading(modifier = loadingModifier)
-            }
-
-            AnimatedVisibility(
                 visible = showAnswer,
-                enter = fadeIn(animationSpec = tween(animationDuration)),
-                exit = fadeOut(animationSpec = tween(animationDuration))
+                enter =
+                    fadeIn(
+                        animationSpec = tween(durationMillis = animationDuration),
+                        initialAlpha = 0f
+                    ) +
+                        slideInVertically(
+                            animationSpec = tween(durationMillis = animationDuration),
+                            initialOffsetY = { 16 }
+                        )
             ) {
                 Answer(
                     answer = chatEntry.answer,
@@ -145,7 +147,6 @@ private fun AnimatedChatEntry(
                 )
             }
         } else {
-            if (showLoading) Loading()
             if (showAnswer) Answer(
                 answer = chatEntry.answer,
                 sources = chatEntry.sources,
