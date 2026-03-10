@@ -12,10 +12,10 @@ internal class DvlaRepo @Inject constructor(
     private val api: DvlaApi
 ) {
     suspend fun linkAccount(id: String): Result<Unit> {
-//        return safeApiCall { api.linkDvlaIdentity(id) }
+        return safeApiCall { api.linkDvlaIdentity(id) }
 
         // fake delay mimicking api call
-        delay(3000)
-        return Result.Success(Unit)
+//        delay(3000)
+//        return Result.Success(Unit)
     }
 }
