@@ -16,7 +16,9 @@ import javax.inject.Inject
 
 internal sealed class NotificationCentreDetailUiState {
     data object Loading: NotificationCentreDetailUiState()
-    data class Loaded(val notificationId: String): NotificationCentreDetailUiState()
+    data class Loaded(val notification: DetailedNotification): NotificationCentreDetailUiState()
+    data object Error: NotificationCentreDetailUiState()
+    data object NotFound: NotificationCentreDetailUiState()
 }
 
 
@@ -46,6 +48,11 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
         loadData()
     }
 
+    fun onLinkTap(url: String) {
+        analyticsClient.notificationCentreUrlLaunched(url)
+    }
+
+
     fun onTapRetry() {
         loadData()
     }
@@ -53,16 +60,15 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
     private fun loadData() {
         savedStateHandle.get<String>(NOTIFICATION_CENTRE_DETAIL_ID_ARG)?.let { id ->
             viewModelScope.launch {
-                delay(3000)
+                delay(500)
                 withContext(Dispatchers.Main) {
-                    _uiState.value = NotificationCentreDetailUiState.Loaded(id)
+                    when(val notification = DetailedNotification.mockDetailedNotifications.firstOrNull { it.notification.id == id }) {
+                        null -> _uiState.value = NotificationCentreDetailUiState.NotFound
+                        else -> _uiState.value = NotificationCentreDetailUiState.Loaded(notification)
+                    }
                 }
             }
         }
-
-    }
-
-    fun onTapNotification(notification: Notification) {
 
     }
 }

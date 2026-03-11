@@ -154,6 +154,15 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun notificationCentreUrlLaunched(url: String) {
+        logEvent(
+            "NotificationCentreUrlLaunched",
+            mapOf(
+                "url" to url
+            )
+        )
+    }
+
     fun search(searchTerm: String) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm)
     }

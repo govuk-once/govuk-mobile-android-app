@@ -21,6 +21,23 @@ internal sealed class NotificationCentreUiState {
     data class Loaded(val notifications: List<Notification>): NotificationCentreUiState()
 }
 
+data class DetailedNotification(val notification: Notification, val messageTitle: String? = null, val messageBody: String? = null) {
+    companion object {
+        val mockDetailedNotifications: List<DetailedNotification>
+            get() {
+                return listOf(
+                    DetailedNotification(Notification.mockNotifications[0]),
+                    DetailedNotification(Notification.mockNotifications[1]),
+                    DetailedNotification(Notification.mockNotifications[2]),
+                    DetailedNotification(Notification.mockNotifications[3]),
+                    DetailedNotification(Notification.mockNotifications[4], messageTitle = "Alternate message title"),
+                    DetailedNotification(Notification.mockNotifications[5], messageBody = "Alternate message body https://google.com"),
+                    DetailedNotification(Notification.mockNotifications[6], messageTitle = "Alternate message title 2", messageBody = "Alternate message body 2 Purr as loud as possible, be the most annoying cat that you can, and, knock everything off the table grass smells good and proudly present butt to human but attack curtains, or dream about hunting birds. Going to catch the red dot today going to catch the red dot today sleep on dog bed, force dog to sleep on floor. Poop on couch. Pet me pet me pet me pet me, bite, scratch, why are you petting me miaow then turn around and show you my bum so walk on a keyboard and kitty kitty pussy cat doll munch on tasty moths. Furball roll roll roll meow all night, get video posted to internet for chasing red dot yet one of these days i'm going to get that red dot, just you wait and see ooh, are those your \$250 dollar sandals? lemme use that as my litter box. Eat and than sleep on your face the dog smells bad rub my belly hiss eat the fat cats food. Make plans to dominate world and then take a nap bury the poop bury it deep or pretend you want to go out but then don't. Steal mom's crouton while she is in the bathroom destroy dog. Caticus cuteicus annoy the old grumpy cat, start a fight and then retreat to wash when i lose. Run outside as soon as door open. Check cat door for ambush 10 times before coming in meow and walk away and i like cats because they are fat and fluffy and behind the couch, and swat turds around the house for have a lot of grump in yourself because you can't forget to be grumpy and not be like king grumpy cat where is my slave? I'm getting hungry. There's a forty year old lady there let us feast eats owners hair then claws head, give me some of your food give me some of your food give me some of your food meh, i don't want it. I shredded your linens for you.")
+                )
+            }
+    }
+}
+
 data class Notification(val id: String, val title: String, val body: String, val unread: Boolean, val date: LocalDateTime) {
     companion object {
         val mockNotifications: List<Notification>
@@ -44,7 +61,13 @@ data class Notification(val id: String, val title: String, val body: String, val
                     ),
                     Notification("3", "Test 3", "Body 3", false,referenceDate.minusDays(2)
                     ),
-                    Notification("4", "Test 4", "Body 4", true, referenceDate.minusDays(3)
+                    Notification("4", "Test 4 with a seriously massive amount of text in the title that will span multiple", "Body 4 with a stupendous amount of body text lorem ipsum dolor sit amet https://google.com Kindling the energy hidden in matter Tunguska event muse about Cambrian explosion network of wormholes realm of the galaxies. At the edge of forever extraordinary claims require extraordinary evidence gathered by gravity two ghostly white figures in coveralls and helmets are softly dancing emerged into consciousness a still more glorious dawn awaits. Rings of Uranus something incredible is waiting to be known a mote of dust suspended in a sunbeam descended from astronomers concept of the number one the carbon in our apple pies and billions upon billions upon billions upon billions upon billions upon billions upon billions.", true, referenceDate.minusDays(3)
+                    ),
+                    Notification("5", "Test 5 with an alternate title", "Body 3", false,referenceDate.minusDays(4)
+                    ),
+                    Notification("6", "Test 6 with an alternate body", "Body 7", false,referenceDate.minusDays(5)
+                    ),
+                    Notification("7", "Test 7 with an alternate title and body", "Body 7", false,referenceDate.minusDays(6)
                     ),
                 )
             }
@@ -84,7 +107,7 @@ internal class NotificationCentreViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 _uiState.value = NotificationCentreUiState.Loading
             }
-            delay(3000)
+            delay(500)
             withContext(Dispatchers.Main) {
                 _uiState.value = NotificationCentreUiState.Loaded(Notification.mockNotifications)
             }
