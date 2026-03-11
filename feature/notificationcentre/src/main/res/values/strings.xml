@@ -3,6 +3,7 @@
     <string name="error_icon_content_description">Error</string>
     <string name="error_title">Sorry, there is a problem</string>
     <string name="error_body">We\'re unable to load your notifications right now. Try again later.</string>
+    <string name="notification_detail_error_body">We\'re unable to load this notification right now. Try again later.</string>
     <string name="error_button">Try again</string>
     <string name="loading_content_description">Loading</string>
     <string name="unread_content_description">Unread</string>
@@ -10,5 +11,8 @@
     <string name="empty_title">No notifications</string>
     <string name="empty_body">You don\'t have any notifications yet. When you receive notifications from government services, they\’ll appear here.</string>
     <string name="notification_centre_title">Notification Centre</string>
+    <string name="notification_centre_detail_title">Notification Detail</string>
     <string name="sent_date_format">Sent: %1s</string>
+    <string name="notification_not_found_title">Notification not found</string>
+    <string name="notification_not_found_body">This notification has been deleted or is no longer available</string>
 </resources>
