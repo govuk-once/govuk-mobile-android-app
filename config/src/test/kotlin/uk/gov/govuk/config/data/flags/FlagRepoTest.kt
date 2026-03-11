@@ -378,4 +378,11 @@ class FlagRepoTest {
 
         assertFalse(flagRepo.isExternalBrowserEnabled())
     }
+
+    @Test
+    fun `Given a release build, When DVLA link is enabled, then return false`() {
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isDvlaLinkEnabled())
+    }
 }
