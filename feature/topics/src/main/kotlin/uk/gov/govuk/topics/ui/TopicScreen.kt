@@ -78,6 +78,7 @@ internal fun TopicRoute(
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
+                        showDvlaLink = it.showDvlaLink,
                         onPageView = { title -> viewModel.onPageView(
                             topicUi = it.topicUi,
                             title = title
@@ -143,6 +144,7 @@ internal fun TopicRoute(
 @Composable
 private fun TopicScreen(
     topic: TopicUi,
+    showDvlaLink: Boolean,
     onPageView: (String) -> Unit,
     onBack: () -> Unit,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
@@ -211,7 +213,7 @@ private fun TopicScreen(
                 MediumVerticalSpacer()
             }
 
-            if (topic.isDriving(context)) {
+            if (showDvlaLink) {
                 item {
                     DrillInCard(
                         title = "Add your driver and vehicles account",
@@ -445,9 +447,6 @@ private fun LazyListScope.subtopics(
         }
     }
 }
-
-private fun TopicUi.isDriving(context: Context) =
-    this.title.equals(context.getString(R.string.driving_and_transport), ignoreCase = true)
 
 @Composable
 private fun ErrorScreen(

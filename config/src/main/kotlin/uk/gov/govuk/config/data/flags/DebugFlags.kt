@@ -18,4 +18,5 @@ class DebugFlags @Inject constructor() {
     internal val isExternalBrowserEnabled: Boolean? = false
     internal val isChatEnabled: Boolean? = true
     internal val isFlexEnabled: Boolean? = false
+    internal val isDvlaLinkEnabled: Boolean? = true
 }

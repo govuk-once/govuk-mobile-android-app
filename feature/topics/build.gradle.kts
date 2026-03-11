@@ -64,6 +64,7 @@ dependencies {
     implementation(projects.design)
     implementation(projects.feature.visited)
     implementation(projects.data)
+    implementation(projects.config)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
