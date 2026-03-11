@@ -567,7 +567,10 @@ private fun GovUkNavHost(
             },
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
         )
-        notificationCentreGraph(navController, modifier = Modifier.padding(paddingValues))
+        notificationCentreGraph(
+            navController,
+            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+            modifier = Modifier.padding(paddingValues))
         settingsGraph(
             navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },

@@ -22,6 +22,7 @@ val notificationCentreDeepLinks = mapOf("/notification" to listOf(NOTIFICATION_C
 
 fun NavGraphBuilder.notificationCentreGraph(
     navController: NavController,
+    launchBrowser: (url: String) -> Unit,
     modifier: Modifier
 ) {
 
@@ -45,7 +46,7 @@ fun NavGraphBuilder.notificationCentreGraph(
             )) {
             NotificationCentreDetailRoute(modifier, onBack = {
                 navController.popBackStack()
-            })
+            }, launchBrowser = launchBrowser)
         }
     }
 }
@@ -55,5 +56,5 @@ fun NavController.navigateToNotificationCentre() {
 }
 
 fun NavController.navigateToNotificationCentreDetail(notification: Notification) {
-    navigate("$NOTIFICATION_CENTRE_DETAIL_ROUTE/$notification.id")
+    navigate("$NOTIFICATION_CENTRE_DETAIL_ROUTE/${notification.id}")
 }
