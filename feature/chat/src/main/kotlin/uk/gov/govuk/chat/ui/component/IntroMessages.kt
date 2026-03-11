@@ -3,7 +3,7 @@ package uk.gov.govuk.chat.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,18 +35,25 @@ internal fun IntroMessages(
         if (animated) {
             var messageVisible by remember { mutableStateOf(false) }
 
-            val delay = 1000L
-            val duration = 500
+            val animationDelay = 1000L
+            val animationDuration = 200
 
             LaunchedEffect(key1 = true) {
-                delay(delay)
+                delay(animationDelay)
                 messageVisible = true
             }
 
             AnimatedVisibility(
                 visible = messageVisible,
-                enter = fadeIn(animationSpec = tween(durationMillis = duration)) +
-                    scaleIn(animationSpec = tween(durationMillis = duration))
+                enter =
+                    fadeIn(
+                        animationSpec = tween(durationMillis = animationDuration),
+                        initialAlpha = 0f
+                    ) +
+                    slideInVertically(
+                        animationSpec = tween(durationMillis = animationDuration),
+                        initialOffsetY = { 16 }
+                    )
             ) {
                 Message()
             }
