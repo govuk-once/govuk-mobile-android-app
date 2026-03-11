@@ -680,4 +680,23 @@ class ChatViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `Given an onboarding screen privacy policy click, then log analytics`() {
+        val text = "text"
+        val url = "url"
+
+        viewModel.onPrivacyPolicyView(
+            text = text,
+            url = url
+        )
+
+        verify {
+            analyticsClient.buttonClick(
+                text = text,
+                url = url,
+                external = true
+            )
+        }
+    }
 }
