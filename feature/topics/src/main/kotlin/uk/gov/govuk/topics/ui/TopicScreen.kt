@@ -198,8 +198,6 @@ private fun TopicScreen(
             icon = R.drawable.ic_topic_services_and_info
         )
 
-        val context = LocalContext.current
-
         LazyColumn {
             item {
                 Title(

@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -35,19 +36,29 @@ internal class DvlaViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        linkAccount()
+        startLinking()
     }
 
-    private fun linkAccount() {
+    private fun startLinking() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            // use temporarily for POC until we get linkingId for DVLA
-            val tempId = deviceIdProvider.getDeviceId()
-            if (dvlaRepo.linkAccount(tempId) is Result.Success) {
-                _linkingEvent.emit(LinkingEvent.LinkComplete)
-            } else {
-                _uiState.value = UiState.Error
-            }
+            val linkingId = getLinkingId()
+            linkDvlaAccount(linkingId)
+        }
+    }
+
+    private suspend fun getLinkingId(): String {
+        // until the OneLogin flow for DVLA is available, device id will be used
+        // delay mimicking process of acquiring linkingId
+        delay(3000)
+        return deviceIdProvider.getDeviceId()
+    }
+
+    private suspend fun linkDvlaAccount(id: String) {
+        if (dvlaRepo.linkAccount(id) is Result.Success) {
+            _linkingEvent.emit(LinkingEvent.LinkComplete)
+        } else {
+            _uiState.value = UiState.Error
         }
     }
 }

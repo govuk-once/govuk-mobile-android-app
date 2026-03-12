@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.data
 
-import kotlinx.coroutines.delay
 import uk.gov.govuk.data.remote.safeApiCall
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
@@ -13,9 +12,5 @@ internal class DvlaRepo @Inject constructor(
 ) {
     suspend fun linkAccount(id: String): Result<Unit> {
         return safeApiCall { api.linkDvlaIdentity(id) }
-
-        // fake delay mimicking api call
-//        delay(3000)
-//        return Result.Success(Unit)
     }
 }
