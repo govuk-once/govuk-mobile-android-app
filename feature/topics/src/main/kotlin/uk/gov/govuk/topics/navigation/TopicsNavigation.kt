@@ -59,8 +59,7 @@ fun NavGraphBuilder.topicsGraph(
             arguments = listOf(
                 navArgument(TOPIC_REF_ARG) { type = NavType.StringType },
                 navArgument(TOPIC_SUBTOPIC_ARG) { type = NavType.BoolType },
-            ),
-            /* deepLinks = deepLinks("/topics$topicPath") */
+            )
         ) {
             TopicRoute(
                 onBack = { navController.popBackStack() },
