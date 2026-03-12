@@ -83,6 +83,9 @@ class ConfigRepoImpl @Inject constructor(
     override val isExternalBrowserEnabled: Boolean
         get() = safeConfig.releaseFlags.externalBrowser
 
+    override val isChatEnabled: Boolean
+        get() = safeConfig.releaseFlags.chat
+
     override val chatUrls: ChatUrls
         get() = safeConfig.chatUrls
 
