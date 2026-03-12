@@ -34,7 +34,7 @@ class NotificationsRepoTest {
     @Test
     fun `Given login, when notifications onboarding not completed, then verify correct functions called`() {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns false
-        coEvery { userRepo.notificationId } returns "12345"
+        coEvery { userRepo.notifications?.notificationId } returns "12345"
 
         runTest {
             notificationsRepo.login()
@@ -45,11 +45,11 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given login, when notifications onboarding completed, consent preference unknown and consent status accepted, then verify correct functions called`() {
+    fun `Given login, when notifications onboarding completed, consent unknown and consent status accepted, then verify correct functions called`() {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
-        coEvery { userRepo.notificationId } returns "12345"
         every { notificationsProvider.consentGiven() } returns true
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
+        coEvery { userRepo.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
+        coEvery { userRepo.notifications?.notificationId } returns "12345"
 
         runTest {
             notificationsRepo.login()
@@ -60,11 +60,11 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given login, when notifications onboarding completed, consent preference unknown and consent status denied, then verify correct functions called`() {
+    fun `Given login, when notifications onboarding completed, consent unknown and consent status denied, then verify correct functions called`() {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
-        coEvery { userRepo.notificationId } returns "12345"
         every { notificationsProvider.consentGiven() } returns false
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
+        coEvery { userRepo.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
+        coEvery { userRepo.notifications?.notificationId } returns "12345"
 
         runTest {
             notificationsRepo.login()
@@ -75,11 +75,11 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given login, when notifications onboarding completed, consent preference accepted and consent status any, then verify correct functions called`() {
+    fun `Given login, when notifications onboarding completed, consent accepted and consent status any, then verify correct functions called`() {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
-        coEvery { userRepo.notificationId } returns "12345"
         every { notificationsProvider.consentGiven() } returns false
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns ConsentStatus.ACCEPTED
+        coEvery { userRepo.notifications?.consentStatus } returns ConsentStatus.ACCEPTED
+        coEvery { userRepo.notifications?.notificationId } returns "12345"
 
         runTest {
             notificationsRepo.login()
@@ -90,15 +90,14 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given login, when notifications id and preferences are null, then verify correct functions are not called`() {
-        coEvery { userRepo.notificationId } returns null
-        coEvery { userRepo.preferences?.notifications?.consentStatus } returns null
+    fun `Given login, when notifications is null, then verify correct functions are not called`() {
+        coEvery { userRepo.notifications } returns null
 
         runTest {
             notificationsRepo.login()
 
             verify(exactly = 0) { notificationsProvider.login(any()) }
-            coVerify(exactly = 0) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
+            coVerify(exactly = 0) { userRepo.updateNotifications(any()) }
         }
     }
 

@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import uk.gov.govuk.data.BuildConfig
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.remote.AuthorizationInterceptor
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -33,6 +34,9 @@ class NetworkModule {
         val client = OkHttpClient.Builder()
             .addInterceptor(AuthorizationInterceptor(authRepo))
             .addInterceptor(loggingInterceptor)
+            // TODO: Consider removing below custom timeouts when Flex is stable
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()

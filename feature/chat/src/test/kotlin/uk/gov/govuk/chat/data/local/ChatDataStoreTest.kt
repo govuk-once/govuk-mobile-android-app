@@ -3,6 +3,7 @@ package uk.gov.govuk.chat.data.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -58,22 +59,14 @@ class ChatDataStoreTest {
     }
 
     @Test
-    fun `Returns false for chat intro seen if data store is empty`() = runTest {
-        assertFalse(chatDataStore.isChatIntroSeen())
+    fun `isChatIntroSeen flow emits false when data store is empty`() = runTest {
+        assertFalse(chatDataStore.isChatIntroSeen.first())
     }
 
     @Test
-    fun `Returns true for chat intro seen if data store value is true`() = runTest {
+    fun `isChatIntroSeen flow emits true after saveChatIntroSeen`() = runTest {
         chatDataStore.saveChatIntroSeen()
-        assertTrue(chatDataStore.isChatIntroSeen())
-    }
-
-    @Test
-    fun `Sets chat seen to true`() = runTest {
-        assertFalse(chatDataStore.isChatIntroSeen())
-
-        chatDataStore.saveChatIntroSeen()
-        assertTrue(chatDataStore.isChatIntroSeen())
+        assertTrue(chatDataStore.isChatIntroSeen.first())
     }
 
     @Test
@@ -82,11 +75,11 @@ class ChatDataStoreTest {
         chatDataStore.saveChatIntroSeen()
 
         assertEquals("123", chatDataStore.conversationId())
-        assertTrue(chatDataStore.isChatIntroSeen())
+        assertTrue(chatDataStore.isChatIntroSeen.first())
 
         chatDataStore.clear()
 
         assertNull(chatDataStore.conversationId())
-        assertFalse(chatDataStore.isChatIntroSeen())
+        assertFalse(chatDataStore.isChatIntroSeen.first())
     }
 }

@@ -17,10 +17,6 @@ import org.junit.Test
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.flags.FlagRepo
-import uk.gov.govuk.data.user.model.ConsentStatus
-import uk.gov.govuk.data.user.model.Notifications
-import uk.gov.govuk.data.user.model.Preferences
-import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -64,9 +60,7 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, when flex is enabled, then the correct functions are called`() {
-        coEvery { notificationsRepo.sendConsent() } returns Success(
-            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.ACCEPTED)))
-        )
+        coEvery { notificationsRepo.sendConsent() } returns Success(Unit)
         every { notificationsRepo.giveConsent() } returns Unit
         every { flagRepo.isFlexEnabled() } returns true
 
@@ -85,9 +79,7 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Allow notifications button click, when flex is not enabled, then the correct functions are called`() {
-        coEvery { notificationsRepo.sendConsent() } returns Success(
-            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.ACCEPTED)))
-        )
+        coEvery { notificationsRepo.sendConsent() } returns Success(Unit)
         every { notificationsRepo.giveConsent() } returns Unit
         every { flagRepo.isFlexEnabled() } returns false
 
@@ -167,9 +159,7 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Continue button click, when flex is enabled, then the correct functions are called`() {
-        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
-            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.DENIED)))
-        )
+        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(Unit)
         every { notificationsRepo.removeConsent() } returns Unit
         every { flagRepo.isFlexEnabled() } returns true
 
@@ -190,9 +180,7 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Continue button click, when flex is not enabled, then the correct functions are called`() {
-        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(
-            UpdateUserDataResponse(Preferences(Notifications(ConsentStatus.DENIED)))
-        )
+        coEvery { notificationsRepo.sendRemoveConsent() } returns Success(Unit)
         every { notificationsRepo.removeConsent() } returns Unit
         every { flagRepo.isFlexEnabled() } returns false
 
