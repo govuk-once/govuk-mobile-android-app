@@ -5,7 +5,6 @@ import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.model.ConsentStatus
-import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,12 +15,10 @@ class NotificationsRepo @Inject constructor(
     private val userRepo: UserRepo
 ) {
     suspend fun login() {
-        userRepo.notificationId?.let { notificationId ->
-            notificationsProvider.login(notificationId)
-        }
-        userRepo.preferences?.notifications?.consentStatus?.let { consentStatus ->
+        userRepo.notifications?.let { notifications ->
+            notificationsProvider.login(notifications.notificationId)
             if (isNotificationsOnboardingCompleted()) {
-                sendExistingConsentWhenPreferenceUnknown(consentStatus)
+                sendExistingConsentWhenPreferenceUnknown(notifications.consentStatus)
             }
         }
     }
@@ -56,11 +53,11 @@ class NotificationsRepo @Inject constructor(
         notificationsProvider.removeConsent()
     }
 
-    suspend fun sendConsent(): Result<UpdateUserDataResponse> {
+    suspend fun sendConsent(): Result<Unit> {
         return userRepo.updateNotifications(ConsentStatus.ACCEPTED)
     }
 
-    suspend fun sendRemoveConsent(): Result<UpdateUserDataResponse> {
+    suspend fun sendRemoveConsent(): Result<Unit> {
         return userRepo.updateNotifications(ConsentStatus.DENIED)
     }
 
