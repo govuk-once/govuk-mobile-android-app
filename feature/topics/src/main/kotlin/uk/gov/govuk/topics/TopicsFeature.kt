@@ -2,7 +2,7 @@ package uk.gov.govuk.topics
 
 interface TopicsFeature {
 
-    var topicReferences: List<String>?
+    var topicsReferences: List<String>?
 
     suspend fun init()
 

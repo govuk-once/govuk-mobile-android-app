@@ -11,7 +11,7 @@ class TopicsDeepLinksProvider @Inject constructor(
     val deepLinks: Map<String, List<String>> by lazy {
         buildMap {
             put("/topics/edit", listOf(TOPICS_EDIT_ROUTE))
-            topicsFeature.topicReferences?.forEach { topicReference ->
+            topicsFeature.topicsReferences?.forEach { topicReference ->
                 put(
                     "/topics/$topicReference",
                     listOf("$TOPIC_ROUTE/$topicReference?isSubtopic=false")

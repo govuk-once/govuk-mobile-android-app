@@ -10,12 +10,12 @@ internal class DefaultTopicsFeature @Inject constructor(
     private val topicsRepo: TopicsRepo
 ) : TopicsFeature {
 
-    override var topicReferences: List<String>? = null
+    override var topicsReferences: List<String>? = null
 
     override suspend fun init() {
         topicsRepo.sync()
 
-        topicReferences = getTopicReferences()
+        topicsReferences = getTopicsReferences()
     }
 
     override suspend fun clear() {
@@ -26,5 +26,5 @@ internal class DefaultTopicsFeature @Inject constructor(
         return topicsRepo.hasTopics()
     }
 
-    private suspend fun getTopicReferences() = topicsRepo.topics.firstOrNull()?.map { it.ref }
+    private suspend fun getTopicsReferences() = topicsRepo.topics.firstOrNull()?.map { it.ref }
 }

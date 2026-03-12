@@ -68,18 +68,18 @@ class DefaultTopicsFeatureTest {
     }
 
     @Test
-    fun `Given init, when topics is empty, then topic references is null`() {
+    fun `Given init, when topics is null, then topics references is null`() {
         coEvery { topicsRepo.topics.firstOrNull() } returns null
 
         runTest {
             topicsFeature.init()
 
-            assertNull(topicsFeature.topicReferences)
+            assertNull(topicsFeature.topicsReferences)
         }
     }
 
     @Test
-    fun `Given init, when topics has a value, then topic references has the value`() {
+    fun `Given init, when topics has a value, then topics references has the value`() {
         val topics = listOf(
             TopicItem(
                 ref = "ref",
@@ -93,7 +93,7 @@ class DefaultTopicsFeatureTest {
         runTest {
             topicsFeature.init()
 
-            assertEquals(listOf("ref"), topicsFeature.topicReferences)
+            assertEquals(listOf("ref"), topicsFeature.topicsReferences)
         }
     }
 }

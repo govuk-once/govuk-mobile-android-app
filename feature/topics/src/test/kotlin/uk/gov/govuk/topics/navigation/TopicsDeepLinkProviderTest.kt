@@ -20,18 +20,18 @@ class TopicsDeepLinkProviderTest {
     }
 
     @Test
-    fun `Given get topic references is null, When init, then deep links contains edit topics`() =
+    fun `Given topics references is null, When init, then deep links contains edit topics`() =
         runTest {
-            every { topicsFeature.topicReferences } returns null
+            every { topicsFeature.topicsReferences } returns null
 
             val expected = mapOf("/topics/edit" to listOf("topics_edit_route"))
             assertEquals(expected, topicsDeepLinksProvider.deepLinks)
         }
 
     @Test
-    fun `Given get topic references contains a value, When init, then deep links contains the expected values`() =
+    fun `Given topics references contains a value, When init, then deep links contains the expected values`() =
         runTest {
-            every { topicsFeature.topicReferences } returns listOf("topic_name")
+            every { topicsFeature.topicsReferences } returns listOf("topic_name")
 
             val expected = mapOf(
                 "/topics/edit" to listOf("topics_edit_route"),
