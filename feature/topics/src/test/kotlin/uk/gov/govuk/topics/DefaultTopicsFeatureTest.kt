@@ -2,13 +2,19 @@ package uk.gov.govuk.topics
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.topics.data.TopicsRepo
+import uk.gov.govuk.topics.domain.model.TopicItem
 
 class DefaultTopicsFeatureTest {
 
@@ -58,6 +64,36 @@ class DefaultTopicsFeatureTest {
 
         runTest {
             assertTrue(topicsFeature.hasTopics())
+        }
+    }
+
+    @Test
+    fun `Given init, when topics is empty, then topic references is null`() {
+        coEvery { topicsRepo.topics.firstOrNull() } returns null
+
+        runTest {
+            topicsFeature.init()
+
+            assertNull(topicsFeature.topicReferences)
+        }
+    }
+
+    @Test
+    fun `Given init, when topics has a value, then topic references has the value`() {
+        val topics = listOf(
+            TopicItem(
+                ref = "ref",
+                title = "title",
+                description = "description",
+                isSelected = false
+            )
+        )
+        every { topicsRepo.topics } returns flowOf(topics)
+
+        runTest {
+            topicsFeature.init()
+
+            assertEquals(listOf("ref"), topicsFeature.topicReferences)
         }
     }
 }

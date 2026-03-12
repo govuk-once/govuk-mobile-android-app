@@ -16,12 +16,14 @@ import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.SEARCH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPICS_EDIT_ROUTE
+import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
 import uk.gov.govuk.visited.navigation.VISITED_ROUTE
 
 class DeeplinkHandlerTest {
 
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
+    private val topicsDeepLinksProvider = mockk<TopicsDeepLinksProvider>(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
     private val onLaunchBrowser = mockk<((String) -> Unit)>(relaxed = true)
     private val onDeeplinkNotFound = mockk<(() -> Unit)>(relaxed = true)
@@ -34,7 +36,7 @@ class DeeplinkHandlerTest {
     fun setup() {
         mockkStatic(Uri::class)
 
-        deeplinkHandler = DeeplinkHandler(flagRepo, analyticsClient)
+        deeplinkHandler = DeeplinkHandler(flagRepo, analyticsClient, topicsDeepLinksProvider)
         deeplinkHandler.onLaunchBrowser = onLaunchBrowser
         deeplinkHandler.onDeeplinkNotFound = onDeeplinkNotFound
         deeplinkHandler.deepLink = deeplink
@@ -145,6 +147,7 @@ class DeeplinkHandlerTest {
         every { flagRepo.isTopicsEnabled() } returns true
         every { deeplink.path } returns "/topics/edit"
         every { deeplink.toString() } returns "govuk://gov.uk/topics/edit"
+        every { topicsDeepLinksProvider.deepLinks } returns mapOf("/topics/edit" to listOf("topics_edit_route"))
 
         deeplinkHandler.deepLink = deeplink
 
