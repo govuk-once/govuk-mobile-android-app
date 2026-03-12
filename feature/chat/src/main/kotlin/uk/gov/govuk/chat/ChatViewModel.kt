@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
@@ -14,7 +15,6 @@ import uk.gov.govuk.chat.ChatUiState.Default
 import uk.gov.govuk.chat.ChatUiState.Error
 import uk.gov.govuk.chat.ChatUiState.Onboarding
 import uk.gov.govuk.chat.data.ChatRepo
-import uk.gov.govuk.chat.data.local.ChatDataStore
 import uk.gov.govuk.chat.data.remote.ChatResult
 import uk.gov.govuk.chat.data.remote.ChatResult.AuthError
 import uk.gov.govuk.chat.data.remote.ChatResult.NotFound
@@ -45,7 +45,6 @@ internal sealed class ChatUiState {
 @HiltViewModel
 internal class ChatViewModel @Inject constructor(
     private val chatRepo: ChatRepo,
-    private val chatDataStore: ChatDataStore,
     private val authRepo: AuthRepo,
     private val analyticsClient: AnalyticsClient,
     configRepo: ConfigRepo
@@ -61,7 +60,7 @@ internal class ChatViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if (chatDataStore.isChatIntroSeen()) {
+            if (chatRepo.isChatIntroSeen.first()) {
                 loadConversation()
             } else {
                 _uiState.value = Onboarding
@@ -117,7 +116,7 @@ internal class ChatViewModel @Inject constructor(
 
     fun setChatIntroSeen() {
         viewModelScope.launch {
-            chatDataStore.saveChatIntroSeen()
+            chatRepo.saveChatIntroSeen()
             _uiState.value = Default()
         }
     }

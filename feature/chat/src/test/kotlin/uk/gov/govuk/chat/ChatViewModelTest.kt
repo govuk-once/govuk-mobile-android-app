@@ -9,6 +9,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -21,7 +22,6 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.data.ChatRepo
-import uk.gov.govuk.chat.data.local.ChatDataStore
 import uk.gov.govuk.chat.data.remote.ChatResult
 import uk.gov.govuk.chat.data.remote.model.Answer
 import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
@@ -38,7 +38,6 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChatViewModelTest {
     private val chatRepo = mockk<ChatRepo>(relaxed = true)
-    private val chatDataStore = mockk<ChatDataStore>(relaxed = true)
     private val authRepo = mockk<AuthRepo>(relaxed = true)
     private val conversation = mockk<Conversation>(relaxed = true)
     private val pendingQuestion = mockk<PendingQuestion>(relaxed = true)
@@ -55,10 +54,10 @@ class ChatViewModelTest {
         Dispatchers.setMain(dispatcher)
 
         // Default set up that works for most tests
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         coEvery { chatRepo.getConversation() } returns null
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         clearAllMocks()
     }
@@ -70,19 +69,19 @@ class ChatViewModelTest {
 
     @Test
     fun `Init emits onboarding if not seen`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } returns false
+        every { chatRepo.isChatIntroSeen } returns flowOf(false)
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         assertEquals(ChatUiState.Onboarding, viewModel.uiState.value)
     }
 
     @Test
     fun `Init does not emit conversation if there is no conversation`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         coEvery { chatRepo.getConversation() } returns null
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         val uiState = viewModel.uiState.value as ChatUiState.Default
 
@@ -96,7 +95,7 @@ class ChatViewModelTest {
 
     @Test
     fun `Load conversation emits conversation if there is a conversation`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
 
         val conversation = Conversation(
             id = "123",
@@ -130,7 +129,7 @@ class ChatViewModelTest {
             ChatResult.Success(conversation)
         }
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         advanceUntilIdle()
 
@@ -152,13 +151,13 @@ class ChatViewModelTest {
 
     @Test
     fun `Load conversation emits error`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         coEvery { chatRepo.getConversation() } coAnswers {
             delay(100)
             ChatResult.Error()
         }
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         advanceUntilIdle()
 
@@ -171,13 +170,13 @@ class ChatViewModelTest {
 
     @Test
     fun `Load conversation emits retryable error`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         coEvery { chatRepo.getConversation() } coAnswers {
             delay(100)
             ChatResult.NotFound()
         }
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         advanceUntilIdle()
 
@@ -211,7 +210,7 @@ class ChatViewModelTest {
 
     @Test
     fun `Load conversation gets answer if there is a pending question`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         coEvery { chatRepo.getConversation() } coAnswers {
             delay(100)
             ChatResult.Success(conversation)
@@ -219,7 +218,7 @@ class ChatViewModelTest {
 
         every { conversation.pendingQuestion } returns pendingQuestion
 
-        viewModel = ChatViewModel(chatRepo, chatDataStore, authRepo, analyticsClient, configRepo)
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
         advanceUntilIdle()
 
@@ -367,7 +366,7 @@ class ChatViewModelTest {
             ChatResult.ValidationError()
         }
 
-        coEvery { chatDataStore.isChatIntroSeen() } returns true
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
 
         val uiStates = mutableListOf<ChatUiState?>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -549,9 +548,7 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `setChatIntroSeen calls datastore and updates uiState`() = runTest {
-        coEvery { chatDataStore.isChatIntroSeen() } coAnswers { true }
-
+    fun `setChatIntroSeen calls repo and updates uiState`() = runTest {
         val uiStates = mutableListOf<ChatUiState?>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.toList(uiStates)
@@ -560,7 +557,7 @@ class ChatViewModelTest {
         viewModel.setChatIntroSeen()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { chatDataStore.saveChatIntroSeen() }
+        coVerify(exactly = 1) { chatRepo.saveChatIntroSeen() }
 
         assertEquals(ChatUiState.Default(), viewModel.uiState.value)
     }
