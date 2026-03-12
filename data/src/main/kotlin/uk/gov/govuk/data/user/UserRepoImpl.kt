@@ -9,9 +9,7 @@ import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.User
-import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
-import uk.gov.govuk.data.user.model.UpdateUserDataResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,11 +21,8 @@ class UserRepoImpl @Inject constructor(
 
     private var user: User? = null
 
-    override val notificationId: String?
-        get() = user?.notificationId
-
-    override val preferences: Preferences?
-        get() = user?.preferences
+    override val notifications: Notifications?
+        get() = user?.notifications
 
     override suspend fun initUser(): Result<Unit> {
         val result = safeApiCall(apiCall = { userApi.getUserInfo() })
@@ -42,12 +37,9 @@ class UserRepoImpl @Inject constructor(
 
     override suspend fun updateNotifications(
         consentStatus: ConsentStatus
-    ): Result<UpdateUserDataResponse> {
-        val request = UpdateNotificationsRequest(Preferences(Notifications(consentStatus)))
-        return safeAuthApiCall(apiCall = {
-            userApi.updateNotifications(
-                request
-            )
-        }, authRepo = authRepo)
-    }
+    ) = safeAuthApiCall(apiCall = {
+        userApi.updateNotifications(
+            UpdateNotificationsRequest(consentStatus)
+        )
+    }, authRepo = authRepo)
 }

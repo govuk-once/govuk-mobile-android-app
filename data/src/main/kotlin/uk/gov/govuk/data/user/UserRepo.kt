@@ -2,13 +2,11 @@ package uk.gov.govuk.data.user
 
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.model.ConsentStatus
-import uk.gov.govuk.data.user.model.Preferences
-import uk.gov.govuk.data.user.model.UpdateUserDataResponse
+import uk.gov.govuk.data.user.model.Notifications
 
 interface UserRepo {
-    val notificationId: String?
-    val preferences: Preferences?
+    val notifications: Notifications?
 
     suspend fun initUser(): Result<Unit>
-    suspend fun updateNotifications(consentStatus: ConsentStatus): Result<UpdateUserDataResponse>
+    suspend fun updateNotifications(consentStatus: ConsentStatus): Result<Unit>
 }

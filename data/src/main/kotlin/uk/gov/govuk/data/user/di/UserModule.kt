@@ -11,6 +11,7 @@ import uk.gov.govuk.data.BuildConfig
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.remote.AuthorizationInterceptor
 import uk.gov.govuk.data.user.remote.UserApi
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -21,6 +22,9 @@ class UserModule {
     fun providesUserApi(authRepo: AuthRepo): UserApi {
         val client = OkHttpClient.Builder()
             .addInterceptor(AuthorizationInterceptor(authRepo))
+            // TODO: Consider removing below custom timeouts when Flex is stable
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()

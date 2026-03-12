@@ -14,7 +14,6 @@ import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.data.user.model.Notifications
 import uk.gov.govuk.data.user.model.User
-import uk.gov.govuk.data.user.model.Preferences
 import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.remote.UserApi
 
@@ -42,18 +41,15 @@ class UserRepoTest {
     fun `Given init is called, when the api response is successful, then the correct values are set`() =
         runTest {
             coEvery { userApi.getUserInfo() } returns Response.success(
-                User(
-                    "12345",
-                    Preferences(Notifications(ConsentStatus.ACCEPTED))
-                )
+                User(Notifications(ConsentStatus.ACCEPTED, "12345"))
             )
 
             userRepo.initUser()
 
             coVerify(exactly = 1) { userApi.getUserInfo() }
 
-            assertEquals("12345", userRepo.notificationId)
-            assertEquals(ConsentStatus.ACCEPTED, userRepo.preferences?.notifications?.consentStatus)
+            assertEquals("12345", userRepo.notifications?.notificationId)
+            assertEquals(ConsentStatus.ACCEPTED, userRepo.notifications?.consentStatus)
         }
 
     @Test
@@ -68,8 +64,8 @@ class UserRepoTest {
 
             coVerify(exactly = 1) { userApi.getUserInfo() }
 
-            assertNull(userRepo.notificationId)
-            assertNull(userRepo.preferences?.notifications?.consentStatus)
+            assertNull(userRepo.notifications?.notificationId)
+            assertNull(userRepo.notifications?.consentStatus)
         }
 
     @Test
@@ -78,13 +74,7 @@ class UserRepoTest {
             userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
             coVerify {
-                userApi.updateNotifications(
-                    UpdateNotificationsRequest(
-                        Preferences(
-                            Notifications(ConsentStatus.ACCEPTED)
-                        )
-                    )
-                )
+                userApi.updateNotifications(UpdateNotificationsRequest(ConsentStatus.ACCEPTED))
             }
         }
 
@@ -94,20 +84,13 @@ class UserRepoTest {
             userRepo.updateNotifications(ConsentStatus.DENIED)
 
             coVerify {
-                userApi.updateNotifications(
-                    UpdateNotificationsRequest(
-                        Preferences(
-                            Notifications(ConsentStatus.DENIED)
-                        )
-                    )
-                )
+                userApi.updateNotifications(UpdateNotificationsRequest(ConsentStatus.DENIED))
             }
         }
 
     @Test
     fun `Given init user is not called, then properties are null`() =
         runTest {
-            assertNull(userRepo.notificationId)
-            assertNull(userRepo.preferences)
+            assertNull(userRepo.notifications)
         }
 }
