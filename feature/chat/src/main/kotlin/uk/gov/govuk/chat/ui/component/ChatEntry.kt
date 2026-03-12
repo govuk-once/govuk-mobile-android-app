@@ -132,23 +132,10 @@ private fun AnimatedChatEntry(
     } else Modifier
 
     Column(modifier = modifier) {
+        if (showSending) Sending()
+        if (showLoading) Loading()
+
         if (chatEntry.shouldAnimate) {
-            AnimatedVisibility(
-                visible = showSending,
-                enter = fadeIn(animationSpec = tween(animationDuration)),
-                exit = fadeOut(animationSpec = tween(animationDuration))
-            ) {
-                Sending()
-            }
-
-            AnimatedVisibility(
-                visible = showLoading,
-                enter = fadeIn(animationSpec = tween(animationDuration)),
-                exit = fadeOut(animationSpec = tween(animationDuration))
-            ) {
-                Loading(modifier = loadingModifier)
-            }
-
             AnimatedVisibility(
                 visible = showAnswer,
                 enter =
@@ -171,15 +158,13 @@ private fun AnimatedChatEntry(
                 )
             }
         } else {
-            if (showSending) Sending()
-            if (showLoading) Loading()
             if (showAnswer) Answer(
-                    answer = chatEntry.answer,
-                    sources = chatEntry.sources,
-                    onMarkdownLinkClicked = onMarkdownLinkClicked,
-                    onSourcesExpanded = onSourcesExpanded,
-                    onCopyText = onCopyText
-                )
+                answer = chatEntry.answer,
+                sources = chatEntry.sources,
+                onMarkdownLinkClicked = onMarkdownLinkClicked,
+                onSourcesExpanded = onSourcesExpanded,
+                onCopyText = onCopyText
+            )
         }
     }
 }
