@@ -385,4 +385,32 @@ class FlagRepoTest {
 
         assertFalse(flagRepo.isDvlaLinkEnabled())
     }
+
+    @Test
+    fun `Given a debug build and DVLA link enabled, When Flex is disabled, then DVLA link is disabled`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+
+        every { debugFlags.isDvlaLinkEnabled } returns true
+        every { debugFlags.isFlexEnabled } returns false
+
+        val result = flagRepo.isDvlaLinkEnabled()
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `Given a debug build and DVLA link enabled, When Flex is enabled, then DVLA link is enabled`() {
+        // GIVEN: We are on a debug build
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+
+        // AND: Both flags are turned ON
+        every { debugFlags.isDvlaLinkEnabled } returns true
+        every { debugFlags.isFlexEnabled } returns true
+
+        // WHEN
+        val result = flagRepo.isDvlaLinkEnabled()
+
+        // THEN: It should return true
+        assertTrue(result)
+    }
 }
