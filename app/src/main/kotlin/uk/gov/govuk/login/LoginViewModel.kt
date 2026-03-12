@@ -17,10 +17,10 @@ import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
-import uk.gov.govuk.login.data.LoginRepo
-import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
+import uk.gov.govuk.login.data.LoginRepo
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import java.util.Date
 import javax.inject.Inject
 
@@ -41,6 +41,8 @@ internal class LoginViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
+    internal val defaultTermsUrl = "https://www.gov.uk/guidance/govuk-app-terms-and-conditions"
+
     private val _isLoading: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val isLoading = _isLoading.asStateFlow()
 
@@ -58,6 +60,7 @@ internal class LoginViewModel @Inject constructor(
         if (!authRepo.isUserSignedIn()) {
             return
         }
+
         viewModelScope.launch {
             if (shouldRefreshTokens()) {
                 authRepo.refreshTokens(
@@ -113,6 +116,10 @@ internal class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun getTermsAndConditionsUrl(): String =
+        configRepo.termsAndConditions?.url?.takeIf { it.isNotEmpty() }
+            ?: defaultTermsUrl
 
     private suspend fun isUserInitialised(): Boolean {
         if (!flagRepo.isFlexEnabled()) return true
