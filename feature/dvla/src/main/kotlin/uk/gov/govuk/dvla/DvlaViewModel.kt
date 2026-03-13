@@ -48,7 +48,7 @@ internal class DvlaViewModel @Inject constructor(
     }
 
     private suspend fun getLinkingId(): String {
-        // until the OneLogin flow for DVLA is available, device id will be used
+        // TODO until the OneLogin flow for DVLA is available, device id will be used
         // delay mimicking process of acquiring linkingId
         delay(3000)
         return deviceIdProvider.getDeviceId()

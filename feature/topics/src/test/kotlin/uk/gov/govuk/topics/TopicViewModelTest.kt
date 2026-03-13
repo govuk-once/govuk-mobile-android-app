@@ -41,7 +41,6 @@ class TopicViewModelTest {
 
     private val dispatcher = UnconfinedTestDispatcher()
     private val topicsRepo = mockk<TopicsRepo>(relaxed = true)
-
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)

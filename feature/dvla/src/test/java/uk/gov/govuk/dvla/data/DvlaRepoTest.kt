@@ -8,18 +8,20 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
+import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.remote.DvlaApi
 
 class DvlaRepoTest {
 
     private val api = mockk<DvlaApi>()
+    private val authRepo = mockk<AuthRepo>()
     private lateinit var repo: DvlaRepo
     private val linkingId = "linkingId"
 
     @Before
     fun setup() {
-        repo = DvlaRepo(api)
+        repo = DvlaRepo(api, authRepo)
     }
 
     @Test

@@ -11,7 +11,7 @@ import javax.inject.Singleton
 internal class DeviceIdProvider @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // for POC, remove when linkingId for DVLA is available, suppress warning
+    // TODO for POC, remove when linkingId for DVLA is available, suppress warning
     @SuppressLint("HardwareIds")
     fun getDeviceId(): String =
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
