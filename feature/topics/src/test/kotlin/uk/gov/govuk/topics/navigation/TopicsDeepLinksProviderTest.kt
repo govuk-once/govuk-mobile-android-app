@@ -8,7 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.topics.TopicsFeature
 
-class TopicsDeepLinkProviderTest {
+class TopicsDeepLinksProviderTest {
 
     private val topicsFeature = mockk<TopicsFeature>(relaxed = true)
 
