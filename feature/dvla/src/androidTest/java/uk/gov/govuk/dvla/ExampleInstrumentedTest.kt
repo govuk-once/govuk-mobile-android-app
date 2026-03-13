@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("uk.gov.govuk.data.test", appContext.packageName)
+        assertEquals("uk.gov.govuk.dvla.test", appContext.packageName)
     }
 }
