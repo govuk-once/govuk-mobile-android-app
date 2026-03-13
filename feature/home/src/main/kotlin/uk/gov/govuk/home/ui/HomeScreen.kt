@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.config.data.local.model.HomeWidget
@@ -42,7 +43,6 @@ import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 import uk.gov.govuk.home.HomeViewModel
 import uk.gov.govuk.home.R
 import uk.gov.govuk.home.ui.animation.AnimateIcon
@@ -53,7 +53,6 @@ internal fun HomeRoute(
     homeWidgets: List<HomeWidget>?,
     modifier: Modifier = Modifier,
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
-    onShowNotificationCentre: () -> Unit,
     ) {
     val viewModel: HomeViewModel = hiltViewModel()
 
@@ -61,8 +60,7 @@ internal fun HomeRoute(
         widgets = widgets,
         onPageView = { viewModel.onPageView(homeWidgets) },
         modifier = modifier,
-        headerWidget = headerWidget,
-        onShowNotificationCentre = onShowNotificationCentre
+        headerWidget = headerWidget
     )
 }
 
@@ -71,8 +69,7 @@ private fun HomeScreen(
     widgets: List<@Composable (Modifier) -> Unit>,
     onPageView: () -> Unit,
     modifier: Modifier = Modifier,
-    headerWidget: (@Composable (Modifier) -> Unit)? = null,
-    onShowNotificationCentre: () -> Unit
+    headerWidget: (@Composable (Modifier) -> Unit)? = null
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -102,21 +99,6 @@ private fun HomeScreen(
 
                     MediumVerticalSpacer()
                 }
-
-                IconButton(
-                    onClick = onShowNotificationCentre,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(48.dp)
-
-                ) {
-                    Icon(
-                        painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_notcenbell),
-                        tint = Color.White,
-                        contentDescription = stringResource(R.string.not_cen_button_description),
-                    )
-                }
-
             }
 
 
@@ -185,10 +167,10 @@ private fun HomeScreen(
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomePreview() {
     GovUkTheme {
-        HomeScreen(listOf(), {}, Modifier, onShowNotificationCentre = {})
+        HomeScreen(listOf(), {}, Modifier)
     }
 }

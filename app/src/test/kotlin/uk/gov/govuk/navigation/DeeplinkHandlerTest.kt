@@ -18,6 +18,7 @@ import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
 import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
+import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_DETAIL_ROUTE
 import uk.gov.govuk.search.navigation.SEARCH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPICS_EDIT_ROUTE
 import uk.gov.govuk.topics.navigation.TOPIC_ROUTE
@@ -327,6 +328,12 @@ class DeeplinkHandlerTest {
         every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
         every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns null
         every { deeplink.queryParameterNames } returns emptySet()
+    fun `Handle notifications deeplink`() {
+        every { deeplink.path } returns "/notificationcentre/detail"
+        every { deeplink.getQueryParameter("id") } returns "12345"
+        every { deeplink.toString() } returns "govuk://gov.uk/notificationcentre/detail?id=12345"
+
+        deeplinkHandler.deepLink = deeplink
 
         deeplinkHandler.handleDeeplink(navController)
 
@@ -407,6 +414,8 @@ class DeeplinkHandlerTest {
         verify {
             deeplink.getQueryParameter("errormessage")
             analyticsClient.logException(match { it.message == "DVLA auth callback error - Something went wrong" })
+            navController.navigate("$NOTIFICATION_CENTRE_DETAIL_ROUTE/12345", any<NavOptionsBuilder.() -> Unit>())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk/notificationcentre/detail?id=12345")
         }
     }
 }

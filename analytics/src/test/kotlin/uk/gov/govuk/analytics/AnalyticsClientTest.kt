@@ -272,6 +272,75 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a Notification Centre URL is launched, then log event`() {
+        val testUrl = "Test"
+        analyticsClient.notificationCentreUrlLaunched(testUrl)
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "NotificationCentreUrlLaunched",
+                mapOf(
+                    "url" to testUrl
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a Notification is marked unread, then log event`() {
+        analyticsClient.notificationCentreMarkUnread()
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "NotificationCentreMarkUnread",
+                mapOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given a Notification is clicked for delete, then log event`() {
+        analyticsClient.notificationCentreDelete()
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "NotificationCentreDelete",
+                mapOf(
+                    "action" to "tap"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a Notification is confirmed for delete, then log event`() {
+        analyticsClient.notificationCentreConfirmDelete()
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "NotificationCentreDelete",
+                mapOf(
+                    "action" to "confirm"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a Notification delete is cancelled, then log event`() {
+        analyticsClient.notificationCentreCancelDelete()
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "NotificationCentreDelete",
+                mapOf(
+                    "action" to "cancel"
+                )
+            )
+        }
+    }
+
+    @Test
     fun `Given a search, then log event`() {
         analyticsClient.search("search term")
 
