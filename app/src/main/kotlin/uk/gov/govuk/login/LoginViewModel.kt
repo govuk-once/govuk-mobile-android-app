@@ -21,6 +21,7 @@ import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.terms.data.TermsRepo
 import java.util.Date
 import javax.inject.Inject
 
@@ -38,6 +39,7 @@ internal class LoginViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val userRepo: UserRepo,
     private val flagRepo: FlagRepo,
+    private val termsRepo: TermsRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
@@ -106,6 +108,7 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
+                termsRepo.termsAccepted()
                 if (isUserInitialised()) {
                     _loginCompleted.emit(
                         LoginEvent.WebLogin(

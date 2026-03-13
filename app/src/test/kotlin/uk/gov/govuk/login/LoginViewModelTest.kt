@@ -33,6 +33,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.terms.data.TermsRepo
 import java.util.Date
 import kotlin.test.assertEquals
 
@@ -46,6 +47,7 @@ class LoginViewModelTest {
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
+    private val termsRepo = mockk<TermsRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val activity = mockk<FragmentActivity>(relaxed = true)
     private val dispatcher = UnconfinedTestDispatcher()
@@ -63,6 +65,7 @@ class LoginViewModelTest {
             notificationsRepo,
             userRepo,
             flagRepo,
+            termsRepo,
             analyticsClient
         )
     }
@@ -414,6 +417,9 @@ class LoginViewModelTest {
             coVerify(exactly = 0) {
                 loginRepo.setRefreshTokenIssuedAtDate(any())
             }
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -446,6 +452,9 @@ class LoginViewModelTest {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
             }
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -476,6 +485,9 @@ class LoginViewModelTest {
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
+            }
+            coVerify {
+                termsRepo.termsAccepted(any())
             }
         }
     }
@@ -515,6 +527,9 @@ class LoginViewModelTest {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
             }
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -537,6 +552,10 @@ class LoginViewModelTest {
 
             val loginEvent = events.first() as LoginEvent.WebLogin
             assertTrue(loginEvent.isBiometricsEnabled)
+
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -559,6 +578,10 @@ class LoginViewModelTest {
 
             val loginEvent = events.first() as LoginEvent.WebLogin
             assertFalse(loginEvent.isBiometricsEnabled)
+
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -580,6 +603,10 @@ class LoginViewModelTest {
 
             val loginEvent = events.first() as LoginEvent.WebLogin
             assertFalse(loginEvent.isBiometricsEnabled)
+
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -605,6 +632,10 @@ class LoginViewModelTest {
             assertTrue(isLoading.last() == true)
             assertTrue(loginEvents.isEmpty())
             assertEquals(ErrorEvent.UnableToSignInError, errorEvents.first())
+
+            coVerify(exactly = 0) {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 }
