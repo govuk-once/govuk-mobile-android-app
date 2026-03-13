@@ -18,7 +18,10 @@ private const val NOTIFICATION_CENTRE_DETAIL_ROUTE = "notification_centre_detail
 const val NOTIFICATION_CENTRE_DETAIL_ID_ARG = "notificationID"
 const val NOTIFICATION_CENTRE_GRAPH_START_DESTINATION = NOTIFICATION_CENTRE_ROUTE
 
-val notificationCentreDeepLinks = mapOf("/notification" to listOf(NOTIFICATION_CENTRE_ROUTE))
+val notificationCentreDeepLinks = mapOf(
+    "/notificationcentre" to listOf(NOTIFICATION_CENTRE_ROUTE),
+    "/notificationcentre/detail" to listOf(NOTIFICATION_CENTRE_DETAIL_ROUTE)
+)
 
 fun NavGraphBuilder.notificationCentreGraph(
     navController: NavController,

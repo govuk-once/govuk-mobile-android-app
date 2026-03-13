@@ -46,27 +46,18 @@ android {
 dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
-    implementation(projects.data)
-    implementation(projects.config)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.adaptive.android)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.icons)
     implementation(libs.hilt.android)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
-    implementation(libs.realm.base)
 
-    implementation(libs.compose.markdown)
     implementation(libs.androidx.compose.animation)
-
-    implementation(libs.lottie.compose)
-
+    
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
