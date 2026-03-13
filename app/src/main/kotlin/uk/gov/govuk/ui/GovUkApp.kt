@@ -568,9 +568,6 @@ private fun GovUkNavHost(
                     )
                 }
             } else null,
-            {
-                navController.navigateToNotificationCentre()
-            },
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
         )
         notificationCentreGraph(

@@ -65,6 +65,8 @@ dependencies {
     implementation(projects.config)
     implementation(projects.notifications)
     implementation(projects.data)
+    implementation(projects.feature.dvla)
+    implementation(projects.feature.notificationcentre)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

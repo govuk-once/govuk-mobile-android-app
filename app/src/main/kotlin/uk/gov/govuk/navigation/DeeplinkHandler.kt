@@ -11,6 +11,7 @@ import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.extension.getUrlParam
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.homeDeepLinks
+import uk.gov.govuk.notificationcentre.navigation.notificationCentreDeepLinks
 import uk.gov.govuk.search.navigation.searchDeepLinks
 import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
@@ -28,6 +29,7 @@ internal class DeeplinkHandler @Inject constructor(
         buildMap {
             putAll(homeDeepLinks)
             putAll(settingsDeepLinks)
+            putAll(notificationCentreDeepLinks)
 
             if (flagRepo.isChatEnabled()) {
                 putAll(chatDeepLinks)
@@ -68,7 +70,16 @@ internal class DeeplinkHandler @Inject constructor(
 
                 // Construct backstack and navigate to deeplink route
                 for (route in routes) {
-                    navController.navigate(route) {
+                    var fullRoute = route
+                    // Fudge the Notification Centre Detail route for now while parameterised
+                    // deeplinks are not supported
+                    if (it.path?.contains("detail") == true) {
+                        it.getQueryParameter("id")?.apply {
+                            fullRoute = "$fullRoute/$this"
+                        }
+                    }
+                    
+                    navController.navigate(fullRoute) {
                         launchSingleTop = true
                     }
                 }

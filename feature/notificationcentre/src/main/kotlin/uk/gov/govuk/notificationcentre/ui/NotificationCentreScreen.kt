@@ -1,6 +1,5 @@
 package uk.gov.govuk.notificationcentre.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,56 +11,43 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import uk.gov.govuk.data.notificationcentre.model.Notification
+import uk.gov.govuk.data.notificationcentre.model.NotificationGroups
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.FootnoteRegularLabel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.Title
-import uk.gov.govuk.design.ui.component.Title1BoldLabel
+import uk.gov.govuk.design.ui.component.Title3SemiBoldLabel
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.notificationcentre.Notification
 import uk.gov.govuk.notificationcentre.NotificationCentreUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreViewModel
 import uk.gov.govuk.notificationcentre.R
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun NotificationCentreRoute(
@@ -81,7 +67,6 @@ internal fun NotificationCentreRoute(
                 viewModel.onPageView()
             }, uiState,
             onBack = onBack,
-            onTapRetry = viewModel::onTapRetry,
             onTapNotification = onTapNotification
         )
     }
@@ -92,7 +77,6 @@ private fun NotificationCentreScreen(
     onPageView: () -> Unit,
     state: NotificationCentreUiState,
     onBack: () -> Unit,
-    onTapRetry: () -> Unit,
     onTapNotification: (Notification) -> Unit
 ) {
     Column(
@@ -113,10 +97,11 @@ private fun NotificationCentreScreen(
         when (state) {
             is NotificationCentreUiState.Loading -> NotificationCentreScreenLoading()
             is NotificationCentreUiState.Empty -> NotificationCentreScreenEmpty()
-            is NotificationCentreUiState.Error -> NotificationCentreScreenError(onTapRetry)
+            is NotificationCentreUiState.Error -> NotificationCentreScreenError()
+            is NotificationCentreUiState.NoInternet -> NotificationCentreScreenNoInternet()
             is NotificationCentreUiState.Loaded -> NotificationCentreScreenLoaded(
                 state.notifications,
-                onTapNotification
+                onTapNotification,
             )
         }
         LaunchedEffect(Unit) {
@@ -142,91 +127,37 @@ private fun NotificationCentreScreenLoading() {
 }
 
 @Composable
-private fun NotificationCentreScreenError(onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            Icons.Filled.ErrorOutline,
-            modifier = Modifier
-                .size(64.dp)
-                .padding(bottom = 16.dp)
-                .semantics { hideFromAccessibility() },
-            contentDescription = stringResource(R.string.error_icon_content_description),
-            colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.surfaces.cardEmergencyLocal)
-        )
-
-        Column(modifier = Modifier.semantics(true) {}) {
-            Title1BoldLabel(
-                stringResource(R.string.error_title),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
-
-            BodyRegularLabel(
-                stringResource(R.string.error_body),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
-            )
-        }
-
-        PrimaryButton(
-            text = stringResource(R.string.error_button),
-            onClick = { onRetry() },
-            modifier = Modifier.padding(top = 32.dp)
-        )
-    }
-}
-
-@Composable
 private fun NotificationCentreScreenEmpty() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_notcenbell),
+        Column(
             modifier = Modifier
-                .size(64.dp)
-                .padding(bottom = 16.dp)
-                .semantics { hideFromAccessibility() },
-            contentDescription = stringResource(R.string.empty_icon_content_description),
-            colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.surfaces.cardEmergencyLocal)
-        )
-
-        Column(modifier = Modifier.semantics(true) {}) {
-
-            Title1BoldLabel(
-                stringResource(R.string.empty_title),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
-
+                .clip(RoundedCornerShape(10.dp))
+                .background(GovUkTheme.colourScheme.surfaces.cardNonTappable)
+        ) {
             BodyRegularLabel(
                 stringResource(R.string.empty_body),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }
+
+        Footer()
     }
 }
 
+
+
 @Composable
 private fun NotificationCentreScreenLoaded(
-    notifications: List<Notification>,
+    notifications: NotificationGroups,
     onTapNotification: (Notification) -> Unit
 ) {
     LazyColumn(
@@ -237,143 +168,100 @@ private fun NotificationCentreScreenLoaded(
             LargeVerticalSpacer()
         }
 
-        itemsIndexed(notifications) { index, not ->
-            val isFirst = index == 0
-            val isLast = index == notifications.size - 1
+        if (notifications.recent.isNotEmpty()) {
+            item {
+                NotificationSectionHeader(stringResource(R.string.section_recent))
+            }
 
-            NotificationRow(not, isFirst, isLast, onTapRow = { onTapNotification(it) })
-            if (index < notifications.size - 1) {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    modifier =
-                        Modifier
-                            .background(GovUkTheme.colourScheme.surfaces.list)
-                            .padding(start = 24.dp, end = 16.dp)
-                            .padding(vertical = 1.dp)
-                            .alpha(0.5f), // Makes it a bit less harsh and closer to iOS
-                    color = GovUkTheme.colourScheme.textAndIcons.secondary
-                )
+            items(notifications.recent) { not ->
+                NotificationRow(not, onTapRow = { onTapNotification(it) })
+            }
+        }
+
+        if (notifications.older.isNotEmpty()) {
+
+            item {
+                NotificationSectionHeader(stringResource(R.string.section_older))
+            }
+
+            items(notifications.older) { not ->
+                NotificationRow(not, onTapRow = { onTapNotification(it) })
             }
         }
 
         item {
-            LargeVerticalSpacer()
+            Footer()
         }
     }
+}
+
+@Composable
+private fun NotificationSectionHeader(title: String) {
+    Title3SemiBoldLabel(title, modifier = Modifier.padding(top = 28.dp, bottom = 16.dp))
 }
 
 @Composable
 private fun NotificationRow(
     notification: Notification,
-    isFirst: Boolean,
-    isLast: Boolean,
     onTapRow: (Notification) -> Unit
 ) {
-    val indicatorColour = GovUkTheme.colourScheme.surfaces.listSelected
-    val cornerRadius = GovUkTheme.numbers.cornerAndroidList
     val unreadContentDescription = stringResource(R.string.unread_content_description)
     Row(
         Modifier
-            .clip(
-                RoundedCornerShape(
-                    topStart = if (isFirst) cornerRadius else 0.dp,
-                    topEnd = if (isFirst) cornerRadius else 0.dp,
-                    bottomStart = if (isLast) cornerRadius else 0.dp,
-                    bottomEnd = if (isLast) cornerRadius else 0.dp
-                )
-            )
+            .padding(bottom = 8.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
             .background(GovUkTheme.colourScheme.surfaces.list)
-            .drawBehind {
-                if (notification.unread) {
-                    drawRect(
-                        color = indicatorColour, size = Size(8.dp.toPx(), size.height)
-                    )
-                }
-            }
-
             .clickable {  onTapRow(notification) }
             .semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically
     ) {
 
-        // Account for the unread indicator by adding an extra 8dp to start padding
+        Box(
+            Modifier
+                .padding(horizontal = 16.dp)
+                .clip(CircleShape)
+                .background(if(notification.isUnread)
+                    GovUkTheme.colourScheme.surfaces.msgUnread
+                else
+                    GovUkTheme.colourScheme.surfaces.msgRead)
+                .size(10.dp)
+                .semantics {
+                    hideFromAccessibility()
+                }
+        )
         Column(
             modifier = Modifier
                 .padding(vertical = 16.dp)
-                .padding(start = 24.dp, end = 16.dp)
-                .weight(1.0f)
+                .padding(end = 16.dp)
                 .semantics(mergeDescendants = true) {
-                    if (notification.unread) {
+                    if (notification.isUnread) {
                         text = AnnotatedString(unreadContentDescription)
                     }
                     role = Role.Button
                 }
         ) {
-            LineLimitedLabel(
-                notification.title,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
-                maxLines = 2,
+            Text(
+                text = notification.title,
+                modifier = Modifier.padding(bottom = 4.dp),
                 style = GovUkTheme.typography.headlineSemibold,
-                modifier = Modifier.padding(bottom = 4.dp)
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-            LineLimitedLabel(
-                notification.body,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                maxLines = 3,
-                style = GovUkTheme.typography.subheadlineRegular,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+
             FootnoteRegularLabel(
-                stringResource(R.string.sent_date_format, formatDate(notification.date)) ,
+                notification.formattedDate,
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }
-
-        Icon(
-            painter = painterResource(uk.gov.govuk.design.R.drawable.ic_arrow),
-            contentDescription = null,
-            tint = GovUkTheme.colourScheme.surfaces.listSelected,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .semantics { hideFromAccessibility() }
-        )
     }
 }
-
-@Composable
-fun LineLimitedLabel(
-    text: String,
-    modifier: Modifier = Modifier,
-    color: Color,
-    maxLines: Int,
-    style: TextStyle
-) {
-    Text(
-        text = text,
-        modifier = modifier,
-        style = style,
-        color = color,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis
-    )
-}
-
-private fun formatDate(date: LocalDateTime): String =
-    DateTimeFormatter.ofPattern("d MMM yyyy, h:mma").format(date)
 
 @Preview(showBackground = true)
 @Composable
 private fun NotificationCentreLoadingPreview() {
     GovUkTheme {
-        NotificationCentreScreen({}, NotificationCentreUiState.Loading, {},{ }) { }
-
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun NotificationCentreErrorPreview() {
-    GovUkTheme {
-        NotificationCentreScreen({}, NotificationCentreUiState.Error, { }, {}) { }
+        NotificationCentreScreen({}, NotificationCentreUiState.Loading, {}) { }
 
     }
 }
@@ -382,7 +270,7 @@ private fun NotificationCentreErrorPreview() {
 @Composable
 private fun NotificationCentreEmptyPreview() {
     GovUkTheme {
-        NotificationCentreScreen({}, NotificationCentreUiState.Empty, { }, {}) { }
+        NotificationCentreScreen({}, NotificationCentreUiState.Empty, { }) { }
     }
 }
 
@@ -393,8 +281,7 @@ private fun NotificationCentreLoadedPreview() {
         NotificationCentreScreen(
             {},
             NotificationCentreUiState.Loaded(Notification.mockNotifications),
-            { },
-            {}
+            { }
         ) { }
 
     }
@@ -404,7 +291,7 @@ private fun NotificationCentreLoadedPreview() {
 @Composable
 private fun NotificationRowReadPreview() {
     GovUkTheme {
-        NotificationRow(Notification.mockNotifications[2], true, isLast = true) { }
+        NotificationRow(Notification.mockNotifications.recent[2]) { }
     }
 }
 
@@ -412,6 +299,6 @@ private fun NotificationRowReadPreview() {
 @Composable
 private fun NotificationRowUnreadPreview() {
     GovUkTheme {
-        NotificationRow(Notification.mockNotifications[3], true, isLast = true) { }
+        NotificationRow(Notification.mockNotifications.recent[3]) { }
     }
 }
