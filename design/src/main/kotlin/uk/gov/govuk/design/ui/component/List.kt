@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -484,6 +485,71 @@ fun CardListItem(
     }
 }
 
+sealed class CountListState {
+    enum class IndicatorState {
+        DIM, FULL
+    }
+    data object Loading: CountListState()
+    data class Idle(val count: Int, val indicatorState: IndicatorState): CountListState()
+}
+
+@Composable
+fun CountListItem(modifier: Modifier = Modifier, title: String, state: CountListState, onClick: (() -> Unit)? = null,
+) {
+    CardListItem(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(
+                    onClick?.let {
+                        return@let if (state != CountListState.Loading) {
+                            Modifier.clickable { it() }
+                        } else {
+                            Modifier
+                        }
+                    } ?: Modifier
+                )
+                .padding(horizontal = 16.dp)
+        ) {
+            BodyRegularLabel(
+                text = title,
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                modifier = Modifier
+                    .padding(0.dp, 16.dp, 8.dp, 16.dp)
+                    .weight(1f)
+            )
+
+            when (state) {
+                is CountListState.Idle -> {
+                    Box(
+                        modifier = Modifier.size(8.dp).clip(CircleShape)
+                            .background(when (state.indicatorState) {
+                                CountListState.IndicatorState.DIM -> GovUkTheme.colourScheme.surfaces.msgRead
+                                CountListState.IndicatorState.FULL -> GovUkTheme.colourScheme.surfaces.msgUnread
+                            })
+                    )
+
+                    BodyRegularLabel(
+                        text = "${state.count}",
+                        color = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+                        modifier = Modifier.padding(start = 6.dp)
+                    )
+                }
+
+                is CountListState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(16.dp),
+                        color = GovUkTheme.colourScheme.surfaces.primary,
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 @Preview
 @Composable
 private fun InternalLinkListItemPreview() {
@@ -602,6 +668,18 @@ private fun AddressListItemPreview() {
             isFirst = false,
             isLast = false
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CountListItemPreview() {
+    GovUkTheme {
+        Column {
+            CountListItem(title = "Test Idle Indicator Full Indicator", state = CountListState.Idle(42, CountListState.IndicatorState.FULL), onClick = {})
+            CountListItem(title = "Test Idle Indicator Dim Indicator", state = CountListState.Idle(0, CountListState.IndicatorState.DIM), onClick = {})
+            CountListItem(title = "Test Loading", state = CountListState.Loading, onClick = {})
+        }
     }
 }
 

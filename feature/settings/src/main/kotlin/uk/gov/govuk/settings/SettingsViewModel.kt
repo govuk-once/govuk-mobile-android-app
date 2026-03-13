@@ -11,6 +11,10 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
+import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
@@ -31,15 +35,25 @@ internal data class SettingsUiState(
     val isNotificationsEnabled: Boolean,
     val isAuthenticationEnabled: Boolean,
     val isAnalyticsEnabled: Boolean,
-    val isYourAccountsEnabled: Boolean
+    val isYourAccountsEnabled: Boolean,
+    val messageRowState: MessageRowState
 )
+
+internal sealed class MessageRowState {
+    internal data object Unknown: MessageRowState()
+    internal data object Gone: MessageRowState()
+    internal data object Loading: MessageRowState()
+    internal data class Loaded(val unreadCount: Int): MessageRowState()
+}
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     authRepo: AuthRepo,
     flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
-    private val configRepo: ConfigRepo
+    private val configRepo: ConfigRepo,
+    private val dvlaRepo: DvlaRepo,
+    private val notificationCentreRepo: NotificationCentreRepo
 ): ViewModel() {
 
     companion object {
@@ -58,8 +72,50 @@ internal class SettingsViewModel @Inject constructor(
             isNotificationsEnabled = flagRepo.isNotificationsEnabled(),
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
             isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
-            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled()
+            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled(),
+            messageRowState = MessageRowState.Unknown
         )
+    }
+
+    private fun loadMessages() {
+        if (_uiState.value?.messageRowState == MessageRowState.Unknown) {
+            viewModelScope.launch {
+                _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
+
+                when (dvlaRepo.linkState.value) {
+                    DvlaLinkState.CHECKING -> {
+                        when (val linkState = dvlaRepo.isAccountLinked()) {
+                            is Result.Success -> loadMessageCount(linkState.value)
+                            else -> _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
+                        }
+                    }
+                    DvlaLinkState.UNLINKED -> {
+                        loadMessageCount(false)
+                    }
+                    DvlaLinkState.LINKED -> {
+                        loadMessageCount(true)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun loadMessageCount(isLinked: Boolean) {
+        if (!isLinked) {
+            _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
+            return
+        }
+
+        when (val messages = notificationCentreRepo.getNotifications()) {
+            is Result.Success -> {
+                _uiState.update { it?.copy(messageRowState = MessageRowState.Loaded(messages.value.count { msg -> msg.isUnread })) }
+            }
+            else -> {
+                _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
+            }
+
+        }
+
     }
 
     fun onPageView() {
@@ -68,6 +124,8 @@ internal class SettingsViewModel @Inject constructor(
             screenName = SCREEN_NAME,
             title = TITLE
         )
+
+        loadMessages()
     }
 
     fun onAccount() {

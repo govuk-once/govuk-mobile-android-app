@@ -21,7 +21,6 @@ fun NavGraphBuilder.homeGraph(
     widgets: List<@Composable (Modifier) -> Unit>,
     modifier: Modifier = Modifier,
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
-    onShowNotificationCentre: () -> Unit,
     transitionOverrideRoutes: List<String> = emptyList()
 ) {
     navigation(
@@ -48,8 +47,7 @@ fun NavGraphBuilder.homeGraph(
             HomeRoute(
                 widgets = widgets,
                 modifier = modifier,
-                headerWidget = headerWidget,
-                onShowNotificationCentre = onShowNotificationCentre
+                headerWidget = headerWidget
             )
         }
     }

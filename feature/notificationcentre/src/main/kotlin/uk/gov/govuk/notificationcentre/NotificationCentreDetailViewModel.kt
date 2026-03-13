@@ -5,26 +5,30 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
+import uk.gov.govuk.data.notificationcentre.model.Notification
+import uk.gov.govuk.data.notificationcentre.model.UpdateNotificationRequestBody
 import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_DETAIL_ID_ARG
 import javax.inject.Inject
 
 internal sealed class NotificationCentreDetailUiState {
     data object Loading: NotificationCentreDetailUiState()
-    data class Loaded(val notification: DetailedNotification): NotificationCentreDetailUiState()
+    data class Loaded(val notification: Notification): NotificationCentreDetailUiState()
     data object Error: NotificationCentreDetailUiState()
-    data object NotFound: NotificationCentreDetailUiState()
+    data object NoInternet: NotificationCentreDetailUiState()
 }
 
 
 @HiltViewModel
 internal class NotificationCentreDetailViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
+    private val notificationCentreRepo: NotificationCentreRepo,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -52,23 +56,64 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
         analyticsClient.notificationCentreUrlLaunched(url)
     }
 
+    fun onTapMarkUnread() {
+        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let {
+            analyticsClient.notificationCentreMarkUnread()
+            viewModelScope.launch {
+                notificationCentreRepo.updateNotification(it.notification.id, UpdateNotificationRequestBody.Status.UNREAD)
+            }
+        }
+    }
 
-    fun onTapRetry() {
-        loadData()
+    fun onTapDelete() {
+        analyticsClient.notificationCentreDelete()
+    }
+
+    fun onConfirmDelete() {
+        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let {
+            analyticsClient.notificationCentreConfirmDelete()
+            viewModelScope.launch {
+                notificationCentreRepo.deleteNotification(it.notification.id)
+            }
+        }
+    }
+
+    fun onCancelDelete() {
+        analyticsClient.notificationCentreCancelDelete()
+
     }
 
     private fun loadData() {
         savedStateHandle.get<String>(NOTIFICATION_CENTRE_DETAIL_ID_ARG)?.let { id ->
             viewModelScope.launch {
-                delay(500)
+                val result = notificationCentreRepo.getSingleNotification(id)
+
                 withContext(Dispatchers.Main) {
-                    when(val notification = DetailedNotification.mockDetailedNotifications.firstOrNull { it.notification.id == id }) {
-                        null -> _uiState.value = NotificationCentreDetailUiState.NotFound
-                        else -> _uiState.value = NotificationCentreDetailUiState.Loaded(notification)
+                    _uiState.value = when(result) {
+                        is Result.Success -> {
+                            val notification = result.value
+                            if (notification != null) {
+                                if (notification.isUnread) {
+                                    viewModelScope.launch {
+                                        notificationCentreRepo.updateNotification(notification.id,
+                                            UpdateNotificationRequestBody.Status.READ)
+                                    }
+                                }
+                                NotificationCentreDetailUiState.Loaded(notification)
+                            } else {
+                                analyticsClient.notificationCentreNotFound()
+                                NotificationCentreDetailUiState.Error
+                            }
+                        }
+
+                        is Result.DeviceOffline -> NotificationCentreDetailUiState.NoInternet
+                        else -> NotificationCentreDetailUiState.Error
                     }
                 }
             }
         }
 
     }
+
+
 }

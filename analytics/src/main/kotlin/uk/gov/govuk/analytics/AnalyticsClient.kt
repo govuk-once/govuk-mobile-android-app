@@ -1,5 +1,7 @@
 package uk.gov.govuk.analytics
 
+import android.os.Debug
+import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
@@ -163,6 +165,32 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun notificationCentreNotFound() {
+        logEvent( "NotificationCentreNotFound", mapOf())
+    }
+
+    fun notificationCentreMarkUnread() {
+        logEvent("NotificationCentreMarkUnread",  mapOf())
+    }
+
+    fun notificationCentreDelete()  {
+        logEvent("NotificationCentreDelete",   mapOf(
+            "action" to "tap"
+        ))
+    }
+
+    fun notificationCentreConfirmDelete() {
+        logEvent("NotificationCentreDelete", mapOf(
+            "action" to "confirm"
+        ))
+    }
+
+    fun notificationCentreCancelDelete() {
+        logEvent("NotificationCentreDelete", mapOf(
+            "action" to "cancel"
+        ))
+    }
+
     fun search(searchTerm: String) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm)
     }
@@ -304,6 +332,7 @@ class AnalyticsClient @Inject constructor(
     }
 
     private fun logEvent(name: String, parameters: Map<String, Any>) {
+        Log.d("Analytics", "Event: $name $parameters" )
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             firebaseAnalyticsClient.logEvent(name, parameters)
         }

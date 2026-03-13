@@ -18,10 +18,12 @@ data class GovUkTypography(
     val title2Bold: TextStyle,
     val title2Regular: TextStyle,
     val title3Bold: TextStyle,
+    val title3SemiBold: TextStyle,
     val title3Regular: TextStyle,
     val headlineSemibold: TextStyle,
     val bodyBold: TextStyle,
     val bodyRegular: TextStyle,
+    val bodySemibold: TextStyle,
     val calloutBold: TextStyle,
     val calloutRegular: TextStyle,
     val subheadlineBold: TextStyle,
@@ -94,6 +96,13 @@ internal val Typography = GovUkTypography(
         lineHeight = 24.sp,
         letterSpacing = letterSpacing
     ),
+    title3SemiBold = TextStyle(
+        fontFamily = transport,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = letterSpacing
+    ),
     title3Regular = TextStyle(
         fontFamily = transport,
         fontWeight = FontWeight.Light,
@@ -118,6 +127,13 @@ internal val Typography = GovUkTypography(
     bodyRegular = TextStyle(
         fontFamily = transport,
         fontWeight = FontWeight.Light,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
+        letterSpacing = letterSpacing
+    ),
+    bodySemibold = TextStyle(
+        fontFamily = transport,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 17.sp,
         lineHeight = 22.sp,
         letterSpacing = letterSpacing
@@ -194,9 +210,11 @@ internal val LocalTypography = staticCompositionLocalOf {
         title2Bold = TextStyle.Default,
         title2Regular = TextStyle.Default,
         title3Bold = TextStyle.Default,
+        title3SemiBold = TextStyle.Default,
         title3Regular = TextStyle.Default,
         headlineSemibold = TextStyle.Default,
         bodyBold = TextStyle.Default,
+        bodySemibold = TextStyle.Default,
         bodyRegular = TextStyle.Default,
         calloutBold = TextStyle.Default,
         calloutRegular = TextStyle.Default,
