@@ -150,6 +150,7 @@ dependencies {
     implementation(projects.feature.search)
     implementation(projects.feature.topics)
     implementation(projects.feature.visited)
+    implementation(projects.feature.dvla)
     implementation(projects.notifications)
 
     implementation(libs.androidx.activity.compose)

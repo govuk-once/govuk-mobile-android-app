@@ -24,7 +24,7 @@ android {
         buildConfigField("String", "AUTHORIZE_ENDPOINT", "\"authorize\"")
         buildConfigField("String", "TOKEN_ENDPOINT", "\"token\"")
         buildConfigField("String", "AUTH_REDIRECT", "\"govuk://govuk/login-auth-callback\"")
-        buildConfigField("String", "USER_API_BASE_URL", "\"https://staging.bl.once.service.gov.uk\"")
+        buildConfigField("String", "FLEX_BASE_URL", "\"https://staging.bl.once.service.gov.uk\"")
     }
 
     buildTypes {
@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.realm.base)
     implementation(libs.openid)
+    implementation(libs.logging.interceptor)
 
     implementation(libs.gov.securestore) {
         artifact {

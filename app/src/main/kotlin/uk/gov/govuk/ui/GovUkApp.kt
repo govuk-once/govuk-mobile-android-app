@@ -67,6 +67,8 @@ import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.navigation.dvlaGraph
+import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -457,7 +459,14 @@ private fun GovUkNavHost(
         )
         topicsGraph(
             navController = navController,
-            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+            launchBrowser = { url ->
+                browserLauncher.launch(url) {
+                    showBrowserNotFoundAlert = true
+                }
+            },
+            onLinkDvlaAccount = {
+                navController.navigateToDvlaLink()
+            },
             modifier = Modifier.padding(paddingValues)
         )
         notificationsGraph(
@@ -554,6 +563,12 @@ private fun GovUkNavHost(
                 bottom = imeBottomPadding,
                 end = paddingValues.calculateEndPadding(layoutDirection)
             )
+        )
+
+        dvlaGraph(
+            onComplete = {
+                navController.popBackStack()
+            }
         )
     }
 

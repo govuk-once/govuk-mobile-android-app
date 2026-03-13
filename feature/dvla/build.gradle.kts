@@ -6,30 +6,29 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.realm)
     alias(libs.plugins.kover)
 }
 
 android {
-    namespace = "uk.gov.govuk.topics"
+    namespace = "uk.gov.govuk.dvla"
     compileSdk = Version.COMPILE_SDK
 
     defaultConfig {
         minSdk = Version.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField("String", "TOPICS_BASE_URL", "\"https://app.integration.publishing.service.gov.uk/static/topics/\"")
     }
 
     buildTypes {
         release {
-            buildConfigField("String", "TOPICS_BASE_URL", "\"https://app.publishing.service.gov.uk/static/topics/\"")
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -46,25 +45,10 @@ android {
     }
 }
 
-sonar {
-    properties {
-        property(
-            "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/TopicsRealmProvider.*"
-        )
-        property(
-            "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/TopicsRealmProvider.*"
-        )
-    }
-}
-
 dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
-    implementation(projects.feature.visited)
     implementation(projects.data)
-    implementation(projects.config)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)

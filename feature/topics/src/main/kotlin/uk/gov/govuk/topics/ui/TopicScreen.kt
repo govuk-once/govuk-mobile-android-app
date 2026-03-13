@@ -1,5 +1,6 @@
 package uk.gov.govuk.topics.ui
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -60,13 +62,15 @@ internal fun TopicRoute(
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
     onSubtopic: (ref: String) -> Unit,
+    onLinkDvlaAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
-    Box(modifier.fillMaxSize()
+    Box(modifier
+        .fillMaxSize()
         .background(GovUkTheme.colourScheme.surfaces.screenBackground)
     ) {
         uiState?.let {
@@ -74,6 +78,7 @@ internal fun TopicRoute(
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
+                        showDvlaLink = it.showDvlaLink,
                         onPageView = { title -> viewModel.onPageView(
                             topicUi = it.topicUi,
                             title = title
@@ -112,7 +117,8 @@ internal fun TopicRoute(
                             )
                             onSubtopic(ref)
                         },
-                        focusRequester = focusRequester
+                        focusRequester = focusRequester,
+                        onPrimaryAction = onLinkDvlaAccount
                     )
                 }
 
@@ -138,6 +144,7 @@ internal fun TopicRoute(
 @Composable
 private fun TopicScreen(
     topic: TopicUi,
+    showDvlaLink: Boolean,
     onPageView: (String) -> Unit,
     onBack: () -> Unit,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
@@ -145,7 +152,8 @@ private fun TopicScreen(
     onPopularPagesSeeAll: (section: String, text: String) -> Unit,
     onSubtopic: (text: String, ref: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
     focusRequester: FocusRequester,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPrimaryAction: () -> Unit = {}
 ) {
     val popularPagesIndex = 1
     val stepByStepsIndex = popularPagesIndex + topic.popularPages.size
@@ -201,6 +209,21 @@ private fun TopicScreen(
 
             item {
                 MediumVerticalSpacer()
+            }
+
+            if (showDvlaLink) {
+                item {
+                    DrillInCard(
+                        title = "Add your driver and vehicles account",
+                        onClick = onPrimaryAction,
+                        modifier = Modifier
+                            .padding(horizontal = GovUkTheme.spacing.medium)
+                            .padding(
+                                top = GovUkTheme.spacing.medium,
+                                bottom = GovUkTheme.spacing.medium
+                            )
+                    )
+                }
             }
 
             val showHorizontalScrollView = false
@@ -305,7 +328,8 @@ private fun HorizontalScrollView(
     if (isFontScaledUp) {
         // vertical list
         Column(
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
+                .fillMaxWidth()
                 .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
             cards.forEach { item ->
@@ -320,7 +344,8 @@ private fun HorizontalScrollView(
         // horizontal list
         Box {
             LazyRow(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
                     .padding(horizontal = GovUkTheme.spacing.medium),
             ) {
                 itemsIndexed(cards) { index, item ->

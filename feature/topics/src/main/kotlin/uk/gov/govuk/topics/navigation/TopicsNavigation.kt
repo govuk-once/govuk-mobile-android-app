@@ -47,6 +47,7 @@ fun NavGraphBuilder.topicSelectionGraph(
 fun NavGraphBuilder.topicsGraph(
     navController: NavController,
     launchBrowser: (url: String) -> Unit,
+    onLinkDvlaAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -75,6 +76,7 @@ fun NavGraphBuilder.topicsGraph(
                 onStepByStepSeeAll = { navController.navigate(TOPICS_ALL_STEP_BY_STEPS_ROUTE) },
                 onPopularPagesSeeAll = { navController.navigate(TOPICS_ALL_POPULAR_PAGES_ROUTE) },
                 onSubtopic = { ref -> navController.navigateToTopic(ref, true) },
+                onLinkDvlaAccount = onLinkDvlaAccount,
                 modifier = modifier
             )
         }
