@@ -91,7 +91,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isChatEnabled,
-            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
+            remoteFlag = configRepo.isChatEnabled
         )
     }
 

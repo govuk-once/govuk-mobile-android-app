@@ -352,8 +352,17 @@ class FlagRepoTest {
     }
 
     @Test
-    fun `Given a release build, When chat is enabled, then return false`() {
-        flagRepo = FlagRepo(false, debugFlags, configRepo)
+    fun `Given chat is enabled, When is chat enabled, then return true`() {
+        mockkStatic(::isEnabled)
+        every { isEnabled(any(), any(), any()) } returns true
+
+        assertTrue(flagRepo.isChatEnabled())
+    }
+
+    @Test
+    fun `Given chat is disabled, When is chat enabled, then return false`() {
+        mockkStatic(::isEnabled)
+        every { isEnabled(any(), any(), any()) } returns false
 
         assertFalse(flagRepo.isChatEnabled())
     }

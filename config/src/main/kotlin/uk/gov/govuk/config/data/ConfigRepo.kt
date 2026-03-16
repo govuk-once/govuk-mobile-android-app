@@ -18,6 +18,7 @@ interface ConfigRepo {
     val isNotificationsEnabled: Boolean
     val isLocalServicesEnabled: Boolean
     val isExternalBrowserEnabled: Boolean
+    val isChatEnabled: Boolean
     val chatUrls: ChatUrls
     val userFeedbackBanner: UserFeedbackBanner?
     val refreshTokenExpirySeconds: Long?
