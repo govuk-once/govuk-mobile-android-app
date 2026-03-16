@@ -35,7 +35,7 @@ class DvlaViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
 
-        every { deviceIdProvider.getDeviceId() } returns linkingId
+        coEvery { deviceIdProvider.getDeviceId() } returns linkingId
     }
 
     @After
