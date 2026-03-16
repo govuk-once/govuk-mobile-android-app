@@ -8,10 +8,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -109,34 +111,6 @@ class LoginViewModelTest {
 
     @Test
     fun `Given the user is signed in and the refresh token issued at date and the refresh token expiry date are null, then emit loading and login event`() {
-        every { authRepo.isUserSignedIn() } returns true
-        coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
-        coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
-        every { flagRepo.isFlexEnabled() } returns true
-
-        runTest {
-            val isLoading = mutableListOf<Boolean?>()
-            val events = mutableListOf<LoginEvent>()
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-                viewModel.isLoading.toList(isLoading)
-            }
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-                viewModel.loginCompleted.toList(events)
-            }
-            viewModel.init(activity)
-
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
-            assertTrue(isLoading.last() == true)
-            assertTrue(events.first() is LoginEvent.BiometricLogin)
-        }
-    }
-
-    @Test
-    fun `Given the user is signed in, the refresh token issued at date and the refresh token expiry date are null and init user returns not sent, then emit loading and login event`() {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
@@ -360,6 +334,24 @@ class LoginViewModelTest {
             coVerify {
                 authRepo.endUserSession()
                 authRepo.clear()
+            }
+        }
+    }
+
+    @Test
+    fun `Given the user is signed in and the biometric login is successful, then terms are not accepted`() {
+        every { authRepo.isUserSignedIn() } returns true
+        coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
+        coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
+
+        runTest {
+            viewModel.init(activity)
+
+            coVerify(exactly = 0) {
+                termsRepo.termsAccepted(any())
             }
         }
     }
@@ -607,6 +599,26 @@ class LoginViewModelTest {
             coVerify {
                 termsRepo.termsAccepted(any())
             }
+        }
+    }
+
+    @Test
+    fun `Given an auth response, when success and terms acceptance suspends, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns null
+        coEvery { termsRepo.termsAccepted(any()) } coAnswers { delay(1) }
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+            advanceUntilIdle()
+
+            assertTrue(events.first() is LoginEvent.WebLogin)
         }
     }
 
