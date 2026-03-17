@@ -87,21 +87,21 @@ class LoginViewModelTest {
     fun `Given the terms url is in the remote config, when init, use the remote config`() {
         coEvery { configRepo.termsAndConditions?.url ?: "" } returns "https://terms.gov.uk"
 
-        assertTrue(viewModel.getTermsAndConditionsUrl() == "https://terms.gov.uk")
+        assertEquals(viewModel.termsAndConditionsUrl, "https://terms.gov.uk")
     }
 
     @Test
     fun `Given the terms url is not in the remote config, when init, use the default`() {
         coEvery { configRepo.termsAndConditions?.url ?: "" } returns ""
 
-        assertTrue(viewModel.getTermsAndConditionsUrl() == viewModel.defaultTermsUrl)
+        assertEquals(viewModel.termsAndConditionsUrl, LoginViewModel.DEFAULT_TERMS_URL)
     }
 
     @Test
     fun `Given the termsAndConditions is not in the remote config, when init, use the default`() {
         coEvery { configRepo.termsAndConditions } returns null
 
-        assertTrue(viewModel.getTermsAndConditionsUrl() == viewModel.defaultTermsUrl)
+        assertEquals(viewModel.termsAndConditionsUrl, LoginViewModel.DEFAULT_TERMS_URL)
     }
 
     @Test

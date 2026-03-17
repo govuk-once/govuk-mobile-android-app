@@ -74,7 +74,7 @@ internal fun LoginRoute(
                     onError(ErrorEvent.UnableToSignInError)
                 }
             },
-            termsUrl = viewModel.getTermsAndConditionsUrl(),
+            termsUrl = viewModel.termsAndConditionsUrl,
             modifier = modifier
         )
     }

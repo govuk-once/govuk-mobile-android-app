@@ -41,7 +41,12 @@ internal class LoginViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
-    internal val defaultTermsUrl = "https://www.gov.uk/guidance/govuk-app-terms-and-conditions"
+    companion object {
+        const val DEFAULT_TERMS_URL = "https://www.gov.uk/guidance/govuk-app-terms-and-conditions"
+    }
+
+    internal val termsAndConditionsUrl: String
+        get() = configRepo.termsAndConditions?.url?.takeIf { it.isNotEmpty() } ?: DEFAULT_TERMS_URL
 
     private val _isLoading: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val isLoading = _isLoading.asStateFlow()
@@ -116,10 +121,6 @@ internal class LoginViewModel @Inject constructor(
             }
         }
     }
-
-    fun getTermsAndConditionsUrl(): String =
-        configRepo.termsAndConditions?.url?.takeIf { it.isNotEmpty() }
-            ?: defaultTermsUrl
 
     private suspend fun isUserInitialised(): Boolean {
         if (!flagRepo.isFlexEnabled()) return true
