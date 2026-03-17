@@ -1,5 +1,7 @@
 package uk.gov.govuk.topics.navigation
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -22,6 +24,8 @@ internal const val TOPIC_SUBTOPIC_ARG = "isSubtopic"
 const val TOPICS_EDIT_ROUTE = "topics_edit_route"
 const val TOPICS_ALL_STEP_BY_STEPS_ROUTE = "topics_all_step_by_steps_route"
 const val TOPICS_ALL_POPULAR_PAGES_ROUTE = "topics_all_popular_pages_route"
+
+const val DVLA_LINK_RESULT = "dvla_link_result"
 
 val topicsDeepLinks = mapOf(
     // Todo - individual topic with args
@@ -67,7 +71,12 @@ fun NavGraphBuilder.topicsGraph(
                 navArgument(TOPIC_SUBTOPIC_ARG) { type = NavType.BoolType },
             ),
             /* deepLinks = deepLinks("/topics$topicPath") */
-        ) {
+        ) { backStackEntry ->
+
+            val isDvlaLinked by backStackEntry.savedStateHandle
+                .getStateFlow(DVLA_LINK_RESULT, false)
+                .collectAsState()
+
             TopicRoute(
                 onBack = { navController.popBackStack() },
                 onExternalLink = { url, _ ->
@@ -76,6 +85,7 @@ fun NavGraphBuilder.topicsGraph(
                 onStepByStepSeeAll = { navController.navigate(TOPICS_ALL_STEP_BY_STEPS_ROUTE) },
                 onPopularPagesSeeAll = { navController.navigate(TOPICS_ALL_POPULAR_PAGES_ROUTE) },
                 onSubtopic = { ref -> navController.navigateToTopic(ref, true) },
+                isDvlaLinked = isDvlaLinked,
                 onLinkDvlaAccount = onLinkDvlaAccount,
                 modifier = modifier
             )

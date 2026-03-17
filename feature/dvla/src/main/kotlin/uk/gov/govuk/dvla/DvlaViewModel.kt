@@ -22,6 +22,7 @@ internal class DvlaViewModel @Inject constructor(
 
     sealed interface LinkingEvent {
         data object LinkComplete : LinkingEvent
+        data object UnlinkComplete : LinkingEvent
     }
 
     sealed interface UiState {
@@ -36,7 +37,7 @@ internal class DvlaViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        startLinking()
+        if (dvlaRepo.isLinked) unlinkDvlaAccount() else startLinking()
     }
 
     private fun startLinking() {
@@ -59,6 +60,17 @@ internal class DvlaViewModel @Inject constructor(
             _linkingEvent.emit(LinkingEvent.LinkComplete)
         } else {
             _uiState.value = UiState.Error
+        }
+    }
+
+    private fun unlinkDvlaAccount() {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            if (dvlaRepo.unlinkAccount() is Result.Success) {
+                _linkingEvent.emit(LinkingEvent.UnlinkComplete)
+            } else {
+                _uiState.value = UiState.Error
+            }
         }
     }
 }

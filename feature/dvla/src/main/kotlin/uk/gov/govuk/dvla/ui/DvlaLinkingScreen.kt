@@ -13,7 +13,9 @@ import uk.gov.govuk.dvla.R
 
 @Composable
 internal fun DvlaLinkingRoute(
-    onComplete: () -> Unit,
+    onLinkComplete: () -> Unit,
+    onUnlinkComplete: () -> Unit,
+    onAlertDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -26,7 +28,7 @@ internal fun DvlaLinkingRoute(
             message = R.string.error_dialog_message,
             buttonText = R.string.try_again,
             onDismiss = {
-                onComplete()
+                onAlertDismiss()
             }
         )
     }
@@ -34,7 +36,8 @@ internal fun DvlaLinkingRoute(
     LaunchedEffect(Unit) {
         viewModel.linkingEvent.collect {
             when(it) {
-                is DvlaViewModel.LinkingEvent.LinkComplete -> onComplete()
+                is DvlaViewModel.LinkingEvent.LinkComplete -> onLinkComplete()
+                is DvlaViewModel.LinkingEvent.UnlinkComplete -> onUnlinkComplete()
             }
         }
     }

@@ -9,12 +9,16 @@ import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
 const val DVLA_LINK_ROUTE = "dvla_link_route"
 
 fun NavGraphBuilder.dvlaGraph(
-    onComplete: () -> Unit,
+    onLinkComplete: () -> Unit,
+    onUnlinkComplete: () -> Unit,
+    onAlertDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     composable(route = DVLA_LINK_ROUTE) {
         DvlaLinkingRoute(
-            onComplete = onComplete,
+            onLinkComplete = onLinkComplete,
+            onUnlinkComplete = onUnlinkComplete,
+            onAlertDismiss = onAlertDismiss,
             modifier = modifier
         )
     }
