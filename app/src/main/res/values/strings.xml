@@ -48,6 +48,11 @@
 
     <string name="login_biometric_prompt_title">Confirm that it’s you</string>
 
+    <string name="welcome_privacy_notice_link_text">Read the privacy notice</string>
+    <string name="welcome_terms_accept_intro_text">To get started, accept the</string>
+    <string name="welcome_terms_link_text">terms and conditions</string>
+    <string name="welcome_opens_in_browser">opens in web browser</string>
+
     <string name="terms_new_user_title">Review the terms and conditions</string>
     <string name="terms_updated_title">Review the updated terms and conditions</string>
     <string name="terms_and_conditions">Terms and conditions</string>

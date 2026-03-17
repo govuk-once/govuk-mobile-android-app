@@ -18,18 +18,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.BuildConfig
+import uk.gov.govuk.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.R
 import uk.gov.govuk.data.auth.ErrorEvent
+import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CaptionRegularLabel
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
@@ -37,7 +41,6 @@ import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.Title1RegularLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.login.LoginEvent
 import uk.gov.govuk.login.LoginViewModel
@@ -71,6 +74,7 @@ internal fun LoginRoute(
                     onError(ErrorEvent.UnableToSignInError)
                 }
             },
+            termsUrl = viewModel.termsAndConditionsUrl,
             modifier = modifier
         )
     }
@@ -97,6 +101,7 @@ internal fun LoginRoute(
 @Composable
 private fun LoginScreen(
     onContinueClick: () -> Unit,
+    termsUrl: String,
     modifier: Modifier = Modifier
 ) {
     CentreAlignedScreen(
@@ -121,13 +126,15 @@ private fun LoginScreen(
                 textAlign = TextAlign.Center
             )
 
-            MediumVerticalSpacer()
+            WelcomeText(
+                introText = stringResource(id = R.string.welcome_terms_accept_intro_text),
+                linkText = stringResource(id = R.string.welcome_terms_link_text),
+                url = termsUrl
+            )
 
-            Title1RegularLabel(
-                text = stringResource(id = R.string.login_description),
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier.padding(horizontal = GovUkTheme.spacing.extraLarge),
-                textAlign = TextAlign.Center
+            WelcomeText(
+                linkText = stringResource(R.string.welcome_privacy_notice_link_text),
+                url = PRIVACY_POLICY_URL
             )
         },
         bottomContent = {
@@ -144,19 +151,61 @@ private fun LoginScreen(
         },
         footerContent = {
             FixedPrimaryButton(
-                text = stringResource(R.string.login_continue_button),
+                text = stringResource(R.string.terms_accept),
                 onClick = { onContinueClick() }
             )
         }
     )
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun LoginPreview() {
+private fun WelcomeText(
+    introText: String = "",
+    linkText: String,
+    url: String
+) {
+    val uriHandler = LocalUriHandler.current
+    val altText = "$introText $linkText ${stringResource(R.string.welcome_opens_in_browser)}"
+
+    MediumVerticalSpacer()
+
+    BodyRegularLabelTrailingLink(
+        introText = introText,
+        outroText = "",
+        linkText = linkText,
+        onClick = { uriHandler.openUri(url) },
+        altText = altText,
+        textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+        textAlign = TextAlign.Center,
+        textDecoration = TextDecoration.Underline,
+        modifier = Modifier.padding(horizontal = GovUkTheme.spacing.large)
+    )
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+private fun LightModePreview() {
     GovUkTheme {
         LoginScreen(
-            onContinueClick = { }
+            onContinueClick = { },
+            termsUrl = "https://terms.gov.uk"
+        )
+    }
+}
+
+@Preview(
+    showBackground = false,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun DarkModePreview() {
+    GovUkTheme {
+        LoginScreen(
+            onContinueClick = { },
+            termsUrl = "https://terms.gov.uk"
         )
     }
 }

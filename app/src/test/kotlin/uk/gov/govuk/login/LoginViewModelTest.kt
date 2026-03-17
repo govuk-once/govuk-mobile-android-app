@@ -84,6 +84,27 @@ class LoginViewModelTest {
     }
 
     @Test
+    fun `Given the terms url is in the remote config, when init, use the remote config`() {
+        coEvery { configRepo.termsAndConditions?.url ?: "" } returns "https://terms.gov.uk"
+
+        assertEquals(viewModel.termsAndConditionsUrl, "https://terms.gov.uk")
+    }
+
+    @Test
+    fun `Given the terms url is not in the remote config, when init, use the default`() {
+        coEvery { configRepo.termsAndConditions?.url ?: "" } returns ""
+
+        assertEquals(viewModel.termsAndConditionsUrl, LoginViewModel.DEFAULT_TERMS_URL)
+    }
+
+    @Test
+    fun `Given the termsAndConditions is not in the remote config, when init, use the default`() {
+        coEvery { configRepo.termsAndConditions } returns null
+
+        assertEquals(viewModel.termsAndConditionsUrl, LoginViewModel.DEFAULT_TERMS_URL)
+    }
+
+    @Test
     fun `Given the user is signed in and the refresh token issued at date and the refresh token expiry date are null, then emit loading and login event`() {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
