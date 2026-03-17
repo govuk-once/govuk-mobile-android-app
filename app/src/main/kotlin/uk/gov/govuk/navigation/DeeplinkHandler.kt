@@ -9,13 +9,14 @@ import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.homeDeepLinks
 import uk.gov.govuk.search.navigation.searchDeepLinks
 import uk.gov.govuk.settings.navigation.settingsDeepLinks
-import uk.gov.govuk.topics.navigation.topicsDeepLinks
+import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
 import javax.inject.Inject
 
 internal class DeeplinkHandler @Inject constructor(
     private val flagRepo: FlagRepo,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    private val topicsDeepLinksProvider: TopicsDeepLinksProvider
 ) {
     var deepLink: Uri? = null
 
@@ -29,7 +30,7 @@ internal class DeeplinkHandler @Inject constructor(
             }
 
             if (flagRepo.isTopicsEnabled()) {
-                putAll(topicsDeepLinks)
+                putAll(topicsDeepLinksProvider.deepLinks)
             }
 
             if (flagRepo.isRecentActivityEnabled()) {

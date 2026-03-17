@@ -27,11 +27,6 @@ const val TOPICS_ALL_POPULAR_PAGES_ROUTE = "topics_all_popular_pages_route"
 
 const val DVLA_LINK_RESULT = "dvla_link_result"
 
-val topicsDeepLinks = mapOf(
-    // Todo - individual topic with args
-    "/topics/edit" to listOf(TOPICS_EDIT_ROUTE)
-)
-
 fun NavGraphBuilder.topicSelectionGraph(
     topicSelectionCompleted: () -> Unit,
 ) {
@@ -69,8 +64,7 @@ fun NavGraphBuilder.topicsGraph(
             arguments = listOf(
                 navArgument(TOPIC_REF_ARG) { type = NavType.StringType },
                 navArgument(TOPIC_SUBTOPIC_ARG) { type = NavType.BoolType },
-            ),
-            /* deepLinks = deepLinks("/topics$topicPath") */
+            )
         ) { backStackEntry ->
 
             val isDvlaLinked by backStackEntry.savedStateHandle
