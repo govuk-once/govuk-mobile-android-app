@@ -23,11 +23,6 @@ const val TOPICS_EDIT_ROUTE = "topics_edit_route"
 const val TOPICS_ALL_STEP_BY_STEPS_ROUTE = "topics_all_step_by_steps_route"
 const val TOPICS_ALL_POPULAR_PAGES_ROUTE = "topics_all_popular_pages_route"
 
-val topicsDeepLinks = mapOf(
-    // Todo - individual topic with args
-    "/topics/edit" to listOf(TOPICS_EDIT_ROUTE)
-)
-
 fun NavGraphBuilder.topicSelectionGraph(
     topicSelectionCompleted: () -> Unit,
 ) {
@@ -65,8 +60,7 @@ fun NavGraphBuilder.topicsGraph(
             arguments = listOf(
                 navArgument(TOPIC_REF_ARG) { type = NavType.StringType },
                 navArgument(TOPIC_SUBTOPIC_ARG) { type = NavType.BoolType },
-            ),
-            /* deepLinks = deepLinks("/topics$topicPath") */
+            )
         ) {
             TopicRoute(
                 onBack = { navController.popBackStack() },

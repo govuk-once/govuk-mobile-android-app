@@ -1,11 +1,12 @@
 package uk.gov.govuk.topics
 
-interface TopicsFeature  {
+interface TopicsFeature {
+
+    var topicsReferences: List<String>?
 
     suspend fun init()
 
     suspend fun clear()
 
     suspend fun hasTopics(): Boolean
-
 }

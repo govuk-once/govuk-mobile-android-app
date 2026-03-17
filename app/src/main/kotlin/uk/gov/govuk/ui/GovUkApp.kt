@@ -373,8 +373,6 @@ private fun GovUkNavHost(
     )
     val layoutDirection = LocalLayoutDirection.current
 
-    val coroutineScope = rememberCoroutineScope()
-
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
