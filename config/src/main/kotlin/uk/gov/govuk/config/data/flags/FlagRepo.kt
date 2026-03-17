@@ -104,12 +104,11 @@ class FlagRepo @Inject constructor(
     }
 
     fun isDvlaLinkEnabled(): Boolean {
-        return true
-//        return isFlexEnabled() && isEnabled(
-//            debugEnabled = debugEnabled,
-//            debugFlag = debugFlags.isDvlaLinkEnabled,
-//            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
-//        )
+        return isFlexEnabled() && isEnabled(
+            debugEnabled = debugEnabled,
+            debugFlag = debugFlags.isDvlaLinkEnabled,
+            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
+        )
     }
 
 }
