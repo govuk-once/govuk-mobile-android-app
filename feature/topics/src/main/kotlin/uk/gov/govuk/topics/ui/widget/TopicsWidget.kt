@@ -11,9 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -45,9 +42,10 @@ fun TopicsWidget(
     val viewModel: TopicsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    uiState?.let {
+    uiState?.let { state ->
         TopicsWidgetContent(
-            uiState = it,
+            uiState = state,
+            onCategoryChange = viewModel::onCategoryChange,
             onView = { category, topics -> viewModel.onView(category, topics) },
             onTopicClick = { category, title, ref, index, count ->
                 viewModel.onTopicSelectClick(
@@ -68,6 +66,7 @@ fun TopicsWidget(
 @Composable
 private fun TopicsWidgetContent(
     uiState: TopicsWidgetUiState,
+    onCategoryChange: (TopicsCategory) -> Unit,
     onView: (TopicsCategory, List<TopicItemUi>) -> Unit,
     onTopicClick: (TopicsCategory, String, String, Int, Int) -> Unit,
     onEditClick: (String) -> Unit,
@@ -81,6 +80,7 @@ private fun TopicsWidgetContent(
         if (uiState.allTopics.isNotEmpty()) {
             TopicsCard(
                 uiState = uiState,
+                onCategoryChange = onCategoryChange,
                 onView = onView,
                 onEditClick = onEditClick,
                 onTopicClick = onTopicClick
@@ -114,12 +114,16 @@ private fun Header(
 @Composable
 private fun TopicsCard(
     uiState: TopicsWidgetUiState,
+    onCategoryChange: (TopicsCategory) -> Unit,
     onView: (TopicsCategory, List<TopicItemUi>) -> Unit,
     onEditClick: (String) -> Unit,
     onTopicClick: (TopicsCategory, String, String, Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var activeButtonState by rememberSaveable { mutableStateOf( ConnectedButton.FIRST) }
+    val activeButtonState = when (uiState.selectedCategory) {
+        TopicsCategory.YOUR -> ConnectedButton.FIRST
+        TopicsCategory.ALL -> ConnectedButton.SECOND
+    }
 
     val (category, topics) = when (activeButtonState) {
         ConnectedButton.FIRST -> TopicsCategory.YOUR to uiState.yourTopics
@@ -143,10 +147,10 @@ private fun TopicsCard(
                 ConnectedButtonGroup(
                     firstText = stringResource(R.string.your_topics),
                     secondText = stringResource(R.string.all_topics),
-                    onActiveStateChange = { activeButton ->
-                        activeButtonState = activeButton
-                    },
-                    activeButton = activeButtonState
+                    activeButton = activeButtonState,
+                    onActiveStateChange = {
+                        onCategoryChange(if (it == ConnectedButton.FIRST) TopicsCategory.YOUR else TopicsCategory.ALL)
+                    }
                 )
             }
         }
@@ -242,6 +246,7 @@ private fun TopicsWidgetPreview() {
                 yourTopics = topics,
                 allTopics = topics
             ),
+            onCategoryChange = {},
             onView = { _, _ -> },
             onTopicClick = { _, _, _, _, _ -> },
             onEditClick = { }
@@ -258,6 +263,7 @@ private fun TopicsWidgetEmptyTopicsPreview() {
                 allTopics = emptyList(),
                 yourTopics = emptyList()
             ),
+            onCategoryChange = {},
             onView = { _, _ -> },
             onTopicClick = { _, _, _, _, _ -> },
             onEditClick = { }

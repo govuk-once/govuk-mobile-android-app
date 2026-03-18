@@ -3,19 +3,23 @@ package uk.gov.govuk.topics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.topics.data.TopicsRepo
+import uk.gov.govuk.topics.data.local.TopicsDataStore
 import uk.gov.govuk.topics.extension.toTopicItemUi
 import uk.gov.govuk.topics.ui.model.TopicItemUi
 import javax.inject.Inject
 
 internal data class TopicsWidgetUiState(
     val allTopics: List<TopicItemUi>,
-    val yourTopics: List<TopicItemUi>
+    val yourTopics: List<TopicItemUi>,
+    val selectedCategory: TopicsCategory = TopicsCategory.YOUR
 )
 
 internal enum class TopicsCategory {
@@ -25,23 +29,30 @@ internal enum class TopicsCategory {
 @HiltViewModel
 internal class TopicsWidgetViewModel @Inject constructor(
     private val topicsRepo: TopicsRepo,
-    private val analyticsClient: AnalyticsClient
-): ViewModel() {
+    private val analyticsClient: AnalyticsClient,
+    private val topicsDataStore: TopicsDataStore
+) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<TopicsWidgetUiState?> = MutableStateFlow(null)
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<TopicsWidgetUiState?> = combine(
+        topicsRepo.topics,
+        topicsDataStore.selectedCategoryFlow
+    ) { topics, category ->
+        val mappedTopics = topics.map { it.toTopicItemUi() }
 
-    init {
+        TopicsWidgetUiState(
+            allTopics = mappedTopics,
+            yourTopics = mappedTopics.filter { it.isSelected },
+            selectedCategory = category
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
+
+    fun onCategoryChange(category: TopicsCategory) {
         viewModelScope.launch {
-            topicsRepo.topics.collect { topics ->
-                val mappedTopics = topics
-                    .map{ topicItem -> topicItem.toTopicItemUi() }
-
-                _uiState.value = TopicsWidgetUiState(
-                    allTopics = mappedTopics,
-                    yourTopics = mappedTopics.filter { it.isSelected }
-                )
-            }
+            topicsDataStore.setSelectedCategory(category)
         }
     }
 
@@ -66,14 +77,12 @@ internal class TopicsWidgetViewModel @Inject constructor(
     }
 
     private fun sendViewItemListEvent(category: TopicsCategory, topics: List<TopicItemUi>) {
-        val items = mutableListOf<EcommerceEvent.Item>()
-
         val listCategory = mapCategory(category)
 
-        topics.forEach { topic ->
-            items += EcommerceEvent.Item(
-                itemName = topic.title,
-                locationId = topic.ref
+        val items = topics.map {
+            EcommerceEvent.Item(
+                itemName = it.title,
+                locationId = it.ref
             )
         }
 
@@ -98,17 +107,12 @@ internal class TopicsWidgetViewModel @Inject constructor(
 
         analyticsClient.selectItemEvent(
             ecommerceEvent = EcommerceEvent(
-                itemListName = listCategory,
-                itemListId = listCategory,
-                items = listOf(
+                itemListName = listCategory, itemListId = listCategory, items = listOf(
                     EcommerceEvent.Item(
-                        itemName = title,
-                        locationId = ref
+                        itemName = title, locationId = ref
                     )
-                ),
-                totalItemCount = topicCount
-            ),
-            selectedItemIndex = selectedItemIndex
+                ), totalItemCount = topicCount
+            ), selectedItemIndex = selectedItemIndex
         )
     }
 
