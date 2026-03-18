@@ -8,10 +8,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -33,6 +35,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.terms.data.TermsRepo
 import java.util.Date
 import kotlin.test.assertEquals
 
@@ -46,6 +49,7 @@ class LoginViewModelTest {
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
+    private val termsRepo = mockk<TermsRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val activity = mockk<FragmentActivity>(relaxed = true)
     private val dispatcher = UnconfinedTestDispatcher()
@@ -63,6 +67,7 @@ class LoginViewModelTest {
             notificationsRepo,
             userRepo,
             flagRepo,
+            termsRepo,
             analyticsClient
         )
     }
@@ -106,34 +111,6 @@ class LoginViewModelTest {
 
     @Test
     fun `Given the user is signed in and the refresh token issued at date and the refresh token expiry date are null, then emit loading and login event`() {
-        every { authRepo.isUserSignedIn() } returns true
-        coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
-        coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
-        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
-        every { flagRepo.isFlexEnabled() } returns true
-
-        runTest {
-            val isLoading = mutableListOf<Boolean?>()
-            val events = mutableListOf<LoginEvent>()
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-                viewModel.isLoading.toList(isLoading)
-            }
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-                viewModel.loginCompleted.toList(events)
-            }
-            viewModel.init(activity)
-
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
-            assertTrue(isLoading.last() == true)
-            assertTrue(events.first() is LoginEvent.BiometricLogin)
-        }
-    }
-
-    @Test
-    fun `Given the user is signed in, the refresh token issued at date and the refresh token expiry date are null and init user returns not sent, then emit loading and login event`() {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
@@ -362,6 +339,24 @@ class LoginViewModelTest {
     }
 
     @Test
+    fun `Given the user is signed in and the biometric login is successful, then terms are not accepted`() {
+        every { authRepo.isUserSignedIn() } returns true
+        coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
+        coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
+
+        runTest {
+            viewModel.init(activity)
+
+            coVerify(exactly = 0) {
+                termsRepo.termsAccepted(any())
+            }
+        }
+    }
+
+    @Test
     fun `Given the user is signed in, when init is unsuccessful, then emit loading`() {
         val exception = Exception("exception")
         every { authRepo.isUserSignedIn() } returns true
@@ -414,6 +409,9 @@ class LoginViewModelTest {
             coVerify(exactly = 0) {
                 loginRepo.setRefreshTokenIssuedAtDate(any())
             }
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -446,6 +444,9 @@ class LoginViewModelTest {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
             }
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -476,6 +477,9 @@ class LoginViewModelTest {
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
+            }
+            coVerify {
+                termsRepo.termsAccepted(any())
             }
         }
     }
@@ -515,6 +519,9 @@ class LoginViewModelTest {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
             }
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -537,6 +544,10 @@ class LoginViewModelTest {
 
             val loginEvent = events.first() as LoginEvent.WebLogin
             assertTrue(loginEvent.isBiometricsEnabled)
+
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -559,6 +570,10 @@ class LoginViewModelTest {
 
             val loginEvent = events.first() as LoginEvent.WebLogin
             assertFalse(loginEvent.isBiometricsEnabled)
+
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 
@@ -580,6 +595,30 @@ class LoginViewModelTest {
 
             val loginEvent = events.first() as LoginEvent.WebLogin
             assertFalse(loginEvent.isBiometricsEnabled)
+
+            coVerify {
+                termsRepo.termsAccepted(any())
+            }
+        }
+    }
+
+    @Test
+    fun `Given an auth response, when success and terms acceptance suspends, then emit login event`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns null
+        coEvery { termsRepo.termsAccepted(any()) } coAnswers { delay(1) }
+        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        every { flagRepo.isFlexEnabled() } returns true
+
+        runTest {
+            val events = mutableListOf<LoginEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.loginCompleted.toList(events)
+            }
+            viewModel.onAuthResponse(null)
+            advanceUntilIdle()
+
+            assertTrue(events.first() is LoginEvent.WebLogin)
         }
     }
 
@@ -605,6 +644,10 @@ class LoginViewModelTest {
             assertTrue(isLoading.last() == true)
             assertTrue(loginEvents.isEmpty())
             assertEquals(ErrorEvent.UnableToSignInError, errorEvents.first())
+
+            coVerify(exactly = 0) {
+                termsRepo.termsAccepted(any())
+            }
         }
     }
 }
