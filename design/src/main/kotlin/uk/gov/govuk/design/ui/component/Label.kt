@@ -268,7 +268,7 @@ fun BodyRegularLabelTrailingLink(
     textAlign: TextAlign = TextAlign.Left,
     textDecoration: TextDecoration = TextDecoration.None
 ) {
-    val linkColor = GovUkTheme.colourScheme.textAndIcons.link
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.linkSecondary
     val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
 
     val annotatedString = buildAnnotatedString {
