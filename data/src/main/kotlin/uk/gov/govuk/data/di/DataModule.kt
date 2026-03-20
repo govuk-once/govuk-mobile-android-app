@@ -14,6 +14,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import uk.gov.govuk.data.crypto.CryptoProvider
 import uk.gov.govuk.data.crypto.TinkClient
+import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
+import uk.gov.govuk.data.notificationcentre.NotificationCentreRepoImpl
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.data.user.UserRepoImpl
 import javax.inject.Named
@@ -57,4 +59,10 @@ internal class DataModule {
     @Provides
     fun provideCryptoProvider(@ApplicationContext context: Context): CryptoProvider =
         TinkClient(context)
+
+    @Singleton
+    @Provides
+    fun provideNotificationCentreRepo(notificationCentreRepo: NotificationCentreRepoImpl): NotificationCentreRepo {
+        return notificationCentreRepo
+    }
 }
