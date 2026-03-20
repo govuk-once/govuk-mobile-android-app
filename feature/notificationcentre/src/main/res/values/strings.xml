@@ -11,8 +11,10 @@
     <string name="empty_title">No notifications</string>
     <string name="empty_body">You don\'t have any notifications yet. When you receive notifications from government services, they\’ll appear here.</string>
     <string name="notification_centre_title">Notification Centre</string>
-    <string name="notification_centre_detail_title">Notification Detail</string>
+    <string name="notification_centre_detail_title">Notification</string>
     <string name="sent_date_format">Sent: %1s</string>
     <string name="notification_not_found_title">Notification not found</string>
     <string name="notification_not_found_body">This notification has been deleted or is no longer available</string>
+    <string name="mark_as_unread">Mark notification as unread</string>
+    <string name="delete_notification">Delete notification</string>
 </resources>

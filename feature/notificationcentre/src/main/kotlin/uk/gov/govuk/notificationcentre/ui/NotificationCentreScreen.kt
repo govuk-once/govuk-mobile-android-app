@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -56,7 +55,7 @@ import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.notificationcentre.Notification
+import uk.gov.govuk.data.notificationcentre.model.Notification
 import uk.gov.govuk.notificationcentre.NotificationCentreUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreViewModel
 import uk.gov.govuk.notificationcentre.R
@@ -284,7 +283,7 @@ private fun NotificationRow(
             )
             .background(GovUkTheme.colourScheme.surfaces.list)
             .drawBehind {
-                if (notification.unread) {
+                if (notification.isUnread) {
                     drawRect(
                         color = indicatorColour, size = Size(8.dp.toPx(), size.height)
                     )
@@ -302,7 +301,7 @@ private fun NotificationRow(
                 .padding(start = 24.dp, end = 16.dp)
                 .weight(1.0f)
                 .semantics(mergeDescendants = true) {
-                    if (notification.unread) {
+                    if (notification.isUnread) {
                         text = AnnotatedString(unreadContentDescription)
                     }
                     role = Role.Button
