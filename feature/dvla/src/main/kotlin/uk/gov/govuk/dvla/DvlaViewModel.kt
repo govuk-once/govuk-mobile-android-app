@@ -13,11 +13,13 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DeviceIdProvider
 import uk.gov.govuk.dvla.data.DvlaRepo
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
-    private val deviceIdProvider: DeviceIdProvider
+    private val deviceIdProvider: DeviceIdProvider,
+    @Named("dvla_auth_url") private val dvlaAuthUrl: String
 ) : ViewModel() {
 
     sealed interface LinkingEvent {
@@ -35,8 +37,20 @@ internal class DvlaViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private val _authUrlToLaunch = MutableStateFlow<String?>(null)
+    val authUrlToLaunch = _authUrlToLaunch.asStateFlow()
+
     init {
-        startLinking()
+//        startLinking()
+        startAuthFlow()
+    }
+
+    private fun startAuthFlow() {
+        _authUrlToLaunch.value = dvlaAuthUrl
+    }
+
+    fun onAuthTabLaunched() {
+        _authUrlToLaunch.value = null
     }
 
     private fun startLinking() {

@@ -564,6 +564,9 @@ private fun GovUkNavHost(
         )
 
         dvlaGraph(
+            launchBrowser = { url ->
+                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
+            },
             onComplete = {
                 navController.popBackStack()
             }

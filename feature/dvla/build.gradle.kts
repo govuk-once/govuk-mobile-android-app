@@ -18,6 +18,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "DVLA_AUTH_URL", "\"https://architecture-link-account-service-ui-ext.dvla.gov.uk/\"")
     }
 
     buildTypes {
