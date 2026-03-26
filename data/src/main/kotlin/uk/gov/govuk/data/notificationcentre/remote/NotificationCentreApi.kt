@@ -11,7 +11,7 @@ import uk.gov.govuk.data.notificationcentre.model.UpdateNotificationRequestBody
 
 interface NotificationCentreApi {
     companion object {
-        private const val NOTIFICATIONS_PATH = "/notifications"
+        private const val NOTIFICATIONS_PATH = "/app/uns/v1/notifications"
     }
     @GET(NOTIFICATIONS_PATH)
     suspend fun getNotifications(): Response<List<Notification>>
