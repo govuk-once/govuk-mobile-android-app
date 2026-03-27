@@ -9,7 +9,7 @@ import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 
 interface UserApi {
     private companion object {
-        const val USERS_PATH = "app/v1/users"
+        const val USERS_PATH = "app/udp/v1/users"
         const val NOTIFICATIONS_PATH = "$USERS_PATH/notifications"
     }
     // Headers are added via interceptor in UserModule.kt
