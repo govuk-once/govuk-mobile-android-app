@@ -2,6 +2,7 @@ package uk.gov.govuk.data.notificationcentre.remote
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Path
@@ -21,4 +22,7 @@ interface NotificationCentreApi {
 
     @PATCH("$NOTIFICATIONS_PATH/{notificationId}/status")
     suspend fun updateNotification(@Path("notificationId") notificationId: String, @Body body: UpdateNotificationRequestBody): Response<Unit>
+
+    @DELETE("$NOTIFICATIONS_PATH/{notificationId}")
+    suspend fun deleteNotification(@Path("notificationId") notificationId: String): Response<Unit>
 }
