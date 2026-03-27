@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
 
 const val DVLA_LINK_ROUTE = "dvla_link_route"
+const val DVLA_DEEP_LINK_PATH = "/returnedToken"
 const val ARG_DVLA_TOKEN = "token"
 
 fun NavGraphBuilder.dvlaGraph(
