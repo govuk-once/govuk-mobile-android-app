@@ -12,10 +12,18 @@ internal class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
     private val authRepo: AuthRepo
 ) {
+    var isLinked = false
+        private set
+
     suspend fun linkAccount(id: String): Result<Unit> {
-        return safeAuthApiCall(
-            apiCall = { api.linkDvlaIdentity(id) },
-            authRepo = authRepo
-        )
+        val result = safeAuthApiCall({ api.linkDvlaIdentity(id) }, authRepo)
+        isLinked = result is Result.Success
+        return result
+    }
+
+    suspend fun unlinkAccount(): Result<Unit> {
+        val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
+        isLinked = result !is Result.Success
+        return result
     }
 }

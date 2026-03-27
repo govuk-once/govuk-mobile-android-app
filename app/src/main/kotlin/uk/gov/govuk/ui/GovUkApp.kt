@@ -83,6 +83,7 @@ import uk.gov.govuk.search.ui.widget.SearchWidget
 import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
 import uk.gov.govuk.terms.navigation.termsGraph
+import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.visited.navigation.visitedGraph
@@ -564,7 +565,15 @@ private fun GovUkNavHost(
         )
 
         dvlaGraph(
-            onComplete = {
+            onLinkComplete = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, true)
+                navController.popBackStack()
+            },
+            onUnlinkComplete = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
+                navController.popBackStack()
+            },
+            onAlertDismiss = {
                 navController.popBackStack()
             }
         )
