@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,7 +19,7 @@ import javax.inject.Named
 internal class DvlaViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
-    @Named("dvla_auth_url") private val dvlaAuthUrl: String
+    @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
 ) : ViewModel() {
 
     sealed interface LinkingEvent {
@@ -62,21 +61,6 @@ internal class DvlaViewModel @Inject constructor(
             linkDvlaAccount(token)
         }
     }
-
-//    private fun startLinking() {
-//        viewModelScope.launch {
-//            _uiState.value = UiState.Loading
-//            val linkingId = getLinkingId()
-//            linkDvlaAccount(linkingId)
-//        }
-//    }
-
-//    private suspend fun getLinkingId(): String {
-//        // TODO until the OneLogin flow for DVLA is available, device id will be used
-//        // delay mimicking process of acquiring linkingId
-//        delay(3000)
-//        return deviceIdProvider.getDeviceId()
-//    }
 
     private suspend fun linkDvlaAccount(id: String) {
         if (dvlaRepo.linkAccount(id) is Result.Success) {
