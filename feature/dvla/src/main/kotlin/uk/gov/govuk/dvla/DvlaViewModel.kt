@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.data.DeviceIdProvider
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import javax.inject.Inject
@@ -21,7 +20,6 @@ import javax.inject.Named
 internal class DvlaViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
-    private val deviceIdProvider: DeviceIdProvider,
     @Named("dvla_auth_url") private val dvlaAuthUrl: String
 ) : ViewModel() {
 
