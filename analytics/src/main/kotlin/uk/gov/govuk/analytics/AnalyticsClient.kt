@@ -136,6 +136,26 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun notificationCentreNotFound() {
+        logEvent( "NotificationCentreNotFound", mapOf())
+    }
+
+    fun notificationCentreMarkUnread() {
+        logEvent("NotificationCentreMarkUnread",  mapOf())
+    }
+
+    fun notificationCentreDelete()  {
+        logEvent("NotificationCentreDelete",   mapOf())
+    }
+
+    fun notificationCentreConfirmDelete() {
+        logEvent("NotificationCentreConfirmDelete", mapOf())
+    }
+
+    fun notificationCentreCancelDelete() {
+        logEvent("NotificationCentreCancelDelete", mapOf())
+    }
+
     fun search(searchTerm: String) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm)
     }

@@ -20,14 +20,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,9 +57,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.data.notificationcentre.model.Notification
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
+import uk.gov.govuk.design.ui.component.DestructiveButton
 import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
+import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailViewModel
@@ -86,6 +94,16 @@ internal fun NotificationCentreDetailRoute(
                 onBack()
             },
             onTapRetry = viewModel::onTapRetry,
+            onTapDelete = {
+                viewModel.onTapDelete()
+            },
+            onConfirmDelete = {
+                viewModel.onConfirmDelete()
+                onBack()
+            },
+            onCancelDelete = {
+                viewModel.onCancelDelete()
+            },
             launchBrowser = {
                 launchBrowser(it)
                 viewModel.onLinkTap(it)
@@ -94,6 +112,7 @@ internal fun NotificationCentreDetailRoute(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NotificationCentreDetailScreen(
     onPageView: () -> Unit,
@@ -101,8 +120,14 @@ private fun NotificationCentreDetailScreen(
     onBack: () -> Unit,
     onUnread: () -> Unit,
     onTapRetry: () -> Unit,
+    onTapDelete: () -> Unit,
+    onCancelDelete: () -> Unit,
+    onConfirmDelete: () -> Unit,
     launchBrowser: (url: String) -> Unit
 ) {
+    val deleteBottomSheetState = rememberModalBottomSheetState()
+    var showDeleteBottomSheet by remember { mutableStateOf(false) }
+
     Column(
         Modifier
             .fillMaxWidth()
@@ -113,7 +138,10 @@ private fun NotificationCentreDetailScreen(
         Header(
             onBack = onBack,
             onUnread = onUnread,
-            onDelete = {}
+            onDelete = {
+                onTapDelete()
+                showDeleteBottomSheet = true
+            }
         )
 
         Column(
@@ -137,6 +165,25 @@ private fun NotificationCentreDetailScreen(
                 )
             }
         }
+
+        if (showDeleteBottomSheet) {
+            ModalBottomSheet(
+                sheetState = deleteBottomSheetState,
+                onDismissRequest = { showDeleteBottomSheet = false
+            }, dragHandle = null) {
+                ConfirmationSheet(
+                    onConfirm = {
+                        showDeleteBottomSheet = false
+                        onConfirmDelete()
+                    },
+                    onCancel = {
+                        showDeleteBottomSheet = false
+                        onCancelDelete()
+                    }
+                )
+            }
+        }
+
         LaunchedEffect(Unit) {
             onPageView()
         }
@@ -187,18 +234,18 @@ private fun Header(
                 )
             }
 
-//            IconButton(
-//                onClick = onDelete,
-//                modifier = Modifier
-//                    .size(48.dp)
-//
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_delete_notification),
-//                    tint = actionColour,
-//                    contentDescription = stringResource(R.string.delete_notification),
-//                )
-//            }
+            IconButton(
+                onClick = onDelete,
+                modifier = Modifier
+                    .size(48.dp)
+
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete_notification),
+                    tint = actionColour,
+                    contentDescription = stringResource(R.string.delete_notification),
+                )
+            }
         }
     }
 }
@@ -385,6 +432,39 @@ fun LinkifyText(text: String, onClick: (String) -> Unit) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ConfirmationSheet(onConfirm: () -> Unit, onCancel: () -> Unit) {
+    Column(Modifier.padding(16.dp)) {
+        Title2BoldLabel(
+            stringResource(R.string.delete_notification_sheet_title),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp)
+        )
+
+        BodyRegularLabel(
+            stringResource(R.string.delete_notification_sheet_body),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            color = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
+
+        DestructiveButton(
+            text = stringResource(R.string.delete_notification_sheet_confirm),
+            onClick = onConfirm,
+            modifier = Modifier.padding(top = 32.dp)
+        )
+
+        SecondaryButton(
+            text = stringResource(R.string.delete_notification_sheet_cancel),
+            onClick = onCancel,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
 
 
 private fun formatDate(date: LocalDateTime): String =
@@ -394,7 +474,7 @@ private fun formatDate(date: LocalDateTime): String =
 @Composable
 private fun NotificationCentreDetailLoadingPreview() {
     GovUkTheme {
-        NotificationCentreDetailScreen({}, NotificationCentreDetailUiState.Loading, {},{}, {}, launchBrowser = {})
+        NotificationCentreDetailScreen({}, NotificationCentreDetailUiState.Loading, {},{}, {}, {}, {},{},launchBrowser = {})
 
     }
 }
@@ -403,7 +483,7 @@ private fun NotificationCentreDetailLoadingPreview() {
 @Composable
 private fun NotificationCentreDetailErrorPreview() {
     GovUkTheme {
-        NotificationCentreDetailScreen({}, NotificationCentreDetailUiState.Error, { }, {}, {}, launchBrowser = {})
+        NotificationCentreDetailScreen({}, NotificationCentreDetailUiState.Error, { }, {}, {}, {}, {},{},launchBrowser = {})
 
     }
 }
@@ -412,7 +492,7 @@ private fun NotificationCentreDetailErrorPreview() {
 @Composable
 private fun NotificationCentreDetailNotFoundPreview() {
     GovUkTheme {
-        NotificationCentreDetailScreen({}, NotificationCentreDetailUiState.NotFound, { }, {}, {}, launchBrowser = {}
+        NotificationCentreDetailScreen({}, NotificationCentreDetailUiState.NotFound, { }, {}, {}, {}, {}, {},launchBrowser = {}
         )
     }
 }
@@ -424,10 +504,21 @@ private fun NotificationCentreDetailLoadedPreview() {
         NotificationCentreDetailScreen(
             {},
             NotificationCentreDetailUiState.Loaded(Notification.mockNotifications.first()),
-            { },
+            {},
+            {},
+            {},
+            {},
             {},
             {},
             launchBrowser = {}
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ConfirmationSheetPreview() {
+    GovUkTheme {
+        ConfirmationSheet(onConfirm = {}, onCancel = {})
     }
 }

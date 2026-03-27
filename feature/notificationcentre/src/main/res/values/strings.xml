@@ -17,4 +17,8 @@
     <string name="notification_not_found_body">This notification has been deleted or is no longer available</string>
     <string name="mark_as_unread">Mark notification as unread</string>
     <string name="delete_notification">Delete notification</string>
+    <string name="delete_notification_sheet_title">Delete notification?</string>
+    <string name="delete_notification_sheet_body">This notification will be permanently deleted. This action cannot be undone.</string>
+    <string name="delete_notification_sheet_confirm">Delete notification</string>
+    <string name="delete_notification_sheet_cancel">Cancel</string>
 </resources>

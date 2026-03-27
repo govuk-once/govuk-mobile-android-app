@@ -56,17 +56,35 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
         analyticsClient.notificationCentreUrlLaunched(url)
     }
 
-
     fun onTapRetry() {
         loadData()
     }
 
     fun onTapMarkUnread() {
         (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let {
+            analyticsClient.notificationCentreMarkUnread()
             viewModelScope.launch {
                 notificationCentreRepo.updateNotification(it.notification.id, UpdateNotificationRequestBody.Status.UNREAD)
             }
         }
+    }
+
+    fun onTapDelete() {
+        analyticsClient.notificationCentreDelete()
+    }
+
+    fun onConfirmDelete() {
+        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let {
+            analyticsClient.notificationCentreConfirmDelete()
+            viewModelScope.launch {
+                notificationCentreRepo.deleteNotification(it.notification.id)
+            }
+        }
+    }
+
+    fun onCancelDelete() {
+        analyticsClient.notificationCentreCancelDelete()
+
     }
 
     private fun loadData() {
@@ -87,6 +105,7 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
                                 }
                                 NotificationCentreDetailUiState.Loaded(notification)
                             } else {
+                                analyticsClient.notificationCentreNotFound()
                                 NotificationCentreDetailUiState.NotFound
                             }
                         }
@@ -98,4 +117,6 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
         }
 
     }
+
+
 }

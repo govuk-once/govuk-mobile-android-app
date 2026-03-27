@@ -37,14 +37,14 @@ class NotificationCentreRepoImpl @Inject constructor(
     override suspend fun getNotifications(): Result<List<Notification>> {
         val currNotifications = notifications
         if (currNotifications != null && !currNotifications.hasExpired) {
-            return Result.Success(currNotifications.value)
+            return Success(currNotifications.value)
         }
 
         val res = safeAuthApiCall(apiCall = {
             notificationCentreApi.getNotifications()
         }, authRepo = authRepo)
 
-        if (res is Result.Success) {
+        if (res is Success) {
             notifications = CacheEntry(res.value)
         }
         return res
@@ -94,6 +94,19 @@ class NotificationCentreRepoImpl @Inject constructor(
             notificationCentreApi.updateNotification(
                 notificationId,
                 UpdateNotificationRequestBody(status)
+            )
+        }, authRepo = authRepo)
+    }
+
+    override suspend fun deleteNotification(notificationId: String): Result<Unit> {
+        notifications?.let { nots ->
+            val updatedNotifications = nots.value.filter { it.id != notificationId }
+            notifications = notifications?.copy(value = updatedNotifications)
+        }
+
+        return safeAuthApiCall(apiCall = {
+            notificationCentreApi.deleteNotification(
+                notificationId
             )
         }, authRepo = authRepo)
     }
