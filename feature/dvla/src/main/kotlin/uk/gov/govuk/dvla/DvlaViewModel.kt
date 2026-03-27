@@ -1,23 +1,25 @@
 package uk.gov.govuk.dvla
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.data.DeviceIdProvider
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
-    private val deviceIdProvider: DeviceIdProvider
+    @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
 ) : ViewModel() {
 
     sealed interface LinkingEvent {
@@ -35,23 +37,29 @@ internal class DvlaViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private val _authUrlToLaunch = MutableStateFlow<String?>(null)
+    val authUrlToLaunch = _authUrlToLaunch.asStateFlow()
+
     init {
-        startLinking()
+        val token = savedStateHandle.get<String>(ARG_DVLA_TOKEN)
+        token?.let {
+            handleAuthRedirect(it)
+        } ?: startAuthFlow()
     }
 
-    private fun startLinking() {
+    private fun startAuthFlow() {
+        _authUrlToLaunch.value = dvlaAuthUrl
+    }
+
+    fun onAuthTabLaunched() {
+        _authUrlToLaunch.value = null
+    }
+
+    fun handleAuthRedirect(token: String) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            val linkingId = getLinkingId()
-            linkDvlaAccount(linkingId)
+            linkDvlaAccount(token)
         }
-    }
-
-    private suspend fun getLinkingId(): String {
-        // TODO until the OneLogin flow for DVLA is available, device id will be used
-        // delay mimicking process of acquiring linkingId
-        delay(3000)
-        return deviceIdProvider.getDeviceId()
     }
 
     private suspend fun linkDvlaAccount(id: String) {

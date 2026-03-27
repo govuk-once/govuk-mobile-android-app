@@ -5,6 +5,9 @@ import androidx.navigation.NavController
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.chatDeepLinks
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
+import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
+import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.extension.getUrlParam
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.homeDeepLinks
@@ -49,6 +52,13 @@ internal class DeeplinkHandler @Inject constructor(
 
     fun handleDeeplink(navController: NavController) {
         deepLink?.let {
+
+            // check for intercepted route first
+            if (interceptDvlaAuthCallback(it, navController)) {
+                deepLink = null
+                return
+            }
+
             var validDeeplink = true
 
             deepLinks[it.path]?.let { routes ->
@@ -74,5 +84,22 @@ internal class DeeplinkHandler @Inject constructor(
             analyticsClient.deepLinkEvent(validDeeplink, it.toString())
             deepLink = null
         }
+    }
+
+    /** Intercepts the DVLA auth callback */
+    private fun interceptDvlaAuthCallback(uri: Uri, navController: NavController): Boolean {
+        if (uri.path != DVLA_DEEP_LINK_PATH) return false
+
+        uri.getQueryParameter(ARG_DVLA_TOKEN)?.let { token ->
+            navController.navigate("$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN=$token") {
+                popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
+                launchSingleTop = true
+            }
+            // TODO: do we need analytics here? (if yes, on error too?)
+        } ?: run {
+            // TODO: Handle auth failure (missing token etc) when we get requirements
+        }
+
+        return true
     }
 }

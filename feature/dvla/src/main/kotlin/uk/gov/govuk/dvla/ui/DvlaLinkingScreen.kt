@@ -13,22 +13,20 @@ import uk.gov.govuk.dvla.R
 
 @Composable
 internal fun DvlaLinkingRoute(
+    onLaunchBrowser: (String) -> Unit,
     onComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val viewModel: DvlaViewModel = hiltViewModel()
+    val authUrlToLaunch by viewModel.authUrlToLaunch.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState is DvlaViewModel.UiState.Error) {
-        InfoAlert(
-            title = R.string.error_dialog_title,
-            message = R.string.error_dialog_message,
-            buttonText = R.string.try_again,
-            onDismiss = {
-                onComplete()
-            }
-        )
+    LaunchedEffect(authUrlToLaunch) {
+        authUrlToLaunch?.let { url ->
+            onLaunchBrowser(url)
+            viewModel.onAuthTabLaunched()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -39,9 +37,23 @@ internal fun DvlaLinkingRoute(
         }
     }
 
-    DvlaLinkingScreen(
-        modifier = modifier
-    )
+    when (uiState) {
+        is DvlaViewModel.UiState.Error -> {
+            InfoAlert(
+                title = R.string.error_dialog_title,
+                message = R.string.error_dialog_message,
+                buttonText = R.string.try_again,
+                onDismiss = {
+                    onComplete()
+                }
+            )
+        }
+        is DvlaViewModel.UiState.Loading -> {
+            DvlaLinkingScreen(
+                modifier = modifier
+            )
+        }
+    }
 }
 
 @Composable
