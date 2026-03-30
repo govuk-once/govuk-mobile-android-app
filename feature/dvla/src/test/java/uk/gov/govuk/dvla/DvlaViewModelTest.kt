@@ -79,5 +79,25 @@ class DvlaViewModelTest {
 
         assertEquals(DvlaViewModel.UiState.Error, viewModel.uiState.value)
     }
+
+    @Test
+    fun `Given no token in SavedStateHandle, when initialised, then start auth flow and set authUrlToLaunch`() = runTest(dispatcher) {
+        every { savedStateHandle.get<String>("token") } returns null
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
+
+        assertEquals(dvlaAuthUrl, viewModel.authUrlToLaunch.value)
+        coVerify(exactly = 0) { repo.linkAccount(any()) }
+    }
+
+    @Test
+    fun `Given auth url is set, when onAuthTabLaunched is called, then reset authUrlToLaunch to null`() = runTest(dispatcher) {
+        every { savedStateHandle.get<String>("token") } returns null
+        val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
+
+        viewModel.onAuthTabLaunched()
+
+        assertEquals(null, viewModel.authUrlToLaunch.value)
+    }
 }
 
