@@ -41,7 +41,7 @@ internal class DvlaViewModel @Inject constructor(
     val authUrlToLaunch = _authUrlToLaunch.asStateFlow()
 
     init {
-        val token = savedStateHandle.get<String>(ARG_DVLA_TOKEN)
+        val token: String? = savedStateHandle[ARG_DVLA_TOKEN]
         token?.let {
             handleAuthRedirect(it)
         } ?: startAuthFlow()

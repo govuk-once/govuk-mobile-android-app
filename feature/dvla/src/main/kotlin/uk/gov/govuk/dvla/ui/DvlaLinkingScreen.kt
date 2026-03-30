@@ -26,6 +26,7 @@ internal fun DvlaLinkingRoute(
         authUrlToLaunch?.let { url ->
             onLaunchBrowser(url)
             viewModel.onAuthTabLaunched()
+            onComplete()
         }
     }
 
