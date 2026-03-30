@@ -217,8 +217,10 @@ private fun TopicScreen(
             if (showDvlaLink) {
                 item {
                     DrillInCard(
-                        title = if (isDvlaLinked) "Unlink your driver and vehicles account"
-                        else "Add your driver and vehicles account",
+                        title = stringResource(
+                            if (isDvlaLinked) R.string.unlink_dvla_account_button
+                            else R.string.link_dvla_account_button
+                        ),
                         onClick = onPrimaryAction,
                         modifier = Modifier
                             .padding(horizontal = GovUkTheme.spacing.medium)

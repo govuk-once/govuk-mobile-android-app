@@ -16,17 +16,13 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
         val body = response.body()
         val code = response.code()
 
-        if (response.isSuccessful) {
-            when {
-                code == 204 -> {
-                    @Suppress("UNCHECKED_CAST")
-                    Success(Unit as T)
-                }
-                body != null -> Success(body)
-                else -> Error()
+        when {
+            code == 204 -> {
+                @Suppress("UNCHECKED_CAST")
+                Success(Unit as T)
             }
-        } else {
-            Error()
+            response.isSuccessful && body != null -> Success(body)
+            else -> Error()
         }
 
     } catch (e: Exception) {
