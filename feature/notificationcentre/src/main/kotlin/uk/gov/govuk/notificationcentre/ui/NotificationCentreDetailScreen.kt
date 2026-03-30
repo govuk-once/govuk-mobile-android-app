@@ -435,7 +435,9 @@ fun LinkifyText(text: String, onClick: (String) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfirmationSheet(onConfirm: () -> Unit, onCancel: () -> Unit) {
-    Column(Modifier.padding(16.dp)) {
+    Column(Modifier
+        .background(GovUkTheme.colourScheme.surfaces.cardDefault)
+        .padding(16.dp)) {
         Title2BoldLabel(
             stringResource(R.string.delete_notification_sheet_title),
             textAlign = TextAlign.Center,
