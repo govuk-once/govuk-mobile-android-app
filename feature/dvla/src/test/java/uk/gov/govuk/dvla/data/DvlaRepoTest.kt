@@ -4,6 +4,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -42,5 +43,33 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.linkDvlaIdentity(linkingId) }
+    }
+
+    @Test
+    fun `Given unlinking api returns success, when unlinkAccount is called, then return Success and update isLinked`() = runTest {
+        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
+        repo.linkAccount(linkingId)
+        assertTrue(repo.isLinked)
+
+        coEvery { api.deleteDvlaIdentity() } returns Response.success(Unit)
+        val result = repo.unlinkAccount()
+
+        assertTrue(result is Result.Success)
+        assertFalse(repo.isLinked)
+        coVerify(exactly = 1) { api.deleteDvlaIdentity() }
+    }
+
+    @Test
+    fun `Given unlinking api throws exception, when unlinkAccount is called, then return error`() = runTest {
+        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
+        repo.linkAccount(linkingId)
+        assertTrue(repo.isLinked)
+
+        coEvery { api.deleteDvlaIdentity() } throws Exception("Exception")
+        val result = repo.unlinkAccount()
+
+        assertTrue(result is Result.Error)
+        assertTrue(repo.isLinked)
+        coVerify(exactly = 1) { api.deleteDvlaIdentity() }
     }
 }

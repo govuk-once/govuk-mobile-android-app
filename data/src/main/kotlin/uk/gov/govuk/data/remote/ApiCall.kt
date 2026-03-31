@@ -14,11 +14,17 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
     return try {
         val response = apiCall()
         val body = response.body()
-        return if (response.isSuccessful && body != null) {
-            Success(body)
-        } else {
-            Error()
+        val code = response.code()
+
+        when {
+            code == 204 -> {
+                @Suppress("UNCHECKED_CAST")
+                Success(Unit as T)
+            }
+            response.isSuccessful && body != null -> Success(body)
+            else -> Error()
         }
+
     } catch (e: Exception) {
         when (e) {
             is AuthenticationException -> AuthError()
