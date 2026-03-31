@@ -16,7 +16,7 @@ fun NavGraphBuilder.dvlaGraph(
     launchBrowser: (String) -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
-    onAlertDismiss: () -> Unit,          
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     composable(
@@ -32,7 +32,7 @@ fun NavGraphBuilder.dvlaGraph(
             onLaunchBrowser = launchBrowser,
             onLinkComplete = onLinkComplete,
             onUnlinkComplete = onUnlinkComplete,
-            onAlertDismiss = onAlertDismiss,
+            onClose = onClose,
             modifier = modifier
         )
     }

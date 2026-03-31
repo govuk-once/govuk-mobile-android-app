@@ -95,9 +95,8 @@ internal class DeeplinkHandler @Inject constructor(
                 popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
                 launchSingleTop = true
             }
-            // TODO: do we need analytics here? (if yes, on error too?)
         } ?: run {
-            // TODO: Handle auth failure (missing token etc) when we get requirements
+            // TODO: Handle auth failure (missing token etc) in future ticket when we get requirements
         }
 
         return true

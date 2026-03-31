@@ -32,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -576,7 +575,7 @@ private fun GovUkNavHost(
                 navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
                 navController.popBackStack()
             },
-            onAlertDismiss = {
+            onClose = {
                 navController.popBackStack()
             }
         )

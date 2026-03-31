@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
@@ -16,7 +17,7 @@ internal fun DvlaLinkingRoute(
     onLaunchBrowser: (String) -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
-    onAlertDismiss: () -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -28,7 +29,7 @@ internal fun DvlaLinkingRoute(
         authUrlToLaunch?.let { url ->
             onLaunchBrowser(url)
             viewModel.onAuthTabLaunched()
-            onAlertDismiss()
+            onClose()
         }
     }
 
@@ -48,7 +49,7 @@ internal fun DvlaLinkingRoute(
                 message = R.string.error_dialog_message,
                 buttonText = R.string.try_again,
                 onDismiss = {
-                    onAlertDismiss()
+                    onClose()
                 }
             )
         }
@@ -65,7 +66,7 @@ private fun DvlaLinkingScreen(
     modifier: Modifier = Modifier
 ) {
     LoadingScreen(
-        accessibilityText = "Linking your account", // TODO extract
+        accessibilityText = stringResource(R.string.dvla_loading_accessibility_text),
         modifier = modifier
     )
 }
