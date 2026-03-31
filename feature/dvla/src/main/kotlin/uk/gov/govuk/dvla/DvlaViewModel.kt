@@ -62,8 +62,8 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
-    private suspend fun linkDvlaAccount(id: String) {
-        if (dvlaRepo.linkAccount(id) is Result.Success) {
+    private suspend fun linkDvlaAccount(token: String) {
+        if (dvlaRepo.linkAccount(token) is Result.Success) {
             _linkingEvent.emit(LinkingEvent.LinkComplete)
         } else {
             _uiState.value = UiState.Error
