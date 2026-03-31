@@ -7,6 +7,9 @@ import retrofit2.http.Path
 
 interface DvlaApi {
 
+    @POST("app/udp/v1/identity/dvla")
+    suspend fun checkDvlaLinked(): Response<Boolean>
+
     @POST("app/udp/v1/identity/dvla/{id}")
     suspend fun linkDvlaIdentity(@Path("id") id: String): Response<Unit>
 

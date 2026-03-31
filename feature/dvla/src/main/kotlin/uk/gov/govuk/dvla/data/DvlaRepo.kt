@@ -18,6 +18,8 @@ internal class DvlaRepo @Inject constructor(
     var isLinked = false
         private set
 
+    suspend fun isAccountLinked(): Result<Boolean> = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
+
     suspend fun linkAccount(token: String): Result<Unit> {
         val result = try {
             val linkingId = extractLinkingIdFromJwt(token)
