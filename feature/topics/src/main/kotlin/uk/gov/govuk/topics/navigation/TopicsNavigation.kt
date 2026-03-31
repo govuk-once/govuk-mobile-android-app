@@ -79,7 +79,6 @@ fun NavGraphBuilder.topicsGraph(
                 onStepByStepSeeAll = { navController.navigate(TOPICS_ALL_STEP_BY_STEPS_ROUTE) },
                 onPopularPagesSeeAll = { navController.navigate(TOPICS_ALL_POPULAR_PAGES_ROUTE) },
                 onSubtopic = { ref -> navController.navigateToTopic(ref, true) },
-                isDvlaLinked = isDvlaLinked,
                 onLinkDvlaAccount = onLinkDvlaAccount,
                 modifier = modifier
             )

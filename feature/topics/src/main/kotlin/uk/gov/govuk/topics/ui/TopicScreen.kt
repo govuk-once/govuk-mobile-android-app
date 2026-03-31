@@ -1,6 +1,5 @@
 package uk.gov.govuk.topics.ui
 
-import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,6 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -49,6 +47,7 @@ import uk.gov.govuk.design.ui.model.FocusableCardColours
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.topics.DvlaLinkState
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicUiState
 import uk.gov.govuk.topics.TopicViewModel
@@ -62,12 +61,12 @@ internal fun TopicRoute(
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
     onSubtopic: (ref: String) -> Unit,
-    isDvlaLinked: Boolean,
     onLinkDvlaAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val dvlaState by viewModel.dvlaState.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
     Box(modifier
@@ -80,7 +79,7 @@ internal fun TopicRoute(
                     TopicScreen(
                         topic = it.topicUi,
                         showDvlaLink = it.showDvlaLink,
-                        isDvlaLinked = isDvlaLinked,
+                        dvlaState = dvlaState,
                         onPageView = { title -> viewModel.onPageView(
                             topicUi = it.topicUi,
                             title = title
@@ -147,7 +146,7 @@ internal fun TopicRoute(
 private fun TopicScreen(
     topic: TopicUi,
     showDvlaLink: Boolean,
-    isDvlaLinked: Boolean,
+    dvlaState: DvlaLinkState,
     onPageView: (String) -> Unit,
     onBack: () -> Unit,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
@@ -216,12 +215,9 @@ private fun TopicScreen(
 
             if (showDvlaLink) {
                 item {
-                    DrillInCard(
-                        title = stringResource(
-                            if (isDvlaLinked) R.string.unlink_dvla_account_button
-                            else R.string.link_dvla_account_button
-                        ),
-                        onClick = onPrimaryAction,
+                    DvlaLinkWidget(
+                        state = dvlaState,
+                        onActionClick = onPrimaryAction,
                         modifier = Modifier
                             .padding(horizontal = GovUkTheme.spacing.medium)
                             .padding(
