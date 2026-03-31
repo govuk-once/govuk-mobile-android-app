@@ -1,6 +1,6 @@
 package uk.gov.govuk.dvla.data
 
-import org.json.JSONObject
+import com.google.gson.JsonParser
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
@@ -26,14 +26,12 @@ internal class DvlaRepo @Inject constructor(
             Result.Error()
         }
 
-        // Update the state from main based on the result of your decoded API call
         isLinked = result is Result.Success
         return result
     }
 
     suspend fun unlinkAccount(): Result<Unit> {
         val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-        // If unlink is successful, isLinked becomes false
         isLinked = result !is Result.Success
         return result
     }
@@ -49,7 +47,8 @@ internal class DvlaRepo @Inject constructor(
                 .withPadding(Base64.PaddingOption.ABSENT_OPTIONAL)
                 .decode(payloadBase64)
             val decodedString = String(decodedBytes, Charsets.UTF_8)
-            JSONObject(decodedString).getString("linking_id")
+            val jsonObject = JsonParser.parseString(decodedString).asJsonObject
+            jsonObject.get("linking_id").asString
 
         } catch (e: Exception) {
             throw IllegalArgumentException("Failed to extract linking id", e)
