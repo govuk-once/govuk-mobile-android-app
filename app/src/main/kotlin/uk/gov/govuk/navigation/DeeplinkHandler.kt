@@ -3,6 +3,7 @@ package uk.gov.govuk.navigation
 import android.net.Uri
 import androidx.navigation.NavController
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.chat.navigation.chatDeepLinks
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
@@ -27,6 +28,10 @@ internal class DeeplinkHandler @Inject constructor(
         buildMap {
             putAll(homeDeepLinks)
             putAll(settingsDeepLinks)
+
+            if (flagRepo.isChatEnabled()) {
+                putAll(chatDeepLinks)
+            }
 
             if (flagRepo.isSearchEnabled()) {
                 putAll(searchDeepLinks)

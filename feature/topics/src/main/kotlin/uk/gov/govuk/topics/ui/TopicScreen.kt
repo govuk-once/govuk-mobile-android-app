@@ -62,6 +62,7 @@ internal fun TopicRoute(
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
     onSubtopic: (ref: String) -> Unit,
+    isDvlaLinked: Boolean,
     onLinkDvlaAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -79,6 +80,7 @@ internal fun TopicRoute(
                     TopicScreen(
                         topic = it.topicUi,
                         showDvlaLink = it.showDvlaLink,
+                        isDvlaLinked = isDvlaLinked,
                         onPageView = { title -> viewModel.onPageView(
                             topicUi = it.topicUi,
                             title = title
@@ -145,6 +147,7 @@ internal fun TopicRoute(
 private fun TopicScreen(
     topic: TopicUi,
     showDvlaLink: Boolean,
+    isDvlaLinked: Boolean,
     onPageView: (String) -> Unit,
     onBack: () -> Unit,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
@@ -214,7 +217,10 @@ private fun TopicScreen(
             if (showDvlaLink) {
                 item {
                     DrillInCard(
-                        title = "Add your driver and vehicles account",
+                        title = stringResource(
+                            if (isDvlaLinked) R.string.unlink_dvla_account_button
+                            else R.string.link_dvla_account_button
+                        ),
                         onClick = onPrimaryAction,
                         modifier = Modifier
                             .padding(horizontal = GovUkTheme.spacing.medium)

@@ -14,7 +14,9 @@ const val ARG_DVLA_TOKEN = "token"
 
 fun NavGraphBuilder.dvlaGraph(
     launchBrowser: (String) -> Unit,
-    onComplete: () -> Unit,
+    onLinkComplete: () -> Unit,
+    onUnlinkComplete: () -> Unit,
+    onAlertDismiss: () -> Unit,          
     modifier: Modifier = Modifier
 ) {
     composable(
@@ -28,7 +30,9 @@ fun NavGraphBuilder.dvlaGraph(
     ) {
         DvlaLinkingRoute(
             onLaunchBrowser = launchBrowser,
-            onComplete = onComplete,
+            onLinkComplete = onLinkComplete,
+            onUnlinkComplete = onUnlinkComplete,
+            onAlertDismiss = onAlertDismiss,
             modifier = modifier
         )
     }

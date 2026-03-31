@@ -14,7 +14,9 @@ import uk.gov.govuk.dvla.R
 @Composable
 internal fun DvlaLinkingRoute(
     onLaunchBrowser: (String) -> Unit,
-    onComplete: () -> Unit,
+    onLinkComplete: () -> Unit,
+    onUnlinkComplete: () -> Unit,
+    onAlertDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -26,14 +28,15 @@ internal fun DvlaLinkingRoute(
         authUrlToLaunch?.let { url ->
             onLaunchBrowser(url)
             viewModel.onAuthTabLaunched()
-            onComplete()
+            onAlertDismiss()
         }
     }
 
     LaunchedEffect(Unit) {
         viewModel.linkingEvent.collect {
             when(it) {
-                is DvlaViewModel.LinkingEvent.LinkComplete -> onComplete()
+                is DvlaViewModel.LinkingEvent.LinkComplete -> onLinkComplete()
+                is DvlaViewModel.LinkingEvent.UnlinkComplete -> onUnlinkComplete()
             }
         }
     }
@@ -45,7 +48,7 @@ internal fun DvlaLinkingRoute(
                 message = R.string.error_dialog_message,
                 buttonText = R.string.try_again,
                 onDismiss = {
-                    onComplete()
+                    onAlertDismiss()
                 }
             )
         }
@@ -62,7 +65,7 @@ private fun DvlaLinkingScreen(
     modifier: Modifier = Modifier
 ) {
     LoadingScreen(
-        accessibilityText = "Linking your account",
+        accessibilityText = "Linking your account", // TODO extract
         modifier = modifier
     )
 }

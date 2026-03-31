@@ -20,6 +20,8 @@ private const val CHAT_ONBOARDING_PAGE_1_ROUTE = "chat_onboarding_1_route"
 private const val CHAT_ONBOARDING_PAGE_2_ROUTE = "chat_onboarding_2_route"
 private const val CHAT_ONBOARDING_PAGE_3_ROUTE = "chat_onboarding_3_route"
 
+val chatDeepLinks = mapOf("/chat" to listOf(CHAT_ROUTE))
+
 fun NavGraphBuilder.chatGraph(
     navController: NavHostController,
     launchBrowser: (url: String) -> Unit,

@@ -1,7 +1,6 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -17,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -250,7 +247,6 @@ private fun BaseButton(
     )
 
     val interactionSource = remember { MutableInteractionSource() }
-    val focusRequester = remember { FocusRequester() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
     val isHovered by interactionSource.collectIsHoveredAsState()
@@ -300,9 +296,7 @@ private fun BaseButton(
             .drawBottomStroke(
                 colour = strokeColour,
                 cornerRadius = 15.dp
-            )
-            .focusRequester(focusRequester)
-            .focusable(interactionSource = interactionSource),
+            ),
         enabled = enabled,
         shape = shape,
         colors = stateMappedColours,

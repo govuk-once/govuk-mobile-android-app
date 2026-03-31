@@ -15,13 +15,27 @@ internal class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
     private val authRepo: AuthRepo
 ) {
+    var isLinked = false
+        private set
+
     suspend fun linkAccount(token: String): Result<Unit> {
-        return try {
+        val result = try {
             val linkingId = extractLinkingIdFromJwt(token)
             safeAuthApiCall({ api.linkDvlaIdentity(linkingId) }, authRepo)
         } catch (e: Exception) {
             Result.Error()
         }
+
+        // Update the state from main based on the result of your decoded API call
+        isLinked = result is Result.Success
+        return result
+    }
+
+    suspend fun unlinkAccount(): Result<Unit> {
+        val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
+        // If unlink is successful, isLinked becomes false
+        isLinked = result !is Result.Success
+        return result
     }
 
     @OptIn(ExperimentalEncodingApi::class)

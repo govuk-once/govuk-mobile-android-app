@@ -101,12 +101,10 @@ class SearchRepoTest {
         @Test
         fun `Perform search returns Success status when results are found`() {
             coEvery {
-                searchApi.getSearchResults(
-                    searchTerm,
-                    SearchConfig.DEFAULT_RESULTS_PER_PAGE
-                )
+                searchApi.getSearchResults(any(), any())
             } returns response
             every {  response.isSuccessful } returns true
+            every { response.code() } returns 200
             every { response.body() } returns responseWithOneSearchResult
 
             val expected = Success(responseWithOneSearchResult)
@@ -120,12 +118,10 @@ class SearchRepoTest {
         @Test
         fun `Perform search returns Empty status when no results are found`() {
             coEvery {
-                searchApi.getSearchResults(
-                    searchTerm,
-                    SearchConfig.DEFAULT_RESULTS_PER_PAGE
-                )
+                searchApi.getSearchResults(any(), any())
             } returns response
             every {  response.isSuccessful } returns true
+            every { response.code() } returns 200
             every { response.body() } returns responseWithNoSearchResults
 
             val expected = Success(responseWithNoSearchResults)

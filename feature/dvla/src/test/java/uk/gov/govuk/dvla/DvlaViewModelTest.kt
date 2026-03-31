@@ -44,7 +44,8 @@ class DvlaViewModelTest {
     }
 
     @Test
-    fun `When initialised, the initial state should be Loading`() = runTest(dispatcher) {
+    fun `Given account is not linked, when initialised, the initial state should be Loading`() = runTest(dispatcher) {
+        every { repo.isLinked } returns false
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -53,7 +54,8 @@ class DvlaViewModelTest {
     }
 
     @Test
-    fun `Given the linking api returns Success, when initialised, then emit LinkComplete event`() = runTest(dispatcher) {
+    fun `Given account is not linked and linking api returns Success, when initialised, then emit LinkComplete event`() = runTest(dispatcher) {
+        every { repo.isLinked } returns false
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -70,7 +72,8 @@ class DvlaViewModelTest {
     }
 
     @Test
-    fun `Given the linking api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
+    fun `Given account is not linked and linking api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
+        every { repo.isLinked } returns false
         coEvery { repo.linkAccount(any()) } returns Result.Error()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -98,6 +101,46 @@ class DvlaViewModelTest {
         viewModel.onAuthTabLaunched()
 
         assertEquals(null, viewModel.authUrlToLaunch.value)
+    }
+
+    @Test
+    fun `Given account is already linked, when initialised, the initial state should be Loading`() = runTest(dispatcher) {
+        every { repo.isLinked } returns true
+        coEvery { repo.unlinkAccount() } returns Result.Success(Unit)
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
+
+        assertEquals(DvlaViewModel.UiState.Loading, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given account is already linked and unlink api returns Success, when initialised, then emit UnlinkComplete event`() = runTest(dispatcher) {
+        every { repo.isLinked } returns true
+        coEvery { repo.unlinkAccount() } returns Result.Success(Unit)
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
+
+        val events = mutableListOf<DvlaViewModel.LinkingEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.linkingEvent.toList(events)
+        }
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.unlinkAccount() }
+        assertEquals(DvlaViewModel.LinkingEvent.UnlinkComplete, events.first())
+    }
+
+    @Test
+    fun `Given account is already linked and unlink api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
+        every { repo.isLinked } returns true
+        coEvery { repo.unlinkAccount() } returns Result.Error()
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
+
+        advanceUntilIdle()
+
+        assertEquals(DvlaViewModel.UiState.Error, viewModel.uiState.value)
     }
 }
 

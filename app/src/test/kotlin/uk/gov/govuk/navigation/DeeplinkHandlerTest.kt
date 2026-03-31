@@ -12,6 +12,7 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.chat.navigation.CHAT_ROUTE
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.SEARCH_ROUTE
@@ -208,6 +209,43 @@ class DeeplinkHandlerTest {
 
         verify {
             analyticsClient.deepLinkEvent(false, "govuk://gov.uk/visited")
+            onDeeplinkNotFound.invoke()
+        }
+
+        verify(exactly = 0) {
+            navController.navigate(any(), any<NavOptionsBuilder.() -> Unit>())
+            onLaunchBrowser.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle chat deeplink`() {
+        every { flagRepo.isChatEnabled() } returns true
+        every { deeplink.path } returns "/chat"
+        every { deeplink.toString() } returns "govuk://gov.uk/chat"
+
+        deeplinkHandler.deepLink = deeplink
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate(CHAT_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk/chat")
+        }
+    }
+
+    @Test
+    fun `Handle chat deeplink when chat is disabled`() {
+        every { flagRepo.isChatEnabled() } returns false
+        every { deeplink.path } returns "/chat"
+        every { deeplink.toString() } returns "govuk://gov.uk/chat"
+        every { deeplink.getQueryParameter(any()) } returns null
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            analyticsClient.deepLinkEvent(false, "govuk://gov.uk/chat")
             onDeeplinkNotFound.invoke()
         }
 
