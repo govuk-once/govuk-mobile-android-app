@@ -92,7 +92,9 @@ private fun popToChatEntryScreen(navController: NavController) {
 }
 
 fun NavController.navigateToChat() {
-    navigate(CHAT_ROUTE)
+    navigate(CHAT_ROUTE) {
+        popUpTo(CHAT_ROUTE) { inclusive = true }
+    }
 }
 
 fun NavController.navigateToOnboardingPageOne() {

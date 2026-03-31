@@ -3,6 +3,7 @@ package uk.gov.govuk.chat.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -63,6 +64,8 @@ private fun OnboardingPageOneScreen(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    BackHandler(onBack = onCancel)
+
     LaunchedEffect(Unit) {
         onPageView()
     }
