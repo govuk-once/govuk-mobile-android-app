@@ -3,7 +3,6 @@ package uk.gov.govuk.chat.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -78,7 +77,6 @@ private fun AnimatedChatEntry(
     var hasAnnouncedAnswer by rememberSaveable(chatEntry.id) { mutableStateOf(false) }
 
     val animationDuration = 200
-    val loadingText = stringResource(R.string.loading_text)
     val answerReceivedText = stringResource(R.string.answer_received)
 
     LaunchedEffect(chatEntry.answer) {
@@ -116,13 +114,6 @@ private fun AnimatedChatEntry(
             hasAnnouncedAnswer = true
         }
     }
-
-    val loadingModifier = if (shouldAnnounceLoading) {
-        Modifier.semantics {
-            liveRegion = LiveRegionMode.Polite
-            contentDescription = loadingText
-        }
-    } else Modifier
 
     val answerModifier = if (shouldAnnounceAnswer) {
         Modifier.semantics {
@@ -173,6 +164,8 @@ private fun AnimatedChatEntry(
 private fun Loading(
     modifier: Modifier = Modifier
 ) {
+    val loadingText = stringResource(R.string.loading_text)
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -197,8 +190,13 @@ private fun Loading(
         SmallHorizontalSpacer()
 
         BodyRegularLabel(
-            text = stringResource(R.string.loading_text),
-            modifier = Modifier.padding(top = 2.dp)
+            text = loadingText,
+            modifier = Modifier
+                .padding(top = 2.dp)
+                .semantics {
+                    liveRegion = LiveRegionMode.Polite
+                    contentDescription = loadingText
+                }
         )
     }
 }
