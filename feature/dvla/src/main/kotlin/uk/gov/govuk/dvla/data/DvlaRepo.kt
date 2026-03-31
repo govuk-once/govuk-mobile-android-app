@@ -48,7 +48,7 @@ internal class DvlaRepo @Inject constructor(
                 .decode(payloadBase64)
             val decodedString = String(decodedBytes, Charsets.UTF_8)
             val jsonObject = JsonParser.parseString(decodedString).asJsonObject
-            jsonObject.get("linking_id").asString
+            jsonObject["linking_id"].asString
 
         } catch (e: Exception) {
             throw IllegalArgumentException("Failed to extract linking id", e)
