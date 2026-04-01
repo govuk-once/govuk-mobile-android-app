@@ -98,7 +98,8 @@ fun ChatBanner(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onClick(linkText) }
+                        .clickable { onClick(title) }   // Introducing GOV.UK Chat
+//                        .clickable { onClick(linkText) }  // Ask a question
                 ) {
                     MediumVerticalSpacer()
                     Row(
