@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
@@ -13,24 +14,23 @@ import uk.gov.govuk.dvla.R
 
 @Composable
 internal fun DvlaLinkingRoute(
+    onLaunchBrowser: (String) -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
-    onAlertDismiss: () -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val viewModel: DvlaViewModel = hiltViewModel()
+    val authUrlToLaunch by viewModel.authUrlToLaunch.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState is DvlaViewModel.UiState.Error) {
-        InfoAlert(
-            title = R.string.error_dialog_title,
-            message = R.string.error_dialog_message,
-            buttonText = R.string.try_again,
-            onDismiss = {
-                onAlertDismiss()
-            }
-        )
+    LaunchedEffect(authUrlToLaunch) {
+        authUrlToLaunch?.let { url ->
+            onLaunchBrowser(url)
+            viewModel.onAuthTabLaunched()
+            onClose()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -42,9 +42,23 @@ internal fun DvlaLinkingRoute(
         }
     }
 
-    DvlaLinkingScreen(
-        modifier = modifier
-    )
+    when (uiState) {
+        is DvlaViewModel.UiState.Error -> {
+            InfoAlert(
+                title = R.string.error_dialog_title,
+                message = R.string.error_dialog_message,
+                buttonText = R.string.try_again,
+                onDismiss = {
+                    onClose()
+                }
+            )
+        }
+        is DvlaViewModel.UiState.Loading -> {
+            DvlaLinkingScreen(
+                modifier = modifier
+            )
+        }
+    }
 }
 
 @Composable
@@ -52,7 +66,7 @@ private fun DvlaLinkingScreen(
     modifier: Modifier = Modifier
 ) {
     LoadingScreen(
-        accessibilityText = "Linking your account",
+        accessibilityText = stringResource(R.string.dvla_loading_accessibility_text),
         modifier = modifier
     )
 }
