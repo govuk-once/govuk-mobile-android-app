@@ -22,7 +22,7 @@ internal class DvlaRepo @Inject constructor(
         val result = try {
             val linkingId = extractLinkingIdFromJwt(token)
             safeAuthApiCall({ api.linkDvlaIdentity(linkingId) }, authRepo)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Result.Error()
         }
 
