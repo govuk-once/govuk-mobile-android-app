@@ -20,7 +20,7 @@ class OneSignalClient @Inject constructor(
     }
 
     override fun login(notificationId: String) {
-        OneSignal.login("notifications-test-user-android")
+        OneSignal.login(notificationId)
     }
 
     override fun logout() {

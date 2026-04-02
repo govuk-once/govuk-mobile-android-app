@@ -15,12 +15,12 @@ class NotificationsRepo @Inject constructor(
     private val userRepo: UserRepo
 ) {
     suspend fun login() {
-//        userRepo.notifications?.let { notifications ->
-            notificationsProvider.login("")
+        userRepo.notifications?.let { notifications ->
+            notificationsProvider.login(notifications.notificationId)
             if (isNotificationsOnboardingCompleted()) {
                 sendExistingConsentWhenPreferenceUnknown(ConsentStatus.ACCEPTED)
             }
-//        }
+        }
     }
 
     private suspend fun sendExistingConsentWhenPreferenceUnknown(consentPreference: ConsentStatus) {

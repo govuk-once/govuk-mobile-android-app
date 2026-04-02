@@ -126,16 +126,14 @@ internal class LoginViewModel @Inject constructor(
     }
 
     private suspend fun isUserInitialised(): Boolean {
-//        if (!flagRepo.isFlexEnabled()) return true
+        if (!flagRepo.isFlexEnabled()) return true
         return attemptUserInitialisation()
     }
 
     private suspend fun attemptUserInitialisation(): Boolean {
-//        return (userRepo.initUser() is Success).also { success ->
-//            if (success) notificationsRepo.login()
-//        }
-        notificationsRepo.login()
-        return true
+        return (userRepo.initUser() is Success).also { success ->
+            if (success) notificationsRepo.login()
+        }
     }
 
     private suspend fun shouldRefreshTokens(): Boolean {
