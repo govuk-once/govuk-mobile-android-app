@@ -47,7 +47,6 @@ import uk.gov.govuk.design.ui.model.FocusableCardColours
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.topics.DvlaLinkState
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicUiState
 import uk.gov.govuk.topics.TopicViewModel
@@ -61,12 +60,12 @@ internal fun TopicRoute(
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
     onSubtopic: (ref: String) -> Unit,
-    onLinkDvlaAccount: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Generic slot for the app module to inject self-managed content into (for example DVLA linking) */
+    headerContent: @Composable () -> Unit = {},
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val dvlaState by viewModel.dvlaState.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
     Box(modifier
@@ -78,8 +77,6 @@ internal fun TopicRoute(
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
-                        showDvlaLink = it.showDvlaLink,
-                        dvlaState = dvlaState,
                         onPageView = { title -> viewModel.onPageView(
                             topicUi = it.topicUi,
                             title = title
@@ -119,7 +116,7 @@ internal fun TopicRoute(
                             onSubtopic(ref)
                         },
                         focusRequester = focusRequester,
-                        onPrimaryAction = onLinkDvlaAccount
+                        headerContent = headerContent
                     )
                 }
 
@@ -145,8 +142,6 @@ internal fun TopicRoute(
 @Composable
 private fun TopicScreen(
     topic: TopicUi,
-    showDvlaLink: Boolean,
-    dvlaState: DvlaLinkState,
     onPageView: (String) -> Unit,
     onBack: () -> Unit,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
@@ -155,7 +150,7 @@ private fun TopicScreen(
     onSubtopic: (text: String, ref: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    onPrimaryAction: () -> Unit = {}
+    headerContent: @Composable () -> Unit = {}
 ) {
     val popularPagesIndex = 1
     val stepByStepsIndex = popularPagesIndex + topic.popularPages.size
@@ -213,19 +208,8 @@ private fun TopicScreen(
                 MediumVerticalSpacer()
             }
 
-            if (showDvlaLink) {
-                item {
-                    DvlaLinkWidget(
-                        state = dvlaState,
-                        onActionClick = onPrimaryAction,
-                        modifier = Modifier
-                            .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(
-                                top = GovUkTheme.spacing.medium,
-                                bottom = GovUkTheme.spacing.medium
-                            )
-                    )
-                }
+            item {
+                headerContent()
             }
 
             val showHorizontalScrollView = false

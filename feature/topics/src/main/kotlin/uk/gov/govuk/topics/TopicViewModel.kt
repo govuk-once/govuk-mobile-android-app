@@ -39,17 +39,10 @@ internal class TopicViewModel @Inject constructor(
         private const val SERVICES_TITLE = "Services and information"
         private const val MAX_POPULAR_PAGES = 4
         private const val MAX_STEP_BY_STEPS = 3
-
-        private const val DRIVING_TOPIC_REF = "driving-transport"
     }
 
     private val _uiState: MutableStateFlow<TopicUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
-
-    // TODO (tech debt) Added for DVLA POC, remove when migrating to a permanent pattern
-    private val _dvlaState: MutableStateFlow<DvlaLinkState> = MutableStateFlow(DvlaLinkState.LINKED)
-    val dvlaState = _dvlaState.asStateFlow()
-
 
     init {
         getTopic()
@@ -61,11 +54,6 @@ internal class TopicViewModel @Inject constructor(
             viewModelScope.launch {
                 val result = topicsRepo.getTopic(ref)
 
-                // TODO (tech debt) DVLA POC
-                // this couples Topic to Dvla, when POC complete, refactor TopicScreen to allow
-                // 'injecting' a 'slot' and extract logic up to GovUkApp/NavGraph
-                val shouldShowDvla = flagRepo.isDvlaLinkEnabled() && ref == DRIVING_TOPIC_REF
-
                 _uiState.value = when (result) {
                     is Success -> {
                         TopicUiState.Default(
@@ -73,8 +61,7 @@ internal class TopicViewModel @Inject constructor(
                                 MAX_POPULAR_PAGES,
                                 MAX_STEP_BY_STEPS,
                                 isSubtopic
-                            ),
-                            showDvlaLink = shouldShowDvla
+                            )
                         )
                     }
                     is DeviceOffline -> TopicUiState.Offline(ref)

@@ -1,15 +1,15 @@
-package uk.gov.govuk.topics.ui
+package uk.gov.govuk.dvla.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.design.ui.component.DrillInCard
-import uk.gov.govuk.topics.DvlaLinkState
-import uk.gov.govuk.topics.R
+import uk.gov.govuk.dvla.DvlaLinkState
+import uk.gov.govuk.dvla.R
 
 @Composable
-internal fun DvlaLinkWidget(
+internal fun DvlaLinkCard(
     state: DvlaLinkState,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
