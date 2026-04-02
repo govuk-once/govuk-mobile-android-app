@@ -68,6 +68,7 @@ import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
+import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -462,8 +463,20 @@ private fun GovUkNavHost(
                     showBrowserNotFoundAlert = true
                 }
             },
-            onLinkDvlaAccount = {
-                navController.navigateToDvlaLink()
+            topicHeader = { topicRef, linkResult ->
+                val isDrivingTopic = topicRef == "driving-transport"
+                val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
+
+                if (isDrivingTopic && isFeatureEnabled) {
+                    // drop in the self-managed public header from the DVLA module
+                    DvlaLinkHeader(
+                        linkResult = linkResult,
+                        onActionClick = { navController.navigateToDvlaLink() },
+                        modifier = Modifier
+                            .padding(horizontal = GovUkTheme.spacing.medium)
+                            .padding(vertical = GovUkTheme.spacing.medium)
+                    )
+                }
             },
             modifier = Modifier.padding(paddingValues)
         )

@@ -12,6 +12,7 @@ import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
 
 class DvlaRepoTest {
 
@@ -72,5 +73,40 @@ class DvlaRepoTest {
         assertTrue(result is Result.Error)
         assertTrue(repo.isLinked)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }
+    }
+
+    @Test
+    fun `Given check api returns account is linked, when isAccountLinked is called, then return Success and update isLinked`() = runTest {
+        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = true))
+
+        val result = repo.isAccountLinked()
+
+        assertTrue(result is Result.Success)
+        assertTrue((result as Result.Success).value)
+        assertTrue(repo.isLinked)
+        coVerify(exactly = 1) { api.checkDvlaLinked() }
+    }
+
+    @Test
+    fun `Given check api returns linked false, when isAccountLinked is called, then return Success(false) and update isLinked`() = runTest {
+        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = false))
+
+        val result = repo.isAccountLinked()
+
+        assertTrue(result is Result.Success)
+        assertFalse((result as Result.Success).value)
+        assertFalse(repo.isLinked)
+        coVerify(exactly = 1) { api.checkDvlaLinked() }
+    }
+
+    @Test
+    fun `Given check api throws exception, when isAccountLinked is called, then return Error and do not update isLinked`() = runTest {
+        coEvery { api.checkDvlaLinked() } throws Exception("Exception")
+
+        val result = repo.isAccountLinked()
+
+        assertTrue(result is Result.Error)
+        assertFalse(repo.isLinked)
+        coVerify(exactly = 1) { api.checkDvlaLinked() }
     }
 }
