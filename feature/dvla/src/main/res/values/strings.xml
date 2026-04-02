@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="link_dvla_account_button">Add your driver and vehicles account</string>
-    <string name="unlink_dvla_account_button">Unlink your driver and vehicles account"</string>
+    <string name="unlink_dvla_account_button">Unlink your driver and vehicles account</string>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
