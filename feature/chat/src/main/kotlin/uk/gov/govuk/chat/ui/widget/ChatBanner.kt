@@ -98,7 +98,7 @@ fun ChatBanner(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onClick(linkText) }
+                        .clickable { onClick(title) }
                 ) {
                     MediumVerticalSpacer()
                     Row(
