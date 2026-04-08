@@ -5,6 +5,8 @@ import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.remote.safeAuthApiCall
+import uk.gov.govuk.dvla.domain.LicenceDetails
+import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.io.encoding.Base64
@@ -47,6 +49,17 @@ internal class DvlaRepo @Inject constructor(
         val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
         isLinked = result !is Result.Success
         return result
+    }
+
+    suspend fun getLicenceDetails(): Result<LicenceDetails> {
+        val result = safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
+
+        return if (result is Result.Success) {
+            Result.Success(result.value.toDomainModel())
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            result as Result<LicenceDetails>
+        }
     }
 
     @OptIn(ExperimentalEncodingApi::class)
