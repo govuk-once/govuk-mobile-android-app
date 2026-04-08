@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.data
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
@@ -17,15 +19,15 @@ internal class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
     private val authRepo: AuthRepo
 ) {
-    var isLinked = false
-        private set
+    private val _isLinked = MutableStateFlow(false)
+    val isLinked = _isLinked.asStateFlow()
 
     suspend fun isAccountLinked(): Result<Boolean> {
         val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
 
         return if (result is Result.Success) {
             val linked = result.value.linked
-            this.isLinked = linked
+            _isLinked.value = linked
             Result.Success(linked)
         } else {
             @Suppress("UNCHECKED_CAST")
@@ -37,17 +39,17 @@ internal class DvlaRepo @Inject constructor(
         val result = try {
             val linkingId = extractLinkingIdFromJwt(token)
             safeAuthApiCall({ api.linkDvlaIdentity(linkingId) }, authRepo)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Result.Error()
         }
 
-        isLinked = result is Result.Success
+        _isLinked.value = result is Result.Success
         return result
     }
 
     suspend fun unlinkAccount(): Result<Unit> {
         val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-        isLinked = result !is Result.Success
+        _isLinked.value = result !is Result.Success
         return result
     }
 
