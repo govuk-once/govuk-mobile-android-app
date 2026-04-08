@@ -25,9 +25,6 @@ internal class DvlaLinkWidgetViewModel @Inject constructor(
             val result = dvlaRepo.isAccountLinked()
 
             _dvlaState.value = if (result is Result.Success && result.value) {
-
-                dvlaRepo.getLicenceDetails()
-
                 DvlaLinkState.LINKED
             } else {
                 DvlaLinkState.UNLINKED
