@@ -25,8 +25,8 @@ class GovUkConfigDataSource @Inject constructor(
     private val gson: Gson,
     private val signatureValidator: SignatureValidator
 ) {
-    suspend fun fetchConfig(): Result<Config> = coroutineScope {
-        return@coroutineScope try {
+    suspend fun fetchConfig(): Result<Config> = try {
+        coroutineScope {
             val configDeferred = async { configApi.getConfig() }
             val termsDeferred = async { contentApi.getContent() }
 
@@ -61,10 +61,10 @@ class GovUkConfigDataSource @Inject constructor(
             } else {
                 Error()
             }
-        } catch (_: UnknownHostException) {
-            DeviceOffline()
-        } catch (_: Exception) {
-            Error()
         }
+    } catch (_: UnknownHostException) {
+        DeviceOffline()
+    } catch (_: Exception) {
+        Error()
     }
 }
