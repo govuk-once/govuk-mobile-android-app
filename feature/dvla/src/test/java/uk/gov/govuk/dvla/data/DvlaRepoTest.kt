@@ -34,6 +34,7 @@ class DvlaRepoTest {
         val result = repo.linkAccount(token)
 
         assertTrue(result is Result.Success)
+        assertTrue(repo.isLinked.value)
         coVerify(exactly = 1) { api.linkDvlaIdentity(linkingId) }
     }
 
@@ -51,13 +52,13 @@ class DvlaRepoTest {
     fun `Given unlinking api returns success, when unlinkAccount is called, then return Success and update isLinked`() = runTest {
         coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
         repo.linkAccount(token)
-        assertTrue(repo.isLinked)
+        assertTrue(repo.isLinked.value)
 
         coEvery { api.deleteDvlaIdentity() } returns Response.success(Unit)
         val result = repo.unlinkAccount()
 
         assertTrue(result is Result.Success)
-        assertFalse(repo.isLinked)
+        assertFalse(repo.isLinked.value)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }
     }
 
@@ -65,13 +66,13 @@ class DvlaRepoTest {
     fun `Given unlinking api throws exception, when unlinkAccount is called, then return error`() = runTest {
         coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
         repo.linkAccount(token)
-        assertTrue(repo.isLinked)
+        assertTrue(repo.isLinked.value)
 
         coEvery { api.deleteDvlaIdentity() } throws Exception("Exception")
         val result = repo.unlinkAccount()
 
         assertTrue(result is Result.Error)
-        assertTrue(repo.isLinked)
+        assertTrue(repo.isLinked.value)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }
     }
 
@@ -83,7 +84,7 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Success)
         assertTrue((result as Result.Success).value)
-        assertTrue(repo.isLinked)
+        assertTrue(repo.isLinked.value)
         coVerify(exactly = 1) { api.checkDvlaLinked() }
     }
 
@@ -95,7 +96,7 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Success)
         assertFalse((result as Result.Success).value)
-        assertFalse(repo.isLinked)
+        assertFalse(repo.isLinked.value)
         coVerify(exactly = 1) { api.checkDvlaLinked() }
     }
 
@@ -106,7 +107,7 @@ class DvlaRepoTest {
         val result = repo.isAccountLinked()
 
         assertTrue(result is Result.Error)
-        assertFalse(repo.isLinked)
+        assertFalse(repo.isLinked.value)
         coVerify(exactly = 1) { api.checkDvlaLinked() }
     }
 }
