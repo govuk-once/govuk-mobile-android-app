@@ -285,7 +285,9 @@ class ChatViewModelTest {
             viewModel.uiState.toList(uiStates)
         }
 
-        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("    First Question   ")
+
+        coVerify { chatRepo.askQuestion("First Question") }
 
         advanceUntilIdle()
 
