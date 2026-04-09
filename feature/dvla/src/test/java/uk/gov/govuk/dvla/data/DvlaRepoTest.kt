@@ -12,6 +12,7 @@ import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
 import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
 
 class DvlaRepoTest {
@@ -109,5 +110,27 @@ class DvlaRepoTest {
         assertTrue(result is Result.Error)
         assertFalse(repo.isLinked.value)
         coVerify(exactly = 1) { api.checkDvlaLinked() }
+    }
+
+    @Test
+    fun `Given driving licence api returns success, when getLicenceDetails is called, then return Success with LicenceDetails`() = runTest {
+        val licenceResponse = mockk<DvlaLicenceResponse>(relaxed = true)
+
+        coEvery { api.getDrivingLicence() } returns Response.success(licenceResponse)
+
+        val result = repo.getLicenceDetails()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getDrivingLicence() }
+    }
+
+    @Test
+    fun `Given driving licence api fails, when getLicenceDetails is called, then return Error`() = runTest {
+        coEvery { api.getDrivingLicence() } throws Exception("Exception")
+
+        val result = repo.getLicenceDetails()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 }

@@ -35,6 +35,7 @@ internal fun LicenceDetailsCard(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium)
         ) {
             // Licence number
+            // TODO hardcoded string for demonstration purpose for this ticket, will be removed in future ticket
             BodyBoldLabel(text = "Licence number")
             BodyRegularLabel(
                 text = details.licenceNumber,
@@ -44,6 +45,7 @@ internal fun LicenceDetailsCard(
             SmallVerticalSpacer()
 
             // Type
+            // TODO hardcoded string for demonstration purpose for this ticket, will be removed in future ticket
             BodyBoldLabel(text = "Type")
             BodyRegularLabel(
                 text = details.type,
@@ -53,6 +55,7 @@ internal fun LicenceDetailsCard(
             SmallVerticalSpacer()
 
             // Status
+            // TODO hardcoded string for demonstration purpose for this ticket, will be removed in future ticket
             BodyBoldLabel(text = "Status")
             BodyRegularLabel(
                 text = details.status,
@@ -62,6 +65,7 @@ internal fun LicenceDetailsCard(
             SmallVerticalSpacer()
 
             // Valid from
+            // TODO hardcoded string for demonstration purpose for this ticket, will be removed in future ticket
             BodyBoldLabel(text = "Valid from")
             BodyRegularLabel(
                 text = details.validFrom,
@@ -71,6 +75,7 @@ internal fun LicenceDetailsCard(
             SmallVerticalSpacer()
 
             // Valid to
+            // TODO hardcoded string for demonstration purpose for this ticket, will be removed in future ticket
             BodyBoldLabel(text = "Valid to")
             BodyRegularLabel(
                 text = details.validTo,
