@@ -86,6 +86,7 @@ import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
+import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.model.HomeWidget
 import uk.gov.govuk.widgets.ui.contains
@@ -464,7 +465,7 @@ private fun GovUkNavHost(
                 }
             },
             topicHeader = { topicRef, linkResult ->
-                val isDrivingTopic = topicRef == "driving-transport"
+                val isDrivingTopic = topicRef.isDrivingTopic()
                 val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
 
                 if (isDrivingTopic && isFeatureEnabled) {
