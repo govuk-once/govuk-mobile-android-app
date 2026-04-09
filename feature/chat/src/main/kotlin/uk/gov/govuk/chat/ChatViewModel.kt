@@ -26,6 +26,7 @@ import uk.gov.govuk.chat.domain.StringCleaner
 import uk.gov.govuk.chat.ui.model.ChatEntry
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.tour.TourRepository
 import javax.inject.Inject
 
 internal sealed class ChatUiState {
@@ -47,7 +48,8 @@ internal class ChatViewModel @Inject constructor(
     private val chatRepo: ChatRepo,
     private val authRepo: AuthRepo,
     private val analyticsClient: AnalyticsClient,
-    configRepo: ConfigRepo
+    configRepo: ConfigRepo,
+    val tourRepository: TourRepository
 ): ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState?> = MutableStateFlow(null)

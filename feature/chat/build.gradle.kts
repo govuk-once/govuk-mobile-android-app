@@ -54,6 +54,7 @@ dependencies {
     implementation(projects.design)
     implementation(projects.data)
     implementation(projects.config)
+    implementation(projects.tour)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

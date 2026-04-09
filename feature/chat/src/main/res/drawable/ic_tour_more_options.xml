@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="300dp"
+    android:viewportWidth="300"
+    android:viewportHeight="300">
+
+    <!-- Background -->
+    <path
+        android:pathData="M24,0 L276,0 Q300,0 300,24 L300,276 Q300,300 276,300 L24,300 Q0,300 0,276 L0,24 Q0,0 24,0 Z"
+        android:fillColor="#00B0C5"
+        android:fillType="nonZero" />
+
+    <!-- Gradient overlay: darker at bottom -->
+    <path
+        android:pathData="M0,150 L300,150 L300,276 Q300,300 276,300 L24,300 Q0,300 0,276 Z"
+        android:fillColor="#1A5276"
+        android:fillAlpha="0.5" />
+
+    <!-- Three-dot vertical menu icon, centered -->
+    <path
+        android:pathData="M150,100 m0,-14 a14,14 0,1,1 0,28 a14,14 0,1,1 0,-28"
+        android:fillColor="#000000" />
+    <path
+        android:pathData="M150,150 m0,-14 a14,14 0,1,1 0,28 a14,14 0,1,1 0,-28"
+        android:fillColor="#000000" />
+    <path
+        android:pathData="M150,200 m0,-14 a14,14 0,1,1 0,28 a14,14 0,1,1 0,-28"
+        android:fillColor="#000000" />
+
+</vector>

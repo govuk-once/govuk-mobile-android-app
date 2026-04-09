@@ -48,10 +48,12 @@ import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.chat.ui.component.ChatEntry
 import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
+import uk.gov.govuk.chat.ui.tour.chatTourConfig
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.tour.ui.TourCarousel
 
 internal class AnalyticsEvents(
     val onPageView: (String, String, String) -> Unit,
@@ -127,6 +129,11 @@ internal fun ChatRoute(
                     ),
                     chatUrls = viewModel.chatUrls,
                     modifier = modifier
+                )
+
+                TourCarousel(
+                    config = chatTourConfig,
+                    tourRepository = viewModel.tourRepository
                 )
             }
         }
