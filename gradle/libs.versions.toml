@@ -46,6 +46,7 @@ openid = "0.11.1"
 
 gov-secure-store = "0.12.1"
 tink = "1.20.0"
+reveal = "3.1.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -91,6 +92,9 @@ google-tag-manager = { group = "com.google.android.gms", name = "play-services-t
 openid = { group = "net.openid", name = "appauth", version.ref = "openid"}
 
 gov-securestore = { group = "uk.gov.securestore", name = "app", version.ref = "gov-secure-store"}
+reveal-core = { group = "com.svenjacobs.reveal", name = "reveal-core", version.ref = "reveal" }
+reveal-shapes = { group = "com.svenjacobs.reveal", name = "reveal-shapes", version.ref = "reveal" }
+reveal-compat-android = { group = "com.svenjacobs.reveal", name = "reveal-compat-android", version.ref = "reveal" }
 
 # A library that provides Android runtime permissions support for Jetpack Compose
 google-accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "googleAccompanist" }

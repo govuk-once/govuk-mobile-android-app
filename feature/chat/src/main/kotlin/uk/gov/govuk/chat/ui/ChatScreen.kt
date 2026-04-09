@@ -49,9 +49,16 @@ import uk.gov.govuk.chat.ui.component.ChatEntry
 import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
 import uk.gov.govuk.config.data.remote.model.ChatUrls
+import uk.gov.govuk.chat.ui.tour.TOUR_TARGET_HEADER
+import uk.gov.govuk.chat.ui.tour.TOUR_TARGET_INPUT
+import uk.gov.govuk.chat.ui.tour.TOUR_TARGET_INTRO
+import uk.gov.govuk.chat.ui.tour.TOUR_TARGET_MENU
+import uk.gov.govuk.chat.ui.tour.chatTourConfig
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.tour.ui.TourOverlay
+import uk.gov.govuk.tour.ui.tourTarget
 
 internal class AnalyticsEvents(
     val onPageView: (String, String, String) -> Unit,
@@ -172,68 +179,73 @@ internal fun ChatScreen(
         )
     }
 
-    Box(
-        modifier.fillMaxSize()
-            .background(GovUkTheme.colourScheme.surfaces.chatBackground)
-            .padding(top = GovUkTheme.spacing.medium)
-    ) {
-        Column(
-            Modifier
-                .windowInsetsPadding(WindowInsets.statusBars)
+    TourOverlay(config = chatTourConfig, modifier = modifier) {
+        Box(
+            Modifier.fillMaxSize()
+                .background(GovUkTheme.colourScheme.surfaces.chatBackground)
+                .padding(top = GovUkTheme.spacing.medium)
         ) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = GovUkTheme.spacing.medium)
+            Column(
+                Modifier
+                    .windowInsetsPadding(WindowInsets.statusBars)
             ) {
-                item {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Title2BoldLabel(
-                            text = stringResource(R.string.bot_header_text),
-                            modifier = Modifier
-                                .padding(vertical = GovUkTheme.spacing.medium)
-                                .weight(1f)
-                                .semantics { heading() },
-                            textAlign = TextAlign.Center
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = GovUkTheme.spacing.medium)
+                ) {
+                    item {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Title2BoldLabel(
+                                text = stringResource(R.string.bot_header_text),
+                                modifier = Modifier
+                                    .padding(vertical = GovUkTheme.spacing.medium)
+                                    .weight(1f)
+                                    .semantics { heading() }
+                                    .tourTarget(TOUR_TARGET_HEADER),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    item {
+                        IntroMessages(
+                            animated = chatEntries.isEmpty(),
+                            modifier = Modifier.tourTarget(TOUR_TARGET_INTRO)
                         )
+                    }
+
+                    items(chatEntries) {
+                        ChatEntry(
+                            chatEntry = it.second,
+                            onMarkdownLinkClicked = { text, url ->
+                                launchBrowser(url)
+                                analyticsEvents.onMarkdownLinkClicked(text, url)
+                            },
+                            animationDelay = animationDelay,
+                            onSourcesExpanded = {
+                                analyticsEvents.onSourcesExpanded()
+                                coroutineScope.launch {
+                                    delay(150)
+                                    listState.animateScrollBy(128f)
+                                }
+                            },
+                            onCopyText = { text ->
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("Markdown content", text)
+                                clipboard.setPrimaryClip(clip)
+                            }
+                        )
+                    }
+
+                    item {
+                        Spacer(Modifier.height(20.dp))
                     }
                 }
 
-                item {
-                    IntroMessages(chatEntries.isEmpty()) // only animate if no conversation
-                }
-
-                items(chatEntries) {
-                    ChatEntry(
-                        chatEntry = it.second,
-                        onMarkdownLinkClicked = { text, url ->
-                            launchBrowser(url)
-                            analyticsEvents.onMarkdownLinkClicked(text, url)
-                        },
-                        animationDelay = animationDelay,
-                        onSourcesExpanded = {
-                            analyticsEvents.onSourcesExpanded()
-                            coroutineScope.launch {
-                                delay(150)
-                                listState.animateScrollBy(128f)
-                            }
-                        },
-                        onCopyText = { text ->
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("Markdown content", text)
-                            clipboard.setPrimaryClip(clip)
-                        }
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(20.dp))
-                }
-            }
-
-            Column {
+                Column {
                     ChatInput(
                         uiState,
                         hasConversation = hasConversation,
@@ -257,9 +269,12 @@ internal fun ChatScreen(
                             .padding(
                                 top = GovUkTheme.spacing.small,
                                 bottom = GovUkTheme.spacing.medium
-                            ),
+                            )
+                            .tourTarget(TOUR_TARGET_INPUT),
+                        menuModifier = Modifier.tourTarget(TOUR_TARGET_MENU),
                         isTalkBackActive = isTalkBackActive
                     )
+                }
             }
         }
     }
