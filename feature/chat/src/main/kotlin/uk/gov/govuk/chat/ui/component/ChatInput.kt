@@ -64,6 +64,7 @@ internal fun ChatInput(
     onSubmit: (String) -> Unit,
     chatUrls: ChatUrls,
     modifier: Modifier = Modifier,
+    menuModifier: Modifier = Modifier,
     isTalkBackActive: Boolean
 ) {
     var isFocused by rememberSaveable { mutableStateOf(false) }
@@ -156,7 +157,7 @@ internal fun ChatInput(
                             onFunctionActionItemClicked(text, section, action)
                         },
                         chatUrls = chatUrls,
-                        modifier = Modifier.semantics { this.traversalIndex = 1f },
+                        modifier = menuModifier.semantics { this.traversalIndex = 1f },
                         isTalkBackActive = isTalkBackActive
                     )
                 }
