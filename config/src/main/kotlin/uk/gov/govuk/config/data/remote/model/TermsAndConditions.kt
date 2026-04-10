@@ -4,5 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class TermsAndConditions(
     @SerializedName("url") val url: String,
-    @SerializedName("lastUpdated") val lastUpdated: String? = null,
+    @SerializedName("contentItemApiUrl") val contentItemApiUrl: String,
+    @SerializedName("lastUpdated") val lastUpdated: String? = null
 )

@@ -37,8 +37,7 @@ class GovUkConfigDataSource @Inject constructor(
                     val configResponse = gson.fromJson(it, ConfigResponse::class.java)
                     val config = configResponse.config
 
-                    // TODO: Get the content item URL from the remote config
-                    val contentItemUrl = "https://www.gov.uk/api/content/guidance/govuk-app-terms-and-conditions"
+                    val contentItemUrl = config.termsAndConditions?.contentItemApiUrl
                     val content = contentApi.getContent(contentItemUrl)
 
                     if (content.isSuccessful) {

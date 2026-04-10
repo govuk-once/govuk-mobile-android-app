@@ -37,7 +37,11 @@ class GovUkConfigDataSourceTest {
     @Test
     fun `Given a successful config response with a body, then return success`() = runTest {
         val remoteTimestamp = "2026-01-01T00:00:00Z"
-        val termsAndConditions = TermsAndConditions(lastUpdated = "old-timestamp", url = "url")
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
         val config = Config(
             available = true,
             minimumVersion = "1.0.0",
@@ -125,7 +129,11 @@ class GovUkConfigDataSourceTest {
     @Test
     fun `Given a successful config and terms response, when fetched, then the terms timestamp is updated`() = runTest {
         val remoteTimestamp = "2026-01-01T00:00:00Z"
-        val termsAndConditions = TermsAndConditions(lastUpdated = "old-timestamp", url = "url")
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
         val config = Config(
             available = true,
             minimumVersion = "1.0.0",
@@ -154,8 +162,11 @@ class GovUkConfigDataSourceTest {
 
     @Test
     fun `Given a successful config but a failed terms response, when fetched, then return failure`() = runTest {
-        val originalTimestamp = "old-timestamp"
-        val termsAndConditions = TermsAndConditions(lastUpdated = originalTimestamp, url = "url")
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
         val config = Config(
             available = true,
             minimumVersion = "1.0.0",
@@ -182,7 +193,10 @@ class GovUkConfigDataSourceTest {
     @Test
     fun `Given a config with no terms and conditions timestamp, when fetched, then the terms timestamp is added`() = runTest {
         val remoteTimestamp = "2026-01-01T00:00:00Z"
-        val termsAndConditions = TermsAndConditions(url = "url")
+        val termsAndConditions = TermsAndConditions(
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
         val config = Config(
             available = true,
             minimumVersion = "1.0.0",
@@ -207,5 +221,37 @@ class GovUkConfigDataSourceTest {
         val result = dataSource.fetchConfig() as Result.Success
 
         assertEquals(remoteTimestamp, result.value.termsAndConditions?.lastUpdated)
+    }
+
+    @Test
+    fun `Given a config with no terms and conditions content item url, when fetched, then return failure`() = runTest {
+        val remoteTimestamp = "2026-01-01T00:00:00Z"
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = ""
+        )
+        val config = Config(
+            available = true,
+            minimumVersion = "1.0.0",
+            recommendedVersion = "1.1.0",
+            releaseFlags = mockk(relaxed = true),
+            version = "1.0.0",
+            chatPollIntervalSeconds = 3.0,
+            userFeedbackBanner = null,
+            chatUrls = mockk(relaxed = true),
+            refreshTokenExpirySeconds = 3600,
+            emergencyBanners = null,
+            chatBanner = null,
+            termsAndConditions = termsAndConditions
+        )
+
+        coEvery { configApi.getConfig() } returns Response.success("{}")
+        coEvery { contentApi.getContent(url = null) } returns Response.success("{}")
+        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
+        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
+
+        assertTrue(dataSource.fetchConfig() is Result.Error)
     }
 }
