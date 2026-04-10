@@ -16,7 +16,7 @@ import uk.gov.govuk.dvla.R
 @Composable
 internal fun DvlaLinkCard(
     state: DvlaLinkState,
-    onActionClick: () -> Unit,
+    onActionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val titleResId = when (state) {
@@ -26,9 +26,11 @@ internal fun DvlaLinkCard(
     }
 
     if (titleResId != null) {
+        val title = stringResource(titleResId)
+
         AccountConnectionCard(
             title = stringResource(titleResId),
-            onClick = onActionClick,
+            onClick = { onActionClick(title) },
             description = stringResource(R.string.link_dvla_account_description),
             modifier =  modifier.fillMaxWidth()
         )

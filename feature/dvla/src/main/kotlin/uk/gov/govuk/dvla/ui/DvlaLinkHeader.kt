@@ -23,7 +23,10 @@ fun DvlaLinkHeader(
 
     DvlaLinkCard(
         state = state,
-        onActionClick = onActionClick,
+        onActionClick = { cardText ->
+            viewModel.onLinkCardClicked(cardText)
+            onActionClick()
+        },
         modifier = modifier
     )
 }
