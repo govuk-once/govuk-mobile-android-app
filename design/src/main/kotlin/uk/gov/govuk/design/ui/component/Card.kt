@@ -554,6 +554,60 @@ fun DrillInCard(
     }
 }
 
+@Composable
+fun AccountConnectionCard(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = GovUkTheme.colourScheme.surfaces.buttonPrimary
+        ),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_link),
+                contentDescription = null,
+                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+            )
+
+            MediumHorizontalSpacer()
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                BodyBoldLabel(
+                    text = title,
+                    color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+                )
+
+                description?.let { description ->
+                    SmallVerticalSpacer()
+                    BodyRegularLabel(
+                        text = description,
+                        color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+                    )
+                }
+            }
+
+            SmallHorizontalSpacer()
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow),
+                contentDescription = null,
+                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+            )
+        }
+    }
+}
+
 @ThemePreviews
 @Composable
 private fun HomeNotableDeathBannerCardPreview() {
@@ -736,3 +790,17 @@ private fun DrillInCardDescriptionPreview() {
         )
     }
 }
+
+@ThemePreviews
+@Composable
+private fun AccountConnectionCardPreview() {
+    GovUkTheme {
+        AccountConnectionCard(
+            title = "Add your driver and vehicles account",
+            onClick = {},
+            description = "Your tax, MOT, penalty points"
+        )
+    }
+}
+
+

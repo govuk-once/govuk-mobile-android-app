@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import uk.gov.govuk.design.ui.component.AccountConnectionCard
 import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaLinkState
@@ -26,11 +27,19 @@ internal fun DvlaLinkCard(
     }
 
     if (titleResId != null) {
-        DrillInCard(
+        AccountConnectionCard(
             title = stringResource(titleResId),
             onClick = onActionClick,
-            modifier = modifier.fillMaxWidth()
+            description = "Your tax, MOT, penalty points",
+            modifier =  modifier.fillMaxWidth()
         )
+
+
+//        DrillInCard(
+//            title = stringResource(titleResId),
+//            onClick = onActionClick,
+//            modifier = modifier.fillMaxWidth()
+//        )
     } else {
         Box(
             modifier = modifier
