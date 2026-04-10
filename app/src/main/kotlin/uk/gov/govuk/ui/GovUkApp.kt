@@ -474,7 +474,7 @@ private fun GovUkNavHost(
                         onActionClick = { navController.navigateToDvlaLink() },
                         modifier = Modifier
                             .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(vertical = GovUkTheme.spacing.medium)
+                            .padding(bottom = GovUkTheme.spacing.medium)
                     )
                 }
             },

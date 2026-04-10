@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.design.ui.component.AccountConnectionCard
-import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaLinkState
 import uk.gov.govuk.dvla.R
@@ -21,8 +20,8 @@ internal fun DvlaLinkCard(
     modifier: Modifier = Modifier
 ) {
     val titleResId = when (state) {
-        DvlaLinkState.UNLINKED -> R.string.link_dvla_account_button
-        DvlaLinkState.LINKED -> R.string.unlink_dvla_account_button
+        DvlaLinkState.UNLINKED -> R.string.link_dvla_account_title
+        DvlaLinkState.LINKED -> null
         DvlaLinkState.CHECKING -> null
     }
 
@@ -30,16 +29,9 @@ internal fun DvlaLinkCard(
         AccountConnectionCard(
             title = stringResource(titleResId),
             onClick = onActionClick,
-            description = "Your tax, MOT, penalty points",
+            description = stringResource(R.string.link_dvla_account_description),
             modifier =  modifier.fillMaxWidth()
         )
-
-
-//        DrillInCard(
-//            title = stringResource(titleResId),
-//            onClick = onActionClick,
-//            modifier = modifier.fillMaxWidth()
-//        )
     } else {
         Box(
             modifier = modifier
