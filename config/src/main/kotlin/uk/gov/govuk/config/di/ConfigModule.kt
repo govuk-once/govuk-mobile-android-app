@@ -47,7 +47,7 @@ class ConfigModule {
     @Singleton
     fun providesContentApi(gson: Gson): ContentApi {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.TS_AND_CS_CONTENT_ITEM_URL)
+            .baseUrl("https://www.gov.uk/") // placeholder URL required by Retrofit
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

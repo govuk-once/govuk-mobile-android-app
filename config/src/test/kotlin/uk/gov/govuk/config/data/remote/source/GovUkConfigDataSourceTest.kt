@@ -54,7 +54,7 @@ class GovUkConfigDataSourceTest {
         )
 
         coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
-        coEvery { contentApi.getContent() } returns Response.success(contentResponse.toString())
+        coEvery { contentApi.getContent(url = any()) } returns Response.success(contentResponse.toString())
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
         coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
@@ -142,7 +142,7 @@ class GovUkConfigDataSourceTest {
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
-        coEvery { contentApi.getContent() } returns Response.success("{}")
+        coEvery { contentApi.getContent(any()) } returns Response.success("{}")
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
         coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
@@ -172,7 +172,7 @@ class GovUkConfigDataSourceTest {
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
-        coEvery { contentApi.getContent() } returns Response.error(404, mockk(relaxed = true))
+        coEvery { contentApi.getContent(url = any()) } returns Response.error(404, mockk(relaxed = true))
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
 
@@ -199,7 +199,7 @@ class GovUkConfigDataSourceTest {
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
-        coEvery { contentApi.getContent() } returns Response.success("{}")
+        coEvery { contentApi.getContent(url = any()) } returns Response.success("{}")
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
         coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
