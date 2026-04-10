@@ -564,7 +564,7 @@ fun AccountConnectionCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = GovUkTheme.colourScheme.surfaces.buttonPrimary
+            containerColor = GovUkTheme.colourScheme.surfaces.cardLinkAccount
         ),
         onClick = onClick
     ) {
