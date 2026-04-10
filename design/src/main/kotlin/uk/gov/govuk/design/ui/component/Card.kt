@@ -31,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -147,7 +149,8 @@ fun HomeBannerCard(
                             BodyBoldLabel(
                                 title,
                                 color = textColour,
-                                modifier = Modifier.padding(start = GovUkTheme.spacing.medium)
+                                modifier = Modifier
+                                    .padding(start = GovUkTheme.spacing.medium)
                                     .semantics { heading() },
                             )
                         }
@@ -217,8 +220,9 @@ fun HomeBannerCard(
                         BodyRegularLabel(
                             text = linkTitle,
                             color = linkTitleColour,
-                            modifier = Modifier.weight(1f)
-                                .clearAndSetSemantics{ }
+                            modifier = Modifier
+                                .weight(1f)
+                                .clearAndSetSemantics { }
                         )
                         if (type.hasDecoratedLink) {
                             Icon(
@@ -561,6 +565,10 @@ fun AccountConnectionCard(
     modifier: Modifier = Modifier,
     description: String? = null
 ) {
+    val fontScale = LocalDensity.current.fontScale
+    val baseWidth = dimensionResource(id = R.dimen.ic_arrow_width)
+    val baseHeight = dimensionResource(id = R.dimen.ic_arrow_height)
+
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -602,7 +610,11 @@ fun AccountConnectionCard(
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow),
                 contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary,
+                modifier = Modifier.size(
+                    width = baseWidth * fontScale,
+                    height = baseHeight * fontScale
+                )
             )
         }
     }
