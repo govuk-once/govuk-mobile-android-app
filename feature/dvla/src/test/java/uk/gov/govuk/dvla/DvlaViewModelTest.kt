@@ -7,6 +7,9 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -45,7 +48,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked, when initialised, the initial state should be Loading`() = runTest(dispatcher) {
-        every { repo.isLinked } returns false
+        every { repo.isLinked } returns MutableStateFlow(false)
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -55,7 +58,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked and linking api returns Success, when initialised, then emit LinkComplete event`() = runTest(dispatcher) {
-        every { repo.isLinked } returns false
+        every { repo.isLinked } returns MutableStateFlow(false)
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -73,7 +76,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked and linking api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
-        every { repo.isLinked } returns false
+        every { repo.isLinked } returns MutableStateFlow(false)
         coEvery { repo.linkAccount(any()) } returns Result.Error()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -85,6 +88,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given no token in SavedStateHandle, when initialised, then start auth flow and set authUrlToLaunch`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
         every { savedStateHandle.get<String>("token") } returns null
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -95,6 +99,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given auth url is set, when onAuthTabLaunched is called, then reset authUrlToLaunch to null`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
         every { savedStateHandle.get<String>("token") } returns null
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
 
@@ -105,7 +110,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked, when initialised, the initial state should be Loading`() = runTest(dispatcher) {
-        every { repo.isLinked } returns true
+        every { repo.isLinked } returns MutableStateFlow(true)
         coEvery { repo.unlinkAccount() } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -115,7 +120,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked and unlink api returns Success, when initialised, then emit UnlinkComplete event`() = runTest(dispatcher) {
-        every { repo.isLinked } returns true
+        every { repo.isLinked } returns MutableStateFlow(true)
         coEvery { repo.unlinkAccount() } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)
@@ -133,7 +138,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked and unlink api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
-        every { repo.isLinked } returns true
+        every { repo.isLinked } returns MutableStateFlow(true)
         coEvery { repo.unlinkAccount() } returns Result.Error()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, dvlaAuthUrl)

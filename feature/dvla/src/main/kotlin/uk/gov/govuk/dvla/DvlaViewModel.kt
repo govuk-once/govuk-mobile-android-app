@@ -45,7 +45,7 @@ internal class DvlaViewModel @Inject constructor(
         val token: String? = savedStateHandle[ARG_DVLA_TOKEN]
 
         when {
-            dvlaRepo.isLinked -> unlinkDvlaAccount()
+            dvlaRepo.isLinked.value -> unlinkDvlaAccount()
             token != null -> handleAuthRedirect(token)
             else -> startAuthFlow()
         }
