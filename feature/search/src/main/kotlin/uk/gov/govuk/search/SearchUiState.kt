@@ -18,7 +18,8 @@ internal data class SearchUiState(
 
     data class SearchResults(
         val searchTerm: String,
-        val values: List<SearchResult>
+        val values: List<SearchResult>,
+        val recommendations: List<SearchResult> = emptyList()
     )
 
     internal sealed class Error(

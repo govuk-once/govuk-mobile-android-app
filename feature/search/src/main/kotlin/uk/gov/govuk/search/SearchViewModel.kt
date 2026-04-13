@@ -14,6 +14,7 @@ import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.search.SearchUiState.Error
 import uk.gov.govuk.search.SearchUiState.SearchResults
 import uk.gov.govuk.search.SearchUiState.Suggestions
+import uk.gov.govuk.search.data.RecommendationRepository
 import uk.gov.govuk.search.data.SearchRepo
 import uk.gov.govuk.search.data.remote.model.SearchResult
 import uk.gov.govuk.search.domain.SearchConfig
@@ -27,6 +28,7 @@ internal class SearchViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val visited: Visited,
     private val searchRepo: SearchRepo,
+    private val recommendationRepository: RecommendationRepository,
 ): ViewModel() {
 
     companion object {
@@ -81,18 +83,22 @@ internal class SearchViewModel @Inject constructor(
                 performingSearch = true
                 emitUiState()
                 val result = searchRepo.performSearch(trimmedSearchTerm)
+                val recommendedResults = recommendationRepository.getRecommendations(trimmedSearchTerm)
                 performingSearch = false
                 val id = UUID.randomUUID()
                 when (result) {
                     is Success -> {
-                        if (result.value.results.isNotEmpty()) {
+                        if (result.value.results.isNotEmpty() || recommendedResults.isNotEmpty()) {
                             emitUiState(
                                 searchResults = SearchResults(
                                     trimmedSearchTerm,
-                                    result.value.results
+                                    result.value.results,
+                                    recommendedResults
                                 )
                             )
-                            sendResultsAnalytics(trimmedSearchTerm, result.value.results)
+                            if (result.value.results.isNotEmpty()) {
+                                sendResultsAnalytics(trimmedSearchTerm, result.value.results)
+                            }
                         } else {
                             emitUiState(error = Error.Empty(id, trimmedSearchTerm))
                         }

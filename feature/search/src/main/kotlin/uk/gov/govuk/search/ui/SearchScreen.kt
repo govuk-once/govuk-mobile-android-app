@@ -215,6 +215,7 @@ private fun SearchContent(
             SearchResults(
                 searchTerm = uiState.searchResults.searchTerm,
                 searchResults = uiState.searchResults.values,
+                recommendedResults = uiState.searchResults.recommendations,
                 onClick = { result, index ->
                     actions.onResultClick(
                         uiState.searchResults.searchTerm,

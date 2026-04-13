@@ -4,6 +4,7 @@
     <string name="search_placeholder">Search</string>
     <string name="content_desc_clear">Clear search</string>
     <string name="search_no_results">No results for</string>
+    <string name="recommended_results_heading">Recommended</string>
     <string name="search_results_heading">Search results</string>
     <string name="previous_searches_heading">Previous searches</string>
     <string name="remove_all_button">Delete all</string>
