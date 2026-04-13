@@ -566,6 +566,7 @@ fun AccountConnectionCard(
     description: String? = null
 ) {
     val fontScale = LocalDensity.current.fontScale
+    val showLeadingIcon = fontScale <= 1.25f
     val baseWidth = dimensionResource(id = R.dimen.ic_arrow_width)
     val baseHeight = dimensionResource(id = R.dimen.ic_arrow_height)
 
@@ -580,13 +581,15 @@ fun AccountConnectionCard(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_link),
-                contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-            )
+            if (showLeadingIcon) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_link),
+                    contentDescription = null,
+                    tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+                )
 
-            MediumHorizontalSpacer()
+                MediumHorizontalSpacer()
+            }
 
             Column(
                 modifier = Modifier.weight(1f)
