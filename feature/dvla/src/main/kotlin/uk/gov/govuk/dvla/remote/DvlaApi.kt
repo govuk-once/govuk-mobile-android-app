@@ -5,6 +5,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
 import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
 
 interface DvlaApi {
@@ -17,5 +18,8 @@ interface DvlaApi {
 
     @DELETE("app/udp/v1/identity/dvla")
     suspend fun deleteDvlaIdentity(): Response<Unit>
+
+    @GET("app/dvla/v1/driving-licence")
+    suspend fun getDrivingLicence(): Response<DvlaLicenceResponse>
 
 }

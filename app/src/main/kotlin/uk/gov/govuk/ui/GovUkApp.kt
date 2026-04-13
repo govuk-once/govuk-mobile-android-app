@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -69,6 +70,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
+import uk.gov.govuk.dvla.ui.LicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -86,6 +88,7 @@ import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
+import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.model.HomeWidget
 import uk.gov.govuk.widgets.ui.contains
@@ -464,18 +467,25 @@ private fun GovUkNavHost(
                 }
             },
             topicHeader = { topicRef, linkResult ->
-                val isDrivingTopic = topicRef == "driving-transport"
+                val isDrivingTopic = topicRef.isDrivingTopic()
                 val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
 
                 if (isDrivingTopic && isFeatureEnabled) {
-                    // drop in the self-managed public header from the DVLA module
-                    DvlaLinkHeader(
-                        linkResult = linkResult,
-                        onActionClick = { navController.navigateToDvlaLink() },
+                    Column(
                         modifier = Modifier
                             .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(bottom = GovUkTheme.spacing.medium)
-                    )
+                            .padding(bottom = GovUkTheme.spacing.medium),
+                        verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                    ) {
+                        // drop in the self-managed public header from the DVLA module
+                        DvlaLinkHeader(
+                            linkResult = linkResult,
+                            onActionClick = { navController.navigateToDvlaLink() }
+                        )
+
+                        // and licence summary widget from DVLA module
+                        LicenceSummaryWidget()
+                    }
                 }
             },
             modifier = Modifier.padding(paddingValues)
