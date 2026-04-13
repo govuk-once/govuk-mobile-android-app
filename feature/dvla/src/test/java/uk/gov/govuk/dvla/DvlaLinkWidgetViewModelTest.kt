@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -71,5 +72,20 @@ class DvlaLinkWidgetViewModelTest {
 
         assertEquals(DvlaLinkState.UNLINKED, viewModel.dvlaState.value)
         coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+    }
+
+    @Test
+    fun `Given a card click, when onLinkCardClicked is called, then track card click event`() {
+        val expectedText = "Link DVLA account"
+
+        viewModel.onLinkCardClicked(expectedText)
+
+        verify(exactly = 1) {
+            analyticsClient.cardClick(
+                text = expectedText,
+                external = false,
+                section = "Account link"
+            )
+        }
     }
 }
