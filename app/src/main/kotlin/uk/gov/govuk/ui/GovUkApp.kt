@@ -69,6 +69,7 @@ import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
+import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.LicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
@@ -480,7 +481,7 @@ private fun GovUkNavHost(
                         // drop in the self-managed public header from the DVLA module
                         DvlaLinkHeader(
                             linkResult = linkResult,
-                            onActionClick = { navController.navigateToDvlaLink() }
+                            onActionClick = { navController.navigateToDvlaLinkIntro() }
                         )
 
                         // and licence summary widget from DVLA module
@@ -587,6 +588,7 @@ private fun GovUkNavHost(
         )
 
         dvlaGraph(
+            onContinueToLink = { navController.navigateToDvlaLink() },
             launchBrowser = { url ->
                 browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
             },

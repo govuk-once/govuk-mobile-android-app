@@ -3,6 +3,11 @@
     <string name="link_dvla_account_button">Add your driver and vehicles account</string>
     <string name="unlink_dvla_account_button">Unlink your driver and vehicles account</string>
 
+    <string name="link_dvla_intro_title">Add your driver and vehicles account</string>
+    <string name="link_dvla_intro_description">Keep track of your applications, penalty points, and tax and MOT dates.</string>
+    <string name="link_dvla_intro_action_message">We’ll take you to your web browser to sign in.</string>
+    <string name="link_dvla_intro_button">Continue</string>
+
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>

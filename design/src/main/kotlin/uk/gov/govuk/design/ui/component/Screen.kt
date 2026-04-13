@@ -85,7 +85,7 @@ fun LoadingScreen(
 
 @Composable
 fun BookendToWebScreen(
-    heading: String,
+    title: String,
     description: String,
     actionMessage: String,
     buttonText: String,
@@ -124,7 +124,7 @@ fun BookendToWebScreen(
                 )
         ) {
             LargeTitleBoldLabel(
-                text = heading,
+                text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
             )
 
@@ -162,7 +162,7 @@ fun BookendToWebScreen(
 private fun BookendToWebScreenPreview() {
     GovUkTheme {
         BookendToWebScreen(
-            heading = "Add your driver and vehicles account",
+            title = "Add your driver and vehicles account",
             description = "Keep track of your applications, penalty points, and tax and MOT dates.",
             actionMessage = "We’ll take you to your web browser to sign in.",
             buttonText = "Continue",
