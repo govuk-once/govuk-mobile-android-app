@@ -1,8 +1,6 @@
 package uk.gov.govuk
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -40,8 +38,6 @@ class MainActivity : FragmentActivity() {
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
 
-        setIntentFlags()
-
         emitIntent(savedInstanceState)
 
         setContent {
@@ -61,12 +57,6 @@ class MainActivity : FragmentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         _intentFlow.tryEmit(intent)
-    }
-
-    private fun setIntentFlags() {
-        // FLAG_ACTIVITY_CLEAR_TASK prevents activity recreation when app is started from a deep link.
-        // It must be used in conjunction with FLAG_ACTIVITY_NEW_TASK.
-        intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
     }
 
     private fun emitIntent(savedInstanceState: Bundle?) {
