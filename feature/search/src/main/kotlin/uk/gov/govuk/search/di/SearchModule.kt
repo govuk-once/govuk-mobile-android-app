@@ -13,6 +13,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uk.gov.govuk.search.DefaultSearchFeature
 import uk.gov.govuk.search.SearchFeature
+import uk.gov.govuk.search.data.BestBetsRepository
+import uk.gov.govuk.search.data.HardcodedBestBetsRepository
 import uk.gov.govuk.search.data.RecommendationRepository
 import uk.gov.govuk.search.data.HardcodedRecommendationRepository
 import uk.gov.govuk.search.data.SearchRepo
@@ -35,6 +37,12 @@ internal class SearchModule {
     @Singleton
     fun providesRecommendationRepository(): RecommendationRepository {
         return HardcodedRecommendationRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun providesBestBetsRepository(): BestBetsRepository {
+        return HardcodedBestBetsRepository()
     }
 
     @Provides

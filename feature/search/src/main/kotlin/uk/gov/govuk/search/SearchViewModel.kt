@@ -14,6 +14,7 @@ import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.search.SearchUiState.Error
 import uk.gov.govuk.search.SearchUiState.SearchResults
 import uk.gov.govuk.search.SearchUiState.Suggestions
+import uk.gov.govuk.search.data.BestBetsRepository
 import uk.gov.govuk.search.data.RecommendationRepository
 import uk.gov.govuk.search.data.SearchRepo
 import uk.gov.govuk.search.data.remote.model.SearchResult
@@ -29,6 +30,7 @@ internal class SearchViewModel @Inject constructor(
     private val visited: Visited,
     private val searchRepo: SearchRepo,
     private val recommendationRepository: RecommendationRepository,
+    private val bestBetsRepository: BestBetsRepository,
 ): ViewModel() {
 
     companion object {
@@ -88,16 +90,17 @@ internal class SearchViewModel @Inject constructor(
                 val id = UUID.randomUUID()
                 when (result) {
                     is Success -> {
-                        if (result.value.results.isNotEmpty() || recommendedResults.isNotEmpty()) {
+                        val results = bestBetsRepository.applyBestBets(trimmedSearchTerm, result.value.results)
+                        if (results.isNotEmpty() || recommendedResults.isNotEmpty()) {
                             emitUiState(
                                 searchResults = SearchResults(
                                     trimmedSearchTerm,
-                                    result.value.results,
+                                    results,
                                     recommendedResults
                                 )
                             )
-                            if (result.value.results.isNotEmpty()) {
-                                sendResultsAnalytics(trimmedSearchTerm, result.value.results)
+                            if (results.isNotEmpty()) {
+                                sendResultsAnalytics(trimmedSearchTerm, results)
                             }
                         } else {
                             emitUiState(error = Error.Empty(id, trimmedSearchTerm))
