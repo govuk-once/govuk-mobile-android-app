@@ -13,6 +13,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
 
@@ -20,6 +21,7 @@ import uk.gov.govuk.data.model.Result
 class DvlaLinkWidgetViewModelTest {
 
     private val dvlaRepo = mockk<DvlaRepo>()
+    private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private lateinit var viewModel: DvlaLinkWidgetViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -28,7 +30,7 @@ class DvlaLinkWidgetViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        viewModel = DvlaLinkWidgetViewModel(dvlaRepo)
+        viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
     }
 
     @After
