@@ -148,7 +148,7 @@ fun BookendToWebScreen(
                 .fillMaxWidth()
                 .padding(GovUkTheme.spacing.medium)
         ) {
-            PrimaryButton(
+            AccountConnectionButton(
                 text = buttonText,
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth()

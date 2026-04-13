@@ -53,6 +53,7 @@ private val Grey60 = Color(0xFFF0F0F0)
 
 private val Black = Color(0xFF000000)
 private val BlackLighter50 = Color(0xFF858686)
+private val BlackLighter80 = Color(0xFFCECECE)
 private val BlackAlpha30 = Color(0x4D000000)
 private val BlackAlpha75 = Color(0x4B000000)
 private val BlackLighter95 = Color(0xFFF3F3F3)
@@ -84,6 +85,8 @@ data class GovUkColourScheme(
         val buttonPrimaryHighlight: Color,
         val buttonPrimaryDisabled: Color,
         val buttonPrimaryFocused: Color,
+        val buttonLinkAccount: Color,
+        val buttonLinkAccountHighlight: Color,
         val buttonSecondary: Color,
         val buttonSecondaryHighlight: Color,
         val buttonSecondaryDisabled: Color,
@@ -151,6 +154,9 @@ data class GovUkColourScheme(
         val buttonPrimaryStroke: Color,
         val buttonPrimaryStrokeHighlight: Color,
         val buttonPrimaryStrokeFocussed: Color,
+        val buttonLinkAccount: Color,
+        val buttonLinkAccountStroke: Color,
+        val buttonLinkAccountHighlight: Color,
         val buttonSecondary: Color,
         val buttonSecondaryHighlight: Color,
         val buttonSecondaryDisabled: Color,
@@ -234,6 +240,8 @@ internal val LightColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = White,
         buttonPrimaryDisabled = Grey600,
         buttonPrimaryFocused = Black,
+        buttonLinkAccount = White,
+        buttonLinkAccountHighlight = BlackLighter80,
         buttonSecondary = BluePrimary,
         buttonSecondaryHighlight = BlueDarker25,
         buttonSecondaryDisabled = Grey700,
@@ -297,11 +305,14 @@ internal val LightColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = GreenDarker25,
         buttonPrimaryDisabled = Grey100,
         buttonPrimaryFocused = YellowPrimary,
+        buttonLinkAccount = Black,
+        buttonLinkAccountHighlight = Black,
 
         // Todo - move these into strokes???
         buttonPrimaryStroke = GreenDarker50,
         buttonPrimaryStrokeHighlight = GreenDarker80,
         buttonPrimaryStrokeFocussed = Black,
+        buttonLinkAccountStroke = Black,
 
         buttonSecondary = Color.Transparent,
         buttonSecondaryHighlight = Color.Transparent,
@@ -388,6 +399,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = Black,
         buttonPrimaryDisabled = Black,
         buttonPrimaryFocused = Black,
+        buttonLinkAccount = White,
+        buttonLinkAccountHighlight = BlackLighter80,
         buttonSecondary = BlueAccent,
         buttonSecondaryHighlight = BlueLighter25,
         buttonSecondaryDisabled = Grey300,
@@ -451,11 +464,14 @@ internal val DarkColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = GreenLighter25,
         buttonPrimaryDisabled = Grey400,
         buttonPrimaryFocused = YellowPrimary,
+        buttonLinkAccount = Black,
+        buttonLinkAccountHighlight = Black,
 
         // Todo - move these into strokes???
         buttonPrimaryStroke = GreenPrimary,
         buttonPrimaryStrokeHighlight = GreenDarker50,
         buttonPrimaryStrokeFocussed = YellowDarker50,
+        buttonLinkAccountStroke = Black,
 
         buttonSecondary = Color.Transparent,
         buttonSecondaryHighlight = Color.Transparent,
@@ -543,6 +559,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             buttonPrimaryHighlight = Color.Unspecified,
             buttonPrimaryDisabled = Color.Unspecified,
             buttonPrimaryFocused = Color.Unspecified,
+            buttonLinkAccount = Color.Unspecified,
+            buttonLinkAccountHighlight = Color.Unspecified,
             buttonSecondary = Color.Unspecified,
             buttonSecondaryHighlight = Color.Unspecified,
             buttonSecondaryDisabled = Color.Unspecified,
@@ -609,6 +627,9 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             buttonPrimaryStroke = Color.Unspecified,
             buttonPrimaryStrokeHighlight = Color.Unspecified,
             buttonPrimaryStrokeFocussed = Color.Unspecified,
+            buttonLinkAccount = Color.Unspecified,
+            buttonLinkAccountStroke = Color.Unspecified,
+            buttonLinkAccountHighlight = Color.Unspecified,
             buttonSecondary = Color.Unspecified,
             buttonSecondaryHighlight = Color.Unspecified,
             buttonSecondaryDisabled = Color.Unspecified,
