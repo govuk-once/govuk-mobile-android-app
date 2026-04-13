@@ -26,7 +26,7 @@ class MainActivity : FragmentActivity() {
     internal lateinit var appNavigation: AppNavigation
 
     private val _intentFlow: MutableSharedFlow<Intent> =
-        MutableSharedFlow(replay = 1)
+        MutableSharedFlow(replay = 2)
     internal val intentFlow = _intentFlow.asSharedFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
