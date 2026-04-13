@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
@@ -26,6 +27,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.GovUkOutlinedCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -187,11 +189,11 @@ private fun RecommendedSearchResultCard(
     GovUkOutlinedCard(
         modifier = modifier,
         onClick = onClick,
-        backgroundColour = GovUkTheme.colourScheme.surfaces.cardGreen,
-        borderColour = GovUkTheme.colourScheme.strokes.cardGreen
+        backgroundColour = Color(0xFFBDD9CE),
+        borderColour = Color(0xFF4DA583)
     ) {
         Row(verticalAlignment = Alignment.Top) {
-            BodyRegularLabel(
+            BodyBoldLabel(
                 text = title,
                 modifier = Modifier.weight(1f),
                 color = GovUkTheme.colourScheme.textAndIcons.link,
