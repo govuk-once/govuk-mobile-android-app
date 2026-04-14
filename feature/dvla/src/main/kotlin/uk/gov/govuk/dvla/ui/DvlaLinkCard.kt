@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import uk.gov.govuk.design.ui.component.DrillInCard
+import uk.gov.govuk.design.ui.component.AccountConnectionCard
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaLinkState
 import uk.gov.govuk.dvla.R
@@ -16,20 +16,23 @@ import uk.gov.govuk.dvla.R
 @Composable
 internal fun DvlaLinkCard(
     state: DvlaLinkState,
-    onActionClick: () -> Unit,
+    onActionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val titleResId = when (state) {
-        DvlaLinkState.UNLINKED -> R.string.link_dvla_account_button
-        DvlaLinkState.LINKED -> R.string.unlink_dvla_account_button
+        DvlaLinkState.UNLINKED -> R.string.link_dvla_account_title
+        DvlaLinkState.LINKED -> null
         DvlaLinkState.CHECKING -> null
     }
 
     if (titleResId != null) {
-        DrillInCard(
+        val title = stringResource(titleResId)
+
+        AccountConnectionCard(
             title = stringResource(titleResId),
-            onClick = onActionClick,
-            modifier = modifier.fillMaxWidth()
+            onClick = { onActionClick(title) },
+            description = stringResource(R.string.link_dvla_account_description),
+            modifier =  modifier.fillMaxWidth()
         )
     } else {
         Box(

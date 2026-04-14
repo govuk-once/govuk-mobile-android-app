@@ -6,14 +6,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import javax.inject.Inject
 
 @HiltViewModel
 internal class DvlaLinkWidgetViewModel @Inject constructor(
-    private val dvlaRepo: DvlaRepo
+    private val dvlaRepo: DvlaRepo,
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
+
+    companion object {
+        private const val SECTION = "Account link"
+    }
 
     private val _dvlaState = MutableStateFlow(DvlaLinkState.CHECKING)
     val dvlaState = _dvlaState.asStateFlow()
@@ -30,5 +36,13 @@ internal class DvlaLinkWidgetViewModel @Inject constructor(
                 DvlaLinkState.UNLINKED
             }
         }
+    }
+
+    fun onLinkCardClicked(text: String) {
+        analyticsClient.cardClick(
+            text = text,
+            external = false,
+            section = SECTION
+        )
     }
 }

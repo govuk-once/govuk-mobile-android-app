@@ -86,6 +86,21 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun cardClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
+        navigation(
+            text = text,
+            type = "Trigger card",
+            url = url,
+            external = external,
+            section = section
+        )
+    }
+
     fun tabClick(text: String) {
         navigation(text = text, type = "Tab")
     }

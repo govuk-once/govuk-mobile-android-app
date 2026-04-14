@@ -474,7 +474,7 @@ private fun GovUkNavHost(
                     Column(
                         modifier = Modifier
                             .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(vertical = GovUkTheme.spacing.medium),
+                            .padding(bottom = GovUkTheme.spacing.medium),
                         verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                     ) {
                         // drop in the self-managed public header from the DVLA module
