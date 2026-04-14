@@ -67,6 +67,7 @@ import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.navigation.DVLA_LINK_INTRO_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
@@ -95,6 +96,17 @@ import uk.gov.govuk.widgets.model.HomeWidget
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
 import uk.govuk.app.local.navigation.localGraph
+
+/** Routes that draw status bar, add any routes that draw system nav bar here */
+private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
+    CHAT_GRAPH_ROUTE,
+    DVLA_LINK_INTRO_ROUTE
+)
+
+/** Routes that draw system nav bar, add any routes that draw system nav bar here */
+private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
+    DVLA_LINK_INTRO_ROUTE
+)
 
 @Composable
 internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
@@ -133,7 +145,10 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
         }
     } else {
         Column {
-            StatusBar(false)
+            StatusBar(
+                hideBackground = false,
+                useDarkIcons = false
+            )
             SplashScreen { isSplashDone = true }
         }
     }
@@ -155,6 +170,14 @@ private fun BottomNavScaffold(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentNavParentRoute = navBackStackEntry?.destination?.parent?.route
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    // status & system nav bars flags
+    val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
+            currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES
+    val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
+    val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
+    val useDarkIcons = isChatRoute && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -195,7 +218,7 @@ private fun BottomNavScaffold(
         modifier = Modifier
             .padding(
                 start = navBarPadding.calculateStartPadding(layoutDirection),
-                bottom = navBarPadding.calculateBottomPadding(),
+                bottom = if (hideBottomPadding) 0.dp else navBarPadding.calculateBottomPadding(),
                 end = navBarPadding.calculateEndPadding(layoutDirection)
             )
     ) { paddingValues ->
@@ -213,7 +236,9 @@ private fun BottomNavScaffold(
             color = GovUkTheme.colourScheme.surfaces.background
         ) {
             Column {
-                StatusBar(currentNavParentRoute == CHAT_GRAPH_ROUTE)
+                StatusBar(
+                    hideBackground = hideStatusBarBackground,
+                    useDarkIcons = useDarkIcons)
                 GovUkNavHost(
                     intentFlow = intentFlow,
                     viewModel = viewModel,
@@ -629,13 +654,14 @@ private fun GovUkNavHost(
 
 @Composable
 private fun StatusBar(
-    isChat: Boolean,
+    hideBackground: Boolean,
+    useDarkIcons: Boolean,
     modifier: Modifier = Modifier
 ) {
     val localView = LocalView.current
     val window = (localView.context as Activity).window
 
-    if (!isChat) {
+    if (!hideBackground) {
         Box(
             modifier
                 .fillMaxWidth()
@@ -644,6 +670,8 @@ private fun StatusBar(
         )
     }
 
-    WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars =
-        (isChat && !isSystemInDarkTheme())
+    WindowCompat.getInsetsController(window, localView).apply {
+        isAppearanceLightStatusBars = useDarkIcons
+        isAppearanceLightNavigationBars = if (hideBackground) false else !isSystemInDarkTheme()
+    }
 }
