@@ -921,4 +921,45 @@ class AnalyticsClientTest {
             firebaseAnalyticClient.logException(exception)
         }
     }
+
+    @Test
+    fun `Given a card click, then log event`() {
+        analyticsClient.cardClick("text")
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "Navigation",
+                mapOf(
+                    "type" to "Trigger card",
+                    "external" to false,
+                    "language" to Locale.getDefault().language,
+                    "text" to "text"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a card click with optional parameters, then log event`() {
+        analyticsClient.cardClick(
+            text = "text",
+            url = "url",
+            external = true,
+            section = "section"
+        )
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "Navigation",
+                mapOf(
+                    "type" to "Trigger card",
+                    "external" to true,
+                    "url" to "url",
+                    "section" to "section",
+                    "language" to Locale.getDefault().language,
+                    "text" to "text"
+                )
+            )
+        }
+    }
 }
