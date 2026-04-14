@@ -12,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -26,7 +27,7 @@ class MainActivity : FragmentActivity() {
     internal lateinit var appNavigation: AppNavigation
 
     private val _intentFlow: MutableSharedFlow<Intent> =
-        MutableSharedFlow(replay = 2)
+        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     internal val intentFlow = _intentFlow.asSharedFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
