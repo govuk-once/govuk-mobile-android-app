@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,8 @@ internal class LicenceSummaryViewModel @Inject constructor(
             dvlaRepo.isLinked.collect { isLinked ->
                 if (isLinked) {
                     fetchLicenceData()
+                    // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
+                    fetchDriverSummaryData()
                 } else {
                     _uiState.value = LicenceSummaryState.Hidden
                 }
@@ -46,6 +49,20 @@ internal class LicenceSummaryViewModel @Inject constructor(
 
             _uiState.value = if (result is Result.Success)
                 LicenceSummaryState.Success(result.value) else LicenceSummaryState.Error
+        }
+    }
+
+    private fun fetchDriverSummaryData() {
+        viewModelScope.launch {
+            val result = dvlaRepo.getDriverSummary()
+
+            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
+            if (BuildConfig.DEBUG) {
+                when (result) {
+                    is Result.Success -> Log.d("DriverSummary", "SUCCESS: ${result.value}")
+                    else -> Log.e("DriverSummary", "ERROR - Failed to fetch driver summary")
+                }
+            }
         }
     }
 }
