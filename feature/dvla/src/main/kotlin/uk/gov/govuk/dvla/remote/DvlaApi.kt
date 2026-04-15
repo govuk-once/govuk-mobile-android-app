@@ -5,6 +5,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
 import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
@@ -26,4 +27,6 @@ interface DvlaApi {
     @GET("app/dvla/v1/driver-summary")
     suspend fun getDriverSummary(): Response<DriverSummaryResponse>
 
+    @GET("app/dvla/v1/customer-summary")
+    suspend fun getCustomerSummary(): Response<CustomerSummaryResponse>
 }
