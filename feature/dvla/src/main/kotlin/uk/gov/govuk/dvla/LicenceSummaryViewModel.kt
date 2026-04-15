@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,8 +58,8 @@ internal class LicenceSummaryViewModel @Inject constructor(
             // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
             if (BuildConfig.DEBUG) {
                 when (result) {
-                    is Result.Success -> Log.d("DriverSummary", "SUCCESS: ${result.value}")
-                    else -> Log.e("DriverSummary", "ERROR - Failed to fetch driver summary")
+                    is Result.Success -> println("DriverSummary: SUCCESS: ${result.value}")
+                    else -> println("DriverSummary: ERROR - Failed to fetch driver summary")
                 }
             }
         }
