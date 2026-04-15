@@ -12,8 +12,6 @@ import uk.govuk.app.local.data.remote.model.RemoteLocalAuthority
 import uk.govuk.app.local.data.remote.safeLocalApiCall
 import uk.govuk.app.local.domain.model.Address
 import uk.govuk.app.local.domain.model.LocalAuthority
-import uk.govuk.app.local.domain.toAddress
-import uk.govuk.app.local.domain.toLocalAuthority
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package uk.govuk.app.local.domain
+package uk.govuk.app.local.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
