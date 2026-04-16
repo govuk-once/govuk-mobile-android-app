@@ -2,8 +2,8 @@ package uk.govuk.app.local.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import uk.govuk.app.local.data.local.model.StoredLocalAuthority
-import uk.govuk.app.local.data.local.model.StoredLocalAuthorityParent
+import uk.govuk.app.local.data.local.model.LocalAuthorityEntity
+import uk.govuk.app.local.data.local.model.LocalAuthorityParentEntity
 import uk.govuk.app.local.data.remote.model.RemoteAddress
 import uk.govuk.app.local.data.remote.model.RemoteLocalAuthority
 import uk.govuk.app.local.domain.model.Address
@@ -59,17 +59,11 @@ class LocalAuthorityMapperTest {
     }
 
     @Test
-    fun `Map from stored local authority with parent`() {
-        val storedLocalAuthority = StoredLocalAuthority().apply {
-            name = "name"
-            url = "url"
-            slug = "slug"
-            parent = StoredLocalAuthorityParent().apply {
-                name = "parent name"
-                url = "parent url"
-                slug = "parent slug"
-            }
-        }
+    fun `Map from local authority entity with parent`() {
+        val entity = LocalAuthorityEntity(
+            name = "name", url = "url", slug = "slug",
+            parent = LocalAuthorityParentEntity(name = "parent name", url = "parent url", slug = "parent slug")
+        )
 
         val expected = LocalAuthority(
             name = "name",
@@ -82,16 +76,15 @@ class LocalAuthorityMapperTest {
             )
         )
 
-        assertEquals(expected, storedLocalAuthority.toLocalAuthority())
+        assertEquals(expected, entity.toLocalAuthority())
     }
 
     @Test
-    fun `Map from stored local authority without parent`() {
-        val storedLocalAuthority = StoredLocalAuthority().apply {
-            name = "name"
-            url = "url"
-            slug = "slug"
-        }
+    fun `Map from local authority entity without parent`() {
+        val entity = LocalAuthorityEntity(
+            name = "name", url = "url", slug = "slug",
+            parent = null
+        )
 
         val expected = LocalAuthority(
             name = "name",
@@ -99,7 +92,7 @@ class LocalAuthorityMapperTest {
             slug = "slug"
         )
 
-        assertEquals(expected, storedLocalAuthority.toLocalAuthority())
+        assertEquals(expected, entity.toLocalAuthority())
     }
 
     @Test

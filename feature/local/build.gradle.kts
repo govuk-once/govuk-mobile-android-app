@@ -46,6 +46,19 @@ android {
     }
 }
 
+sonar {
+    properties {
+        property(
+            "sonar.coverage.exclusions",
+            properties["sonar.coverage.exclusions"].toString() + ",**/LocalDatabase.*,**/LocalMigrationCallback.*"
+        )
+        property(
+            "sonar.cpd.exclusions",
+            properties["sonar.cpd.exclusions"].toString() + ",**/LocalDatabase.*,**/LocalMigrationCallback.*"
+        )
+    }
+}
+
 dependencies {
     implementation(projects.design)
     implementation(projects.analytics)
@@ -61,10 +74,15 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.realm.base)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.sqlite)
     implementation(libs.androidx.adaptive.android)
     implementation(libs.androidx.ui.tooling)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
