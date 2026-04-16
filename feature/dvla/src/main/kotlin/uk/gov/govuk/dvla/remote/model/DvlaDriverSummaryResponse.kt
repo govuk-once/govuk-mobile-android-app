@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
+import uk.gov.govuk.dvla.remote.model.common.DriversEligibilityResponse
 
 data class DriverSummaryResponse(
     @SerializedName("linkingId") val linkingId: String,
@@ -157,28 +158,6 @@ data class SdlResponse(
     @SerializedName("tokens") val tokens: List<SdlToken>
 )
 
-data class DriversEligibilityResponse(
-    @SerializedName("applications") val applications: List<Application>
-)
-
-data class Application(
-    @SerializedName("applicationType") val applicationType: String,
-    @SerializedName("isRequired") val isRequired: Boolean?,
-    @SerializedName("ineligibleReason") val ineligibleReason: String?,
-    @SerializedName("availableActions") val availableActions: List<AvailableAction>,
-    @SerializedName("possibleTransactions") val possibleTransactions: List<PossibleTransaction>?
-)
-
-data class AvailableAction(
-    @SerializedName("actionType") val actionType: String,
-    @SerializedName("isRequired") val isRequired: Boolean?
-)
-
-data class PossibleTransaction(
-    @SerializedName("transactionType") val transactionType: String,
-    @SerializedName("isRequired") val isRequired: Boolean?
-)
-
 data class ImageUtilityResponse(
     @SerializedName("photoUrl") val photoUrl: String?,
     @SerializedName("signatureImageUrl") val signatureImageUrl: String?
@@ -213,7 +192,7 @@ data class Endorsement(
     @SerializedName("welshOtherSentenceLiteral") val welshOtherSentenceLiteral: String?,
     @SerializedName("penaltyPoints") val penaltyPoints: Int?,
     @SerializedName("penaltyPointsExpiryDate") val penaltyPointsExpiryDate: String?,
-    @SerializedName("prisonSentSuspendedPeriod") val prisonSentSuspendedPeriod: Any?, // Can expand if needed
+    @SerializedName("prisonSentSuspendedPeriod") val prisonSentSuspendedPeriod: Any?,
     @SerializedName("rehabilitationCourseCompleted") val rehabilitationCourseCompleted: Boolean?,
     @SerializedName("sentenceDate") val sentenceDate: String?,
     @SerializedName("sentencingCourtCode") val sentencingCourtCode: String?,
