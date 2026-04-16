@@ -18,7 +18,7 @@ import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.topics.data.local.TopicsLocalDataSource
-import uk.gov.govuk.topics.data.local.model.LocalTopicItem
+import uk.gov.govuk.topics.data.local.model.LocalTopicItemEntity
 import uk.gov.govuk.topics.data.remote.TopicsApi
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic.RemoteTopicContent
@@ -107,18 +107,8 @@ class TopicsRepoTest{
     fun `Given locally cached topics, when get topics, then emit topic items`() {
         every { localDataSource.topics } returns flowOf(
             listOf(
-                LocalTopicItem().apply {
-                    ref = "ref1"
-                    title = "title1"
-                    description = "desc1"
-                    isSelected = true
-                },
-                LocalTopicItem().apply {
-                    ref = "ref2"
-                    title = "title2"
-                    description = "desc2"
-                    isSelected = false
-                }
+                LocalTopicItemEntity(ref = "ref1", title = "title1", description = "desc1", isSelected = true),
+                LocalTopicItemEntity(ref = "ref2", title = "title2", description = "desc2", isSelected = false)
             )
         )
 

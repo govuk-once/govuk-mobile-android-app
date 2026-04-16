@@ -12,14 +12,11 @@ internal interface VisitedDao {
     @Query("SELECT * FROM visited_items ORDER BY lastVisited DESC")
     fun getVisitedItems(): Flow<List<VisitedItemEntity>>
 
-    @Query("SELECT * FROM visited_items WHERE title = :title AND url = :url LIMIT 1")
-    suspend fun findByTitleAndUrl(title: String, url: String): VisitedItemEntity?
-
     @Insert
     suspend fun insert(item: VisitedItemEntity)
 
     @Query("UPDATE visited_items SET lastVisited = :lastVisited WHERE title = :title AND url = :url")
-    suspend fun updateLastVisited(title: String, url: String, lastVisited: Long)
+    suspend fun updateLastVisited(title: String, url: String, lastVisited: Long): Int
 
     @Query("DELETE FROM visited_items WHERE title = :title AND url = :url")
     suspend fun delete(title: String, url: String)

@@ -16,10 +16,8 @@ internal class VisitedLocalDataSource @Inject constructor(
 
     suspend fun insertOrUpdate(title: String, url: String, lastVisited: LocalDateTime = LocalDateTime.now()) {
         val timestamp = lastVisited.toEpochSecond(ZoneOffset.UTC)
-        val existing = dao.findByTitleAndUrl(title, url)
-        if (existing != null) {
-            dao.updateLastVisited(title, url, timestamp)
-        } else {
+        val updated = dao.updateLastVisited(title, url, timestamp)
+        if (updated == 0) {
             dao.insert(VisitedItemEntity(title = title, url = url, lastVisited = timestamp))
         }
     }

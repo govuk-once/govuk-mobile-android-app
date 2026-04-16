@@ -42,20 +42,18 @@ class VisitedLocalDataSourceTest {
 
     @Test
     fun `Given no existing visited item, when visited, then insert into db`() {
-        coEvery { dao.findByTitleAndUrl("title1", "url1") } returns null
+        coEvery { dao.updateLastVisited(any(), any(), any()) } returns 0
 
         runTest {
             dataSource.insertOrUpdate("title1", "url1")
 
             coVerify { dao.insert(match { it.title == "title1" && it.url == "url1" }) }
-            coVerify(exactly = 0) { dao.updateLastVisited(any(), any(), any()) }
         }
     }
 
     @Test
     fun `Given an existing visited item, when re-visited, then update lastVisited in db`() {
-        val existing = VisitedItemEntity(id = 1, title = "title1", url = "url1", lastVisited = 0)
-        coEvery { dao.findByTitleAndUrl("title1", "url1") } returns existing
+        coEvery { dao.updateLastVisited(any(), any(), any()) } returns 1
         val now = LocalDateTime.now()
 
         runTest {
