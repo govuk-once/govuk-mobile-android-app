@@ -12,6 +12,7 @@ import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
 import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
 
@@ -132,5 +133,26 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.getDrivingLicence() }
+    }
+
+    @Test
+    fun `Given driver summary api returns success, when getDriverSummary is called, then return Success with DriverSummaryDetails`() = runTest {
+        val summaryResponse = mockk<DriverSummaryResponse>(relaxed = true)
+        coEvery { api.getDriverSummary() } returns Response.success(summaryResponse)
+
+        val result = repo.getDriverSummary()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getDriverSummary() }
+    }
+
+    @Test
+    fun `Given driver summary api fails, when getDriverSummary is called, then return Error`() = runTest {
+        coEvery { api.getDriverSummary() } throws Exception("Exception")
+
+        val result = repo.getDriverSummary()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getDriverSummary() }
     }
 }
