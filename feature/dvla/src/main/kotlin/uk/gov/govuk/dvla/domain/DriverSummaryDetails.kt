@@ -7,16 +7,16 @@ data class DriverSummaryDetails(
     val licenceNumber: String,
     val firstName: String,
     val lastName: String,
-    val penaltyPoints: Int,
+    val penaltyPoints: Int?,
     val status: String,
-    val expiryDate: String
+    val expiryDate: String?
 )
 
 fun DriverSummaryResponse.toDomainModel() = DriverSummaryDetails(
     licenceNumber = this.driverViewResponse.driver.drivingLicenceNumber,
-    firstName = this.driverViewResponse.driver.firstNames,
-    lastName = this.driverViewResponse.driver.lastName,
+    firstName = this.driverViewResponse.driver.firstNames ?: "",
+    lastName = this.driverViewResponse.driver.lastName ?: "",
     penaltyPoints = this.driverViewResponse.driver.penaltyPoints,
-    status = this.driverViewResponse.licence.status,
-    expiryDate = this.driverViewResponse.token.validToDate
+    status = this.driverViewResponse.licence?.status ?: "Unknown",
+    expiryDate = this.driverViewResponse.token?.validToDate
 )
