@@ -7,6 +7,7 @@ import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.remote.safeAuthApiCall
+import uk.gov.govuk.dvla.domain.DriverSummaryDetails
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
@@ -61,6 +62,17 @@ internal class DvlaRepo @Inject constructor(
         } else {
             @Suppress("UNCHECKED_CAST")
             result as Result<LicenceDetails>
+        }
+    }
+
+    suspend fun getDriverSummary(): Result<DriverSummaryDetails> {
+        val result = safeAuthApiCall({ api.getDriverSummary() }, authRepo)
+
+        return if (result is Result.Success) {
+            Result.Success(result.value.toDomainModel())
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            result as Result<DriverSummaryDetails>
         }
     }
 

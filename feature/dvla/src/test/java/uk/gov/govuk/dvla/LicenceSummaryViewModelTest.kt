@@ -18,6 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.domain.DriverSummaryDetails
 import uk.gov.govuk.dvla.domain.LicenceDetails
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,6 +33,15 @@ class LicenceSummaryViewModelTest {
         validTo = "2035-05-01",
         type = "Full",
         status = "Valid"
+    )
+
+    private val driverSummaryDetails = DriverSummaryDetails(
+        licenceNumber = "DECER607085K99AE",
+        firstName = "KENNETH",
+        lastName = "DECERQUEIRA",
+        penaltyPoints = 0,
+        status = "Valid",
+        expiryDate = "2035-05-01"
     )
 
     @Before
@@ -53,6 +63,7 @@ class LicenceSummaryViewModelTest {
 
         assertEquals(LicenceSummaryState.Hidden, viewModel.uiState.value)
         coVerify(exactly = 0) { repo.getLicenceDetails() }
+        coVerify(exactly = 0) { repo.getDriverSummary() }
     }
 
     @Test
@@ -65,6 +76,7 @@ class LicenceSummaryViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { repo.getLicenceDetails() }
+        coVerify(exactly = 1) { repo.getDriverSummary() }
         assertEquals(LicenceSummaryState.Success(licenceDetails), viewModel.uiState.value)
     }
 
@@ -77,6 +89,7 @@ class LicenceSummaryViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { repo.getLicenceDetails() }
+        coVerify(exactly = 1) { repo.getDriverSummary() }
         assertEquals(LicenceSummaryState.Error, viewModel.uiState.value)
     }
 
