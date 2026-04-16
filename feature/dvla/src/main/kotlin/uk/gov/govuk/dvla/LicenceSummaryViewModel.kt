@@ -32,7 +32,8 @@ internal class LicenceSummaryViewModel @Inject constructor(
                 if (isLinked) {
                     fetchLicenceData()
                     // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-                    fetchDriverSummaryData()
+//                    fetchDriverSummaryData()
+                    fetchCustomerSummaryData()
                 } else {
                     _uiState.value = LicenceSummaryState.Hidden
                 }
@@ -60,6 +61,20 @@ internal class LicenceSummaryViewModel @Inject constructor(
                 when (result) {
                     is Result.Success -> println("DriverSummary: SUCCESS: ${result.value}")
                     else -> println("DriverSummary: ERROR - Failed to fetch driver summary")
+                }
+            }
+        }
+    }
+
+    private fun fetchCustomerSummaryData() {
+        viewModelScope.launch {
+            val result = dvlaRepo.getCustomerSummary()
+
+            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
+            if (BuildConfig.DEBUG) {
+                when (result) {
+                    is Result.Success -> println("CustomerSummary: SUCCESS: ${result.value}")
+                    else -> println("CustomerSummary: ERROR - Failed to fetch customer summary")
                 }
             }
         }
