@@ -26,33 +26,25 @@ internal class LocalMigrationCallback(
                 .build()
         }
 
-        val item = try {
-            val realm = Realm.open(config)
-            val result = realm.query<StoredLocalAuthority>().find().firstOrNull()?.let { stored ->
-                listOf(stored.name, stored.url, stored.slug,
-                    stored.parent?.name, stored.parent?.url, stored.parent?.slug)
-            }
-            realm.close()
-            result
-        } catch (e: Exception) {
-            analyticsClient.logException(e)
-            return
-        }
-
-        if (item != null) {
-            db.beginTransaction()
-            try {
-                db.execSQL(
-                    "INSERT OR REPLACE INTO local_authority (id, name, url, slug, parent_name, parent_url, parent_slug) VALUES (1, ?, ?, ?, ?, ?, ?)",
-                    arrayOf(item[0], item[1], item[2], item[3], item[4], item[5])
-                )
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-        }
-
         try {
+            val realm = Realm.open(config)
+            try {
+                val item = realm.query<StoredLocalAuthority>().find().firstOrNull()
+                if (item != null) {
+                    db.beginTransaction()
+                    try {
+                        db.execSQL(
+                            "INSERT OR REPLACE INTO local_authority (id, name, url, slug, parent_name, parent_url, parent_slug) VALUES (1, ?, ?, ?, ?, ?, ?)",
+                            arrayOf<Any?>(item.name, item.url, item.slug, item.parent?.name, item.parent?.url, item.parent?.slug)
+                        )
+                        db.setTransactionSuccessful()
+                    } finally {
+                        db.endTransaction()
+                    }
+                }
+            } finally {
+                realm.close()
+            }
             Realm.deleteRealm(config)
         } catch (e: Exception) {
             analyticsClient.logException(e)

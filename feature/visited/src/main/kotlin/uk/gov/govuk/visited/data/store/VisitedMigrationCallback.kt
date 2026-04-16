@@ -25,33 +25,27 @@ internal class VisitedMigrationCallback(
                 .build()
         }
 
-        val items = try {
-            val realm = Realm.open(config)
-            val result = realm.query<VisitedItem>().find()
-                .map { Triple(it.title, it.url, it.lastVisited) }
-            realm.close()
-            result
-        } catch (e: Exception) {
-            analyticsClient.logException(e)
-            return
-        }
-
-        if (items.isNotEmpty()) {
-            db.beginTransaction()
-            try {
-                items.forEach { (title, url, lastVisited) ->
-                    db.execSQL(
-                        "INSERT OR REPLACE INTO visited_items (title, url, lastVisited) VALUES (?, ?, ?)",
-                        arrayOf(title, url, lastVisited)
-                    )
-                }
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-        }
-
         try {
+            val realm = Realm.open(config)
+            try {
+                val items = realm.query<VisitedItem>().find()
+                if (items.isNotEmpty()) {
+                    db.beginTransaction()
+                    try {
+                        items.forEach { item ->
+                            db.execSQL(
+                                "INSERT OR REPLACE INTO visited_items (title, url, lastVisited) VALUES (?, ?, ?)",
+                                arrayOf<Any?>(item.title, item.url, item.lastVisited)
+                            )
+                        }
+                        db.setTransactionSuccessful()
+                    } finally {
+                        db.endTransaction()
+                    }
+                }
+            } finally {
+                realm.close()
+            }
             Realm.deleteRealm(config)
         } catch (e: Exception) {
             analyticsClient.logException(e)

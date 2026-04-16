@@ -25,33 +25,27 @@ internal class SearchMigrationCallback(
                 .build()
         }
 
-        val items = try {
-            val realm = Realm.open(config)
-            val result = realm.query<LocalSearchItem>().find()
-                .map { Pair(it.searchTerm, it.timestamp) }
-            realm.close()
-            result
-        } catch (e: Exception) {
-            analyticsClient.logException(e)
-            return
-        }
-
-        if (items.isNotEmpty()) {
-            db.beginTransaction()
-            try {
-                items.forEach { (searchTerm, timestamp) ->
-                    db.execSQL(
-                        "INSERT OR REPLACE INTO local_search_items (searchTerm, timestamp) VALUES (?, ?)",
-                        arrayOf(searchTerm, timestamp)
-                    )
-                }
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-        }
-
         try {
+            val realm = Realm.open(config)
+            try {
+                val items = realm.query<LocalSearchItem>().find()
+                if (items.isNotEmpty()) {
+                    db.beginTransaction()
+                    try {
+                        items.forEach { item ->
+                            db.execSQL(
+                                "INSERT OR REPLACE INTO local_search_items (searchTerm, timestamp) VALUES (?, ?)",
+                                arrayOf<Any?>(item.searchTerm, item.timestamp)
+                            )
+                        }
+                        db.setTransactionSuccessful()
+                    } finally {
+                        db.endTransaction()
+                    }
+                }
+            } finally {
+                realm.close()
+            }
             Realm.deleteRealm(config)
         } catch (e: Exception) {
             analyticsClient.logException(e)
