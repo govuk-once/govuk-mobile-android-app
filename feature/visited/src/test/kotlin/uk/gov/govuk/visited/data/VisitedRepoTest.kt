@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import uk.gov.govuk.visited.data.model.VisitedItem
+import uk.gov.govuk.visited.data.model.VisitedItemEntity
 import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
 import java.time.LocalDate
 
@@ -32,16 +32,8 @@ class VisitedRepoTest {
 
         every { localDataSource.visitedItems } returns flowOf(
             listOf(
-                VisitedItem().apply {
-                    title = "title1"
-                    url = "url1"
-                    lastVisited = lastVisitedMillis
-                },
-                VisitedItem().apply {
-                    title = "title2"
-                    url = "url2"
-                    lastVisited = lastVisitedMillis
-                }
+                VisitedItemEntity(title = "title1", url = "url1", lastVisited = lastVisitedMillis),
+                VisitedItemEntity(title = "title2", url = "url2", lastVisited = lastVisitedMillis)
             )
         )
         val repo = VisitedRepo(localDataSource)
