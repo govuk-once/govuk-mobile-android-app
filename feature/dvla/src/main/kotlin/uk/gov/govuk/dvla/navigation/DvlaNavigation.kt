@@ -6,19 +6,30 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
 
+const val DVLA_LINK_INTRO_ROUTE = "dvla_link_intro_route"
 const val DVLA_LINK_ROUTE = "dvla_link_route"
 const val DVLA_DEEP_LINK_PATH = "/returnedToken"
 const val ARG_DVLA_TOKEN = "token"
 
 fun NavGraphBuilder.dvlaGraph(
+    onContinueToLink: () -> Unit,
     launchBrowser: (String) -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    composable(route = DVLA_LINK_INTRO_ROUTE) {
+        DvlaLinkIntroScreen(
+            onClose = onClose,
+            onContinue = onContinueToLink,
+            modifier = modifier
+        )
+    }
+
     composable(
         route = "$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN={$ARG_DVLA_TOKEN}",
         arguments = listOf(
@@ -36,6 +47,10 @@ fun NavGraphBuilder.dvlaGraph(
             modifier = modifier
         )
     }
+}
+
+fun NavController.navigateToDvlaLinkIntro() {
+    navigate(DVLA_LINK_INTRO_ROUTE)
 }
 
 fun NavController.navigateToDvlaLink() {

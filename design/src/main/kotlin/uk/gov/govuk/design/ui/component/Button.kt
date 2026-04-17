@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 data class GovUkButtonColours(
     val defaultContainerColour: Color,
@@ -68,6 +69,40 @@ fun PrimaryButton(
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
+        pressedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeHighlight,
+        disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
+        disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
+    )
+
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        colours = colours,
+        textStyle = GovUkTheme.typography.bodyBold,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        externalLink = externalLink,
+        shape = RoundedCornerShape(15.dp)
+    )
+}
+
+@Composable
+fun AccountConnectionButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
+    val colours = GovUkButtonColours(
+        defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccount,
+        defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonLinkAccount,
+        defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccountStroke,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
+        pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccountHighlight,
+        pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonLinkAccountHighlight,
         pressedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeHighlight,
         disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
         disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
@@ -363,6 +398,18 @@ private fun PrimaryDisabled()
             text = "Primary button",
             onClick = { },
             enabled = false
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AccountConnection()
+{
+    GovUkTheme {
+        AccountConnectionButton(
+            text = "Continue",
+            onClick = { }
         )
     }
 }
