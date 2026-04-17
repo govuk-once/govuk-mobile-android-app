@@ -1,15 +1,11 @@
 package uk.gov.govuk.dvla.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.design.ui.component.AccountConnectionCard
-import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.dvla.DvlaLinkState
 import uk.gov.govuk.dvla.R
 
@@ -32,18 +28,13 @@ internal fun DvlaLinkCard(
             title = stringResource(titleResId),
             onClick = { onActionClick(title) },
             description = stringResource(R.string.link_dvla_account_description),
-            modifier =  modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth()
         )
     } else {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = GovUkTheme.spacing.medium),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                color = GovUkTheme.colourScheme.surfaces.primary
-            )
-        }
+        val altText = stringResource(R.string.link_dvla_loading)
+        LoaderCard(
+            modifier = modifier.fillMaxWidth(),
+            altText = altText
+        )
     }
 }
