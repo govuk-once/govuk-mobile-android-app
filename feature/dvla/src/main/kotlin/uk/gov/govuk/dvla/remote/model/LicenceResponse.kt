@@ -2,7 +2,7 @@ package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class DvlaLicenceResponse(
+data class LicenceResponse(
     @SerializedName("driver") val driver: Driver,
     @SerializedName("licence") val licence: Licence,
     @SerializedName("token") val token: Token
