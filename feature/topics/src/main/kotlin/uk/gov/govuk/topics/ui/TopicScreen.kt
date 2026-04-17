@@ -471,6 +471,7 @@ private fun TopicLoadingScreen(
     modifier: Modifier = Modifier
 ) {
     val topicName = topicReference.toTopicName(LocalContext.current)
+    val altText = stringResource(R.string.loading_topic_pages, topicName)
 
     Column(modifier.verticalScroll(rememberScrollState())) {
         ChildPageHeader(
@@ -478,16 +479,20 @@ private fun TopicLoadingScreen(
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
 
-        LoaderCard(modifier = Modifier
-            .padding(horizontal = GovUkTheme.spacing.medium)
-            .padding(top = GovUkTheme.spacing.medium)
+        LoaderCard(
+            modifier = Modifier
+                .padding(horizontal = GovUkTheme.spacing.medium)
+                .padding(top = GovUkTheme.spacing.medium),
+            altText = altText
         )
 
         LargeVerticalSpacer()
 
-        LoaderCard(modifier = Modifier
-            .padding(horizontal = GovUkTheme.spacing.medium)
-            .padding(bottom = GovUkTheme.spacing.medium)
+        LoaderCard(
+            modifier = Modifier
+                .padding(horizontal = GovUkTheme.spacing.medium)
+                .padding(bottom = GovUkTheme.spacing.medium),
+            altText = altText
         )
     }
 }
