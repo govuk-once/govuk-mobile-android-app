@@ -7,13 +7,13 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
-import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
-import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
+import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import uk.gov.govuk.dvla.remote.model.LinkStatusResponse
 
 interface DvlaApi {
 
     @GET("app/udp/v1/identity/dvla")
-    suspend fun checkDvlaLinked(): Response<DvlaStatusResponse>
+    suspend fun checkDvlaLinked(): Response<LinkStatusResponse>
 
     @POST("app/udp/v1/identity/dvla/{id}")
     suspend fun linkDvlaIdentity(@Path("id") id: String): Response<Unit>
@@ -22,7 +22,7 @@ interface DvlaApi {
     suspend fun deleteDvlaIdentity(): Response<Unit>
 
     @GET("app/dvla/v1/driving-licence")
-    suspend fun getDrivingLicence(): Response<DvlaLicenceResponse>
+    suspend fun getDrivingLicence(): Response<LicenceResponse>
 
     @GET("app/dvla/v1/driver-summary")
     suspend fun getDriverSummary(): Response<DriverSummaryResponse>

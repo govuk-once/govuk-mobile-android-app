@@ -14,8 +14,8 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
-import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
-import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
+import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import uk.gov.govuk.dvla.remote.model.LinkStatusResponse
 
 class DvlaRepoTest {
 
@@ -81,7 +81,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given check api returns account is linked, when isAccountLinked is called, then return Success and update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = true))
+        coEvery { api.checkDvlaLinked() } returns Response.success(LinkStatusResponse(linked = true))
 
         val result = repo.isAccountLinked()
 
@@ -93,7 +93,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given check api returns linked false, when isAccountLinked is called, then return Success(false) and update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = false))
+        coEvery { api.checkDvlaLinked() } returns Response.success(LinkStatusResponse(linked = false))
 
         val result = repo.isAccountLinked()
 
@@ -116,7 +116,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given driving licence api returns success, when getLicenceDetails is called, then return Success with LicenceDetails`() = runTest {
-        val licenceResponse = mockk<DvlaLicenceResponse>(relaxed = true)
+        val licenceResponse = mockk<LicenceResponse>(relaxed = true)
 
         coEvery { api.getDrivingLicence() } returns Response.success(licenceResponse)
 

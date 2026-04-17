@@ -1,15 +1,15 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
-import uk.gov.govuk.dvla.remote.model.common.DriversEligibilityResponse
+import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
 
 data class CustomerSummaryResponse(
     @SerializedName("linkingId") val linkingId: String,
     @SerializedName("customerResponse") val customerResponse: CustomerResponse,
-    @SerializedName("driversEligibilityResponse") val driversEligibilityResponse: DriversEligibilityResponse?,
-    @SerializedName("driversSuppressionResponse") val driversSuppressionResponse: DriversSuppressionResponse?,
+    @SerializedName("driversEligibilityResponse") val driversEligibility: DriversEligibility?,
+    @SerializedName("driversSuppressionResponse") val driversSuppression: DriversSuppression?,
     @SerializedName("applicationTaskResponse") val applicationTaskResponse: ApplicationTaskResponse?,
-    @SerializedName("vehicleResponse") val vehicleResponse: List<VehicleFullResponse>?,
+    @SerializedName("vehicleResponse") val vehicleResponse: List<Vehicle>?,
     @SerializedName("hasErrors") val hasErrors: Boolean
 )
 
@@ -128,7 +128,7 @@ data class Case(
     @SerializedName("applicationId") val applicationId: String?
 )
 
-data class DriversSuppressionResponse(
+data class DriversSuppression(
     @SerializedName("drivingLicenceNumber") val drivingLicenceNumber: String,
     @SerializedName("suppressionStatus") val suppressionStatus: List<SuppressionStatus>
 )
@@ -153,7 +153,7 @@ data class ApplicationTask(
     @SerializedName("version") val version: Int?
 )
 
-data class VehicleFullResponse(
+data class Vehicle(
     @SerializedName("registrationNumber") val registrationNumber: String,
     @SerializedName("recordType") val recordType: String?,
     @SerializedName("vehicleId") val vehicleId: Int,
