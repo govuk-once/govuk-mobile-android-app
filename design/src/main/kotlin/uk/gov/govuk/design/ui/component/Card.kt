@@ -811,7 +811,7 @@ private fun DrillInCardDescriptionPreview() {
 private fun AccountConnectionCardPreview() {
     GovUkTheme {
         AccountConnectionCard(
-            title = "Add your driver and vehicles account",
+            title = "Add driver and vehicles account",
             onClick = {},
             description = "Your tax, MOT, penalty points"
         )

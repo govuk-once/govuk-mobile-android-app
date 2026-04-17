@@ -12,6 +12,9 @@
     <string name="off_button">Off</string>
     <string name="action_toggle">toggle</string>
 
+    <string name="acronym_mot">MOT</string>
+    <string name="acronym_mot_alt_text">M.O.T.</string>
+
     <!-- Error-->
     <string name="app_unavailable_description">You cannot use the GOV.UK app at the moment. Try again later.</string>
     <string name="app_unavailable_title">Sorry, the app is unavailable</string>

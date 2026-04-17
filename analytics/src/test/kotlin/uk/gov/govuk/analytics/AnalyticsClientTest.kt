@@ -930,7 +930,7 @@ class AnalyticsClientTest {
             firebaseAnalyticClient.logEvent(
                 "Navigation",
                 mapOf(
-                    "type" to "Trigger card",
+                    "type" to "trigger card",
                     "external" to false,
                     "language" to Locale.getDefault().language,
                     "text" to "text"
@@ -952,7 +952,7 @@ class AnalyticsClientTest {
             firebaseAnalyticClient.logEvent(
                 "Navigation",
                 mapOf(
-                    "type" to "Trigger card",
+                    "type" to "trigger card",
                     "external" to true,
                     "url" to "url",
                     "section" to "section",
