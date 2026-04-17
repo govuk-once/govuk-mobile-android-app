@@ -40,7 +40,7 @@ internal class TopicViewModel @Inject constructor(
         private const val MAX_STEP_BY_STEPS = 3
     }
 
-    private val topicRef = savedStateHandle.get<String>(TOPIC_REF_ARG)
+    private val topicRef: String? = savedStateHandle[TOPIC_REF_ARG]
 
     private val loadingState: TopicUiState?
         get() {
