@@ -30,6 +30,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
+import uk.gov.govuk.design.ui.extension.replaceAcronym
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -62,15 +63,27 @@ private fun BaseLabel(
     textAlign: TextAlign,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
 ) {
-    val altText = text.text.replace(
-        stringResource(R.string.gov_uk),
-        stringResource(R.string.gov_uk_alt_text)
-    )
+    val altText = text.text
+        .replace(
+            stringResource(R.string.gov_uk),
+            stringResource(R.string.gov_uk_alt_text)
+        )
+        // replace acronyms with alt text so Talkback announces properly - for example MOT as M.O.T. and not 'moat'
+        .replaceAcronym(
+            stringResource(R.string.acronym_mot),
+            stringResource(R.string.acronym_mot_alt_text)
+        )
+
+    // apply semantics only if the text changed
+    val semanticsModifier = if (altText != text.text) {
+        Modifier.semantics { contentDescription = altText }
+    } else {
+        Modifier
+    }
+
     Text(
         text = text,
-        modifier = modifier.semantics {
-            contentDescription = altText
-        },
+        modifier = modifier.then(semanticsModifier),
         style = style.copy(hyphens = Hyphens.Auto),
         color = color,
         textAlign = textAlign,
