@@ -479,15 +479,15 @@ private fun TopicLoadingScreen(
         )
 
         LoaderCard(modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp)
+            .padding(horizontal = GovUkTheme.spacing.medium)
+            .padding(top = GovUkTheme.spacing.medium)
         )
 
         LargeVerticalSpacer()
 
         LoaderCard(modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(horizontal = GovUkTheme.spacing.medium)
+            .padding(bottom = GovUkTheme.spacing.medium)
         )
     }
 }
