@@ -31,8 +31,9 @@ internal class LicenceSummaryViewModel @Inject constructor(
             dvlaRepo.isLinked.collect { isLinked ->
                 if (isLinked) {
                     fetchLicenceData()
-                    // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-//                    fetchDriverSummaryData()
+                    // TODO: this is to demonstrate driver & customer summary endpoint call data,
+                    //  until we decide which endpoint to use
+                    fetchDriverSummaryData()
                     fetchCustomerSummaryData()
                 } else {
                     _uiState.value = LicenceSummaryState.Hidden
