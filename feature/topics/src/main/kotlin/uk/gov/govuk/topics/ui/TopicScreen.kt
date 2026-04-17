@@ -35,6 +35,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -134,6 +135,13 @@ internal fun TopicRoute(
                     onBack = onBack,
                     content = { ProblemMessage() }
                 )
+
+                is TopicUiState.Loading -> {
+                    TopicLoadingScreen(
+                        topicReference = it.topicReference,
+                        onBack = onBack,
+                    )
+                }
             }
         }
     }
@@ -456,6 +464,34 @@ private fun ErrorScreen(
     }
 }
 
+@Composable
+private fun TopicLoadingScreen(
+    topicReference: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val topicName = topicReference.toTopicName(LocalContext.current)
+
+    Column(modifier.verticalScroll(rememberScrollState())) {
+        ChildPageHeader(
+            text = topicName,
+            dismissStyle = HeaderDismissStyle.Back(onBack)
+        )
+
+        LoaderCard(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp)
+        )
+
+        LargeVerticalSpacer()
+
+        LoaderCard(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun ErrorScreenOfflinePreview() {
@@ -478,6 +514,17 @@ private fun ErrorScreenProblemPreview() {
             onPageView = {},
             onBack = {},
             content = { ProblemMessage() }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TopicLoadingScreenPreview() {
+    GovUkTheme {
+        TopicLoadingScreen(
+            topicReference = "benefits",
+            onBack = {}
         )
     }
 }
