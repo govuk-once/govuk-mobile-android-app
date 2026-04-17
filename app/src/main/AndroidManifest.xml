@@ -18,7 +18,7 @@
             android:exported="true"
             android:theme="@style/Theme.GovUkMobileApp"
             android:windowSoftInputMode="adjustResize"
-            android:launchMode="singleInstance">
+            android:launchMode="singleTop">
             <intent-filter>
                 <data android:scheme="govuk" />
                 <data android:host="gov.uk" />

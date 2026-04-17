@@ -1,8 +1,6 @@
 package uk.gov.govuk
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -28,7 +27,7 @@ class MainActivity : FragmentActivity() {
     internal lateinit var appNavigation: AppNavigation
 
     private val _intentFlow: MutableSharedFlow<Intent> =
-        MutableSharedFlow(replay = 1)
+        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     internal val intentFlow = _intentFlow.asSharedFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +38,6 @@ class MainActivity : FragmentActivity() {
         Firebase.appCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
-
-        setIntentFlags()
 
         emitIntent(savedInstanceState)
 
@@ -61,12 +58,6 @@ class MainActivity : FragmentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         _intentFlow.tryEmit(intent)
-    }
-
-    private fun setIntentFlags() {
-        // FLAG_ACTIVITY_CLEAR_TASK prevents activity recreation when app is started from a deep link.
-        // It must be used in conjunction with FLAG_ACTIVITY_NEW_TASK.
-        intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
     }
 
     private fun emitIntent(savedInstanceState: Bundle?) {

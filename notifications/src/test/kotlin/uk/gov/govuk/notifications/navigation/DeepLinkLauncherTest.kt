@@ -37,7 +37,7 @@ class DeepLinkLauncherTest {
     }
 
     @Test
-    fun `Given a valid deep link, then the app is started with correct flags and data`() {
+    fun `Given a valid deep link, then the app is started with correct data`() {
         val url = "https://gov.uk/home"
         val uriMock = mockk<Uri>()
         every { Uri.parse(url) } returns uriMock
@@ -49,7 +49,6 @@ class DeepLinkLauncherTest {
 
         verify(exactly = 1) {
             mockIntent.data = uriMock
-            mockIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(mockIntent)
         }
     }

@@ -18,6 +18,7 @@ import uk.gov.govuk.config.data.ConfigRepoImpl
 import uk.gov.govuk.config.data.flags.DebugFlags
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.config.data.remote.ConfigApi
+import uk.gov.govuk.config.data.remote.ContentApi
 import uk.gov.govuk.config.data.serialisation.EmergencyBannerTypeAdapter
 import javax.inject.Singleton
 
@@ -40,6 +41,17 @@ class ConfigModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(ConfigApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesContentApi(gson: Gson): ContentApi {
+        return Retrofit.Builder()
+            .baseUrl("https://www.gov.uk/") // placeholder URL required by Retrofit
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(ContentApi::class.java)
     }
 
     @Provides
