@@ -12,8 +12,10 @@ import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.remote.DvlaApi
-import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
-import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
+import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
+import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
+import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import uk.gov.govuk.dvla.remote.model.LinkStatusResponse
 
 class DvlaRepoTest {
 
@@ -79,7 +81,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given check api returns account is linked, when isAccountLinked is called, then return Success and update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = true))
+        coEvery { api.checkDvlaLinked() } returns Response.success(LinkStatusResponse(linked = true))
 
         val result = repo.isAccountLinked()
 
@@ -91,7 +93,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given check api returns linked false, when isAccountLinked is called, then return Success(false) and update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = false))
+        coEvery { api.checkDvlaLinked() } returns Response.success(LinkStatusResponse(linked = false))
 
         val result = repo.isAccountLinked()
 
@@ -114,7 +116,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given driving licence api returns success, when getLicenceDetails is called, then return Success with LicenceDetails`() = runTest {
-        val licenceResponse = mockk<DvlaLicenceResponse>(relaxed = true)
+        val licenceResponse = mockk<LicenceResponse>(relaxed = true)
 
         coEvery { api.getDrivingLicence() } returns Response.success(licenceResponse)
 
@@ -132,5 +134,47 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.getDrivingLicence() }
+    }
+
+    @Test
+    fun `Given driver summary api returns success, when getDriverSummary is called, then return Success with DriverSummaryDetails`() = runTest {
+        val summaryResponse = mockk<DriverSummaryResponse>(relaxed = true)
+        coEvery { api.getDriverSummary() } returns Response.success(summaryResponse)
+
+        val result = repo.getDriverSummary()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getDriverSummary() }
+    }
+
+    @Test
+    fun `Given driver summary api fails, when getDriverSummary is called, then return Error`() = runTest {
+        coEvery { api.getDriverSummary() } throws Exception("Exception")
+
+        val result = repo.getDriverSummary()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getDriverSummary() }
+    }
+
+    @Test
+    fun `Given customer summary api returns success, when getCustomerSummary is called, then return Success with CustomerSummaryDetails`() = runTest {
+        val summaryResponse = mockk<CustomerSummaryResponse>(relaxed = true)
+        coEvery { api.getCustomerSummary() } returns Response.success(summaryResponse)
+
+        val result = repo.getCustomerSummary()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getCustomerSummary() }
+    }
+
+    @Test
+    fun `Given customer summary api fails, when getCustomerSummary is called, then return Error`() = runTest {
+        coEvery { api.getCustomerSummary() } throws Exception("Exception")
+
+        val result = repo.getCustomerSummary()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getCustomerSummary() }
     }
 }

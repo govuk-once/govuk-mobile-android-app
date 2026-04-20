@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
@@ -240,6 +242,7 @@ fun HomeBannerCard(
         }
     }
 }
+
 @Composable
 fun SearchResultCard(
     title: String,
@@ -629,6 +632,48 @@ fun AccountConnectionCard(
     }
 }
 
+@Composable
+fun CentredCardWithIcon(
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = GovUkTheme.colourScheme.surfaces.list
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 96.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            icon()
+        }
+    }
+}
+
+@Composable
+fun LoaderCard(
+    modifier: Modifier = Modifier,
+    altText: String? = null
+) {
+    CentredCardWithIcon(
+        icon = {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(30.dp)
+                    .then(if (altText != null) Modifier.clearAndSetSemantics {
+                        contentDescription = altText
+                    } else Modifier),
+                color = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+            )
+        },
+        modifier = modifier
+    )
+}
+
 @ThemePreviews
 @Composable
 private fun HomeNotableDeathBannerCardPreview() {
@@ -824,4 +869,10 @@ private fun AccountConnectionCardPreview() {
     }
 }
 
-
+@ThemePreviews
+@Composable
+private fun LoaderCardPreview() {
+    GovUkTheme {
+        LoaderCard()
+    }
+}

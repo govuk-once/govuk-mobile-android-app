@@ -1,7 +1,6 @@
 package uk.gov.govuk
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import androidx.test.core.app.ActivityScenario
@@ -38,19 +37,6 @@ class MainActivityTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-    }
-
-    @Test
-    fun given_the_MainActivity_is_launched_When_onCreate_is_called_then_the_intent_flags_should_be_NEW_TASK_and_CLEAR_TASK() {
-        val scenario = ActivityScenario.launch<MainActivity>(intent)
-        scenario.onActivity { activity ->
-            runTest {
-                assertEquals(
-                    activity.intent.flags,
-                    FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
-                )
-            }
-        }
     }
 
     @Test

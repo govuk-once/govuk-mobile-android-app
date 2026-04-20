@@ -27,6 +27,7 @@
     <string name="select_alt_text">Select</string>
     <string name="deselect_alt_text">Deselect</string>
     <string name="empty_topics">Add your topics</string>
+    <string name="loading_topic_pages">Loading %1$s pages</string>
 
     <!-- Topic names -->
     <string name="benefits">Benefits</string>
