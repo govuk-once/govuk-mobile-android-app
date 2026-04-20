@@ -563,7 +563,8 @@ fun AccountConnectionCard(
     title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    description: String? = null
+    description: String? = null,
+    descriptionAltText: String? = null
 ) {
     val fontScale = LocalDensity.current.fontScale
     val showLeadingIcon = fontScale <= 1.25f
@@ -603,7 +604,12 @@ fun AccountConnectionCard(
                     SmallVerticalSpacer()
                     BodyRegularLabel(
                         text = description,
-                        color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+                        color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+                        modifier = if (descriptionAltText != null) {
+                            Modifier.clearAndSetSemantics {
+                                contentDescription = descriptionAltText
+                            }
+                        } else Modifier
                     )
                 }
             }
