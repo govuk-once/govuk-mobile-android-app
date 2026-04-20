@@ -1,6 +1,6 @@
 package uk.gov.govuk.dvla.domain
 
-import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
+import uk.gov.govuk.dvla.remote.model.LicenceResponse
 
 data class LicenceDetails(
     val licenceNumber: String,
@@ -10,7 +10,7 @@ data class LicenceDetails(
     val status: String
 )
 
-fun DvlaLicenceResponse.toDomainModel() = LicenceDetails(
+fun LicenceResponse.toDomainModel() = LicenceDetails(
     licenceNumber = this.driver.drivingLicenceNumber,
     validFrom = this.token.validFromDate,
     validTo = this.token.validToDate,
