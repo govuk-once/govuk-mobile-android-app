@@ -16,7 +16,7 @@ class NotificationsRepo @Inject constructor(
 ) {
     suspend fun login() {
         userRepo.notifications?.let { notifications ->
-            notificationsProvider.login(notifications.notificationId)
+            notificationsProvider.login(notifications.pushId)
             if (isNotificationsOnboardingCompleted()) {
                 sendExistingConsentWhenPreferenceUnknown(notifications.consentStatus)
             }

@@ -7,7 +7,7 @@ interface NotificationsProvider {
     val context: Context
 
     fun initialise(appId: String)
-    fun login(notificationId: String)
+    fun login(pushId: String)
     fun logout()
     fun giveConsent()
     fun removeConsent()
