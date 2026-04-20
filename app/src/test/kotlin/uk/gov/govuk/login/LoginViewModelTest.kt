@@ -383,7 +383,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, user api returns a notification id and id token issued at date is not stored, then emit loading and login event`() {
+    fun `Given an auth response, when success, user api returns a push id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
         coEvery { userRepo.initUser() } returns Result.Success(Unit)
@@ -416,7 +416,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, user api returns a notification id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
+    fun `Given an auth response, when success, user api returns a push id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
@@ -451,7 +451,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, flex is not enabled, user api returns a notification id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
+    fun `Given an auth response, when success, flex is not enabled, user api returns a push id and id token issued at date is stored, then emit loading, login event and set token expiry`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
