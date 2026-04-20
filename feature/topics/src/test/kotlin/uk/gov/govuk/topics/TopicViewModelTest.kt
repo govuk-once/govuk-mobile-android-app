@@ -64,14 +64,13 @@ class TopicViewModelTest {
     }
 
     @Test
-    fun `Given the topic reference is null, When init, then topic ui state is service error`() {
+    fun `Given the topic reference is null, When init, then topic ui state is no reference error`() {
         every { savedStateHandle.get<String>(TOPIC_REF_ARG) } returns null
 
         val viewModel = TopicViewModel(topicsRepo, analyticsClient, visited, savedStateHandle)
 
         runTest {
-            assert(viewModel.uiState.value is TopicUiState.ServiceError)
-            assertEquals("", (viewModel.uiState.value as TopicUiState.ServiceError).topicReference)
+            assert(viewModel.uiState.value is TopicUiState.Error.NoReference)
         }
     }
 
@@ -121,7 +120,7 @@ class TopicViewModelTest {
         val viewModel = TopicViewModel(topicsRepo, analyticsClient, visited, savedStateHandle)
 
         runTest {
-            val result = viewModel.uiState.first() as TopicUiState.Offline
+            val result = viewModel.uiState.first() as TopicUiState.Error.Offline
             assertEquals(REF, result.topicReference)
         }
     }
@@ -133,7 +132,7 @@ class TopicViewModelTest {
         val viewModel = TopicViewModel(topicsRepo, analyticsClient, visited, savedStateHandle)
 
         runTest {
-            val result = viewModel.uiState.first() as TopicUiState.ServiceError
+            val result = viewModel.uiState.first() as TopicUiState.Error.Service
             assertEquals(REF, result.topicReference)
         }
     }
@@ -145,7 +144,7 @@ class TopicViewModelTest {
         val viewModel = TopicViewModel(topicsRepo, analyticsClient, visited, savedStateHandle)
 
         runTest {
-            val result = viewModel.uiState.first() as TopicUiState.ServiceError
+            val result = viewModel.uiState.first() as TopicUiState.Error.Service
             assertEquals(REF, result.topicReference)
         }
     }

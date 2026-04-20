@@ -72,12 +72,12 @@ internal class TopicViewModel @Inject constructor(
                             )
                         )
                     }
-                    is DeviceOffline -> TopicUiState.Offline(ref)
-                    else -> TopicUiState.ServiceError(ref)
+                    is DeviceOffline -> TopicUiState.Error.Offline(ref)
+                    else -> TopicUiState.Error.Service(ref)
                 }
             }
         } ?: run {
-            _uiState.value = TopicUiState.ServiceError("")
+            _uiState.value = TopicUiState.Error.NoReference
         }
     }
 

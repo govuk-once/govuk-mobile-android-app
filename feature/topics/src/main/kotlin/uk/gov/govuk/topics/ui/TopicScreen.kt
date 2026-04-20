@@ -121,7 +121,7 @@ internal fun TopicRoute(
                     )
                 }
 
-                is TopicUiState.Offline -> ErrorScreen(
+                is TopicUiState.Error.Offline -> ErrorScreen(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
@@ -129,8 +129,15 @@ internal fun TopicRoute(
                 )
 
 
-                is TopicUiState.ServiceError -> ErrorScreen(
+                is TopicUiState.Error.Service -> ErrorScreen(
                     topicReference = it.topicReference,
+                    onPageView = { title -> viewModel.onPageView(title = title) },
+                    onBack = onBack,
+                    content = { ProblemMessage() }
+                )
+
+                is TopicUiState.Error.NoReference -> ErrorScreen(
+                    topicReference = "",
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
                     content = { ProblemMessage() }
