@@ -13,10 +13,10 @@ data class DriverSummaryDetails(
 )
 
 fun DriverSummaryResponse.toDomainModel() = DriverSummaryDetails(
-    licenceNumber = this.driverViewResponse.driver.drivingLicenceNumber,
-    firstName = this.driverViewResponse.driver.firstNames ?: "",
-    lastName = this.driverViewResponse.driver.lastName ?: "",
-    penaltyPoints = this.driverViewResponse.driver.penaltyPoints,
-    status = this.driverViewResponse.licence?.status ?: "Unknown",
-    expiryDate = this.driverViewResponse.token?.validToDate
+    licenceNumber = this.driverView.driver.drivingLicenceNumber,
+    firstName = this.driverView.driver.firstNames ?: "",
+    lastName = this.driverView.driver.lastName ?: "",
+    penaltyPoints = this.driverView.driver.penaltyPoints,
+    status = this.driverView.licence?.status ?: "Unknown",
+    expiryDate = this.driverView.token?.validToDate
 )

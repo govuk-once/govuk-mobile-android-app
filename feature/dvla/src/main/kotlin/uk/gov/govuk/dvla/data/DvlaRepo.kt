@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
+import uk.gov.govuk.dvla.domain.CustomerSummaryDetails
 import uk.gov.govuk.dvla.domain.DriverSummaryDetails
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.toDomainModel
@@ -54,27 +56,18 @@ internal class DvlaRepo @Inject constructor(
         return result
     }
 
-    suspend fun getLicenceDetails(): Result<LicenceDetails> {
-        val result = safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
+    suspend fun getLicenceDetails(): Result<LicenceDetails> =
+        safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
+            .map { it.toDomainModel() }
 
-        return if (result is Result.Success) {
-            Result.Success(result.value.toDomainModel())
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            result as Result<LicenceDetails>
-        }
-    }
+    suspend fun getDriverSummary(): Result<DriverSummaryDetails> =
+        safeAuthApiCall({ api.getDriverSummary() }, authRepo)
+            .map { it.toDomainModel() }
 
-    suspend fun getDriverSummary(): Result<DriverSummaryDetails> {
-        val result = safeAuthApiCall({ api.getDriverSummary() }, authRepo)
+    suspend fun getCustomerSummary(): Result<CustomerSummaryDetails> =
+        safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
+            .map { it.toDomainModel() }
 
-        return if (result is Result.Success) {
-            Result.Success(result.value.toDomainModel())
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            result as Result<DriverSummaryDetails>
-        }
-    }
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun extractLinkingIdFromJwt(jwtToken: String): String {
