@@ -17,13 +17,15 @@ import uk.gov.govuk.dvla.R
 @Composable
 internal fun DvlaLinkIntroScreen(
     onClose: () -> Unit,
-    onContinue: () -> Unit,
+    onContinue: (String) -> Unit,
     onPageView: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
         onPageView()
     }
+
+    val continueButtonText = stringResource(R.string.link_dvla_intro_button)
 
     Box(
         modifier = modifier
@@ -36,9 +38,9 @@ internal fun DvlaLinkIntroScreen(
             title = stringResource(R.string.link_dvla_intro_title),
             description = stringResource(R.string.link_dvla_intro_description),
             actionMessage = stringResource(R.string.link_dvla_intro_action_message),
-            buttonText = stringResource(R.string.link_dvla_intro_button),
+            buttonText = continueButtonText,
             onClose = onClose,
-            onContinue = onContinue,
+            onContinue = { onContinue(continueButtonText) },
         )
     }
 }

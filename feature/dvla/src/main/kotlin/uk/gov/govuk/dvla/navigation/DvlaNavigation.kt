@@ -41,8 +41,8 @@ fun NavGraphBuilder.dvlaGraph(
                     viewModel.onIntroCloseClicked()
                     onClose()
                 },
-                onContinue = {
-                    viewModel.onIntroContinueClicked()
+                onContinue = { buttonText ->
+                    viewModel.onIntroContinueClicked(buttonText)
                     onContinueToLink()
                 },
                 modifier = modifier

@@ -24,6 +24,14 @@ internal class DvlaViewModel @Inject constructor(
     @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
 ) : ViewModel() {
 
+    companion object {
+        private const val SCREEN_CLASS = "DvlaLinkIntroScreen"
+        private const val SCREEN_NAME = "DVLA Link Intro"
+        private const val SCREEN_FORMAT = "account bookend"
+        private const val SECTION_CONTINUE = "Continue"
+        private const val NAV_TYPE_CLOSE = "Close"
+    }
+
     sealed interface LinkingEvent {
         data object LinkComplete : LinkingEvent
         data object UnlinkComplete : LinkingEvent
@@ -59,22 +67,22 @@ internal class DvlaViewModel @Inject constructor(
 
     fun onIntroPageView() {
         analyticsClient.screenView(
-            screenClass = "DvlaLinkIntroScreen",
-            screenName = "Use screen title",
-            title = "Use screen title",
-            format = "account bookend"
+            screenClass = SCREEN_CLASS,
+            screenName = SCREEN_NAME,
+            title = SCREEN_NAME,
+            format = SCREEN_FORMAT
         )
     }
 
     fun onIntroCloseClicked() {
-        analyticsClient.iconClick(type = "Close")
+        analyticsClient.iconClick(type = NAV_TYPE_CLOSE)
     }
 
-    fun onIntroContinueClicked() {
+    fun onIntroContinueClicked(text: String) {
         analyticsClient.buttonClick(
-            text = "Continue",
+            text = text,
             external = false,
-            section = "Continue"
+            section = SECTION_CONTINUE
         )
     }
 
