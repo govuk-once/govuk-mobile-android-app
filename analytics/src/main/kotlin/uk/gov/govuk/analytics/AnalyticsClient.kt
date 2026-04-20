@@ -39,15 +39,16 @@ class AnalyticsClient @Inject constructor(
         analyticsRepo.clear()
     }
 
-    fun screenView(screenClass: String, screenName: String, title: String) {
+    fun screenView(screenClass: String, screenName: String, title: String, format: String? = null) {
         logEvent(
             FirebaseAnalytics.Event.SCREEN_VIEW,
             parametersWithLanguage(
-                mapOf(
+                listOfNotNull(
                     FirebaseAnalytics.Param.SCREEN_CLASS to screenClass,
                     FirebaseAnalytics.Param.SCREEN_NAME to screenName,
                     "screen_title" to title,
-                )
+                    format?.let { "format" to it }
+                ).toMap()
             )
         )
     }
@@ -98,6 +99,17 @@ class AnalyticsClient @Inject constructor(
             url = url,
             external = external,
             section = section
+        )
+    }
+
+    fun iconClick(
+        type: String,
+        external: Boolean = false
+    ) {
+        navigation(
+            text = "N/A",
+            type = type,
+            external = external
         )
     }
 

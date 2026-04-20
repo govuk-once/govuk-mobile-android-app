@@ -67,7 +67,7 @@ import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.navigation.DVLA_LINK_INTRO_ROUTE
+import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
@@ -100,12 +100,12 @@ import uk.govuk.app.local.navigation.localGraph
 /** Routes that draw status bar, add any routes that draw system nav bar here */
 private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
     CHAT_GRAPH_ROUTE,
-    DVLA_LINK_INTRO_ROUTE
+    DVLA_GRAPH_ROUTE
 )
 
 /** Routes that draw system nav bar, add any routes that draw system nav bar here */
 private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
-    DVLA_LINK_INTRO_ROUTE
+    DVLA_GRAPH_ROUTE
 )
 
 @Composable
@@ -175,7 +175,8 @@ private fun BottomNavScaffold(
     // status & system nav bars flags
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES
-    val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
+    val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
+            currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
     val useDarkIcons = isChatRoute && !isSystemInDarkTheme()
 

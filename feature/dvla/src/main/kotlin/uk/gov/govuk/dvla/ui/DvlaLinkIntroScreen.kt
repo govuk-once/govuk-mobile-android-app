@@ -1,12 +1,13 @@
 package uk.gov.govuk.dvla.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.design.ui.component.BookendToWebScreen
@@ -17,14 +18,20 @@ import uk.gov.govuk.dvla.R
 internal fun DvlaLinkIntroScreen(
     onClose: () -> Unit,
     onContinue: () -> Unit,
+    onPageView: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    LaunchedEffect(Unit) {
+        onPageView()
+    }
+
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
+
         BookendToWebScreen(
             title = stringResource(R.string.link_dvla_intro_title),
             description = stringResource(R.string.link_dvla_intro_description),
@@ -32,7 +39,6 @@ internal fun DvlaLinkIntroScreen(
             buttonText = stringResource(R.string.link_dvla_intro_button),
             onClose = onClose,
             onContinue = onContinue,
-            modifier = modifier
         )
     }
 }

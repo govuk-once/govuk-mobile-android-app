@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
@@ -19,6 +20,7 @@ import javax.inject.Named
 internal class DvlaViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
+    private val analyticsClient: AnalyticsClient,
     @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
 ) : ViewModel() {
 
@@ -53,6 +55,27 @@ internal class DvlaViewModel @Inject constructor(
 
     private fun startAuthFlow() {
         _authUrlToLaunch.value = dvlaAuthUrl
+    }
+
+    fun onIntroPageView() {
+        analyticsClient.screenView(
+            screenClass = "DvlaLinkIntroScreen",
+            screenName = "Use screen title",
+            title = "Use screen title",
+            format = "account bookend"
+        )
+    }
+
+    fun onIntroCloseClicked() {
+        analyticsClient.iconClick(type = "Close")
+    }
+
+    fun onIntroContinueClicked() {
+        analyticsClient.buttonClick(
+            text = "Continue",
+            external = false,
+            section = "Continue"
+        )
     }
 
     fun onAuthTabLaunched() {
