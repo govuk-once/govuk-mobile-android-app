@@ -1,17 +1,18 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
+import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
 
 data class DriverSummaryResponse(
     @SerializedName("linkingId") val linkingId: String,
-    @SerializedName("driverViewResponse") val driverViewResponse: DriverViewResponse,
-    @SerializedName("sdlResponse") val sdlResponse: SdlResponse?,
-    @SerializedName("driversEligibilityResponse") val driversEligibilityResponse: DriversEligibilityResponse?,
-    @SerializedName("imageUtilityResponse") val imageUtilityResponse: ImageUtilityResponse?,
+    @SerializedName("driverViewResponse") val driverView: DriverView,
+    @SerializedName("sdlResponse") val sdl: Sdl?,
+    @SerializedName("driversEligibilityResponse") val driversEligibility: DriversEligibility?,
+    @SerializedName("imageUtilityResponse") val imageUtility: ImageUtility?,
     @SerializedName("hasErrors") val hasErrors: Boolean
 )
 
-data class DriverViewResponse(
+data class DriverView(
     @SerializedName("driver") val driver: Driver,
     @SerializedName("licence") val licence: Licence?,
     @SerializedName("entitlement") val entitlement: List<Entitlement>,
@@ -152,34 +153,11 @@ data class TokenRestriction(
     @SerializedName("welshCategoryRestrictionLiteral") val welshCategoryRestrictionLiteral: String?
 )
 
-data class SdlResponse(
-    // CHANGED: Replaced List<Any> with explicit List<SdlToken>
+data class Sdl(
     @SerializedName("tokens") val tokens: List<SdlToken>
 )
 
-data class DriversEligibilityResponse(
-    @SerializedName("applications") val applications: List<Application>
-)
-
-data class Application(
-    @SerializedName("applicationType") val applicationType: String,
-    @SerializedName("isRequired") val isRequired: Boolean?,
-    @SerializedName("ineligibleReason") val ineligibleReason: String?,
-    @SerializedName("availableActions") val availableActions: List<AvailableAction>,
-    @SerializedName("possibleTransactions") val possibleTransactions: List<PossibleTransaction>?
-)
-
-data class AvailableAction(
-    @SerializedName("actionType") val actionType: String,
-    @SerializedName("isRequired") val isRequired: Boolean?
-)
-
-data class PossibleTransaction(
-    @SerializedName("transactionType") val transactionType: String,
-    @SerializedName("isRequired") val isRequired: Boolean?
-)
-
-data class ImageUtilityResponse(
+data class ImageUtility(
     @SerializedName("photoUrl") val photoUrl: String?,
     @SerializedName("signatureImageUrl") val signatureImageUrl: String?
 )
@@ -213,7 +191,7 @@ data class Endorsement(
     @SerializedName("welshOtherSentenceLiteral") val welshOtherSentenceLiteral: String?,
     @SerializedName("penaltyPoints") val penaltyPoints: Int?,
     @SerializedName("penaltyPointsExpiryDate") val penaltyPointsExpiryDate: String?,
-    @SerializedName("prisonSentSuspendedPeriod") val prisonSentSuspendedPeriod: Any?, // Can expand if needed
+    @SerializedName("prisonSentSuspendedPeriod") val prisonSentSuspendedPeriod: Any?,
     @SerializedName("rehabilitationCourseCompleted") val rehabilitationCourseCompleted: Boolean?,
     @SerializedName("sentenceDate") val sentenceDate: String?,
     @SerializedName("sentencingCourtCode") val sentencingCourtCode: String?,
@@ -253,7 +231,6 @@ data class SdlToken(
     @SerializedName("cancelled") val cancelled: String?
 )
 
-// Replaces 'Any?' in DriverViewResponse.holder
 data class HolderDetails(
     @SerializedName("holderFirstNames") val holderFirstNames: String?,
     @SerializedName("holderSurname") val holderSurname: String?,
