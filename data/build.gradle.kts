@@ -56,11 +56,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*,**/RoomEncryptionHelper.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/RealmEncryptionHelper.*,**/RealmDataStore.*,**/TinkClient.*,**/RoomEncryptionHelper.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*,**/RoomEncryptionHelper.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/RealmEncryptionHelper.*,**/RealmDataStore.*,**/TinkClient.*,**/RoomEncryptionHelper.*"
         )
     }
 }
