@@ -62,15 +62,22 @@ private fun BaseLabel(
     textAlign: TextAlign,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
 ) {
-    val altText = text.text.replace(
-        stringResource(R.string.gov_uk),
-        stringResource(R.string.gov_uk_alt_text)
-    )
+    val altText = text.text
+        .replace(
+            stringResource(R.string.gov_uk),
+            stringResource(R.string.gov_uk_alt_text)
+        )
+
+    // apply semantics only if the text changed
+    val semanticsModifier = if (altText != text.text) {
+        Modifier.semantics { contentDescription = altText }
+    } else {
+        Modifier
+    }
+
     Text(
         text = text,
-        modifier = modifier.semantics {
-            contentDescription = altText
-        },
+        modifier = modifier.then(semanticsModifier),
         style = style.copy(hyphens = Hyphens.Auto),
         color = color,
         textAlign = textAlign,

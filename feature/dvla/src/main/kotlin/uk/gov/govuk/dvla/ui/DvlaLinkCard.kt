@@ -23,12 +23,15 @@ internal fun DvlaLinkCard(
 
     if (titleResId != null) {
         val title = stringResource(titleResId)
+        val description = stringResource(R.string.link_dvla_account_description)
 
         AccountConnectionCard(
-            title = stringResource(titleResId),
+            title = title,
             onClick = { onActionClick(title) },
-            description = stringResource(R.string.link_dvla_account_description),
-            modifier = modifier.fillMaxWidth()
+            description = description,
+            descriptionAltText = description.replace(stringResource(R.string.acronym_mot),
+                stringResource(R.string.acronym_mot_alt_text)),
+            modifier =  modifier.fillMaxWidth()
         )
     } else {
         val altText = stringResource(R.string.link_dvla_loading)
