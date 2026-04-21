@@ -488,17 +488,7 @@ private fun TopicLoadingScreen(
 
         LoaderCard(
             modifier = Modifier
-                .padding(horizontal = GovUkTheme.spacing.medium)
-                .padding(top = GovUkTheme.spacing.medium),
-            altText = altText
-        )
-
-        LargeVerticalSpacer()
-
-        LoaderCard(
-            modifier = Modifier
-                .padding(horizontal = GovUkTheme.spacing.medium)
-                .padding(bottom = GovUkTheme.spacing.medium),
+                .padding(GovUkTheme.spacing.medium),
             altText = altText
         )
     }
