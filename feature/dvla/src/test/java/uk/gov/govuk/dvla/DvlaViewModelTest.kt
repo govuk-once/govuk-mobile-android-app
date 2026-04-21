@@ -5,6 +5,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -148,6 +149,51 @@ class DvlaViewModelTest {
         advanceUntilIdle()
 
         assertEquals(DvlaViewModel.UiState.Error, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given screen title, when onIntroPageView is called, then track screen view`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        viewModel.onIntroPageView("DVLA link intro")
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "DvlaLinkIntroScreen",
+                screenName = "DVLA link intro",
+                title = "DVLA link intro",
+                format = "account bookend"
+            )
+        }
+    }
+
+    @Test
+    fun `When onIntroCloseClicked is called, then track close icon click`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        viewModel.onIntroCloseClicked()
+
+        verify {
+            analyticsClient.iconClick(type = "Close")
+        }
+    }
+
+    @Test
+    fun `Given button text, when onIntroContinueClicked is called, then track button click`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        viewModel.onIntroContinueClicked("Continue")
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Continue",
+                external = false,
+                section = "Continue"
+            )
+        }
     }
 }
 
