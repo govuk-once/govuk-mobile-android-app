@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="link_dvla_account_title">Add your driver and vehicles account</string>
+    <string name="link_dvla_account_title">Add driver and vehicles account</string>
     <string name="link_dvla_account_description">Your tax, MOT, penalty points</string>
     <string name="link_dvla_loading">Loading driver and vehicles account information</string>
+
+    <string name="acronym_mot">MOT</string>
+    <string name="acronym_mot_alt_text">M.O.T.</string>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>

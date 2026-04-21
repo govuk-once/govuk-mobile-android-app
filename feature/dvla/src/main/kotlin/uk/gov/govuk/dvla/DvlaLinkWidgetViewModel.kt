@@ -18,7 +18,7 @@ internal class DvlaLinkWidgetViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val SECTION = "Account link"
+        private const val SECTION = "account link"
     }
 
     private val _dvlaState = MutableStateFlow(DvlaLinkState.CHECKING)

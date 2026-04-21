@@ -94,7 +94,7 @@ class AnalyticsClient @Inject constructor(
     ) {
         navigation(
             text = text,
-            type = "Trigger card",
+            type = "trigger card",
             url = url,
             external = external,
             section = section

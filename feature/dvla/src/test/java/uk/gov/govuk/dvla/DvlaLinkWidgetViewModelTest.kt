@@ -84,7 +84,7 @@ class DvlaLinkWidgetViewModelTest {
             analyticsClient.cardClick(
                 text = expectedText,
                 external = false,
-                section = "Account link"
+                section = "account link"
             )
         }
     }
