@@ -674,6 +674,6 @@ private fun StatusBar(
 
     WindowCompat.getInsetsController(window, localView).apply {
         isAppearanceLightStatusBars = useDarkIcons
-        isAppearanceLightNavigationBars = if (hideBackground) false else !isSystemInDarkTheme()
+        isAppearanceLightNavigationBars = !hideBackground && !isSystemInDarkTheme()
     }
 }
