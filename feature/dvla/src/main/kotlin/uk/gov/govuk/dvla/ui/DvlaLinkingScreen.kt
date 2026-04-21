@@ -64,7 +64,7 @@ internal fun DvlaLinkingRoute(
     }
 
     when (uiState) {
-        is DvlaViewModel.UiState.Default -> { } // don't need to show anything
+        is DvlaViewModel.UiState.Default -> Unit // don't need to show anything
         is DvlaViewModel.UiState.Error -> {
             InfoAlert(
                 title = R.string.error_dialog_title,
