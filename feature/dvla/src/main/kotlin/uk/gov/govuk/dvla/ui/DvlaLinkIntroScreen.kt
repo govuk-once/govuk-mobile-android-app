@@ -18,14 +18,15 @@ import uk.gov.govuk.dvla.R
 internal fun DvlaLinkIntroScreen(
     onClose: () -> Unit,
     onContinue: (String) -> Unit,
-    onPageView: () -> Unit,
+    onPageView: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
-        onPageView()
-    }
-
+    val screenTitle = stringResource(R.string.link_dvla_intro_title)
     val continueButtonText = stringResource(R.string.link_dvla_intro_button)
+
+    LaunchedEffect(Unit) {
+        onPageView(screenTitle)
+    }
 
     Box(
         modifier = modifier
@@ -35,7 +36,7 @@ internal fun DvlaLinkIntroScreen(
     ) {
 
         BookendToWebScreen(
-            title = stringResource(R.string.link_dvla_intro_title),
+            title = screenTitle,
             description = stringResource(R.string.link_dvla_intro_description),
             actionMessage = stringResource(R.string.link_dvla_intro_action_message),
             buttonText = continueButtonText,

@@ -34,8 +34,8 @@ fun NavGraphBuilder.dvlaGraph(
             val viewModel: DvlaViewModel = hiltViewModel()
 
             DvlaLinkIntroScreen(
-                onPageView = {
-                    viewModel.onIntroPageView()
+                onPageView = { screenTitle ->
+                    viewModel.onIntroPageView(screenTitle)
                 },
                 onClose = {
                     viewModel.onIntroCloseClicked()

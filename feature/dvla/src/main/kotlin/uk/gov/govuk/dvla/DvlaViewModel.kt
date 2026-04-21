@@ -26,7 +26,6 @@ internal class DvlaViewModel @Inject constructor(
 
     companion object {
         private const val SCREEN_CLASS = "DvlaLinkIntroScreen"
-        private const val SCREEN_NAME = "DVLA Link Intro"
         private const val SCREEN_FORMAT = "account bookend"
         private const val SECTION_CONTINUE = "Continue"
         private const val NAV_TYPE_CLOSE = "Close"
@@ -66,11 +65,11 @@ internal class DvlaViewModel @Inject constructor(
         _authUrlToLaunch.value = dvlaAuthUrl
     }
 
-    fun onIntroPageView() {
+    fun onIntroPageView(screenTitle: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
-            screenName = SCREEN_NAME,
-            title = SCREEN_NAME,
+            screenName = screenTitle,
+            title = screenTitle,
             format = SCREEN_FORMAT
         )
     }
