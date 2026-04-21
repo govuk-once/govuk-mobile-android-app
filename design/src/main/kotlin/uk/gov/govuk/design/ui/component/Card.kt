@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.extension.talkBackText
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.CardListItem
 import uk.gov.govuk.design.ui.model.EmergencyBannerUiType
 import uk.gov.govuk.design.ui.model.FocusableCardColours
@@ -608,11 +609,7 @@ fun AccountConnectionCard(
                     BodyRegularLabel(
                         text = description,
                         color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
-                        modifier = if (descriptionAltText != null) {
-                            Modifier.clearAndSetSemantics {
-                                contentDescription = descriptionAltText
-                            }
-                        } else Modifier
+                        modifier = modifier.withAltText(descriptionAltText)
                     )
                 }
             }

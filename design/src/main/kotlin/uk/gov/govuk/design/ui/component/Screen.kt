@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.design.ui.theme.ThemePreviews
 
@@ -92,7 +93,8 @@ fun BookendToWebScreen(
     buttonText: String,
     onClose: () -> Unit,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    descriptionAltText: String? = null
 ) {
     Column(
         modifier = modifier
@@ -134,7 +136,8 @@ fun BookendToWebScreen(
 
             Title3RegularLabel(
                 text = description,
-                color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+                color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+                modifier = modifier.withAltText(descriptionAltText)
             )
 
             MediumVerticalSpacer()

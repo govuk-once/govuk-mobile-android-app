@@ -23,6 +23,7 @@ internal fun DvlaLinkIntroScreen(
 ) {
     val screenTitle = stringResource(R.string.link_dvla_intro_title)
     val continueButtonText = stringResource(R.string.link_dvla_intro_button)
+    val description = stringResource(R.string.link_dvla_intro_description)
 
     LaunchedEffect(Unit) {
         onPageView(screenTitle)
@@ -37,7 +38,11 @@ internal fun DvlaLinkIntroScreen(
 
         BookendToWebScreen(
             title = screenTitle,
-            description = stringResource(R.string.link_dvla_intro_description),
+            description = description,
+            descriptionAltText = description.replace(
+                stringResource(R.string.acronym_mot),
+                stringResource(R.string.acronym_mot_alt_text)
+            ),
             actionMessage = stringResource(R.string.link_dvla_intro_action_message),
             buttonText = continueButtonText,
             onClose = onClose,
