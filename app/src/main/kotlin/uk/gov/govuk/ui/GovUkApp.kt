@@ -613,20 +613,22 @@ private fun GovUkNavHost(
         )
 
         dvlaGraph(
-            onContinueToLink = { navController.navigateToDvlaLink() },
+            onContinueToLink = {
+                navController.navigateToDvlaLink()
+            },
             launchBrowser = { url ->
                 browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
             },
             onLinkComplete = {
+                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
                 navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, true)
-                navController.popBackStack()
             },
             onUnlinkComplete = {
+                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
                 navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
-                navController.popBackStack()
             },
             onClose = {
-                navController.popBackStack()
+                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
             }
         )
     }

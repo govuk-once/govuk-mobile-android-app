@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,11 +26,14 @@ internal fun DvlaLinkingRoute(
     val authUrlToLaunch by viewModel.authUrlToLaunch.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
+    BackHandler {
+        onClose()
+    }
+
     LaunchedEffect(authUrlToLaunch) {
         authUrlToLaunch?.let { url ->
             onLaunchBrowser(url)
             viewModel.onAuthTabLaunched()
-            onClose()
         }
     }
 
@@ -43,6 +47,7 @@ internal fun DvlaLinkingRoute(
     }
 
     when (uiState) {
+        is DvlaViewModel.UiState.Default -> { } // don't need to show anything
         is DvlaViewModel.UiState.Error -> {
             InfoAlert(
                 title = R.string.error_dialog_title,

@@ -38,6 +38,7 @@ internal class DvlaViewModel @Inject constructor(
     }
 
     sealed interface UiState {
+        data object Default : UiState
         data object Loading : UiState
         data object Error : UiState
     }
@@ -45,7 +46,7 @@ internal class DvlaViewModel @Inject constructor(
     private val _linkingEvent = MutableSharedFlow<LinkingEvent>()
     val linkingEvent = _linkingEvent.asSharedFlow()
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Default)
     val uiState = _uiState.asStateFlow()
 
     private val _authUrlToLaunch = MutableStateFlow<String?>(null)
