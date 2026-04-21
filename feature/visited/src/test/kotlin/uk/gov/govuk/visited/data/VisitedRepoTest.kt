@@ -44,6 +44,19 @@ class VisitedRepoTest {
     }
 
     @Test
+    fun `Given a visited item is removed, then remove from local data source`() {
+        val repo = VisitedRepo(localDataSource)
+
+        runTest {
+            repo.remove("title", "url")
+        }
+
+        coVerify {
+            localDataSource.remove("title", "url")
+        }
+    }
+
+    @Test
     fun `Given the repo is cleared, then clear local data source`() {
         val repo = VisitedRepo(localDataSource)
 
