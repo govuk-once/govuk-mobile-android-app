@@ -5,9 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.dvla.DvlaViewModel
@@ -26,14 +30,27 @@ internal fun DvlaLinkingRoute(
     val authUrlToLaunch by viewModel.authUrlToLaunch.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
+    var browserLaunched by rememberSaveable { mutableStateOf(false) }
+
     BackHandler {
         onClose()
+    }
+
+    // exit screen if user closes Chrome tab
+    LifecycleResumeEffect(Unit) {
+        if (browserLaunched) {
+            onClose()
+        }
+        onPauseOrDispose {
+            // nothing to clean up
+        }
     }
 
     LaunchedEffect(authUrlToLaunch) {
         authUrlToLaunch?.let { url ->
             onLaunchBrowser(url)
             viewModel.onAuthTabLaunched()
+            browserLaunched = true
         }
     }
 
