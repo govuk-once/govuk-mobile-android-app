@@ -195,6 +195,37 @@ fun BookendConnectingScreen(
     }
 }
 
+@Composable
+fun AccountConnectionSuccessScreen(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
+            .padding(horizontal = GovUkTheme.spacing.medium),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_done),
+            contentDescription = "",
+            tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+        )
+
+        LargeVerticalSpacer()
+
+        LargeTitleBoldLabel(
+            text = title,
+            color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.semantics { heading() }
+        )
+    }
+}
+
 @ThemePreviews
 @Composable
 private fun BookendToWebScreenPreview() {
@@ -216,6 +247,16 @@ private fun BookendConnectingScreenPreview() {
     GovUkTheme {
         BookendConnectingScreen(
             title = "Add your driver and vehicles account"
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AccountConnectionSuccessScreenPreview() {
+    GovUkTheme {
+        AccountConnectionSuccessScreen(
+            title = "Driver and vehicles account added"
         )
     }
 }
