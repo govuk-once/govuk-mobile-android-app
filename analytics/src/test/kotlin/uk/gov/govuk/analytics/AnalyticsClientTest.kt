@@ -962,4 +962,24 @@ class AnalyticsClientTest {
             )
         }
     }
+
+    @Test
+    fun `Given an icon click, then log event`() {
+        analyticsClient.iconClick(
+            type = "Icon type",
+            external = false
+        )
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "Navigation",
+                mapOf(
+                    "type" to "Icon type",
+                    "external" to false,
+                    "language" to Locale.getDefault().language,
+                    "text" to "N/A"
+                )
+            )
+        }
+    }
 }

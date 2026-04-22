@@ -4,6 +4,11 @@
     <string name="link_dvla_account_description">Your tax, MOT, penalty points</string>
     <string name="link_dvla_loading">Loading driver and vehicles account information</string>
 
+    <string name="link_dvla_intro_title">Add your driver and vehicles account</string>
+    <string name="link_dvla_intro_description">Keep track of your applications, penalty points, and tax and MOT dates.</string>
+    <string name="link_dvla_intro_action_message">We’ll take you to your web browser to sign in.</string>
+    <string name="link_dvla_intro_button">Continue</string>
+
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
 
