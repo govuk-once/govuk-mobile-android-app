@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -111,7 +112,7 @@ fun BookendToWebScreen(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_cancel),
-                contentDescription = "Close",
+                contentDescription = stringResource(R.string.content_desc_close),
                 tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
             )
         }
