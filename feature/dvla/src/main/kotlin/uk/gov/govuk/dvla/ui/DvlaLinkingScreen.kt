@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.dvla.DvlaViewModel
@@ -65,6 +66,20 @@ internal fun DvlaLinkingRoute(
 
     when (uiState) {
         is DvlaViewModel.UiState.Default -> Unit // don't need to show anything
+        is DvlaViewModel.UiState.Success -> {
+            AccountConnectionSuccessScreen(
+                title = stringResource(R.string.link_dvla_success_title),
+                buttonText = stringResource(R.string.link_dvla_success_button),
+                onContinue = {
+                    viewModel.onSuccessContinueClicked()
+                },
+            )
+        }
+        is DvlaViewModel.UiState.Loading -> {
+            DvlaLinkingScreen(
+                modifier = modifier
+            )
+        }
         is DvlaViewModel.UiState.Error -> {
             InfoAlert(
                 title = R.string.error_dialog_title,
@@ -73,11 +88,6 @@ internal fun DvlaLinkingRoute(
                 onDismiss = {
                     onClose()
                 }
-            )
-        }
-        is DvlaViewModel.UiState.Loading -> {
-            DvlaLinkingScreen(
-                modifier = modifier
             )
         }
     }

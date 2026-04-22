@@ -39,6 +39,7 @@ internal class DvlaViewModel @Inject constructor(
     sealed interface UiState {
         data object Default : UiState
         data object Loading : UiState
+        data object Success : UiState
         data object Error : UiState
     }
 
@@ -97,9 +98,15 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
+    fun onSuccessContinueClicked() {
+        viewModelScope.launch {
+            _linkingEvent.emit(LinkingEvent.LinkComplete)
+        }
+    }
+
     private suspend fun linkDvlaAccount(token: String) {
         if (dvlaRepo.linkAccount(token) is Result.Success) {
-            _linkingEvent.emit(LinkingEvent.LinkComplete)
+            _uiState.value = UiState.Success
         } else {
             _uiState.value = UiState.Error
         }

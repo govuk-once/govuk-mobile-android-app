@@ -10,6 +10,8 @@
     <string name="link_dvla_intro_button">Continue</string>
 
     <string name="link_dvla_connecting_title">Adding driver and vehicles account…</string>
+    <string name="link_dvla_success_title">Driver and vehicles account added</string>
+    <string name="link_dvla_success_button">Continue</string>
 
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
