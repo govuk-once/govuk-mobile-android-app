@@ -1,4 +1,4 @@
-package uk.gov.govuk.ui
+package uk.gov.govuk.design.ui.component.error
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,22 +7,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import uk.gov.govuk.R
+import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 @Composable
-internal fun DeviceOfflineScreen(
+fun DeviceOfflineScreen(
     onTryAgain: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -60,12 +62,14 @@ internal fun DeviceOfflineScreen(
     }
 }
 
-@Preview (showBackground = true)
+@ThemePreviews
 @Composable
 private fun DeviceOfflinePreview() {
     GovUkTheme {
-        DeviceOfflineScreen(
-            onTryAgain = { }
-        )
+        Surface {
+            DeviceOfflineScreen(
+                onTryAgain = { }
+            )
+        }
     }
 }

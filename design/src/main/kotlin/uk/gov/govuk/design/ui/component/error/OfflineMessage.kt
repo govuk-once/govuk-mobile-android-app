@@ -24,7 +24,7 @@ fun OfflineMessage(
     )
 }
 
-@Preview
+@Preview (showBackground = true)
 @Composable
 private fun OfflineMessagePreview() {
     GovUkTheme {

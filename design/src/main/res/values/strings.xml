@@ -16,6 +16,11 @@
     <string name="app_unavailable_description">You cannot use the GOV.UK app at the moment. Try again later.</string>
     <string name="app_unavailable_title">Sorry, the app is unavailable</string>
 
+    <string name="device_offline_title">You are not connected to the internet</string>
+    <string name="device_offline_description_1">You need to have an internet connection to use the GOV.UK app.</string>
+    <string name="device_offline_description_2">Reconnect to the internet and try again.</string>
+    <string name="device_offline_button_title">Try again</string>
+
     <string name="no_internet_title">You are not connected to the internet</string>
     <string name="no_internet_description">You need to have an internet connection to use the GOV.UK app.\n\nReconnect to the internet and try again.</string>
     <string name="try_again">Try again</string>
