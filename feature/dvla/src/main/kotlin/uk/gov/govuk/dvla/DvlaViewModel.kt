@@ -25,9 +25,11 @@ internal class DvlaViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val SCREEN_CLASS = "DvlaLinkIntroScreen"
+        private const val SCREEN_CLASS_INTRO = "DvlaLinkIntroScreen"
+        private const val SCREEN_CLASS_SUCCESS = "DvlaLinkSuccessScreen"
         private const val SCREEN_FORMAT = "account bookend"
         private const val SECTION_CONTINUE = "Continue"
+        private const val SECTION_LINK_SUCCESS = "account link success"
         private const val NAV_TYPE_CLOSE = "Close"
     }
 
@@ -68,10 +70,18 @@ internal class DvlaViewModel @Inject constructor(
 
     fun onIntroPageView(screenTitle: String) {
         analyticsClient.screenView(
-            screenClass = SCREEN_CLASS,
+            screenClass = SCREEN_CLASS_INTRO,
             screenName = screenTitle,
             title = screenTitle,
             format = SCREEN_FORMAT
+        )
+    }
+
+    fun onLinkSuccessPageView(screenTitle: String) {
+        analyticsClient.screenView(
+            screenClass = SCREEN_CLASS_SUCCESS,
+            screenName = screenTitle,
+            title = screenTitle
         )
     }
 
@@ -87,6 +97,18 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
+    fun onSuccessContinueClicked(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            external = false,
+            section = SECTION_LINK_SUCCESS
+        )
+
+        viewModelScope.launch {
+            _linkingEvent.emit(LinkingEvent.LinkComplete)
+        }
+    }
+
     fun onAuthTabLaunched() {
         _authUrlToLaunch.value = null
     }
@@ -95,12 +117,6 @@ internal class DvlaViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             linkDvlaAccount(token)
-        }
-    }
-
-    fun onSuccessContinueClicked() {
-        viewModelScope.launch {
-            _linkingEvent.emit(LinkingEvent.LinkComplete)
         }
     }
 

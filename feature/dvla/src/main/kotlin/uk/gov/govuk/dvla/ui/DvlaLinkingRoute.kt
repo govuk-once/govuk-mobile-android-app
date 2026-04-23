@@ -75,7 +75,11 @@ internal fun DvlaLinkingRoute(
         is DvlaViewModel.UiState.Default -> Unit // don't need to show anything
         is DvlaViewModel.UiState.Success -> {
             DvlaLinkSuccessScreen(
-                onContinue = { viewModel.onSuccessContinueClicked() },
+                onPageView = { screenTitle ->
+                    viewModel.onLinkSuccessPageView(screenTitle)
+                },
+                onContinue = { buttonText ->
+                    viewModel.onSuccessContinueClicked(buttonText) },
                 modifier = modifier
             )
         }
@@ -109,11 +113,22 @@ private fun DvlaLinkLoadingScreen(
 
 @Composable
 private fun DvlaLinkSuccessScreen(
-    onContinue: () -> Unit,
+    onPageView: (String) -> Unit,
+    onContinue: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val title = stringResource(R.string.link_dvla_success_title)
     val buttonText = stringResource(R.string.link_dvla_success_button)
+
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        // protect against config change
+        if (!hasTrackedPageView) {
+            onPageView(title)
+            hasTrackedPageView = true
+        }
+    }
 
     Box(
         modifier = modifier
@@ -124,7 +139,7 @@ private fun DvlaLinkSuccessScreen(
         AccountConnectionSuccessScreen(
             title = title,
             buttonText = buttonText,
-            onContinue = onContinue,
+            onContinue = { onContinue(buttonText) },
             modifier = Modifier
         )
     }

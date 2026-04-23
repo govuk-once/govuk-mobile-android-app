@@ -228,7 +228,6 @@ fun AccountConnectionSuccessScreen(
                 text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.semantics { heading() }
             )
         }
         Column(
