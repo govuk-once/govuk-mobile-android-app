@@ -60,21 +60,16 @@ class DvlaViewModelTest {
     }
 
     @Test
-    fun `Given account is not linked and linking api returns Success, when initialised, then emit LinkComplete event`() = runTest(dispatcher) {
+    fun `Given account is not linked and linking api returns Success, when initialised, then state should be Success`() = runTest(dispatcher) {
         every { repo.isLinked } returns MutableStateFlow(false)
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
-        val events = mutableListOf<DvlaViewModel.LinkingEvent>()
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.linkingEvent.toList(events)
-        }
-
         advanceUntilIdle()
 
         coVerify(exactly = 1) { repo.linkAccount(token) }
-        assertEquals(DvlaViewModel.LinkingEvent.LinkComplete, events.first())
+        assertEquals(DvlaViewModel.UiState.Success, viewModel.uiState.value)
     }
 
     @Test
@@ -194,6 +189,47 @@ class DvlaViewModelTest {
                 section = "Continue"
             )
         }
+    }
+
+    @Test
+    fun `Given screen title, when onLinkSuccessPageView is called, then track screen view`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        viewModel.onLinkSuccessPageView("Driver and vehicles account added")
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "DvlaLinkSuccessScreen",
+                screenName = "Driver and vehicles account added",
+                title = "Driver and vehicles account added"
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text, when onSuccessContinueClicked is called, then track button click and emit LinkComplete event`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val events = mutableListOf<DvlaViewModel.LinkingEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.linkingEvent.toList(events)
+        }
+
+        viewModel.onSuccessContinueClicked("Continue")
+
+        advanceUntilIdle()
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Continue",
+                external = false,
+                section = "account link success"
+            )
+        }
+
+        assertEquals(DvlaViewModel.LinkingEvent.LinkComplete, events.first())
     }
 }
 
