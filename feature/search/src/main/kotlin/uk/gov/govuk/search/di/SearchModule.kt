@@ -1,19 +1,27 @@
 package uk.gov.govuk.search.di
 
 import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.sqlcipher.database.SupportFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.local.RealmEncryptionHelper
+import uk.gov.govuk.data.local.RoomEncryptionHelper
 import uk.gov.govuk.search.DefaultSearchFeature
 import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.search.data.SearchRepo
+import uk.gov.govuk.search.data.local.SearchDao
+import uk.gov.govuk.search.data.local.SearchDatabase
+import uk.gov.govuk.search.data.local.SearchMigrationCallback
 import uk.gov.govuk.search.data.remote.AutocompleteApi
 import uk.gov.govuk.search.data.remote.SearchApi
 import uk.gov.govuk.search.domain.SearchConfig
@@ -22,6 +30,25 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 internal class SearchModule {
+
+    @Provides
+    @Singleton
+    fun providesSearchDatabase(
+        @ApplicationContext context: Context,
+        roomEncryptionHelper: RoomEncryptionHelper,
+        encryptionHelper: RealmEncryptionHelper,
+        analyticsClient: AnalyticsClient
+    ): SearchDatabase {
+        val key = roomEncryptionHelper.getKey()
+        return Room.databaseBuilder(context, SearchDatabase::class.java, "search.db")
+            .openHelperFactory(SupportFactory(key, null, false))
+            .addCallback(SearchMigrationCallback(encryptionHelper, analyticsClient))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSearchDao(database: SearchDatabase): SearchDao = database.searchDao()
 
     @Provides
     @Singleton
