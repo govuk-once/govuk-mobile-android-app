@@ -1,6 +1,12 @@
 package uk.gov.govuk.dvla.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,6 +21,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
 
@@ -67,16 +74,13 @@ internal fun DvlaLinkingRoute(
     when (uiState) {
         is DvlaViewModel.UiState.Default -> Unit // don't need to show anything
         is DvlaViewModel.UiState.Success -> {
-            AccountConnectionSuccessScreen(
-                title = stringResource(R.string.link_dvla_success_title),
-                buttonText = stringResource(R.string.link_dvla_success_button),
-                onContinue = {
-                    viewModel.onSuccessContinueClicked()
-                },
+            DvlaLinkSuccessScreen(
+                onContinue = { viewModel.onSuccessContinueClicked() },
+                modifier = modifier
             )
         }
         is DvlaViewModel.UiState.Loading -> {
-            DvlaLinkingScreen(
+            DvlaLinkLoadingScreen(
                 modifier = modifier
             )
         }
@@ -94,11 +98,34 @@ internal fun DvlaLinkingRoute(
 }
 
 @Composable
-private fun DvlaLinkingScreen(
+private fun DvlaLinkLoadingScreen(
     modifier: Modifier = Modifier
 ) {
     BookendConnectingScreen(
         title = stringResource(R.string.link_dvla_connecting_title),
         modifier = modifier
     )
+}
+
+@Composable
+private fun DvlaLinkSuccessScreen(
+    onContinue: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val title = stringResource(R.string.link_dvla_success_title)
+    val buttonText = stringResource(R.string.link_dvla_success_button)
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
+            .windowInsetsPadding(WindowInsets.systemBars)
+    ) {
+        AccountConnectionSuccessScreen(
+            title = title,
+            buttonText = buttonText,
+            onContinue = onContinue,
+            modifier = Modifier
+        )
+    }
 }
