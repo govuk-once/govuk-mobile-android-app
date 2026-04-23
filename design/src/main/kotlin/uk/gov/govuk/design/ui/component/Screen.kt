@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -196,6 +195,55 @@ fun BookendConnectingScreen(
     }
 }
 
+@Composable
+fun AccountConnectionSuccessScreen(
+    title: String,
+    buttonText: String,
+    onContinue: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = GovUkTheme.spacing.medium),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_success_round),
+                contentDescription = null,
+                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+            )
+
+            LargeVerticalSpacer()
+
+            LargeTitleBoldLabel(
+                text = title,
+                color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+                textAlign = TextAlign.Center,
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(GovUkTheme.spacing.medium)
+        ) {
+            AccountConnectionButton(
+                text = buttonText,
+                onClick = onContinue,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
 @ThemePreviews
 @Composable
 private fun BookendToWebScreenPreview() {
@@ -217,6 +265,18 @@ private fun BookendConnectingScreenPreview() {
     GovUkTheme {
         BookendConnectingScreen(
             title = "Add your driver and vehicles account"
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AccountConnectionSuccessScreenPreview() {
+    GovUkTheme {
+        AccountConnectionSuccessScreen(
+            title = "Driver and vehicles account added",
+            buttonText = "Continue",
+            onContinue = {}
         )
     }
 }
