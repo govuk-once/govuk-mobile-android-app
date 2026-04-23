@@ -9,12 +9,12 @@
     <string name="link_dvla_intro_action_message">We’ll take you to your web browser to sign in.</string>
     <string name="link_dvla_intro_button">Continue</string>
 
+    <string name="link_dvla_connecting_title">Adding driver and vehicles account…</string>
+
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>
-
-    <string name="dvla_loading_accessibility_text">Linking your account</string>
 </resources>

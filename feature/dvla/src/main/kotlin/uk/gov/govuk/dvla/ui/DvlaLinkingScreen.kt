@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.component.InfoAlert
-import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
 
@@ -87,8 +87,8 @@ internal fun DvlaLinkingRoute(
 private fun DvlaLinkingScreen(
     modifier: Modifier = Modifier
 ) {
-    LoadingScreen(
-        accessibilityText = stringResource(R.string.dvla_loading_accessibility_text),
+    BookendConnectingScreen(
+        title = stringResource(R.string.link_dvla_connecting_title),
         modifier = modifier
     )
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.withAltText
@@ -163,6 +165,37 @@ fun BookendToWebScreen(
     }
 }
 
+@Composable
+fun BookendConnectingScreen(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
+            .padding(horizontal = GovUkTheme.spacing.medium),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(40.dp),
+            color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+        )
+
+        LargeVerticalSpacer()
+
+        LargeTitleBoldLabel(
+            text = title,
+            color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.semantics { heading() }
+        )
+    }
+}
+
 @ThemePreviews
 @Composable
 private fun BookendToWebScreenPreview() {
@@ -174,6 +207,16 @@ private fun BookendToWebScreenPreview() {
             buttonText = "Continue",
             onClose = {},
             onContinue = {}
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun BookendConnectingScreenPreview() {
+    GovUkTheme {
+        BookendConnectingScreen(
+            title = "Add your driver and vehicles account"
         )
     }
 }
