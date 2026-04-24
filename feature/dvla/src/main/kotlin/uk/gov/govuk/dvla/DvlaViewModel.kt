@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -42,7 +43,10 @@ internal class DvlaViewModel @Inject constructor(
         data object Default : UiState
         data object Loading : UiState
         data object Success : UiState
-        data object Error : UiState
+        sealed interface Error : UiState {
+            data object Offline : Error
+            data object Other : Error
+        }
     }
 
     private val _linkingEvent = MutableSharedFlow<LinkingEvent>()
@@ -120,21 +124,25 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
-    private suspend fun linkDvlaAccount(token: String) {
-        if (dvlaRepo.linkAccount(token) is Result.Success) {
-            _uiState.value = UiState.Success
-        } else {
-            _uiState.value = UiState.Error
+    private suspend fun linkDvlaAccount(token: String, withDelay: Boolean = true) {
+        // TODO remove
+        if (withDelay) delay(5000)
+
+
+        when (dvlaRepo.linkAccount(token)) {
+            is Result.Success -> _uiState.value = UiState.Success
+            is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
+            else -> _uiState.value = UiState.Error.Other
         }
     }
 
     private fun unlinkDvlaAccount() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            if (dvlaRepo.unlinkAccount() is Result.Success) {
-                _linkingEvent.emit(LinkingEvent.UnlinkComplete)
-            } else {
-                _uiState.value = UiState.Error
+            when (dvlaRepo.unlinkAccount()) {
+                is Result.Success -> _linkingEvent.emit(LinkingEvent.UnlinkComplete)
+                is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
+                else -> _uiState.value = UiState.Error.Other
             }
         }
     }

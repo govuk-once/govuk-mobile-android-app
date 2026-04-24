@@ -3,10 +3,14 @@ package uk.gov.govuk.dvla.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,6 +25,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
@@ -79,16 +84,28 @@ internal fun DvlaLinkingRoute(
                     viewModel.onLinkSuccessPageView(screenTitle)
                 },
                 onContinue = { buttonText ->
-                    viewModel.onSuccessContinueClicked(buttonText) },
+                    viewModel.onSuccessContinueClicked(buttonText)
+                },
                 modifier = modifier
             )
         }
+
         is DvlaViewModel.UiState.Loading -> {
             DvlaLinkLoadingScreen(
                 modifier = modifier
             )
         }
-        is DvlaViewModel.UiState.Error -> {
+
+        is DvlaViewModel.UiState.Error.Offline -> {
+            DvlaOfflineScreen(
+                // TODO handle retry
+                onTryAgain = { onClose() },
+                modifier = modifier
+            )
+
+        }
+
+        is DvlaViewModel.UiState.Error.Other -> {
             InfoAlert(
                 title = R.string.error_dialog_title,
                 message = R.string.error_dialog_message,
@@ -141,6 +158,27 @@ private fun DvlaLinkSuccessScreen(
             buttonText = buttonText,
             onContinue = { onContinue(buttonText) },
             modifier = Modifier
+        )
+    }
+}
+
+@Composable
+private fun DvlaOfflineScreen(
+    onTryAgain: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxSize()) {
+        // Status bars are transparent in DVLA route (GovUkApp TRANSPARENT_STATUS_BAR_ROUTES),
+        // apply background blue manually
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .background(GovUkTheme.colourScheme.surfaces.homeHeader)
+        )
+
+        DeviceOfflineScreen(
+            onTryAgain = onTryAgain
         )
     }
 }
