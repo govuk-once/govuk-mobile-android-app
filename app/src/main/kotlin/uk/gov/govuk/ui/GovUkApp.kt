@@ -63,8 +63,11 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
+import uk.gov.govuk.design.ui.component.FullScreenHeader
+import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
+import uk.gov.govuk.design.ui.component.StatusBar
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -122,9 +125,11 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
             when (it) {
                 is AppUiState.Loading -> LoadingScreen()
                 is AppUiState.AppUnavailable -> AppUnavailableScreen()
-                is AppUiState.DeviceOffline -> DeviceOfflineScreen(
-                    onTryAgain = { viewModel.onTryAgain() }
-                )
+                is AppUiState.DeviceOffline -> FullScreenWrapper {
+                    DeviceOfflineScreen(
+                        onTryAgain = { viewModel.onTryAgain() }
+                    )
+                }
 
                 is AppUiState.ForcedUpdate -> ForcedUpdateScreen()
                 is AppUiState.Default -> {
@@ -655,26 +660,4 @@ private fun GovUkNavHost(
     }
 }
 
-@Composable
-private fun StatusBar(
-    hideBackground: Boolean,
-    useDarkIcons: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val localView = LocalView.current
-    val window = (localView.context as Activity).window
 
-    if (!hideBackground) {
-        Box(
-            modifier
-                .fillMaxWidth()
-                .windowInsetsTopHeight(WindowInsets.statusBars)
-                .background(GovUkTheme.colourScheme.surfaces.homeHeader)
-        )
-    }
-
-    WindowCompat.getInsetsController(window, localView).apply {
-        isAppearanceLightStatusBars = useDarkIcons
-        isAppearanceLightNavigationBars = !hideBackground && !isSystemInDarkTheme()
-    }
-}

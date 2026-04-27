@@ -20,6 +20,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
+import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -93,7 +94,7 @@ internal fun DvlaLinkingRoute(
         }
 
         is DvlaViewModel.UiState.Error.Offline -> {
-            DeviceOfflineScreen(
+            DvlaOfflineScreen(
                 onTryAgain = { viewModel.onRetryClicked() },
                 modifier = modifier
             )
@@ -153,6 +154,18 @@ private fun DvlaLinkSuccessScreen(
             buttonText = buttonText,
             onContinue = { onContinue(buttonText) },
             modifier = Modifier
+        )
+    }
+}
+
+@Composable
+private fun DvlaOfflineScreen(
+    onTryAgain: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FullScreenWrapper(modifier = modifier) {
+        DeviceOfflineScreen(
+            onTryAgain = onTryAgain
         )
     }
 }
