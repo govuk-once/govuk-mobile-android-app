@@ -19,7 +19,7 @@ import javax.inject.Named
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient,
     @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
@@ -59,6 +59,14 @@ internal class DvlaViewModel @Inject constructor(
     val authUrlToLaunch = _authUrlToLaunch.asStateFlow()
 
     init {
+        processLinkingState()
+    }
+
+    fun onRetryClicked() {
+        processLinkingState()
+    }
+
+    private fun processLinkingState() {
         val token: String? = savedStateHandle[ARG_DVLA_TOKEN]
 
         when {
@@ -124,9 +132,9 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
-    private suspend fun linkDvlaAccount(token: String, withDelay: Boolean = true) {
+    private suspend fun linkDvlaAccount(token: String) {
         // TODO remove
-        if (withDelay) delay(5000)
+        delay(3000)
 
 
         when (dvlaRepo.linkAccount(token)) {
