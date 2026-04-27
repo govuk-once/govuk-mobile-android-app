@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -18,7 +19,7 @@ import javax.inject.Named
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient,
     @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
@@ -42,7 +43,11 @@ internal class DvlaViewModel @Inject constructor(
         data object Default : UiState
         data object Loading : UiState
         data object Success : UiState
-        data object Error : UiState
+        sealed interface Error : UiState {
+            data object Offline : Error
+            // TODO 'offline' and 'other' for now, there is another ticket for errors
+            data object Other : Error
+        }
     }
 
     private val _linkingEvent = MutableSharedFlow<LinkingEvent>()
@@ -55,6 +60,14 @@ internal class DvlaViewModel @Inject constructor(
     val authUrlToLaunch = _authUrlToLaunch.asStateFlow()
 
     init {
+        processLinkingState()
+    }
+
+    fun onRetryClicked() {
+        processLinkingState()
+    }
+
+    private fun processLinkingState() {
         val token: String? = savedStateHandle[ARG_DVLA_TOKEN]
 
         when {
@@ -121,20 +134,20 @@ internal class DvlaViewModel @Inject constructor(
     }
 
     private suspend fun linkDvlaAccount(token: String) {
-        if (dvlaRepo.linkAccount(token) is Result.Success) {
-            _uiState.value = UiState.Success
-        } else {
-            _uiState.value = UiState.Error
+        when (dvlaRepo.linkAccount(token)) {
+            is Result.Success -> _uiState.value = UiState.Success
+            is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
+            else -> _uiState.value = UiState.Error.Other
         }
     }
 
     private fun unlinkDvlaAccount() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            if (dvlaRepo.unlinkAccount() is Result.Success) {
-                _linkingEvent.emit(LinkingEvent.UnlinkComplete)
-            } else {
-                _uiState.value = UiState.Error
+            when (dvlaRepo.unlinkAccount()) {
+                is Result.Success -> _linkingEvent.emit(LinkingEvent.UnlinkComplete)
+                is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
+                else -> _uiState.value = UiState.Error.Other
             }
         }
     }

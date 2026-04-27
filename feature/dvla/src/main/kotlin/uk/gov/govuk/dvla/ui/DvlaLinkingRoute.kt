@@ -20,7 +20,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
+import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
@@ -79,16 +81,27 @@ internal fun DvlaLinkingRoute(
                     viewModel.onLinkSuccessPageView(screenTitle)
                 },
                 onContinue = { buttonText ->
-                    viewModel.onSuccessContinueClicked(buttonText) },
+                    viewModel.onSuccessContinueClicked(buttonText)
+                },
                 modifier = modifier
             )
         }
+
         is DvlaViewModel.UiState.Loading -> {
             DvlaLinkLoadingScreen(
                 modifier = modifier
             )
         }
-        is DvlaViewModel.UiState.Error -> {
+
+        is DvlaViewModel.UiState.Error.Offline -> {
+            DvlaOfflineScreen(
+                onTryAgain = { viewModel.onRetryClicked() },
+                modifier = modifier
+            )
+
+        }
+
+        is DvlaViewModel.UiState.Error.Other -> {
             InfoAlert(
                 title = R.string.error_dialog_title,
                 message = R.string.error_dialog_message,
@@ -144,3 +157,16 @@ private fun DvlaLinkSuccessScreen(
         )
     }
 }
+
+@Composable
+private fun DvlaOfflineScreen(
+    onTryAgain: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FullScreenWrapper(modifier = modifier) {
+        DeviceOfflineScreen(
+            onTryAgain = onTryAgain
+        )
+    }
+}
+
