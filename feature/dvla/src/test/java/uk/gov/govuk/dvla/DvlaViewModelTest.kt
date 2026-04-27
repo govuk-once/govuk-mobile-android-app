@@ -81,7 +81,19 @@ class DvlaViewModelTest {
 
         advanceUntilIdle()
 
-        assertEquals(DvlaViewModel.UiState.Error, viewModel.uiState.value)
+        assertEquals(DvlaViewModel.UiState.Error.Other, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given account is not linked and linking api returns DeviceOffline, when initialised, then state should be Error Offline`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        coEvery { repo.linkAccount(any()) } returns Result.DeviceOffline()
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        advanceUntilIdle()
+
+        assertEquals(DvlaViewModel.UiState.Error.Offline, viewModel.uiState.value)
     }
 
     @Test
@@ -143,7 +155,19 @@ class DvlaViewModelTest {
 
         advanceUntilIdle()
 
-        assertEquals(DvlaViewModel.UiState.Error, viewModel.uiState.value)
+        assertEquals(DvlaViewModel.UiState.Error.Other, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given account is already linked and unlink api returns DeviceOffline, when initialised, then state should be Error Offline`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(true)
+        coEvery { repo.unlinkAccount() } returns Result.DeviceOffline()
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        advanceUntilIdle()
+
+        assertEquals(DvlaViewModel.UiState.Error.Offline, viewModel.uiState.value)
     }
 
     @Test
@@ -230,6 +254,23 @@ class DvlaViewModelTest {
         }
 
         assertEquals(DvlaViewModel.LinkingEvent.LinkComplete, events.first())
+    }
+
+    @Test
+    fun `Given a token exists, when onRetryClicked is called, then it should process linking state again`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        coEvery { repo.linkAccount(any()) } returns Result.DeviceOffline()
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.linkAccount(token) }
+
+        viewModel.onRetryClicked()
+        advanceUntilIdle()
+
+        // verify retried
+        coVerify(exactly = 2) { repo.linkAccount(token) }
     }
 }
 

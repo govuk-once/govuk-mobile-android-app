@@ -45,6 +45,7 @@ internal class DvlaViewModel @Inject constructor(
         data object Success : UiState
         sealed interface Error : UiState {
             data object Offline : Error
+            // TODO 'offline' and 'other' for now, there is another ticket for errors
             data object Other : Error
         }
     }
