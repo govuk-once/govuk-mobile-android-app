@@ -133,10 +133,6 @@ internal class DvlaViewModel @Inject constructor(
     }
 
     private suspend fun linkDvlaAccount(token: String) {
-        // TODO remove
-        delay(3000)
-
-
         when (dvlaRepo.linkAccount(token)) {
             is Result.Success -> _uiState.value = UiState.Success
             is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
