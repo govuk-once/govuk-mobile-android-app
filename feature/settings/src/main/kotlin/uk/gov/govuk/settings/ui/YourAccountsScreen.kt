@@ -9,6 +9,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,11 +18,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.NonTappableCard
 import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.R
+import uk.gov.govuk.settings.YourAccountsUiState
 import uk.gov.govuk.settings.YourAccountsViewModel
 
 @Composable
@@ -29,9 +33,10 @@ internal fun YourAccountsRoute(
     modifier: Modifier = Modifier
 ) {
     val viewModel: YourAccountsViewModel = hiltViewModel()
-
+    val uiState by viewModel.uiState.collectAsState()
 
     YourAccountsScreen(
+        state = uiState,
         onBack = onBack,
         onPageView = { viewModel.onPageView() },
         modifier = modifier
@@ -40,6 +45,7 @@ internal fun YourAccountsRoute(
 
 @Composable
 private fun YourAccountsScreen(
+    state: YourAccountsUiState,
     onBack: () -> Unit,
     onPageView: () -> Unit,
     modifier: Modifier = Modifier
@@ -70,16 +76,26 @@ private fun YourAccountsScreen(
             LargeVerticalSpacer()
 
             Column(Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
-                InternalLinkListItem(
-                    "Driver and vehicles account", {},
-                    style = InternalLinkListItemStyle.Button(
-                        uk.gov.govuk.design.R.drawable.ic_cancel_round,
-                        "Alt text"
-                    ) {})
+                when(state) {
+                    is YourAccountsUiState.HasAddedAccounts -> {
+                        InternalLinkListItem(
+                            "Driver and vehicles account", {},
+                            style = InternalLinkListItemStyle.Button(
+                                uk.gov.govuk.design.R.drawable.ic_cancel_round,
+                                "Alt text"
+                            ) {})
+                    }
 
+                    is YourAccountsUiState.NoAddedAccounts -> {
+                        NonTappableCard(
+                            body = "Accounts you add to the app will appear here",
+                        )
+                    }
+
+                    else -> {}
+                }
             }
         }
-
     }
 }
 
@@ -88,6 +104,7 @@ private fun YourAccountsScreen(
 private fun YourAccountsScreenPreview() {
     GovUkTheme {
         YourAccountsScreen(
+            state = YourAccountsUiState.NoAddedAccounts,
             onBack = { },
             onPageView = { },
         )
