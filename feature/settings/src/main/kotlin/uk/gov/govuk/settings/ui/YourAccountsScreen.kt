@@ -14,11 +14,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
-import uk.gov.govuk.design.ui.component.ExternalLinkListItem
+import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title
-import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
+import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.YourAccountsViewModel
@@ -70,9 +70,9 @@ private fun YourAccountsScreen(
             LargeVerticalSpacer()
 
             Column(Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
-                ExternalLinkListItem(
-                    "Title", {},
-                    style = ExternalLinkListItemStyle.Button(
+                InternalLinkListItem(
+                    "Driver and vehicles account", {},
+                    style = InternalLinkListItemStyle.Button(
                         uk.gov.govuk.design.R.drawable.ic_cancel_round,
                         "Alt text"
                     ) {})

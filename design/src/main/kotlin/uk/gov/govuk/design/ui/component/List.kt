@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -26,7 +25,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
@@ -82,6 +80,22 @@ fun InternalLinkListItem(
                         text = style.title,
                         color = GovUkTheme.colourScheme.textAndIcons.iconTertiary
                     )
+                }
+
+                is InternalLinkListItemStyle.Button -> {
+                    TextButton(
+                        onClick = style.onClick,
+                        modifier = Modifier
+                            .semantics { contentDescription = style.altText }
+                            .align(Alignment.CenterVertically),
+                        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
+                    ) {
+                        Icon(
+                            painter = painterResource(style.icon),
+                            contentDescription = null,
+                            tint = GovUkTheme.colourScheme.textAndIcons.secondary
+                        )
+                    }
                 }
 
                 else -> {
@@ -372,6 +386,16 @@ private fun InternalLinkListItemDescriptionPreview() {
 private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
         InternalLinkListItem("Title", {}, style = InternalLinkListItemStyle.Status("Status"))
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemButtonPreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            "Title", {},
+            style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
     }
 }
 

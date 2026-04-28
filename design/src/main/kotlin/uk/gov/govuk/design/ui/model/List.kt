@@ -17,6 +17,11 @@ sealed interface InternalLinkListItemStyle {
     data class Status(
         val title: String
     ) : InternalLinkListItemStyle
+    data class Button(
+        @DrawableRes val icon: Int,
+        val altText: String,
+        val onClick: () -> Unit
+    ) : InternalLinkListItemStyle
 }
 
 sealed interface IconListItemStyle {
