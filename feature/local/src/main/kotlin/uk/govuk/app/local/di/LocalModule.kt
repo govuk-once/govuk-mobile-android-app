@@ -19,6 +19,7 @@ import uk.govuk.app.local.LocalFeature
 import uk.govuk.app.local.data.LocalRepo
 import uk.govuk.app.local.data.local.LocalDao
 import uk.govuk.app.local.data.local.LocalDatabase
+import uk.govuk.app.local.data.local.DefaultRealmLocalReader
 import uk.govuk.app.local.data.local.LocalMigrationCallback
 import uk.govuk.app.local.data.remote.LocalApi
 import javax.inject.Singleton
@@ -36,9 +37,11 @@ internal class LocalModule {
         analyticsClient: AnalyticsClient
     ): LocalDatabase {
         val key = roomEncryptionHelper.getKey()
+        val factory = SupportFactory(key, null, false)
+        key.fill(0)
         return Room.databaseBuilder(context, LocalDatabase::class.java, "local.db")
-            .openHelperFactory(SupportFactory(key, null, false))
-            .addCallback(LocalMigrationCallback(realmEncryptionHelper, analyticsClient))
+            .openHelperFactory(factory)
+            .addCallback(LocalMigrationCallback(DefaultRealmLocalReader(realmEncryptionHelper), analyticsClient))
             .build()
     }
 

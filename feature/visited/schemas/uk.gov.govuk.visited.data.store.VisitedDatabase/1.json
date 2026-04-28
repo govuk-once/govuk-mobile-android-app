@@ -2,18 +2,12 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a76dda09b157874ed90555feffbd2f49",
+    "identityHash": "10aab7a0f6fc49740b44173cb82b44d4",
     "entities": [
       {
         "tableName": "visited_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `url` TEXT NOT NULL, `lastVisited` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `url` TEXT NOT NULL, `lastVisited` INTEGER NOT NULL, PRIMARY KEY(`title`, `url`))",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "title",
             "columnName": "title",
@@ -34,28 +28,17 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "title",
+            "url"
           ]
-        },
-        "indices": [
-          {
-            "name": "index_visited_items_title_url",
-            "unique": true,
-            "columnNames": [
-              "title",
-              "url"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_visited_items_title_url` ON `${TABLE_NAME}` (`title`, `url`)"
-          }
-        ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a76dda09b157874ed90555feffbd2f49')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '10aab7a0f6fc49740b44173cb82b44d4')"
     ]
   }
 }

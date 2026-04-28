@@ -42,11 +42,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/VisitedDatabase.*,**/VisitedMigrationCallback.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/VisitedDatabase.*,**/RealmVisitedReader.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/VisitedDatabase.*,**/VisitedMigrationCallback.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/VisitedDatabase.*,**/RealmVisitedReader.*"
         )
     }
 }

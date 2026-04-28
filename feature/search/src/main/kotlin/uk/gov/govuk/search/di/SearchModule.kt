@@ -21,6 +21,7 @@ import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.search.data.SearchRepo
 import uk.gov.govuk.search.data.local.SearchDao
 import uk.gov.govuk.search.data.local.SearchDatabase
+import uk.gov.govuk.search.data.local.DefaultRealmSearchReader
 import uk.gov.govuk.search.data.local.SearchMigrationCallback
 import uk.gov.govuk.search.data.remote.AutocompleteApi
 import uk.gov.govuk.search.data.remote.SearchApi
@@ -40,9 +41,11 @@ internal class SearchModule {
         analyticsClient: AnalyticsClient
     ): SearchDatabase {
         val key = roomEncryptionHelper.getKey()
+        val factory = SupportFactory(key, null, false)
+        key.fill(0)
         return Room.databaseBuilder(context, SearchDatabase::class.java, "search.db")
-            .openHelperFactory(SupportFactory(key, null, false))
-            .addCallback(SearchMigrationCallback(encryptionHelper, analyticsClient))
+            .openHelperFactory(factory)
+            .addCallback(SearchMigrationCallback(DefaultRealmSearchReader(encryptionHelper), analyticsClient))
             .build()
     }
 

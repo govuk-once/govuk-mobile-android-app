@@ -50,11 +50,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/LocalDatabase.*,**/LocalMigrationCallback.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/LocalDatabase.*,**/RealmLocalReader.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/LocalDatabase.*,**/LocalMigrationCallback.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/LocalDatabase.*,**/RealmLocalReader.*"
         )
     }
 }

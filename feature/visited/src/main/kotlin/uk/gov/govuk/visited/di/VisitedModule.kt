@@ -15,6 +15,7 @@ import uk.gov.govuk.visited.Visited
 import uk.gov.govuk.visited.VisitedClient
 import uk.gov.govuk.visited.data.store.VisitedDao
 import uk.gov.govuk.visited.data.store.VisitedDatabase
+import uk.gov.govuk.visited.data.store.DefaultRealmVisitedReader
 import uk.gov.govuk.visited.data.store.VisitedMigrationCallback
 import javax.inject.Singleton
 
@@ -35,7 +36,7 @@ internal class VisitedModule {
         key.fill(0)
         return Room.databaseBuilder(context, VisitedDatabase::class.java, "visited.db")
             .openHelperFactory(factory)
-            .addCallback(VisitedMigrationCallback(realmEncryptionHelper, analyticsClient))
+            .addCallback(VisitedMigrationCallback(DefaultRealmVisitedReader(realmEncryptionHelper), analyticsClient))
             .build()
     }
 

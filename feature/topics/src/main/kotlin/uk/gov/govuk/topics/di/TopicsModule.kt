@@ -25,6 +25,7 @@ import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.topics.data.TopicsRepo
 import uk.gov.govuk.topics.data.local.TopicsDao
 import uk.gov.govuk.topics.data.local.TopicsDatabase
+import uk.gov.govuk.topics.data.local.DefaultRealmTopicsReader
 import uk.gov.govuk.topics.data.local.TopicsMigrationCallback
 import uk.gov.govuk.topics.data.remote.TopicsApi
 import javax.inject.Named
@@ -43,9 +44,11 @@ internal class TopicsModule {
         analyticsClient: AnalyticsClient
     ): TopicsDatabase {
         val key = roomEncryptionHelper.getKey()
+        val factory = SupportFactory(key, null, false)
+        key.fill(0)
         return Room.databaseBuilder(context, TopicsDatabase::class.java, "topics.db")
-            .openHelperFactory(SupportFactory(key, null, false))
-            .addCallback(TopicsMigrationCallback(realmEncryptionHelper, analyticsClient))
+            .openHelperFactory(factory)
+            .addCallback(TopicsMigrationCallback(DefaultRealmTopicsReader(realmEncryptionHelper), analyticsClient))
             .build()
     }
 

@@ -50,11 +50,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/TopicsDatabase.*,**/TopicsMigrationCallback.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/TopicsDatabase.*,**/RealmTopicsReader.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/TopicsDatabase.*,**/TopicsMigrationCallback.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/TopicsDatabase.*,**/RealmTopicsReader.*"
         )
     }
 }
