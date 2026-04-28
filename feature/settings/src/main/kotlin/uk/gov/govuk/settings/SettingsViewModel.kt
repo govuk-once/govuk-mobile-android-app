@@ -74,6 +74,10 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
+    fun onYourAccountsClick() {
+        // TODO in future ticket
+    }
+
     fun onSignOut() {
         analyticsClient.settingsItemClick(
             text = SIGN_OUT_EVENT,

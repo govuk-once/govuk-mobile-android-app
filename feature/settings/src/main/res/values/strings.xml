@@ -12,6 +12,7 @@
   </string>
     <string name="privacy_read_more">Read more about this in the privacy notice.</string>
 
+  <string name="your_accounts_title">Your accounts</string>
   <string name="share_setting">Share app usage statistics</string>
   <string name="link_opens_in">Opens in web browser</string>
   <string name="oss_licenses_title">Open source licenses</string>
