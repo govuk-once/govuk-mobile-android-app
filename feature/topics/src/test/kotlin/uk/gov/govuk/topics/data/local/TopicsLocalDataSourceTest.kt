@@ -1,9 +1,11 @@
 package uk.gov.govuk.topics.data.local
 
+import androidx.room.withTransaction
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -18,13 +20,18 @@ import uk.gov.govuk.topics.data.remote.model.RemoteTopicItem
 
 class TopicsLocalDataSourceTest {
 
+    private val database = mockk<TopicsDatabase>()
     private val dao = mockk<TopicsDao>(relaxed = true)
     private val dataStore = mockk<TopicsDataStore>(relaxed = true)
     private lateinit var dataSource: TopicsLocalDataSource
 
     @Before
     fun setup() {
-        dataSource = TopicsLocalDataSource(dao, dataStore)
+        mockkStatic("androidx.room.RoomDatabaseKt")
+        coEvery { database.withTransaction(any<suspend () -> Unit>()) } coAnswers {
+            secondArg<suspend () -> Unit>().invoke()
+        }
+        dataSource = TopicsLocalDataSource(database, dao, dataStore)
     }
 
     @Test

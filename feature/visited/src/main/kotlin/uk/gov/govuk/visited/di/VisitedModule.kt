@@ -31,8 +31,10 @@ internal class VisitedModule {
         analyticsClient: AnalyticsClient
     ): VisitedDatabase {
         val key = roomEncryptionHelper.getKey()
+        val factory = SupportFactory(key, null, false)
+        key.fill(0)
         return Room.databaseBuilder(context, VisitedDatabase::class.java, "visited.db")
-            .openHelperFactory(SupportFactory(key, null, false))
+            .openHelperFactory(factory)
             .addCallback(VisitedMigrationCallback(realmEncryptionHelper, analyticsClient))
             .build()
     }

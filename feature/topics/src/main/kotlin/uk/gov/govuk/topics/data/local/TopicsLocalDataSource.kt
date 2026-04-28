@@ -1,5 +1,6 @@
 package uk.gov.govuk.topics.data.local
 
+import androidx.room.withTransaction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class TopicsLocalDataSource @Inject constructor(
+    private val database: TopicsDatabase,
     private val dao: TopicsDao,
     private val topicsDataStore: TopicsDataStore
 ) {
@@ -22,25 +24,27 @@ internal class TopicsLocalDataSource @Inject constructor(
         dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) {
         withContext(dispatcher) {
-            val localRefs = dao.getAllRefs().toSet()
-            val remoteRefs = remoteTopics.map { it.ref }.toSet()
+            database.withTransaction {
+                val localRefs = dao.getAllRefs().toSet()
+                val remoteRefs = remoteTopics.map { it.ref }.toSet()
 
-            (localRefs - remoteRefs).forEach { dao.delete(it) }
+                (localRefs - remoteRefs).forEach { dao.delete(it) }
 
-            val isCustomised = topicsDataStore.isTopicsCustomised()
+                val isCustomised = topicsDataStore.isTopicsCustomised()
 
-            remoteTopics.forEach { topic ->
-                if (topic.ref in localRefs) {
-                    if (isCustomised) {
-                        dao.updateTitleAndDescription(topic.ref, topic.title, topic.description)
+                remoteTopics.forEach { topic ->
+                    if (topic.ref in localRefs) {
+                        if (isCustomised) {
+                            dao.updateTitleAndDescription(topic.ref, topic.title, topic.description)
+                        } else {
+                            // Previous impl initially marked all topics as selected by default,
+                            // we need to clear this for the new impl
+                            // if the user has not actively customised their topics
+                            dao.updateTitleDescriptionAndClearSelection(topic.ref, topic.title, topic.description)
+                        }
                     } else {
-                        // Previous impl initially marked all topics as selected by default,
-                        // we need to clear this for the new impl
-                        // if the user has not actively customised their topics
-                        dao.updateTitleDescriptionAndClearSelection(topic.ref, topic.title, topic.description)
+                        dao.insert(LocalTopicItemEntity(ref = topic.ref, title = topic.title, description = topic.description))
                     }
-                } else {
-                    dao.insert(LocalTopicItemEntity(ref = topic.ref, title = topic.title, description = topic.description))
                 }
             }
         }

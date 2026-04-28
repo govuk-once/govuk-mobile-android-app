@@ -1,6 +1,5 @@
 package uk.gov.govuk.visited.data.store
 
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -11,8 +10,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.visited.data.model.VisitedItemEntity
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class VisitedLocalDataSourceTest {
 
@@ -41,26 +38,11 @@ class VisitedLocalDataSourceTest {
     }
 
     @Test
-    fun `Given no existing visited item, when visited, then insert into db`() {
-        coEvery { dao.updateLastVisited(any(), any(), any()) } returns 0
-
+    fun `Given a visited item, when visited, then upsert into db`() {
         runTest {
             dataSource.insertOrUpdate("title1", "url1")
 
-            coVerify { dao.insert(match { it.title == "title1" && it.url == "url1" }) }
-        }
-    }
-
-    @Test
-    fun `Given an existing visited item, when re-visited, then update lastVisited in db`() {
-        coEvery { dao.updateLastVisited(any(), any(), any()) } returns 1
-        val now = LocalDateTime.now()
-
-        runTest {
-            dataSource.insertOrUpdate("title1", "url1", now)
-
-            coVerify { dao.updateLastVisited("title1", "url1", now.toEpochSecond(ZoneOffset.UTC)) }
-            coVerify(exactly = 0) { dao.insert(any()) }
+            coVerify { dao.upsert(match { it.title == "title1" && it.url == "url1" }) }
         }
     }
 

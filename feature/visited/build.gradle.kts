@@ -34,6 +34,10 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 sonar {
     properties {
         property(
