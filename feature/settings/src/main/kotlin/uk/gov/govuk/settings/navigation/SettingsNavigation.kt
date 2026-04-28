@@ -19,6 +19,7 @@ import uk.gov.govuk.settings.ui.SettingsRoute
 import uk.gov.govuk.settings.ui.SettingsRouteActions
 import uk.gov.govuk.settings.ui.SignOutErrorRoute
 import uk.gov.govuk.settings.ui.SignOutRoute
+import uk.gov.govuk.settings.ui.YourAccountsRoute
 import java.net.URLEncoder
 
 
@@ -29,11 +30,12 @@ const val SIGN_OUT_GRAPH_ROUTE = "sign_out_graph_route"
 private const val SIGN_OUT_ROUTE = "sign_out_route"
 
 const val SIGN_OUT_ERROR_ROUTE = "sign_out_error_route"
+const val YOUR_ACCOUNTS_ROUTE = "your_accounts_route"
 
 val settingsDeepLinks = mapOf("/settings" to listOf(SETTINGS_ROUTE))
 
 fun NavGraphBuilder.settingsGraph(
-    navigateTo: (String) -> Unit,
+    navController: NavController,
     onBiometricsClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
@@ -52,13 +54,13 @@ fun NavGraphBuilder.settingsGraph(
                         launchBrowser(ACCOUNT_URL)
                     },
                     onYourAccountsClick = {
-                        // TODO in future ticket
+                        navController.navigate(YOUR_ACCOUNTS_ROUTE)
                     },
                     onSignOutClick = {
-                        navigateTo(SIGN_OUT_GRAPH_ROUTE)
+                        navController.navigate(SIGN_OUT_GRAPH_ROUTE)
                     },
                     onNotificationsClick = {
-                        navigateTo(NOTIFICATIONS_PERMISSION_ROUTE)
+                        navController.navigate(NOTIFICATIONS_PERMISSION_ROUTE)
                     },
                     onBiometricsClick = onBiometricsClick,
                     onPrivacyPolicyClick = {
@@ -79,6 +81,13 @@ fun NavGraphBuilder.settingsGraph(
                         launchBrowser(TERMS_AND_CONDITIONS_URL)
                     }
                 ),
+                modifier = modifier
+            )
+        }
+
+        composable(YOUR_ACCOUNTS_ROUTE) {
+            YourAccountsRoute(
+                onBack = { navController.popBackStack() },
                 modifier = modifier
             )
         }

@@ -570,7 +570,7 @@ private fun GovUkNavHost(
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
         )
         settingsGraph(
-            navigateTo = { route -> navController.navigate(route) },
+            navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
             appVersion = BuildConfig.VERSION_NAME_USER_FACING,
             launchBrowser = { url ->
