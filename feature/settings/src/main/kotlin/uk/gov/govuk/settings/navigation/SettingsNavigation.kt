@@ -51,6 +51,9 @@ fun NavGraphBuilder.settingsGraph(
                     onAccountClick = {
                         launchBrowser(ACCOUNT_URL)
                     },
+                    onYourAccountsClick = {
+                        // TODO in future ticket
+                    },
                     onSignOutClick = {
                         navigateTo(SIGN_OUT_GRAPH_ROUTE)
                     },
