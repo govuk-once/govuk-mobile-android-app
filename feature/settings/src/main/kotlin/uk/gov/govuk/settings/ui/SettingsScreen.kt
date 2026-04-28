@@ -161,9 +161,10 @@ private fun SettingsScreen(
                 onAccountClick = actions.onAccountClick
             )
 
-            MediumVerticalSpacer()
-
-            YourAccounts(actions.onYourAccountsClick)
+            if (uiState.isYourAccountsEnabled) {
+                MediumVerticalSpacer()
+                YourAccounts(actions.onYourAccountsClick)
+            }
 
             MediumVerticalSpacer()
 

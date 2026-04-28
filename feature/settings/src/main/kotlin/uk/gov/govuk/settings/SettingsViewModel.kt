@@ -30,7 +30,8 @@ internal data class SettingsUiState(
     val userEmail: String,
     val isNotificationsEnabled: Boolean,
     val isAuthenticationEnabled: Boolean,
-    val isAnalyticsEnabled: Boolean
+    val isAnalyticsEnabled: Boolean,
+    val isYourAccountsEnabled: Boolean
 )
 
 @HiltViewModel
@@ -55,7 +56,8 @@ internal class SettingsViewModel @Inject constructor(
             userEmail = authRepo.getUserEmail(),
             isNotificationsEnabled = flagRepo.isNotificationsEnabled(),
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
-            isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled()
+            isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
+            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled()
         )
     }
 
