@@ -36,7 +36,9 @@ internal fun YourAccountsRoute(
     YourAccountsScreen(
         accounts = accounts,
         onBack = onBack,
-        onPageView = { viewModel.onPageView() },
+        onPageView = {
+            // TODO may not be needed
+        },
         modifier = modifier
     )
 }

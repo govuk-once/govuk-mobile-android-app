@@ -46,6 +46,7 @@ internal class SettingsViewModel @Inject constructor(
         private const val SCREEN_CLASS = "SettingsScreen"
         private const val SCREEN_NAME = "Settings"
         private const val TITLE = "Settings"
+        private const val SECTION = "Settings"
     }
 
     private val _uiState: MutableStateFlow<SettingsUiState?> = MutableStateFlow(null)
@@ -76,8 +77,13 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
-    fun onYourAccountsClick() {
-        // TODO in future ticket
+    fun onYourAccountsClick(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            external = false,
+            section = SECTION
+
+        )
     }
 
     fun onSignOut() {

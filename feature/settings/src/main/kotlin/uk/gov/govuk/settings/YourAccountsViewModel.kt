@@ -17,10 +17,10 @@ internal class YourAccountsViewModel @Inject constructor(
     }
 
     fun onPageView() {
-        analyticsClient.screenView(
-            screenClass = SCREEN_CLASS,
-            screenName = SCREEN_NAME,
-            title = TITLE
-        )
+//        analyticsClient.screenView(
+//            screenClass = SCREEN_CLASS,
+//            screenName = SCREEN_NAME,
+//            title = TITLE
+//        )
     }
 }
