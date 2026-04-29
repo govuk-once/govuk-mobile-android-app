@@ -17,6 +17,7 @@ import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.auth.ErrorEvent
+import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.login.data.LoginRepo
@@ -80,11 +81,8 @@ internal class LoginViewModel @Inject constructor(
                         }
 
                         AuthRepo.RefreshStatus.Success -> {
-                            if (isUserInitialised()) {
-                                _loginCompleted.emit(LoginEvent.BiometricLogin)
-                            } else {
-                                _errorEvent.emit(ErrorEvent.UserApiError)
-                            }
+                            attemptUserInitialisation()
+                            _loginCompleted.emit(LoginEvent.BiometricLogin)
                         }
 
                         is AuthRepo.RefreshStatus.Error -> {
@@ -108,33 +106,39 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
+                attemptUserInitialisation()
                 termsRepo.termsAccepted()
-                if (isUserInitialised()) {
-                    _loginCompleted.emit(
-                        LoginEvent.WebLogin(
-                            isBiometricsEnabled = authRepo.isAuthenticationEnabled()
-                                    && !appRepo.hasSkippedBiometrics()
-                        )
+                _loginCompleted.emit(
+                    LoginEvent.WebLogin(
+                        isBiometricsEnabled = authRepo.isAuthenticationEnabled()
+                                && !appRepo.hasSkippedBiometrics()
                     )
-                } else {
-                    _errorEvent.emit(ErrorEvent.UserApiError)
-                }
+                )
             } else {
                 _errorEvent.emit(ErrorEvent.UnableToSignInError)
             }
         }
     }
 
-    private suspend fun isUserInitialised(): Boolean {
-        if (!flagRepo.isFlexEnabled()) return true
-        return attemptUserInitialisation()
+    private suspend fun attemptUserInitialisation() {
+        if (flagRepo.isFlexEnabled()) {
+            when (val result = userRepo.initUser()) {
+                is Result.AuthError<*> -> logUserInitFailure("Auth error")
+                is Result.DeviceOffline<*> -> { } // Ignore
+                is Result.Error<*> -> logUserInitFailure("Unknown")
+                is Result.InvalidSignature<*> -> { } // Ignore
+                is Result.ServiceNotResponding<*> -> logUserInitFailure("Http error - ${result.code}")
+                is Success<*> -> {
+                    // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//                    notificationsRepo.login()
+                }
+            }
+        }
     }
 
-    private suspend fun attemptUserInitialisation(): Boolean =
-        (userRepo.initUser() is Success).also { success ->
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            if (success) notificationsRepo.login()
-        }
+    private fun logUserInitFailure(message: String) {
+        analyticsClient.logException(RuntimeException("Hello UDP error - $message"))
+    }
 
     private suspend fun shouldRefreshTokens(): Boolean {
         val tokenExpirySeconds = getTokenExpirySeconds()

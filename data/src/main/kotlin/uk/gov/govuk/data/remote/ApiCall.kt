@@ -16,20 +16,23 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
         val body = response.body()
         val code = response.code()
 
-        when {
-            code == 204 -> {
-                @Suppress("UNCHECKED_CAST")
-                Success(Unit as T)
+        if (response.isSuccessful) {
+            when {
+                code == 204 -> {
+                    @Suppress("UNCHECKED_CAST")
+                    Success(Unit as T)
+                }
+                response.isSuccessful && body != null -> Success(body)
+                else -> Error()
             }
-            response.isSuccessful && body != null -> Success(body)
-            else -> Error()
+        } else {
+            ServiceNotResponding(code)
         }
-
     } catch (e: Exception) {
         when (e) {
             is AuthenticationException -> AuthError()
             is UnknownHostException -> DeviceOffline()
-            is HttpException -> ServiceNotResponding()
+            is HttpException -> ServiceNotResponding(e.code())
             else -> Error()
         }
     }
