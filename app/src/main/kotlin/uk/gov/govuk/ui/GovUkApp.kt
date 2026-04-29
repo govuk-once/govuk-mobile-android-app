@@ -402,6 +402,8 @@ private fun GovUkNavHost(
     var showDeepLinkNotFoundAlert by remember { mutableStateOf(false) }
     var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
 
+    val linkedAccounts by viewModel.linkedAccounts.collectAsState()
+
     val imeBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
     val sysNavBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val imeBottomPadding = maxOf(
@@ -579,6 +581,7 @@ private fun GovUkNavHost(
                     url = url
                 ) { showBrowserNotFoundAlert = true }
             },
+            linkedAccounts = linkedAccounts,
             modifier = Modifier.padding(paddingValues)
         )
         signOutGraph(

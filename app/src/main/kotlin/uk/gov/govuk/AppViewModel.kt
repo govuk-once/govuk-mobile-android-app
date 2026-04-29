@@ -19,10 +19,12 @@ import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
+import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
+import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
@@ -46,7 +48,8 @@ internal class AppViewModel @Inject constructor(
     private val visitedFeature: Visited,
     private val chatFeature: ChatFeature,
     private val analyticsClient: AnalyticsClient,
-    private val notificationsRepo: NotificationsRepo
+    private val notificationsRepo: NotificationsRepo,
+    private val dvlaRepo: DvlaRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -54,6 +57,9 @@ internal class AppViewModel @Inject constructor(
 
     private val _homeWidgets: MutableStateFlow<List<HomeWidget>?> = MutableStateFlow(null)
     internal val homeWidgets = _homeWidgets.asStateFlow()
+
+    private val _linkedAccounts = MutableStateFlow<List<LinkedAccountUiModel>>(emptyList())
+    val linkedAccounts = _linkedAccounts.asStateFlow()
 
     enum class TimeoutEvent {
         WARNING, TIMEOUT
@@ -101,6 +107,11 @@ internal class AppViewModel @Inject constructor(
                 } else {
                     topicsFeature.init()
 
+                    // check DVLA link status
+                    if (authRepo.isUserSessionActive() && flagRepo.isDvlaLinkEnabled()) {
+                        dvlaRepo.isAccountLinked()
+                    }
+
                     _uiState.value = AppUiState.Default(
                         shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
                         shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
@@ -109,11 +120,13 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner
-                    ) { suppressedWidgets, shouldDisplayChatBanner ->
-                        Pair(suppressedWidgets, shouldDisplayChatBanner)
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
+                        chatFeature.shouldDisplayChatBanner,
+                        dvlaRepo.isLinked
+                    ) { suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked ->
+                        Triple(suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked)
+                    }.collect { (suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked) ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
+                        updateLinkedAccounts(isDvlaLinked)
                     }
                 }
             }
@@ -228,6 +241,19 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
+    private fun updateLinkedAccounts(isDvlaLinked: Boolean) {
+        val accounts = mutableListOf<LinkedAccountUiModel>()
+        if (isDvlaLinked) {
+            accounts.add(
+                LinkedAccountUiModel(
+                    displayTitleRes = uk.gov.govuk.dvla.R.string.dvla_account_title,
+                    onUnlink = { unlinkDvlaAccount() }
+                )
+            )
+        }
+        _linkedAccounts.value = accounts
+    }
+
     fun onWidgetClick(
         text: String,
         url: String? = null,
@@ -254,6 +280,12 @@ internal class AppViewModel @Inject constructor(
             text,
             section
         )
+    }
+
+    private fun unlinkDvlaAccount() {
+        viewModelScope.launch {
+            dvlaRepo.unlinkAccount()
+        }
     }
 
     fun onTabClick(text: String) {

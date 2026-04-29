@@ -20,6 +20,7 @@ import uk.gov.govuk.settings.ui.SettingsRouteActions
 import uk.gov.govuk.settings.ui.SignOutErrorRoute
 import uk.gov.govuk.settings.ui.SignOutRoute
 import uk.gov.govuk.settings.ui.YourAccountsRoute
+import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import java.net.URLEncoder
 
 
@@ -39,6 +40,7 @@ fun NavGraphBuilder.settingsGraph(
     onBiometricsClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
+    linkedAccounts: List<LinkedAccountUiModel>,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -87,6 +89,7 @@ fun NavGraphBuilder.settingsGraph(
 
         composable(YOUR_ACCOUNTS_ROUTE) {
             YourAccountsRoute(
+                accounts = linkedAccounts,
                 onBack = { navController.popBackStack() },
                 modifier = modifier
             )
