@@ -132,7 +132,8 @@ internal class LoginViewModel @Inject constructor(
 
     private suspend fun attemptUserInitialisation(): Boolean =
         (userRepo.initUser() is Success).also { success ->
-            if (success) notificationsRepo.login()
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//            if (success) notificationsRepo.login()
         }
 
     private suspend fun shouldRefreshTokens(): Boolean {

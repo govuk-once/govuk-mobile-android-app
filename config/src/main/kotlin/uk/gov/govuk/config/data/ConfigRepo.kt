@@ -25,6 +25,7 @@ interface ConfigRepo {
     val emergencyBanners: List<EmergencyBanner>?
     val chatBanner: ChatBanner?
     val termsAndConditions: TermsAndConditions?
+    val isFlexEnabled: Boolean
 
     suspend fun initConfig(): Result<Unit>
     suspend fun activateRemoteConfig(): Boolean

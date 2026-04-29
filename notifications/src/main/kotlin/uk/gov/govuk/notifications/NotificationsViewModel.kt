@@ -51,7 +51,8 @@ internal open class NotificationsViewModel @Inject constructor(
         viewModelScope.launch {
             if (flagRepo.isFlexEnabled()) {
                 // TODO: awaiting failure requirements for sendConsent()
-                notificationsRepo.sendConsent()
+                // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//                notificationsRepo.sendConsent()
             }
             notificationsRepo.giveConsent()
             onCompleted()
@@ -80,7 +81,8 @@ internal open class NotificationsViewModel @Inject constructor(
         viewModelScope.launch {
             if (flagRepo.isFlexEnabled()) {
                 // TODO: awaiting failure requirements for sendRemoveConsent()
-                notificationsRepo.sendRemoveConsent()
+                // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//                notificationsRepo.sendRemoveConsent()
             }
             notificationsRepo.removeConsent()
         }
