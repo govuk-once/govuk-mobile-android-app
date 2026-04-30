@@ -11,6 +11,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -88,6 +89,7 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsConsentRequired() } returns false
         every { flagRepo.isTopicsEnabled() } returns false
         every { flagRepo.isNotificationsEnabled() } returns false
+        every { dvlaRepo.isLinked } returns MutableStateFlow(false)
 
         viewModel = AppViewModel(
             timeoutManager,
