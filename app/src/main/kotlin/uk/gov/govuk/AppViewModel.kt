@@ -247,7 +247,9 @@ internal class AppViewModel @Inject constructor(
             accounts.add(
                 LinkedAccountUiModel(
                     displayTitleRes = uk.gov.govuk.dvla.R.string.dvla_account_title,
-                    onUnlink = { unlinkDvlaAccount() }
+                    onUnlink = {
+                        // TODO placeholder for next ticket
+                    }
                 )
             )
         }
@@ -280,12 +282,6 @@ internal class AppViewModel @Inject constructor(
             text,
             section
         )
-    }
-
-    private fun unlinkDvlaAccount() {
-        viewModelScope.launch {
-            dvlaRepo.unlinkAccount()
-        }
     }
 
     fun onTabClick(text: String) {
