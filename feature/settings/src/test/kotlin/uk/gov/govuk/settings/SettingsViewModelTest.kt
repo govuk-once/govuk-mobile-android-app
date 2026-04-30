@@ -33,6 +33,7 @@ import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.SIGN_OUT_EVENT
+import uk.gov.govuk.settings.BuildConfig.SUBJECT_ACCESS_REQUEST_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
 
@@ -296,6 +297,19 @@ class SettingsViewModelTest {
                 text = text,
                 external = false,
                 section = "Settings"
+            )
+        }
+    }
+
+    @Test
+    fun `Given a subject access request page view, then log analytics`() {
+        viewModel.onSubjectAccessRequestView()
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = SUBJECT_ACCESS_REQUEST_EVENT,
+                screenName = SUBJECT_ACCESS_REQUEST_EVENT,
+                title = SUBJECT_ACCESS_REQUEST_EVENT
             )
         }
     }
