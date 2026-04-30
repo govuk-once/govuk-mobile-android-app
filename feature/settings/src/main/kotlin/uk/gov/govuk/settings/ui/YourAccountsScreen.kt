@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -22,7 +20,6 @@ import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.R
-import uk.gov.govuk.settings.YourAccountsViewModel
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 
 @Composable
@@ -31,14 +28,10 @@ internal fun YourAccountsRoute(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: YourAccountsViewModel = hiltViewModel()
 
     YourAccountsScreen(
         accounts = accounts,
         onBack = onBack,
-        onPageView = {
-            // TODO may not be needed
-        },
         modifier = modifier
     )
 }
@@ -47,12 +40,8 @@ internal fun YourAccountsRoute(
 private fun YourAccountsScreen(
     accounts: List<LinkedAccountUiModel>,
     onBack: () -> Unit,
-    onPageView: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
-        onPageView()
-    }
 
     Column(
         modifier
@@ -107,8 +96,7 @@ private fun YourAccountsScreenEmptyPreview() {
     GovUkTheme {
         YourAccountsScreen(
             accounts = emptyList(),
-            onBack = { },
-            onPageView = { },
+            onBack = { }
         )
     }
 }
@@ -124,8 +112,7 @@ private fun YourAccountsScreenPreview() {
                     onUnlink = {}
                 )
             ),
-            onBack = { },
-            onPageView = { },
+            onBack = { }
         )
     }
 }
