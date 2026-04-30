@@ -22,6 +22,7 @@ import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
@@ -133,14 +134,8 @@ private fun DvlaLinkSuccessScreen(
     val title = stringResource(R.string.link_dvla_success_title)
     val buttonText = stringResource(R.string.link_dvla_success_button)
 
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        // protect against config change
-        if (!hasTrackedPageView) {
-            onPageView(title)
-            hasTrackedPageView = true
-        }
+    RememberLaunchedEffect {
+        onPageView(title)
     }
 
     Box(

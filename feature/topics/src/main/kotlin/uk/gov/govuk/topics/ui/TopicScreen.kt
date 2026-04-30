@@ -15,13 +15,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -38,6 +34,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
@@ -184,13 +181,8 @@ private fun TopicScreen(
             section, text, url, selectedItemIndex ->
         onExternalLink(section, text, url, selectedItemIndex, totalItemCount)
     }
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        if (!hasTrackedPageView) {
-            onPageView(topic.title)
-            hasTrackedPageView = true
-        }
+    RememberLaunchedEffect {
+        onPageView(topic.title)
     }
 
     Column(
@@ -463,17 +455,12 @@ private fun ErrorScreen(
     content: @Composable () -> Unit
 ) {
     val topicName = topicReference.toTopicName(LocalContext.current)
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
+    RememberLaunchedEffect {
+        onPageView(topicName)
+    }
 
     Column(modifier.verticalScroll(rememberScrollState())) {
-
-        LaunchedEffect(Unit) {
-            if (!hasTrackedPageView) {
-                onPageView(topicName)
-                hasTrackedPageView = true
-            }
-        }
-
         ChildPageHeader(
             text = topicName,
             dismissStyle = HeaderDismissStyle.Back(onBack)

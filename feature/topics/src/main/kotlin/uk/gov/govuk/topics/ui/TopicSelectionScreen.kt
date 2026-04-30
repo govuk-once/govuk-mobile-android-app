@@ -9,18 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenHeader
+import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.topics.R
@@ -65,13 +62,9 @@ private fun TopicSelectionScreen(
     modifier: Modifier = Modifier
 ) {
     val title = stringResource(R.string.topic_selection_title)
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        if (!hasTrackedPageView) {
-            onPageView(title)
-            hasTrackedPageView = true
-        }
+    RememberLaunchedEffect {
+        onPageView(title)
     }
 
     Column(modifier.fillMaxSize()) {

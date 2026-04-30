@@ -19,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.home.HomeViewModel
@@ -65,7 +65,6 @@ private fun HomeScreen(
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
 ) {
     val focusRequester = remember { FocusRequester() }
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier.background(GovUkTheme.colourScheme.surfaces.screenBackground)) {
         Column(
@@ -144,11 +143,11 @@ private fun HomeScreen(
         }
     }
 
+    RememberLaunchedEffect {
+        onPageView()
+    }
+
     LaunchedEffect(Unit) {
-        if (!hasTrackedPageView) {
-            onPageView()
-            hasTrackedPageView = true
-        }
         focusRequester.requestFocus()
     }
 }
