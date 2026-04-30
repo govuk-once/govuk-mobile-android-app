@@ -61,6 +61,9 @@ internal class DvlaViewModel @Inject constructor(
 
     init {
         processLinkingState()
+        viewModelScope.launch {
+            getVehicleDetails("aa19aaa")
+        }
     }
 
     fun onRetryClicked() {
@@ -149,6 +152,18 @@ internal class DvlaViewModel @Inject constructor(
                 is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
                 else -> _uiState.value = UiState.Error.Other
             }
+        }
+    }
+
+    private suspend fun getVehicleDetails(registrationNumber: String) {
+        val sanitisedInput = registrationNumber.filterNot { it.isWhitespace() }.uppercase()
+
+        try {
+            val response = dvlaRepo.getVehicleDetails(sanitisedInput)
+            println("DVLA VES success: $response")
+        } catch (e: Exception) {
+            println("DVLA VES error: ${e.message}")
+            e.printStackTrace()
         }
     }
 }
