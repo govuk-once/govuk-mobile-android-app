@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
-//    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -61,10 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.icons)
     implementation(libs.hilt.android)
-//    implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
-
-//    implementation(libs.kotlinx.serialization.json)
 
     ksp(libs.hilt.compiler)
 
