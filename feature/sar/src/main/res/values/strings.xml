@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="sar_title">Subject Access Request</string>
+  <string name="sar_display_title">Subject Access Request Display</string>
+  <string name="close">Close</string>
+  <string name="confirm">Confirm</string>
+</resources>
