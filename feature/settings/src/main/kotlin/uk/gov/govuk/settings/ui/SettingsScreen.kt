@@ -54,7 +54,8 @@ internal class SettingsRouteActions(
     val onHelpClick: () -> Unit,
     val onAccessibilityStatementClick: () -> Unit,
     val onOpenSourceLicenseClick: () -> Unit,
-    val onTermsAndConditionsClick: () -> Unit
+    val onTermsAndConditionsClick: () -> Unit,
+    val onSubjectAccessRequestClick: () -> Unit
 )
 
 @Composable
@@ -111,6 +112,10 @@ internal fun SettingsRoute(
                 onTermsAndConditionsClick = {
                     viewModel.onTermsAndConditionsView()
                     actions.onTermsAndConditionsClick()
+                },
+                onSubjectAccessRequestClick = {
+                    viewModel.onSubjectAccessRequestView()
+                    actions.onSubjectAccessRequestClick()
                 }
             ),
             modifier = modifier
@@ -131,6 +136,7 @@ private class SettingsActions(
     val onAccessibilityStatementClick: () -> Unit,
     val onLicenseClick: () -> Unit,
     val onTermsAndConditionsClick: () -> Unit,
+    val onSubjectAccessRequestClick: () -> Unit
 )
 
 @Composable
@@ -187,6 +193,7 @@ private fun SettingsScreen(
             AccessibilityStatement(actions.onAccessibilityStatementClick)
             OpenSourceLicenses(actions.onLicenseClick)
             TermsAndConditions(actions.onTermsAndConditionsClick)
+            SubjectAccessRequest(actions.onSubjectAccessRequestClick)
 
             MediumVerticalSpacer()
 
@@ -424,6 +431,20 @@ private fun TermsAndConditions(
     ExternalLinkListItem(
         title = stringResource(R.string.terms_and_conditions_title),
         onClick = onLicenseClick,
+        modifier = modifier,
+        isFirst = false,
+        isLast = false,
+    )
+}
+
+@Composable
+private fun SubjectAccessRequest(
+    onSubjectAccessRequestClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    InternalLinkListItem(
+        title = stringResource(R.string.sar_title),
+        onClick = onSubjectAccessRequestClick,
         modifier = modifier,
         isFirst = false,
         isLast = true,

@@ -21,6 +21,7 @@
   <string name="privacy_policy_title">Privacy notice</string>
   <string name="notifications_title">Notifications</string>
   <string name="biometric_title">Biometrics</string>
+  <string name="sar_title">Subject Access Request</string>
 
   <string name="feedback_prompt_widget_title">Give feedback to help improve this app</string>
 

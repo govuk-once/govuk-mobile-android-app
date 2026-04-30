@@ -64,6 +64,7 @@ import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
+import uk.gov.govuk.sar.navigation.subjectAccessRequestGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
@@ -559,6 +560,10 @@ private fun GovUkNavHost(
                 }
             } else null,
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
+        )
+        subjectAccessRequestGraph(
+            navController = navController,
+            modifier = Modifier.padding(paddingValues)
         )
         settingsGraph(
             navController = navController,

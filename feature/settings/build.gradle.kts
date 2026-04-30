@@ -40,6 +40,8 @@ android {
 
         buildConfigField("String", "TERMS_AND_CONDITIONS_EVENT", "\"TermsAndConditions\"")
         buildConfigField("String", "TERMS_AND_CONDITIONS_URL", "\"http://www.gov.uk/government/publications/govuk-app-terms-and-conditions\"")
+
+        buildConfigField("String", "SUBJECT_ACCESS_REQUEST_EVENT", "\"SubjectAccessRequest\"")
     }
 
     compileOptions {
@@ -65,6 +67,7 @@ dependencies {
     implementation(projects.config)
     implementation(projects.notifications)
     implementation(projects.data)
+    implementation(projects.feature.sar)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

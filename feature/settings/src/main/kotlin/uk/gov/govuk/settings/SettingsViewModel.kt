@@ -22,6 +22,7 @@ import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.SIGN_OUT_EVENT
+import uk.gov.govuk.settings.BuildConfig.SUBJECT_ACCESS_REQUEST_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
 import javax.inject.Inject
@@ -141,6 +142,14 @@ internal class SettingsViewModel @Inject constructor(
         analyticsClient.settingsItemClick(
             text = TERMS_AND_CONDITIONS_EVENT,
             url = TERMS_AND_CONDITIONS_URL
+        )
+    }
+
+    fun onSubjectAccessRequestView() {
+        analyticsClient.screenView(
+            screenClass = SUBJECT_ACCESS_REQUEST_EVENT,
+            screenName = SUBJECT_ACCESS_REQUEST_EVENT,
+            title = SUBJECT_ACCESS_REQUEST_EVENT
         )
     }
 

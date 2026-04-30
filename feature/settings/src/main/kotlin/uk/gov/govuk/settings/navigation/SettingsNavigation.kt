@@ -13,6 +13,7 @@ import androidx.navigation.navigation
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.coroutines.flow.StateFlow
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_PERMISSION_ROUTE
+import uk.gov.govuk.sar.navigation.SUBJECT_ACCESS_REQUEST_ROUTE
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
@@ -84,6 +85,9 @@ fun NavGraphBuilder.settingsGraph(
                     },
                     onTermsAndConditionsClick = {
                         launchBrowser(TERMS_AND_CONDITIONS_URL)
+                    },
+                    onSubjectAccessRequestClick = {
+                        navigateTo(SUBJECT_ACCESS_REQUEST_ROUTE)
                     }
                 ),
                 modifier = modifier
