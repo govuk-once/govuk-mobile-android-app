@@ -72,8 +72,13 @@ private fun LocalAddressSelectScreen(
     addresses: List<Address>,
     modifier: Modifier = Modifier
 ) {
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        onPageView()
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
     }
 
     var selectedSlug by rememberSaveable { mutableStateOf("") }

@@ -79,11 +79,15 @@ private fun LocalAuthoritySelectScreen(
     localAuthorities: List<LocalAuthority>,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
-        onPageView()
-    }
-
     var selectedSlug by rememberSaveable { mutableStateOf("") }
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
+    }
 
     Scaffold(
         containerColor = GovUkTheme.colourScheme.surfaces.background,

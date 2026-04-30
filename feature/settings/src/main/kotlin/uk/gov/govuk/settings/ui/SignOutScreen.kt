@@ -7,6 +7,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -62,8 +66,13 @@ private fun SignOutScreen(
     onSignOut: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        onPageView()
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
     }
 
     Column(modifier.fillMaxSize()) {

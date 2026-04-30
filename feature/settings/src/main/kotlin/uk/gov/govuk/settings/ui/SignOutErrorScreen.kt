@@ -2,6 +2,10 @@ package uk.gov.govuk.settings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,8 +37,13 @@ private fun SignOutErrorScreen(
     onBackClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        onPageView()
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
     }
 
     ErrorPage(

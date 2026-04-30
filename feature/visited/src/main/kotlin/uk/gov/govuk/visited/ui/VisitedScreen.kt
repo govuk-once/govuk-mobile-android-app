@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -83,8 +84,13 @@ private fun VisitedScreen(
     onRemoveClick: (title: String, url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        onPageView()
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
     }
 
     val title = stringResource(R.string.visited_items_title)

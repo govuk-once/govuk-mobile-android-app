@@ -115,8 +115,13 @@ private fun SearchScreen(
     launchBrowser: (url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        actions.onPageView()
+        if (!hasTrackedPageView) {
+            actions.onPageView()
+            hasTrackedPageView = true
+        }
     }
 
     val focusRequester = remember { FocusRequester() }

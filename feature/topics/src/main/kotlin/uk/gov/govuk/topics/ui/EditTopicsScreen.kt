@@ -8,7 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -59,9 +62,13 @@ private fun EditTopicsScreen(
 ) {
     val title = stringResource(R.string.edit_title)
     val focusRequester = remember { FocusRequester() }
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onPageView(title)
+        if (!hasTrackedPageView) {
+            onPageView(title)
+            hasTrackedPageView = true
+        }
         focusRequester.requestFocus()
     }
 

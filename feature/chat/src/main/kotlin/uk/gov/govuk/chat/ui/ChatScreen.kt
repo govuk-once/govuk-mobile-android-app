@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -155,7 +156,7 @@ internal fun ChatScreen(
     val animationDelay = 500
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
-
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(uiState.isPiiError) {
@@ -165,11 +166,14 @@ internal fun ChatScreen(
     }
 
     LaunchedEffect(Unit) {
-        analyticsEvents.onPageView(
-            Analytics.CHAT_SCREEN_CLASS,
-            Analytics.CHAT_SCREEN_NAME,
-            Analytics.CHAT_SCREEN_TITLE
-        )
+        if (!hasTrackedPageView) {
+            analyticsEvents.onPageView(
+                Analytics.CHAT_SCREEN_CLASS,
+                Analytics.CHAT_SCREEN_NAME,
+                Analytics.CHAT_SCREEN_TITLE
+            )
+            hasTrackedPageView = true
+        }
     }
 
     Box(

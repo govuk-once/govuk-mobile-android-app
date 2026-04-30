@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -62,9 +65,13 @@ private fun TopicSelectionScreen(
     modifier: Modifier = Modifier
 ) {
     val title = stringResource(R.string.topic_selection_title)
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onPageView(title)
+        if (!hasTrackedPageView) {
+            onPageView(title)
+            hasTrackedPageView = true
+        }
     }
 
     Column(modifier.fillMaxSize()) {

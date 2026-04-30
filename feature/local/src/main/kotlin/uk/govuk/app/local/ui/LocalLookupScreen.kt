@@ -94,9 +94,13 @@ private fun LocalLookupScreen(
 ) {
     var postcode by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onPageView()
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
     }
 
     Scaffold(

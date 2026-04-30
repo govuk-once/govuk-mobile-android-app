@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +65,7 @@ private fun HomeScreen(
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
 ) {
     val focusRequester = remember { FocusRequester() }
+    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier.background(GovUkTheme.colourScheme.surfaces.screenBackground)) {
         Column(
@@ -143,7 +145,10 @@ private fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        onPageView()
+        if (!hasTrackedPageView) {
+            onPageView()
+            hasTrackedPageView = true
+        }
         focusRequester.requestFocus()
     }
 }
