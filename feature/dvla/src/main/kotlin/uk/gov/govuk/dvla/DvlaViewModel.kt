@@ -61,6 +61,7 @@ internal class DvlaViewModel @Inject constructor(
 
     init {
         processLinkingState()
+        // TODO demonstrating for POC, will be removed
         viewModelScope.launch {
             getVehicleDetails("aa19aaa")
         }
@@ -136,6 +137,13 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
+    // for unit testing purpose for now, will be used in later ticket
+    fun onVehicleSearchSubmitted(registrationNumber: String) {
+        viewModelScope.launch {
+            getVehicleDetails(registrationNumber)
+        }
+    }
+
     private suspend fun linkDvlaAccount(token: String) {
         when (dvlaRepo.linkAccount(token)) {
             is Result.Success -> _uiState.value = UiState.Success
@@ -158,6 +166,7 @@ internal class DvlaViewModel @Inject constructor(
     private suspend fun getVehicleDetails(registrationNumber: String) {
         val sanitisedInput = registrationNumber.filterNot { it.isWhitespace() }.uppercase()
 
+        // TODO demonstrating for POC, will be removed
         try {
             val response = dvlaRepo.getVehicleDetails(sanitisedInput)
             println("DVLA VES success: $response")

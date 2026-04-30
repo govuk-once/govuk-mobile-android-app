@@ -26,6 +26,7 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.VehicleDetails
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaViewModelTest {
@@ -271,6 +272,36 @@ class DvlaViewModelTest {
 
         // verify retried
         coVerify(exactly = 2) { repo.linkAccount(token) }
+    }
+
+    @Test
+    fun `Given ViewModel initialised, then getVehicleDetails is called with sanitised registration number`() = runTest(dispatcher) {
+        val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
+
+        every { repo.isLinked } returns MutableStateFlow(false)
+        coEvery { repo.getVehicleDetails(any()) } returns Result.Success(vehicleDetails)
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.getVehicleDetails("AA19AAA") }
+    }
+
+    @Test
+    fun `Given registration input with spaces, when search is submitted, then repo is called with sanitised registration number`() = runTest(dispatcher) {
+        val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
+
+        every { repo.isLinked } returns MutableStateFlow(false)
+        coEvery { repo.getVehicleDetails(any()) } returns Result.Success(vehicleDetails)
+
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+        advanceUntilIdle()
+
+        val input = "a  B 12 C d  E"
+        viewModel.onVehicleSearchSubmitted(input)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.getVehicleDetails("AB12CDE") }
     }
 }
 
