@@ -67,7 +67,7 @@ private fun YourAccountsScreen(
             Column(Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
                 if (accounts.isEmpty()) {
                     NonTappableCard(
-                        body = "Accounts you add to the app will appear here",
+                        body = stringResource(R.string.your_accounts_empty_state_body),
                     )
                 } else {
                     accounts.forEach { account ->
@@ -77,7 +77,7 @@ private fun YourAccountsScreen(
                             onClick = { },
                             style = InternalLinkListItemStyle.Button(
                                 icon = uk.gov.govuk.design.R.drawable.ic_cancel_round,
-                                altText = "Remove $displayTitle"
+                                altText = stringResource(R.string.your_accounts_remove_account_alt_text, displayTitle)
                             ) {
                                 // TODO in future ticket: accountToUnlink = account
                                 account.onUnlink()
