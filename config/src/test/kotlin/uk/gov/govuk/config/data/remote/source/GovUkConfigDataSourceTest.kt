@@ -12,14 +12,18 @@ import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.config.SignatureValidator
 import uk.gov.govuk.config.data.remote.ConfigApi
+import uk.gov.govuk.config.data.remote.ContentApi
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.ConfigResponse
+import uk.gov.govuk.config.data.remote.model.TermsAndConditions
+import uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
 import uk.gov.govuk.data.model.Result
 import java.net.UnknownHostException
 
 class GovUkConfigDataSourceTest {
 
     private val configApi = mockk<ConfigApi>(relaxed = true)
+    private val contentApi = mockk<ContentApi>(relaxed = true)
     private val gson = mockk<Gson>(relaxed = true)
     private val signatureValidator = mockk<SignatureValidator>(relaxed = true)
 
@@ -27,13 +31,37 @@ class GovUkConfigDataSourceTest {
     private val config = mockk<Config>(relaxed = true)
     private val configResponse = mockk<ConfigResponse>(relaxed = true)
     private val response = mockk<Response<String>>(relaxed = true)
-    private val dataSource = GovUkConfigDataSource(configApi, gson, signatureValidator)
+    private val contentResponse = mockk<Response<String>>(relaxed = true)
+    private val dataSource = GovUkConfigDataSource(configApi, contentApi, gson, signatureValidator)
 
     @Test
     fun `Given a successful config response with a body, then return success`() = runTest {
+        val remoteTimestamp = "2026-01-01T00:00:00Z"
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
+        val config = Config(
+            available = true,
+            minimumVersion = "1.0.0",
+            recommendedVersion = "1.1.0",
+            releaseFlags = mockk(relaxed = true),
+            version = "1.0.0",
+            chatPollIntervalSeconds = 3.0,
+            userFeedbackBanner = null,
+            chatUrls = mockk(relaxed = true),
+            refreshTokenExpirySeconds = 3600,
+            emergencyBanners = null,
+            chatBanner = null,
+            termsAndConditions = termsAndConditions
+        )
+
         coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
+        coEvery { contentApi.getContent(url = any()) } returns Response.success(contentResponse.toString())
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
-        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "signature")
+        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
 
         val result = dataSource.fetchConfig()
         assertTrue(result is Result.Success)
@@ -96,5 +124,134 @@ class GovUkConfigDataSourceTest {
         dataSource.fetchConfig()
 
         coVerify { signatureValidator.isValidSignature("", any()) }
+    }
+
+    @Test
+    fun `Given a successful config and terms response, when fetched, then the terms timestamp is updated`() = runTest {
+        val remoteTimestamp = "2026-01-01T00:00:00Z"
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
+        val config = Config(
+            available = true,
+            minimumVersion = "1.0.0",
+            recommendedVersion = "1.1.0",
+            releaseFlags = mockk(relaxed = true),
+            version = "1.0.0",
+            chatPollIntervalSeconds = 3.0,
+            userFeedbackBanner = null,
+            chatUrls = mockk(relaxed = true),
+            refreshTokenExpirySeconds = 3600,
+            emergencyBanners = null,
+            chatBanner = null,
+            termsAndConditions = termsAndConditions
+        )
+
+        coEvery { configApi.getConfig() } returns Response.success("{}")
+        coEvery { contentApi.getContent(any()) } returns Response.success("{}")
+        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
+        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
+
+        val result = dataSource.fetchConfig() as Result.Success
+
+        assertEquals(remoteTimestamp, result.value.termsAndConditions?.lastUpdated)
+    }
+
+    @Test
+    fun `Given a successful config but a failed terms response, when fetched, then return failure`() = runTest {
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
+        val config = Config(
+            available = true,
+            minimumVersion = "1.0.0",
+            recommendedVersion = "1.1.0",
+            releaseFlags = mockk(relaxed = true),
+            version = "1.0.0",
+            chatPollIntervalSeconds = 3.0,
+            userFeedbackBanner = null,
+            chatUrls = mockk(relaxed = true),
+            refreshTokenExpirySeconds = 3600,
+            emergencyBanners = null,
+            chatBanner = null,
+            termsAndConditions = termsAndConditions
+        )
+
+        coEvery { configApi.getConfig() } returns Response.success("{}")
+        coEvery { contentApi.getContent(url = any()) } returns Response.error(404, mockk(relaxed = true))
+        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
+        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
+
+        assertTrue(dataSource.fetchConfig() is Result.Error)
+    }
+
+    @Test
+    fun `Given a config with no terms and conditions timestamp, when fetched, then the terms timestamp is added`() = runTest {
+        val remoteTimestamp = "2026-01-01T00:00:00Z"
+        val termsAndConditions = TermsAndConditions(
+            url = "url",
+            contentItemApiUrl = "contentItemUrl"
+        )
+        val config = Config(
+            available = true,
+            minimumVersion = "1.0.0",
+            recommendedVersion = "1.1.0",
+            releaseFlags = mockk(relaxed = true),
+            version = "1.0.0",
+            chatPollIntervalSeconds = 3.0,
+            userFeedbackBanner = null,
+            chatUrls = mockk(relaxed = true),
+            refreshTokenExpirySeconds = 3600,
+            emergencyBanners = null,
+            chatBanner = null,
+            termsAndConditions = termsAndConditions
+        )
+
+        coEvery { configApi.getConfig() } returns Response.success("{}")
+        coEvery { contentApi.getContent(url = any()) } returns Response.success("{}")
+        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
+        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
+
+        val result = dataSource.fetchConfig() as Result.Success
+
+        assertEquals(remoteTimestamp, result.value.termsAndConditions?.lastUpdated)
+    }
+
+    @Test
+    fun `Given a config with no terms and conditions content item url, when fetched, then return failure`() = runTest {
+        val remoteTimestamp = "2026-01-01T00:00:00Z"
+        val termsAndConditions = TermsAndConditions(
+            lastUpdated = "old-timestamp",
+            url = "url",
+            contentItemApiUrl = ""
+        )
+        val config = Config(
+            available = true,
+            minimumVersion = "1.0.0",
+            recommendedVersion = "1.1.0",
+            releaseFlags = mockk(relaxed = true),
+            version = "1.0.0",
+            chatPollIntervalSeconds = 3.0,
+            userFeedbackBanner = null,
+            chatUrls = mockk(relaxed = true),
+            refreshTokenExpirySeconds = 3600,
+            emergencyBanners = null,
+            chatBanner = null,
+            termsAndConditions = termsAndConditions
+        )
+
+        coEvery { configApi.getConfig() } returns Response.success("{}")
+        coEvery { contentApi.getContent(url = null) } returns Response.success("{}")
+        coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
+        coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
+
+        assertTrue(dataSource.fetchConfig() is Result.Error)
     }
 }

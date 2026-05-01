@@ -37,7 +37,8 @@ class TermsRepoTest {
     fun `Given there is no terms accepted date, when get terms acceptance state, then return new user`() = runTest {
         every { configRepo.termsAndConditions } returns TermsAndConditions(
             lastUpdated = "2024-01-01T00:00:00Z",
-            url = "https://terms.url"
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
         )
         coEvery { termsDataStore.getTermsAcceptedDate() } returns null
 
@@ -51,7 +52,8 @@ class TermsRepoTest {
     fun `Given terms were updated after they were accepted, when get terms acceptance state, then return updated`() = runTest {
         every { configRepo.termsAndConditions } returns TermsAndConditions(
             lastUpdated = "2024-06-01T00:00:00Z",
-            url = "https://terms.url"
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
         )
         coEvery { termsDataStore.getTermsAcceptedDate() } returns Instant.parse("2024-01-01T00:00:00Z").toEpochMilli()
 
@@ -65,7 +67,8 @@ class TermsRepoTest {
     fun `Given terms were accepted after they were last updated, when get terms acceptance state, then return accepted`() = runTest {
         every { configRepo.termsAndConditions } returns TermsAndConditions(
             lastUpdated = "2024-01-01T00:00:00Z",
-            url = "https://terms.url"
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
         )
         coEvery { termsDataStore.getTermsAcceptedDate() } returns Instant.parse("2024-06-01T00:00:00Z").toEpochMilli()
 
@@ -76,7 +79,8 @@ class TermsRepoTest {
     fun `Given the terms last updated date is invalid, when get terms acceptance state, then return error`() = runTest {
         every { configRepo.termsAndConditions } returns TermsAndConditions(
             lastUpdated = "not-a-date",
-            url = "https://terms.url"
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
         )
         coEvery { termsDataStore.getTermsAcceptedDate() } returns 123L
 

@@ -30,7 +30,6 @@ import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
-import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
@@ -40,6 +39,7 @@ import uk.gov.govuk.design.ui.component.ToggleListItem
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.theme.ThemePreviews
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SettingsUiState
 import uk.gov.govuk.settings.SettingsViewModel
@@ -47,6 +47,7 @@ import uk.gov.govuk.settings.SettingsViewModel
 internal class SettingsRouteActions(
     val onAccountClick: () -> Unit,
     val onSignOutClick: () -> Unit,
+    val onYourAccountsClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: () -> Unit,
     val onPrivacyPolicyClick: () -> Unit,
@@ -73,6 +74,10 @@ internal fun SettingsRoute(
                 onAccountClick = {
                     viewModel.onAccount()
                     actions.onAccountClick()
+                },
+                onYourAccountsClick = {
+                    viewModel.onYourAccountsClick()
+                    actions.onYourAccountsClick()
                 },
                 onSignOutClick = {
                     viewModel.onSignOut()
@@ -116,6 +121,7 @@ internal fun SettingsRoute(
 private class SettingsActions(
     val onPageView: () -> Unit,
     val onAccountClick: () -> Unit,
+    val onYourAccountsClick: () -> Unit,
     val onSignOutClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: (String) -> Unit,
@@ -152,11 +158,15 @@ private fun SettingsScreen(
 
             ManageLogin(
                 userEmail = uiState.userEmail,
-                onAccountClick = actions.onAccountClick,
-                onSignOutClick = actions.onSignOutClick
+                onAccountClick = actions.onAccountClick
             )
 
-            LargeVerticalSpacer()
+            if (uiState.isYourAccountsEnabled) {
+                MediumVerticalSpacer()
+                YourAccounts(actions.onYourAccountsClick)
+            }
+
+            MediumVerticalSpacer()
 
             NotificationsAndPrivacy(
                 uiState = uiState,
@@ -176,6 +186,10 @@ private fun SettingsScreen(
             AccessibilityStatement(actions.onAccessibilityStatementClick)
             OpenSourceLicenses(actions.onLicenseClick)
             TermsAndConditions(actions.onTermsAndConditionsClick)
+
+            MediumVerticalSpacer()
+
+            SignOut(actions.onSignOutClick)
         }
     }
 }
@@ -184,7 +198,6 @@ private fun SettingsScreen(
 private fun ManageLogin(
     userEmail: String,
     onAccountClick: () -> Unit,
-    onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -226,21 +239,22 @@ private fun ManageLogin(
             text = stringResource(R.string.manage_login_description),
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)
         )
-
-        MediumVerticalSpacer()
-
-        CardListItem(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onSignOutClick
-        ) {
-            BodyRegularLabel(
-                text = stringResource(R.string.manage_login_sign_out),
-                modifier = Modifier
-                    .padding(GovUkTheme.spacing.medium),
-                color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-            )
-        }
     }
+}
+
+@Composable
+private fun YourAccounts(
+    onYourAccountsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    InternalLinkListItem(
+        title = stringResource(R.string.your_accounts_title),
+        onClick = onYourAccountsClick,
+        modifier = modifier,
+        isFirst = true,
+        isLast = true,
+    )
+
 }
 
 @Composable
@@ -412,4 +426,33 @@ private fun TermsAndConditions(
         isFirst = false,
         isLast = true,
     )
+}
+
+@Composable
+private fun SignOut(
+    onSignOutClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CardListItem(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onSignOutClick
+    ) {
+        BodyRegularLabel(
+            text = stringResource(R.string.manage_login_sign_out),
+            modifier = Modifier
+                .padding(GovUkTheme.spacing.medium),
+            color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ManageLoginPreview() {
+    GovUkTheme {
+        ManageLogin(
+            userEmail = "user@example.com",
+            onAccountClick = {}
+        )
+    }
 }

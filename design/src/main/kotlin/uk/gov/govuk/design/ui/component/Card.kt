@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
@@ -31,6 +33,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -44,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.extension.talkBackText
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.CardListItem
 import uk.gov.govuk.design.ui.model.EmergencyBannerUiType
 import uk.gov.govuk.design.ui.model.FocusableCardColours
@@ -147,7 +152,8 @@ fun HomeBannerCard(
                             BodyBoldLabel(
                                 title,
                                 color = textColour,
-                                modifier = Modifier.padding(start = GovUkTheme.spacing.medium)
+                                modifier = Modifier
+                                    .padding(start = GovUkTheme.spacing.medium)
                                     .semantics { heading() },
                             )
                         }
@@ -217,8 +223,9 @@ fun HomeBannerCard(
                         BodyRegularLabel(
                             text = linkTitle,
                             color = linkTitleColour,
-                            modifier = Modifier.weight(1f)
-                                .clearAndSetSemantics{ }
+                            modifier = Modifier
+                                .weight(1f)
+                                .clearAndSetSemantics { }
                         )
                         if (type.hasDecoratedLink) {
                             Icon(
@@ -236,6 +243,7 @@ fun HomeBannerCard(
         }
     }
 }
+
 @Composable
 fun SearchResultCard(
     title: String,
@@ -554,6 +562,115 @@ fun DrillInCard(
     }
 }
 
+@Composable
+fun AccountConnectionCard(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    descriptionAltText: String? = null
+) {
+    val fontScale = LocalDensity.current.fontScale
+    val showLeadingIcon = fontScale <= 1.25f
+    val baseWidth = dimensionResource(id = R.dimen.ic_arrow_width)
+    val baseHeight = dimensionResource(id = R.dimen.ic_arrow_height)
+
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = GovUkTheme.colourScheme.surfaces.cardLinkAccount
+        ),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (showLeadingIcon) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_link),
+                    contentDescription = null,
+                    tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+                )
+
+                MediumHorizontalSpacer()
+            }
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                BodyBoldLabel(
+                    text = title,
+                    color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+                )
+
+                description?.let { description ->
+                    SmallVerticalSpacer()
+                    BodyRegularLabel(
+                        text = description,
+                        color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+                        modifier = modifier.withAltText(descriptionAltText)
+                    )
+                }
+            }
+
+            SmallHorizontalSpacer()
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow),
+                contentDescription = null,
+                tint = GovUkTheme.colourScheme.textAndIcons.iconPrimary,
+                modifier = Modifier.size(
+                    width = baseWidth * fontScale,
+                    height = baseHeight * fontScale
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun CentredCardWithIcon(
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = GovUkTheme.colourScheme.surfaces.list
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 96.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            icon()
+        }
+    }
+}
+
+@Composable
+fun LoaderCard(
+    modifier: Modifier = Modifier,
+    altText: String? = null
+) {
+    CentredCardWithIcon(
+        icon = {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(30.dp)
+                    .then(if (altText != null) Modifier.clearAndSetSemantics {
+                        contentDescription = altText
+                    } else Modifier),
+                color = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+            )
+        },
+        modifier = modifier
+    )
+}
+
 @ThemePreviews
 @Composable
 private fun HomeNotableDeathBannerCardPreview() {
@@ -734,5 +851,25 @@ private fun DrillInCardDescriptionPreview() {
             onClick = {},
             description = "Card description"
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AccountConnectionCardPreview() {
+    GovUkTheme {
+        AccountConnectionCard(
+            title = "Add driver and vehicles account",
+            onClick = {},
+            description = "Your tax, MOT, penalty points"
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun LoaderCardPreview() {
+    GovUkTheme {
+        LoaderCard()
     }
 }

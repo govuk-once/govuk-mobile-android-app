@@ -3,13 +3,15 @@ package uk.gov.govuk.config.data.remote.source
 import com.google.gson.Gson
 import uk.gov.govuk.config.SignatureValidator
 import uk.gov.govuk.config.data.remote.ConfigApi
+import uk.gov.govuk.config.data.remote.ContentApi
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.ConfigResponse
+import uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.model.Result.DeviceOffline
-import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Error
+import uk.gov.govuk.data.model.Result.InvalidSignature
+import uk.gov.govuk.data.model.Result.Success
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class GovUkConfigDataSource @Inject constructor(
     private val configApi: ConfigApi,
+    private val contentApi: ContentApi,
     private val gson: Gson,
     private val signatureValidator: SignatureValidator
 ) {
@@ -32,8 +35,28 @@ class GovUkConfigDataSource @Inject constructor(
                     }
 
                     val configResponse = gson.fromJson(it, ConfigResponse::class.java)
-                    Success(configResponse.config)
-                } ?: Error()
+                    val config = configResponse.config
+
+                    val contentItemUrl = config.termsAndConditions?.contentItemApiUrl
+                    val content = contentApi.getContent(contentItemUrl)
+
+                    if (content.isSuccessful) {
+                        val contentItemTimestamp: String = content.body().run {
+                            gson.fromJson(
+                                this,
+                                TermsAndConditionsTimestamp::class.java
+                            ).publicUpdatedAt
+                        }
+
+                        config.termsAndConditions = config.termsAndConditions?.copy(
+                            lastUpdated = contentItemTimestamp
+                        )
+
+                        Success(config)
+                    } else {
+                        Error()
+                    }
+               } ?: Error()
             } else {
                 Error()
             }

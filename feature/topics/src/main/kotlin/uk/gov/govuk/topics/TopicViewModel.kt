@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
-import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.topics.data.TopicsRepo
@@ -19,11 +18,11 @@ import uk.gov.govuk.topics.navigation.TOPIC_SUBTOPIC_ARG
 import uk.gov.govuk.topics.ui.model.TopicUi
 import uk.gov.govuk.visited.Visited
 import javax.inject.Inject
+import kotlin.String
 
 @HiltViewModel
 internal class TopicViewModel @Inject constructor(
     private val topicsRepo: TopicsRepo,
-    private val flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
     private val visited: Visited,
     private val savedStateHandle: SavedStateHandle
@@ -39,11 +38,18 @@ internal class TopicViewModel @Inject constructor(
         private const val SERVICES_TITLE = "Services and information"
         private const val MAX_POPULAR_PAGES = 4
         private const val MAX_STEP_BY_STEPS = 3
-
-        private const val DRIVING_TOPIC_REF = "driving-transport"
     }
 
-    private val _uiState: MutableStateFlow<TopicUiState?> = MutableStateFlow(null)
+    private val topicRef: String? = savedStateHandle[TOPIC_REF_ARG]
+
+    private val loadingState: TopicUiState?
+        get() {
+            return topicRef?.let { ref ->
+                TopicUiState.Loading(ref)
+            }
+        }
+
+    private val _uiState: MutableStateFlow<TopicUiState?> = MutableStateFlow(loadingState)
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -51,12 +57,10 @@ internal class TopicViewModel @Inject constructor(
     }
 
     internal fun getTopic() {
-        savedStateHandle.get<String>(TOPIC_REF_ARG)?.let { ref ->
+        topicRef?.let { ref ->
             val isSubtopic = savedStateHandle.get<Boolean>(TOPIC_SUBTOPIC_ARG) == true
             viewModelScope.launch {
                 val result = topicsRepo.getTopic(ref)
-
-                val shouldShowDvla = flagRepo.isDvlaLinkEnabled() && ref == DRIVING_TOPIC_REF
 
                 _uiState.value = when (result) {
                     is Success -> {
@@ -65,14 +69,15 @@ internal class TopicViewModel @Inject constructor(
                                 MAX_POPULAR_PAGES,
                                 MAX_STEP_BY_STEPS,
                                 isSubtopic
-                            ),
-                            showDvlaLink = shouldShowDvla
+                            )
                         )
                     }
-                    is DeviceOffline -> TopicUiState.Offline(ref)
-                    else -> TopicUiState.ServiceError(ref)
+                    is DeviceOffline -> TopicUiState.Error.Offline(ref)
+                    else -> TopicUiState.Error.Service(ref)
                 }
             }
+        } ?: run {
+            _uiState.value = TopicUiState.Error.NoReference
         }
     }
 

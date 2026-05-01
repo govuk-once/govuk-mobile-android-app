@@ -3,7 +3,6 @@ package uk.gov.govuk.ui
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -43,10 +42,9 @@ internal sealed class BrowserActivityLauncher(
             try {
                 Intent(Intent.ACTION_VIEW).run {
                     data = url.toUri()
-                    setFlags(FLAG_ACTIVITY_NEW_TASK)
                     launcher.launch(this)
                 }
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 onError()
             }
         }
@@ -59,10 +57,9 @@ internal sealed class BrowserActivityLauncher(
             try {
                 CustomTabsIntent.Builder().build().run {
                     intent.data = url.toUri()
-                    intent.setFlags(FLAG_ACTIVITY_NEW_TASK)
                     launcher.launch(this.intent)
                 }
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 onError()
             }
         }

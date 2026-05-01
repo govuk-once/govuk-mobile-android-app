@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="link_dvla_account_title">Add driver and vehicles account</string>
+    <string name="link_dvla_account_description">Your tax, MOT, penalty points</string>
+    <string name="link_dvla_loading">Loading driver and vehicles account information</string>
+
+    <string name="link_dvla_intro_title">Add your driver and vehicles account</string>
+    <string name="link_dvla_intro_description">Keep track of your applications, penalty points, and tax and MOT dates.</string>
+    <string name="link_dvla_intro_action_message">We’ll take you to your web browser to sign in.</string>
+    <string name="link_dvla_intro_button">Continue</string>
+
+    <string name="link_dvla_connecting_title">Adding driver and vehicles account…</string>
+    <string name="link_dvla_success_title">Driver and vehicles account added</string>
+    <string name="link_dvla_success_button">Continue</string>
+
+    <string name="acronym_mot">MOT</string>
+    <string name="acronym_mot_alt_text">M.O.T.</string>
+
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>

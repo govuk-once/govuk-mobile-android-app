@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import uk.gov.govuk.dvla.BuildConfig
 import uk.gov.govuk.dvla.remote.DvlaApi
 
 import javax.inject.Named
@@ -43,4 +44,9 @@ object DvlaModule {
             produceFile = { context.preferencesDataStoreFile("dvla_prefs") }
         )
     }
+
+    @Provides
+    @Named("dvla_auth_url")
+    fun provideDvlaAuthUrl(): String = BuildConfig.DVLA_AUTH_URL
+
 }

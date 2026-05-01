@@ -27,6 +27,7 @@
     <string name="select_alt_text">Select</string>
     <string name="deselect_alt_text">Deselect</string>
     <string name="empty_topics">Add your topics</string>
+    <string name="loading_topic_pages">Loading %1$s pages</string>
 
     <!-- Topic names -->
     <string name="benefits">Benefits</string>
@@ -40,9 +41,5 @@
     <string name="retirement">Retirement</string>
     <string name="studying_and_training">Studying and training</string>
     <string name="travel_abroad">Travel abroad</string>
-
-    <!-- Driving -->
-    <string name="link_dvla_account_button">Add your driver and vehicles account</string>
-    <string name="unlink_dvla_account_button">Unlink your driver and vehicles account"</string>
 
 </resources>

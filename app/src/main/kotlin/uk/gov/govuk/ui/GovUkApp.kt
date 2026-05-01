@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +33,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -63,12 +63,20 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
+import uk.gov.govuk.design.ui.component.FullScreenHeader
+import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
+import uk.gov.govuk.design.ui.component.StatusBar
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
+import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
+import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
+import uk.gov.govuk.dvla.ui.DvlaLinkHeader
+import uk.gov.govuk.dvla.ui.LicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -88,11 +96,23 @@ import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
+import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.model.HomeWidget
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
 import uk.govuk.app.local.navigation.localGraph
+
+/** Routes that draw status bar, add any routes that draw status bar here */
+private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
+    CHAT_GRAPH_ROUTE,
+    DVLA_GRAPH_ROUTE
+)
+
+/** Routes that draw system nav bar, add any routes that draw system nav bar here */
+private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
+    DVLA_GRAPH_ROUTE
+)
 
 @Composable
 internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
@@ -107,9 +127,11 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
             when (it) {
                 is AppUiState.Loading -> LoadingScreen()
                 is AppUiState.AppUnavailable -> AppUnavailableScreen()
-                is AppUiState.DeviceOffline -> DeviceOfflineScreen(
-                    onTryAgain = { viewModel.onTryAgain() }
-                )
+                is AppUiState.DeviceOffline -> FullScreenWrapper {
+                    DeviceOfflineScreen(
+                        onTryAgain = { viewModel.onTryAgain() }
+                    )
+                }
 
                 is AppUiState.ForcedUpdate -> ForcedUpdateScreen()
                 is AppUiState.Default -> {
@@ -131,7 +153,10 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
         }
     } else {
         Column {
-            StatusBar(false)
+            StatusBar(
+                hideBackground = false,
+                useDarkIcons = false
+            )
             SplashScreen { isSplashDone = true }
         }
     }
@@ -153,6 +178,15 @@ private fun BottomNavScaffold(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentNavParentRoute = navBackStackEntry?.destination?.parent?.route
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    // status & system nav bars flags
+    val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
+            currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES
+    val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
+            currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
+    val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
+    val useDarkIcons = isChatRoute && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -193,7 +227,7 @@ private fun BottomNavScaffold(
         modifier = Modifier
             .padding(
                 start = navBarPadding.calculateStartPadding(layoutDirection),
-                bottom = navBarPadding.calculateBottomPadding(),
+                bottom = if (hideBottomPadding) 0.dp else navBarPadding.calculateBottomPadding(),
                 end = navBarPadding.calculateEndPadding(layoutDirection)
             )
     ) { paddingValues ->
@@ -211,7 +245,9 @@ private fun BottomNavScaffold(
             color = GovUkTheme.colourScheme.surfaces.background
         ) {
             Column {
-                StatusBar(currentNavParentRoute == CHAT_GRAPH_ROUTE)
+                StatusBar(
+                    hideBackground = hideStatusBarBackground,
+                    useDarkIcons = useDarkIcons)
                 GovUkNavHost(
                     intentFlow = intentFlow,
                     viewModel = viewModel,
@@ -465,8 +501,26 @@ private fun GovUkNavHost(
                     showBrowserNotFoundAlert = true
                 }
             },
-            onLinkDvlaAccount = {
-                navController.navigateToDvlaLink()
+            topicHeader = { topicRef, linkResult ->
+                val isDrivingTopic = topicRef.isDrivingTopic()
+                val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
+
+                if (isDrivingTopic && isFeatureEnabled) {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = GovUkTheme.spacing.medium),
+                        verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                    ) {
+                        // drop in the self-managed public header from the DVLA module
+                        DvlaLinkHeader(
+                            linkResult = linkResult,
+                            onActionClick = { navController.navigateToDvlaLinkIntro() }
+                        )
+
+                        // and licence summary widget from DVLA module
+                        LicenceSummaryWidget()
+                    }
+                }
             },
             modifier = Modifier.padding(paddingValues)
         )
@@ -574,15 +628,24 @@ private fun GovUkNavHost(
         )
 
         dvlaGraph(
+            onContinueToLink = {
+                navController.navigateToDvlaLink()
+            },
+            launchBrowser = { url ->
+                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
+            },
             onLinkComplete = {
+                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
                 navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, true)
-                navController.popBackStack()
             },
             onUnlinkComplete = {
+                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
                 navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
-                navController.popBackStack()
             },
-            onAlertDismiss = {
+            onIntroClose = {
+                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
+            },
+            onWebFlowClosed = {
                 navController.popBackStack()
             }
         )
@@ -609,23 +672,4 @@ private fun GovUkNavHost(
     }
 }
 
-@Composable
-private fun StatusBar(
-    isChat: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val localView = LocalView.current
-    val window = (localView.context as Activity).window
 
-    if (!isChat) {
-        Box(
-            modifier
-                .fillMaxWidth()
-                .windowInsetsTopHeight(WindowInsets.statusBars)
-                .background(GovUkTheme.colourScheme.surfaces.homeHeader)
-        )
-    }
-
-    WindowCompat.getInsetsController(window, localView).isAppearanceLightStatusBars =
-        (isChat && !isSystemInDarkTheme())
-}

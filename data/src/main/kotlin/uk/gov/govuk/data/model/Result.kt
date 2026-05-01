@@ -8,3 +8,13 @@ sealed class Result<T> {
     class InvalidSignature<T>: Result<T>()
     class Error<T>: Result<T>()
 }
+
+inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> {
+    return when (this) {
+        is Result.Success -> Result.Success(transform(this.value))
+        else -> {
+            @Suppress("UNCHECKED_CAST")
+            this as Result<R>
+        }
+    }
+}

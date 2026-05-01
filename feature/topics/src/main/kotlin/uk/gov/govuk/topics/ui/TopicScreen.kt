@@ -1,6 +1,5 @@
 package uk.gov.govuk.topics.ui
 
-import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.LoadingScreen
+import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -62,9 +61,9 @@ internal fun TopicRoute(
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
     onSubtopic: (ref: String) -> Unit,
-    isDvlaLinked: Boolean,
-    onLinkDvlaAccount: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Generic slot for the app module to inject self-managed content into (for example DVLA linking) */
+    headerContent: @Composable () -> Unit = {},
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -79,8 +78,6 @@ internal fun TopicRoute(
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
-                        showDvlaLink = it.showDvlaLink,
-                        isDvlaLinked = isDvlaLinked,
                         onPageView = { title -> viewModel.onPageView(
                             topicUi = it.topicUi,
                             title = title
@@ -120,11 +117,11 @@ internal fun TopicRoute(
                             onSubtopic(ref)
                         },
                         focusRequester = focusRequester,
-                        onPrimaryAction = onLinkDvlaAccount
+                        headerContent = headerContent
                     )
                 }
 
-                is TopicUiState.Offline -> ErrorScreen(
+                is TopicUiState.Error.Offline -> ErrorScreen(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
@@ -132,12 +129,26 @@ internal fun TopicRoute(
                 )
 
 
-                is TopicUiState.ServiceError -> ErrorScreen(
+                is TopicUiState.Error.Service -> ErrorScreen(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
                     content = { ProblemMessage() }
                 )
+
+                is TopicUiState.Error.NoReference -> ErrorScreen(
+                    topicReference = "",
+                    onPageView = { title -> viewModel.onPageView(title = title) },
+                    onBack = onBack,
+                    content = { ProblemMessage() }
+                )
+
+                is TopicUiState.Loading -> {
+                    TopicLoadingScreen(
+                        topicReference = it.topicReference,
+                        onBack = onBack,
+                    )
+                }
             }
         }
     }
@@ -146,8 +157,6 @@ internal fun TopicRoute(
 @Composable
 private fun TopicScreen(
     topic: TopicUi,
-    showDvlaLink: Boolean,
-    isDvlaLinked: Boolean,
     onPageView: (String) -> Unit,
     onBack: () -> Unit,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
@@ -156,7 +165,7 @@ private fun TopicScreen(
     onSubtopic: (text: String, ref: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    onPrimaryAction: () -> Unit = {}
+    headerContent: @Composable () -> Unit = {}
 ) {
     val popularPagesIndex = 1
     val stepByStepsIndex = popularPagesIndex + topic.popularPages.size
@@ -214,22 +223,8 @@ private fun TopicScreen(
                 MediumVerticalSpacer()
             }
 
-            if (showDvlaLink) {
-                item {
-                    DrillInCard(
-                        title = stringResource(
-                            if (isDvlaLinked) R.string.unlink_dvla_account_button
-                            else R.string.link_dvla_account_button
-                        ),
-                        onClick = onPrimaryAction,
-                        modifier = Modifier
-                            .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(
-                                top = GovUkTheme.spacing.medium,
-                                bottom = GovUkTheme.spacing.medium
-                            )
-                    )
-                }
+            item {
+                headerContent()
             }
 
             val showHorizontalScrollView = false
@@ -476,6 +471,29 @@ private fun ErrorScreen(
     }
 }
 
+@Composable
+private fun TopicLoadingScreen(
+    topicReference: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val topicName = topicReference.toTopicName(LocalContext.current)
+    val altText = stringResource(R.string.loading_topic_pages, topicName)
+
+    Column(modifier.verticalScroll(rememberScrollState())) {
+        ChildPageHeader(
+            text = topicName,
+            dismissStyle = HeaderDismissStyle.Back(onBack)
+        )
+
+        LoaderCard(
+            modifier = Modifier
+                .padding(GovUkTheme.spacing.medium),
+            altText = altText
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun ErrorScreenOfflinePreview() {
@@ -498,6 +516,17 @@ private fun ErrorScreenProblemPreview() {
             onPageView = {},
             onBack = {},
             content = { ProblemMessage() }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TopicLoadingScreenPreview() {
+    GovUkTheme {
+        TopicLoadingScreen(
+            topicReference = "benefits",
+            onBack = {}
         )
     }
 }
