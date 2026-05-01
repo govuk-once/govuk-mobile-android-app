@@ -40,4 +40,7 @@
   <string name="sign_out_error_additional_text">If you need to sign out right now, you can delete the app from your phone.</string>
   <string name="sign_out_error_go_back_to_settings_button">Go back to settings</string>
 
+  <string name="your_accounts_empty_state_body">Accounts you add to the app will appear here</string>
+  <string name="your_accounts_remove_account_alt_text">Remove %1$s</string>
+
 </resources>
