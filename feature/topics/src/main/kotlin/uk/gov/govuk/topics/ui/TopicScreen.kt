@@ -34,7 +34,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
@@ -181,7 +181,7 @@ private fun TopicScreen(
             section, text, url, selectedItemIndex ->
         onExternalLink(section, text, url, selectedItemIndex, totalItemCount)
     }
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView(topic.title)
     }
 
@@ -456,7 +456,7 @@ private fun ErrorScreen(
 ) {
     val topicName = topicReference.toTopicName(LocalContext.current)
 
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView(topicName)
     }
 

@@ -6,7 +6,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.ErrorPage
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SignOutViewModel
@@ -33,7 +33,7 @@ private fun SignOutErrorScreen(
     onBackClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView()
     }
 

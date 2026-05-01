@@ -17,7 +17,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenHeader
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.topics.R
@@ -63,7 +63,7 @@ private fun TopicSelectionScreen(
 ) {
     val title = stringResource(R.string.topic_selection_title)
 
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView(title)
     }
 

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.design.ui.component.BookendToWebScreen
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
@@ -25,7 +25,7 @@ internal fun DvlaLinkIntroScreen(
     val continueButtonText = stringResource(R.string.link_dvla_intro_button)
     val description = stringResource(R.string.link_dvla_intro_description)
 
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView(screenTitle)
     }
 

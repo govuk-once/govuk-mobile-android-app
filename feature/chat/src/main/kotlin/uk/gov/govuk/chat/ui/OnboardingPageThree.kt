@@ -17,7 +17,7 @@ import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FullScreenHeader
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.SecondaryButton
@@ -81,7 +81,7 @@ private fun OnboardingPageThreeScreen(
     onPrivacyNoticeClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView()
     }
 

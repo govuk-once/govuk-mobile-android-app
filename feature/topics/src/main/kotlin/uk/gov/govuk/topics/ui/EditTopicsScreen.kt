@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.ModalHeader
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
@@ -61,7 +61,7 @@ private fun EditTopicsScreen(
     val title = stringResource(R.string.edit_title)
     val focusRequester = remember { FocusRequester() }
 
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView(title)
     }
 

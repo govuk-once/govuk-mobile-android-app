@@ -37,7 +37,7 @@ import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -96,7 +96,7 @@ private fun LocalLookupScreen(
     var postcode by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView()
     }
 

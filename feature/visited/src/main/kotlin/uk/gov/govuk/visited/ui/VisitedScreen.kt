@@ -28,7 +28,7 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RememberLaunchedEffect
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.NonTappableCard
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
@@ -83,7 +83,7 @@ private fun VisitedScreen(
     onRemoveClick: (title: String, url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    RememberLaunchedEffect {
+    RunOnceLaunchedEffect {
         onPageView()
     }
 
