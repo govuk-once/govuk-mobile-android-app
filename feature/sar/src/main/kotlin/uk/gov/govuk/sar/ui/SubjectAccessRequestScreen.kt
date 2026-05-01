@@ -21,8 +21,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
+import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.SecondaryButton
@@ -93,6 +97,7 @@ private fun BottomNavBar(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
     Column(
         modifier = modifier
@@ -102,9 +107,12 @@ private fun BottomNavBar(
         PrimaryButton(
             text = stringResource(R.string.confirm),
             onClick = {
-                scope.launch(Dispatchers.IO) {
+                scope.launch(dispatcher) {
+                    // TODO: get this from getUserInfo()
+                    val user = User(Notifications(consentStatus = ConsentStatus.ACCEPTED, pushId = "12345"))
+
                     val file = SubjectAccessRequestFile(context)
-                    file.writeFile()
+                    file.writeFile(user)
                 }
 
                 onConfirm()
