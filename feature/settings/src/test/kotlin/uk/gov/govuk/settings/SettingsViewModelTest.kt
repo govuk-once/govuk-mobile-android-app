@@ -55,6 +55,7 @@ class SettingsViewModelTest {
         coEvery { authRepo.isAuthenticationEnabled() } returns true
         coEvery { analyticsClient.isAnalyticsEnabled() } returns true
         coEvery { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isDvlaLinkEnabled() } returns true
 
         viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
     }
@@ -280,6 +281,21 @@ class SettingsViewModelTest {
             analyticsClient.settingsItemClick(
                 text = SIGN_OUT_EVENT,
                 external = false
+            )
+        }
+    }
+
+    @Test
+    fun `Given your accounts click, then log analytics`() {
+        val text = "Driver and vehicles account"
+
+        viewModel.onYourAccountsClick(text)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = text,
+                external = false,
+                section = "Settings"
             )
         }
     }

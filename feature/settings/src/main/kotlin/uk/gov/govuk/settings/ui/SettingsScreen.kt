@@ -75,8 +75,8 @@ internal fun SettingsRoute(
                     viewModel.onAccount()
                     actions.onAccountClick()
                 },
-                onYourAccountsClick = {
-                    viewModel.onYourAccountsClick()
+                onYourAccountsClick = { text ->
+                    viewModel.onYourAccountsClick(text)
                     actions.onYourAccountsClick()
                 },
                 onSignOutClick = {
@@ -121,7 +121,7 @@ internal fun SettingsRoute(
 private class SettingsActions(
     val onPageView: () -> Unit,
     val onAccountClick: () -> Unit,
-    val onYourAccountsClick: () -> Unit,
+    val onYourAccountsClick: (String) -> Unit,
     val onSignOutClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: (String) -> Unit,
@@ -162,8 +162,9 @@ private fun SettingsScreen(
             )
 
             if (uiState.isYourAccountsEnabled) {
+                val title = stringResource(R.string.your_accounts_title)
                 MediumVerticalSpacer()
-                YourAccounts(actions.onYourAccountsClick)
+                YourAccounts(title, { actions.onYourAccountsClick(title) })
             }
 
             MediumVerticalSpacer()
@@ -244,11 +245,12 @@ private fun ManageLogin(
 
 @Composable
 private fun YourAccounts(
+    title: String,
     onYourAccountsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     InternalLinkListItem(
-        title = stringResource(R.string.your_accounts_title),
+        title = title,
         onClick = onYourAccountsClick,
         modifier = modifier,
         isFirst = true,
