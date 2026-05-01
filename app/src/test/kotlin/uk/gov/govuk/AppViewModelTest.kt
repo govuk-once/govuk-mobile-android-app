@@ -925,4 +925,32 @@ class AppViewModelTest {
             notificationsRepo.logout()
         }
     }
+
+    @Test
+    fun `Given user session active and dvla flag enabled, When init, then check if account is linked`() = runTest(dispatcher) {
+        every { authRepo.isUserSessionActive() } returns true
+        every { flagRepo.isDvlaLinkEnabled() } returns true
+
+        val viewModel = AppViewModel(
+            timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo
+        )
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+    }
+
+    @Test
+    fun `Given dvla is linked, When init, then linkedAccounts contains dvla account`() = runTest {
+        every { dvlaRepo.isLinked } returns MutableStateFlow(true)
+
+        val viewModel = AppViewModel(
+            timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo
+        )
+
+        val linkedAccounts = viewModel.linkedAccounts.first { it.isNotEmpty() }
+        assertEquals(1, linkedAccounts.size)
+        assertEquals(uk.gov.govuk.dvla.R.string.dvla_account_title, linkedAccounts.first().displayTitleRes)
+    }
 }
