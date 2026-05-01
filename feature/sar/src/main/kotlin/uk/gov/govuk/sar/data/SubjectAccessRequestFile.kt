@@ -9,9 +9,9 @@ import uk.gov.govuk.data.user.model.User
 import java.io.File
 
 class SubjectAccessRequestFile(
-    val context: Context
-) {
+    val context: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+) {
     companion object {
         const val FILENAME = "subject-access-request.json"
     }

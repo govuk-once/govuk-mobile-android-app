@@ -57,7 +57,6 @@ private fun SubjectAccessRequestDisplayScreen(
     val scope = rememberCoroutineScope()
     val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
-
     var fileContent by remember { mutableStateOf("No data") }
 
     LaunchedEffect(Unit) {
