@@ -18,7 +18,7 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Singleton
-internal class DvlaRepo @Inject constructor(
+class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
     private val authRepo: AuthRepo
 ) {

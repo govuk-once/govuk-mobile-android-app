@@ -10,6 +10,7 @@
     <string name="empty_icon_content_description">No notifications</string>
     <string name="empty_title">No notifications</string>
     <string name="empty_body">You don\'t have any notifications yet. When you receive notifications from government services, they\’ll appear here.</string>
+    <string name="linking_id_format">Linking ID: %1$s</string>
     <string name="notification_centre_title">Notification Centre</string>
     <string name="notification_centre_detail_title">Notification</string>
     <string name="sent_date_format">Sent: %1s</string>

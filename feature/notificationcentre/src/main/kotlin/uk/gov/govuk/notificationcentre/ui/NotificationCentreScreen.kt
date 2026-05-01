@@ -1,5 +1,7 @@
 package uk.gov.govuk.notificationcentre.ui
 
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +33,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -111,11 +114,12 @@ private fun NotificationCentreScreen(
 
         when (state) {
             is NotificationCentreUiState.Loading -> NotificationCentreScreenLoading()
-            is NotificationCentreUiState.Empty -> NotificationCentreScreenEmpty()
+            is NotificationCentreUiState.Empty -> NotificationCentreScreenEmpty(state.linkingId)
             is NotificationCentreUiState.Error -> NotificationCentreScreenError(onTapRetry)
             is NotificationCentreUiState.Loaded -> NotificationCentreScreenLoaded(
                 state.notifications,
-                onTapNotification
+                state.linkingId,
+                onTapNotification,
             )
         }
         LaunchedEffect(Unit) {
@@ -185,7 +189,7 @@ private fun NotificationCentreScreenError(onRetry: () -> Unit) {
 }
 
 @Composable
-private fun NotificationCentreScreenEmpty() {
+private fun NotificationCentreScreenEmpty(linkingId: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -193,6 +197,9 @@ private fun NotificationCentreScreenEmpty() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        linkingId?.let {
+            LinkingIdView(linkingId)
+        }
         Image(
             painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_notcenbell),
             modifier = Modifier
@@ -226,12 +233,19 @@ private fun NotificationCentreScreenEmpty() {
 @Composable
 private fun NotificationCentreScreenLoaded(
     notifications: List<Notification>,
+    linkingId: String?,
     onTapNotification: (Notification) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
             .padding(horizontal = GovUkTheme.spacing.medium)
     ) {
+        item {
+            linkingId?.let {
+                LinkingIdView(linkingId)
+            }
+        }
+
         item {
             LargeVerticalSpacer()
         }
@@ -259,6 +273,26 @@ private fun NotificationCentreScreenLoaded(
             LargeVerticalSpacer()
         }
     }
+}
+
+@Composable
+private fun LinkingIdView(linkingId: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, linkingId)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    val context = LocalContext.current
+
+    BodyRegularLabel(
+        stringResource(R.string.linking_id_format, linkingId), Modifier
+            .padding(vertical = 16.dp)
+            .clickable(onClick = {
+                Log.d("DVLA", "Linking ID: $linkingId")
+                context.startActivity(shareIntent)
+            })
+    )
 }
 
 @Composable
@@ -381,7 +415,7 @@ private fun NotificationCentreErrorPreview() {
 @Composable
 private fun NotificationCentreEmptyPreview() {
     GovUkTheme {
-        NotificationCentreScreen({}, NotificationCentreUiState.Empty, { }, {}) { }
+        NotificationCentreScreen({}, NotificationCentreUiState.Empty("12345"), { }, {}) { }
     }
 }
 
@@ -391,7 +425,7 @@ private fun NotificationCentreLoadedPreview() {
     GovUkTheme {
         NotificationCentreScreen(
             {},
-            NotificationCentreUiState.Loaded(Notification.mockNotifications),
+            NotificationCentreUiState.Loaded(Notification.mockNotifications, "12345"),
             { },
             {}
         ) { }

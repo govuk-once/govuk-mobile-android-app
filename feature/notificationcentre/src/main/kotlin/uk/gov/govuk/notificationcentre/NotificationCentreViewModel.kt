@@ -13,19 +13,21 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
 import uk.gov.govuk.data.notificationcentre.model.Notification
+import uk.gov.govuk.dvla.data.DvlaRepo
 import javax.inject.Inject
 
 internal sealed class NotificationCentreUiState {
     data object Loading: NotificationCentreUiState()
-    data object Empty: NotificationCentreUiState()
+    data class Empty(val linkingId: String?): NotificationCentreUiState()
     data object Error: NotificationCentreUiState()
-    data class Loaded(val notifications: List<Notification>): NotificationCentreUiState()
+    data class Loaded(val notifications: List<Notification>, val linkingId: String?): NotificationCentreUiState()
 }
 
 @HiltViewModel
 internal class NotificationCentreViewModel @Inject constructor(
     private val notificationCentreRepo: NotificationCentreRepo,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    private val dvlaRepo: DvlaRepo
 ): ViewModel() {
 
     companion object {
@@ -56,14 +58,22 @@ internal class NotificationCentreViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 _uiState.value = NotificationCentreUiState.Loading
             }
+
+            val linkingId = when (val customerSummary = dvlaRepo.getCustomerSummary()) {
+                is Result.Success -> {
+                    customerSummary.value.linkingId
+                }
+                else -> null
+            }
+
             val notifications = notificationCentreRepo.getNotifications()
             withContext(Dispatchers.Main) {
                 _uiState.value = when (notifications) {
                     is Result.Success -> {
                         if (notifications.value.isEmpty()) {
-                            NotificationCentreUiState.Empty
+                            NotificationCentreUiState.Empty(linkingId)
                         } else {
-                            NotificationCentreUiState.Loaded(notifications.value)
+                            NotificationCentreUiState.Loaded(notifications.value, linkingId)
                         }
                     }
                     else -> NotificationCentreUiState.Error

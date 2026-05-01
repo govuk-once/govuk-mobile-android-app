@@ -47,6 +47,7 @@ dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
     implementation(projects.data)
+    implementation(projects.feature.dvla)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

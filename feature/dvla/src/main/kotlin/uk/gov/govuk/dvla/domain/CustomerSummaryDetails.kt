@@ -9,7 +9,8 @@ data class CustomerSummaryDetails(
     val lastName: String,
     val dateOfBirth: String,
     val emailAddress: String?,
-    val recordStatus: String
+    val recordStatus: String,
+    val linkingId: String
 )
 
 fun CustomerSummaryResponse.toDomainModel(): CustomerSummaryDetails {
@@ -22,6 +23,7 @@ fun CustomerSummaryResponse.toDomainModel(): CustomerSummaryDetails {
         dateOfBirth = individualDetails.dateOfBirth,
         recordStatus = customer.recordStatus,
         firstName = individualDetails.firstNames ?: "",
-        emailAddress = customer.emailAddress
+        emailAddress = customer.emailAddress,
+        linkingId = linkingId
     )
 }
