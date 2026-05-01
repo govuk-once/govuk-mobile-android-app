@@ -109,7 +109,9 @@ internal class AppViewModel @Inject constructor(
 
                     // check DVLA link status
                     if (authRepo.isUserSessionActive() && flagRepo.isDvlaLinkEnabled()) {
-                        dvlaRepo.isAccountLinked()
+                        viewModelScope.launch {
+                            dvlaRepo.isAccountLinked()
+                        }
                     }
 
                     _uiState.value = AppUiState.Default(
