@@ -19,11 +19,12 @@ const val DVLA_DEEP_LINK_PATH = "/returnedToken"
 const val ARG_DVLA_TOKEN = "token"
 
 fun NavGraphBuilder.dvlaGraph(
+    onIntroClose: () -> Unit,
     onContinueToLink: () -> Unit,
     launchBrowser: (String) -> Unit,
+    onWebFlowClosed: () -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
-    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -39,7 +40,7 @@ fun NavGraphBuilder.dvlaGraph(
                 },
                 onClose = {
                     viewModel.onIntroCloseClicked()
-                    onClose()
+                    onIntroClose()
                 },
                 onContinue = { buttonText ->
                     viewModel.onIntroContinueClicked(buttonText)
@@ -62,7 +63,7 @@ fun NavGraphBuilder.dvlaGraph(
                 onLaunchBrowser = launchBrowser,
                 onLinkComplete = onLinkComplete,
                 onUnlinkComplete = onUnlinkComplete,
-                onClose = onClose,
+                onWebFlowClosed = onWebFlowClosed,
                 modifier = modifier
             )
         }

@@ -22,6 +22,7 @@ import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
@@ -32,7 +33,7 @@ internal fun DvlaLinkingRoute(
     onLaunchBrowser: (String) -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
-    onClose: () -> Unit,
+    onWebFlowClosed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -43,13 +44,13 @@ internal fun DvlaLinkingRoute(
     var browserLaunched by rememberSaveable { mutableStateOf(false) }
 
     BackHandler {
-        onClose()
+        onWebFlowClosed()
     }
 
-    // exit screen if user closes Chrome tab
+    // handle Chrome tab cancellation
     LifecycleResumeEffect(Unit) {
         if (browserLaunched) {
-            onClose()
+            onWebFlowClosed()
         }
         onPauseOrDispose {
             // nothing to clean up
@@ -107,7 +108,7 @@ internal fun DvlaLinkingRoute(
                 message = R.string.error_dialog_message,
                 buttonText = R.string.try_again,
                 onDismiss = {
-                    onClose()
+                    onWebFlowClosed()
                 }
             )
         }
@@ -133,14 +134,8 @@ private fun DvlaLinkSuccessScreen(
     val title = stringResource(R.string.link_dvla_success_title)
     val buttonText = stringResource(R.string.link_dvla_success_button)
 
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        // protect against config change
-        if (!hasTrackedPageView) {
-            onPageView(title)
-            hasTrackedPageView = true
-        }
+    RunOnceLaunchedEffect {
+        onPageView(title)
     }
 
     Box(

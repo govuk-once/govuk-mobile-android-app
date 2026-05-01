@@ -625,8 +625,11 @@ private fun GovUkNavHost(
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
                 navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
             },
-            onClose = {
+            onIntroClose = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
+            },
+            onWebFlowClosed = {
+                navController.popBackStack()
             }
         )
     }

@@ -50,6 +50,7 @@ import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -155,7 +156,6 @@ internal fun ChatScreen(
     val animationDelay = 500
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
 
     LaunchedEffect(uiState.isPiiError) {
@@ -164,7 +164,7 @@ internal fun ChatScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         analyticsEvents.onPageView(
             Analytics.CHAT_SCREEN_CLASS,
             Analytics.CHAT_SCREEN_NAME,

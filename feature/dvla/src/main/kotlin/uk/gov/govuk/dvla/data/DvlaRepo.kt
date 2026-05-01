@@ -11,6 +11,7 @@ import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.dvla.domain.CustomerSummaryDetails
 import uk.gov.govuk.dvla.domain.DriverSummaryDetails
 import uk.gov.govuk.dvla.domain.LicenceDetails
+import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -68,6 +69,9 @@ class DvlaRepo @Inject constructor(
         safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
             .map { it.toDomainModel() }
 
+    suspend fun getVehicleDetails(registrationNumber: String): Result<VehicleDetails> =
+        safeAuthApiCall({ api.getVehicleDetails(registrationNumber) }, authRepo)
+            .map { it.toDomainModel() }
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun extractLinkingIdFromJwt(jwtToken: String): String {

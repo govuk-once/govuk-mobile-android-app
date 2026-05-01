@@ -9,6 +9,7 @@ import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.LinkStatusResponse
+import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 interface DvlaApi {
 
@@ -29,4 +30,7 @@ interface DvlaApi {
 
     @GET("app/dvla/v1/customer-summary")
     suspend fun getCustomerSummary(): Response<CustomerSummaryResponse>
+
+    @GET("app/dvla/v1/vehicle-enquiry/{reg}")
+    suspend fun getVehicleDetails(@Path("reg") registrationNumber: String): Response<VehicleEnquiryResponse>
 }
