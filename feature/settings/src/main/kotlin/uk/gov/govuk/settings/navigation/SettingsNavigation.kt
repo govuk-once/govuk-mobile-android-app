@@ -2,13 +2,16 @@ package uk.gov.govuk.settings.navigation
 
 import android.content.Intent
 import android.os.Build
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import kotlinx.coroutines.flow.StateFlow
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_PERMISSION_ROUTE
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
@@ -40,7 +43,7 @@ fun NavGraphBuilder.settingsGraph(
     onBiometricsClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
-    linkedAccounts: List<LinkedAccountUiModel>,
+    linkedAccountsFlow: StateFlow<List<LinkedAccountUiModel>>,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -88,8 +91,10 @@ fun NavGraphBuilder.settingsGraph(
         }
 
         composable(YOUR_ACCOUNTS_ROUTE) {
+            val accounts by linkedAccountsFlow.collectAsStateWithLifecycle()
+
             YourAccountsRoute(
-                accounts = linkedAccounts,
+                accounts = accounts,
                 onBack = { navController.popBackStack() },
                 modifier = modifier
             )
