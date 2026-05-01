@@ -193,7 +193,11 @@ private fun SettingsScreen(
             AccessibilityStatement(actions.onAccessibilityStatementClick)
             OpenSourceLicenses(actions.onLicenseClick)
             TermsAndConditions(actions.onTermsAndConditionsClick)
-            SubjectAccessRequest(actions.onSubjectAccessRequestClick)
+
+            if (uiState.isFlexEnabled) {
+                MediumVerticalSpacer()
+                SubjectAccessRequest(actions.onSubjectAccessRequestClick)
+            }
 
             MediumVerticalSpacer()
 
@@ -433,7 +437,7 @@ private fun TermsAndConditions(
         onClick = onLicenseClick,
         modifier = modifier,
         isFirst = false,
-        isLast = false,
+        isLast = true,
     )
 }
 
@@ -442,13 +446,15 @@ private fun SubjectAccessRequest(
     onSubjectAccessRequestClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    InternalLinkListItem(
-        title = stringResource(R.string.sar_title),
-        onClick = onSubjectAccessRequestClick,
-        modifier = modifier,
-        isFirst = false,
-        isLast = true,
-    )
+    CardListItem(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onSubjectAccessRequestClick
+    ) {
+        BodyRegularLabel(
+            text = stringResource(R.string.sar_title),
+            modifier = Modifier.padding(GovUkTheme.spacing.medium)
+        )
+    }
 }
 
 @Composable

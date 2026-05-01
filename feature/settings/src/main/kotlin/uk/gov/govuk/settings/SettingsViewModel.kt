@@ -32,7 +32,8 @@ internal data class SettingsUiState(
     val isNotificationsEnabled: Boolean,
     val isAuthenticationEnabled: Boolean,
     val isAnalyticsEnabled: Boolean,
-    val isYourAccountsEnabled: Boolean
+    val isYourAccountsEnabled: Boolean,
+    val isFlexEnabled: Boolean
 )
 
 @HiltViewModel
@@ -59,7 +60,8 @@ internal class SettingsViewModel @Inject constructor(
             isNotificationsEnabled = flagRepo.isNotificationsEnabled(),
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
             isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
-            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled()
+            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled(),
+            isFlexEnabled = flagRepo.isFlexEnabled()
         )
     }
 
