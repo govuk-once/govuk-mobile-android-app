@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.home.HomeViewModel
@@ -142,8 +143,11 @@ private fun HomeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView()
+    }
+
+    LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 }

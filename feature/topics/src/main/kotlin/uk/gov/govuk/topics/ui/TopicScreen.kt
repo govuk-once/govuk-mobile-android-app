@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,6 +34,7 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
@@ -181,8 +181,7 @@ private fun TopicScreen(
             section, text, url, selectedItemIndex ->
         onExternalLink(section, text, url, selectedItemIndex, totalItemCount)
     }
-
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView(topic.title)
     }
 
@@ -457,11 +456,11 @@ private fun ErrorScreen(
 ) {
     val topicName = topicReference.toTopicName(LocalContext.current)
 
-    Column(modifier.verticalScroll(rememberScrollState())) {
-        LaunchedEffect(Unit) {
-            onPageView(topicName)
-        }
+    RunOnceLaunchedEffect {
+        onPageView(topicName)
+    }
 
+    Column(modifier.verticalScroll(rememberScrollState())) {
         ChildPageHeader(
             text = topicName,
             dismissStyle = HeaderDismissStyle.Back(onBack)
