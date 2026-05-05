@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,6 +35,7 @@ import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.sar.R
+import uk.gov.govuk.sar.SubjectAccessRequestViewModel
 import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 
 @Composable
@@ -41,19 +44,33 @@ internal fun SubjectAccessRequestRoute(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: SubjectAccessRequestViewModel = hiltViewModel()
+
     SubjectAccessRequestScreen(
-        onConfirm = onConfirm,
-        onClose = onClose,
+        onPageView = { viewModel.onExplainerPageView() },
+        onConfirm = { text ->
+            viewModel.onButtonClick(text)
+            onConfirm()
+        },
+        onClose = { text ->
+            viewModel.onButtonClick(text)
+            onClose()
+        },
         modifier = modifier
     )
 }
 
 @Composable
 private fun SubjectAccessRequestScreen(
-    onConfirm: () -> Unit,
-    onClose: () -> Unit,
+    onPageView: () -> Unit,
+    onConfirm: (String) -> Unit,
+    onClose: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(Unit) {
+        onPageView()
+    }
+
     Scaffold(
         containerColor = GovUkTheme.colourScheme.surfaces.background,
         modifier = modifier.fillMaxWidth(),
@@ -91,8 +108,8 @@ private fun SubjectAccessRequestScreen(
 
 @Composable
 private fun BottomNavBar(
-    onConfirm: () -> Unit,
-    onClose: () -> Unit,
+    onConfirm: (String) -> Unit,
+    onClose: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -104,8 +121,11 @@ private fun BottomNavBar(
             .padding(GovUkTheme.spacing.medium)
             .background(GovUkTheme.colourScheme.surfaces.background)
     ) {
+        val confirmText = stringResource(R.string.confirm)
+        val closeText = stringResource(R.string.close)
+
         PrimaryButton(
-            text = stringResource(R.string.confirm),
+            text = confirmText,
             onClick = {
                 scope.launch(dispatcher) {
                     // TODO: get this from getUserInfo()
@@ -115,12 +135,12 @@ private fun BottomNavBar(
                     file.writeFile(user)
                 }
 
-                onConfirm()
+                onConfirm(confirmText)
             }
         )
         SecondaryButton(
-            text = stringResource(R.string.close),
-            onClick = onClose
+            text = closeText,
+            onClick = { onClose(closeText) }
         )
     }
 }
@@ -133,6 +153,7 @@ private fun BottomNavBar(
 private fun LightModePreview() {
     GovUkTheme {
         SubjectAccessRequestScreen(
+            onPageView = {},
             onConfirm = {},
             onClose = {}
         )
@@ -147,6 +168,7 @@ private fun LightModePreview() {
 private fun DarkModePreview() {
     GovUkTheme {
         SubjectAccessRequestScreen(
+            onPageView = {},
             onConfirm = {},
             onClose = {}
         )

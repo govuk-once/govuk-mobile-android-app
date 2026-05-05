@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.sar.R
+import uk.gov.govuk.sar.SubjectAccessRequestViewModel
 import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 
 @Composable
@@ -42,24 +44,35 @@ internal fun SubjectAccessRequestDisplayRoute(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: SubjectAccessRequestViewModel = hiltViewModel()
+
     SubjectAccessRequestDisplayScreen(
-        onClose = onClose,
+        onPageView = {
+            viewModel.onDisplayPageView()
+        },
+        onClose = { text ->
+            viewModel.onButtonClick(text)
+            onClose()
+        },
         modifier = modifier
     )
 }
 
 @Composable
 private fun SubjectAccessRequestDisplayScreen(
-    onClose: () -> Unit,
+    onPageView: () -> Unit,
+    onClose: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    var fileContent by remember { mutableStateOf("No data") }
+    var fileContent by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
+        onPageView()
+
         scope.launch(dispatcher) {
             val file = SubjectAccessRequestFile(context)
             fileContent = file.readFile()
@@ -109,17 +122,19 @@ private fun SubjectAccessRequestDisplayScreen(
 
 @Composable
 private fun BottomNavBar(
-    onClose: () -> Unit,
+    onClose: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val closeText = stringResource(R.string.close)
+
     Column(
         modifier = modifier
             .padding(GovUkTheme.spacing.medium)
             .background(GovUkTheme.colourScheme.surfaces.background)
     ) {
         SecondaryButton(
-            text = stringResource(R.string.close),
-            onClick = onClose,
+            text = closeText,
+            onClick = { onClose(closeText) },
         )
     }
 }
@@ -132,6 +147,7 @@ private fun BottomNavBar(
 private fun LightModePreview() {
     GovUkTheme {
         SubjectAccessRequestDisplayScreen(
+            onPageView = {},
             onClose = {}
         )
     }
@@ -145,6 +161,7 @@ private fun LightModePreview() {
 private fun DarkModePreview() {
     GovUkTheme {
         SubjectAccessRequestDisplayScreen(
+            onPageView = {},
             onClose = {}
         )
     }
