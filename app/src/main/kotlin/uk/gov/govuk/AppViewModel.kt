@@ -4,7 +4,9 @@ import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -105,13 +107,25 @@ internal class AppViewModel @Inject constructor(
                 } else if (flagRepo.isForcedUpdate(BuildConfig.VERSION_NAME)) {
                     _uiState.value = AppUiState.ForcedUpdate
                 } else {
-                    topicsFeature.init()
-
-                    // check DVLA link status
-                    if (authRepo.isUserSessionActive() && flagRepo.isDvlaLinkEnabled()) {
-                        viewModelScope.launch {
-                            dvlaRepo.isAccountLinked()
+                    coroutineScope {
+                        // init topics and check DVLA link status in parallel
+                        val initTopics = async {
+                            runCatching {
+                                topicsFeature.init()
+                            }
                         }
+
+                        val checkDvlaLinkStatus =
+                            if (authRepo.isUserSessionActive() && flagRepo.isDvlaLinkEnabled()) {
+                                async {
+                                    runCatching {
+                                        dvlaRepo.isAccountLinked()
+                                    }
+                                }
+                            } else null
+
+                        initTopics.await()
+                        checkDvlaLinkStatus?.await()
                     }
 
                     _uiState.value = AppUiState.Default(
