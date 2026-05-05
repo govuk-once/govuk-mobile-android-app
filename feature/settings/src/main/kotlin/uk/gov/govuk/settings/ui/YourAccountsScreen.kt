@@ -1,6 +1,7 @@
 package uk.gov.govuk.settings.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,12 +10,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,18 +31,21 @@ import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.settings.LinkedAccountsUiState
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 
 @Composable
 internal fun YourAccountsRoute(
     accounts: List<LinkedAccountUiModel>,
+    accountsUiState: LinkedAccountsUiState,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     YourAccountsScreen(
         accounts = accounts,
+        accountsUiState = accountsUiState,
         onBack = onBack,
         modifier = modifier
     )
@@ -48,6 +54,7 @@ internal fun YourAccountsRoute(
 @Composable
 private fun YourAccountsScreen(
     accounts: List<LinkedAccountUiModel>,
+    accountsUiState: LinkedAccountsUiState,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -63,40 +70,65 @@ private fun YourAccountsScreen(
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
 
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = GovUkTheme.spacing.large)
-        ) {
-            Title(
-                title = stringResource(R.string.your_accounts_title)
-            )
-
-            LargeVerticalSpacer()
-
-            Column(Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
-                if (accounts.isEmpty()) {
-                    NonTappableCard(
-                        body = stringResource(R.string.your_accounts_empty_state_body),
+        when (accountsUiState) {
+            LinkedAccountsUiState.Default -> {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = GovUkTheme.spacing.large)
+                ) {
+                    Title(
+                        title = stringResource(R.string.your_accounts_title)
                     )
-                } else {
-                    accounts.forEach { account ->
-                        val displayTitle = stringResource(id = account.displayTitleRes)
-                        InternalLinkListItem(
-                            title = displayTitle,
-                            onClick = { },
-                            style = InternalLinkListItemStyle.Button(
-                                icon = uk.gov.govuk.design.R.drawable.ic_cancel_round,
-                                altText = stringResource(R.string.your_accounts_remove_account_alt_text, displayTitle)
-                            ) {
-                                accountToUnlink = account
+
+                    LargeVerticalSpacer()
+
+                    Column(Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
+                        if (accounts.isEmpty()) {
+                            NonTappableCard(
+                                body = stringResource(R.string.your_accounts_empty_state_body),
+                            )
+                        } else {
+                            accounts.forEach { account ->
+                                val displayTitle = stringResource(id = account.displayTitleRes)
+                                InternalLinkListItem(
+                                    title = displayTitle,
+                                    onClick = { },
+                                    style = InternalLinkListItemStyle.Button(
+                                        icon = uk.gov.govuk.design.R.drawable.ic_cancel_round,
+                                        altText = stringResource(
+                                            R.string.your_accounts_remove_account_alt_text,
+                                            displayTitle
+                                        )
+                                    ) {
+                                        accountToUnlink = account
+                                    }
+                                )
                             }
-                        )
+                        }
                     }
                 }
+
+            }
+
+            LinkedAccountsUiState.Unlinking -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = GovUkTheme.colourScheme.textAndIcons.primary
+                    )
+                }
+
+            }
+
+            LinkedAccountsUiState.Error -> {
+
             }
         }
+
 
         accountToUnlink?.let { account ->
             RemoveAccountDialog(
@@ -165,6 +197,7 @@ private fun YourAccountsScreenEmptyPreview() {
     GovUkTheme {
         YourAccountsScreen(
             accounts = emptyList(),
+            accountsUiState = LinkedAccountsUiState.Default,
             onBack = { }
         )
     }
@@ -181,6 +214,24 @@ private fun YourAccountsScreenPreview() {
                     onUnlink = {}
                 )
             ),
+            accountsUiState = LinkedAccountsUiState.Default,
+            onBack = { }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun YourAccountsScreenUnlinkingPreview() {
+    GovUkTheme {
+        YourAccountsScreen(
+            accounts = listOf(
+                LinkedAccountUiModel(
+                    displayTitleRes = R.string.manage_login_header_title,
+                    onUnlink = {}
+                )
+            ),
+            accountsUiState = LinkedAccountsUiState.Unlinking,
             onBack = { }
         )
     }

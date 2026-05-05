@@ -24,6 +24,7 @@ import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
+import uk.gov.govuk.settings.LinkedAccountsUiState
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
@@ -60,6 +61,9 @@ internal class AppViewModel @Inject constructor(
 
     private val _linkedAccounts = MutableStateFlow<List<LinkedAccountUiModel>>(emptyList())
     val linkedAccounts = _linkedAccounts.asStateFlow()
+
+    private val _linkedAccountsUiState = MutableStateFlow<LinkedAccountsUiState>(LinkedAccountsUiState.Default)
+    val linkedAccountsUiState = _linkedAccountsUiState.asStateFlow()
 
     enum class TimeoutEvent {
         WARNING, TIMEOUT
@@ -286,7 +290,16 @@ internal class AppViewModel @Inject constructor(
 
     private fun unlinkDvlaAccount() {
         viewModelScope.launch {
-            dvlaRepo.unlinkAccount()
+            _linkedAccountsUiState.value = LinkedAccountsUiState.Unlinking
+            val result = dvlaRepo.unlinkAccount()
+
+            if (result is Success) {
+                // back to default, the account will be removed automatically
+                // dvlaRepo.isLinked will emit false, triggering the combine block
+                _linkedAccountsUiState.value = LinkedAccountsUiState.Default
+            } else {
+                _linkedAccountsUiState.value = LinkedAccountsUiState.Error
+            }
         }
     }
 
