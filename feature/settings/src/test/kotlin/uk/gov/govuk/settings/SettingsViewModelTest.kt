@@ -303,13 +303,12 @@ class SettingsViewModelTest {
 
     @Test
     fun `Given a subject access request page view, then log analytics`() {
-        viewModel.onSubjectAccessRequestView()
+        viewModel.onSubjectAccessRequestClick()
 
         verify {
-            analyticsClient.screenView(
-                screenClass = SUBJECT_ACCESS_REQUEST_EVENT,
-                screenName = SUBJECT_ACCESS_REQUEST_EVENT,
-                title = SUBJECT_ACCESS_REQUEST_EVENT
+            analyticsClient.settingsItemClick(
+                text = SUBJECT_ACCESS_REQUEST_EVENT,
+                external = false
             )
         }
     }
