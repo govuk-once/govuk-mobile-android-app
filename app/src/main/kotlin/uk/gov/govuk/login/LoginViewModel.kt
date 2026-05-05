@@ -124,9 +124,9 @@ internal class LoginViewModel @Inject constructor(
         if (flagRepo.isFlexEnabled()) {
             when (val result = userRepo.initUser()) {
                 is Result.AuthError<*> -> logUserInitFailure("Auth error")
-                is Result.DeviceOffline<*> -> { } // Ignore
+                is Result.DeviceOffline<*> -> { /* Ignore */ }
                 is Result.Error<*> -> logUserInitFailure("Unknown")
-                is Result.InvalidSignature<*> -> { } // Ignore
+                is Result.InvalidSignature<*> -> { /* Ignore */ }
                 is Result.ServiceNotResponding<*> -> logUserInitFailure("Http error - ${result.code}")
                 is Success<*> -> {
                     // Todo - will be re-added for phase 2 or 3 of Hello UDP
