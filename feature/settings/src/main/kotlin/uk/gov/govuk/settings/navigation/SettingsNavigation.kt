@@ -87,7 +87,7 @@ fun NavGraphBuilder.settingsGraph(
                         launchBrowser(TERMS_AND_CONDITIONS_URL)
                     },
                     onSubjectAccessRequestClick = {
-                        navigateTo(SUBJECT_ACCESS_REQUEST_ROUTE)
+                        navController.navigate(SUBJECT_ACCESS_REQUEST_ROUTE)
                     }
                 ),
                 modifier = modifier
