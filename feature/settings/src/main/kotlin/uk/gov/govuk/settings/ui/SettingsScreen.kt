@@ -114,7 +114,7 @@ internal fun SettingsRoute(
                     actions.onTermsAndConditionsClick()
                 },
                 onSubjectAccessRequestClick = {
-                    viewModel.onSubjectAccessRequestView()
+                    viewModel.onSubjectAccessRequestClick()
                     actions.onSubjectAccessRequestClick()
                 }
             ),

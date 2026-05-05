@@ -147,11 +147,10 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
-    fun onSubjectAccessRequestView() {
-        analyticsClient.screenView(
-            screenClass = SUBJECT_ACCESS_REQUEST_EVENT,
-            screenName = SUBJECT_ACCESS_REQUEST_EVENT,
-            title = SUBJECT_ACCESS_REQUEST_EVENT
+    fun onSubjectAccessRequestClick() {
+        analyticsClient.settingsItemClick(
+            text = SUBJECT_ACCESS_REQUEST_EVENT,
+            external = false
         )
     }
 
