@@ -52,8 +52,12 @@ internal fun YourAccountsRoute(
         accounts = accounts,
         accountsUiState = accountsUiState,
         onBack = onBack,
-        onUnlink = { service ->
-            viewModel.unlinkAccount(service)
+        onRemoveIconClicked = { service -> viewModel.onRemoveIconClicked(service) },
+        onUnlinkConfirmed = { service, buttonLabel ->
+            viewModel.unlinkAccount(service, buttonLabel)
+        },
+        onUnlinkCancelled = { service, buttonLabel ->
+            viewModel.onUnlinkCancelled(service, buttonLabel)
         },
         onErrorDismiss = { viewModel.resetError() },
         modifier = modifier
@@ -65,7 +69,9 @@ private fun YourAccountsScreen(
     accounts: List<LinkedAccountUiModel>,
     accountsUiState: LinkedAccountsUiState,
     onBack: () -> Unit,
-    onUnlink: (String) -> Unit,
+    onRemoveIconClicked: (String) -> Unit,
+    onUnlinkConfirmed: (String, String) -> Unit,
+    onUnlinkCancelled: (String, String) -> Unit,
     onErrorDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -84,7 +90,10 @@ private fun YourAccountsScreen(
             AccountsContainer(onBack = onBack, modifier = modifier) {
                 AccountsListContent(
                     accounts = accounts,
-                    onRemoveClick = { accountToUnlink = it },
+                    onRemoveClick = {
+                        accountToUnlink = it
+                        onRemoveIconClicked(it.serviceName)
+                    },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -100,13 +109,23 @@ private fun YourAccountsScreen(
     }
 
     accountToUnlink?.let { account ->
+        val displayTitle = stringResource(id = account.displayTitleRes)
+        val titleText = stringResource(R.string.remove_account_dialog_title, displayTitle)
+        val bodyText = stringResource(R.string.remove_account_dialog_body)
+        val confirmText = stringResource(R.string.remove_account_dialog_confirm_button_text)
+        val cancelText = stringResource(R.string.remove_account_dialog_cancel_button_text)
+
         RemoveAccountDialog(
-            displayTitle = stringResource(id = account.displayTitleRes),
+            titleText = titleText,
+            bodyText = bodyText,
+            confirmButtonText = confirmText,
+            cancelButtonText = cancelText,
             onConfirm = {
-                onUnlink(account.serviceName)
+                onUnlinkConfirmed(account.serviceName, confirmText)
                 accountToUnlink = null
             },
             onDismiss = {
+                onUnlinkCancelled(account.serviceName, cancelText)
                 accountToUnlink = null
             }
         )
@@ -179,7 +198,10 @@ private fun AccountsListContent(
 
 @Composable
 private fun RemoveAccountDialog(
-    displayTitle: String,
+    titleText: String,
+    bodyText: String,
+    confirmButtonText: String,
+    cancelButtonText: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
@@ -190,12 +212,12 @@ private fun RemoveAccountDialog(
         modifier = modifier,
         title = {
             BodyBoldLabel(
-                text = "Remove $displayTitle?"
+                text = titleText
             )
         },
         text = {
             BodyRegularLabel(
-                text = "You will not be able to see information from this account in the app, unless you add it again. You can still see it on the GOV.UK website.",
+                text = bodyText,
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         },
@@ -204,7 +226,7 @@ private fun RemoveAccountDialog(
                 onClick = onConfirm
             ) {
                 BodyBoldLabel(
-                    text = "Remove account",
+                    text = confirmButtonText,
                     color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
                 )
             }
@@ -214,7 +236,7 @@ private fun RemoveAccountDialog(
                 onClick = onDismiss
             ) {
                 BodyRegularLabel(
-                    text = "Cancel",
+                    text = cancelButtonText,
                     color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
                 )
             }
@@ -247,8 +269,10 @@ private fun YourAccountsScreenEmptyPreview() {
             accounts = emptyList(),
             accountsUiState = LinkedAccountsUiState.Default,
             onBack = { },
+            onRemoveIconClicked = { },
             onErrorDismiss = { },
-            onUnlink = { }
+            onUnlinkConfirmed = { _, _ -> },
+            onUnlinkCancelled = { _, _ -> }
         )
     }
 }
@@ -266,8 +290,10 @@ private fun YourAccountsScreenPreview() {
             ),
             accountsUiState = LinkedAccountsUiState.Default,
             onBack = { },
+            onRemoveIconClicked = { },
             onErrorDismiss = { },
-            onUnlink = { }
+            onUnlinkConfirmed = { _, _ -> },
+            onUnlinkCancelled = { _, _ -> }
         )
     }
 }
@@ -285,8 +311,10 @@ private fun YourAccountsScreenUnlinkingPreview() {
             ),
             accountsUiState = LinkedAccountsUiState.Unlinking,
             onBack = { },
+            onRemoveIconClicked = { },
             onErrorDismiss = { },
-            onUnlink = { }
+            onUnlinkConfirmed = { _, _ -> },
+            onUnlinkCancelled = { _, _ -> }
         )
     }
 }

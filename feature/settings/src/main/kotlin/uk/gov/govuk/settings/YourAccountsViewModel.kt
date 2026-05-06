@@ -10,14 +10,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.settings.domain.LinkedAccountsRepo
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import javax.inject.Inject
 
 @HiltViewModel
 internal class YourAccountsViewModel @Inject constructor(
-    private val linkedAccountsRepo: LinkedAccountsRepo
+    private val linkedAccountsRepo: LinkedAccountsRepo,
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
+
+    companion object {
+        private const val SECTION = "Settings"
+    }
 
     val linkedAccounts: StateFlow<List<LinkedAccountUiModel>> =
         linkedAccountsRepo.getLinkedAccounts()
@@ -31,7 +37,21 @@ internal class YourAccountsViewModel @Inject constructor(
         MutableStateFlow<LinkedAccountsUiState>(LinkedAccountsUiState.Default)
     val accountsUiState = _accountsUiState.asStateFlow()
 
-    fun unlinkAccount(serviceName: String) {
+    fun onRemoveIconClicked(serviceName: String) {
+        analyticsClient.buttonFunction(
+            text = "$serviceName unlink",
+            section = SECTION,
+            action = "action"
+        )
+    }
+
+    fun unlinkAccount(serviceName: String, buttonLabel: String) {
+        analyticsClient.buttonClick(
+            text = "${serviceName.uppercase()} $buttonLabel",
+            external = false,
+            section = SECTION
+        )
+
         viewModelScope.launch {
             _accountsUiState.value = LinkedAccountsUiState.Unlinking
             val result = linkedAccountsRepo.unlinkAccount(serviceName)
@@ -45,12 +65,18 @@ internal class YourAccountsViewModel @Inject constructor(
                     _accountsUiState.value = LinkedAccountsUiState.Error
                 }
             }
-
         }
-
     }
 
     fun resetError() {
         _accountsUiState.value = LinkedAccountsUiState.Default
+    }
+
+    fun onUnlinkCancelled(serviceName: String, buttonLabel: String) {
+        analyticsClient.buttonClick(
+            text = "${serviceName.uppercase()} $buttonLabel",
+            external = false,
+            section = SECTION
+        )
     }
 }

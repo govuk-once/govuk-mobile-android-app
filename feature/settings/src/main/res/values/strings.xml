@@ -42,5 +42,9 @@
 
   <string name="your_accounts_empty_state_body">Accounts you add to the app will appear here</string>
   <string name="your_accounts_remove_account_alt_text">Remove %1$s</string>
+  <string name="remove_account_dialog_title">Remove %1$s?</string>
+  <string name="remove_account_dialog_body">You will not be able to see information from this account in the app, unless you add it again. You can still see it on the GOV.UK website.</string>
+  <string name="remove_account_dialog_confirm_button_text">Remove account</string>
+  <string name="remove_account_dialog_cancel_button_text">Cancel</string>
 
 </resources>
