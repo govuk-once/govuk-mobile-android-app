@@ -267,6 +267,7 @@ class LoginViewModelTest {
             viewModel.init(activity)
 
             coVerify(exactly = 0) {
+                userRepo.initUser()
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
@@ -468,6 +469,7 @@ class LoginViewModelTest {
             assertTrue(events.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 0) {
+                userRepo.initUser()
                 notificationsRepo.login()
             }
             coVerify(exactly = 1) {
