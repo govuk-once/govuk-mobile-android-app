@@ -35,7 +35,9 @@ class SubjectAccessRequestFileTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+
         every { context.filesDir } returns temporaryFolder.root
+
         subject = SubjectAccessRequestFile(context)
     }
 
@@ -45,8 +47,9 @@ class SubjectAccessRequestFileTest {
     }
 
     @Test
-    fun `writeFile creates subject access request file`() = runTest(testDispatcher) {
+    fun `creates a subject access request file`() = runTest(testDispatcher) {
         val file = File(temporaryFolder.root, SubjectAccessRequestFile.FILENAME)
+
         assertFalse(file.exists())
 
         val user = User(
@@ -55,29 +58,31 @@ class SubjectAccessRequestFileTest {
                 pushId = "999"
             )
         )
-        subject.writeFile(user)
+
+        subject.writeUserData(user)
         advanceUntilIdle()
 
         assertTrue(file.exists())
     }
 
     @Test
-    fun `readFile returns formatted string when subject access request file exists`() = runTest(testDispatcher) {
+    fun `formatted string when subject access request file exists`() = runTest(testDispatcher) {
         val user = User(
             Notifications(
                 consentStatus = ConsentStatus.DENIED,
                 pushId = "666"
             )
         )
-        subject.writeFile(user)
+
+        subject.writeUserData(user)
         advanceUntilIdle()
 
-        assertEquals("ConsentStatus: DENIED Push ID: 666", subject.readFile())
+        assertEquals("ConsentStatus: DENIED Push ID: 666", subject.readUserData())
     }
 
     @Test
-    fun `readFile returns error message when file is missing`() = runTest(testDispatcher) {
-        val result = subject.readFile()
+    fun `returns error message when file is missing`() = runTest(testDispatcher) {
+        val result = subject.readUserData()
         advanceUntilIdle()
 
         assertEquals("File does not exist yet!", result)

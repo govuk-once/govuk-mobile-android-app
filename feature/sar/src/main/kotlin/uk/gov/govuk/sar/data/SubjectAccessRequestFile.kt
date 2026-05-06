@@ -16,7 +16,7 @@ class SubjectAccessRequestFile(
         const val FILENAME = "subject-access-request.json"
     }
 
-    suspend fun writeFile(user: User) {
+    suspend fun writeUserData(user: User) {
         try {
             val file = File(context.filesDir, FILENAME)
             file.writeText(Gson().toJson(user))
@@ -29,7 +29,7 @@ class SubjectAccessRequestFile(
         }
     }
 
-    suspend fun readFile(): String {
+    suspend fun readUserData(): String {
         var fileContent = ""
 
         try {

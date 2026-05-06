@@ -11,10 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -23,12 +21,6 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import uk.gov.govuk.data.user.model.ConsentStatus
-import uk.gov.govuk.data.user.model.Notifications
-import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.SecondaryButton
@@ -36,7 +28,6 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.sar.R
 import uk.gov.govuk.sar.SubjectAccessRequestViewModel
-import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 
 @Composable
 internal fun SubjectAccessRequestRoute(
@@ -50,6 +41,7 @@ internal fun SubjectAccessRequestRoute(
         onPageView = { viewModel.onExplainerPageView() },
         onConfirm = { text ->
             viewModel.onButtonClick(text)
+            viewModel.saveUserData()
             onConfirm()
         },
         onClose = { text ->
@@ -112,10 +104,6 @@ private fun BottomNavBar(
     onClose: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val dispatcher: CoroutineDispatcher = Dispatchers.IO
-
     Column(
         modifier = modifier
             .padding(GovUkTheme.spacing.medium)
@@ -126,17 +114,7 @@ private fun BottomNavBar(
 
         PrimaryButton(
             text = confirmText,
-            onClick = {
-                scope.launch(dispatcher) {
-                    // TODO: get this from getUserInfo()
-                    val user = User(Notifications(consentStatus = ConsentStatus.ACCEPTED, pushId = "12345"))
-
-                    val file = SubjectAccessRequestFile(context)
-                    file.writeFile(user)
-                }
-
-                onConfirm(confirmText)
-            }
+            onClick = { onConfirm(confirmText) }
         )
         SecondaryButton(
             text = closeText,

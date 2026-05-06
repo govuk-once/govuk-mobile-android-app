@@ -12,13 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -27,9 +22,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.SecondaryButton
@@ -37,7 +30,6 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.sar.R
 import uk.gov.govuk.sar.SubjectAccessRequestViewModel
-import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 
 @Composable
 internal fun SubjectAccessRequestDisplayRoute(
@@ -45,10 +37,13 @@ internal fun SubjectAccessRequestDisplayRoute(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SubjectAccessRequestViewModel = hiltViewModel()
+    val fileContent by viewModel.fileContent.collectAsStateWithLifecycle()
 
     SubjectAccessRequestDisplayScreen(
+        fileContent = fileContent,
         onPageView = {
             viewModel.onDisplayPageView()
+            viewModel.loadUserData()
         },
         onClose = { text ->
             viewModel.onButtonClick(text)
@@ -60,23 +55,13 @@ internal fun SubjectAccessRequestDisplayRoute(
 
 @Composable
 private fun SubjectAccessRequestDisplayScreen(
+    fileContent: String,
     onPageView: () -> Unit,
     onClose: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val dispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    var fileContent by remember { mutableStateOf("") }
-
     LaunchedEffect(Unit) {
         onPageView()
-
-        scope.launch(dispatcher) {
-            val file = SubjectAccessRequestFile(context)
-            fileContent = file.readFile()
-        }
     }
 
     Scaffold(
@@ -147,6 +132,7 @@ private fun BottomNavBar(
 private fun LightModePreview() {
     GovUkTheme {
         SubjectAccessRequestDisplayScreen(
+            fileContent = "Hello World",
             onPageView = {},
             onClose = {}
         )
@@ -161,6 +147,7 @@ private fun LightModePreview() {
 private fun DarkModePreview() {
     GovUkTheme {
         SubjectAccessRequestDisplayScreen(
+            fileContent = "Hello World",
             onPageView = {},
             onClose = {}
         )
