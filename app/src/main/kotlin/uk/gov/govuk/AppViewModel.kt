@@ -26,8 +26,6 @@ import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
-import uk.gov.govuk.settings.LinkedAccountsUiState
-import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
@@ -60,12 +58,6 @@ internal class AppViewModel @Inject constructor(
 
     private val _homeWidgets: MutableStateFlow<List<HomeWidget>?> = MutableStateFlow(null)
     internal val homeWidgets = _homeWidgets.asStateFlow()
-
-    private val _linkedAccounts = MutableStateFlow<List<LinkedAccountUiModel>>(emptyList())
-    val linkedAccounts = _linkedAccounts.asStateFlow()
-
-    private val _linkedAccountsUiState = MutableStateFlow<LinkedAccountsUiState>(LinkedAccountsUiState.Default)
-    val linkedAccountsUiState = _linkedAccountsUiState.asStateFlow()
 
     enum class TimeoutEvent {
         WARNING, TIMEOUT
@@ -140,13 +132,11 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner,
-                        dvlaRepo.isLinked
-                    ) { suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked ->
-                        Triple(suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked)
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked) ->
+                        chatFeature.shouldDisplayChatBanner
+                    ) { suppressedWidgets, shouldDisplayChatBanner ->
+                        Pair(suppressedWidgets, shouldDisplayChatBanner)
+                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
-                        updateLinkedAccounts(isDvlaLinked)
                     }
                 }
             }
@@ -261,19 +251,6 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    private fun updateLinkedAccounts(isDvlaLinked: Boolean) {
-        val accounts = mutableListOf<LinkedAccountUiModel>()
-        if (isDvlaLinked) {
-            accounts.add(
-                LinkedAccountUiModel(
-                    displayTitleRes = uk.gov.govuk.dvla.R.string.dvla_account_title,
-                    onUnlink = { unlinkDvlaAccount() }
-                )
-            )
-        }
-        _linkedAccounts.value = accounts
-    }
-
     fun onWidgetClick(
         text: String,
         url: String? = null,
@@ -300,21 +277,6 @@ internal class AppViewModel @Inject constructor(
             text,
             section
         )
-    }
-
-    private fun unlinkDvlaAccount() {
-        viewModelScope.launch {
-            _linkedAccountsUiState.value = LinkedAccountsUiState.Unlinking
-            val result = dvlaRepo.unlinkAccount()
-
-            if (result is Success) {
-                // back to default, the account will be removed automatically
-                // dvlaRepo.isLinked will emit false, triggering the combine block
-                _linkedAccountsUiState.value = LinkedAccountsUiState.Default
-            } else {
-                _linkedAccountsUiState.value = LinkedAccountsUiState.Error
-            }
-        }
     }
 
     fun onTabClick(text: String) {

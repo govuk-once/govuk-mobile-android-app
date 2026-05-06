@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
@@ -33,22 +35,27 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.LinkedAccountsUiState
 import uk.gov.govuk.settings.R
+import uk.gov.govuk.settings.YourAccountsViewModel
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 
 @Composable
 internal fun YourAccountsRoute(
-    accounts: List<LinkedAccountUiModel>,
-    accountsUiState: LinkedAccountsUiState,
     onBack: () -> Unit,
-    onErrorDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: YourAccountsViewModel = hiltViewModel()
 ) {
+
+    val accounts by viewModel.linkedAccounts.collectAsStateWithLifecycle()
+    val accountsUiState by viewModel.accountsUiState.collectAsStateWithLifecycle()
 
     YourAccountsScreen(
         accounts = accounts,
         accountsUiState = accountsUiState,
         onBack = onBack,
-        onErrorDismiss = onErrorDismiss,
+        onUnlink = { service ->
+            viewModel.unlinkAccount(service)
+        },
+        onErrorDismiss = { viewModel.resetError() },
         modifier = modifier
     )
 }
@@ -58,6 +65,7 @@ private fun YourAccountsScreen(
     accounts: List<LinkedAccountUiModel>,
     accountsUiState: LinkedAccountsUiState,
     onBack: () -> Unit,
+    onUnlink: (String) -> Unit,
     onErrorDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -95,7 +103,7 @@ private fun YourAccountsScreen(
         RemoveAccountDialog(
             displayTitle = stringResource(id = account.displayTitleRes),
             onConfirm = {
-                account.onUnlink()
+                onUnlink(account.serviceName)
                 accountToUnlink = null
             },
             onDismiss = {
@@ -239,7 +247,8 @@ private fun YourAccountsScreenEmptyPreview() {
             accounts = emptyList(),
             accountsUiState = LinkedAccountsUiState.Default,
             onBack = { },
-            onErrorDismiss = { }
+            onErrorDismiss = { },
+            onUnlink = { }
         )
     }
 }
@@ -251,13 +260,14 @@ private fun YourAccountsScreenPreview() {
         YourAccountsScreen(
             accounts = listOf(
                 LinkedAccountUiModel(
-                    displayTitleRes = R.string.manage_login_header_title,
-                    onUnlink = {}
+                    serviceName = "dvla",
+                    displayTitleRes = R.string.manage_login_header_title
                 )
             ),
             accountsUiState = LinkedAccountsUiState.Default,
             onBack = { },
-            onErrorDismiss = { }
+            onErrorDismiss = { },
+            onUnlink = { }
         )
     }
 }
@@ -269,13 +279,14 @@ private fun YourAccountsScreenUnlinkingPreview() {
         YourAccountsScreen(
             accounts = listOf(
                 LinkedAccountUiModel(
-                    displayTitleRes = R.string.manage_login_header_title,
-                    onUnlink = {}
+                    serviceName = "dvla",
+                    displayTitleRes = R.string.manage_login_header_title
                 )
             ),
             accountsUiState = LinkedAccountsUiState.Unlinking,
             onBack = { },
-            onErrorDismiss = { }
+            onErrorDismiss = { },
+            onUnlink = { }
         )
     }
 }

@@ -570,8 +570,6 @@ private fun GovUkNavHost(
                     url = url
                 ) { showBrowserNotFoundAlert = true }
             },
-            linkedAccountsFlow = viewModel.linkedAccounts,
-            accountsUiStateFlow = viewModel.linkedAccountsUiState,
             modifier = Modifier.padding(paddingValues)
         )
         signOutGraph(
