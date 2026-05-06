@@ -127,7 +127,7 @@ class TopicViewModelTest {
 
     @Test
     fun `Given the topic API is unavailable, When init, then the results and status in the view model are correct`() {
-        coEvery { topicsRepo.getTopic(REF) } returns ServiceNotResponding()
+        coEvery { topicsRepo.getTopic(REF) } returns ServiceNotResponding(404)
 
         val viewModel = TopicViewModel(topicsRepo, analyticsClient, visited, savedStateHandle)
 

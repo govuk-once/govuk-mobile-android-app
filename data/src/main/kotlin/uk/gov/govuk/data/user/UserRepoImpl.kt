@@ -24,15 +24,12 @@ class UserRepoImpl @Inject constructor(
     override val notifications: Notifications?
         get() = user?.notifications
 
-    override suspend fun initUser(): Result<Unit> {
+    override suspend fun initUser(): Result<User> {
         val result = safeApiCall(apiCall = { userApi.getUserInfo() })
-        return if (result is Success) {
+        if (result is Success) {
             user = result.value
-            Success(Unit)
-        } else {
-            @Suppress("UNCHECKED_CAST") // we know it's not a success
-            result as Result<Unit>
         }
+        return result
     }
 
     override suspend fun updateNotifications(
