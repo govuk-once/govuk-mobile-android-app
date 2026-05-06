@@ -100,6 +100,9 @@ fun NavGraphBuilder.settingsGraph(
                 accounts = accounts,
                 accountsUiState = accountsUiState,
                 onBack = { navController.popBackStack() },
+                onErrorDismiss = {
+
+                },
                 modifier = modifier
             )
         }
