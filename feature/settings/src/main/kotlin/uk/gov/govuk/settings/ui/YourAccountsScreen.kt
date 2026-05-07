@@ -103,7 +103,8 @@ private fun YourAccountsScreen(
         LinkedAccountsUiState.Unlinking -> {
             AccountsContainer(onBack = onBack, modifier = modifier) {
                 LoadingScreen(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    accessibilityText = stringResource(R.string.remove_account_unlinking_alt_text)
                 )
             }
         }
