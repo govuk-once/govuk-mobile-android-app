@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,8 +34,8 @@ internal class SubjectAccessRequestViewModel @Inject constructor(
         }
     }
 
-    fun saveUserData() {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun saveUserData(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+        viewModelScope.launch {
             val user = User(
                 Notifications(
                     consentStatus = ConsentStatus.ACCEPTED,
@@ -42,7 +43,7 @@ internal class SubjectAccessRequestViewModel @Inject constructor(
                 )
             ) // TODO: get this from getUserInfo()
 
-            val file = SubjectAccessRequestFile(context, Dispatchers.IO)
+            val file = SubjectAccessRequestFile(context, dispatcher)
             file.writeUserData(user)
         }
     }

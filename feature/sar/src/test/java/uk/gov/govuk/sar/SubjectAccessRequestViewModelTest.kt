@@ -50,7 +50,7 @@ class SubjectAccessRequestViewModelTest {
 
     @Test
     fun `saveUserData creates a User profile file`() = runTest {
-        viewModel.saveUserData()
+        viewModel.saveUserData(testDispatcher)
         advanceUntilIdle()
 
         val file = File(temporaryFolder.root, SubjectAccessRequestFile.FILENAME)

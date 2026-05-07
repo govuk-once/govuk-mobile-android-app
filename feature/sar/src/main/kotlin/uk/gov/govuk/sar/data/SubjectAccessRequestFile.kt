@@ -17,15 +17,14 @@ class SubjectAccessRequestFile(
     }
 
     suspend fun writeUserData(user: User) {
-        try {
-            val file = File(context.filesDir, FILENAME)
-            file.writeText(Gson().toJson(user))
-
-            withContext(dispatcher) {
+        withContext(dispatcher) {
+            try {
+                val file = File(context.filesDir, FILENAME)
+                file.writeText(Gson().toJson(user))
                 println("Saved: ${file.absolutePath}")
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
