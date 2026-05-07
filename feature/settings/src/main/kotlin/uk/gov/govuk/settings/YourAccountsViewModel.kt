@@ -25,6 +25,7 @@ internal class YourAccountsViewModel @Inject constructor(
 
     companion object {
         private const val SECTION = "Settings"
+        private const val ACTION_EDIT = "Edit"
     }
 
     val linkedAccounts: StateFlow<List<LinkedAccountUiModel>> =
@@ -48,7 +49,7 @@ internal class YourAccountsViewModel @Inject constructor(
         analyticsClient.buttonFunction(
             text = "$serviceName unlink",
             section = SECTION,
-            action = "action"
+            action = ACTION_EDIT
         )
     }
 
