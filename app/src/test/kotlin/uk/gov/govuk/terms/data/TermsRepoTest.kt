@@ -7,6 +7,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.terms.data.local.TermsDataStore
@@ -18,12 +19,13 @@ class TermsRepoTest {
 
     private val termsDataStore = mockk<TermsDataStore>(relaxed = true)
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
+    private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
 
     private lateinit var repo: TermsRepo
 
     @Before
     fun setup() {
-        repo = TermsRepo(termsDataStore, configRepo)
+        repo = TermsRepo(termsDataStore, configRepo, analyticsClient)
     }
 
     @Test

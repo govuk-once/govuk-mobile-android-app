@@ -1,5 +1,6 @@
 package uk.gov.govuk.terms.data
 
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.terms.data.local.TermsDataStore
 import java.time.Instant
@@ -17,7 +18,8 @@ internal sealed class TermsAcceptanceState {
 @Singleton
 internal class TermsRepo @Inject constructor(
     private val termsDataStore: TermsDataStore,
-    private val configRepo: ConfigRepo
+    private val configRepo: ConfigRepo,
+    private val analyticsClient: AnalyticsClient
 ) {
     internal suspend fun termsAccepted(acceptedDate: Long = Instant.now().toEpochMilli()) {
         termsDataStore.setTermsAcceptedDate(acceptedDate)
@@ -34,7 +36,8 @@ internal class TermsRepo @Inject constructor(
             } else {
                 TermsAcceptanceState.Accepted
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            analyticsClient.logException(e)
             TermsAcceptanceState.Error
         }
     }
