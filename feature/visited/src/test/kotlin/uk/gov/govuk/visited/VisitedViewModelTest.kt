@@ -21,7 +21,6 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.visited.data.VisitedRepo
 import uk.gov.govuk.visited.data.localDateFormatter
-import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
 import uk.gov.govuk.visited.domain.model.VisitedItemUi
 import uk.gov.govuk.visited.ui.model.VisitedUi
 import java.time.LocalDateTime
@@ -33,7 +32,6 @@ class VisitedViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val visitedRepo = mockk<VisitedRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
-    private val visitedLocalDataSource = mockk<VisitedLocalDataSource>(relaxed = true)
     private val visited = mockk<Visited>(relaxed = true)
 
     @Before
@@ -49,7 +47,7 @@ class VisitedViewModelTest {
     @Test
     fun `Given a page view, then log analytics`() {
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         viewModel.onPageView()
 
@@ -65,7 +63,7 @@ class VisitedViewModelTest {
     @Test
     fun `Given a visited item is removed, then log analytics`() {
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         viewModel.onRemoveVisitedItem("Title")
 
@@ -81,7 +79,7 @@ class VisitedViewModelTest {
     @Test
     fun `Given remove all button click, then log analytics`() {
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         viewModel.onRemoveAllVisitedItems()
 
@@ -97,7 +95,7 @@ class VisitedViewModelTest {
     @Test
     fun `Given a done button click, then log analytics`() {
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         viewModel.onDoneClick()
 
@@ -113,7 +111,7 @@ class VisitedViewModelTest {
     @Test
     fun `Given the user re-views a visited item, then run the insert or update function`() {
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         runTest {
             viewModel.onVisitedItemClicked("visited item title", "visited item title")
@@ -166,7 +164,7 @@ class VisitedViewModelTest {
         coEvery { visitedRepo.visitedItems } returns flowOf(visitedItems)
 
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         runTest {
             assertEquals(expected, viewModel.uiState.first())
@@ -185,7 +183,7 @@ class VisitedViewModelTest {
         coEvery { visitedRepo.visitedItems } returns flowOf(visitedItems)
 
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
         viewModel.onPageView()
 
         runTest {
@@ -204,13 +202,13 @@ class VisitedViewModelTest {
         coEvery { visitedRepo.visitedItems } returns flowOf(initialVisitedItems)
 
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         runTest {
             viewModel.onVisitedItemRemoveClicked("Title 1", "Url 1")
 
-            coVerify(exactly = 1) { visitedLocalDataSource.remove(any(), any()) }
-            coVerify { visitedLocalDataSource.remove("Title 1", "Url 1") }
+            coVerify(exactly = 1) { visitedRepo.remove(any(), any()) }
+            coVerify { visitedRepo.remove("Title 1", "Url 1") }
             coVerify { viewModel.onRemoveVisitedItem("Title 1") }
         }
     }
@@ -226,15 +224,15 @@ class VisitedViewModelTest {
         coEvery { visitedRepo.visitedItems } returns flowOf(initialVisitedItems)
 
         val viewModel =
-            VisitedViewModel(visitedRepo, visitedLocalDataSource, visited, analyticsClient)
+            VisitedViewModel(visitedRepo, visited, analyticsClient)
 
         runTest {
             viewModel.onRemoveAllVisitedItemsClicked()
 
-            coVerify(exactly = 3) { visitedLocalDataSource.remove(any(), any()) }
-            coVerify { visitedLocalDataSource.remove("Title 1", "Url 1") }
-            coVerify { visitedLocalDataSource.remove("Title 2", "Url 2") }
-            coVerify { visitedLocalDataSource.remove("Title 3", "Url 3") }
+            coVerify(exactly = 3) { visitedRepo.remove(any(), any()) }
+            coVerify { visitedRepo.remove("Title 1", "Url 1") }
+            coVerify { visitedRepo.remove("Title 2", "Url 2") }
+            coVerify { visitedRepo.remove("Title 3", "Url 3") }
             coVerify { viewModel.onRemoveVisitedItem("Title 1") }
             coVerify { viewModel.onRemoveVisitedItem("Title 2") }
             coVerify { viewModel.onRemoveVisitedItem("Title 3") }
