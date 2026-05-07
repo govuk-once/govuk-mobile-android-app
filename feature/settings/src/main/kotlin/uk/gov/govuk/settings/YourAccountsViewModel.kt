@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import uk.gov.govuk.data.model.Result.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
@@ -37,6 +39,11 @@ internal class YourAccountsViewModel @Inject constructor(
         MutableStateFlow<LinkedAccountsUiState>(LinkedAccountsUiState.Default)
     val accountsUiState = _accountsUiState.asStateFlow()
 
+    // error is a one-off event instead of a state, we need to navigate away to a full screen 'curtain' screen
+    // and prevent navigation loop when the full screen error is dismissed
+    private val _errorEvent = Channel<Unit>(Channel.BUFFERED)
+    val errorEvent = _errorEvent.receiveAsFlow()
+
     fun onRemoveIconClicked(serviceName: String) {
         analyticsClient.buttonFunction(
             text = "$serviceName unlink",
@@ -55,21 +62,12 @@ internal class YourAccountsViewModel @Inject constructor(
         viewModelScope.launch {
             _accountsUiState.value = LinkedAccountsUiState.Unlinking
             val result = linkedAccountsRepo.unlinkAccount(serviceName)
+            _accountsUiState.value = LinkedAccountsUiState.Default
 
-            when (result) {
-                is Success -> {
-                    _accountsUiState.value = LinkedAccountsUiState.Default
-                }
-
-                else -> {
-                    _accountsUiState.value = LinkedAccountsUiState.Error
-                }
+            if (result !is Success) {
+                _errorEvent.send(Unit)
             }
         }
-    }
-
-    fun resetError() {
-        _accountsUiState.value = LinkedAccountsUiState.Default
     }
 
     fun onUnlinkCancelled(serviceName: String, buttonLabel: String) {

@@ -46,5 +46,8 @@
   <string name="remove_account_dialog_body">You will not be able to see information from this account in the app, unless you add it again. You can still see it on the GOV.UK website.</string>
   <string name="remove_account_dialog_confirm_button_text">Remove account</string>
   <string name="remove_account_dialog_cancel_button_text">Cancel</string>
+  <string name="remove_account_error_page_header">There’s a problem</string>
+  <string name="remove_account_error_page_subtext">We could not remove your driver and vehicles account. Try again later.</string>
+  <string name="remove_account_error_page_button_text">Go back to your accounts</string>
 
 </resources>

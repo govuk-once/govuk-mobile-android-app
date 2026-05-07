@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +42,20 @@ import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 @Composable
 internal fun YourAccountsRoute(
     onBack: () -> Unit,
+    onNavigateToError: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: YourAccountsViewModel = hiltViewModel()
 ) {
 
     val accounts by viewModel.linkedAccounts.collectAsStateWithLifecycle()
     val accountsUiState by viewModel.accountsUiState.collectAsStateWithLifecycle()
+
+    // catch error event and trigger navigation
+    LaunchedEffect(Unit) {
+        viewModel.errorEvent.collect {
+            onNavigateToError()
+        }
+    }
 
     YourAccountsScreen(
         accounts = accounts,
@@ -59,7 +68,6 @@ internal fun YourAccountsRoute(
         onUnlinkCancelled = { service, buttonLabel ->
             viewModel.onUnlinkCancelled(service, buttonLabel)
         },
-        onErrorDismiss = { viewModel.resetError() },
         modifier = modifier
     )
 }
@@ -72,20 +80,13 @@ private fun YourAccountsScreen(
     onRemoveIconClicked: (String) -> Unit,
     onUnlinkConfirmed: (String, String) -> Unit,
     onUnlinkCancelled: (String, String) -> Unit,
-    onErrorDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     var accountToUnlink by remember { mutableStateOf<LinkedAccountUiModel?>(null) }
 
     when (accountsUiState) {
-        LinkedAccountsUiState.Error -> {
-            RemoveAccountErrorScreen(
-                onDismiss = onErrorDismiss,
-                modifier = modifier
-            )
-        }
-
+        // error is handled as an even in LaunchedEffect
         LinkedAccountsUiState.Default -> {
             AccountsContainer(onBack = onBack, modifier = modifier) {
                 AccountsListContent(
@@ -246,18 +247,16 @@ private fun RemoveAccountDialog(
 }
 
 @Composable
-private fun RemoveAccountErrorScreen(
+internal fun RemoveAccountErrorScreen(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     ErrorPage(
-        headerText = "There’s a problem",
-        subText = "We could not remove your driver and vehicles account. Try again later.",
-        buttonText = "Go back to your accounts",
+        headerText = stringResource(R.string.remove_account_error_page_header),
+        subText = stringResource(R.string.remove_account_error_page_subtext),
+        buttonText = stringResource(R.string.remove_account_error_page_button_text),
         onBack = { onDismiss() },
         modifier = modifier
-            .fillMaxSize()
-            .background(GovUkTheme.colourScheme.surfaces.screenBackground)
     )
 }
 
@@ -270,7 +269,6 @@ private fun YourAccountsScreenEmptyPreview() {
             accountsUiState = LinkedAccountsUiState.Default,
             onBack = { },
             onRemoveIconClicked = { },
-            onErrorDismiss = { },
             onUnlinkConfirmed = { _, _ -> },
             onUnlinkCancelled = { _, _ -> }
         )
@@ -291,7 +289,6 @@ private fun YourAccountsScreenPreview() {
             accountsUiState = LinkedAccountsUiState.Default,
             onBack = { },
             onRemoveIconClicked = { },
-            onErrorDismiss = { },
             onUnlinkConfirmed = { _, _ -> },
             onUnlinkCancelled = { _, _ -> }
         )
@@ -312,7 +309,6 @@ private fun YourAccountsScreenUnlinkingPreview() {
             accountsUiState = LinkedAccountsUiState.Unlinking,
             onBack = { },
             onRemoveIconClicked = { },
-            onErrorDismiss = { },
             onUnlinkConfirmed = { _, _ -> },
             onUnlinkCancelled = { _, _ -> }
         )
