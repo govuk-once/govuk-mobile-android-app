@@ -3,6 +3,7 @@ package uk.gov.govuk.terms.data
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.terms.data.local.TermsDataStore
 import java.time.Instant
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +28,7 @@ internal class TermsRepo @Inject constructor(
         val termsAcceptedAt = getTermsAcceptedDate() ?: return TermsAcceptanceState.NewUser(terms.url)
 
         return try {
-            val termsUpdatedAt = Instant.parse(terms.lastUpdated)
+            val termsUpdatedAt = OffsetDateTime.parse(terms.lastUpdated).toInstant()
             if (termsUpdatedAt.isAfter(Instant.ofEpochMilli(termsAcceptedAt))) {
                 TermsAcceptanceState.Updated(terms.url)
             } else {

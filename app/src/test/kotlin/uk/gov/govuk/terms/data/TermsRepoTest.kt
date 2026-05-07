@@ -104,4 +104,40 @@ class TermsRepoTest {
             termsDataStore.clear()
         }
     }
+
+    @Test
+    fun `With Offset in Ts&Cs - Given terms were accepted after they were last updated, when get terms acceptance state, then return accepted`() = runTest {
+        every { configRepo.termsAndConditions } returns TermsAndConditions(
+            lastUpdated = "2024-01-01T00:00:00+00:00",
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
+        )
+        coEvery { termsDataStore.getTermsAcceptedDate() } returns Instant.parse("2024-06-01T00:00:00Z").toEpochMilli()
+
+        assertIs<TermsAcceptanceState.Accepted>(repo.getTermsAcceptanceState())
+    }
+
+    @Test
+    fun `With Offset in accepted date - Given terms were accepted after they were last updated, when get terms acceptance state, then return accepted`() = runTest {
+        every { configRepo.termsAndConditions } returns TermsAndConditions(
+            lastUpdated = "2024-01-01T00:00:00Z",
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
+        )
+        coEvery { termsDataStore.getTermsAcceptedDate() } returns Instant.parse("2024-06-01T00:00:00+00:00").toEpochMilli()
+
+        assertIs<TermsAcceptanceState.Accepted>(repo.getTermsAcceptanceState())
+    }
+
+    @Test
+    fun `With Offset in Ts&Cs and accepted date - Given terms were accepted after they were last updated, when get terms acceptance state, then return accepted`() = runTest {
+        every { configRepo.termsAndConditions } returns TermsAndConditions(
+            lastUpdated = "2024-01-01T00:00:00+00:00",
+            url = "https://terms.url",
+            contentItemApiUrl = "https://content-item.url"
+        )
+        coEvery { termsDataStore.getTermsAcceptedDate() } returns Instant.parse("2024-06-01T00:00:00+00:00").toEpochMilli()
+
+        assertIs<TermsAcceptanceState.Accepted>(repo.getTermsAcceptanceState())
+    }
 }
