@@ -12,8 +12,10 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowSizeClass
+import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST
 import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND
 import uk.gov.govuk.design.ui.model.SINGLE_COLUMN_THRESHOLD_DP
@@ -167,7 +169,8 @@ private fun VerticalButtonGroup(
             text = secondaryText,
             onClick = onSecondary,
             modifier = Modifier.fillMaxWidth(),
-            enabled = secondaryEnabled
+            enabled = secondaryEnabled,
+            externalLink = secondaryText == stringResource(R.string.go_to_the_gov_uk_website)
         )
     }
 }
