@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="sar_title">Subject Access Request</string>
-  <string name="sar_display_title">Subject Access Request Display</string>
+  <string name="sar_title">Your app data</string>
+  <string name="sar_display_title">Your GOV.UK app data</string>
   <string name="close">Close</string>
-  <string name="confirm">Confirm</string>
+  <string name="confirm">Download your data</string>
+  <string name="share">Share</string>
+
+  <string name="sar_body_content_1">We store a small amount of data about you to improve your experience in the app. This includes:</string>
+  <string name="sar_body_content_1_bp_1">your notification settings</string>
+  <string name="sar_body_content_1_bp_2">a unique ID for your account (Push ID)</string>
+  <string name="sar_body_content_2">This does not include any other information you have shared with us or other government services.</string>
+  <string name="sar_body_content_3_intro">Read more about how we use your data in the</string>
+  <string name="sar_body_content_3_link">privacy notice</string>
+
+  <string name="sar_body_button_subtext">Downloading your data will create a PDF you can view, share or save.</string>
+  <string name="sar_display_content">This file contains the data we store about you to improve your experience in the GOV.UK app.</string>
+  <string name="sar_opens_in_browser">opens in web browser</string>
+
+  <string name="sar_display_notification_field">Notification settings:</string>
+  <string name="sar_display_push_id_field">Push ID (a unique ID for your account):</string>
 </resources>

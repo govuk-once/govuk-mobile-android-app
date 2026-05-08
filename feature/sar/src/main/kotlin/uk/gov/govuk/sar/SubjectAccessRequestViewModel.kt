@@ -24,13 +24,13 @@ internal class SubjectAccessRequestViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ): ViewModel() {
 
-    private val _fileContent = MutableStateFlow("")
-    val fileContent: StateFlow<String> = _fileContent.asStateFlow()
+    private val _userProfile = MutableStateFlow<User?>(null)
+    val userProfile: StateFlow<User?> = _userProfile.asStateFlow()
 
     fun loadUserData() {
         viewModelScope.launch {
             val file = SubjectAccessRequestFile(context)
-            _fileContent.value = file.readUserData()
+            _userProfile.value = file.readUserData()
         }
     }
 
@@ -39,7 +39,7 @@ internal class SubjectAccessRequestViewModel @Inject constructor(
             val user = User(
                 Notifications(
                     consentStatus = ConsentStatus.ACCEPTED,
-                    pushId = "1234"
+                    pushId = "ABC1234"
                 )
             ) // TODO: get this from getUserInfo()
 

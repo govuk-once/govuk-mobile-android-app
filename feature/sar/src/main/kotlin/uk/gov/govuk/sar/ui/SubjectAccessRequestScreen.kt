@@ -1,7 +1,6 @@
 package uk.gov.govuk.sar.ui
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,18 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
+import uk.gov.govuk.design.BuildConfig.PRIVACY_POLICY_URL
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
+import uk.gov.govuk.design.ui.component.CaptionRegularLabel
+import uk.gov.govuk.design.ui.component.ChildPageHeader
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
-import uk.gov.govuk.design.ui.component.SecondaryButton
-import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.sar.R
 import uk.gov.govuk.sar.SubjectAccessRequestViewModel
@@ -67,59 +73,99 @@ private fun SubjectAccessRequestScreen(
         containerColor = GovUkTheme.colourScheme.surfaces.background,
         modifier = modifier.fillMaxWidth(),
 
-        bottomBar = {
-            BottomNavBar(
-                onConfirm = onConfirm,
-                onClose = onClose,
-                modifier = Modifier
-                    .semantics {
-                        isTraversalGroup = true
-                        traversalIndex = 1f
-                    }
+        topBar = {
+            val titleText = stringResource(R.string.sar_title)
+            ChildPageHeader(
+                text = titleText,
+                dismissStyle = HeaderDismissStyle.Back {
+                    onClose(titleText)
+                }
             )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(horizontal = GovUkTheme.spacing.medium)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            SmallVerticalSpacer()
-            LargeTitleBoldLabel(
-                text = stringResource(R.string.sar_title),
+            val bodyContent1 = stringResource(R.string.sar_body_content_1)
+            val bodyContent1Bullet1 = stringResource(R.string.sar_body_content_1_bp_1)
+            val bodyContent1Bullet2 = stringResource(R.string.sar_body_content_1_bp_2)
+            val bodyContent2 = stringResource(R.string.sar_body_content_2)
+            val bodyContent3Intro = stringResource(R.string.sar_body_content_3_intro)
+            val bodyContent3Link = stringResource(R.string.sar_body_content_3_link)
+            val opensInBrowser = stringResource(R.string.sar_opens_in_browser)
+            val confirmText = stringResource(R.string.confirm)
+
+            MediumVerticalSpacer()
+            BodyRegularLabel(
+                text = bodyContent1,
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.semantics { heading() }
+                textAlign = TextAlign.Left
+            )
+
+            val bullet = "\u2022"
+            val messages = listOf(
+                bodyContent1Bullet1,
+                bodyContent1Bullet2
+            )
+            val paragraphStyle = ParagraphStyle(
+                textIndent = TextIndent(restLine = 12.sp)
+            )
+            MediumVerticalSpacer()
+            BodyRegularLabel(
+                buildAnnotatedString {
+                    messages.forEach {
+                        withStyle(style = paragraphStyle) {
+                            append(bullet)
+                            append("  ")
+                            append(it)
+                        }
+                    }
+                }
+            )
+
+            MediumVerticalSpacer()
+            BodyRegularLabel(
+                text = bodyContent2,
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                textAlign = TextAlign.Left
+            )
+
+            val uriHandler = LocalUriHandler.current
+            val url = PRIVACY_POLICY_URL
+            val altText = "$bodyContent3Intro $bodyContent3Link $opensInBrowser"
+
+            MediumVerticalSpacer()
+            BodyRegularLabelTrailingLink(
+                introText = bodyContent3Intro,
+                outroText = ".",
+                linkText = bodyContent3Link,
+                onClick = { uriHandler.openUri(url) },
+                altText = altText,
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+                textAlign = TextAlign.Left,
+                textDecoration = TextDecoration.Underline
+            )
+
+            MediumVerticalSpacer()
+            PrimaryButton(
+                text = confirmText,
+                onClick = { onConfirm(confirmText) }
+            )
+
+            MediumVerticalSpacer()
+            CaptionRegularLabel(
+                text = stringResource(R.string.sar_body_button_subtext),
+                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(horizontal = GovUkTheme.spacing.large)
             )
         }
-    }
-}
-
-@Composable
-private fun BottomNavBar(
-    onConfirm: (String) -> Unit,
-    onClose: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .padding(GovUkTheme.spacing.medium)
-            .background(GovUkTheme.colourScheme.surfaces.background)
-    ) {
-        val confirmText = stringResource(R.string.confirm)
-        val closeText = stringResource(R.string.close)
-
-        PrimaryButton(
-            text = confirmText,
-            onClick = { onConfirm(confirmText) }
-        )
-        SecondaryButton(
-            text = closeText,
-            onClick = { onClose(closeText) }
-        )
     }
 }
 

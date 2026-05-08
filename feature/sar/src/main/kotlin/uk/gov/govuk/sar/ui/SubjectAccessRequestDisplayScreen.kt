@@ -1,9 +1,9 @@
 package uk.gov.govuk.sar.ui
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,17 +16,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
+import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
-import uk.gov.govuk.design.ui.component.SecondaryButton
-import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.ModalHeader
+import uk.gov.govuk.design.ui.model.HeaderActionStyle
+import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.sar.R
 import uk.gov.govuk.sar.SubjectAccessRequestViewModel
@@ -37,10 +39,10 @@ internal fun SubjectAccessRequestDisplayRoute(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SubjectAccessRequestViewModel = hiltViewModel()
-    val fileContent by viewModel.fileContent.collectAsStateWithLifecycle()
+    val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
 
     SubjectAccessRequestDisplayScreen(
-        fileContent = fileContent,
+        userProfile = userProfile,
         onPageView = {
             viewModel.onDisplayPageView()
             viewModel.loadUserData()
@@ -55,7 +57,7 @@ internal fun SubjectAccessRequestDisplayRoute(
 
 @Composable
 private fun SubjectAccessRequestDisplayScreen(
-    fileContent: String,
+    userProfile: User?,
     onPageView: () -> Unit,
     onClose: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -68,60 +70,94 @@ private fun SubjectAccessRequestDisplayScreen(
         containerColor = GovUkTheme.colourScheme.surfaces.background,
         modifier = modifier.fillMaxWidth(),
 
-        bottomBar = {
-            BottomNavBar(
-                onClose = onClose,
-                modifier = Modifier
-                    .semantics {
-                        isTraversalGroup = true
-                        traversalIndex = 1f
-                    }
+        topBar = {
+            val titleText = stringResource(R.string.sar_display_title)
+            ModalHeader(
+                text = titleText,
+                dismissStyle = HeaderDismissStyle.Close {
+                    onClose(titleText)
+                },
+                actionStyle = HeaderActionStyle.ActionButton(
+                    title = stringResource(R.string.share),
+                    onClick = {}
+                )
             )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(horizontal = GovUkTheme.spacing.medium)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            SmallVerticalSpacer()
-            LargeTitleBoldLabel(
-                text = stringResource(R.string.sar_display_title),
+            LargeVerticalSpacer()
+            BodyRegularLabel(
+                text = stringResource(R.string.sar_display_content),
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Left,
                 modifier = Modifier.semantics { heading() }
             )
-            SmallVerticalSpacer()
-            BodyRegularLabel(
-                text = fileContent,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier.padding(horizontal = GovUkTheme.spacing.extraLarge),
-                textAlign = TextAlign.Center
-            )
+
+            LargeVerticalSpacer()
+            Row(
+                modifier = Modifier
+                    .padding(vertical = GovUkTheme.spacing.small)
+                    .fillMaxWidth()
+            ) {
+                BodyRegularLabel(
+                    text = stringResource(R.string.sar_display_notification_field),
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .weight(1f),
+                    textAlign = TextAlign.Left
+                )
+
+                if (userProfile != null) {
+                    val consentStatus = humanize(userProfile)
+                    BodyRegularLabel(
+                        text = consentStatus,
+                        color = GovUkTheme.colourScheme.textAndIcons.primary,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .weight(1f),
+                        textAlign = TextAlign.Right
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(vertical = GovUkTheme.spacing.small)
+                    .fillMaxWidth()
+            ) {
+                BodyRegularLabel(
+                    text = stringResource(R.string.sar_display_push_id_field),
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .weight(1f),
+                    textAlign = TextAlign.Left
+                )
+
+                BodyRegularLabel(
+                    text = userProfile?.notifications?.pushId ?: "",
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .weight(1f),
+                    textAlign = TextAlign.Right
+                )
+            }
         }
     }
 }
 
-@Composable
-private fun BottomNavBar(
-    onClose: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val closeText = stringResource(R.string.close)
-
-    Column(
-        modifier = modifier
-            .padding(GovUkTheme.spacing.medium)
-            .background(GovUkTheme.colourScheme.surfaces.background)
-    ) {
-        SecondaryButton(
-            text = closeText,
-            onClick = { onClose(closeText) },
-        )
-    }
+private fun humanize(user: User): String {
+    return user.notifications.consentStatus.toString().lowercase().replaceFirstChar { it.uppercase() }
 }
 
 @Preview(
@@ -132,7 +168,12 @@ private fun BottomNavBar(
 private fun LightModePreview() {
     GovUkTheme {
         SubjectAccessRequestDisplayScreen(
-            fileContent = "Hello World",
+            userProfile = User(
+                Notifications(
+                    consentStatus = ConsentStatus.ACCEPTED,
+                    pushId = "1234"
+                )
+            ),
             onPageView = {},
             onClose = {}
         )
@@ -147,7 +188,12 @@ private fun LightModePreview() {
 private fun DarkModePreview() {
     GovUkTheme {
         SubjectAccessRequestDisplayScreen(
-            fileContent = "Hello World",
+            userProfile = User(
+                Notifications(
+                    consentStatus = ConsentStatus.ACCEPTED,
+                    pushId = "1234"
+                )
+            ),
             onPageView = {},
             onClose = {}
         )

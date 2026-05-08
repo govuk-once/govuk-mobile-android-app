@@ -19,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 import java.io.File
 
@@ -60,23 +61,24 @@ class SubjectAccessRequestViewModelTest {
     }
 
     @Test
-    fun `loadUserData updates fileContent when file exists`() = runTest {
+    fun `loadUserData returns the correct profile when the file exists`() = runTest {
         val file = File(temporaryFolder.root, SubjectAccessRequestFile.FILENAME)
         file.writeText("""{"notifications":{"consentStatus":"ACCEPTED","pushId":"999"}}""")
 
         viewModel.loadUserData()
         advanceUntilIdle()
 
-        val expected = "ConsentStatus: ACCEPTED Push ID: 999"
-        assertEquals(expected, viewModel.fileContent.value)
+        assertEquals(ConsentStatus.ACCEPTED, viewModel.userProfile.value?.notifications?.consentStatus)
+        assertEquals("999", viewModel.userProfile.value?.notifications?.pushId)
     }
 
     @Test
-    fun `loadUserData updates fileContent with error if the file does not exit`() = runTest {
+    fun `loadUserData returns a dummy user profile when the file does not exit`() = runTest {
         viewModel.loadUserData()
         advanceUntilIdle()
 
-        assertEquals("File does not exist yet!", viewModel.fileContent.value)
+        assertEquals(ConsentStatus.UNKNOWN, viewModel.userProfile.value?.notifications?.consentStatus)
+        assertEquals("0000", viewModel.userProfile.value?.notifications?.pushId)
     }
 
     @Test

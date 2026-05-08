@@ -29,8 +29,8 @@ import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
@@ -192,10 +192,9 @@ private fun SettingsScreen(
             PrivacyPolicy(actions.onPrivacyPolicyClick)
             AccessibilityStatement(actions.onAccessibilityStatementClick)
             OpenSourceLicenses(actions.onLicenseClick)
-            TermsAndConditions(actions.onTermsAndConditionsClick)
+            TermsAndConditions(uiState,actions.onTermsAndConditionsClick)
 
             if (uiState.isFlexEnabled) {
-                MediumVerticalSpacer()
                 SubjectAccessRequest(actions.onSubjectAccessRequestClick)
             }
 
@@ -429,6 +428,7 @@ private fun OpenSourceLicenses(
 
 @Composable
 private fun TermsAndConditions(
+    uiState: SettingsUiState,
     onLicenseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -437,7 +437,7 @@ private fun TermsAndConditions(
         onClick = onLicenseClick,
         modifier = modifier,
         isFirst = false,
-        isLast = true,
+        isLast = !uiState.isFlexEnabled,
     )
 }
 
@@ -446,15 +446,13 @@ private fun SubjectAccessRequest(
     onSubjectAccessRequestClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CardListItem(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onSubjectAccessRequestClick
-    ) {
-        BodyRegularLabel(
-            text = stringResource(R.string.sar_title),
-            modifier = Modifier.padding(GovUkTheme.spacing.medium)
-        )
-    }
+    InternalLinkListItem(
+        title = stringResource(R.string.sar_title),
+        onClick = onSubjectAccessRequestClick,
+        modifier = modifier,
+        isFirst = false,
+        isLast = true,
+    )
 }
 
 @Composable

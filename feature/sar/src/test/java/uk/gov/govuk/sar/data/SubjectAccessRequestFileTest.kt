@@ -66,7 +66,7 @@ class SubjectAccessRequestFileTest {
     }
 
     @Test
-    fun `formatted string when subject access request file exists`() = runTest(testDispatcher) {
+    fun `returns the correct user profile when subject access request file exists`() = runTest(testDispatcher) {
         val user = User(
             Notifications(
                 consentStatus = ConsentStatus.DENIED,
@@ -77,15 +77,17 @@ class SubjectAccessRequestFileTest {
         subject.writeUserData(user)
         advanceUntilIdle()
 
-        assertEquals("ConsentStatus: DENIED Push ID: 666", subject.readUserData())
+        assertEquals(ConsentStatus.DENIED, subject.readUserData().notifications.consentStatus)
+        assertEquals("666", subject.readUserData().notifications.pushId)
     }
 
     @Test
-    fun `returns error message when file is missing`() = runTest(testDispatcher) {
+    fun `returns a dummy user profile when file is missing`() = runTest(testDispatcher) {
         val result = subject.readUserData()
         advanceUntilIdle()
 
-        assertEquals("File does not exist yet!", result)
+        assertEquals(ConsentStatus.UNKNOWN, result.notifications.consentStatus)
+        assertEquals("0000", result.notifications.pushId)
     }
 }
 
