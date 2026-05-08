@@ -37,8 +37,8 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 fun InternalLinkListItem(
     title: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
@@ -369,7 +369,7 @@ fun CardListItem(
 @Composable
 private fun InternalLinkListItemPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", {})
+        InternalLinkListItem(title = "Title")
     }
 }
 
@@ -377,7 +377,7 @@ private fun InternalLinkListItemPreview() {
 @Composable
 private fun InternalLinkListItemDescriptionPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", {}, description = "Description")
+        InternalLinkListItem("Title", description = "Description")
     }
 }
 
@@ -385,7 +385,7 @@ private fun InternalLinkListItemDescriptionPreview() {
 @Composable
 private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", {}, style = InternalLinkListItemStyle.Status("Status"))
+        InternalLinkListItem("Title", style = InternalLinkListItemStyle.Status("Status"))
     }
 }
 
@@ -394,7 +394,7 @@ private fun InternalLinkListItemStatusPreview() {
 private fun InternalLinkListItemButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
-            "Title", {},
+            "Title",
             style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
     }
 }

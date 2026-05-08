@@ -74,7 +74,7 @@ private fun YourAccountsScreen(
                         val displayTitle = stringResource(id = account.displayTitleRes)
                         InternalLinkListItem(
                             title = displayTitle,
-                            onClick = { },
+                            onClick = null,
                             style = InternalLinkListItemStyle.Button(
                                 icon = uk.gov.govuk.design.R.drawable.ic_cancel_round,
                                 altText = stringResource(R.string.your_accounts_remove_account_alt_text, displayTitle)
