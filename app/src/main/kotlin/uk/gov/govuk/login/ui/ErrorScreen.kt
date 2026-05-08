@@ -25,13 +25,12 @@ private fun ErrorScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val buttonText = stringResource(R.string.login_back_and_try_again_button)
     ErrorPage(
         headerText = stringResource(R.string.login_sign_in_error_header),
         subText = stringResource(R.string.login_sign_in_error_sub_text),
         footer = {
             FixedPrimaryButton(
-                text = buttonText,
+                text = stringResource(R.string.login_back_and_try_again_button),
                 onClick = { onBack() }
             )
         },
