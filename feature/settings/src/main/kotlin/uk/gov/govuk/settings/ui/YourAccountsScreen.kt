@@ -178,7 +178,8 @@ private fun AccountsListContent(
                 )
             } else {
                 accounts.forEach { account ->
-                    val displayTitle = stringResource(id = account.displayTitleRes)
+                    val displayTitle =
+                        stringResource(id = account.displayTitleRes).replaceFirstChar { it.uppercase() }
                     InternalLinkListItem(
                         title = displayTitle,
                         onClick = { },
