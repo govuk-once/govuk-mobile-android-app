@@ -1,6 +1,7 @@
 package uk.gov.govuk.sar
 
 import android.content.Context
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -18,8 +19,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import retrofit2.Response
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
+import uk.gov.govuk.data.user.model.User
+import uk.gov.govuk.data.user.remote.UserApi
 import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 import java.io.File
 
@@ -31,6 +36,7 @@ class SubjectAccessRequestViewModelTest {
 
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val context: Context = mockk()
+    private val userApi: UserApi = mockk()
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var viewModel: SubjectAccessRequestViewModel
@@ -41,7 +47,7 @@ class SubjectAccessRequestViewModelTest {
 
         every { context.filesDir } returns temporaryFolder.root
 
-        viewModel = SubjectAccessRequestViewModel(analyticsClient, context)
+        viewModel = SubjectAccessRequestViewModel(analyticsClient, context, userApi)
     }
 
     @After
@@ -51,12 +57,17 @@ class SubjectAccessRequestViewModelTest {
 
     @Test
     fun `saveUserData creates a User profile file`() = runTest {
+        coEvery { userApi.getUserInfo() } returns Response.success(
+            User(Notifications(ConsentStatus.ACCEPTED, "1234"))
+        )
+
         viewModel.saveUserData(testDispatcher)
         advanceUntilIdle()
 
         val file = File(temporaryFolder.root, SubjectAccessRequestFile.FILENAME)
 
         assertTrue(file.exists())
+        assertTrue(file.readText().contains("accepted"))
         assertTrue(file.readText().contains("1234"))
     }
 

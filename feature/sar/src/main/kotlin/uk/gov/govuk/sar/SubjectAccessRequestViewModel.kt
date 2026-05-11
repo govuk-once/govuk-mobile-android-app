@@ -12,16 +12,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.user.model.ConsentStatus
-import uk.gov.govuk.data.user.model.Notifications
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.remote.safeApiCall
 import uk.gov.govuk.data.user.model.User
+import uk.gov.govuk.data.user.remote.UserApi
 import uk.gov.govuk.sar.data.SubjectAccessRequestFile
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SubjectAccessRequestViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val userApi: UserApi
 ): ViewModel() {
 
     private val _userProfile = MutableStateFlow<User?>(null)
@@ -36,15 +38,13 @@ internal class SubjectAccessRequestViewModel @Inject constructor(
 
     fun saveUserData(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
         viewModelScope.launch {
-            val user = User(
-                Notifications(
-                    consentStatus = ConsentStatus.ACCEPTED,
-                    pushId = "ABC1234"
-                )
-            ) // TODO: get this from getUserInfo()
-
+            val result = safeApiCall(apiCall = { userApi.getUserInfo() })
             val file = SubjectAccessRequestFile(context, dispatcher)
-            file.writeUserData(user)
+
+            // TODO: Handle errors
+            if (result is Result.Success) {
+                file.writeUserData(result.value)
+            }
         }
     }
 
