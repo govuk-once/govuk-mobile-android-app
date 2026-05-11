@@ -35,6 +35,9 @@ internal class LicenceSummaryViewModel @Inject constructor(
                     //  until we decide which endpoint to use
                     fetchDriverSummaryData()
                     fetchCustomerSummaryData()
+
+                    // TODO: this is to demonstrate share code endpoint call data, remove
+                    createListCancelShareCode()
                 } else {
                     _uiState.value = LicenceSummaryState.Hidden
                 }
@@ -78,6 +81,54 @@ internal class LicenceSummaryViewModel @Inject constructor(
                     else -> println("CustomerSummary: ERROR - Failed to fetch customer summary")
                 }
             }
+        }
+    }
+
+    private fun createListCancelShareCode() {
+        // TODO: this is to demonstrate the endpoint call data, to be removed
+        viewModelScope.launch {
+            println("------------------ DVLA SHARE CODES DEMO ------------------")
+
+            suspend fun logCodes(step: String) {
+                when (val result = dvlaRepo.getShareCodes()) {
+                    is Result.Success -> {
+                        val codes = result.value
+                        val codesString = codes.joinToString { "${it.tokenId} [${it.validity.name}]" }
+                        println("DVLA Share codeS: $step. Total codes: ${codes.size}. Current codes: [$codesString]")
+                    }
+                    else -> {
+                        println("DVLA Share codeS: $step. Failed to fetch codes.")
+                    }
+                }
+            }
+
+            // list existing codes
+            logCodes("Fetching existing codes")
+
+            // create code
+            val createResult = dvlaRepo.createShareCode()
+            if (createResult !is Result.Success) {
+                println("DVLA Share codes: Failed to create code")
+                return@launch
+            }
+
+            val newCode = createResult.value
+            val tokenIdToCancel = newCode.tokenId
+            println("DVLA Share codes: Created share code with id: $tokenIdToCancel")
+
+            // list codes after creation
+            logCodes("Fetching after creation")
+
+            // cancel
+            val cancelResult = dvlaRepo.cancelShareCode(tokenIdToCancel)
+            if (cancelResult is Result.Success) {
+                println("DVLA Share codes: Cancelled share code: $tokenIdToCancel")
+            } else {
+                println("DVLA Share codes: failed to cancel code")
+            }
+
+            // list codes after cancelling
+            logCodes("Fetching after cancellation")
         }
     }
 }

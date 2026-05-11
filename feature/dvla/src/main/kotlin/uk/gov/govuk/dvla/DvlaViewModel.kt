@@ -175,16 +175,4 @@ internal class DvlaViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-
-    private suspend fun createShareCode() {
-
-        // TODO demonstrating for POC, will be removed
-        try {
-            val response = dvlaRepo.createShareCode()
-            println("DVLA Share code success: $response")
-        } catch (e: Exception) {
-            println("DVLA Share code: ${e.message}")
-            e.printStackTrace()
-        }
-    }
 }
