@@ -4,7 +4,7 @@ import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.ShareCode
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 
-enum class ShareCodeValidity {
+enum class CheckCodeValidity {
     CANCELLED,
     EXPIRED,
     VALID,
@@ -13,14 +13,14 @@ enum class ShareCodeValidity {
     UNKNOWN
 }
 
-enum class ShareCodeStatus {
+enum class CheckCodeStatus {
     ACTIVE,
     INACTIVE,
     UNKNOWN
 }
 
-data class ShareCodeDetails(
-    val validity: ShareCodeValidity,
+data class CheckCodeDetails(
+    val validity: CheckCodeValidity,
     val tokenId: String,
     val token: String,
     val drivingLicenceNumber: String,
@@ -28,14 +28,14 @@ data class ShareCodeDetails(
     val documentReference: String,
     val createdAt: String,
     val expiresAt: String,
-    val activationStatus: ShareCodeStatus?,
+    val activationStatus: CheckCodeStatus?,
     val redeemedAt: String?,
     val cancelledAt: String?
 )
 
-fun ShareCode.toDomainModel() = ShareCodeDetails(
-    validity = runCatching { ShareCodeValidity.valueOf(this.validity.name) }
-        .getOrDefault(ShareCodeValidity.UNKNOWN),
+fun ShareCode.toDomainModel() = CheckCodeDetails(
+    validity = runCatching { CheckCodeValidity.valueOf(this.validity.name) }
+        .getOrDefault(CheckCodeValidity.UNKNOWN),
 
     tokenId = this.tokenId,
     token = this.token,
@@ -46,15 +46,15 @@ fun ShareCode.toDomainModel() = ShareCodeDetails(
     expiresAt = this.expiresAt,
 
     activationStatus = this.activationStatus?.let {
-        runCatching { ShareCodeStatus.valueOf(it.name) }.getOrDefault(ShareCodeStatus.UNKNOWN)
+        runCatching { CheckCodeStatus.valueOf(it.name) }.getOrDefault(CheckCodeStatus.UNKNOWN)
     },
 
     redeemedAt = this.redeemedAt,
     cancelledAt = this.cancelledAt
 )
 
-fun SingleShareCodeResponse.toDomainModel(): ShareCodeDetails = this.shareCode.toDomainModel()
+fun SingleShareCodeResponse.toDomainModel(): CheckCodeDetails = this.shareCode.toDomainModel()
 
 
-fun MultiShareCodeResponse.toDomainModel(): List<ShareCodeDetails> =
+fun MultiShareCodeResponse.toDomainModel(): List<CheckCodeDetails> =
     this.shareCodes.map { it.toDomainModel() }

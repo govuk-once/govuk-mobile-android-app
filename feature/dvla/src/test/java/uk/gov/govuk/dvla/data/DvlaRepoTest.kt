@@ -212,7 +212,7 @@ class DvlaRepoTest {
 
         coEvery { api.createShareCode() } returns Response.success(shareCodeResponse)
 
-        val result = repo.createShareCode()
+        val result = repo.createCheckCode()
 
         assertTrue(result is Result.Success)
         coVerify(exactly = 1) { api.createShareCode() }
@@ -222,7 +222,7 @@ class DvlaRepoTest {
     fun `Given create share code api fails, when createShareCode is called, then return Error`() = runTest {
         coEvery { api.createShareCode() } throws Exception("Exception")
 
-        val result = repo.createShareCode()
+        val result = repo.createCheckCode()
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.createShareCode() }
@@ -234,7 +234,7 @@ class DvlaRepoTest {
 
         coEvery { api.getShareCodes() } returns Response.success(shareCodesResponse)
 
-        val result = repo.getShareCodes()
+        val result = repo.getCheckCodes()
 
         assertTrue(result is Result.Success)
         coVerify(exactly = 1) { api.getShareCodes() }
@@ -244,7 +244,7 @@ class DvlaRepoTest {
     fun `Given get share codes api fails, when getShareCodes is called, then return Error`() = runTest {
         coEvery { api.getShareCodes() } throws Exception("Exception")
 
-        val result = repo.getShareCodes()
+        val result = repo.getCheckCodes()
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.getShareCodes() }
@@ -257,7 +257,7 @@ class DvlaRepoTest {
 
         coEvery { api.cancelShareCode(tokenId) } returns Response.success(shareCodeResponse)
 
-        val result = repo.cancelShareCode(tokenId)
+        val result = repo.cancelCheckCode(tokenId)
 
         assertTrue(result is Result.Success)
         coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
@@ -268,7 +268,7 @@ class DvlaRepoTest {
         val tokenId = "token_id"
         coEvery { api.cancelShareCode(tokenId) } throws Exception("Exception")
 
-        val result = repo.cancelShareCode(tokenId)
+        val result = repo.cancelCheckCode(tokenId)
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
