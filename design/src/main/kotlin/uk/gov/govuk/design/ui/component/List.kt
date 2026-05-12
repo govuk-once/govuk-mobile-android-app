@@ -3,6 +3,7 @@ package uk.gov.govuk.design.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -26,6 +28,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.talkBackText
@@ -33,6 +36,7 @@ import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 @Composable
 fun InternalLinkListItem(
@@ -331,6 +335,48 @@ fun IconListItem(
 }
 
 @Composable
+fun StatusListItem(
+    title: String,
+    description: String,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
+    iconContentDescription: String? = null,
+    isFirst: Boolean = false,
+    isLast: Boolean = false
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                BodyBoldLabel(text = title)
+
+                SmallVerticalSpacer()
+
+                BodyRegularLabel(text = description)
+            }
+
+            MediumHorizontalSpacer()
+
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = iconContentDescription,
+                tint = Color.Unspecified
+            )
+        }
+    }
+}
+
+@Composable
 fun CardListItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -427,5 +473,33 @@ private fun ExternalLinkListItemButtonPreview() {
         ExternalLinkListItem(
             "Title", {}, description = "Description",
             style = ExternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+    }
+}
+
+@Preview
+@Composable
+private fun StatusListItemPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = "Tax",
+            description = "Valid until 1 February 2027",
+            icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun StatusListItemMOTPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = "MOT",
+            description = "Valid until 24 June 2026",
+            icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
     }
 }
