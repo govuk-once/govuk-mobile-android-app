@@ -3,7 +3,6 @@ package uk.gov.govuk.chat.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.res.Configuration
 import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -35,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -331,12 +330,9 @@ private fun clickEvents() = UiEvents(
     onClear = { }
 )
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO
-)
+@PreviewLightDark
 @Composable
-private fun LightModeChatScreenPreview() {
+private fun ChatScreenPreview() {
     GovUkTheme {
         ChatScreen(
             uiState = ChatUiState.Default(isLoading = false),
@@ -349,20 +345,3 @@ private fun LightModeChatScreenPreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun DarkModeChatScreenPreview() {
-    GovUkTheme {
-        ChatScreen(
-            uiState = ChatUiState.Default(isLoading = false),
-            analyticsEvents = analyticsEvents(),
-            launchBrowser = { _ -> },
-            hasConversation = false,
-            chatUrls = ChatUrls("", "", "", ""),
-            uiEvents = clickEvents()
-        )
-    }
-}
