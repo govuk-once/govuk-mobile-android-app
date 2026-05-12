@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
 
 data class DriverSummaryResponse(
-    @SerializedName("linkingId") val linkingId: String,
     @SerializedName("driverViewResponse") val driverView: DriverView,
     @SerializedName("sdlResponse") val sdl: Sdl?,
     @SerializedName("driversEligibilityResponse") val driversEligibility: DriversEligibility?,
