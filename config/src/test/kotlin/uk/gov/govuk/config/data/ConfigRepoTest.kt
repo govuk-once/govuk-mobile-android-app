@@ -133,6 +133,7 @@ class ConfigRepoTest {
         every { config.releaseFlags.notifications } returns true
         every { config.releaseFlags.localServices } returns true
         every { config.releaseFlags.externalBrowser } returns true
+        every { config.releaseFlags.flex } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
         every { config.userFeedbackBanner } returns mockFeedback
@@ -150,6 +151,7 @@ class ConfigRepoTest {
         assertEquals(true, repo.isNotificationsEnabled)
         assertEquals(true, repo.isLocalServicesEnabled)
         assertEquals(true, repo.isExternalBrowserEnabled)
+        assertEquals(true, repo.isFlexEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
         assertSame(mockFeedback, repo.userFeedbackBanner)

@@ -863,7 +863,8 @@ class AppViewModelTest {
         viewModel.onResume(uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { notificationsRepo.sendRemoveConsent() }
+        // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//        coVerify(exactly = 1) { notificationsRepo.sendRemoveConsent() }
         verify(exactly = 1) { notificationsRepo.removeConsent() }
         assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
     }

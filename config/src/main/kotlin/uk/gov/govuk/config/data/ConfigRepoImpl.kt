@@ -104,6 +104,9 @@ class ConfigRepoImpl @Inject constructor(
     override val termsAndConditions: TermsAndConditions?
         get() = safeConfig.termsAndConditions
 
+    override val isFlexEnabled: Boolean
+        get() = safeConfig.releaseFlags.flex
+
     override suspend fun clearRemoteConfigValues() {
         firebaseDataSource.clearRemoteValues()
     }

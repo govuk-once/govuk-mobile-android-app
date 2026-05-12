@@ -182,7 +182,7 @@ private fun AccountsListContent(
                         stringResource(id = account.displayTitleRes).replaceFirstChar { it.uppercase() }
                     InternalLinkListItem(
                         title = displayTitle,
-                        onClick = { },
+                        onClick = null,
                         style = InternalLinkListItemStyle.Button(
                             icon = uk.gov.govuk.design.R.drawable.ic_cancel_round,
                             altText = stringResource(

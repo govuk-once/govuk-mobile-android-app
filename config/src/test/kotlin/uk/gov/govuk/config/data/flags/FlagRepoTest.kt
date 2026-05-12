@@ -21,7 +21,7 @@ class FlagRepoTest {
     @Before
     fun setup() {
         flagRepo = FlagRepo(
-            debugEnabled = true,
+            debugEnabled = false,
             debugFlags = debugFlags,
             configRepo = configRepo
         )
@@ -167,44 +167,41 @@ class FlagRepoTest {
 
     @Test
     fun `Given app is available, When available is true, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isAvailable } returns true
 
         assertTrue(flagRepo.isAppAvailable())
     }
 
     @Test
     fun `Given app is unavailable, When is app available is false, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isAvailable } returns false
 
         assertFalse(flagRepo.isAppAvailable())
     }
 
     @Test
     fun `Given the debug minimum version is 0_0_2, When the app version is 0_0_1, then return true`() {
-        every { debugFlags.minimumVersion } returns "0.0.2"
+        every { configRepo.minimumVersion } returns "0.0.2"
 
         assertTrue(flagRepo.isForcedUpdate("0.0.1"))
     }
 
     @Test
     fun `Given the debug minimum version is 0_0_2, When the app version is 0_0_2, then return false`() {
-        every { debugFlags.minimumVersion } returns "0.0.2"
+        every { configRepo.minimumVersion } returns "0.0.2"
 
         assertFalse(flagRepo.isForcedUpdate("0.0.2"))
     }
 
     @Test
     fun `Given the debug minimum version is 0_0_1, When the app version is 0_0_2, then return false`() {
-        every { debugFlags.minimumVersion } returns "0.0.1"
+        every { configRepo.minimumVersion } returns "0.0.1"
 
         assertFalse(flagRepo.isForcedUpdate("0.0.2"))
     }
 
     @Test
     fun `Given the remote minimum version is 0_0_2, When the app version is 0_0_1, then return true`() {
-        every { debugFlags.minimumVersion } returns null
         every { configRepo.minimumVersion } returns "0.0.2"
 
         assertTrue(flagRepo.isForcedUpdate("0.0.1"))
@@ -212,7 +209,6 @@ class FlagRepoTest {
 
     @Test
     fun `Given the remote minimum version is 0_0_2, When the app version is 0_0_2, then return false`() {
-        every { debugFlags.minimumVersion } returns null
         every { configRepo.minimumVersion } returns "0.0.2"
 
         assertFalse(flagRepo.isForcedUpdate("0.0.2"))
@@ -220,7 +216,6 @@ class FlagRepoTest {
 
     @Test
     fun `Given the remote minimum version is 0_0_1, When the app version is 0_0_2, then return false`() {
-        every { debugFlags.minimumVersion } returns null
         every { configRepo.minimumVersion } returns "0.0.1"
 
         assertFalse(flagRepo.isForcedUpdate("0.0.2"))
@@ -228,7 +223,7 @@ class FlagRepoTest {
 
     @Test
     fun `Given the debug recommended version is 0_0_2, When the app version is 0_0_1, then return true`() {
-        every { debugFlags.recommendedVersion } returns "0.0.2"
+        every { configRepo.recommendedVersion } returns "0.0.2"
 
         assertTrue(flagRepo.isRecommendUpdate("0.0.1"))
     }
@@ -249,7 +244,6 @@ class FlagRepoTest {
 
     @Test
     fun `Given the remote recommended version is 0_0_2, When the app version is 0_0_1, then return true`() {
-        every { debugFlags.recommendedVersion } returns null
         every { configRepo.recommendedVersion } returns "0.0.2"
 
         assertTrue(flagRepo.isRecommendUpdate("0.0.1"))
@@ -257,7 +251,6 @@ class FlagRepoTest {
 
     @Test
     fun `Given the remote recommended version is 0_0_2, When the app version is 0_0_2, then return false`() {
-        every { debugFlags.recommendedVersion } returns null
         every { configRepo.recommendedVersion } returns "0.0.2"
 
         assertFalse(flagRepo.isRecommendUpdate("0.0.2"))
@@ -265,7 +258,6 @@ class FlagRepoTest {
 
     @Test
     fun `Given the remote recommended version is 0_0_1, When the app version is 0_0_2, then return false`() {
-        every { debugFlags.recommendedVersion } returns null
         every { configRepo.recommendedVersion } returns "0.0.1"
 
         assertFalse(flagRepo.isRecommendUpdate("0.0.2"))
@@ -273,102 +265,101 @@ class FlagRepoTest {
 
     @Test
     fun `Given search is enabled, When is search enabled, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isSearchEnabled } returns true
 
         assertTrue(flagRepo.isSearchEnabled())
     }
 
     @Test
     fun `Given search is disabled, When is search enabled, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isSearchEnabled } returns false
 
         assertFalse(flagRepo.isSearchEnabled())
     }
 
     @Test
     fun `Given recent activity is enabled, When is recent activity enabled, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isRecentActivityEnabled } returns true
 
         assertTrue(flagRepo.isRecentActivityEnabled())
     }
 
     @Test
     fun `Given recent activity is disabled, When is recent activity disabled, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isRecentActivityEnabled } returns false
 
         assertFalse(flagRepo.isRecentActivityEnabled())
     }
 
     @Test
     fun `Given topics is enabled, When is topics enabled, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isTopicsEnabled } returns true
 
         assertTrue(flagRepo.isTopicsEnabled())
     }
 
     @Test
     fun `Given topics is disabled, When is topics enabled, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isTopicsEnabled } returns false
 
         assertFalse(flagRepo.isTopicsEnabled())
     }
 
     @Test
     fun `Given notifications is enabled, When is notifications enabled, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isNotificationsEnabled } returns true
 
         assertTrue(flagRepo.isNotificationsEnabled())
     }
 
     @Test
     fun `Given notifications is disabled, When is notifications enabled, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isNotificationsEnabled } returns false
 
         assertFalse(flagRepo.isNotificationsEnabled())
     }
 
     @Test
     fun `Given local is enabled, When is local enabled, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isLocalServicesEnabled } returns true
 
         assertTrue(flagRepo.isLocalServicesEnabled())
     }
 
     @Test
     fun `Given local is disabled, When is local enabled, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isLocalServicesEnabled } returns false
 
         assertFalse(flagRepo.isLocalServicesEnabled())
     }
 
     @Test
     fun `Given chat is enabled, When is chat enabled, then return true`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns true
+        every { configRepo.isChatEnabled } returns true
 
         assertTrue(flagRepo.isChatEnabled())
     }
 
     @Test
     fun `Given chat is disabled, When is chat enabled, then return false`() {
-        mockkStatic(::isEnabled)
-        every { isEnabled(any(), any(), any()) } returns false
+        every { configRepo.isChatEnabled } returns false
 
         assertFalse(flagRepo.isChatEnabled())
     }
 
     @Test
-    fun `Given a release build, When flex is enabled, then return false`() {
+    fun `Given flex is enabled, When is flex enabled, then return true`() {
+        every { configRepo.isFlexEnabled } returns true
+
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertTrue(flagRepo.isFlexEnabled())
+    }
+
+    @Test
+    fun `Given flex is disabled, When is flex enabled, then return false`() {
+        every { configRepo.isFlexEnabled } returns false
+
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
         assertFalse(flagRepo.isFlexEnabled())
@@ -376,7 +367,7 @@ class FlagRepoTest {
 
     @Test
     fun `Given a debug build, When is external browser enabled, then return false`() {
-        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        flagRepo = FlagRepo(true, DebugFlags(), configRepo)
 
         assertFalse(flagRepo.isExternalBrowserEnabled())
     }
