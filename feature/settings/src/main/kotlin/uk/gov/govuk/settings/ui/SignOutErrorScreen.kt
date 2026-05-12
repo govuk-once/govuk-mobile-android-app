@@ -5,8 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import uk.gov.govuk.design.ui.component.ErrorPage
+import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SignOutViewModel
@@ -36,13 +37,17 @@ private fun SignOutErrorScreen(
     RunOnceLaunchedEffect {
         onPageView()
     }
-
+    val buttonText = stringResource(R.string.sign_out_error_go_back_to_settings_button)
     ErrorPage(
         headerText = stringResource(R.string.sign_out_error_header),
         subText = stringResource(R.string.sign_out_error_sub_text),
+        footer = {
+            FixedPrimaryButton(
+                text = buttonText,
+                onClick = { onBackClick(buttonText) }
+            )
+        },
         additionalText = stringResource(R.string.sign_out_error_additional_text),
-        buttonText = stringResource(R.string.sign_out_error_go_back_to_settings_button),
-        onBack = onBackClick,
         modifier = modifier
     )
 }

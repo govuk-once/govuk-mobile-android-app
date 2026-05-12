@@ -21,6 +21,7 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -47,9 +48,6 @@ internal fun RecommendUpdateScreen(
             BodyRegularLabel(stringResource(R.string.recommend_update_description))
         }
 
-        val updateButtonText = stringResource(R.string.recommend_update_button_title_update)
-        val skipButtonText = stringResource(R.string.recommend_update_button_title_skip)
-
         val context = LocalContext.current
         val onUpdateClick: () -> Unit = {
             val intent = Intent(Intent.ACTION_VIEW)
@@ -57,11 +55,18 @@ internal fun RecommendUpdateScreen(
             context.startActivity(intent)
         }
 
+        val primaryText = stringResource(R.string.recommend_update_button_title_update)
+        val secondaryText = stringResource(R.string.recommend_update_button_title_skip)
+
         FixedDoubleButtonGroup(
-            primaryText = updateButtonText,
-            onPrimary = onUpdateClick,
-            secondaryText = skipButtonText,
-            onSecondary = recommendUpdateSkipped
+            primaryButton = Button(
+                text = primaryText,
+                onClick = onUpdateClick
+            ),
+            secondaryButton = Button(
+                text = secondaryText,
+                onClick = recommendUpdateSkipped
+            )
         )
     }
 }

@@ -12,13 +12,15 @@
     <string name="link_dvla_connecting_title">Adding driver and vehicles account…</string>
     <string name="link_dvla_success_title">Driver and vehicles account added</string>
     <string name="link_dvla_success_button">Continue</string>
+    <string name="link_dvla_problem_title">There’s a problem</string>
+    <string name="link_dvla_problem_description">We could not add your driver and vehicles account. Try again later, or go to the GOV.UK website.</string>
+    <string name="link_dvla_problem_primary_button">Go back to the driving topic</string>
+    <string name="link_dvla_problem_secondary_button">Go to the GOV.UK website</string>
 
     <string name="dvla_account_title">Driver and vehicles account</string>
 
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
 
-    <string name="error_dialog_title">There’s a problem</string>
-    <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>
 </resources>
