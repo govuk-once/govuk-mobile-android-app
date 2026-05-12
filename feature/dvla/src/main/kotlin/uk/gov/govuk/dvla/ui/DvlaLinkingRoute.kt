@@ -30,6 +30,7 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.component.error.ErrorConstants
 import uk.gov.govuk.design.ui.component.error.ErrorPage
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
@@ -173,20 +174,27 @@ private fun ErrorOtherScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val primaryText = stringResource(R.string.link_dvla_problem_action_button)
+    val secondaryText = stringResource(uk.gov.govuk.design.R.string.go_to_the_gov_uk_website)
     ErrorPage(
         headerText = stringResource(R.string.link_dvla_problem_title),
         subText = stringResource(R.string.link_dvla_problem_description),
         footer = {
             FixedDoubleButtonGroup(
-                primaryText = stringResource(R.string.link_dvla_problem_action_button),
-                onPrimary = { onWebFlowClosed() },
-                secondaryText = stringResource(uk.gov.govuk.design.R.string.go_to_the_gov_uk_website),
-                onSecondary = {
-                    Intent(Intent.ACTION_VIEW).let { intent ->
-                        intent.data = ErrorConstants.GOV_UK_URL.toUri()
-                        context.startActivity(intent)
-                    }
-                }
+                primaryButton = Button(
+                    text = primaryText,
+                    onClick = { onWebFlowClosed() }
+                ),
+                secondaryButton = Button(
+                    text = secondaryText,
+                    onClick = {
+                        Intent(Intent.ACTION_VIEW).let { intent ->
+                            intent.data = ErrorConstants.GOV_UK_URL.toUri()
+                            context.startActivity(intent)
+                        }
+                    },
+                    isExternal = true
+                )
             )
         },
         modifier.safeDrawingPadding()

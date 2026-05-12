@@ -35,6 +35,7 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.govuk.app.local.LocalSelectViewModel
 import uk.govuk.app.local.R
@@ -145,12 +146,16 @@ private fun BottomNavBar(
         val selectByAddressButtonText = stringResource(R.string.local_select_by_address)
 
         FixedDoubleButtonGroup(
-            primaryText = confirmButtonText,
-            onPrimary = { onSlugSelect(confirmButtonText, selectedSlug) },
-            secondaryText = selectByAddressButtonText,
-            onSecondary = { onSelectByAddress(selectByAddressButtonText) },
-            modifier = modifier,
-            primaryEnabled = selectedSlug.isNotEmpty()
+            primaryButton = Button(
+                text = confirmButtonText,
+                onClick = { onSlugSelect(confirmButtonText, selectedSlug) },
+                isEnabled = selectedSlug.isNotEmpty()
+            ),
+            secondaryButton = Button(
+                text = selectByAddressButtonText,
+                onClick = { onSelectByAddress(selectByAddressButtonText) }
+            ),
+            modifier = modifier
         )
     }
 }
@@ -174,7 +179,8 @@ private fun RadioButtonGroup(
                         selected = (localAuthority.slug == selectedOption),
                         onClick = {
                             onSlugChange(localAuthority.slug)
-                            onOptionSelected(localAuthority.slug) },
+                            onOptionSelected(localAuthority.slug)
+                        },
                         role = Role.RadioButton
                     ),
                 verticalAlignment = Alignment.CenterVertically,

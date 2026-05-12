@@ -12,12 +12,11 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowSizeClass
-import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST
 import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.model.SINGLE_COLUMN_THRESHOLD_DP
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -67,27 +66,17 @@ fun FixedSecondaryButton(
 
 @Composable
 fun FixedDoubleButtonGroup(
-    primaryText: String,
-    onPrimary: () -> Unit,
-    secondaryText: String,
-    onSecondary: () -> Unit,
+    primaryButton: Button,
+    secondaryButton: Button,
     modifier: Modifier = Modifier,
-    primaryDestructive: Boolean = false,
-    primaryEnabled: Boolean = true,
-    secondaryEnabled: Boolean = true,
     isWindowHeightCompact: Boolean = isWindowHeightCompact()
 ) {
     Column(modifier.fillMaxWidth()) {
         FixedContainerDivider()
         MediumVerticalSpacer()
         DoubleButtonGroup(
-            primaryText = primaryText,
-            onPrimary = onPrimary,
-            secondaryText = secondaryText,
-            onSecondary = onSecondary,
-            primaryDestructive = primaryDestructive,
-            primaryEnabled = primaryEnabled,
-            secondaryEnabled = secondaryEnabled,
+            primaryButton = primaryButton,
+            secondaryButton = secondaryButton,
             isWindowHeightCompact = isWindowHeightCompact
         )
         ExtraLargeVerticalSpacer()
@@ -96,37 +85,22 @@ fun FixedDoubleButtonGroup(
 
 @Composable
 fun DoubleButtonGroup(
-    primaryText: String,
-    onPrimary: () -> Unit,
-    secondaryText: String,
-    onSecondary: () -> Unit,
+    primaryButton: Button,
+    secondaryButton: Button,
     modifier: Modifier = Modifier,
-    primaryDestructive: Boolean = false,
-    primaryEnabled: Boolean = true,
-    secondaryEnabled: Boolean = true,
     isWindowHeightCompact: Boolean = isWindowHeightCompact()
 ) {
     if (isWindowHeightCompact) {
         HorizontalButtonGroup(
-            primaryText = primaryText,
-            onPrimary = onPrimary,
-            secondaryText = secondaryText,
-            onSecondary = onSecondary,
+            primaryButton = primaryButton,
+            secondaryButton = secondaryButton,
             modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium),
-            primaryDestructive = primaryDestructive,
-            primaryEnabled = primaryEnabled,
-            secondaryEnabled = secondaryEnabled
         )
     } else {
         VerticalButtonGroup(
-            primaryText = primaryText,
-            onPrimary = onPrimary,
-            secondaryText = secondaryText,
-            onSecondary = onSecondary,
+            primaryButton = primaryButton,
+            secondaryButton = secondaryButton,
             modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium),
-            primaryDestructive = primaryDestructive,
-            primaryEnabled = primaryEnabled,
-            secondaryEnabled = secondaryEnabled
         )
     }
 }
@@ -139,77 +113,67 @@ private fun isWindowHeightCompact() : Boolean {
 
 @Composable
 private fun VerticalButtonGroup(
-    primaryText: String,
-    onPrimary: () -> Unit,
-    secondaryText: String,
-    onSecondary: () -> Unit,
-    modifier: Modifier = Modifier,
-    primaryDestructive: Boolean = false,
-    primaryEnabled: Boolean = true,
-    secondaryEnabled: Boolean = true,
+    primaryButton: Button,
+    secondaryButton: Button,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        if (primaryDestructive) {
+        if (primaryButton.isDestructive) {
             DestructiveButton(
-                text = primaryText,
-                onClick = onPrimary,
+                text = primaryButton.text,
+                onClick = primaryButton.onClick,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = primaryEnabled
+                enabled = primaryButton.isEnabled
             )
         } else {
             PrimaryButton(
-                text = primaryText,
-                onClick = onPrimary,
+                text = primaryButton.text,
+                onClick = primaryButton.onClick,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = primaryEnabled
+                enabled = primaryButton.isEnabled
             )
         }
         MediumVerticalSpacer()
         SecondaryButton(
-            text = secondaryText,
-            onClick = onSecondary,
+            text = secondaryButton.text,
+            onClick = secondaryButton.onClick,
             modifier = Modifier.fillMaxWidth(),
-            enabled = secondaryEnabled,
-            externalLink = secondaryText == stringResource(R.string.go_to_the_gov_uk_website)
+            enabled = secondaryButton.isEnabled,
+            externalLink = secondaryButton.isExternal
         )
     }
 }
 
 @Composable
 private fun HorizontalButtonGroup(
-    primaryText: String,
-    onPrimary: () -> Unit,
-    secondaryText: String,
-    onSecondary: () -> Unit,
-    modifier: Modifier = Modifier,
-    primaryDestructive: Boolean = false,
-    primaryEnabled: Boolean = true,
-    secondaryEnabled: Boolean = true,
+    primaryButton: Button,
+    secondaryButton: Button,
+    modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        if (primaryDestructive) {
+        if (primaryButton.isDestructive) {
             DestructiveButton(
-                text = primaryText,
-                onClick = onPrimary,
+                text = primaryButton.text,
+                onClick = primaryButton.onClick,
                 modifier = Modifier.weight(0.5f),
-                enabled = primaryEnabled
+                enabled = primaryButton.isEnabled
             )
         } else {
             PrimaryButton(
-                text = primaryText,
-                onClick = onPrimary,
+                text = primaryButton.text,
+                onClick = primaryButton.onClick,
                 modifier = Modifier.weight(0.5f),
-                enabled = primaryEnabled
+                enabled = primaryButton.isEnabled
             )
         }
         MediumHorizontalSpacer()
         SecondaryButton(
-            text = secondaryText,
-            onClick = onSecondary,
+            text = secondaryButton.text,
+            onClick = secondaryButton.onClick,
             modifier = Modifier.weight(0.5f),
-            enabled = secondaryEnabled
+            enabled = secondaryButton.isEnabled
         )
     }
 }
@@ -349,10 +313,8 @@ private fun VerticalButtonGroupPreview()
 {
     GovUkTheme {
         FixedDoubleButtonGroup(
-            primaryText = "Primary",
-            onPrimary = {},
-            secondaryText = "Secondary",
-            onSecondary = {},
+            primaryButton = Button("Primary", {}),
+            secondaryButton = Button("Secondary", {}),
             isWindowHeightCompact = false
         )
     }
@@ -364,10 +326,8 @@ private fun HorizontalButtonGroupPreview()
 {
     GovUkTheme {
         FixedDoubleButtonGroup(
-            primaryText = "Primary",
-            onPrimary = {},
-            secondaryText = "Secondary",
-            onSecondary = {},
+            primaryButton = Button("Primary", {}),
+            secondaryButton = Button("Secondary", {}),
             isWindowHeightCompact = true
         )
     }
@@ -377,13 +337,11 @@ private fun HorizontalButtonGroupPreview()
 @Composable
 private fun VerticalDestructiveButtonGroupPreview()
 {
+    val primaryButton = Button("Primary", {}, true)
     GovUkTheme {
         FixedDoubleButtonGroup(
-            primaryText = "Primary",
-            onPrimary = {},
-            secondaryText = "Secondary",
-            onSecondary = {},
-            primaryDestructive = true,
+            primaryButton = primaryButton,
+            secondaryButton = Button("Secondary", {}),
             isWindowHeightCompact = false
         )
     }
@@ -393,13 +351,11 @@ private fun VerticalDestructiveButtonGroupPreview()
 @Composable
 private fun HorizontalDestructiveButtonGroupPreview()
 {
+    val primaryButton = Button("Primary", {}, true)
     GovUkTheme {
         FixedDoubleButtonGroup(
-            primaryText = "Primary",
-            onPrimary = {},
-            secondaryText = "Secondary",
-            onSecondary = {},
-            primaryDestructive = true,
+            primaryButton = primaryButton,
+            secondaryButton = Button("Secondary", {}),
             isWindowHeightCompact = true
         )
     }
