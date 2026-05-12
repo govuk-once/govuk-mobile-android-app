@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -173,9 +172,8 @@ private fun ErrorOtherScreen(
     onLaunchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val primaryText = stringResource(R.string.link_dvla_problem_action_button)
-    val secondaryText = stringResource(uk.gov.govuk.design.R.string.go_to_the_gov_uk_website)
+    val primaryText = stringResource(R.string.link_dvla_problem_primary_button)
+    val secondaryText = stringResource(R.string.link_dvla_problem_secondary_button)
     ErrorPage(
         headerText = stringResource(R.string.link_dvla_problem_title),
         subText = stringResource(R.string.link_dvla_problem_description),
