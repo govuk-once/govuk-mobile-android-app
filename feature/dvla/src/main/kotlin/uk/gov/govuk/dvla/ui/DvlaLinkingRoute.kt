@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.ui
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
@@ -112,6 +110,7 @@ internal fun DvlaLinkingRoute(
         is DvlaViewModel.UiState.Error.Other -> {
             ErrorOtherScreen(
                 onWebFlowClosed = onWebFlowClosed,
+                onLaunchBrowser = onLaunchBrowser,
                 modifier = modifier
             )
         }
@@ -171,6 +170,7 @@ private fun DvlaOfflineScreen(
 @Composable
 private fun ErrorOtherScreen(
     onWebFlowClosed: () -> Unit,
+    onLaunchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -188,15 +188,12 @@ private fun ErrorOtherScreen(
                 secondaryButton = Button(
                     text = secondaryText,
                     onClick = {
-                        Intent(Intent.ACTION_VIEW).let { intent ->
-                            intent.data = ErrorConstants.GOV_UK_URL.toUri()
-                            context.startActivity(intent)
-                        }
+                        onLaunchBrowser(ErrorConstants.GOV_UK_URL)
                     },
                     isExternal = true
                 )
             )
         },
-        modifier.safeDrawingPadding()
+        modifier = modifier.safeDrawingPadding()
     )
 }
