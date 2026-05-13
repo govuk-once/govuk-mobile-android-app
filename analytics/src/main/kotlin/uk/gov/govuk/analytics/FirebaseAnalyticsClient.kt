@@ -1,9 +1,12 @@
 package uk.gov.govuk.analytics
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.qualtrics.digital.Qualtrics
+import dagger.hilt.android.qualifiers.ApplicationContext
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import java.io.Serializable
 import javax.inject.Inject
@@ -11,8 +14,10 @@ import javax.inject.Singleton
 
 @Singleton
 class FirebaseAnalyticsClient @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val firebaseCrashlytics: FirebaseCrashlytics
+    private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val qualtrics: Qualtrics
 ) {
 
     fun enable() {
@@ -27,6 +32,24 @@ class FirebaseAnalyticsClient @Inject constructor(
 
     fun logEvent(name: String, parameters: Map<String, Any>) {
         firebaseAnalytics.logEvent(name, mapToBundle(parameters))
+
+        parameters.forEach { (key, value) ->
+            qualtrics.properties.setString(key, value.toString())
+        }
+
+        val qualtricsEventName = if (name == FirebaseAnalytics.Event.SCREEN_VIEW) {
+            parameters[FirebaseAnalytics.Param.SCREEN_NAME] as? String ?: name
+        } else {
+            name
+        }
+
+        qualtrics.registerViewVisit(qualtricsEventName)
+
+        qualtrics.evaluateProject { result ->
+            if (result.values.any { it.passed() }) {
+                qualtrics.display(context)
+            }
+        }
     }
 
     fun logEcommerceEvent(
@@ -62,10 +85,13 @@ class FirebaseAnalyticsClient @Inject constructor(
         bundle.putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, itemsArrayList)
 
         firebaseAnalytics.logEvent(event, bundle)
+        qualtrics.registerViewVisit(event)
+        // TODO: Evaluate project here!
     }
 
     fun setUserProperty(name: String, value: String) {
         firebaseAnalytics.setUserProperty(name, value)
+        qualtrics.properties.setString(name, value)
     }
 
     fun logException(exception: Exception) {

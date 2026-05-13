@@ -12,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
+import com.qualtrics.digital.Qualtrics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +32,10 @@ internal class AnalyticsModule {
     @Provides
     @Singleton
     fun provideCrashlytics(): FirebaseCrashlytics = Firebase.crashlytics
+
+    @Provides
+    @Singleton
+    fun provideQualtrics(): Qualtrics = Qualtrics.instance()
 
     @Singleton
     @Provides
