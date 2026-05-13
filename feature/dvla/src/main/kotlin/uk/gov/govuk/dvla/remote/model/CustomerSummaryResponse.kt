@@ -2,6 +2,8 @@ package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
 import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
+import uk.gov.govuk.dvla.remote.model.common.MotStatus
+import uk.gov.govuk.dvla.remote.model.common.TaxStatus
 
 data class CustomerSummaryResponse(
     @SerializedName("linkingId") val linkingId: String,
@@ -186,10 +188,10 @@ data class Vehicle(
     @SerializedName("dateOfLiability") val dateOfLiability: String?,
     @SerializedName("sornStart") val sornStart: String?,
     @SerializedName("taxClass") val taxClass: String,
-    @SerializedName("taxStatus") val taxStatus: String?,
+    @SerializedName("taxStatus") val taxStatus: TaxStatus?,
     @SerializedName("artEndDate") val artEndDate: String?,
     @SerializedName("motExpiryDate") val motExpiryDate: String?,
-    @SerializedName("motStatus") val motStatus: String,
+    @SerializedName("motStatus") val motStatus: MotStatus,
     @SerializedName("colour") val colour: String,
     @SerializedName("secondaryColour") val secondaryColour: String?,
     @SerializedName("fuelType") val fuelType: String,

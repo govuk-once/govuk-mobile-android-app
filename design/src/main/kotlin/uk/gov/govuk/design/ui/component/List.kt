@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -340,7 +342,6 @@ fun StatusListItem(
     description: String,
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
-    iconContentDescription: String? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false
 ) {
@@ -353,7 +354,10 @@ fun StatusListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -369,8 +373,8 @@ fun StatusListItem(
 
             Icon(
                 painter = painterResource(id = icon),
-                contentDescription = iconContentDescription,
-                tint = Color.Unspecified
+                contentDescription = null,
+                tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
             )
         }
     }
@@ -476,7 +480,7 @@ private fun ExternalLinkListItemButtonPreview() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun StatusListItemPreview() {
     GovUkTheme {
@@ -490,16 +494,3 @@ private fun StatusListItemPreview() {
     }
 }
 
-@Preview
-@Composable
-private fun StatusListItemMOTPreview() {
-    GovUkTheme {
-        StatusListItem(
-            title = "MOT",
-            description = "Valid until 24 June 2026",
-            icon = R.drawable.ic_check_round,
-            isFirst = false,
-            isLast = false
-        )
-    }
-}

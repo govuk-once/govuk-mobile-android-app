@@ -8,9 +8,9 @@ data class VehicleDetails(
     val make: String,
     val colour: String,
     val yearOfManufacture: Int?,
-    val taxStatus: String,
+    val taxStatus: TaxStatus,
     val taxDueDate: String?,
-    val motStatus: String,
+    val motStatus: MotStatus,
     val motExpiryDate: String?,
     val fuelType: String,
     val engineCapacity: Int?,
@@ -22,11 +22,12 @@ fun VehicleEnquiryResponse.toDomainModel() = VehicleDetails(
     make = this.make ?: "",
     colour = this.colour ?: "",
     yearOfManufacture = this.yearOfManufacture,
-    taxStatus = this.taxStatus?.name ?: "",
+    taxStatus = this.taxStatus?.toDomain() ?: TaxStatus.UNKNOWN,
     taxDueDate = this.taxDueDate,
-    motStatus = this.motStatus?.name ?: "",
+    motStatus = this.motStatus?.toDomain() ?: MotStatus.UNKNOWN,
     motExpiryDate = this.motExpiryDate,
     fuelType = this.fuelType ?: "",
     engineCapacity = this.engineCapacity,
     co2Emissions = this.co2Emissions
 )
+

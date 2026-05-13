@@ -9,12 +9,14 @@ data class CustomerSummaryDetails(
     val lastName: String,
     val dateOfBirth: String,
     val emailAddress: String?,
-    val recordStatus: String
+    val recordStatus: String,
+    val vehicles: List<CustomerVehicle>
 )
 
 fun CustomerSummaryResponse.toDomainModel(): CustomerSummaryDetails {
     val customer = this.customerResponse.customer
     val individualDetails = customer.individualDetails
+    val vehicles = this.vehicleResponse?.map { it.toCustomerVehicle() } ?: emptyList()
 
     return CustomerSummaryDetails(
         customerId = customer.customerId,
@@ -22,6 +24,7 @@ fun CustomerSummaryResponse.toDomainModel(): CustomerSummaryDetails {
         dateOfBirth = individualDetails.dateOfBirth,
         recordStatus = customer.recordStatus,
         firstName = individualDetails.firstNames ?: "",
-        emailAddress = customer.emailAddress
+        emailAddress = customer.emailAddress,
+        vehicles = vehicles
     )
 }

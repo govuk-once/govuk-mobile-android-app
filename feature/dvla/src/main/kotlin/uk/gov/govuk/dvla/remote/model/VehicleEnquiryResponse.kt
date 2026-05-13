@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
+import uk.gov.govuk.dvla.remote.model.common.MotStatus
+import uk.gov.govuk.dvla.remote.model.common.TaxStatus
 
 data class VehicleEnquiryResponse(
     @SerializedName("registrationNumber")
@@ -49,33 +51,6 @@ data class VehicleEnquiryResponse(
     val automatedVehicle: Boolean? = null
 )
 
-enum class TaxStatus {
-    @SerializedName("Not Taxed for on Road Use")
-    NOT_TAXED_FOR_ON_ROAD_USE,
-
-    @SerializedName("SORN")
-    SORN,
-
-    @SerializedName("Taxed")
-    TAXED,
-
-    @SerializedName("Untaxed")
-    UNTAXED
-}
-
-enum class MotStatus {
-    @SerializedName("No details held by DVLA")
-    NO_DETAILS_HELD,
-
-    @SerializedName("No results returned")
-    NO_RESULTS_RETURNED,
-
-    @SerializedName("Not valid")
-    NOT_VALID,
-
-    @SerializedName("Valid")
-    VALID
-}
 data class ErrorResponse(
     @SerializedName("errors")
     val errors: List<ErrorDetail>? = null
