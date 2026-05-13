@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,9 @@ import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.domain.DriverSummaryDetails
 import uk.gov.govuk.dvla.domain.LicenceDetails
+import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.CheckCodeStatus
+import uk.gov.govuk.dvla.domain.CheckCodeValidity
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LicenceSummaryViewModelTest {
@@ -109,5 +113,54 @@ class LicenceSummaryViewModelTest {
         advanceUntilIdle()
 
         assertEquals(LicenceSummaryState.Hidden, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given account linked, when viewModel initialised, then execute full create list cancel share code flow`() = runTest(dispatcher) {
+        val shareCode = CheckCodeDetails(
+            validity = CheckCodeValidity.VALID,
+            tokenId = "token_id",
+            token = "token",
+            drivingLicenceNumber = "DECER607085K99AE",
+            driverId = "driver-id",
+            documentReference = "doc_ref",
+            createdAt = "2023-01-01",
+            expiresAt = "2023-01-22",
+            activationStatus = CheckCodeStatus.ACTIVE,
+            redeemedAt = null,
+            cancelledAt = null
+        )
+
+        every { repo.isLinked } returns MutableStateFlow(true)
+        coEvery { repo.getLicenceDetails() } returns Result.Success(licenceDetails)
+        coEvery { repo.getCheckCodes() } returns Result.Success(emptyList())
+        coEvery { repo.createCheckCode() } returns Result.Success(shareCode)
+        coEvery { repo.cancelCheckCode("token_id") } returns Result.Success(shareCode)
+
+        val viewModel = LicenceSummaryViewModel(repo)
+        advanceUntilIdle()
+
+        coVerifyOrder {
+            repo.getCheckCodes()
+            repo.createCheckCode()
+            repo.getCheckCodes()
+            repo.cancelCheckCode("token_id")
+            repo.getCheckCodes()
+        }
+    }
+
+    @Test
+    fun `Given create share code fails, when viewModel initialised, then stop share code flow and do not list or cancel`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(true)
+        coEvery { repo.getLicenceDetails() } returns Result.Success(licenceDetails)
+        coEvery { repo.getCheckCodes() } returns Result.Success(emptyList())
+        coEvery { repo.createCheckCode() } returns Result.Error()
+
+        val viewModel = LicenceSummaryViewModel(repo)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { repo.getCheckCodes() }
+        coVerify(exactly = 1) { repo.createCheckCode() }
+        coVerify(exactly = 0) { repo.cancelCheckCode(any()) }
     }
 }
