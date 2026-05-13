@@ -43,6 +43,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
@@ -59,7 +60,6 @@ import uk.gov.govuk.design.ui.model.hasDecoratedLink
 import uk.gov.govuk.design.ui.model.linkTitleColour
 import uk.gov.govuk.design.ui.model.textColour
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 @Composable
 fun GovUkOutlinedCard(
@@ -671,7 +671,7 @@ fun LoaderCard(
     )
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeNotableDeathBannerCardPreview() {
     GovUkTheme {
@@ -686,7 +686,7 @@ private fun HomeNotableDeathBannerCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeNationalEmergencyBannerCardPreview() {
     GovUkTheme {
@@ -701,7 +701,7 @@ private fun HomeNationalEmergencyBannerCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeLocalEmergencyBannerCardPreview() {
     GovUkTheme {
@@ -716,7 +716,7 @@ private fun HomeLocalEmergencyBannerCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeInformationEmergencyBannerCardPreview() {
     GovUkTheme {
@@ -854,7 +854,7 @@ private fun DrillInCardDescriptionPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun AccountConnectionCardPreview() {
     GovUkTheme {
@@ -866,7 +866,7 @@ private fun AccountConnectionCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun LoaderCardPreview() {
     GovUkTheme {
