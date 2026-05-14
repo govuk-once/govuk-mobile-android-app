@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.androidx.icons)
     implementation(libs.hilt.android)
 
+    implementation(libs.multiplatform.markdown.renderer)
+    implementation(libs.multiplatform.markdown.renderer.m3)
+
     implementation(libs.androidx.compose.animation)
 
     ksp(libs.hilt.compiler)

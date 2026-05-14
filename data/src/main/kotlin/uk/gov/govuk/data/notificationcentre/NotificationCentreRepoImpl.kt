@@ -52,6 +52,10 @@ class NotificationCentreRepoImpl @Inject constructor(
 
     override suspend fun getSingleNotification(notificationId: String): Result<Notification?> {
         return try {
+
+            notifications?.value?.first { it.id == notificationId }?.apply {
+                return Success(this)
+            }
             val response = withAuthRetry( {notificationCentreApi.getSingleNotification(notificationId) }, authRepo)
             val body = response.body()
             return if (response.isSuccessful && body != null) {
@@ -101,7 +105,7 @@ class NotificationCentreRepoImpl @Inject constructor(
     override suspend fun deleteNotification(notificationId: String): Result<Unit> {
         notifications?.let { nots ->
             val updatedNotifications = nots.value.filter { it.id != notificationId }
-            notifications = notifications?.copy(value = updatedNotifications)
+            notifications = nots.copy(value = updatedNotifications)
         }
 
         return safeAuthApiCall(apiCall = {

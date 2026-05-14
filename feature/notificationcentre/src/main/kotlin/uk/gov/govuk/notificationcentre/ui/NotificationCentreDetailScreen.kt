@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ErrorOutline
@@ -48,12 +50,16 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownColor
+import com.mikepenz.markdown.m3.markdownTypography
 import uk.gov.govuk.data.notificationcentre.model.Notification
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
@@ -362,27 +368,128 @@ private fun NotificationCentreDetailScreenLoaded(
             .clip(RoundedCornerShape(10.dp))
             .background(GovUkTheme.colourScheme.surfaces.cardEmergencyInformation)
     ) {
-        Column(modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium, vertical = GovUkTheme.spacing.medium)
+        Column(modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium, vertical = GovUkTheme.spacing.medium).verticalScroll(
+            rememberScrollState()
+        )
         ) {
-            Title1BoldLabel(
-                notification.messageTitle ?: notification.title,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier.padding(bottom = 16.dp)
+//            Title1BoldLabel(
+//                notification.messageTitle ?: notification.title,
+//                color = GovUkTheme.colourScheme.textAndIcons.primary,
+//                modifier = Modifier.padding(bottom = 16.dp)
+//            )
+//
+//            CalloutRegularLabel(
+//                stringResource(R.string.sent_date_format, formatDate(notification.date)),
+//                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+//                modifier = Modifier.padding(bottom = 32.dp)
+//            )
+
+            Markdown(
+                """
+                   # Heading 1
+
+                   ## Heading 2
+
+                   ### Heading 3
+
+                   This is a paragraph of body text. It can span multiple sentences [...] new lines as needed.
+
+                   This is **bold text** in a sentence. This is *italic text* in a sentence. This is **bold** and *italic* in the same paragraph.
+
+                   Here is an unordered list:
+
+                   - First item
+                   - Second item
+                   - Third item
+
+                   Here is an ordered list:
+
+                   1. First item
+                   2. Second item
+                   3. Third item
+
+                   Here is a [link to GOV.UK](https://www.gov.uk) in a sentence.
+                   """.trimIndent(),
+                typography =  govUkMarkdownTypography()
             )
 
-            CalloutRegularLabel(
-                stringResource(R.string.sent_date_format, formatDate(notification.date)),
-                color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                modifier = Modifier.padding(bottom = 32.dp)
-
-            )
-
-            LinkifyText(notification.messageBody ?: notification.title, onClick = {
-                launchBrowser(it)
-            })
+//            LinkifyText(notification.messageBody ?: notification.body, onClick = {
+//                launchBrowser(it)
+//            })
         }
     }
 }
+
+@Composable
+private fun govUkMarkdownTypography() = markdownTypography(
+    // Body text — Black in light, White in dark
+    text = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // H1 — Large Title: Transport Bold, 34sp / 41sp line height
+    h1 = GovUkTheme.typography.titleLargeBold.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // H2 — Title 1: Transport Bold, 28sp / 34sp line height
+    h2 = GovUkTheme.typography.title1Bold.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // H3 — Title 2: Transport Bold, 22sp / 28sp line height
+    h3 = GovUkTheme.typography.title2Bold.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // H4 — Title 3: Transport Bold, 20sp / 24sp line height
+    h4 = GovUkTheme.typography.title3Bold.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // H5 — Subheadline Bold, 15sp / 20sp line height
+    h5 = GovUkTheme.typography.subheadlineBold.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // H6 — Caption Bold, 12sp / 17sp line height
+    h6 = GovUkTheme.typography.captionBold.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // Body paragraph — Transport Light, 17sp / 22sp line height
+    paragraph = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // Ordered and unordered lists
+    ordered = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+    bullet = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+    list = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // Code — Footnote size (14sp), monospace override applied by the library
+    code = GovUkTheme.typography.footnoteRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary
+    ),
+
+    // Blockquote — body size, italic
+    quote = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        fontStyle = FontStyle.Italic
+    ),
+
+    // Links — BluePrimary (#1D70B8) in light, White in dark, with underline
+    link = GovUkTheme.typography.bodyRegular.copy(
+        color = GovUkTheme.colourScheme.textAndIcons.linkPrimary,
+        textDecoration = TextDecoration.Underline
+    ),
+)
 
 @Composable
 fun LinkifyText(text: String, onClick: (String) -> Unit) {
