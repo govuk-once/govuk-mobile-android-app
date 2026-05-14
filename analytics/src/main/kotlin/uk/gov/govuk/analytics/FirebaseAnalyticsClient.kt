@@ -43,13 +43,7 @@ class FirebaseAnalyticsClient @Inject constructor(
             name
         }
 
-        qualtrics.registerViewVisit(qualtricsEventName)
-
-        qualtrics.evaluateProject { result ->
-            if (result.values.any { it.passed() }) {
-                qualtrics.display(context)
-            }
-        }
+        processQualtricsDisplay(qualtricsEventName)
     }
 
     fun logEcommerceEvent(
@@ -85,8 +79,32 @@ class FirebaseAnalyticsClient @Inject constructor(
         bundle.putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, itemsArrayList)
 
         firebaseAnalytics.logEvent(event, bundle)
+
+        qualtrics.properties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, ecommerceEvent.itemListId)
+        qualtrics.properties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, ecommerceEvent.itemListName)
+        qualtrics.properties.setString("total_item_count", ecommerceEvent.totalItemCount.toString())
+
+        selectedItemIndex?.let { index ->
+            val item = ecommerceEvent.items.getOrNull(index)
+            item?.let {
+                qualtrics.properties.setString(FirebaseAnalytics.Param.ITEM_NAME, it.itemName)
+                it.itemId?.let { id ->
+                    qualtrics.properties.setString(FirebaseAnalytics.Param.ITEM_ID, id)
+                }
+            }
+        }
+
+        processQualtricsDisplay(event)
+    }
+
+    private fun processQualtricsDisplay(event: String) {
         qualtrics.registerViewVisit(event)
-        // TODO: Evaluate project here!
+
+        qualtrics.evaluateProject { results ->
+            if (results.values.any { it.passed() }) {
+                qualtrics.display(context)
+            }
+        }
     }
 
     fun setUserProperty(name: String, value: String) {
