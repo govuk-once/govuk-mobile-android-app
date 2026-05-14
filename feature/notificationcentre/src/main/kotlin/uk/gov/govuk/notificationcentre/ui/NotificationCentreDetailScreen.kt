@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -73,7 +74,10 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailViewModel
 import uk.gov.govuk.notificationcentre.R
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -372,44 +376,20 @@ private fun NotificationCentreDetailScreenLoaded(
             rememberScrollState()
         )
         ) {
-//            Title1BoldLabel(
-//                notification.messageTitle ?: notification.title,
-//                color = GovUkTheme.colourScheme.textAndIcons.primary,
-//                modifier = Modifier.padding(bottom = 16.dp)
-//            )
-//
-//            CalloutRegularLabel(
-//                stringResource(R.string.sent_date_format, formatDate(notification.date)),
-//                color = GovUkTheme.colourScheme.textAndIcons.secondary,
-//                modifier = Modifier.padding(bottom = 32.dp)
-//            )
+            Title1BoldLabel(
+                notification.messageTitle ?: notification.title,
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            CalloutRegularLabel(
+                stringResource(R.string.sent_date_format, formatDate(notification.date)),
+                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
 
             Markdown(
-                """
-                   # Heading 1
-
-                   ## Heading 2
-
-                   ### Heading 3
-
-                   This is a paragraph of body text. It can span multiple sentences [...] new lines as needed.
-
-                   This is **bold text** in a sentence. This is *italic text* in a sentence. This is **bold** and *italic* in the same paragraph.
-
-                   Here is an unordered list:
-
-                   - First item
-                   - Second item
-                   - Third item
-
-                   Here is an ordered list:
-
-                   1. First item
-                   2. Second item
-                   3. Third item
-
-                   Here is a [link to GOV.UK](https://www.gov.uk) in a sentence.
-                   """.trimIndent(),
+                notification.messageBody ?: notification.body,
                 typography =  govUkMarkdownTypography()
             )
 
@@ -576,8 +556,11 @@ private fun ConfirmationSheet(onConfirm: () -> Unit, onCancel: () -> Unit) {
 
 
 
-private fun formatDate(date: LocalDateTime): String =
-    DateTimeFormatter.ofPattern("d MMM yyyy, h:mma").format(date)
+private fun formatDate(date: Instant): String =
+    DateTimeFormatter
+        .ofPattern("d MMM yyyy, h:mma")
+        .withZone(ZoneId.systemDefault())
+        .format(date)
 
 @Preview(showBackground = true)
 @Composable

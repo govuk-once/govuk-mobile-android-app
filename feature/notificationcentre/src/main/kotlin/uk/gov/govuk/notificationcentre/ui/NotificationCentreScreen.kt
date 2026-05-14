@@ -59,7 +59,10 @@ import uk.gov.govuk.data.notificationcentre.model.Notification
 import uk.gov.govuk.notificationcentre.NotificationCentreUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreViewModel
 import uk.gov.govuk.notificationcentre.R
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -356,8 +359,11 @@ fun LineLimitedLabel(
     )
 }
 
-private fun formatDate(date: LocalDateTime): String =
-    DateTimeFormatter.ofPattern("d MMM yyyy, h:mma").format(date)
+private fun formatDate(date: Instant): String =
+    DateTimeFormatter
+        .ofPattern("d MMM yyyy, h:mma")
+        .withZone(ZoneId.systemDefault())
+        .format(date)
 
 @Preview(showBackground = true)
 @Composable

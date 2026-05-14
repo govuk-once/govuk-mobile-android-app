@@ -1,7 +1,9 @@
 package uk.gov.govuk.data.notificationcentre.model
 
 import com.google.gson.annotations.SerializedName
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 data class Notification(
@@ -20,8 +22,8 @@ data class Notification(
     @SerializedName("MessageBody")
     val messageBody: String? = null) {
 
-    val date: LocalDateTime
-        get() = LocalDateTime.parse(rawDate, DateTimeFormatter.ISO_DATE_TIME)
+    val date: Instant
+        get() = Instant.parse(rawDate)
 
     val isUnread: Boolean
         get() = status != "READ"
