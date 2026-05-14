@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -168,7 +167,7 @@ internal class DvlaViewModel @Inject constructor(
 
         // TODO demonstrating for POC, will be removed
         try {
-            val response = dvlaRepo.getVehicleDetails(sanitisedInput)
+            val response = dvlaRepo.lookupVehicle(sanitisedInput)
             println("DVLA VES success: $response")
         } catch (e: Exception) {
             println("DVLA VES error: ${e.message}")

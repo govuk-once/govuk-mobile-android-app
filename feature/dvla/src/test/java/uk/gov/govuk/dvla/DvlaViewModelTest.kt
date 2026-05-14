@@ -9,8 +9,6 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -279,12 +277,12 @@ class DvlaViewModelTest {
         val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
 
         every { repo.isLinked } returns MutableStateFlow(false)
-        coEvery { repo.getVehicleDetails(any()) } returns Result.Success(vehicleDetails)
+        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vehicleDetails)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.getVehicleDetails("AA19AAA") }
+        coVerify(exactly = 1) { repo.lookupVehicle("AA19AAA") }
     }
 
     @Test
@@ -292,7 +290,7 @@ class DvlaViewModelTest {
         val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
 
         every { repo.isLinked } returns MutableStateFlow(false)
-        coEvery { repo.getVehicleDetails(any()) } returns Result.Success(vehicleDetails)
+        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vehicleDetails)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
         advanceUntilIdle()
@@ -301,7 +299,7 @@ class DvlaViewModelTest {
         viewModel.onVehicleSearchSubmitted(input)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.getVehicleDetails("AB12CDE") }
+        coVerify(exactly = 1) { repo.lookupVehicle("AB12CDE") }
     }
 }
 

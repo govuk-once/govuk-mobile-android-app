@@ -176,7 +176,7 @@ data class Vehicle(
     @SerializedName("dateDestroyed") val dateDestroyed: String?,
     @SerializedName("dateExported") val dateExported: String?,
     @SerializedName("dateStolen") val dateStolen: String?,
-    @SerializedName("taxedUntil") val taxedUntil: String?,
+    @SerializedName("taxedUntil") val taxedUntil: String?,  // 2008-12-25
     @SerializedName("registrationDocumentId") val registrationDocumentId: String?,
     @SerializedName("registrationDocumentIssueDate") val registrationDocumentIssueDate: String?,
     @SerializedName("engineCapacity") val engineCapacity: Int?,
@@ -190,7 +190,7 @@ data class Vehicle(
     @SerializedName("taxClass") val taxClass: String,
     @SerializedName("taxStatus") val taxStatus: TaxStatus?,
     @SerializedName("artEndDate") val artEndDate: String?,
-    @SerializedName("motExpiryDate") val motExpiryDate: String?,
+    @SerializedName("motExpiryDate") val motExpiryDate: String?,  // 2008-12-25
     @SerializedName("motStatus") val motStatus: MotStatus,
     @SerializedName("colour") val colour: String,
     @SerializedName("secondaryColour") val secondaryColour: String?,

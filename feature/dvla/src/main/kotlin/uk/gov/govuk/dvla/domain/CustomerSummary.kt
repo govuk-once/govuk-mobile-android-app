@@ -3,7 +3,7 @@ package uk.gov.govuk.dvla.domain
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
 
 // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-data class CustomerSummaryDetails(
+data class CustomerSummary(
     val customerId: String,
     val firstName: String,
     val lastName: String,
@@ -13,12 +13,12 @@ data class CustomerSummaryDetails(
     val vehicles: List<CustomerVehicle>
 )
 
-fun CustomerSummaryResponse.toDomainModel(): CustomerSummaryDetails {
+fun CustomerSummaryResponse.toDomainModel(): CustomerSummary {
     val customer = this.customerResponse.customer
     val individualDetails = customer.individualDetails
     val vehicles = this.vehicleResponse?.map { it.toCustomerVehicle() } ?: emptyList()
 
-    return CustomerSummaryDetails(
+    return CustomerSummary(
         customerId = customer.customerId,
         lastName = individualDetails.lastName,
         dateOfBirth = individualDetails.dateOfBirth,

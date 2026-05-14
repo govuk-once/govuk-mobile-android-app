@@ -18,7 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.domain.DriverSummaryDetails
+import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceDetails
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -35,7 +35,7 @@ class LicenceSummaryViewModelTest {
         status = "Valid"
     )
 
-    private val driverSummaryDetails = DriverSummaryDetails(
+    private val driverSummaryDetails = DriverSummary(
         licenceNumber = "DECER607085K99AE",
         firstName = "KENNETH",
         lastName = "DECERQUEIRA",

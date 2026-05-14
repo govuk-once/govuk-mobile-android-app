@@ -184,23 +184,23 @@ class DvlaRepoTest {
         val reg = "AA19AAA"
         val vehicleResponse = mockk<VehicleEnquiryResponse>(relaxed = true)
 
-        coEvery { api.getVehicleDetails(reg) } returns Response.success(vehicleResponse)
+        coEvery { api.lookupVehicle(reg) } returns Response.success(vehicleResponse)
 
-        val result = repo.getVehicleDetails(reg)
+        val result = repo.lookupVehicle(reg)
 
         assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.getVehicleDetails(reg) }
+        coVerify(exactly = 1) { api.lookupVehicle(reg) }
     }
 
     @Test
     fun `Given vehicle enquiry fails, when getVehicleDetails is called, then return Error`() = runTest {
         val reg = "AA19AAA"
 
-        coEvery { api.getVehicleDetails(reg) } throws Exception("Exception")
+        coEvery { api.lookupVehicle(reg) } throws Exception("Exception")
 
-        val result = repo.getVehicleDetails(reg)
+        val result = repo.lookupVehicle(reg)
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.getVehicleDetails(reg) }
+        coVerify(exactly = 1) { api.lookupVehicle(reg) }
     }
 }

@@ -36,10 +36,10 @@ fun VehicleSummaryCard(
     registration: String,
     make: String,
     model: String,
-    taxStatusText: String,
+    taxStatusText: String, // TODO use new ui models
     motStatusText: String,
     onDetailsClick: () -> Unit,
-    onOverflowClick: () -> Unit,
+    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     GovUkOutlinedCard(
@@ -51,7 +51,7 @@ fun VehicleSummaryCard(
             registration = registration,
             make = make,
             model = model,
-            onOverflowClick = onOverflowClick,
+            onMoreClick = onMoreClick,
             isFirst = true // Rounds top corners, draws bottom divider
         )
 
@@ -108,7 +108,7 @@ fun VehicleHeader(
     registration: String,
     make: String,
     model: String,
-    onOverflowClick: () -> Unit,
+    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFirst: Boolean = true
 ) {
@@ -138,7 +138,7 @@ fun VehicleHeader(
                         .size(48.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(GovUkTheme.colourScheme.surfaces.buttonCompact)
-                        .clickable(onClick = onOverflowClick),
+                        .clickable(onClick = onMoreClick),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -180,7 +180,7 @@ private fun VehicleHeaderPreview() {
             registration = "FH08 PDH",
             make = "Volkswagen",
             model = "ID4",
-            onOverflowClick = {}
+            onMoreClick = {}
         )
     }
 }
@@ -196,7 +196,7 @@ private fun VehicleSummaryCardPreview() {
             taxStatusText = "Valid until 1 February 2027",
             motStatusText = "Valid until 24 April 2026",
             onDetailsClick = {},
-            onOverflowClick = {}
+            onMoreClick = {}
         )
     }
 }
