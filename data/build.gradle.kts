@@ -32,6 +32,7 @@ android {
             buildConfigField("String", "AUTH_BASE_URL", "\"https://govukapp.auth.eu-west-2.amazoncognito.com/oauth2/\"")
             buildConfigField("String", "TOKEN_BASE_URL", "\"https://em5hkfc46k.execute-api.eu-west-2.amazonaws.com/production/oauth2/\"")
             buildConfigField("String", "AUTH_CLIENT_ID", "\"40grlhknon5palderi2j1a1bte\"")
+            buildConfigField("String", "FLEX_BASE_URL", "\"https://production.bl.once.service.gov.uk\"")
         }
     }
 
