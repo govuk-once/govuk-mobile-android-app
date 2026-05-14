@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,45 +31,42 @@ import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable
 fun VehicleSummaryCard(
-    registration: String,
-    make: String,
-    model: String,
-    taxStatusText: String, // TODO use new ui models
-    motStatusText: String,
+    vehicleSummary: VehicleSummaryUiModel,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    GovUkOutlinedCard(
-        modifier = modifier,
-        padding = 0.dp
+    Card(
+        modifier = modifier
     ) {
         // header
         VehicleHeader(
-            registration = registration,
-            make = make,
-            model = model,
+            registration = vehicleSummary.registration,
+            make = vehicleSummary.make,
+            model = vehicleSummary.model,
             onMoreClick = onMoreClick,
-            isFirst = true // Rounds top corners, draws bottom divider
+            isFirst = true
         )
 
         // tax
         StatusListItem(
-            title = "Tax",
-            description = taxStatusText,
-            icon = R.drawable.ic_check_round,
+            title = vehicleSummary.taxStatus.title,
+            description = vehicleSummary.taxStatus.description,
+            icon = vehicleSummary.taxStatus.icon,
             isFirst = false,
             isLast = false
         )
 
         // MOT
         StatusListItem(
-            title = "MOT",
-            description = motStatusText,
-            icon = R.drawable.ic_check_round,
+            title = vehicleSummary.motStatus.title,
+            description = vehicleSummary.motStatus.description,
+            icon = vehicleSummary.motStatus.icon,
             isFirst = false,
             isLast = false
         )
@@ -190,11 +188,21 @@ private fun VehicleHeaderPreview() {
 private fun VehicleSummaryCardPreview() {
     GovUkTheme {
         VehicleSummaryCard(
-            registration = "FH08 PDH",
-            make = "Volkswagen",
-            model = "ID4",
-            taxStatusText = "Valid until 1 February 2027",
-            motStatusText = "Valid until 24 April 2026",
+            vehicleSummary = VehicleSummaryUiModel(
+                registration = "FH08 PDH",
+                make = "Volkswagen",
+                model = "ID4",
+                taxStatus = StatusRowUiModel(
+                    title = "Tax",
+                    description = "Valid until 1 February 2027",
+                    icon = R.drawable.ic_check_round,
+                ),
+                motStatus = StatusRowUiModel(
+                    title = "MOT",
+                    description = "Valid until 24 April 2026",
+                    icon = R.drawable.ic_check_round,
+                )
+            ),
             onDetailsClick = {},
             onMoreClick = {}
         )

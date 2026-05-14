@@ -61,7 +61,7 @@ class LicenceSummaryViewModelTest {
         val viewModel = LicenceSummaryViewModel(repo)
         advanceUntilIdle()
 
-        assertEquals(LicenceSummaryState.Hidden, viewModel.uiState.value)
+        assertEquals(LicenceSummaryUiState.Hidden, viewModel.uiState.value)
         coVerify(exactly = 0) { repo.getLicenceDetails() }
         coVerify(exactly = 0) { repo.getDriverSummary() }
     }
@@ -77,7 +77,7 @@ class LicenceSummaryViewModelTest {
 
         coVerify(exactly = 1) { repo.getLicenceDetails() }
         coVerify(exactly = 1) { repo.getDriverSummary() }
-        assertEquals(LicenceSummaryState.Success(licenceDetails), viewModel.uiState.value)
+        assertEquals(LicenceSummaryUiState.Success(licenceDetails), viewModel.uiState.value)
     }
 
     @Test
@@ -90,7 +90,7 @@ class LicenceSummaryViewModelTest {
 
         coVerify(exactly = 1) { repo.getLicenceDetails() }
         coVerify(exactly = 1) { repo.getDriverSummary() }
-        assertEquals(LicenceSummaryState.Error, viewModel.uiState.value)
+        assertEquals(LicenceSummaryUiState.Error, viewModel.uiState.value)
     }
 
     @Test
@@ -102,12 +102,12 @@ class LicenceSummaryViewModelTest {
         val viewModel = LicenceSummaryViewModel(repo)
         advanceUntilIdle()
 
-        assertEquals(LicenceSummaryState.Success(licenceDetails), viewModel.uiState.value)
+        assertEquals(LicenceSummaryUiState.Success(licenceDetails), viewModel.uiState.value)
 
         // unlinking
         isLinkedFlow.value = false
         advanceUntilIdle()
 
-        assertEquals(LicenceSummaryState.Hidden, viewModel.uiState.value)
+        assertEquals(LicenceSummaryUiState.Hidden, viewModel.uiState.value)
     }
 }

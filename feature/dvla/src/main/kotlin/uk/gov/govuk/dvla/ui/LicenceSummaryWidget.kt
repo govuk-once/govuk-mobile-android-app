@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.LicenceSummaryState
+import uk.gov.govuk.dvla.LicenceSummaryUiState
 import uk.gov.govuk.dvla.LicenceSummaryViewModel
 
 @Composable
@@ -22,8 +22,8 @@ fun LicenceSummaryWidget(
     val state by viewModel.uiState.collectAsState()
 
     when (val currentState = state) {
-        is LicenceSummaryState.Hidden -> return // draw nothing if not linked
-        is LicenceSummaryState.Loading -> {
+        is LicenceSummaryUiState.Hidden -> return // draw nothing if not linked
+        is LicenceSummaryUiState.Loading -> {
             Box(
                 modifier = modifier
                     .fillMaxWidth()
@@ -35,10 +35,10 @@ fun LicenceSummaryWidget(
                 )
             }
         }
-        is LicenceSummaryState.Error -> {
+        is LicenceSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets
         }
-        is LicenceSummaryState.Success -> {
+        is LicenceSummaryUiState.Success -> {
             LicenceDetailsCard(
                 details = currentState.licence,
                 modifier = modifier

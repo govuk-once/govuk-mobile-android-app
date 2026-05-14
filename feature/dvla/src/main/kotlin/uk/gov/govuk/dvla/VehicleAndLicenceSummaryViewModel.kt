@@ -11,11 +11,11 @@ import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import javax.inject.Inject
 
-internal sealed interface LicenceSummaryState {
-    data object Hidden : LicenceSummaryState
-    data object Loading : LicenceSummaryState
-    data class Success(val licence: LicenceDetails) : LicenceSummaryState
-    data object Error : LicenceSummaryState
+internal sealed interface LicenceSummaryUiState {
+    data object Hidden : LicenceSummaryUiState
+    data object Loading : LicenceSummaryUiState
+    data class Success(val licence: LicenceDetails) : LicenceSummaryUiState
+    data object Error : LicenceSummaryUiState
 }
 
 @HiltViewModel
@@ -23,20 +23,20 @@ internal class LicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<LicenceSummaryState>(LicenceSummaryState.Hidden)
+    private val _uiState = MutableStateFlow<LicenceSummaryUiState>(LicenceSummaryUiState.Hidden)
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             dvlaRepo.isLinked.collect { isLinked ->
                 if (isLinked) {
-                    fetchLicenceData()
+//                    fetchLicenceData()
                     // TODO: this is to demonstrate driver & customer summary endpoint call data,
                     //  until we decide which endpoint to use
-                    fetchDriverSummaryData()
-                    fetchCustomerSummaryData()
+//                    fetchDriverSummaryData()
+                    fetchCustomerSummary()
                 } else {
-                    _uiState.value = LicenceSummaryState.Hidden
+                    _uiState.value = LicenceSummaryUiState.Hidden
                 }
             }
         }
@@ -44,12 +44,12 @@ internal class LicenceSummaryViewModel @Inject constructor(
 
     private fun fetchLicenceData() {
         viewModelScope.launch {
-            _uiState.value = LicenceSummaryState.Loading
+            _uiState.value = LicenceSummaryUiState.Loading
 
             val result = dvlaRepo.getLicenceDetails()
 
             _uiState.value = if (result is Result.Success)
-                LicenceSummaryState.Success(result.value) else LicenceSummaryState.Error
+                LicenceSummaryUiState.Success(result.value) else LicenceSummaryUiState.Error
         }
     }
 
@@ -67,8 +67,9 @@ internal class LicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCustomerSummaryData() {
+    private fun fetchCustomerSummary() {
         viewModelScope.launch {
+            _uiState.value = LicenceSummaryUiState.Loading
             val result = dvlaRepo.getCustomerSummary()
 
             // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
