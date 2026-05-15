@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
+    alias(libs.plugins.ksp)
 }
 
 val privacyPolicyUrl: String by project
@@ -44,6 +45,9 @@ dependencies {
     implementation(libs.androidx.adaptive.android)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.icons)
+    implementation(libs.hilt.android)
+
+    ksp(libs.hilt.compiler)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
