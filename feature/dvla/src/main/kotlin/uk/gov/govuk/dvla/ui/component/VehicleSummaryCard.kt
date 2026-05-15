@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,13 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
-import uk.gov.govuk.design.ui.component.GovUkOutlinedCard
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
@@ -35,7 +36,7 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable
-fun VehicleSummaryCard(
+internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
@@ -43,6 +44,10 @@ fun VehicleSummaryCard(
 ) {
     Card(
         modifier = modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
+        )
     ) {
         // header
         VehicleHeader(
@@ -68,7 +73,7 @@ fun VehicleSummaryCard(
             description = vehicleSummary.motStatus.description,
             icon = vehicleSummary.motStatus.icon,
             isFirst = false,
-            isLast = false
+            isLast = true
         )
 
         // details
@@ -82,7 +87,7 @@ fun VehicleSummaryCard(
 }
 
 @Composable
-fun RegistrationPlate(
+internal fun RegistrationPlate(
     registration: String,
     modifier: Modifier = Modifier
 ) {
@@ -105,7 +110,7 @@ fun RegistrationPlate(
 fun VehicleHeader(
     registration: String,
     make: String,
-    model: String,
+    model: String?,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFirst: Boolean = true
@@ -154,10 +159,13 @@ fun VehicleHeader(
                 text = make,
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
-            BodyRegularLabel(
-                text = model,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
-            )
+
+            model?.let {
+                BodyRegularLabel(
+                    text = it,
+                    color = GovUkTheme.colourScheme.textAndIcons.secondary
+                )
+            }
         }
     }
 }

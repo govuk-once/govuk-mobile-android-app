@@ -8,22 +8,24 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.LicenceDetails
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import javax.inject.Inject
 
-internal sealed interface LicenceSummaryUiState {
-    data object Hidden : LicenceSummaryUiState
-    data object Loading : LicenceSummaryUiState
-    data class Success(val licence: LicenceDetails) : LicenceSummaryUiState
-    data object Error : LicenceSummaryUiState
+internal sealed interface VehicleAndLicenceSummaryUiState {
+    data object Hidden : VehicleAndLicenceSummaryUiState
+    data object Loading : VehicleAndLicenceSummaryUiState
+    data class Success(val vehicles: List<VehicleSummaryUiModel>) : VehicleAndLicenceSummaryUiState
+    data object Error : VehicleAndLicenceSummaryUiState
 }
 
 @HiltViewModel
-internal class LicenceSummaryViewModel @Inject constructor(
-    private val dvlaRepo: DvlaRepo
+internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
+    private val dvlaRepo: DvlaRepo,
+    private val mapper: VehicleSummaryMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<LicenceSummaryUiState>(LicenceSummaryUiState.Hidden)
+    private val _uiState = MutableStateFlow<VehicleAndLicenceSummaryUiState>(VehicleAndLicenceSummaryUiState.Hidden)
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -36,22 +38,22 @@ internal class LicenceSummaryViewModel @Inject constructor(
 //                    fetchDriverSummaryData()
                     fetchCustomerSummary()
                 } else {
-                    _uiState.value = LicenceSummaryUiState.Hidden
+                    _uiState.value = VehicleAndLicenceSummaryUiState.Hidden
                 }
             }
         }
     }
 
-    private fun fetchLicenceData() {
-        viewModelScope.launch {
-            _uiState.value = LicenceSummaryUiState.Loading
-
-            val result = dvlaRepo.getLicenceDetails()
-
-            _uiState.value = if (result is Result.Success)
-                LicenceSummaryUiState.Success(result.value) else LicenceSummaryUiState.Error
-        }
-    }
+//    private fun fetchLicenceData() {
+//        viewModelScope.launch {
+//            _uiState.value = LicenceSummaryUiState.Loading
+//
+//            val result = dvlaRepo.getLicenceDetails()
+//
+//            _uiState.value = if (result is Result.Success)
+//                LicenceSummaryUiState.Success(result.value) else LicenceSummaryUiState.Error
+//        }
+//    }
 
     private fun fetchDriverSummaryData() {
         viewModelScope.launch {
@@ -69,14 +71,15 @@ internal class LicenceSummaryViewModel @Inject constructor(
 
     private fun fetchCustomerSummary() {
         viewModelScope.launch {
-            _uiState.value = LicenceSummaryUiState.Loading
-            val result = dvlaRepo.getCustomerSummary()
+            _uiState.value = VehicleAndLicenceSummaryUiState.Loading
 
-            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-            if (BuildConfig.DEBUG) {
-                when (result) {
-                    is Result.Success -> println("CustomerSummary: SUCCESS: ${result.value}")
-                    else -> println("CustomerSummary: ERROR - Failed to fetch customer summary")
+            when (val result = dvlaRepo.getCustomerSummary()) {
+                is Result.Success -> {
+                    val vehicleUiModels = result.value.vehicles.map { mapper.toUiModel(it) }
+                    _uiState.value = VehicleAndLicenceSummaryUiState.Success(vehicles = vehicleUiModels)
+                }
+                else -> {
+                    _uiState.value = VehicleAndLicenceSummaryUiState.Error
                 }
             }
         }

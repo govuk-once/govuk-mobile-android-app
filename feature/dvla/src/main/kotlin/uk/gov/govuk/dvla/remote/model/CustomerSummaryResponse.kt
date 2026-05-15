@@ -161,7 +161,7 @@ data class Vehicle(
     @SerializedName("vehicleId") val vehicleId: Int,
     @SerializedName("chassisVin") val chassisVin: String,
     @SerializedName("make") val make: String,
-    @SerializedName("model") val model: String,
+    @SerializedName("model") val model: String?,
     @SerializedName("manufacturerVehicleType") val manufacturerVehicleType: String,
     @SerializedName("typeApprovalVariant") val typeApprovalVariant: String,
     @SerializedName("typeApprovalVersion") val typeApprovalVersion: String,

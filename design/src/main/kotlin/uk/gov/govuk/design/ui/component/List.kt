@@ -340,7 +340,7 @@ fun IconListItem(
 fun StatusListItem(
     title: String,
     description: String,
-    @DrawableRes icon: Int,
+    @DrawableRes icon: Int?,
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
     isLast: Boolean = false
@@ -371,11 +371,13 @@ fun StatusListItem(
 
             MediumHorizontalSpacer()
 
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
-            )
+            icon?.let {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = null,
+                    tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
+                )
+            }
         }
     }
 }
