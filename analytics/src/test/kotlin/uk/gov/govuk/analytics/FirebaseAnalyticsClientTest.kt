@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 
 class FirebaseAnalyticsClientTest {
 
@@ -16,7 +17,10 @@ class FirebaseAnalyticsClientTest {
 
     @Before
     fun setup() {
-        firebaseAnalyticsClient = FirebaseAnalyticsClient(firebaseAnalytics, firebaseCrashlytics)
+        firebaseAnalyticsClient = FirebaseAnalyticsClient(
+            firebaseAnalytics,
+            firebaseCrashlytics
+        )
     }
 
     @Test
@@ -25,7 +29,7 @@ class FirebaseAnalyticsClientTest {
 
         verify {
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
-            firebaseCrashlytics.setCrashlyticsCollectionEnabled(true)
+            firebaseCrashlytics.isCrashlyticsCollectionEnabled = true
         }
     }
 
@@ -35,7 +39,7 @@ class FirebaseAnalyticsClientTest {
 
         verify {
             firebaseAnalytics.setAnalyticsCollectionEnabled(false)
-            firebaseCrashlytics.setCrashlyticsCollectionEnabled(false)
+            firebaseCrashlytics.isCrashlyticsCollectionEnabled = false
         }
     }
 
@@ -45,6 +49,31 @@ class FirebaseAnalyticsClientTest {
 
         verify {
             firebaseAnalytics.setUserProperty("name", "value")
+        }
+    }
+
+    @Test
+    fun `Given an event is logged, then log event and register visit`() {
+        val params = mapOf("param1" to "value1")
+        firebaseAnalyticsClient.logEvent("event_name", params)
+
+        verify {
+            firebaseAnalytics.logEvent(any(), any())
+        }
+    }
+
+    @Test
+    fun `Given an ecommerce event is logged, then log ecommerce event and register visit`() {
+        val ecommerceEvent = EcommerceEvent(
+            itemListId = "list_id",
+            itemListName = "list_name",
+            items = emptyList(),
+            totalItemCount = 0
+        )
+        firebaseAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
+
+        verify {
+            firebaseAnalytics.logEvent("event_name", any())
         }
     }
 

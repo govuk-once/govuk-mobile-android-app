@@ -48,6 +48,8 @@ openid = "0.11.1"
 gov-secure-store = "0.12.1"
 tink = "1.20.0"
 
+qualtricsDigitalSdk = "2.32.0"
+
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -101,6 +103,8 @@ androidx-compose-animation = { group = "androidx.compose.animation", name = "ani
 google-crypto-tink = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tink" }
 
 commonmark = { group = "org.commonmark", name = "commonmark", version.ref = "commonmark" }
+
+qualtrics-digital-sdk = { module = "com.qualtrics:digital", version.ref = "qualtricsDigitalSdk" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

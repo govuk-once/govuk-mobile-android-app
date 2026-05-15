@@ -33,6 +33,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 sonar {
@@ -60,6 +64,8 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.google.tag.manager)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.qualtrics.digital.sdk)
 
     ksp(libs.hilt.compiler)
 
