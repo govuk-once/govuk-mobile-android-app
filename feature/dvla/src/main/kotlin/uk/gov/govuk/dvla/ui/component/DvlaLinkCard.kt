@@ -1,4 +1,4 @@
-package uk.gov.govuk.dvla.ui
+package uk.gov.govuk.dvla.ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable

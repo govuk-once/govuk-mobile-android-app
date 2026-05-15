@@ -18,11 +18,11 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.domain.DriverSummaryDetails
+import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceDetails
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LicenceSummaryViewModelTest {
+class VehicleAndLicenceSummaryViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val repo = mockk<DvlaRepo>(relaxed = true)
@@ -35,7 +35,7 @@ class LicenceSummaryViewModelTest {
         status = "Valid"
     )
 
-    private val driverSummaryDetails = DriverSummaryDetails(
+    private val driverSummaryDetails = DriverSummary(
         licenceNumber = "DECER607085K99AE",
         firstName = "KENNETH",
         lastName = "DECERQUEIRA",
@@ -58,10 +58,10 @@ class LicenceSummaryViewModelTest {
     fun `Given isLinked emits false, when viewModel initialised, then state is Hidden and no calls are made`() = runTest(dispatcher) {
         every { repo.isLinked } returns MutableStateFlow(false)
 
-        val viewModel = LicenceSummaryViewModel(repo)
+        val viewModel = VehicleAndLicenceSummaryViewModel(repo)
         advanceUntilIdle()
 
-        assertEquals(LicenceSummaryState.Hidden, viewModel.uiState.value)
+        assertEquals(VehicleAndLicenceSummaryUiState.Hidden, viewModel.uiState.value)
         coVerify(exactly = 0) { repo.getLicenceDetails() }
         coVerify(exactly = 0) { repo.getDriverSummary() }
     }
@@ -71,13 +71,13 @@ class LicenceSummaryViewModelTest {
         every { repo.isLinked } returns MutableStateFlow(true)
         coEvery { repo.getLicenceDetails() } returns Result.Success(licenceDetails)
 
-        val viewModel = LicenceSummaryViewModel(repo)
+        val viewModel = VehicleAndLicenceSummaryViewModel(repo)
 
         advanceUntilIdle()
 
         coVerify(exactly = 1) { repo.getLicenceDetails() }
         coVerify(exactly = 1) { repo.getDriverSummary() }
-        assertEquals(LicenceSummaryState.Success(licenceDetails), viewModel.uiState.value)
+        assertEquals(VehicleAndLicenceSummaryUiState.Success(licenceDetails), viewModel.uiState.value)
     }
 
     @Test
@@ -85,12 +85,12 @@ class LicenceSummaryViewModelTest {
         every { repo.isLinked } returns MutableStateFlow(true)
         coEvery { repo.getLicenceDetails() } returns Result.Error()
 
-        val viewModel = LicenceSummaryViewModel(repo)
+        val viewModel = VehicleAndLicenceSummaryViewModel(repo)
         advanceUntilIdle()
 
         coVerify(exactly = 1) { repo.getLicenceDetails() }
         coVerify(exactly = 1) { repo.getDriverSummary() }
-        assertEquals(LicenceSummaryState.Error, viewModel.uiState.value)
+        assertEquals(VehicleAndLicenceSummaryUiState.Error, viewModel.uiState.value)
     }
 
     @Test
@@ -99,15 +99,15 @@ class LicenceSummaryViewModelTest {
         every { repo.isLinked } returns isLinkedFlow
         coEvery { repo.getLicenceDetails() } returns Result.Success(licenceDetails)
 
-        val viewModel = LicenceSummaryViewModel(repo)
+        val viewModel = VehicleAndLicenceSummaryViewModel(repo)
         advanceUntilIdle()
 
-        assertEquals(LicenceSummaryState.Success(licenceDetails), viewModel.uiState.value)
+        assertEquals(VehicleAndLicenceSummaryUiState.Success(licenceDetails), viewModel.uiState.value)
 
         // unlinking
         isLinkedFlow.value = false
         advanceUntilIdle()
 
-        assertEquals(LicenceSummaryState.Hidden, viewModel.uiState.value)
+        assertEquals(VehicleAndLicenceSummaryUiState.Hidden, viewModel.uiState.value)
     }
 }

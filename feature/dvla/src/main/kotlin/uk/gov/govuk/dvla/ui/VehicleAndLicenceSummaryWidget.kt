@@ -11,19 +11,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.LicenceSummaryState
-import uk.gov.govuk.dvla.LicenceSummaryViewModel
+import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
+import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
+import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 
 @Composable
 fun LicenceSummaryWidget(
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: LicenceSummaryViewModel = hiltViewModel()
+    val viewModel: VehicleAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
     when (val currentState = state) {
-        is LicenceSummaryState.Hidden -> return // draw nothing if not linked
-        is LicenceSummaryState.Loading -> {
+        is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
+        is VehicleAndLicenceSummaryUiState.Loading -> {
             Box(
                 modifier = modifier
                     .fillMaxWidth()
@@ -35,14 +36,21 @@ fun LicenceSummaryWidget(
                 )
             }
         }
-        is LicenceSummaryState.Error -> {
+        is VehicleAndLicenceSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets
         }
-        is LicenceSummaryState.Success -> {
-            LicenceDetailsCard(
-                details = currentState.licence,
-                modifier = modifier
-            )
+        is VehicleAndLicenceSummaryUiState.Success -> {
+            // TODO support list of vehicles
+            val vehicle = currentState.vehicles.firstOrNull()
+
+            if (vehicle != null) {
+                VehicleSummaryCard(
+                    vehicleSummary = vehicle,
+                    onDetailsClick = {  },
+                    onMoreClick = {  },
+                    modifier = modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

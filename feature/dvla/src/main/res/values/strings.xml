@@ -18,6 +18,9 @@
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
 
+    <string name="tax_status_title">Tax</string>
+    <string name="valid_until">Valid until %s</string>
+
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>
