@@ -1,34 +1,25 @@
 package uk.gov.govuk.analytics
 
-import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.qualtrics.digital.Properties
-import com.qualtrics.digital.Qualtrics
-import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 
 class FirebaseAnalyticsClientTest {
 
-    private val context = mockk<Context>(relaxed = true)
     private val firebaseAnalytics = mockk<FirebaseAnalytics>(relaxed = true)
     private val firebaseCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
-    private val qualtrics = mockk<Qualtrics>(relaxed = true)
-    private val qualtricsProperties = mockk<Properties>(relaxed = true)
 
     private lateinit var firebaseAnalyticsClient: FirebaseAnalyticsClient
 
     @Before
     fun setup() {
-        qualtrics.properties = qualtricsProperties
         firebaseAnalyticsClient = FirebaseAnalyticsClient(
-            context,
             firebaseAnalytics,
-            firebaseCrashlytics,
-            qualtrics
+            firebaseCrashlytics
         )
     }
 
@@ -58,7 +49,6 @@ class FirebaseAnalyticsClientTest {
 
         verify {
             firebaseAnalytics.setUserProperty("name", "value")
-            qualtricsProperties.setString("name", "value")
         }
     }
 
@@ -69,9 +59,6 @@ class FirebaseAnalyticsClientTest {
 
         verify {
             firebaseAnalytics.logEvent(any(), any())
-            qualtricsProperties.setString("param1", "value1")
-            qualtrics.registerViewVisit("event_name")
-            qualtrics.evaluateProject(any())
         }
     }
 
@@ -87,10 +74,6 @@ class FirebaseAnalyticsClientTest {
 
         verify {
             firebaseAnalytics.logEvent("event_name", any())
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, "list_id")
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, "list_name")
-            qualtrics.registerViewVisit("event_name")
-            qualtrics.evaluateProject(any())
         }
     }
 

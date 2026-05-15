@@ -12,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class AnalyticsClient @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
-    private val firebaseAnalyticsClient: FirebaseAnalyticsClient
+    private val firebaseAnalyticsClient: FirebaseAnalyticsClient,
+    private val qualtricsAnalyticsClient: QualtricsAnalyticsClient
 ) {
 
     lateinit var isUserSessionActive: () -> Boolean
@@ -213,6 +214,7 @@ class AnalyticsClient @Inject constructor(
 
     fun topicsCustomised() {
         firebaseAnalyticsClient.setUserProperty("topics_customised", "true")
+        qualtricsAnalyticsClient.setUserProperty("topics_customised", "true")
     }
 
     fun selectItemEvent(ecommerceEvent: EcommerceEvent, selectedItemIndex: Int) {
@@ -297,12 +299,14 @@ class AnalyticsClient @Inject constructor(
     private fun logEvent(name: String, parameters: Map<String, Any>) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             firebaseAnalyticsClient.logEvent(name, parameters)
+            qualtricsAnalyticsClient.logEvent(name, parameters)
         }
     }
 
     private fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             firebaseAnalyticsClient.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
+            qualtricsAnalyticsClient.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
         }
     }
 }
