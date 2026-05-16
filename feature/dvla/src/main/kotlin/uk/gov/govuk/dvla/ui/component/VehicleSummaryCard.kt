@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
@@ -50,7 +49,7 @@ internal fun VehicleSummaryCard(
         )
     ) {
         // header
-        VehicleHeader(
+        VehicleSummaryHeader(
             registration = vehicleSummary.registration,
             make = vehicleSummary.make,
             model = vehicleSummary.model,
@@ -73,7 +72,7 @@ internal fun VehicleSummaryCard(
             description = vehicleSummary.motStatus.description,
             icon = vehicleSummary.motStatus.icon,
             isFirst = false,
-            isLast = true
+            isLast = false
         )
 
         // details
@@ -107,7 +106,7 @@ internal fun RegistrationPlate(
 }
 
 @Composable
-fun VehicleHeader(
+fun VehicleSummaryHeader(
     registration: String,
     make: String,
     model: String?,
@@ -182,7 +181,7 @@ private fun RegistrationPlatePreview() {
 @Composable
 private fun VehicleHeaderPreview() {
     GovUkTheme {
-        VehicleHeader(
+        VehicleSummaryHeader(
             registration = "FH08 PDH",
             make = "Volkswagen",
             model = "ID4",
@@ -208,7 +207,7 @@ private fun VehicleSummaryCardPreview() {
                 motStatus = StatusRowUiModel(
                     title = "MOT",
                     description = "Valid until 24 April 2026",
-                    icon = R.drawable.ic_check_round,
+                    icon = R.drawable.ic_cancel_round
                 )
             ),
             onDetailsClick = {},

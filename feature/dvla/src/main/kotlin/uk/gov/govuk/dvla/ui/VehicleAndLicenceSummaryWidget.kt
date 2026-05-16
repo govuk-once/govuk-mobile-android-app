@@ -1,22 +1,18 @@
 package uk.gov.govuk.dvla.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 
 @Composable
-fun LicenceSummaryWidget(
+fun VehicleAndLicenceSummaryWidget(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: VehicleAndLicenceSummaryViewModel = hiltViewModel()
@@ -25,16 +21,10 @@ fun LicenceSummaryWidget(
     when (val currentState = state) {
         is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
         is VehicleAndLicenceSummaryUiState.Loading -> {
-            Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(GovUkTheme.spacing.medium),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = GovUkTheme.colourScheme.surfaces.primary
-                )
-            }
+            LoaderCard(
+                modifier = modifier.fillMaxWidth()
+                // TODO alt text?
+            )
         }
         is VehicleAndLicenceSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets

@@ -37,7 +37,7 @@ internal class VehicleSummaryMapper @Inject constructor(
     }
 
     private fun resolveDescription(resId: Int?, dateArg: String?): String {
-        val id = resId ?: return ""
+        val id = resId ?: return "Unknown" // TODO temporarily return unknown, other states in future tickets
         return dateArg?.let { stringProvider.getString(id, it) }
             ?: stringProvider.getString(id)
     }
