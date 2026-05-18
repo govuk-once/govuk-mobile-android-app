@@ -16,6 +16,8 @@ import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.LinkStatusResponse
+import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
+import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 class DvlaRepoTest {
@@ -202,5 +204,73 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.getVehicleDetails(reg) }
+    }
+
+    @Test
+    fun `Given create share code api returns success, when createShareCode is called, then return Success with ShareCodeDetails`() = runTest {
+        val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
+
+        coEvery { api.createShareCode() } returns Response.success(shareCodeResponse)
+
+        val result = repo.createCheckCode()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.createShareCode() }
+    }
+
+    @Test
+    fun `Given create share code api fails, when createShareCode is called, then return Error`() = runTest {
+        coEvery { api.createShareCode() } throws Exception("Exception")
+
+        val result = repo.createCheckCode()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.createShareCode() }
+    }
+
+    @Test
+    fun `Given get share codes api returns success, when getShareCodes is called, then return Success with list of ShareCodeDetails`() = runTest {
+        val shareCodesResponse = mockk<MultiShareCodeResponse>(relaxed = true)
+
+        coEvery { api.getShareCodes() } returns Response.success(shareCodesResponse)
+
+        val result = repo.getCheckCodes()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getShareCodes() }
+    }
+
+    @Test
+    fun `Given get share codes api fails, when getShareCodes is called, then return Error`() = runTest {
+        coEvery { api.getShareCodes() } throws Exception("Exception")
+
+        val result = repo.getCheckCodes()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getShareCodes() }
+    }
+
+    @Test
+    fun `Given cancel share code api returns success, when cancelShareCode is called, then return Success with ShareCodeDetails`() = runTest {
+        val tokenId = "token_id"
+        val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
+
+        coEvery { api.cancelShareCode(tokenId) } returns Response.success(shareCodeResponse)
+
+        val result = repo.cancelCheckCode(tokenId)
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
+    }
+
+    @Test
+    fun `Given cancel share code api fails, when cancelShareCode is called, then return Error`() = runTest {
+        val tokenId = "token_id"
+        coEvery { api.cancelShareCode(tokenId) } throws Exception("Exception")
+
+        val result = repo.cancelCheckCode(tokenId)
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
     }
 }
