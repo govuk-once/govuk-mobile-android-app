@@ -2,9 +2,13 @@ package uk.gov.govuk.analytics
 
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.qualtrics.digital.IQualtricsProjectEvaluationCallback
 import com.qualtrics.digital.Properties
 import com.qualtrics.digital.Qualtrics
+import com.qualtrics.digital.TargetingResult
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.junit.After
 import org.junit.Before
@@ -32,28 +36,80 @@ class QualtricsAnalyticsClientTest {
     }
 
     @Test
-    fun `Given a user property is set, then set user property`() {
-        qualtricsAnalyticsClient.setUserProperty("name", "value")
+    fun `Given an event, then log the event and set the property`() {
+        val params = mapOf("text" to "value")
 
-        verify {
-            qualtrics.properties.setString("name", "value")
+        qualtricsAnalyticsClient.logEvent("event_name", params)
+
+        verify(exactly = 1) {
+            qualtricsProperties.setString("text", "value")
         }
     }
 
     @Test
-    fun `Given an event is logged, then log event and register visit`() {
-        val params = mapOf("param1" to "value1")
+    fun `Given an event, then log event and register the view visit`() {
+        val params = mapOf("text" to "value")
+
         qualtricsAnalyticsClient.logEvent("event_name", params)
 
-        verify {
-            qualtricsProperties.setString("param1", "value1")
+        verify(exactly = 1) {
             qualtrics.registerViewVisit("event_name")
+        }
+    }
+
+    @Test
+    fun `Given an event, then log event and evaluate the project`() {
+        val params = mapOf("text" to "value")
+
+        qualtricsAnalyticsClient.logEvent("event_name", params)
+
+        verify(exactly = 1) {
             qualtrics.evaluateProject(any())
         }
     }
 
     @Test
-    fun `Given an ecommerce event without items is logged, then log ecommerce event and register visit`() {
+    fun `Given an event and the survey display is triggered, then display the survey`() {
+        val params = mapOf("screen_name" to "Settings")
+        val result = mockk<TargetingResult> {
+            every { passed() } returns true
+        }
+        val mockResults = mapOf("survey" to result)
+        val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+
+        every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.logEvent("event_name", params)
+
+        callbackSlot.captured.run(mockResults)
+
+        verify(exactly = 1) {
+            qualtrics.display(context)
+        }
+    }
+
+    @Test
+    fun `Given an event and the survey display is not triggered, then do not display the survey`() {
+        val params = mapOf("screen_name" to "Settings")
+        val result = mockk<TargetingResult> {
+            every { passed() } returns false
+        }
+        val mockResults = mapOf("survey" to result)
+        val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+
+        every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.logEvent("event_name", params)
+
+        callbackSlot.captured.run(mockResults)
+
+        verify(exactly = 0) {
+            qualtrics.display(context)
+        }
+    }
+
+    @Test
+    fun `Given an ecommerce event, then log the event and set the properties`() {
         val ecommerceEvent = EcommerceEvent(
             itemListId = "list_id",
             itemListName = "list_name",
@@ -63,131 +119,91 @@ class QualtricsAnalyticsClientTest {
 
         qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
 
-        verify {
+        verify(exactly = 1) {
             qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, "list_id")
             qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, "list_name")
-            qualtricsProperties.setString("items", "[]")
-            qualtricsProperties.setString("total_item_count", "0")
-            qualtrics.registerViewVisit("event_name")
-            qualtrics.evaluateProject(any())
         }
     }
 
     @Test
-    fun `Given an ecommerce event with a single item is logged, then log ecommerce event and register visit`() {
+    fun `Given an ecommerce event, then log the event and register the view visit`() {
         val ecommerceEvent = EcommerceEvent(
             itemListId = "list_id",
             itemListName = "list_name",
-            items = listOf(
-                EcommerceEvent.Item(
-                    itemId = "item_id_one",
-                    itemName = "item_name_one",
-                    itemCategory = "item_category_one",
-                    locationId = "item_location_id_one",
-                    term = "item_term_one"
-                )
-            ),
-            totalItemCount = 1
+            items = emptyList(),
+            totalItemCount = 0
         )
 
         qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
 
-        verify {
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, "list_id")
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, "list_name")
-            qualtricsProperties.setString("item_id_0", "item_id_one")
-            qualtricsProperties.setString("item_name_0", "item_name_one")
-            qualtricsProperties.setString("item_category_0", "item_category_one")
-            qualtricsProperties.setString("item_location_id_0", "item_location_id_one")
-            qualtricsProperties.setString("item_term_0", "item_term_one")
-            qualtricsProperties.setString("total_item_count", "1")
+        verify(exactly = 1) {
             qualtrics.registerViewVisit("event_name")
-            qualtrics.evaluateProject(any())
         }
     }
 
     @Test
-    fun `Given an ecommerce event with more than one item but no selected index is logged, then log ecommerce event and register visit`() {
+    fun `Given an ecommerce event, then log the event and evaluate the project`() {
         val ecommerceEvent = EcommerceEvent(
             itemListId = "list_id",
             itemListName = "list_name",
-            items = listOf(
-                EcommerceEvent.Item(
-                    itemId = "item_id_one",
-                    itemName = "item_name_one",
-                    itemCategory = "item_category_one",
-                    locationId = "item_location_id_one",
-                    term = "item_term_one"
-                ),
-                EcommerceEvent.Item(
-                    itemId = "item_id_two",
-                    itemName = "item_name_two",
-                    itemCategory = "item_category_two",
-                    locationId = "item_location_id_two",
-                    term = "item_term_two"
-                )
-            ),
-            totalItemCount = 2
+            items = emptyList(),
+            totalItemCount = 0
         )
 
         qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
 
-        verify {
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, "list_id")
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, "list_name")
-            qualtricsProperties.setString("item_id_0", "item_id_one")
-            qualtricsProperties.setString("item_name_0", "item_name_one")
-            qualtricsProperties.setString("item_category_0", "item_category_one")
-            qualtricsProperties.setString("item_location_id_0", "item_location_id_one")
-            qualtricsProperties.setString("item_term_0", "item_term_one")
-            qualtricsProperties.setString("item_id_1", "item_id_two")
-            qualtricsProperties.setString("item_name_1", "item_name_two")
-            qualtricsProperties.setString("item_category_1", "item_category_two")
-            qualtricsProperties.setString("item_location_id_1", "item_location_id_two")
-            qualtricsProperties.setString("item_term_1", "item_term_two")
-            qualtricsProperties.setString("total_item_count", "2")
-            qualtrics.registerViewVisit("event_name")
+        verify(exactly = 1) {
             qualtrics.evaluateProject(any())
         }
     }
 
     @Test
-    fun `Given an ecommerce event with more than one item adn a selected index is logged, then log ecommerce event and register visit`() {
+    fun `Given an ecommerce event and the survey display is triggered, then display the survey`() {
         val ecommerceEvent = EcommerceEvent(
             itemListId = "list_id",
             itemListName = "list_name",
-            items = listOf(
-                EcommerceEvent.Item(
-                    itemId = "item_id_one",
-                    itemName = "item_name_one",
-                    itemCategory = "item_category_one",
-                    locationId = "item_location_id_one",
-                    term = "item_term_one"
-                ),
-                EcommerceEvent.Item(
-                    itemId = "item_id_two",
-                    itemName = "item_name_two",
-                    itemCategory = "item_category_two",
-                    locationId = "item_location_id_two",
-                    term = "item_term_two"
-                )
-            ),
-            totalItemCount = 2
+            items = emptyList(),
+            totalItemCount = 0
         )
+        val result = mockk<TargetingResult> {
+            every { passed() } returns true
+        }
+        val mockResults = mapOf("survey" to result)
+        val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
 
-        qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent, 1)
+        every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
 
-        verify {
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, "list_id")
-            qualtricsProperties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, "list_name")
-            qualtricsProperties.setString("item_id_1", "item_id_two")
-            qualtricsProperties.setString("item_name_1", "item_name_two")
-            qualtricsProperties.setString("item_category_1", "item_category_two")
-            qualtricsProperties.setString("item_location_id_1", "item_location_id_two")
-            qualtricsProperties.setString("item_term_1", "item_term_two")
-            qualtricsProperties.setString("total_item_count", "2")
-            qualtrics.registerViewVisit("event_name")
-            qualtrics.evaluateProject(any())
+        qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
+
+        callbackSlot.captured.run(mockResults)
+
+        verify(exactly = 1) {
+            qualtrics.display(context)
+        }
+    }
+
+    @Test
+    fun `Given an ecommerce event and the survey display is not triggered, then do not display the survey`() {
+        val ecommerceEvent = EcommerceEvent(
+            itemListId = "list_id",
+            itemListName = "list_name",
+            items = emptyList(),
+            totalItemCount = 0
+        )
+        val result = mockk<TargetingResult> {
+            every { passed() } returns false
+        }
+        val mockResults = mapOf("survey" to result)
+        val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+
+        every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
+
+        callbackSlot.captured.run(mockResults)
+
+        verify(exactly = 0) {
+            qualtrics.display(context)
         }
     }
 }

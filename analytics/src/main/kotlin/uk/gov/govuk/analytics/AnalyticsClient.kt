@@ -13,8 +13,8 @@ import javax.inject.Singleton
 class AnalyticsClient @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
     private val firebaseAnalyticsClient: FirebaseAnalyticsClient,
-    private val qualtricsAnalyticsClient: QualtricsAnalyticsClient
-) {
+    private val analyticsCoordinator: AnalyticsCoordinator
+) : AnalyticsCoordinatorInterface {
 
     lateinit var isUserSessionActive: () -> Boolean
 
@@ -214,7 +214,6 @@ class AnalyticsClient @Inject constructor(
 
     fun topicsCustomised() {
         firebaseAnalyticsClient.setUserProperty("topics_customised", "true")
-        qualtricsAnalyticsClient.setUserProperty("topics_customised", "true")
     }
 
     fun selectItemEvent(ecommerceEvent: EcommerceEvent, selectedItemIndex: Int) {
@@ -228,7 +227,8 @@ class AnalyticsClient @Inject constructor(
     fun viewItemListEvent(ecommerceEvent: EcommerceEvent) {
         logEcommerceEvent(
             event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-            ecommerceEvent = ecommerceEvent
+            ecommerceEvent = ecommerceEvent,
+            selectedItemIndex = null
         )
     }
 
@@ -296,17 +296,15 @@ class AnalyticsClient @Inject constructor(
         return parameters + Pair("language", Locale.getDefault().language)
     }
 
-    private fun logEvent(name: String, parameters: Map<String, Any>) {
+    override fun logEvent(name: String, parameters: Map<String, Any>) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
-            firebaseAnalyticsClient.logEvent(name, parameters)
-            qualtricsAnalyticsClient.logEvent(name, parameters)
+            analyticsCoordinator.logEvent(name, parameters)
         }
     }
 
-    private fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
+    override fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
-            firebaseAnalyticsClient.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
-            qualtricsAnalyticsClient.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
+            analyticsCoordinator.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
         }
     }
 }

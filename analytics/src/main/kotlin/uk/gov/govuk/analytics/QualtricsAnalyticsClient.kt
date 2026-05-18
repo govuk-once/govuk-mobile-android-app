@@ -12,71 +12,60 @@ class QualtricsAnalyticsClient @Inject constructor(
     private val qualtrics: Qualtrics
 ) {
 
-    fun logEvent(
-        name: String,
-        parameters: Map<String, Any>
-    ) {
-        parameters.forEach { (key, value) ->
-            qualtrics.properties.setString(key, value.toString())
-        }
+    fun logEvent(eventName: String, parameters: Map<String, Any>) {
+        setParameters(parameters)
 
-        val qualtricsEventName = if (name == FirebaseAnalytics.Event.SCREEN_VIEW) {
-            parameters[FirebaseAnalytics.Param.SCREEN_NAME] as? String ?: name
-        } else {
-            name
-        }
-
-        processQualtricsDisplay(qualtricsEventName)
+        registerVisitAndEvaluateForTriggers(eventName)
     }
 
-    fun logEcommerceEvent(
-        event: String,
-        ecommerceEvent: EcommerceEvent,
-        selectedItemIndex: Int? = null
-    ) {
-        qualtrics.properties.setString(FirebaseAnalytics.Param.ITEM_LIST_ID, ecommerceEvent.itemListId)
-        qualtrics.properties.setString(FirebaseAnalytics.Param.ITEM_LIST_NAME, ecommerceEvent.itemListName)
-        qualtrics.properties.setString("total_item_count", ecommerceEvent.totalItemCount.toString())
+    fun logEcommerceEvent(eventName: String, ecommerceEvent: EcommerceEvent) {
+        setParameters(
+            mapOf(
+                FirebaseAnalytics.Param.ITEM_LIST_ID to ecommerceEvent.itemListId,
+                FirebaseAnalytics.Param.ITEM_LIST_NAME to ecommerceEvent.itemListName
+            )
+        )
 
-        if (ecommerceEvent.items.any()) {
-            if (selectedItemIndex != null) {
-                selectedItemIndex.let { index ->
-                    val item = ecommerceEvent.items.getOrNull(index)
-                    item?.let {
-                        addItem(index, item)
-                    }
-                }
-            } else {
-                ecommerceEvent.items.forEachIndexed { index, item ->
-                    addItem(index, item)
-                }
-            }
-        } else {
-            qualtrics.properties.setString("items", "[]")
-        }
-
-        processQualtricsDisplay(event)
+        registerVisitAndEvaluateForTriggers(eventName)
     }
 
-    fun setUserProperty(name: String, value: String) {
-        qualtrics.properties.setString(name, value)
-    }
-
-    private fun addItem(index: Int, item: EcommerceEvent.Item) {
-        qualtrics.properties.setString("item_id_$index", item.itemId)
-        qualtrics.properties.setString("item_name_$index", item.itemName)
-        qualtrics.properties.setString("item_category_$index", item.itemCategory)
-        qualtrics.properties.setString("item_location_id_$index", item.locationId)
-        qualtrics.properties.setString("item_term_$index", item.term)
-    }
-
-    private fun processQualtricsDisplay(eventName: String) {
+    private fun registerVisitAndEvaluateForTriggers(eventName: String) {
         qualtrics.registerViewVisit(eventName)
 
         qualtrics.evaluateProject { results ->
             if (results.values.any { it.passed() }) {
                 qualtrics.display(context)
             }
+        }
+    }
+
+    /**
+     * The Qualtrics SDK data storage mechanism is implemented as a single (flat) map
+     * that is cached across events. So, it does not handle objects for sending
+     * data - specifically maps, arrays of maps and nested arrays. It also means we
+     * need to flat-map all the keys and values we would ever want to send - making
+     * the keys unique in some way - for example, e-commerce events that have 'items'.
+     *
+     * As a consequence of the above - if a key is not overwritten in newer events
+     * - it will be resent in subsequent events, causing incorrect event data to
+     * be 'leaked' across events.
+     *
+     * This seems to be a deliberate 'feature'.
+     *
+     * To date, the only solution to this seems to be creating a unique, defined and
+     * distinct set of keys that are set to the new events value or an empty string
+     * before being sent. It seems this is the only way to ensure that only valid
+     * data is sent.
+     */
+    private val analyticsParameterKeys = listOf(
+        "action", "external", "item_list_id", "item_list_name",
+        "language", "screen_class", "screen_name", "screen_title",
+        "section", "text", "type", "url"
+    )
+
+    private fun setParameters(parameters: Map<String, Any>) {
+        analyticsParameterKeys.forEach { key ->
+            qualtrics.properties.setString(key, parameters[key]?.toString() ?: "")
         }
     }
 }

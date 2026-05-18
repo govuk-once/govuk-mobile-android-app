@@ -22,13 +22,13 @@ class AnalyticsClientTest {
 
     private val analyticsRepo = mockk<AnalyticsRepo>(relaxed = true)
     private val firebaseAnalyticClient = mockk<FirebaseAnalyticsClient>(relaxed = true)
-    private val qualtricsAnalyticsClient = mockk<QualtricsAnalyticsClient>(relaxed = true)
+    private val analyticsCoordinator = mockk<AnalyticsCoordinator>(relaxed = true)
 
     private lateinit var analyticsClient: AnalyticsClient
 
     @Before
     fun setup() {
-        analyticsClient = AnalyticsClient(analyticsRepo, firebaseAnalyticClient, qualtricsAnalyticsClient)
+        analyticsClient = AnalyticsClient(analyticsRepo, firebaseAnalyticClient, analyticsCoordinator)
 
         every { analyticsRepo.analyticsEnabledState } returns ENABLED
         analyticsClient.isUserSessionActive = { true }
@@ -45,8 +45,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
-            qualtricsAnalyticsClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
@@ -61,8 +60,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
-            qualtricsAnalyticsClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
@@ -77,8 +75,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
-            qualtricsAnalyticsClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
@@ -97,8 +94,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
-            qualtricsAnalyticsClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
@@ -117,8 +113,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
-            qualtricsAnalyticsClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), 42)
         }
     }
 
@@ -136,8 +131,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
-            qualtricsAnalyticsClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
@@ -155,8 +149,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
-            qualtricsAnalyticsClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
@@ -175,8 +168,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
-            qualtricsAnalyticsClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
@@ -197,8 +189,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -221,8 +212,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
    }
 
@@ -239,8 +229,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -264,8 +253,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -280,8 +268,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -296,8 +283,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -312,8 +298,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -328,8 +313,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -344,8 +328,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -360,8 +343,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -376,8 +358,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -392,8 +373,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -408,8 +388,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -424,8 +403,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -440,8 +418,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -456,8 +433,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -472,8 +448,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -491,8 +466,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -509,8 +483,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -528,8 +501,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -547,8 +519,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -566,8 +537,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -584,8 +554,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -602,8 +571,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -625,8 +593,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -650,8 +617,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -669,8 +635,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -688,8 +653,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -707,8 +671,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -730,8 +693,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -753,8 +715,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -853,7 +814,6 @@ class AnalyticsClientTest {
 
         verify {
             firebaseAnalyticClient.setUserProperty("topics_customised", "true")
-            qualtricsAnalyticsClient.setUserProperty("topics_customised", "true")
         }
     }
 
@@ -880,12 +840,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
-                event = FirebaseAnalytics.Event.SELECT_ITEM,
-                ecommerceEvent = ecommerceEvent,
-                selectedItemIndex = 42
-            )
-            qualtricsAnalyticsClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.SELECT_ITEM,
                 ecommerceEvent = ecommerceEvent,
                 selectedItemIndex = 42
@@ -925,13 +880,10 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
-            )
-            qualtricsAnalyticsClient.logEcommerceEvent(
-                event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
+                ecommerceEvent = ecommerceEvent,
+                null
             )
         }
     }
@@ -952,13 +904,10 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
-            )
-            qualtricsAnalyticsClient.logEcommerceEvent(
-                event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
+                ecommerceEvent = ecommerceEvent,
+                null
             )
         }
     }
@@ -987,8 +936,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -1012,8 +960,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -1033,8 +980,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(event, params)
-            qualtricsAnalyticsClient.logEvent(event, params)
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 }

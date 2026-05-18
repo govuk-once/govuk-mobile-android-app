@@ -18,6 +18,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import uk.gov.govuk.analytics.AnalyticsCoordinator
+import uk.gov.govuk.analytics.FirebaseAnalyticsClient
+import uk.gov.govuk.analytics.QualtricsAnalyticsClient
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -36,6 +39,21 @@ internal class AnalyticsModule {
     @Provides
     @Singleton
     fun provideQualtrics(): Qualtrics = Qualtrics.instance()
+
+    @Provides
+    @Singleton
+    fun provideAnalyticsCoordinator(@ApplicationContext context: Context): AnalyticsCoordinator {
+        return AnalyticsCoordinator(
+            firebaseAnalyticsClient = FirebaseAnalyticsClient(
+                firebaseAnalytics = Firebase.analytics,
+                firebaseCrashlytics = Firebase.crashlytics
+            ),
+            qualtricsAnalyticsClient = QualtricsAnalyticsClient(
+                context = context,
+                qualtrics = Qualtrics.instance()
+            )
+        )
+    }
 
     @Singleton
     @Provides
