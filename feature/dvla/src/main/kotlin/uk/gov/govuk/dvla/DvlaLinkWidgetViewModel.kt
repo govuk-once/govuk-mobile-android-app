@@ -22,20 +22,15 @@ internal class DvlaLinkWidgetViewModel @Inject constructor(
         private const val SECTION = "account link"
     }
 
-    private val _dvlaState = MutableStateFlow(DvlaLinkState.CHECKING)
-    val dvlaState = _dvlaState.asStateFlow()
+    val dvlaState = dvlaRepo.linkState
 
     fun checkStatus() {
         viewModelScope.launch {
-            _dvlaState.value = DvlaLinkState.CHECKING
+            // if linked don't check again
+            if (dvlaState.value == DvlaLinkState.LINKED) return@launch
 
-            val result = dvlaRepo.isAccountLinked()
-
-            _dvlaState.value = if (result is Result.Success && result.value) {
-                DvlaLinkState.LINKED
-            } else {
-                DvlaLinkState.UNLINKED
-            }
+            // link state is checked/updated by the repo and observed in DvlaLinkHeader, ui is updated accordingly
+            dvlaRepo.isAccountLinked()
         }
     }
 

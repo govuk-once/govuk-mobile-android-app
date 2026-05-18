@@ -26,7 +26,10 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
     private val mapper: VehicleSummaryMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<VehicleAndLicenceSummaryUiState>(VehicleAndLicenceSummaryUiState.Hidden)
+    private val _uiState = MutableStateFlow(
+        if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) VehicleAndLicenceSummaryUiState.Loading
+        else VehicleAndLicenceSummaryUiState.Hidden
+    )
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -79,8 +82,8 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
             when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
-                    val vehicleUiModels = result.value.vehicles.map { mapper.toUiModel(it) }
-                    _uiState.value = VehicleAndLicenceSummaryUiState.Success(vehicles = vehicleUiModels)
+                    val vehicleList = result.value.vehicles.map { mapper.toUiModel(it) }
+                    _uiState.value = VehicleAndLicenceSummaryUiState.Success(vehicles = vehicleList)
                 }
                 else -> {
                     _uiState.value = VehicleAndLicenceSummaryUiState.Error
