@@ -129,8 +129,7 @@ internal class LoginViewModel @Inject constructor(
                 is Result.InvalidSignature<*> -> { /* Ignore */ }
                 is Result.ServiceNotResponding<*> -> logUserInitFailure("Http error - ${result.code}")
                 is Success<*> -> {
-                    // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//                    notificationsRepo.login()
+                    notificationsRepo.login()
                 }
             }
         }

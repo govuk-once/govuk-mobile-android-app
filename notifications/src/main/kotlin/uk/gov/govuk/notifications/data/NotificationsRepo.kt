@@ -17,9 +17,12 @@ class NotificationsRepo @Inject constructor(
     suspend fun login() {
         userRepo.notifications?.let { notifications ->
             notificationsProvider.login(notifications.pushId)
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+            /*
             if (isNotificationsOnboardingCompleted()) {
                 sendExistingConsentWhenPreferenceUnknown(notifications.consentStatus)
             }
+             */
         }
     }
 
