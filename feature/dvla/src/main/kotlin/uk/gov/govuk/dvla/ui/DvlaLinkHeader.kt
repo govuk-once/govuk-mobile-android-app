@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,15 +27,19 @@ fun DvlaLinkHeader(
 
     when (state) {
         DvlaLinkState.UNLINKED, DvlaLinkState.CHECKING -> {
-            DvlaLinkCard(
-                state = state,
-                onActionClick = { cardText ->
-                    viewModel.onLinkCardClicked(cardText)
-                    onActionClick()
-                },
-                modifier = modifier
-            )
-            SmallVerticalSpacer()
+            Column(modifier = modifier) {
+                DvlaLinkCard(
+                    state = state,
+                    onActionClick = { cardText ->
+                        viewModel.onLinkCardClicked(cardText)
+                        onActionClick()
+                    }
+                )
+
+                if (state == DvlaLinkState.UNLINKED) {
+                    SmallVerticalSpacer()
+                }
+            }
         }
         DvlaLinkState.LINKED -> { /* Show nothing */ }
     }
