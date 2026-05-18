@@ -25,12 +25,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
-import uk.gov.govuk.design.ui.component.ErrorPage
+import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.NonTappableCard
 import uk.gov.govuk.design.ui.component.Title
+import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -256,9 +257,13 @@ internal fun RemoveAccountErrorScreen(
     ErrorPage(
         headerText = stringResource(R.string.remove_account_error_page_header),
         subText = stringResource(R.string.remove_account_error_page_subtext),
-        buttonText = stringResource(R.string.remove_account_error_page_button_text),
-        onBack = { onDismiss() },
-        modifier = modifier
+        modifier = modifier,
+        footer = {
+            FixedPrimaryButton(
+                text = stringResource(R.string.remove_account_error_page_button_text),
+                onClick = onDismiss
+            )
+        }
     )
 }
 

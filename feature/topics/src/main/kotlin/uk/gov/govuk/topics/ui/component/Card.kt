@@ -1,6 +1,5 @@
 package uk.gov.govuk.topics.ui.component
 
-import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.MediumHorizontalSpacer
@@ -124,20 +123,7 @@ fun TopicSelectionCard(
     }
 }
 
-@Preview
-@Composable
-private fun TopicSelectionCardUnselectedPreview() {
-    GovUkTheme {
-        TopicSelectionCard(
-            icon = R.drawable.ic_topic_benefits,
-            title = "Benefits",
-            isSelected = false,
-            onClick = { }
-        )
-    }
-}
-
-@Preview
+@PreviewLightDark
 @Composable
 private fun TopicSelectionCardSelectedPreview() {
     GovUkTheme {
@@ -150,9 +136,9 @@ private fun TopicSelectionCardSelectedPreview() {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PreviewLightDark
 @Composable
-private fun TopicSelectionCardUnselectedDarkPreview() {
+private fun TopicSelectionCardUnselectedPreview() {
     GovUkTheme {
         TopicSelectionCard(
             icon = R.drawable.ic_topic_benefits,
@@ -163,15 +149,3 @@ private fun TopicSelectionCardUnselectedDarkPreview() {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun TopicSelectionCardSelectedDarkPreview() {
-    GovUkTheme {
-        TopicSelectionCard(
-            icon = R.drawable.ic_topic_benefits,
-            title = "Benefits",
-            isSelected = true,
-            onClick = { }
-        )
-    }
-}

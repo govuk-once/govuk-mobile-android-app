@@ -28,11 +28,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 data class GovUkButtonColours(
     val defaultContainerColour: Color,
@@ -402,7 +402,7 @@ private fun PrimaryDisabled()
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun AccountConnection()
 {

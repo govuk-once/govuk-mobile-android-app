@@ -17,7 +17,7 @@ plugins {
 
 val majorVersion = "1"
 val minorVersion = "1"
-val patchVersion = "5"
+val patchVersion = "6"
 
 val privacyPolicyUrl: String by project
 

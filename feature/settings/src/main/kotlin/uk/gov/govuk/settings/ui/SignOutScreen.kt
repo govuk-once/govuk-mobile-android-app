@@ -21,6 +21,7 @@ import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.NavigationEvent
@@ -88,13 +89,18 @@ private fun SignOutScreen(
             LargeVerticalSpacer()
         }
 
-        val primaryButtonText = stringResource(R.string.sign_out_button)
+        val primaryText = stringResource(R.string.sign_out_button)
+        val secondaryText = stringResource(R.string.sign_out_cancel_button)
         FixedDoubleButtonGroup(
-            primaryText = primaryButtonText,
-            onPrimary = { onSignOut(primaryButtonText) },
-            secondaryText = stringResource(R.string.sign_out_cancel_button),
-            onSecondary = onBack,
-            primaryDestructive = true
+            primaryButton = Button(
+                text = primaryText,
+                onClick = { onSignOut(primaryText) },
+                isDestructive = true
+            ),
+            secondaryButton = Button(
+                text = secondaryText,
+                onClick = onBack
+            )
         )
     }
 }

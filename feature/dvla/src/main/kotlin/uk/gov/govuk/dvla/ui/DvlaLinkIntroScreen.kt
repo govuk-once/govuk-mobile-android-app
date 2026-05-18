@@ -2,10 +2,8 @@ package uk.gov.govuk.dvla.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,7 +31,7 @@ internal fun DvlaLinkIntroScreen(
         modifier = modifier
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
-            .windowInsetsPadding(WindowInsets.systemBars)
+            .safeDrawingPadding()
     ) {
 
         BookendToWebScreen(
