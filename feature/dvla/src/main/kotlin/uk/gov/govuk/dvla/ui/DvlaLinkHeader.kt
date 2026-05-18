@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
-import uk.gov.govuk.dvla.DvlaLinkState
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.DvlaLinkWidgetViewModel
 import uk.gov.govuk.dvla.ui.component.DvlaLinkCard
 

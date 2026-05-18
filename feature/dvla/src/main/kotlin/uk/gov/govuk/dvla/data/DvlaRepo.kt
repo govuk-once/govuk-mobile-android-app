@@ -10,6 +10,7 @@ import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.toDomainModel
@@ -23,15 +24,15 @@ class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
     private val authRepo: AuthRepo
 ) {
-    private val _isLinked = MutableStateFlow(false)
-    val isLinked = _isLinked.asStateFlow()
+    private val _linkState = MutableStateFlow(DvlaLinkState.CHECKING)
+    val linkState = _linkState.asStateFlow()
 
     suspend fun isAccountLinked(): Result<Boolean> {
         val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
 
         return if (result is Result.Success) {
             val linked = result.value.linked
-            _isLinked.value = linked
+            _linkState.value = if (linked) DvlaLinkState.LINKED else DvlaLinkState.UNLINKED
             Result.Success(linked)
         } else {
             @Suppress("UNCHECKED_CAST")
@@ -47,13 +48,17 @@ class DvlaRepo @Inject constructor(
             Result.Error()
         }
 
-        _isLinked.value = result is Result.Success
+        if (result is Result.Success) {
+            _linkState.value = DvlaLinkState.LINKED
+        }
         return result
     }
 
     suspend fun unlinkAccount(): Result<Unit> {
         val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-        _isLinked.value = result !is Result.Success
+        if (result is Result.Success) {
+            _linkState.value = DvlaLinkState.UNLINKED
+        }
         return result
     }
 

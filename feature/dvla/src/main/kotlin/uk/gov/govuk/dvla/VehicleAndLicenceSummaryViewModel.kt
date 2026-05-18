@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import javax.inject.Inject
@@ -30,15 +31,18 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dvlaRepo.isLinked.collect { isLinked ->
-                if (isLinked) {
-//                    fetchLicenceData()
-                    // TODO: this is to demonstrate driver & customer summary endpoint call data,
-                    //  until we decide which endpoint to use
+            dvlaRepo.linkState.collect { state ->
+                when (state) {
+                    DvlaLinkState.LINKED -> {
+                        //                    fetchLicenceData()
+                        // TODO: this is to demonstrate driver & customer summary endpoint call data,
+                        //  until we decide which endpoint to use
 //                    fetchDriverSummaryData()
-                    fetchCustomerSummary()
-                } else {
-                    _uiState.value = VehicleAndLicenceSummaryUiState.Hidden
+                        fetchCustomerSummary()
+                    }
+
+                    DvlaLinkState.UNLINKED,
+                    DvlaLinkState.CHECKING -> _uiState.value = VehicleAndLicenceSummaryUiState.Hidden
                 }
             }
         }

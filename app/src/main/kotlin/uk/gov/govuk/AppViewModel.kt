@@ -22,6 +22,7 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
@@ -137,9 +138,13 @@ internal class AppViewModel @Inject constructor(
                     combine(
                         appRepo.suppressedHomeWidgets,
                         chatFeature.shouldDisplayChatBanner,
-                        dvlaRepo.isLinked
-                    ) { suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked ->
-                        Triple(suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked)
+                        dvlaRepo.linkState
+                    ) { suppressedWidgets, shouldDisplayChatBanner, linkState ->
+                        Triple(
+                            suppressedWidgets,
+                            shouldDisplayChatBanner,
+                            linkState == DvlaLinkState.LINKED
+                        )
                     }.collect { (suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked) ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
                         updateLinkedAccounts(isDvlaLinked)

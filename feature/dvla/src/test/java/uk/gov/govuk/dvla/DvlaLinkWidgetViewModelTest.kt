@@ -17,6 +17,7 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaLinkWidgetViewModelTest {
