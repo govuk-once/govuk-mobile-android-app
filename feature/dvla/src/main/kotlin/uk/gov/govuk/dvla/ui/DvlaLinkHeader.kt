@@ -35,10 +35,7 @@ fun DvlaLinkHeader(
                         onActionClick()
                     }
                 )
-
-                if (state == DvlaLinkState.UNLINKED) {
-                    SmallVerticalSpacer()
-                }
+                SmallVerticalSpacer()
             }
         }
         DvlaLinkState.LINKED -> { /* Show nothing */ }

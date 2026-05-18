@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LoaderCard
-import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
@@ -25,10 +25,10 @@ fun VehicleAndLicenceSummaryWidget(
     when (val currentState = state) {
         is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
         is VehicleAndLicenceSummaryUiState.Loading -> {
-            LoaderCard(
-                modifier = modifier.fillMaxWidth()
-                // TODO alt text?
-            )
+            Column(modifier = modifier) {
+                LoaderCard(modifier = Modifier.fillMaxWidth())
+                SmallVerticalSpacer()
+            }
         }
         is VehicleAndLicenceSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets

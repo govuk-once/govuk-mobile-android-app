@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.component
 
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,16 +16,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
-import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
@@ -93,14 +94,19 @@ internal fun RegistrationPlate(
     Box(
         modifier = modifier
             .background(
-                color = Color(0xFFFFC800), // TODO extract
+                color = GovUkTheme.colourScheme.surfaces.registrationPlate,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(top = 8.dp, bottom = 5.dp, start = 8.dp, end = 8.dp)
     ) {
-        BodyBoldLabel(
+        Text(
             text = registration,
-            color = Color.Black, // TODO use resource
+            style = GovUkTheme.typography.registrationPlate,
+            color = GovUkTheme.colourScheme.textAndIcons.registrationPlateText,
+            modifier = Modifier.semantics {
+                val numberPlate = registration.map { "$it " }.joinToString("").trim()
+                contentDescription = "Number plate $numberPlate"
+            }
         )
     }
 }

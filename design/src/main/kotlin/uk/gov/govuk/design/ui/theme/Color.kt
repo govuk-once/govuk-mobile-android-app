@@ -26,6 +26,7 @@ private val TealAccent = Color(0xFF00FFE0)
 
 private val YellowPrimary = Color(0xFFFFDD00)
 private val YellowDarker50 = Color(0xFF806F0D)
+private val YellowRegPlate = Color(0xFFFFC800)
 
 private val RedPrimary = Color(0xFFCA3535)
 private val RedAccent = Color(0xFFFF5E5E)
@@ -125,6 +126,7 @@ data class GovUkColourScheme(
         val cardCarouselFocused: Color,
         val cardInformationEmergencyBannerPrimary: Color,
         val cardInformationEmergencyBannerLink: Color,
+        val registrationPlateText: Color
     )
 
     data class Surfaces(
@@ -192,7 +194,8 @@ data class GovUkColourScheme(
         val chatBotMessageBackground: Color,
         val chatIntroCardBackground: Color,
         val screenBackground: Color,
-        val fullScreenLinkAccount: Color
+        val fullScreenLinkAccount: Color,
+        val registrationPlate: Color
     )
 
     data class Strokes(
@@ -281,6 +284,7 @@ internal val LightColorScheme = GovUkColourScheme(
         cardCarouselFocused = Black,
         cardInformationEmergencyBannerPrimary = Black,
         cardInformationEmergencyBannerLink = BluePrimary,
+        registrationPlateText = Black
     ),
     surfaces = Surfaces(
         background = White,
@@ -353,7 +357,8 @@ internal val LightColorScheme = GovUkColourScheme(
         chatBotMessageBackground = White,
         chatIntroCardBackground = BlueLighter95,
         screenBackground = BlueLighter90,
-        fullScreenLinkAccount = GreenPrimary
+        fullScreenLinkAccount = GreenPrimary,
+        registrationPlate = YellowRegPlate
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -441,6 +446,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardCarouselFocused = Black,
         cardInformationEmergencyBannerPrimary = White,
         cardInformationEmergencyBannerLink = BlueAccent,
+        registrationPlateText = Black
     ),
     surfaces = Surfaces(
         background = BlueDarker80,
@@ -513,7 +519,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatBotMessageBackground = Blue99,
         chatIntroCardBackground = Blue99,
         screenBackground = BlueDarker80,
-        fullScreenLinkAccount = GreenPrimary
+        fullScreenLinkAccount = GreenPrimary,
+        registrationPlate = YellowRegPlate
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -602,6 +609,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardCarouselFocused = Color.Unspecified,
             cardInformationEmergencyBannerPrimary = Color.Unspecified,
             cardInformationEmergencyBannerLink = Color.Unspecified,
+            registrationPlateText = Color.Unspecified
         ),
         surfaces = Surfaces(
             background = Color.Unspecified,
@@ -668,7 +676,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatBotMessageBackground = Color.Unspecified,
             chatIntroCardBackground = Color.Unspecified,
             screenBackground = Color.Unspecified,
-            fullScreenLinkAccount = Color.Unspecified
+            fullScreenLinkAccount = Color.Unspecified,
+            registrationPlate = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
