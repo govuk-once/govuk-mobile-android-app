@@ -19,6 +19,7 @@ import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicSelectionUiState
@@ -111,13 +112,17 @@ private fun TopicSelectionScreen(
             val isDoneEnabled = it.isDoneEnabled
 
             FixedDoubleButtonGroup(
-                primaryText = doneButtonText,
-                onPrimary = { onDone(doneButtonText) },
-                secondaryText = skipButtonText,
-                onSecondary = { onSkip(skipButtonText) },
+                primaryButton = Button(
+                    text = doneButtonText,
+                    onClick = { onDone(doneButtonText) },
+                    isEnabled = isDoneEnabled
+                ),
+                secondaryButton = Button(
+                    text = skipButtonText,
+                    onClick = { onSkip(skipButtonText) }
+                ),
                 modifier = Modifier
-                    .background(GovUkTheme.colourScheme.surfaces.fixedContainer),
-                primaryEnabled = isDoneEnabled
+                    .background(GovUkTheme.colourScheme.surfaces.fixedContainer)
             )
         }
     }

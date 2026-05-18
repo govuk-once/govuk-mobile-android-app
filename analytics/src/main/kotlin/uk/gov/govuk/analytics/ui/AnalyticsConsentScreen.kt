@@ -33,6 +33,7 @@ import uk.gov.govuk.design.ui.component.MediumHorizontalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrivacyPolicyLink
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -102,10 +103,14 @@ private fun AnalyticsConsentScreen(
         val disableButtonText = stringResource(R.string.analytics_consent_button_disable)
 
         FixedDoubleButtonGroup(
-            primaryText = enableButtonText,
-            onPrimary = onConsentGranted,
-            secondaryText = disableButtonText,
-            onSecondary = onConsentDenied
+            primaryButton = Button(
+                text = enableButtonText,
+                onClick = onConsentGranted
+            ),
+            secondaryButton = Button(
+                text = disableButtonText,
+                onClick = onConsentDenied
+            )
         )
     }
 }

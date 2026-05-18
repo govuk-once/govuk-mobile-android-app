@@ -29,6 +29,7 @@ import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.LargeHorizontalSpacer
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.login.BiometricViewModel
 
@@ -96,11 +97,17 @@ private fun BiometricScreen(
             )
         },
         footerContent = {
+            val primaryText = stringResource(R.string.login_biometrics_button)
+            val secondaryText = stringResource(R.string.login_biometrics_skip_button)
             FixedDoubleButtonGroup(
-                primaryText = stringResource(R.string.login_biometrics_button),
-                onPrimary = { onSetupBiometrics() },
-                secondaryText = stringResource(R.string.login_biometrics_skip_button),
-                onSecondary = { onSkip() }
+                primaryButton = Button(
+                    text = primaryText,
+                    onClick = { onSetupBiometrics() }
+                ),
+                secondaryButton = Button(
+                    text = secondaryText,
+                    onClick = { onSkip() }
+                )
             )
         }
     )
