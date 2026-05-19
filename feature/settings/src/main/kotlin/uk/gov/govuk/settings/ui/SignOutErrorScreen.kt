@@ -40,8 +40,10 @@ private fun SignOutErrorScreen(
     val buttonText = stringResource(R.string.sign_out_error_go_back_to_settings_button)
     ErrorPage(
         headerText = stringResource(R.string.sign_out_error_header),
-        stringResource(R.string.sign_out_error_sub_text_1),
-        stringResource(R.string.sign_out_error_sub_text_2),
+        subText = arrayOf(
+            stringResource(R.string.sign_out_error_sub_text_1),
+            stringResource(R.string.sign_out_error_sub_text_2)
+        ),
         footerContent = {
             FixedPrimaryButton(
                 text = buttonText,
