@@ -20,15 +20,11 @@ internal fun ChatErrorPageWithRetry(
 ) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
-        subText = stringResource(id = R.string.error_retry_page_subtext),
+        subText = arrayOf(
+            stringResource(id = R.string.error_retry_page_subtext),
+            stringResource(id = R.string.error_retry_page_additional_text)
+        ),
         modifier = modifier,
-        additionalContent = {
-            MediumVerticalSpacer()
-            BodyRegularLabel(
-                text = stringResource(id = R.string.error_retry_page_additional_text),
-                textAlign = TextAlign.Center
-            )
-        },
         footerContent = {
             FixedPrimaryButton(
                 text = stringResource(id = R.string.error_retry_button_text),
@@ -44,7 +40,7 @@ internal fun ChatErrorPageNoRetry(
 ) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
-        subText = stringResource(id = R.string.error_page_subtext),
+        subText = arrayOf(stringResource(id = R.string.error_page_subtext)),
         modifier = modifier,
         additionalContent = {
             MediumVerticalSpacer()
