@@ -1,4 +1,4 @@
-package uk.gov.govuk.design.ui.util
+package uk.gov.govuk.dvla.util
 
 import android.content.Context
 import androidx.annotation.StringRes

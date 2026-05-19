@@ -1,6 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
-import uk.gov.govuk.design.ui.util.StringProvider
+import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
