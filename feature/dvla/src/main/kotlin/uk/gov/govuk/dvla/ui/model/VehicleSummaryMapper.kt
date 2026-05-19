@@ -22,7 +22,7 @@ internal class VehicleSummaryMapper @Inject constructor(
         return VehicleSummaryUiModel(
             registration = vehicle.registration,
             make = vehicle.make,
-            model = vehicle.model,
+            model = vehicle.model ?: "Unknown", // TODO return unknown for now, other states in future tickets
             taxStatus = StatusRowUiModel(
                 title = stringProvider.getString(R.string.tax_status_title),
                 description = resolveDescription(taxStringResId, taxDate),
@@ -37,7 +37,7 @@ internal class VehicleSummaryMapper @Inject constructor(
     }
 
     private fun resolveDescription(resId: Int?, dateArg: String?): String {
-        val id = resId ?: return "Unknown" // TODO temporarily return unknown, other states in future tickets
+        val id = resId ?: return "Unknown" // TODO return unknown for now, other states in future tickets
         return dateArg?.let { stringProvider.getString(id, it) }
             ?: stringProvider.getString(id)
     }

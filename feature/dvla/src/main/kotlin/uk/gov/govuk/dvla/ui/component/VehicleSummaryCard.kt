@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -115,7 +116,7 @@ internal fun RegistrationPlate(
 fun VehicleSummaryHeader(
     registration: String,
     make: String,
-    model: String?,
+    model: String,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFirst: Boolean = true
@@ -143,16 +144,16 @@ fun VehicleSummaryHeader(
                 // overflow
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(GovUkTheme.colourScheme.surfaces.buttonCompact)
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(GovUkTheme.colourScheme.surfaces.cardOverflowButton)
                         .clickable(onClick = onMoreClick),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_more),
                         contentDescription = "More options",
-                        tint = GovUkTheme.colourScheme.textAndIcons.primary
+                        tint = GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
                     )
                 }
             }
@@ -165,12 +166,10 @@ fun VehicleSummaryHeader(
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
-            model?.let {
-                BodyRegularLabel(
-                    text = it,
-                    color = GovUkTheme.colourScheme.textAndIcons.secondary
-                )
-            }
+            BodyRegularLabel(
+                text = model,
+                color = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
         }
     }
 }

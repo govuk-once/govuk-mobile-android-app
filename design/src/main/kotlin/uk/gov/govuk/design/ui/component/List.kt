@@ -368,11 +368,16 @@ fun StatusListItem(
             MediumHorizontalSpacer()
 
             icon?.let {
-                Icon(
-                    painter = painterResource(id = it),
-                    contentDescription = null,
-                    tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
-                )
+                Box(
+                    modifier = Modifier.size(36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = it),
+                        contentDescription = null,
+                        tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
+                    )
+                }
             }
         }
     }
