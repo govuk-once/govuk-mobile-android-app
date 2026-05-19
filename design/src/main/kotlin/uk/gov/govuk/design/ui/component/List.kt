@@ -374,7 +374,7 @@ fun StatusListItem(
                 ) {
                     Icon(
                         painter = painterResource(id = it),
-                        contentDescription = null,
+                        contentDescription = null,  // decorative icon
                         tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
                     )
                 }

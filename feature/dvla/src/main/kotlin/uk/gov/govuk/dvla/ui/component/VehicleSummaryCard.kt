@@ -23,16 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
@@ -79,7 +80,7 @@ internal fun VehicleSummaryCard(
 
         // details
         InternalLinkListItem(
-            title = "Details",
+            title = stringResource(R.string.vehicle_details_title),
             onClick = onDetailsClick,
             isFirst = false,
             isLast = true
@@ -92,6 +93,9 @@ internal fun RegistrationPlate(
     registration: String,
     modifier: Modifier = Modifier
 ) {
+    val accessibleNumberPlate = registration.map { "$it " }.joinToString("").trim() // 'FH08PDH' to 'F H 0 8 P D H'
+    val altText = stringResource(id = R.string.registration_plate_alt_text, accessibleNumberPlate)
+
     Box(
         modifier = modifier
             .background(
@@ -105,8 +109,7 @@ internal fun RegistrationPlate(
             style = GovUkTheme.typography.registrationPlate,
             color = GovUkTheme.colourScheme.textAndIcons.registrationPlateText,
             modifier = Modifier.semantics {
-                val numberPlate = registration.map { "$it " }.joinToString("").trim()
-                contentDescription = "Number plate $numberPlate"
+                contentDescription = altText
             }
         )
     }
@@ -151,8 +154,8 @@ fun VehicleSummaryHeader(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_more),
-                        contentDescription = "More options",
+                        painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_more),
+                        contentDescription = stringResource(R.string.more_options_alt_text),
                         tint = GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
                     )
                 }
@@ -207,12 +210,12 @@ private fun VehicleSummaryCardPreview() {
                 taxStatus = StatusRowUiModel(
                     title = "Tax",
                     description = "Valid until 1 February 2027",
-                    icon = R.drawable.ic_check_round,
+                    icon = uk.gov.govuk.design.R.drawable.ic_check_round,
                 ),
                 motStatus = StatusRowUiModel(
                     title = "MOT",
                     description = "Valid until 24 April 2026",
-                    icon = R.drawable.ic_cancel_round
+                    icon = uk.gov.govuk.design.R.drawable.ic_cancel_round
                 )
             ),
             onDetailsClick = {},
