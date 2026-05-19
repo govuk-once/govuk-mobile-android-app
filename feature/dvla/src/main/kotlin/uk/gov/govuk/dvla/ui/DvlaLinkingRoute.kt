@@ -177,7 +177,7 @@ private fun ErrorOtherScreen(
     ErrorPage(
         headerText = stringResource(R.string.link_dvla_problem_title),
         subText = stringResource(R.string.link_dvla_problem_description),
-        footer = {
+        footerContent = {
             FixedDoubleButtonGroup(
                 primaryButton = Button(
                     text = primaryText,

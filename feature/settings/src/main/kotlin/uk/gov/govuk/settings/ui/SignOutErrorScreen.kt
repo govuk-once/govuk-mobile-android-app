@@ -3,9 +3,12 @@ package uk.gov.govuk.settings.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -41,13 +44,19 @@ private fun SignOutErrorScreen(
     ErrorPage(
         headerText = stringResource(R.string.sign_out_error_header),
         subText = stringResource(R.string.sign_out_error_sub_text),
-        footer = {
+        additionalContent = {
+            MediumVerticalSpacer()
+            BodyRegularLabel(
+                text = stringResource(R.string.sign_out_error_additional_text),
+                textAlign = TextAlign.Center
+            )
+        },
+        footerContent = {
             FixedPrimaryButton(
                 text = buttonText,
                 onClick = { onBackClick(buttonText) }
             )
         },
-        additionalText = stringResource(R.string.sign_out_error_additional_text),
         modifier = modifier
     )
 }

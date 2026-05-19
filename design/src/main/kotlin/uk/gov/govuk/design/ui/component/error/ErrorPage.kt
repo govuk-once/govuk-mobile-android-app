@@ -1,5 +1,6 @@
 package uk.gov.govuk.design.ui.component.error
 
+import android.content.res.Configuration
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.height
@@ -11,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -30,25 +32,29 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 fun ErrorPage(
     headerText: String,
     subText: String,
-    footer: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    additionalText: String? = null
+    additionalContent: (@Composable () -> Unit)? = null,
+    footerContent: (@Composable () -> Unit)? = null
 ) {
     val focusRequester = remember { FocusRequester() }
 
     CentreAlignedScreen(
         modifier = modifier,
         screenContent = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_error),
-                contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .padding(all = GovUkTheme.spacing.medium)
-            )
+            val isOrientationPortrait =
+                LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
-            LargeHorizontalSpacer()
+            if (isOrientationPortrait) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_error),
+                    contentDescription = null,
+                    tint = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier
+                        .height(IntrinsicSize.Min)
+                        .padding(all = GovUkTheme.spacing.medium)
+                )
+                LargeHorizontalSpacer()
+            }
 
             LargeTitleBoldLabel(
                 text = headerText,
@@ -66,17 +72,10 @@ fun ErrorPage(
                 textAlign = TextAlign.Center
             )
 
-            if (additionalText != null) {
-                MediumVerticalSpacer()
-
-                BodyRegularLabel(
-                    text = additionalText,
-                    textAlign = TextAlign.Center
-                )
-            }
+            additionalContent?.invoke()
         },
         footerContent = {
-            footer()
+            footerContent?.invoke()
         }
     )
     LaunchedEffect(Unit) {
@@ -92,7 +91,7 @@ private fun ErrorPageWithoutAdditionalTextPreview() {
         ErrorPage(
             headerText = "Header text",
             subText = "Sub text",
-            footer = {
+            footerContent = {
                 FixedPrimaryButton(
                     text = "Button text",
                     onClick = { }
@@ -104,18 +103,24 @@ private fun ErrorPageWithoutAdditionalTextPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ErrorPageWithAdditionalTextPreview() {
+private fun ErrorPageWithAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
             subText = "Sub text",
-            footer = {
+            additionalContent = {
+                MediumVerticalSpacer()
+                BodyRegularLabel(
+                    text = "Additional text",
+                    textAlign = TextAlign.Center
+                )
+            },
+            footerContent = {
                 FixedPrimaryButton(
                     text = "Button text",
                     onClick = { }
                 )
-            },
-            additionalText = "Additional text",
+            }
         )
     }
 }

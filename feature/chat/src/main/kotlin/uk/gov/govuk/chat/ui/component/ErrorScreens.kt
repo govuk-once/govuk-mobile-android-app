@@ -1,24 +1,16 @@
 package uk.gov.govuk.chat.ui.component
 
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
-import uk.gov.govuk.design.ui.component.CentreAlignedScreen
-import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.LargeHorizontalSpacer
-import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
+import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -26,12 +18,23 @@ internal fun ChatErrorPageWithRetry(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ChatErrorPage(
+    ErrorPage(
+        headerText = stringResource(id = R.string.error_page_header),
         subText = stringResource(id = R.string.error_retry_page_subtext),
-        modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium),
-        additionalText = stringResource(id = R.string.error_retry_page_additional_text),
-        buttonText = stringResource(id = R.string.error_retry_button_text),
-        onRetry = onRetry
+        modifier = modifier,
+        additionalContent = {
+            MediumVerticalSpacer()
+            BodyRegularLabel(
+                text = stringResource(id = R.string.error_retry_page_additional_text),
+                textAlign = TextAlign.Center
+            )
+        },
+        footerContent = {
+            FixedPrimaryButton(
+                text = stringResource(id = R.string.error_retry_button_text),
+                onClick = onRetry
+            )
+        }
     )
 }
 
@@ -39,68 +42,13 @@ internal fun ChatErrorPageWithRetry(
 internal fun ChatErrorPageNoRetry(
     modifier: Modifier = Modifier
 ) {
-    ChatErrorPage(
+    ErrorPage(
+        headerText = stringResource(id = R.string.error_page_header),
         subText = stringResource(id = R.string.error_page_subtext),
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun ChatErrorPage(
-    subText: String,
-    modifier: Modifier = Modifier,
-    additionalText: String? = null,
-    buttonText: String? = null,
-    onRetry: (() -> Unit)? = null
-) {
-    CentreAlignedScreen(
         modifier = modifier,
-        screenContent = {
-            Icon(
-                painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_error),
-                contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier.height(IntrinsicSize.Min)
-                    .padding(all = GovUkTheme.spacing.medium)
-            )
-
-            LargeHorizontalSpacer()
-
-            LargeTitleBoldLabel(
-                text = stringResource(id = R.string.error_page_header),
-                textAlign = TextAlign.Center
-            )
-
+        additionalContent = {
             MediumVerticalSpacer()
-
-            BodyRegularLabel(
-                text = subText,
-                textAlign = TextAlign.Center
-            )
-
-            MediumVerticalSpacer()
-
-            if (additionalText != null) {
-                BodyRegularLabel(
-                    text = additionalText,
-                    textAlign = TextAlign.Center
-                )
-            } else {
-                AdditionalText()
-            }
-        },
-        footerContent = {
-            if (buttonText != null && onRetry != null) {
-                MediumVerticalSpacer()
-                PrimaryButton(
-                    text = buttonText,
-                    onClick = onRetry,
-                    modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium),
-                    enabled = true,
-                    externalLink = false
-                )
-                ExtraLargeVerticalSpacer()
-            }
+            AdditionalText()
         }
     )
 }
