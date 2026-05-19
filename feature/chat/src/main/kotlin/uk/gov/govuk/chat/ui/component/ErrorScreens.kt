@@ -6,7 +6,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import uk.gov.govuk.chat.R
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -20,10 +19,8 @@ internal fun ChatErrorPageWithRetry(
 ) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
-        subText = arrayOf(
-            stringResource(id = R.string.error_retry_page_subtext),
-            stringResource(id = R.string.error_retry_page_additional_text)
-        ),
+        stringResource(id = R.string.error_retry_page_sub_text_1),
+        stringResource(id = R.string.error_retry_page_sub_text_2),
         modifier = modifier,
         footerContent = {
             FixedPrimaryButton(
@@ -40,7 +37,7 @@ internal fun ChatErrorPageNoRetry(
 ) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
-        subText = arrayOf(stringResource(id = R.string.error_page_subtext)),
+        stringResource(id = R.string.error_page_sub_text),
         modifier = modifier,
         additionalContent = {
             MediumVerticalSpacer()

@@ -3,12 +3,9 @@ package uk.gov.govuk.settings.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -43,10 +40,8 @@ private fun SignOutErrorScreen(
     val buttonText = stringResource(R.string.sign_out_error_go_back_to_settings_button)
     ErrorPage(
         headerText = stringResource(R.string.sign_out_error_header),
-        subText = arrayOf(
-            stringResource(R.string.sign_out_error_sub_text),
-            stringResource(R.string.sign_out_error_additional_text)
-        ),
+        stringResource(R.string.sign_out_error_sub_text_1),
+        stringResource(R.string.sign_out_error_sub_text_2),
         footerContent = {
             FixedPrimaryButton(
                 text = buttonText,

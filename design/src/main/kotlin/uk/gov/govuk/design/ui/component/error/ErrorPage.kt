@@ -91,7 +91,7 @@ private fun ErrorPageWithoutAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
-            subText = arrayOf("Sub text 1", "Sub text 2"),
+            "Sub text 1", "Sub text 2",
             footerContent = {
                 FixedPrimaryButton(
                     text = "Button text",
@@ -108,7 +108,7 @@ private fun ErrorPageWithAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
-            subText = arrayOf("Sub text"),
+            "Sub text",
             additionalContent = {
                 MediumVerticalSpacer()
                 BodyRegularLabel(
