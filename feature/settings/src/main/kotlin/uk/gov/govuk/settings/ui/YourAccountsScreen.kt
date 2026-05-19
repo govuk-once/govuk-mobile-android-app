@@ -172,7 +172,7 @@ private fun AccountsListContent(
     ) {
         LargeVerticalSpacer()
 
-        Column(Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
+        Column(modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
             if (accounts.isEmpty()) {
                 NonTappableCard(
                     body = stringResource(R.string.your_accounts_empty_state_body),
