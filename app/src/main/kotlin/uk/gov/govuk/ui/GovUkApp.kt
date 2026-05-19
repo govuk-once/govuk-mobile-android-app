@@ -83,7 +83,6 @@ import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
 import uk.gov.govuk.settings.navigation.unlinkAccountErrorGraph
 import uk.gov.govuk.terms.navigation.termsGraph
-import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
@@ -491,7 +490,7 @@ private fun GovUkNavHost(
                     showBrowserNotFoundAlert = true
                 }
             },
-            topicHeader = { topicRef, linkResult ->
+            topicHeader = { topicRef ->
                 val isDrivingTopic = topicRef.isDrivingTopic()
                 val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
 
@@ -503,7 +502,6 @@ private fun GovUkNavHost(
                     ) {
                         // drop in the self-managed public header from the DVLA module
                         DvlaLinkHeader(
-                            linkResult = linkResult,
                             onActionClick = { navController.navigateToDvlaLinkIntro() }
                         )
 
@@ -622,11 +620,9 @@ private fun GovUkNavHost(
             },
             onLinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, true)
             },
             onUnlinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
             },
             onIntroClose = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)

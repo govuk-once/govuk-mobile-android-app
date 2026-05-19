@@ -14,14 +14,13 @@ import uk.gov.govuk.dvla.ui.component.DvlaLinkCard
 
 @Composable
 fun DvlaLinkHeader(
-    linkResult: Boolean,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: DvlaLinkWidgetViewModel = hiltViewModel()
     val state by viewModel.dvlaState.collectAsState()
 
-    LaunchedEffect(linkResult) {
+    LaunchedEffect(Unit) {
         viewModel.checkStatus()
     }
 
