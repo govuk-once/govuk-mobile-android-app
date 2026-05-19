@@ -37,10 +37,10 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     DvlaLinkState.LINKED -> {
-                        //                    fetchLicenceData()
+                        fetchLicenceData()
                         // TODO: this is to demonstrate driver & customer summary endpoint call data,
                         //  until we decide which endpoint to use
-//                    fetchDriverSummaryData()
+                        fetchDriverSummaryData()
                         fetchCustomerSummary()
                     }
 
@@ -51,16 +51,19 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-//    private fun fetchLicenceData() {
-//        viewModelScope.launch {
-//            _uiState.value = LicenceSummaryUiState.Loading
-//
-//            val result = dvlaRepo.getLicenceDetails()
-//
-//            _uiState.value = if (result is Result.Success)
-//                LicenceSummaryUiState.Success(result.value) else LicenceSummaryUiState.Error
-//        }
-//    }
+    private fun fetchLicenceData() {
+        viewModelScope.launch {
+            val result = dvlaRepo.getLicenceDetails()
+
+            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
+            if (BuildConfig.DEBUG) {
+                when (result) {
+                    is Result.Success -> println("Licence data: SUCCESS: ${result.value}")
+                    else -> println("Licence data: ERROR - Failed to fetch Licence data")
+                }
+            }
+        }
+    }
 
     private fun fetchDriverSummaryData() {
         viewModelScope.launch {

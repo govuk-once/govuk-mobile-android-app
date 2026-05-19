@@ -36,6 +36,8 @@ class DvlaRepo @Inject constructor(
             _linkState.value = if (linked) DvlaLinkState.LINKED else DvlaLinkState.UNLINKED
             Result.Success(linked)
         } else {
+            _linkState.value = DvlaLinkState.UNLINKED
+
             @Suppress("UNCHECKED_CAST")
             result as Result<Boolean>
         }
