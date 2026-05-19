@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.talkBackText
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
@@ -339,7 +340,8 @@ fun StatusListItem(
     @DrawableRes icon: Int?,
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
-    isLast: Boolean = false
+    isLast: Boolean = false,
+    titleAltText: String? = null
 ) {
     CardListItem(
         modifier = modifier,
@@ -358,7 +360,10 @@ fun StatusListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                BodyBoldLabel(text = title)
+                BodyBoldLabel(
+                    text = title,
+                    modifier = modifier.withAltText(titleAltText)
+                )
 
                 SmallVerticalSpacer()
 

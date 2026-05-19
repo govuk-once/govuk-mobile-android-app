@@ -72,6 +72,7 @@ internal fun VehicleSummaryCard(
         // MOT
         StatusListItem(
             title = vehicleSummary.motStatus.title,
+            titleAltText = vehicleSummary.motStatus.titleAltText,
             description = vehicleSummary.motStatus.description,
             icon = vehicleSummary.motStatus.icon,
             isFirst = false,

@@ -30,6 +30,7 @@ internal class VehicleSummaryMapper @Inject constructor(
             ),
             motStatus = StatusRowUiModel(
                 title = stringProvider.getString(R.string.acronym_mot),
+                titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
                 description = resolveDescription(motStringResId, motDate),
                 icon = motIconResId
             )

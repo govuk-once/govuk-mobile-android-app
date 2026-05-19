@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 
 data class StatusRowUiModel(
     val title: String,
+    val titleAltText: String? = null,
     val description: String,
     @param:DrawableRes val icon: Int?
 )
