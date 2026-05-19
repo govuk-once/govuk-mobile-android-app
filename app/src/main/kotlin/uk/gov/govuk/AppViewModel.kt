@@ -26,7 +26,6 @@ import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
-import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
@@ -59,9 +58,6 @@ internal class AppViewModel @Inject constructor(
 
     private val _homeWidgets: MutableStateFlow<List<HomeWidget>?> = MutableStateFlow(null)
     internal val homeWidgets = _homeWidgets.asStateFlow()
-
-    private val _linkedAccounts = MutableStateFlow<List<LinkedAccountUiModel>>(emptyList())
-    val linkedAccounts = _linkedAccounts.asStateFlow()
 
     enum class TimeoutEvent {
         WARNING, TIMEOUT
@@ -136,13 +132,11 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner,
-                        dvlaRepo.isLinked
-                    ) { suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked ->
-                        Triple(suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked)
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked) ->
+                        chatFeature.shouldDisplayChatBanner
+                    ) { suppressedWidgets, shouldDisplayChatBanner ->
+                        Pair(suppressedWidgets, shouldDisplayChatBanner)
+                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
-                        updateLinkedAccounts(isDvlaLinked)
                     }
                 }
             }
@@ -255,21 +249,6 @@ internal class AppViewModel @Inject constructor(
                 _homeWidgets.value = widgets
             }
         }
-    }
-
-    private fun updateLinkedAccounts(isDvlaLinked: Boolean) {
-        val accounts = mutableListOf<LinkedAccountUiModel>()
-        if (isDvlaLinked) {
-            accounts.add(
-                LinkedAccountUiModel(
-                    displayTitleRes = uk.gov.govuk.dvla.R.string.dvla_account_title,
-                    onUnlink = {
-                        // TODO placeholder for next ticket
-                    }
-                )
-            )
-        }
-        _linkedAccounts.value = accounts
     }
 
     fun onWidgetClick(
