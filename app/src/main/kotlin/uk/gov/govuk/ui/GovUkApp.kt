@@ -81,6 +81,7 @@ import uk.gov.govuk.search.navigation.searchGraph
 import uk.gov.govuk.search.ui.widget.SearchWidget
 import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
+import uk.gov.govuk.settings.navigation.unlinkAccountErrorGraph
 import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
@@ -570,7 +571,6 @@ private fun GovUkNavHost(
                     url = url
                 ) { showBrowserNotFoundAlert = true }
             },
-            linkedAccountsFlow = viewModel.linkedAccounts,
             modifier = Modifier.padding(paddingValues)
         )
         signOutGraph(
@@ -578,6 +578,9 @@ private fun GovUkNavHost(
             onSignOut = {
                 appNavigation.onSignOut(navController)
             }
+        )
+        unlinkAccountErrorGraph(
+            navController = navController
         )
         searchGraph(
             navController,

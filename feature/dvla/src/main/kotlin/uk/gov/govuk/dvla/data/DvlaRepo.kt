@@ -12,6 +12,7 @@ import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.domain.LicenceDetails
+import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
@@ -76,6 +77,18 @@ class DvlaRepo @Inject constructor(
 
     suspend fun lookupVehicle(registrationNumber: String): Result<VehicleDetails> =
         safeAuthApiCall({ api.lookupVehicle(registrationNumber) }, authRepo)
+            .map { it.toDomainModel() }
+
+    suspend fun createCheckCode(): Result<CheckCodeDetails> =
+        safeAuthApiCall({ api.createShareCode() }, authRepo)
+            .map { it.toDomainModel() }
+
+    suspend fun getCheckCodes(): Result<List<CheckCodeDetails>> =
+        safeAuthApiCall({ api.getShareCodes() }, authRepo)
+            .map { it.toDomainModel() }
+
+    suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
+        safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
             .map { it.toDomainModel() }
 
     @OptIn(ExperimentalEncodingApi::class)

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
@@ -28,7 +29,6 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 @Composable
 fun ChatBanner(
@@ -124,7 +124,7 @@ fun ChatBanner(
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun ChatBannerPreview() {
     GovUkTheme {
