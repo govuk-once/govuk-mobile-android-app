@@ -8,7 +8,7 @@ import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import javax.inject.Inject
 
 class QualtricsAnalyticsClient @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val qualtrics: Qualtrics
 ) {
 
