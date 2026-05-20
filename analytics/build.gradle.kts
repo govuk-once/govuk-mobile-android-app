@@ -17,6 +17,10 @@ android {
         minSdk = Version.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // TODO: these should live in BitWarden - also they'll differ by environment
+        buildConfigField("String", "QUALTRICS_BRAND_ID", "\"\"")
+        buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"\"")
     }
 
     compileOptions {
@@ -32,6 +36,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     testOptions {

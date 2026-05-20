@@ -36,6 +36,15 @@ class QualtricsAnalyticsClientTest {
     }
 
     @Test
+    fun `Given an initialization call, then the project is initialized`() {
+        qualtricsAnalyticsClient.initialize()
+
+        verify(exactly = 1) {
+            qualtrics.initializeProject(any(), any(), any())
+        }
+    }
+
+    @Test
     fun `Given an event, then log the event and set the property`() {
         val params = mapOf("text" to "value")
 

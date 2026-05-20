@@ -45,11 +45,6 @@ android {
         buildConfigField("String", "ONE_SIGNAL_APP_ID", "\"4c235189-5c5f-4a71-8385-2549fc36419f\"")
         buildConfigField("String", "VERSION_NAME_USER_FACING", "\"$versionName ($versionCode)\"")
         buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
-
-        // TODO: these should probably live in BitWarden and they'll differ by environment
-        // TODO: question - what if we want/need different project ID's, is that even a thing?
-        buildConfigField("String", "QUALTRICS_BRAND_ID", "\"\"")
-        buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"\"")
     }
 
     signingConfigs {

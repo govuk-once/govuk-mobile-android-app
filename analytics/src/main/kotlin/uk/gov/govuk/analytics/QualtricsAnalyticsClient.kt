@@ -9,8 +9,16 @@ import javax.inject.Inject
 
 class QualtricsAnalyticsClient @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val qualtrics: Qualtrics
+    private val qualtrics: Qualtrics = Qualtrics.instance()
 ) {
+
+    fun initialize() {
+        qualtrics.initializeProject(
+            BuildConfig.QUALTRICS_BRAND_ID,
+            BuildConfig.QUALTRICS_PROJECT_ID,
+            context
+        )
+    }
 
     fun logEvent(eventName: String, parameters: Map<String, Any>) {
         setParameters(parameters)
