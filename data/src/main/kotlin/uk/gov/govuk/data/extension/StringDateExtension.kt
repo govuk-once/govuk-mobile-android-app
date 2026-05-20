@@ -7,7 +7,7 @@ fun String?.toLocalDateOrNull(): LocalDate? {
     if (this.isNullOrBlank()) return null
     return try {
         LocalDate.parse(this)
-    } catch (e: DateTimeParseException) {
+    } catch (_: DateTimeParseException) {
         null
     }
 }

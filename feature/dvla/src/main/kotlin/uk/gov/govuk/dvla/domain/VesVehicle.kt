@@ -3,7 +3,7 @@ package uk.gov.govuk.dvla.domain
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 // TODO: this is to demonstrate the endpoint call data, to be decided which data to use
-data class VehicleDetails(
+data class VesVehicle(
     val registrationNumber: String,
     val make: String,
     val colour: String,
@@ -17,7 +17,7 @@ data class VehicleDetails(
     val co2Emissions: Int?
 )
 
-fun VehicleEnquiryResponse.toDomainModel() = VehicleDetails(
+fun VehicleEnquiryResponse.toDomainModel() = VesVehicle(
     registrationNumber = this.registrationNumber,
     make = this.make ?: "",
     colour = this.colour ?: "",

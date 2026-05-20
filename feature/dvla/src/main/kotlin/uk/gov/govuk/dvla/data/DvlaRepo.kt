@@ -13,7 +13,7 @@ import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
-import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -77,7 +77,7 @@ class DvlaRepo @Inject constructor(
         safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun lookupVehicle(registrationNumber: String): Result<VehicleDetails> =
+    suspend fun lookupVehicle(registrationNumber: String): Result<VesVehicle> =
         safeAuthApiCall({ api.lookupVehicle(registrationNumber) }, authRepo)
             .map { it.toDomainModel() }
 

@@ -25,7 +25,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
-import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.VesVehicle
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaViewModelTest {
@@ -275,10 +275,10 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given ViewModel initialised, then getVehicleDetails is called with sanitised registration number`() = runTest(dispatcher) {
-        val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
+        val vesVehicle = mockk<VesVehicle>(relaxed = true)
 
         every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
-        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vehicleDetails)
+        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vesVehicle)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
         advanceUntilIdle()
@@ -288,10 +288,10 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given registration input with spaces, when search is submitted, then repo is called with sanitised registration number`() = runTest(dispatcher) {
-        val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
+        val vesVehicle = mockk<VesVehicle>(relaxed = true)
 
         every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
-        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vehicleDetails)
+        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vesVehicle)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
         advanceUntilIdle()
