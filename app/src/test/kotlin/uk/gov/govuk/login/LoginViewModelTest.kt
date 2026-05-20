@@ -131,8 +131,8 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            coVerify(exactly = 1) { notificationsRepo.login() }assertTrue(isLoading.last() == true)
+            coVerify(exactly = 1) { notificationsRepo.login() }
+            assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
     }
@@ -158,8 +158,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            coVerify(exactly = 1) { notificationsRepo.login() }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -185,8 +184,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            coVerify(exactly = 1) { notificationsRepo.login() }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -239,8 +237,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            coVerify(exactly = 1) { notificationsRepo.login() }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -402,8 +399,7 @@ class LoginViewModelTest {
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.WebLogin)
 
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            coVerify(exactly = 1) { notificationsRepo.login() }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             coVerify(exactly = 0) {
                 loginRepo.setRefreshTokenIssuedAtDate(any())
             }
@@ -435,8 +431,7 @@ class LoginViewModelTest {
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.WebLogin)
 
-            // Todo - will be re-added for phase 2 or 3 of Hello UDP
-//            coVerify(exactly = 1) { notificationsRepo.login() }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)

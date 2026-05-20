@@ -55,7 +55,8 @@ class NotificationsRepoTest {
             notificationsRepo.login()
 
             verify(exactly = 1) { notificationsProvider.login("12345") }
-            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
         }
     }
 
@@ -70,7 +71,8 @@ class NotificationsRepoTest {
             notificationsRepo.login()
 
             verify(exactly = 1) { notificationsProvider.login("12345") }
-            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.DENIED) }
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.DENIED) }
         }
     }
 
