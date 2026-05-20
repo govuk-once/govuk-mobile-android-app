@@ -40,7 +40,7 @@ private fun SignOutErrorScreen(
     val buttonText = stringResource(R.string.sign_out_error_go_back_to_settings_button)
     ErrorPage(
         headerText = stringResource(R.string.sign_out_error_header),
-        subText = arrayOf(
+        subText = listOf(
             stringResource(R.string.sign_out_error_sub_text_1),
             stringResource(R.string.sign_out_error_sub_text_2)
         ),

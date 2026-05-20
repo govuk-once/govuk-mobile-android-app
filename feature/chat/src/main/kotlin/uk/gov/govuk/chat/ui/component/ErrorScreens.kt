@@ -19,7 +19,7 @@ internal fun ChatErrorPageWithRetry(
 ) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
-        subText = arrayOf(
+        subText = listOf(
             stringResource(id = R.string.error_retry_page_sub_text_1),
             stringResource(id = R.string.error_retry_page_sub_text_2)
         ),
@@ -39,7 +39,7 @@ internal fun ChatErrorPageNoRetry(
 ) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
-        subText = arrayOf(stringResource(id = R.string.error_page_sub_text)),
+        subText = listOf(stringResource(id = R.string.error_page_sub_text)),
         modifier = modifier,
         additionalContent = {
             MediumVerticalSpacer()

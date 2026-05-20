@@ -31,7 +31,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 fun ErrorPage(
     headerText: String,
-    vararg subText: String,
+    subText: List<String>,
     modifier: Modifier = Modifier,
     additionalContent: (@Composable () -> Unit)? = null,
     footerContent: (@Composable () -> Unit)? = null
@@ -91,7 +91,7 @@ private fun ErrorPageWithoutAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
-            subText = arrayOf("Sub text 1", "Sub text 2"),
+            subText = listOf("Sub text 1", "Sub text 2"),
             footerContent = {
                 FixedPrimaryButton(
                     text = "Button text",
@@ -108,7 +108,7 @@ private fun ErrorPageWithAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
-            subText = arrayOf("Sub text"),
+            subText = listOf("Sub text"),
             additionalContent = {
                 MediumVerticalSpacer()
                 BodyRegularLabel(

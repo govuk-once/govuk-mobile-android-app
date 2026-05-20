@@ -256,7 +256,7 @@ internal fun RemoveAccountErrorScreen(
 ) {
     ErrorPage(
         headerText = stringResource(R.string.remove_account_error_page_header),
-        subText = arrayOf(stringResource(R.string.remove_account_error_page_sub_text)),
+        subText = listOf(stringResource(R.string.remove_account_error_page_sub_text)),
         modifier = modifier,
         footerContent = {
             FixedPrimaryButton(
