@@ -3,11 +3,8 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import javax.inject.Inject

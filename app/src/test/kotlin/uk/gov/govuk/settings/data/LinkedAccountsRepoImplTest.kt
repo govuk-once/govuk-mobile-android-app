@@ -14,6 +14,7 @@ import org.junit.Test
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 
 class LinkedAccountsRepoImplTest {
 
@@ -29,7 +30,7 @@ class LinkedAccountsRepoImplTest {
 
     @Test
     fun `Given DVLA is linked and flag is enabled, when getLinkedAccounts is called, then return list with DVLA account`() = runTest {
-        every { dvlaRepo.isLinked } returns MutableStateFlow(true)
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
         every { flagRepo.isDvlaLinkEnabled() } returns true
 
         val accounts = repo.getLinkedAccounts().first()
@@ -41,7 +42,7 @@ class LinkedAccountsRepoImplTest {
 
     @Test
     fun `Given DVLA is linked but flag is disabled, when getLinkedAccounts is called, then return empty list`() = runTest {
-        every { dvlaRepo.isLinked } returns MutableStateFlow(true)
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
         every { flagRepo.isDvlaLinkEnabled() } returns false
 
         val accounts = repo.getLinkedAccounts().first()
@@ -51,7 +52,7 @@ class LinkedAccountsRepoImplTest {
 
     @Test
     fun `Given DVLA is not linked and flag is enabled, when getLinkedAccounts is called, then return empty list`() = runTest {
-        every { dvlaRepo.isLinked } returns MutableStateFlow(false)
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         every { flagRepo.isDvlaLinkEnabled() } returns true
 
         val accounts = repo.getLinkedAccounts().first()
