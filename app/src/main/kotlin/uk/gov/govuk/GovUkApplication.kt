@@ -12,7 +12,7 @@ class GovUkApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        notificationsProvider.initialise(BuildConfig.ONE_SIGNAL_APP_ID)
+        notificationsProvider.initialise()
         notificationsProvider.addClickListener()
     }
 }
