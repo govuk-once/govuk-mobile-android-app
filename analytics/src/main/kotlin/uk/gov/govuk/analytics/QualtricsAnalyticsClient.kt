@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class QualtricsAnalyticsClient @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val qualtrics: Qualtrics = Qualtrics.instance()
+    private val qualtrics: Qualtrics
 ) {
 
     fun initialize() {

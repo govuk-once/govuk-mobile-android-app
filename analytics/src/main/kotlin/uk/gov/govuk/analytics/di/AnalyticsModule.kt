@@ -19,6 +19,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import uk.gov.govuk.analytics.AnalyticsCoordinator
+import uk.gov.govuk.analytics.AnalyticsCoordinatorInterface
 import uk.gov.govuk.analytics.FirebaseAnalyticsClient
 import uk.gov.govuk.analytics.QualtricsAnalyticsClient
 import javax.inject.Named
@@ -42,7 +43,7 @@ internal class AnalyticsModule {
 
     @Provides
     @Singleton
-    fun provideAnalyticsCoordinator(@ApplicationContext context: Context): AnalyticsCoordinator {
+    fun provideAnalyticsCoordinator(@ApplicationContext context: Context): AnalyticsCoordinatorInterface {
         return AnalyticsCoordinator(
             firebaseAnalyticsClient = FirebaseAnalyticsClient(
                 firebaseAnalytics = Firebase.analytics,

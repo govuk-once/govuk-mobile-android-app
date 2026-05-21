@@ -14,7 +14,7 @@ class AnalyticsClient @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
     private val firebaseAnalyticsClient: FirebaseAnalyticsClient,
     private val analyticsCoordinator: AnalyticsCoordinator
-) : AnalyticsCoordinatorInterface {
+) {
 
     lateinit var isUserSessionActive: () -> Boolean
 
@@ -296,13 +296,13 @@ class AnalyticsClient @Inject constructor(
         return parameters + Pair("language", Locale.getDefault().language)
     }
 
-    override fun logEvent(name: String, parameters: Map<String, Any>) {
+    fun logEvent(name: String, parameters: Map<String, Any>) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             analyticsCoordinator.logEvent(name, parameters)
         }
     }
 
-    override fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
+    fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             analyticsCoordinator.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
         }
