@@ -550,6 +550,7 @@ class AppViewModelTest {
             val navEvent =
                 async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
             coEvery { authRepo.isDifferentUser() } returns false
+            every { flagRepo.isDvlaLinkEnabled() } returns true
 
             viewModel.onLogin()
             advanceUntilIdle()
@@ -568,6 +569,8 @@ class AppViewModelTest {
                 configRepo.clearRemoteConfigValues()
             }
 
+            coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+
             assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
         }
 
@@ -578,6 +581,7 @@ class AppViewModelTest {
             val navEvent =
                 async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
             coEvery { authRepo.isDifferentUser() } returns true
+            every { flagRepo.isDvlaLinkEnabled() } returns true
 
             viewModel.onLogin()
             advanceUntilIdle()
@@ -593,6 +597,8 @@ class AppViewModelTest {
                 chatFeature.clear()
                 analyticsClient.clear()
             }
+
+            coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
 
             assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
         }

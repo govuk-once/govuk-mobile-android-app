@@ -20,10 +20,6 @@ fun DvlaLinkHeader(
     val viewModel: DvlaLinkWidgetViewModel = hiltViewModel()
     val state by viewModel.dvlaState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.checkStatus()
-    }
-
     when (state) {
         DvlaLinkState.UNLINKED, DvlaLinkState.CHECKING -> {
             Column(modifier = modifier) {

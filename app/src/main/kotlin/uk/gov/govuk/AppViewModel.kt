@@ -189,6 +189,17 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
+
+            // check dvla link state after login
+            if (flagRepo.isDvlaLinkEnabled()) {
+                // check in background
+                launch {
+                    runCatching {
+                        dvlaRepo.isAccountLinked()
+                    }
+                }
+            }
+
             onNext()
         }
     }
