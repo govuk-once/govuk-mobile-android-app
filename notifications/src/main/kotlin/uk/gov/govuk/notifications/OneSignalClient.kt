@@ -14,9 +14,9 @@ class OneSignalClient @Inject constructor(
     private val launcher: DeepLinkLauncher
 ) : NotificationsProvider {
 
-    override fun initialise(appId: String) {
+    override fun initialise() {
         OneSignal.consentRequired = true
-        OneSignal.initWithContext(context, appId)
+        OneSignal.initWithContext(context, BuildConfig.ONE_SIGNAL_APP_ID)
     }
 
     override fun login(pushId: String) {
