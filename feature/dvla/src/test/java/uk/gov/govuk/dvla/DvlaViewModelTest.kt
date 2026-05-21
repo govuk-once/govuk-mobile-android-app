@@ -301,5 +301,59 @@ class DvlaViewModelTest {
 
         coVerify(exactly = 1) { repo.getVehicleDetails("AB12CDE") }
     }
+
+    @Test
+    fun `Given screen title, when onErrorOtherPageView is called, then track error screen view`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val title = "There is a problem"
+        viewModel.onErrorOtherPageView(title)
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "DvlaLinkErrorScreen",
+                screenName = title,
+                title = title
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text, when onErrorBackToDrivingClicked is called, then track button click`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val label = "Go back to driving"
+        viewModel.onErrorBackToDrivingClicked(label)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = label,
+                external = false,
+                section = "account link fail"
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text and url, when onErrorVisitGovUkClicked is called, then track external button click with url`() = runTest(dispatcher) {
+        every { repo.isLinked } returns MutableStateFlow(false)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val label = "Go to GOV.UK"
+        val url = "gov.uk"
+
+        viewModel.onErrorVisitGovUkClicked(label, url)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = label,
+                url = url,
+                external = true,
+                section = "account link fail"
+            )
+        }
+    }
 }
 
