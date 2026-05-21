@@ -36,8 +36,8 @@
   <string name="sign_out_cancel_button">Cancel</string>
 
   <string name="sign_out_error_header">There was a problem signing you out</string>
-  <string name="sign_out_error_sub_text">Try again later.</string>
-  <string name="sign_out_error_additional_text">If you need to sign out right now, you can delete the app from your phone.</string>
+  <string name="sign_out_error_sub_text_1">Try again later.</string>
+  <string name="sign_out_error_sub_text_2">If you need to sign out right now, you can delete the app from your phone.</string>
   <string name="sign_out_error_go_back_to_settings_button">Go back to settings</string>
 
   <string name="your_accounts_empty_state_body">Accounts you add to the app will appear here</string>
@@ -47,7 +47,7 @@
   <string name="remove_account_dialog_confirm_button_text">Remove account</string>
   <string name="remove_account_dialog_cancel_button_text">Cancel</string>
   <string name="remove_account_error_page_header">There’s a problem</string>
-  <string name="remove_account_error_page_subtext">We could not remove your driver and vehicles account. Try again later.</string>
+  <string name="remove_account_error_page_sub_text">We could not remove your driver and vehicles account. Try again later.</string>
   <string name="remove_account_error_page_button_text">Go back to your accounts</string>
   <string name="remove_account_unlinking_alt_text">Removing account</string>
 

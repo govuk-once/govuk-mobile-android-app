@@ -27,8 +27,8 @@ private fun ErrorScreen(
 ) {
     ErrorPage(
         headerText = stringResource(R.string.login_sign_in_error_header),
-        subText = stringResource(R.string.login_sign_in_error_sub_text),
-        footer = {
+        subText = listOf(stringResource(R.string.login_sign_in_error_sub_text)),
+        footerContent = {
             FixedPrimaryButton(
                 text = stringResource(R.string.login_back_and_try_again_button),
                 onClick = { onBack() }
