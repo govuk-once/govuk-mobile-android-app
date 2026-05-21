@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-interface StringProvider {
+fun interface StringProvider {
     fun getString(@StringRes resId: Int, vararg formatArgs: Any): String
 }
 

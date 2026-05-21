@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -133,17 +134,10 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner,
-                        dvlaRepo.linkState
-                    ) { suppressedWidgets, shouldDisplayChatBanner, linkState ->
-                        Triple(
-                            suppressedWidgets,
-                            shouldDisplayChatBanner,
-                            linkState == DvlaLinkState.LINKED
-                        )
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked) ->
+                        chatFeature.shouldDisplayChatBanner
+                    ) { suppressedWidgets, shouldDisplayChatBanner ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
-                    }
+                    }.collect()
                 }
             }
             is InvalidSignature -> _uiState.value = AppUiState.ForcedUpdate
