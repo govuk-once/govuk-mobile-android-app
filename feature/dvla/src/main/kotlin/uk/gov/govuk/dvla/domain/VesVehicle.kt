@@ -3,6 +3,8 @@ package uk.gov.govuk.dvla.domain
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 // TODO: this is to demonstrate the endpoint call data, to be decided which data to use
+
+/** Representation of vehicle data returned by the Vehicle Enquiry Service (VES). */
 data class VesVehicle(
     val registrationNumber: String,
     val make: String,

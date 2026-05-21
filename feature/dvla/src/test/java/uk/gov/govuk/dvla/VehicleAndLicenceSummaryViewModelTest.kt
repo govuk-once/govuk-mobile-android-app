@@ -2,7 +2,6 @@ package uk.gov.govuk.dvla
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -14,16 +13,11 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.domain.DriverSummary
-import uk.gov.govuk.dvla.domain.LicenceDetails
-import uk.gov.govuk.dvla.domain.CheckCodeDetails
-import uk.gov.govuk.dvla.domain.CheckCodeStatus
-import uk.gov.govuk.dvla.domain.CheckCodeValidity
+import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.DvlaLinkState

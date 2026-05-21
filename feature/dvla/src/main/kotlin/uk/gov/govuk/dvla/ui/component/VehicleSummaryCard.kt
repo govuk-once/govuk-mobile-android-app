@@ -65,8 +65,6 @@ internal fun VehicleSummaryCard(
             title = vehicleSummary.taxStatus.title,
             description = vehicleSummary.taxStatus.description,
             icon = vehicleSummary.taxStatus.icon,
-            isFirst = false,
-            isLast = false
         )
 
         // MOT
@@ -75,8 +73,6 @@ internal fun VehicleSummaryCard(
             titleAltText = vehicleSummary.motStatus.titleAltText,
             description = vehicleSummary.motStatus.description,
             icon = vehicleSummary.motStatus.icon,
-            isFirst = false,
-            isLast = false
         )
 
         // details
@@ -134,7 +130,7 @@ fun VehicleSummaryHeader(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(GovUkTheme.spacing.medium)
         ) {
             // reg plate and overflow menu
             Row(
