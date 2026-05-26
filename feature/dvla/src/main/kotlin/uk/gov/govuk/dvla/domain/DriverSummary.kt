@@ -3,7 +3,7 @@ package uk.gov.govuk.dvla.domain
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 
 // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-data class DriverSummaryDetails(
+data class DriverSummary(
     val licenceNumber: String,
     val firstName: String,
     val lastName: String,
@@ -12,7 +12,7 @@ data class DriverSummaryDetails(
     val expiryDate: String?
 )
 
-fun DriverSummaryResponse.toDomainModel() = DriverSummaryDetails(
+fun DriverSummaryResponse.toDomainModel() = DriverSummary(
     licenceNumber = this.driverView.driver.drivingLicenceNumber,
     firstName = this.driverView.driver.firstNames ?: "",
     lastName = this.driverView.driver.lastName ?: "",

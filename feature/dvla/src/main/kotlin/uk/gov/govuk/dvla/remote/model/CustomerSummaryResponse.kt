@@ -2,6 +2,8 @@ package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
 import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
+import uk.gov.govuk.dvla.remote.model.common.MotStatus
+import uk.gov.govuk.dvla.remote.model.common.TaxStatus
 
 data class CustomerSummaryResponse(
     @SerializedName("customerResponse") val customerResponse: CustomerResponse,
@@ -158,7 +160,7 @@ data class Vehicle(
     @SerializedName("vehicleId") val vehicleId: Int,
     @SerializedName("chassisVin") val chassisVin: String,
     @SerializedName("make") val make: String,
-    @SerializedName("model") val model: String,
+    @SerializedName("model") val model: String?,
     @SerializedName("manufacturerVehicleType") val manufacturerVehicleType: String,
     @SerializedName("typeApprovalVariant") val typeApprovalVariant: String,
     @SerializedName("typeApprovalVersion") val typeApprovalVersion: String,
@@ -173,7 +175,7 @@ data class Vehicle(
     @SerializedName("dateDestroyed") val dateDestroyed: String?,
     @SerializedName("dateExported") val dateExported: String?,
     @SerializedName("dateStolen") val dateStolen: String?,
-    @SerializedName("taxedUntil") val taxedUntil: String?,
+    @SerializedName("taxedUntil") val taxedUntil: String?,  // 2008-12-25
     @SerializedName("registrationDocumentId") val registrationDocumentId: String?,
     @SerializedName("registrationDocumentIssueDate") val registrationDocumentIssueDate: String?,
     @SerializedName("engineCapacity") val engineCapacity: Int?,
@@ -185,10 +187,10 @@ data class Vehicle(
     @SerializedName("dateOfLiability") val dateOfLiability: String?,
     @SerializedName("sornStart") val sornStart: String?,
     @SerializedName("taxClass") val taxClass: String,
-    @SerializedName("taxStatus") val taxStatus: String?,
+    @SerializedName("taxStatus") val taxStatus: TaxStatus?,
     @SerializedName("artEndDate") val artEndDate: String?,
-    @SerializedName("motExpiryDate") val motExpiryDate: String?,
-    @SerializedName("motStatus") val motStatus: String,
+    @SerializedName("motExpiryDate") val motExpiryDate: String?,  // 2008-12-25
+    @SerializedName("motStatus") val motStatus: MotStatus,
     @SerializedName("colour") val colour: String,
     @SerializedName("secondaryColour") val secondaryColour: String?,
     @SerializedName("fuelType") val fuelType: String,

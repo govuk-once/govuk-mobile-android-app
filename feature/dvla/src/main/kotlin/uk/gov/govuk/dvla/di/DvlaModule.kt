@@ -15,6 +15,8 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import uk.gov.govuk.dvla.BuildConfig
 import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.util.StringProvider
+import uk.gov.govuk.dvla.util.StringProviderImpl
 
 import javax.inject.Named
 import javax.inject.Singleton
@@ -48,5 +50,13 @@ object DvlaModule {
     @Provides
     @Named("dvla_auth_url")
     fun provideDvlaAuthUrl(): String = BuildConfig.DVLA_AUTH_URL
+
+    @Provides
+    @Singleton
+    fun provideStringProvider(
+        @ApplicationContext context: Context
+    ): StringProvider {
+        return StringProviderImpl(context)
+    }
 
 }

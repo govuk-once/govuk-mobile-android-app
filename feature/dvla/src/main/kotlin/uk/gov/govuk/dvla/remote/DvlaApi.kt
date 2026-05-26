@@ -34,7 +34,7 @@ interface DvlaApi {
     suspend fun getCustomerSummary(): Response<CustomerSummaryResponse>
 
     @GET("app/dvla/v1/vehicle-enquiry/{reg}")
-    suspend fun getVehicleDetails(@Path("reg") registrationNumber: String): Response<VehicleEnquiryResponse>
+    suspend fun lookupVehicle(@Path("reg") registrationNumber: String): Response<VehicleEnquiryResponse>
 
     @POST("app/dvla/v1/share-code")
     suspend fun createShareCode(): Response<SingleShareCodeResponse>

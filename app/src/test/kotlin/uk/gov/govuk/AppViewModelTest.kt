@@ -43,6 +43,7 @@ import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.search.SearchFeature
@@ -89,7 +90,7 @@ class AppViewModelTest {
         every { analyticsClient.isAnalyticsConsentRequired() } returns false
         every { flagRepo.isTopicsEnabled() } returns false
         every { flagRepo.isNotificationsEnabled() } returns false
-        every { dvlaRepo.isLinked } returns MutableStateFlow(false)
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
 
         viewModel = AppViewModel(
             timeoutManager,
@@ -549,6 +550,7 @@ class AppViewModelTest {
             val navEvent =
                 async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
             coEvery { authRepo.isDifferentUser() } returns false
+            every { flagRepo.isDvlaLinkEnabled() } returns true
 
             viewModel.onLogin()
             advanceUntilIdle()
@@ -567,6 +569,8 @@ class AppViewModelTest {
                 configRepo.clearRemoteConfigValues()
             }
 
+            coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+
             assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
         }
 
@@ -577,6 +581,7 @@ class AppViewModelTest {
             val navEvent =
                 async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
             coEvery { authRepo.isDifferentUser() } returns true
+            every { flagRepo.isDvlaLinkEnabled() } returns true
 
             viewModel.onLogin()
             advanceUntilIdle()
@@ -592,6 +597,8 @@ class AppViewModelTest {
                 chatFeature.clear()
                 analyticsClient.clear()
             }
+
+            coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
 
             assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
         }

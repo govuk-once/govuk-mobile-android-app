@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.map
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.settings.domain.LinkedAccountsRepo
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import javax.inject.Inject
@@ -20,10 +21,10 @@ class LinkedAccountsRepoImpl @Inject constructor(
 
     override fun getLinkedAccounts(): Flow<List<LinkedAccountUiModel>> {
         // any future linked service would be checked here
-        return dvlaRepo.isLinked.map { isDvlaLinked ->
+        return dvlaRepo.linkState.map { linkState ->
             val accounts = mutableListOf<LinkedAccountUiModel>()
 
-            if (isDvlaLinked && flagRepo.isDvlaLinkEnabled()) {
+            if (linkState == DvlaLinkState.LINKED && flagRepo.isDvlaLinkEnabled()) {
                 accounts.add(
                     LinkedAccountUiModel(
                         serviceName = SERVICE_NAME_DVLA,

@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
@@ -134,10 +136,8 @@ internal class AppViewModel @Inject constructor(
                         appRepo.suppressedHomeWidgets,
                         chatFeature.shouldDisplayChatBanner
                     ) { suppressedWidgets, shouldDisplayChatBanner ->
-                        Pair(suppressedWidgets, shouldDisplayChatBanner)
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
-                    }
+                    }.collect()
                 }
             }
             is InvalidSignature -> _uiState.value = AppUiState.ForcedUpdate
@@ -189,6 +189,17 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
+
+            // check dvla link state after login
+            if (flagRepo.isDvlaLinkEnabled()) {
+                // check in background
+                launch {
+                    runCatching {
+                        dvlaRepo.isAccountLinked()
+                    }
+                }
+            }
+
             onNext()
         }
     }
