@@ -24,7 +24,8 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.DvlaLinkState
+import uk.gov.govuk.dvla.domain.VesVehicle
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaViewModelTest {
@@ -50,7 +51,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked, when initialised, the initial state should be Default`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -60,7 +61,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked and linking api returns Success, when initialised, then state should be Success`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         coEvery { repo.linkAccount(any()) } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -73,7 +74,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked and linking api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         coEvery { repo.linkAccount(any()) } returns Result.Error()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -85,7 +86,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is not linked and linking api returns DeviceOffline, when initialised, then state should be Error Offline`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         coEvery { repo.linkAccount(any()) } returns Result.DeviceOffline()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -97,7 +98,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given no token in SavedStateHandle, when initialised, then start auth flow and set authUrlToLaunch`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         every { savedStateHandle.get<String>("token") } returns null
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -108,7 +109,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given auth url is set, when onAuthTabLaunched is called, then reset authUrlToLaunch to null`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         every { savedStateHandle.get<String>("token") } returns null
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
@@ -119,7 +120,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked, when initialised, the initial state should be Default`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(true)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
         coEvery { repo.unlinkAccount() } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -129,7 +130,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked and unlink api returns Success, when initialised, then emit UnlinkComplete event`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(true)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
         coEvery { repo.unlinkAccount() } returns Result.Success(Unit)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -147,7 +148,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked and unlink api returns Error, when initialised, then state should be Error`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(true)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
         coEvery { repo.unlinkAccount() } returns Result.Error()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -159,7 +160,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given account is already linked and unlink api returns DeviceOffline, when initialised, then state should be Error Offline`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(true)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
         coEvery { repo.unlinkAccount() } returns Result.DeviceOffline()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -171,7 +172,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given screen title, when onIntroPageView is called, then track screen view`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         viewModel.onIntroPageView("DVLA link intro")
@@ -188,7 +189,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `When onIntroCloseClicked is called, then track close icon click`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         viewModel.onIntroCloseClicked()
@@ -200,7 +201,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given button text, when onIntroContinueClicked is called, then track button click`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         viewModel.onIntroContinueClicked("Continue")
@@ -216,7 +217,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given screen title, when onLinkSuccessPageView is called, then track screen view`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         viewModel.onLinkSuccessPageView("Driver and vehicles account added")
@@ -232,7 +233,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given button text, when onSuccessContinueClicked is called, then track button click and emit LinkComplete event`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         val events = mutableListOf<DvlaViewModel.LinkingEvent>()
@@ -257,7 +258,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given a token exists, when onRetryClicked is called, then it should process linking state again`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         coEvery { repo.linkAccount(any()) } returns Result.DeviceOffline()
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
@@ -274,23 +275,23 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given ViewModel initialised, then getVehicleDetails is called with sanitised registration number`() = runTest(dispatcher) {
-        val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
+        val vesVehicle = mockk<VesVehicle>(relaxed = true)
 
-        every { repo.isLinked } returns MutableStateFlow(false)
-        coEvery { repo.getVehicleDetails(any()) } returns Result.Success(vehicleDetails)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vesVehicle)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.getVehicleDetails("AA19AAA") }
+        coVerify(exactly = 1) { repo.lookupVehicle("AA19AAA") }
     }
 
     @Test
     fun `Given registration input with spaces, when search is submitted, then repo is called with sanitised registration number`() = runTest(dispatcher) {
-        val vehicleDetails = mockk<VehicleDetails>(relaxed = true)
+        val vesVehicle = mockk<VesVehicle>(relaxed = true)
 
-        every { repo.isLinked } returns MutableStateFlow(false)
-        coEvery { repo.getVehicleDetails(any()) } returns Result.Success(vehicleDetails)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vesVehicle)
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
         advanceUntilIdle()
@@ -299,7 +300,7 @@ class DvlaViewModelTest {
         viewModel.onVehicleSearchSubmitted(input)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.getVehicleDetails("AB12CDE") }
+        coVerify(exactly = 1) { repo.lookupVehicle("AB12CDE") }
     }
 
     @Test

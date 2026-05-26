@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import javax.inject.Inject
 import javax.inject.Named
@@ -76,7 +77,7 @@ internal class DvlaViewModel @Inject constructor(
         val token: String? = savedStateHandle[ARG_DVLA_TOKEN]
 
         when {
-            dvlaRepo.isLinked.value -> unlinkDvlaAccount()
+            dvlaRepo.linkState.value == DvlaLinkState.LINKED -> unlinkDvlaAccount()
             token != null -> handleAuthRedirect(token)
             else -> startAuthFlow()
         }
@@ -193,7 +194,7 @@ internal class DvlaViewModel @Inject constructor(
 
         // TODO demonstrating for POC, will be removed
         try {
-            val response = dvlaRepo.getVehicleDetails(sanitisedInput)
+            val response = dvlaRepo.lookupVehicle(sanitisedInput)
             println("DVLA VES success: $response")
         } catch (e: Exception) {
             println("DVLA VES error: ${e.message}")
