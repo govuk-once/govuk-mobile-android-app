@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
@@ -63,7 +64,7 @@ private fun VehicleAndLicenceSummarySuccess(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
     ) {
         vehicles.forEach { vehicle ->
             VehicleSummaryCard(
