@@ -99,7 +99,12 @@ internal fun RegistrationPlate(
                 color = GovUkTheme.colourScheme.surfaces.registrationPlate,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(top = 8.dp, bottom = 5.dp, start = 8.dp, end = 8.dp)
+            .padding(
+                top = GovUkTheme.spacing.small,
+                start = GovUkTheme.spacing.small,
+                end = GovUkTheme.spacing.small,
+                bottom = 5.dp
+            )
     ) {
         Text(
             text = registration,
