@@ -15,10 +15,12 @@ import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
+import uk.gov.govuk.settings.ui.RemoveAccountErrorScreen
 import uk.gov.govuk.settings.ui.SettingsRoute
 import uk.gov.govuk.settings.ui.SettingsRouteActions
 import uk.gov.govuk.settings.ui.SignOutErrorRoute
 import uk.gov.govuk.settings.ui.SignOutRoute
+import uk.gov.govuk.settings.ui.YourAccountsRoute
 import java.net.URLEncoder
 
 
@@ -29,11 +31,13 @@ const val SIGN_OUT_GRAPH_ROUTE = "sign_out_graph_route"
 private const val SIGN_OUT_ROUTE = "sign_out_route"
 
 const val SIGN_OUT_ERROR_ROUTE = "sign_out_error_route"
+const val YOUR_ACCOUNTS_ROUTE = "your_accounts_route"
+const val UNLINK_ACCOUNT_ERROR_ROUTE = "unlink_account_error_route"
 
 val settingsDeepLinks = mapOf("/settings" to listOf(SETTINGS_ROUTE))
 
 fun NavGraphBuilder.settingsGraph(
-    navigateTo: (String) -> Unit,
+    navController: NavController,
     onBiometricsClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
@@ -52,13 +56,13 @@ fun NavGraphBuilder.settingsGraph(
                         launchBrowser(ACCOUNT_URL)
                     },
                     onYourAccountsClick = {
-                        // TODO in future ticket
+                        navController.navigate(YOUR_ACCOUNTS_ROUTE)
                     },
                     onSignOutClick = {
-                        navigateTo(SIGN_OUT_GRAPH_ROUTE)
+                        navController.navigate(SIGN_OUT_GRAPH_ROUTE)
                     },
                     onNotificationsClick = {
-                        navigateTo(NOTIFICATIONS_PERMISSION_ROUTE)
+                        navController.navigate(NOTIFICATIONS_PERMISSION_ROUTE)
                     },
                     onBiometricsClick = onBiometricsClick,
                     onPrivacyPolicyClick = {
@@ -82,6 +86,22 @@ fun NavGraphBuilder.settingsGraph(
                 modifier = modifier
             )
         }
+
+        composable(YOUR_ACCOUNTS_ROUTE) {
+            YourAccountsRoute(
+                onBack = { navController.popBackStack() },
+                onNavigateToError = { navController.navigate(UNLINK_ACCOUNT_ERROR_ROUTE) },
+                modifier = modifier
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.unlinkAccountErrorGraph(navController: NavController) {
+    composable(UNLINK_ACCOUNT_ERROR_ROUTE) {
+        RemoveAccountErrorScreen(
+            onDismiss = { navController.popBackStack() }
+        )
     }
 }
 

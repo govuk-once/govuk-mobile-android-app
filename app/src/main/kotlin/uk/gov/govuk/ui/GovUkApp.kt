@@ -1,11 +1,8 @@
 package uk.gov.govuk.ui
 
-import android.app.Activity
 import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,12 +10,9 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -39,13 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -63,7 +55,6 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
-import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
@@ -76,7 +67,7 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
-import uk.gov.govuk.dvla.ui.LicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.VehicleAndLicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -92,8 +83,8 @@ import uk.gov.govuk.search.navigation.searchGraph
 import uk.gov.govuk.search.ui.widget.SearchWidget
 import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
+import uk.gov.govuk.settings.navigation.unlinkAccountErrorGraph
 import uk.gov.govuk.terms.navigation.termsGraph
-import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
@@ -501,7 +492,7 @@ private fun GovUkNavHost(
                     showBrowserNotFoundAlert = true
                 }
             },
-            topicHeader = { topicRef, linkResult ->
+            topicHeader = { topicRef ->
                 val isDrivingTopic = topicRef.isDrivingTopic()
                 val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
 
@@ -513,12 +504,11 @@ private fun GovUkNavHost(
                     ) {
                         // drop in the self-managed public header from the DVLA module
                         DvlaLinkHeader(
-                            linkResult = linkResult,
                             onActionClick = { navController.navigateToDvlaLinkIntro() }
                         )
 
                         // and licence summary widget from DVLA module
-                        LicenceSummaryWidget()
+                        VehicleAndLicenceSummaryWidget()
                     }
                 }
             },
@@ -579,7 +569,7 @@ private fun GovUkNavHost(
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
             modifier = Modifier.padding(paddingValues))
         settingsGraph(
-            navigateTo = { route -> navController.navigate(route) },
+            navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
             appVersion = BuildConfig.VERSION_NAME_USER_FACING,
             launchBrowser = { url ->
@@ -595,6 +585,9 @@ private fun GovUkNavHost(
             onSignOut = {
                 appNavigation.onSignOut(navController)
             }
+        )
+        unlinkAccountErrorGraph(
+            navController = navController
         )
         searchGraph(
             navController,
@@ -636,11 +629,9 @@ private fun GovUkNavHost(
             },
             onLinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, true)
             },
             onUnlinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
             },
             onIntroClose = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)

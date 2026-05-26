@@ -29,12 +29,17 @@ data class GovUkTypography(
     val footnoteBold: TextStyle,
     val footnoteRegular: TextStyle,
     val captionBold: TextStyle,
-    val captionRegular: TextStyle
+    val captionRegular: TextStyle,
+    val registrationPlate: TextStyle
 )
 
 private val transport = FontFamily(
     Font(R.font.transport_bold, FontWeight.Bold),
     Font(R.font.transport_light, FontWeight.Light),
+)
+
+private val dvlaVrm = FontFamily(
+    Font(R.font.dvla_vrm, FontWeight.Bold)
 )
 
 private val letterSpacing = TextUnit(0.05f, TextUnitType.Sp)
@@ -172,6 +177,11 @@ internal val Typography = GovUkTypography(
         fontSize = 12.sp,
         lineHeight = 17.sp,
         letterSpacing = letterSpacing
+    ),
+    registrationPlate = TextStyle(
+        fontFamily = dvlaVrm,
+        fontWeight = FontWeight.Bold,
+        fontSize = 17.sp,
     )
 )
 
@@ -195,6 +205,7 @@ internal val LocalTypography = staticCompositionLocalOf {
         footnoteBold = TextStyle.Default,
         footnoteRegular = TextStyle.Default,
         captionBold = TextStyle.Default,
-        captionRegular = TextStyle.Default
+        captionRegular = TextStyle.Default,
+        registrationPlate = TextStyle.Default
     )
 }

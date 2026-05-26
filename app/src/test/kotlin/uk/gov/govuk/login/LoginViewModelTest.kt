@@ -33,6 +33,7 @@ import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Success
 import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.UserRepo
+import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.terms.data.TermsRepo
@@ -48,6 +49,7 @@ class LoginViewModelTest {
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
+    private val user = mockk<User>(relaxed = true)
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
     private val termsRepo = mockk<TermsRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
@@ -115,7 +117,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -129,9 +131,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -144,7 +144,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -158,9 +158,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -172,7 +170,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns Date().toInstant().epochSecond
         coEvery { configRepo.refreshTokenExpirySeconds } returns Date().toInstant().epochSecond + 10000
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -186,9 +184,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -227,7 +223,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { configRepo.refreshTokenExpirySeconds } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -241,9 +237,7 @@ class LoginViewModelTest {
             }
             viewModel.init(activity)
 
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
         }
@@ -270,6 +264,7 @@ class LoginViewModelTest {
             viewModel.init(activity)
 
             coVerify(exactly = 0) {
+                userRepo.initUser()
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
@@ -278,7 +273,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given the user is signed in and the refresh token issued at date and refresh expiry seconds are null, the refresh token expiry date is in the future and initialising the user repo id is unsuccessful, then emit user api error`() {
+    fun `Given the user is signed in and null token issue date and expiry seconds, refresh token expiry date is in the future and init user is unsuccessful, then log error and emit login completed`() {
         every { authRepo.isUserSignedIn() } returns true
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns Date().toInstant().epochSecond + 10000
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
@@ -306,8 +301,9 @@ class LoginViewModelTest {
                 notificationsRepo.login()
             }
             assertTrue(isLoading.last() == true)
-            assertTrue(loginEvents.isEmpty())
-            assertEquals(ErrorEvent.UserApiError, errorEvents.first())
+            assertTrue(errorEvents.isEmpty())
+            assertTrue(loginEvents.first() is LoginEvent.BiometricLogin)
+            verify { analyticsClient.logException(any()) }
         }
     }
 
@@ -344,7 +340,7 @@ class LoginViewModelTest {
         coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
         coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
         coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -386,7 +382,7 @@ class LoginViewModelTest {
     fun `Given an auth response, when success, user api returns a push id and id token issued at date is not stored, then emit loading and login event`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -403,9 +399,7 @@ class LoginViewModelTest {
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.WebLogin)
 
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             coVerify(exactly = 0) {
                 loginRepo.setRefreshTokenIssuedAtDate(any())
             }
@@ -420,7 +414,7 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -437,9 +431,7 @@ class LoginViewModelTest {
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.WebLogin)
 
-            coVerify(exactly = 1) {
-                notificationsRepo.login()
-            }
+            coVerify(exactly = 1) { notificationsRepo.login() }
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()
                 loginRepo.setRefreshTokenIssuedAtDate(12345L)
@@ -472,6 +464,7 @@ class LoginViewModelTest {
             assertTrue(events.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 0) {
+                userRepo.initUser()
                 notificationsRepo.login()
             }
             coVerify(exactly = 1) {
@@ -485,7 +478,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `Given an auth response, when success, id token issued at date is stored and user api returns error, then emit user api error`() {
+    fun `Given an auth response, when success, and user api returns error, then log user error and emit login completed`() {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
@@ -512,8 +505,8 @@ class LoginViewModelTest {
             }
 
             assertTrue(isLoading.last() == true)
-            assertTrue(loginEvents.isEmpty())
-            assertEquals(ErrorEvent.UserApiError, errorEvents.first())
+            assertTrue(errorEvents.isEmpty())
+            assertTrue(loginEvents.first() is LoginEvent.WebLogin)
 
             coVerify(exactly = 1) {
                 authRepo.getIdTokenIssuedAtDate()
@@ -521,6 +514,9 @@ class LoginViewModelTest {
             }
             coVerify {
                 termsRepo.termsAccepted(any())
+            }
+            verify {
+                analyticsClient.logException(any())
             }
         }
     }
@@ -532,7 +528,7 @@ class LoginViewModelTest {
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
         every { authRepo.isAuthenticationEnabled() } returns true
         coEvery { appRepo.hasSkippedBiometrics() } returns false
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -558,7 +554,7 @@ class LoginViewModelTest {
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
         every { authRepo.isAuthenticationEnabled() } returns true
         coEvery { appRepo.hasSkippedBiometrics() } returns true
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -583,7 +579,7 @@ class LoginViewModelTest {
         every { authRepo.getIdTokenIssuedAtDate() } returns 12345L
         every { configRepo.refreshTokenExpirySeconds } returns 601200L
         every { authRepo.isAuthenticationEnabled() } returns false
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {
@@ -607,7 +603,7 @@ class LoginViewModelTest {
         coEvery { authRepo.handleAuthResponse(any()) } returns true
         every { authRepo.getIdTokenIssuedAtDate() } returns null
         coEvery { termsRepo.termsAccepted(any()) } coAnswers { delay(1) }
-        coEvery { userRepo.initUser() } returns Result.Success(Unit)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
         every { flagRepo.isFlexEnabled() } returns true
 
         runTest {

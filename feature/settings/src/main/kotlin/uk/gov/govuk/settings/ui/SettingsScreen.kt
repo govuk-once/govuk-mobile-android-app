@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -31,6 +31,7 @@ import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
@@ -39,7 +40,6 @@ import uk.gov.govuk.design.ui.component.ToggleListItem
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SettingsUiState
 import uk.gov.govuk.settings.SettingsViewModel
@@ -75,8 +75,8 @@ internal fun SettingsRoute(
                     viewModel.onAccount()
                     actions.onAccountClick()
                 },
-                onYourAccountsClick = {
-                    viewModel.onYourAccountsClick()
+                onYourAccountsClick = { text ->
+                    viewModel.onYourAccountsClick(text)
                     actions.onYourAccountsClick()
                 },
                 onSignOutClick = {
@@ -121,7 +121,7 @@ internal fun SettingsRoute(
 private class SettingsActions(
     val onPageView: () -> Unit,
     val onAccountClick: () -> Unit,
-    val onYourAccountsClick: () -> Unit,
+    val onYourAccountsClick: (String) -> Unit,
     val onSignOutClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: (String) -> Unit,
@@ -140,7 +140,7 @@ private fun SettingsScreen(
     actions: SettingsActions,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         actions.onPageView()
     }
 
@@ -162,8 +162,9 @@ private fun SettingsScreen(
             )
 
             if (uiState.isYourAccountsEnabled) {
+                val title = stringResource(R.string.your_accounts_title)
                 MediumVerticalSpacer()
-                YourAccounts(actions.onYourAccountsClick)
+                YourAccounts(title, { actions.onYourAccountsClick(title) })
             }
 
             MediumVerticalSpacer()
@@ -244,11 +245,12 @@ private fun ManageLogin(
 
 @Composable
 private fun YourAccounts(
+    title: String,
     onYourAccountsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     InternalLinkListItem(
-        title = stringResource(R.string.your_accounts_title),
+        title = title,
         onClick = onYourAccountsClick,
         modifier = modifier,
         isFirst = true,
@@ -446,7 +448,7 @@ private fun SignOut(
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun ManageLoginPreview() {
     GovUkTheme {

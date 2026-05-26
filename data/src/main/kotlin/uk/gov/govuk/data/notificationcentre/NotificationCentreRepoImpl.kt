@@ -71,7 +71,7 @@ class NotificationCentreRepoImpl @Inject constructor(
             when (e) {
                 is AuthenticationException -> AuthError()
                 is UnknownHostException -> DeviceOffline()
-                is HttpException -> ServiceNotResponding()
+                is HttpException -> ServiceNotResponding(e.code())
                 else -> Error()
             }
         }

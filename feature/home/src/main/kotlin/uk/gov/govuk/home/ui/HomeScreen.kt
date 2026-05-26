@@ -35,12 +35,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 import uk.gov.govuk.home.HomeViewModel
 import uk.gov.govuk.home.R
 import uk.gov.govuk.home.ui.animation.AnimateIcon
@@ -173,13 +174,16 @@ private fun HomeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView()
+    }
+
+    LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomePreview() {
     GovUkTheme {

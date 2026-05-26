@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.OnboardingSlide
 import uk.gov.govuk.design.ui.component.PrivacyPolicyLink
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notifications.R
 
@@ -27,7 +28,7 @@ internal fun NotificationsScreen(
     header: (@Composable () -> Unit)? = null,
     footer: @Composable () -> Unit
 ) {
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView()
     }
 
@@ -67,7 +68,11 @@ private fun NotificationsScreenPreview() {
             onPrivacyPolicyClick = { _, _ -> },
             image = R.drawable.notifications_bell,
             footer = {
-                FixedDoubleButtonGroup("Primary button", {}, "Secondary button", {})
-            })
+                FixedDoubleButtonGroup(
+                    Button("Primary", {}),
+                    Button("Secondary", {})
+                )
+            }
+        )
     }
 }

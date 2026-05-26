@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
@@ -20,9 +21,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
+import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
-import uk.gov.govuk.design.ui.component.InfoAlert
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
+import uk.gov.govuk.design.ui.component.error.ErrorConstants
+import uk.gov.govuk.design.ui.component.error.ErrorPage
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
@@ -66,7 +71,7 @@ internal fun DvlaLinkingRoute(
 
     LaunchedEffect(Unit) {
         viewModel.linkingEvent.collect {
-            when(it) {
+            when (it) {
                 is DvlaViewModel.LinkingEvent.LinkComplete -> onLinkComplete()
                 is DvlaViewModel.LinkingEvent.UnlinkComplete -> onUnlinkComplete()
             }
@@ -102,13 +107,10 @@ internal fun DvlaLinkingRoute(
         }
 
         is DvlaViewModel.UiState.Error.Other -> {
-            InfoAlert(
-                title = R.string.error_dialog_title,
-                message = R.string.error_dialog_message,
-                buttonText = R.string.try_again,
-                onDismiss = {
-                    onWebFlowClosed()
-                }
+            ErrorOtherScreen(
+                onWebFlowClosed = onWebFlowClosed,
+                onLaunchBrowser = onLaunchBrowser,
+                modifier = modifier
             )
         }
     }
@@ -133,14 +135,8 @@ private fun DvlaLinkSuccessScreen(
     val title = stringResource(R.string.link_dvla_success_title)
     val buttonText = stringResource(R.string.link_dvla_success_button)
 
-    var hasTrackedPageView by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        // protect against config change
-        if (!hasTrackedPageView) {
-            onPageView(title)
-            hasTrackedPageView = true
-        }
+    RunOnceLaunchedEffect {
+        onPageView(title)
     }
 
     Box(
@@ -170,3 +166,32 @@ private fun DvlaOfflineScreen(
     }
 }
 
+@Composable
+private fun ErrorOtherScreen(
+    onWebFlowClosed: () -> Unit,
+    onLaunchBrowser: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val primaryText = stringResource(R.string.link_dvla_problem_primary_button)
+    val secondaryText = stringResource(R.string.link_dvla_problem_secondary_button)
+    ErrorPage(
+        headerText = stringResource(R.string.link_dvla_problem_title),
+        subText = listOf(stringResource(R.string.link_dvla_problem_description)),
+        footerContent = {
+            FixedDoubleButtonGroup(
+                primaryButton = Button(
+                    text = primaryText,
+                    onClick = { onWebFlowClosed() }
+                ),
+                secondaryButton = Button(
+                    text = secondaryText,
+                    onClick = {
+                        onLaunchBrowser(ErrorConstants.GOV_UK_URL)
+                    },
+                    isExternal = true
+                )
+            )
+        },
+        modifier = modifier.safeDrawingPadding()
+    )
+}

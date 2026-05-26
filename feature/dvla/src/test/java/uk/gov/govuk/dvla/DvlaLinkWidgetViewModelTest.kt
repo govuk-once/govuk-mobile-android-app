@@ -2,11 +2,14 @@ package uk.gov.govuk.dvla
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -17,6 +20,7 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaLinkWidgetViewModelTest {
@@ -31,6 +35,7 @@ class DvlaLinkWidgetViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.CHECKING)
         viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
     }
 
@@ -40,42 +45,54 @@ class DvlaLinkWidgetViewModelTest {
     }
 
     @Test
-    fun `When the viewModel is initialized, then initial state is CHECKING`() {
+    fun `When the viewModel is initialized, then state matches the repository's`() {
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.CHECKING)
+        val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
+
         assertEquals(DvlaLinkState.CHECKING, viewModel.dvlaState.value)
     }
 
     @Test
-    fun `Given the account is linked, when checkStatus is called, then state updates to LINKED`() = runTest {
-        coEvery { dvlaRepo.isAccountLinked() } returns Result.Success(true)
-
-        viewModel.checkStatus()
-
-        assertEquals(DvlaLinkState.LINKED, viewModel.dvlaState.value)
-        coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
-    }
-
-    @Test
-    fun `Given the account is not linked, when checkStatus is called, then state updates to UNLINKED`() = runTest {
+    fun `Given state is UNLINKED, when checkStatus is called, then repository is called`() = runTest {
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         coEvery { dvlaRepo.isAccountLinked() } returns Result.Success(false)
 
+        val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
         viewModel.checkStatus()
 
-        assertEquals(DvlaLinkState.UNLINKED, viewModel.dvlaState.value)
+        advanceUntilIdle()
+
         coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
     }
 
     @Test
-    fun `Given repo returns error, when checkStatus is called, then state defaults to UNLINKED`() = runTest {
-        coEvery { dvlaRepo.isAccountLinked() } returns Result.Error()
+    fun `Given state is CHECKING, when checkStatus is called, then repository is called`() = runTest {
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.CHECKING)
+        coEvery { dvlaRepo.isAccountLinked() } returns Result.Success(true)
+
+        val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
+        viewModel.checkStatus()
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+    }
+
+    @Test
+    fun `Given state is already LINKED, when checkStatus is called, then return without calling repository`() = runTest {
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+        val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
 
         viewModel.checkStatus()
 
-        assertEquals(DvlaLinkState.UNLINKED, viewModel.dvlaState.value)
-        coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+        coVerify(exactly = 0) { dvlaRepo.isAccountLinked() }
     }
 
     @Test
     fun `Given a card click, when onLinkCardClicked is called, then track card click event`() {
+        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
+
         val expectedText = "Link DVLA account"
 
         viewModel.onLinkCardClicked(expectedText)

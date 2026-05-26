@@ -1,4 +1,4 @@
-package uk.gov.govuk.dvla
+package uk.gov.govuk.dvla.domain
 
 enum class DvlaLinkState {
     CHECKING,

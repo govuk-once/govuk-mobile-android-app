@@ -13,6 +13,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.notifications.NotificationsPermissionViewModel
 import uk.gov.govuk.notifications.NotificationsUiState
@@ -55,17 +56,22 @@ internal fun NotificationsPermissionRoute(
                         val primaryText = stringResource(R.string.allow_notifications_button)
                         val secondaryText = stringResource(R.string.not_now_button)
                         FixedDoubleButtonGroup(
-                            primaryText = primaryText, onPrimary = {
-                                notificationsViewModel.onAllowNotificationsClick(primaryText)
-                                {
+                            primaryButton = Button(
+                                text = primaryText,
+                                onClick = {
+                                    notificationsViewModel.onAllowNotificationsClick(primaryText)
+                                    {
+                                        notificationsPermissionCompleted()
+                                    }
+                                }
+                            ),
+                            secondaryButton = Button(
+                                text = secondaryText,
+                                onClick = {
+                                    notificationsViewModel.onNotNowClick(secondaryText)
                                     notificationsPermissionCompleted()
                                 }
-                            },
-                            secondaryText = secondaryText,
-                            onSecondary = {
-                                notificationsViewModel.onNotNowClick(secondaryText)
-                                notificationsPermissionCompleted()
-                            }
+                            )
                         )
                     }
                 )
