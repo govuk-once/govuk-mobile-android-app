@@ -305,7 +305,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given screen title, when onErrorOtherPageView is called, then track error screen view`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         val title = "There is a problem"
@@ -322,7 +322,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given button text, when onErrorBackToDrivingClicked is called, then track button click`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         val label = "Go back to driving"
@@ -339,7 +339,7 @@ class DvlaViewModelTest {
 
     @Test
     fun `Given button text and url, when onErrorVisitGovUkClicked is called, then track external button click with url`() = runTest(dispatcher) {
-        every { repo.isLinked } returns MutableStateFlow(false)
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
 
         val label = "Go to GOV.UK"
