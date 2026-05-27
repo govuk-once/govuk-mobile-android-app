@@ -356,5 +356,39 @@ class DvlaViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `Given screen title, when onOfflinePageView is called, then track offline screen view`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val title = "You are offline"
+        viewModel.onOfflinePageView(title)
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "DvlaOfflineScreen",
+                screenName = title,
+                title = title
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text, when onOfflineTryAgainClicked is called, then track button click`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val label = "Try again"
+        viewModel.onOfflineTryAgainClicked(label)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = label,
+                external = false,
+                section = "account link fail"
+            )
+        }
+    }
 }
 
