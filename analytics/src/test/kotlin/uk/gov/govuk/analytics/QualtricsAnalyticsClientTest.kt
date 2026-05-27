@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
@@ -43,6 +44,24 @@ class QualtricsAnalyticsClientTest {
         qualtricsAnalyticsClient.initialize()
 
         verify(exactly = 1) {
+            qualtrics.initializeProject(any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `Given the initial state, then isInitialized should be false`() {
+        assertFalse(qualtricsAnalyticsClient.isInitialized)
+    }
+
+    @Test
+    fun `Given an initialization call, when qualtrics is already initialized, then the project is not re-initialized`() {
+        val qualtricsAnalyticsClient = mockk< QualtricsAnalyticsClient>(relaxed = true)
+
+        every { qualtricsAnalyticsClient.isInitialized } returns true
+
+        qualtricsAnalyticsClient.initialize()
+
+        verify(exactly = 0) {
             qualtrics.initializeProject(any(), any(), any())
         }
     }

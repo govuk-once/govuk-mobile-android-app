@@ -13,7 +13,7 @@ class QualtricsAnalyticsClient @Inject constructor(
     private val activityProvider: ActivityProviderInterface
 ) {
 
-    private var isInitialized = false
+    internal var isInitialized = false
 
     fun initialize() {
         if (isInitialized) return

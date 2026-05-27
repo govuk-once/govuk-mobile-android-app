@@ -24,6 +24,15 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
+    fun `Given an initialize call, then call the Qualtrics initialize method`() = runTest {
+        analyticsCoordinator.initialize()
+
+        verify {
+            qualtricsAnalyticsClient.initialize()
+        }
+    }
+
+    @Test
     fun `Given a log event, then log event`() = runTest {
         val event = "event"
         val params = mapOf(

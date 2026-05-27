@@ -26,11 +26,17 @@ class ActivityProvider @Inject constructor() : ActivityProviderInterface, Applic
         activityReference = WeakReference(activity)
     }
 
-    override fun onActivityPaused(activity: Activity) {}
+    override fun onActivityPaused(activity: Activity) {
+        // unimplemented as the referenced activity in this state is still valid
+    }
 
-    override fun onActivityStopped(p0: Activity) {}
+    override fun onActivityStopped(activity: Activity) {
+        // unimplemented as the referenced activity in this state is still valid
+    }
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+        // unimplemented as only interested in tracking the activity for UI display
+    }
 
     override fun onActivityDestroyed(activity: Activity) {
         if (activityReference.get() == activity) {
