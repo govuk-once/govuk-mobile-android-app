@@ -9,15 +9,21 @@ import javax.inject.Inject
 
 class QualtricsAnalyticsClient @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val qualtrics: Qualtrics
+    private val qualtrics: Qualtrics,
+    private val activityProvider: ActivityProviderInterface
 ) {
 
+    private var isInitialized = false
+
     fun initialize() {
+        if (isInitialized) return
+
         qualtrics.initializeProject(
             BuildConfig.QUALTRICS_BRAND_ID,
             BuildConfig.QUALTRICS_PROJECT_ID,
             context
         )
+        isInitialized = true
     }
 
     fun logEvent(eventName: String, parameters: Map<String, Any>) {
@@ -42,7 +48,9 @@ class QualtricsAnalyticsClient @Inject constructor(
 
         qualtrics.evaluateProject { results ->
             if (results.values.any { it.passed() }) {
-                qualtrics.display(context)
+                activityProvider.currentActivity?.let { activity ->
+                    qualtrics.display(activity)
+                }
             }
         }
     }

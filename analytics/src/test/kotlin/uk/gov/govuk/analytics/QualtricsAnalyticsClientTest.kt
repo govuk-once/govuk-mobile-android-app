@@ -1,5 +1,6 @@
 package uk.gov.govuk.analytics
 
+import android.app.Activity
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.qualtrics.digital.IQualtricsProjectEvaluationCallback
@@ -18,8 +19,10 @@ import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 class QualtricsAnalyticsClientTest {
 
     private val context = mockk<Context>(relaxed = true)
+    private val activity = mockk<Activity>(relaxed = true)
     private val qualtrics = mockk<Qualtrics>(relaxed = true)
     private val qualtricsProperties = mockk<Properties>(relaxed = true)
+    private val activityProvider = mockk<ActivityProviderInterface>(relaxed = true)
 
     private lateinit var qualtricsAnalyticsClient: QualtricsAnalyticsClient
 
@@ -27,7 +30,7 @@ class QualtricsAnalyticsClientTest {
     fun setUp() {
         qualtrics.properties = qualtricsProperties
 
-        qualtricsAnalyticsClient = QualtricsAnalyticsClient(context, qualtrics)
+        qualtricsAnalyticsClient = QualtricsAnalyticsClient(context, qualtrics, activityProvider)
     }
 
     @After
@@ -86,6 +89,7 @@ class QualtricsAnalyticsClientTest {
         val mockResults = mapOf("survey" to result)
         val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
 
+        every { activityProvider.currentActivity } returns activity
         every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
 
         qualtricsAnalyticsClient.logEvent("event_name", params)
@@ -93,7 +97,7 @@ class QualtricsAnalyticsClientTest {
         callbackSlot.captured.run(mockResults)
 
         verify(exactly = 1) {
-            qualtrics.display(context)
+            qualtrics.display(activity)
         }
     }
 
@@ -180,6 +184,7 @@ class QualtricsAnalyticsClientTest {
         val mockResults = mapOf("survey" to result)
         val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
 
+        every { activityProvider.currentActivity } returns activity
         every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
 
         qualtricsAnalyticsClient.logEcommerceEvent("event_name", ecommerceEvent)
@@ -187,7 +192,7 @@ class QualtricsAnalyticsClientTest {
         callbackSlot.captured.run(mockResults)
 
         verify(exactly = 1) {
-            qualtrics.display(context)
+            qualtrics.display(activity)
         }
     }
 

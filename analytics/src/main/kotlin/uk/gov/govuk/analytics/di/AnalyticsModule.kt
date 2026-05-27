@@ -13,58 +13,58 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
 import com.qualtrics.digital.Qualtrics
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import uk.gov.govuk.analytics.ActivityProvider
+import uk.gov.govuk.analytics.ActivityProviderInterface
 import uk.gov.govuk.analytics.AnalyticsCoordinator
 import uk.gov.govuk.analytics.AnalyticsCoordinatorInterface
-import uk.gov.govuk.analytics.FirebaseAnalyticsClient
-import uk.gov.govuk.analytics.QualtricsAnalyticsClient
 import javax.inject.Named
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal class AnalyticsModule {
+internal abstract class AnalyticsModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
+    abstract fun bindAnalyticsCoordinator(
+        analyticsCoordinator: AnalyticsCoordinator
+    ): AnalyticsCoordinatorInterface
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideCrashlytics(): FirebaseCrashlytics = Firebase.crashlytics
+    abstract fun bindActivityProvider(
+        activityProvider: ActivityProvider
+    ): ActivityProviderInterface
 
-    @Provides
-    @Singleton
-    fun provideQualtrics(): Qualtrics = Qualtrics.instance()
+    companion object {
+        @Provides
+        @Singleton
+        fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
 
-    @Provides
-    @Singleton
-    fun provideAnalyticsCoordinator(@ApplicationContext context: Context): AnalyticsCoordinatorInterface {
-        return AnalyticsCoordinator(
-            firebaseAnalyticsClient = FirebaseAnalyticsClient(
-                firebaseAnalytics = Firebase.analytics,
-                firebaseCrashlytics = Firebase.crashlytics
-            ),
-            qualtricsAnalyticsClient = QualtricsAnalyticsClient(
-                context = context,
-                qualtrics = Qualtrics.instance()
+        @Provides
+        @Singleton
+        fun provideCrashlytics(): FirebaseCrashlytics = Firebase.crashlytics
+
+        @Provides
+        @Singleton
+        fun provideQualtrics(): Qualtrics = Qualtrics.instance()
+
+        @Singleton
+        @Provides
+        @Named("analytics_prefs")
+        fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+            return PreferenceDataStoreFactory.create(
+                corruptionHandler = ReplaceFileCorruptionHandler(
+                    produceNewData = { emptyPreferences() }
+                ),
+                produceFile = { context.preferencesDataStoreFile("analytics_preferences") }
             )
-        )
-    }
-
-    @Singleton
-    @Provides
-    @Named("analytics_prefs")
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            produceFile = { context.preferencesDataStoreFile("analytics_preferences") }
-        )
+        }
     }
 }
