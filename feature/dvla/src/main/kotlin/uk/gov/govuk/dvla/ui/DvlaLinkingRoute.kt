@@ -100,10 +100,14 @@ internal fun DvlaLinkingRoute(
 
         is DvlaViewModel.UiState.Error.Offline -> {
             DvlaOfflineScreen(
-                onTryAgain = { viewModel.onRetryClicked() },
+                onPageView = { title ->
+                    viewModel.onOfflinePageView(title)
+                },
+                onTryAgain = { buttonText ->
+                    viewModel.onOfflineTryAgainClicked(buttonText)
+                },
                 modifier = modifier
             )
-
         }
 
         is DvlaViewModel.UiState.Error.Other -> {
@@ -165,12 +169,23 @@ private fun DvlaLinkSuccessScreen(
 
 @Composable
 private fun DvlaOfflineScreen(
-    onTryAgain: () -> Unit,
+    onPageView: (String) -> Unit,
+    onTryAgain: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val title = stringResource(uk.gov.govuk.design.R.string.device_offline_title)
+    val buttonText = stringResource(uk.gov.govuk.design.R.string.device_offline_button_title)
+
+    RunOnceLaunchedEffect {
+        onPageView(title)
+    }
+
     FullScreenWrapper(modifier = modifier) {
         DeviceOfflineScreen(
-            onTryAgain = onTryAgain
+            onTryAgain = {
+                onTryAgain(buttonText)
+            }
         )
     }
 }

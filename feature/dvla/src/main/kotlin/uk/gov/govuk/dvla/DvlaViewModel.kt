@@ -29,6 +29,7 @@ internal class DvlaViewModel @Inject constructor(
         private const val SCREEN_CLASS_INTRO = "DvlaLinkIntroScreen"
         private const val SCREEN_CLASS_SUCCESS = "DvlaLinkSuccessScreen"
         private const val SCREEN_CLASS_ERROR_OTHER = "DvlaLinkErrorScreen"
+        private const val SCREEN_CLASS_ERROR_OFFLINE = "DvlaOfflineScreen"
         private const val SCREEN_FORMAT = "account bookend"
         private const val SECTION_CONTINUE = "Continue"
         private const val SECTION_LINK_SUCCESS = "account link success"
@@ -152,6 +153,23 @@ internal class DvlaViewModel @Inject constructor(
             section = SECTION_LINK_FAIL
         )
     }
+
+    fun onOfflinePageView(screenTitle: String) {
+        analyticsClient.screenView(
+            screenClass = SCREEN_CLASS_ERROR_OFFLINE,
+            screenName = screenTitle,
+            title = screenTitle
+        )
+    }
+
+    fun onOfflineTryAgainClicked(buttonText: String) {
+        analyticsClient.buttonClick(
+            text = buttonText,
+            external = false,
+            section = SECTION_LINK_FAIL
+        )
+    }
+
     fun onAuthTabLaunched() {
         _authUrlToLaunch.value = null
     }
