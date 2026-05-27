@@ -7,7 +7,10 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
-class VehicleDetailsMapperTest {
+import uk.gov.govuk.dvla.remote.model.common.TaxStatus as RemoteTaxStatus
+import uk.gov.govuk.dvla.remote.model.common.MotStatus as RemoteMotStatus
+
+class VesVehicleMapperTest {
 
     @Test
     fun `Given fully populated VehicleEnquiryResponse, when mapped to domain model, it maps all fields correctly`() {
@@ -16,9 +19,9 @@ class VehicleDetailsMapperTest {
             every { make } returns "FORD"
             every { colour } returns "RED"
             every { yearOfManufacture } returns 2019
-            every { taxStatus?.name } returns "Taxed"
+            every { taxStatus } returns RemoteTaxStatus.TAXED
             every { taxDueDate } returns "2027-04-30T00:00:00.000Z"
-            every { motStatus?.name } returns "No details held by DVLA"
+            every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
             every { motExpiryDate } returns "2025-05-20T00:00:00.000Z"
             every { fuelType } returns "PETROL"
             every { engineCapacity } returns 2000
@@ -31,9 +34,9 @@ class VehicleDetailsMapperTest {
         assertEquals("FORD", domainModel.make)
         assertEquals("RED", domainModel.colour)
         assertEquals(2019, domainModel.yearOfManufacture)
-        assertEquals("Taxed", domainModel.taxStatus)
+        assertEquals(TaxStatus.TAXED, domainModel.taxStatus)
         assertEquals("2027-04-30T00:00:00.000Z", domainModel.taxDueDate)
-        assertEquals("No details held by DVLA", domainModel.motStatus)
+        assertEquals(MotStatus.UNKNOWN, domainModel.motStatus)
         assertEquals("2025-05-20T00:00:00.000Z", domainModel.motExpiryDate)
         assertEquals("PETROL", domainModel.fuelType)
         assertEquals(2000, domainModel.engineCapacity)
@@ -62,9 +65,9 @@ class VehicleDetailsMapperTest {
         assertEquals("", domainModel.make)
         assertEquals("", domainModel.colour)
         assertNull(domainModel.yearOfManufacture)
-        assertEquals("", domainModel.taxStatus)
+        assertEquals(TaxStatus.UNKNOWN, domainModel.taxStatus)
+        assertEquals(MotStatus.UNKNOWN, domainModel.motStatus)
         assertNull(domainModel.taxDueDate)
-        assertEquals("", domainModel.motStatus)
         assertNull(domainModel.motExpiryDate)
         assertEquals("", domainModel.fuelType)
         assertNull(domainModel.engineCapacity)

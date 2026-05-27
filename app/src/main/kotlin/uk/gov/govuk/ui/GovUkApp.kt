@@ -67,7 +67,7 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
-import uk.gov.govuk.dvla.ui.LicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.VehicleAndLicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -81,8 +81,8 @@ import uk.gov.govuk.search.navigation.searchGraph
 import uk.gov.govuk.search.ui.widget.SearchWidget
 import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
+import uk.gov.govuk.settings.navigation.unlinkAccountErrorGraph
 import uk.gov.govuk.terms.navigation.termsGraph
-import uk.gov.govuk.topics.navigation.DVLA_LINK_RESULT
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
@@ -490,7 +490,7 @@ private fun GovUkNavHost(
                     showBrowserNotFoundAlert = true
                 }
             },
-            topicHeader = { topicRef, linkResult ->
+            topicHeader = { topicRef ->
                 val isDrivingTopic = topicRef.isDrivingTopic()
                 val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
 
@@ -502,12 +502,11 @@ private fun GovUkNavHost(
                     ) {
                         // drop in the self-managed public header from the DVLA module
                         DvlaLinkHeader(
-                            linkResult = linkResult,
                             onActionClick = { navController.navigateToDvlaLinkIntro() }
                         )
 
                         // and licence summary widget from DVLA module
-                        LicenceSummaryWidget()
+                        VehicleAndLicenceSummaryWidget()
                     }
                 }
             },
@@ -570,7 +569,6 @@ private fun GovUkNavHost(
                     url = url
                 ) { showBrowserNotFoundAlert = true }
             },
-            linkedAccountsFlow = viewModel.linkedAccounts,
             modifier = Modifier.padding(paddingValues)
         )
         signOutGraph(
@@ -578,6 +576,9 @@ private fun GovUkNavHost(
             onSignOut = {
                 appNavigation.onSignOut(navController)
             }
+        )
+        unlinkAccountErrorGraph(
+            navController = navController
         )
         searchGraph(
             navController,
@@ -619,11 +620,9 @@ private fun GovUkNavHost(
             },
             onLinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, true)
             },
             onUnlinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-                navController.previousBackStackEntry?.savedStateHandle?.set(DVLA_LINK_RESULT, false)
             },
             onIntroClose = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)

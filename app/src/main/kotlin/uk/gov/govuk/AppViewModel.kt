@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -22,11 +23,11 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
-import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
@@ -59,9 +60,6 @@ internal class AppViewModel @Inject constructor(
 
     private val _homeWidgets: MutableStateFlow<List<HomeWidget>?> = MutableStateFlow(null)
     internal val homeWidgets = _homeWidgets.asStateFlow()
-
-    private val _linkedAccounts = MutableStateFlow<List<LinkedAccountUiModel>>(emptyList())
-    val linkedAccounts = _linkedAccounts.asStateFlow()
 
     enum class TimeoutEvent {
         WARNING, TIMEOUT
@@ -136,14 +134,10 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner,
-                        dvlaRepo.isLinked
-                    ) { suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked ->
-                        Triple(suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked)
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner, isDvlaLinked) ->
+                        chatFeature.shouldDisplayChatBanner
+                    ) { suppressedWidgets, shouldDisplayChatBanner ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
-                        updateLinkedAccounts(isDvlaLinked)
-                    }
+                    }.collect()
                 }
             }
             is InvalidSignature -> _uiState.value = AppUiState.ForcedUpdate
@@ -195,6 +189,17 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
             }
+
+            // check dvla link state after login
+            if (flagRepo.isDvlaLinkEnabled()) {
+                // check in background
+                launch {
+                    runCatching {
+                        dvlaRepo.isAccountLinked()
+                    }
+                }
+            }
+
             onNext()
         }
     }
@@ -255,21 +260,6 @@ internal class AppViewModel @Inject constructor(
                 _homeWidgets.value = widgets
             }
         }
-    }
-
-    private fun updateLinkedAccounts(isDvlaLinked: Boolean) {
-        val accounts = mutableListOf<LinkedAccountUiModel>()
-        if (isDvlaLinked) {
-            accounts.add(
-                LinkedAccountUiModel(
-                    displayTitleRes = uk.gov.govuk.dvla.R.string.dvla_account_title,
-                    onUnlink = {
-                        // TODO placeholder for next ticket
-                    }
-                )
-            )
-        }
-        _linkedAccounts.value = accounts
     }
 
     fun onWidgetClick(

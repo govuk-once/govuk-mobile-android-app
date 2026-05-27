@@ -3,6 +3,7 @@ package uk.gov.govuk.design.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,9 +27,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.talkBackText
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
@@ -331,6 +334,61 @@ fun IconListItem(
 }
 
 @Composable
+fun StatusListItem(
+    title: String,
+    description: String,
+    @DrawableRes icon: Int?,
+    modifier: Modifier = Modifier,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+    titleAltText: String? = null
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                BodyBoldLabel(
+                    text = title,
+                    modifier = modifier.withAltText(titleAltText)
+                )
+
+                SmallVerticalSpacer()
+
+                BodyRegularLabel(text = description)
+            }
+
+            MediumHorizontalSpacer()
+
+            icon?.let {
+                Box(
+                    modifier = Modifier.size(36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = it),
+                        contentDescription = null,  // decorative icon
+                        tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun CardListItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -429,3 +487,18 @@ private fun ExternalLinkListItemButtonPreview() {
             style = ExternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
     }
 }
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = "Tax",
+            description = "Valid until 1 February 2027",
+            icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+

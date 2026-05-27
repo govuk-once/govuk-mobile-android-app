@@ -18,7 +18,7 @@ class GovUkApplication: Application() {
         super.onCreate()
         registerActivityLifecycleCallbacks(activityProvider as ActivityLifecycleCallbacks)
 
-        notificationsProvider.initialise(BuildConfig.ONE_SIGNAL_APP_ID)
+        notificationsProvider.initialise()
         notificationsProvider.addClickListener()
 
         analyticsProvider.initialize()

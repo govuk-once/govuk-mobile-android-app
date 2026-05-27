@@ -14,6 +14,7 @@ import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.OnboardingSlide
 import uk.gov.govuk.design.ui.component.PrivacyPolicyLink
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notifications.R
 
@@ -67,7 +68,11 @@ private fun NotificationsScreenPreview() {
             onPrivacyPolicyClick = { _, _ -> },
             image = R.drawable.notifications_bell,
             footer = {
-                FixedDoubleButtonGroup("Primary button", {}, "Secondary button", {})
-            })
+                FixedDoubleButtonGroup(
+                    Button("Primary", {}),
+                    Button("Secondary", {})
+                )
+            }
+        )
     }
 }

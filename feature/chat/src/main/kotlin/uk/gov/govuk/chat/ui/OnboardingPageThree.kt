@@ -1,6 +1,5 @@
 package uk.gov.govuk.chat.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -8,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatViewModel
@@ -17,9 +16,9 @@ import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FullScreenHeader
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -146,12 +145,9 @@ private fun OnboardingPageThreeScreen(
     )
 }
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO
-)
+@PreviewLightDark
 @Composable
-private fun LightModePreview() {
+private fun OnboardingPageThreePreview() {
     GovUkTheme {
         OnboardingPageThreeScreen(
             onPageView = {},
@@ -163,19 +159,3 @@ private fun LightModePreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun DarkModePreview() {
-    GovUkTheme {
-        OnboardingPageThreeScreen(
-            onPageView = {},
-            onClick = {},
-            onCancel = {},
-            onBack = {},
-            onPrivacyNoticeClick = { _, _ -> }
-        )
-    }
-}

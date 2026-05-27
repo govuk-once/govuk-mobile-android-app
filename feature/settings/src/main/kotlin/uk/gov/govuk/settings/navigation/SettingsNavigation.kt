@@ -2,28 +2,25 @@ package uk.gov.govuk.settings.navigation
 
 import android.content.Intent
 import android.os.Build
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import kotlinx.coroutines.flow.StateFlow
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_PERMISSION_ROUTE
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
+import uk.gov.govuk.settings.ui.RemoveAccountErrorScreen
 import uk.gov.govuk.settings.ui.SettingsRoute
 import uk.gov.govuk.settings.ui.SettingsRouteActions
 import uk.gov.govuk.settings.ui.SignOutErrorRoute
 import uk.gov.govuk.settings.ui.SignOutRoute
 import uk.gov.govuk.settings.ui.YourAccountsRoute
-import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
 import java.net.URLEncoder
 
 
@@ -35,6 +32,7 @@ private const val SIGN_OUT_ROUTE = "sign_out_route"
 
 const val SIGN_OUT_ERROR_ROUTE = "sign_out_error_route"
 const val YOUR_ACCOUNTS_ROUTE = "your_accounts_route"
+const val UNLINK_ACCOUNT_ERROR_ROUTE = "unlink_account_error_route"
 
 val settingsDeepLinks = mapOf("/settings" to listOf(SETTINGS_ROUTE))
 
@@ -43,7 +41,6 @@ fun NavGraphBuilder.settingsGraph(
     onBiometricsClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
-    linkedAccountsFlow: StateFlow<List<LinkedAccountUiModel>>,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -91,14 +88,20 @@ fun NavGraphBuilder.settingsGraph(
         }
 
         composable(YOUR_ACCOUNTS_ROUTE) {
-            val accounts by linkedAccountsFlow.collectAsStateWithLifecycle()
-
             YourAccountsRoute(
-                accounts = accounts,
                 onBack = { navController.popBackStack() },
+                onNavigateToError = { navController.navigate(UNLINK_ACCOUNT_ERROR_ROUTE) },
                 modifier = modifier
             )
         }
+    }
+}
+
+fun NavGraphBuilder.unlinkAccountErrorGraph(navController: NavController) {
+    composable(UNLINK_ACCOUNT_ERROR_ROUTE) {
+        RemoveAccountErrorScreen(
+            onDismiss = { navController.popBackStack() }
+        )
     }
 }
 

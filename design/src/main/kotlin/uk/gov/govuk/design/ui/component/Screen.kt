@@ -24,11 +24,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 @Composable
 fun CentreAlignedScreen(
@@ -244,7 +244,7 @@ fun AccountConnectionSuccessScreen(
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun BookendToWebScreenPreview() {
     GovUkTheme {
@@ -259,7 +259,7 @@ private fun BookendToWebScreenPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun BookendConnectingScreenPreview() {
     GovUkTheme {
@@ -269,7 +269,7 @@ private fun BookendConnectingScreenPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun AccountConnectionSuccessScreenPreview() {
     GovUkTheme {
