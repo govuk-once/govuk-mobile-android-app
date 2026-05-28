@@ -8,6 +8,8 @@ import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
+import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.DvlaLinkState
@@ -23,10 +25,15 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @Singleton
 class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
-    private val authRepo: AuthRepo
+    private val authRepo: AuthRepo,
+    private val dvlaDataStore: DvlaDataStore
 ) {
     private val _linkState = MutableStateFlow(DvlaLinkState.CHECKING)
     val linkState = _linkState.asStateFlow()
+
+    internal suspend fun getSelectedCategory(): Category? = dvlaDataStore.getSelectedCategory()
+
+    internal suspend fun setSelectedCategory(category: Category) = dvlaDataStore.setSelectedCategory(category)
 
     suspend fun isAccountLinked(): Result<Boolean> {
         val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)

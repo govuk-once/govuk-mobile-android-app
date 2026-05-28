@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.drawBottomStroke
+import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 data class GovUkButtonColours(
@@ -222,13 +223,14 @@ fun ConnectedButton(
     text: String,
     onClick: () -> Unit,
     active: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colours: ButtonColours
 ) {
     val containerColour =
         if (active) {
-            GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive
+            colours.containerActive
         } else {
-            GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+            colours.containerInactive
         }
 
     val contentColour =
@@ -536,7 +538,11 @@ private fun ConnectedActive()
         ConnectedButton(
             text = "Connected button",
             onClick = { },
-            active = true
+            active = true,
+            colours = ButtonColours(
+                containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+            )
         )
     }
 }
@@ -549,7 +555,11 @@ private fun ConnectedInactive()
         ConnectedButton(
             text = "Connected button",
             onClick = { },
-            active = false
+            active = false,
+            colours = ButtonColours(
+                containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+            )
         )
     }
 }

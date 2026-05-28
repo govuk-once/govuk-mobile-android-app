@@ -17,6 +17,7 @@ import androidx.window.core.layout.WindowSizeClass
 import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST
 import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND
 import uk.gov.govuk.design.ui.model.Button
+import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.model.SINGLE_COLUMN_THRESHOLD_DP
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -190,7 +191,8 @@ fun ConnectedButtonGroup(
     secondText: String,
     onActiveStateChange: (ConnectedButton) -> Unit,
     activeButton: ConnectedButton,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colours: ButtonColours
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
@@ -202,7 +204,8 @@ fun ConnectedButtonGroup(
             secondText = secondText,
             onActiveStateChange = onActiveStateChange,
             activeButton = activeButton,
-            modifier = modifier
+            modifier = modifier,
+            colours = colours
         )
     } else {
         HorizontalConnectedButtonGroup(
@@ -210,7 +213,8 @@ fun ConnectedButtonGroup(
             secondText = secondText,
             onActiveStateChange = onActiveStateChange,
             activeButton = activeButton,
-            modifier = modifier
+            modifier = modifier,
+            colours = colours
         )
     }
 }
@@ -221,7 +225,8 @@ private fun HorizontalConnectedButtonGroup(
     secondText: String,
     onActiveStateChange: (ConnectedButton) -> Unit,
     activeButton: ConnectedButton,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colours: ButtonColours
 ) {
     Row(modifier = modifier
         .fillMaxWidth()
@@ -236,7 +241,8 @@ private fun HorizontalConnectedButtonGroup(
             active = activeButton == FIRST,
             modifier = Modifier
                 .weight(0.5f)
-                .fillMaxHeight()
+                .fillMaxHeight(),
+            colours = colours
         )
         SmallHorizontalSpacer()
         ConnectedButton(
@@ -247,7 +253,8 @@ private fun HorizontalConnectedButtonGroup(
             active = activeButton == SECOND,
             modifier = Modifier
                 .weight(0.5f)
-                .fillMaxHeight()
+                .fillMaxHeight(),
+            colours = colours
         )
     }
 }
@@ -258,7 +265,8 @@ private fun VerticalConnectedButtonGroup(
     secondText: String,
     onActiveStateChange: (ConnectedButton) -> Unit,
     activeButton: ConnectedButton,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colours: ButtonColours
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         ConnectedButton(
@@ -268,7 +276,8 @@ private fun VerticalConnectedButtonGroup(
             },
             active = activeButton == FIRST,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            colours = colours
         )
         SmallVerticalSpacer()
         ConnectedButton(
@@ -278,7 +287,8 @@ private fun VerticalConnectedButtonGroup(
             },
             active = activeButton == SECOND,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            colours = colours
         )
     }
 }
@@ -370,7 +380,11 @@ private fun HorizontalConnectedButtonGroupPreview()
             firstText = "First",
             secondText = "Second",
             onActiveStateChange = { },
-            activeButton = FIRST
+            activeButton = FIRST,
+            colours = ButtonColours(
+                containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+            )
         )
     }
 }
@@ -384,7 +398,11 @@ private fun VerticalConnectedButtonGroupPreview()
             firstText = "First",
             secondText = "Second",
             onActiveStateChange = { },
-            activeButton = FIRST
+            activeButton = FIRST,
+            colours = ButtonColours(
+                containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+            )
         )
     }
 }

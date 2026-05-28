@@ -11,6 +11,8 @@ import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
@@ -25,14 +27,35 @@ class DvlaRepoTest {
 
     private val api = mockk<DvlaApi>()
     private val authRepo = mockk<AuthRepo>()
+    private val dvlaDataStore = mockk<DvlaDataStore>()
     private lateinit var repo: DvlaRepo
     private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJleHAiOjM2MDAsImxpbmtpbmdfaWQiOiIxMjM0LWFiY2QifQ."
     private val linkingId = "1234-abcd"
 
     @Before
     fun setup() {
-        repo = DvlaRepo(api, authRepo)
+        repo = DvlaRepo(api, authRepo, dvlaDataStore)
     }
+
+    @Test
+    fun `Given getSelectedCategory is called, then getSelectedCategory is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.getSelectedCategory() } returns Category.VEHICLE
+
+            repo.getSelectedCategory()
+
+            coVerify(exactly = 1) { dvlaDataStore.getSelectedCategory() }
+        }
+
+    @Test
+    fun `Given setSelectedCategory is called, then setSelectedCategory is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.setSelectedCategory(category = Category.VEHICLE) } returns Unit
+
+            repo.setSelectedCategory(category = Category.VEHICLE)
+
+            coVerify(exactly = 1) { dvlaDataStore.setSelectedCategory(category = Category.VEHICLE) }
+        }
 
     @Test
     fun `Given linking api returns success, when linkAccount is called, then return Success`() = runTest {

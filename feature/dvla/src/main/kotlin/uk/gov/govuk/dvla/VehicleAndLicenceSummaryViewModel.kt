@@ -9,16 +9,12 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
+import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
+import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
 import javax.inject.Inject
-
-internal sealed interface VehicleAndLicenceSummaryUiState {
-    data object Hidden : VehicleAndLicenceSummaryUiState
-    data object Loading : VehicleAndLicenceSummaryUiState
-    data class Success(val vehicles: List<VehicleSummaryUiModel>) : VehicleAndLicenceSummaryUiState
-    data object Error : VehicleAndLicenceSummaryUiState
-}
 
 @HiltViewModel
 internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
@@ -26,17 +22,23 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
     private val mapper: VehicleSummaryMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) VehicleAndLicenceSummaryUiState.Loading
-        else VehicleAndLicenceSummaryUiState.Hidden
-    )
+    private val _uiState = MutableStateFlow<UiState?>(null)
     val uiState = _uiState.asStateFlow()
+
+    private val _vehicleSummaryUiState =
+        MutableStateFlow<VehicleSummaryUiState>(VehicleSummaryUiState.Loading)
+    val vehicleSummaryUiState = _vehicleSummaryUiState.asStateFlow()
+
+    private val _licenceSummaryUiState =
+        MutableStateFlow<LicenceSummaryUiState>(LicenceSummaryUiState.Loading)
+    val licenceSummaryUiState = _licenceSummaryUiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     DvlaLinkState.LINKED -> {
+                        setUiStateToDefault()
                         fetchLicenceData()
                         // TODO: this is to demonstrate driver & customer summary endpoint call data,
                         //  until we decide which endpoint to use
@@ -45,9 +47,31 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
                     }
 
                     DvlaLinkState.UNLINKED,
-                    DvlaLinkState.CHECKING -> _uiState.value = VehicleAndLicenceSummaryUiState.Hidden
+                    DvlaLinkState.CHECKING -> _uiState.value = UiState.Hidden
                 }
             }
+        }
+    }
+
+    fun onVehicleSelected() {
+        setSelectedCategory(category = Category.VEHICLE)
+    }
+
+    fun onLicenceSelected() {
+        setSelectedCategory(category = Category.LICENCE)
+    }
+
+    private fun setSelectedCategory(category: Category) {
+        viewModelScope.launch {
+            dvlaRepo.setSelectedCategory(category = category)
+            _uiState.value = UiState.Default(category = category)
+        }
+    }
+
+    private fun setUiStateToDefault() {
+        viewModelScope.launch {
+            val category = dvlaRepo.getSelectedCategory() ?: Category.VEHICLE // Default to 'VEHICLE'
+            _uiState.value = UiState.Default(category = category)
         }
     }
 
@@ -81,15 +105,18 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     private fun fetchCustomerSummary() {
         viewModelScope.launch {
-            _uiState.value = VehicleAndLicenceSummaryUiState.Loading
+            _vehicleSummaryUiState.value = VehicleSummaryUiState.Loading
+            _licenceSummaryUiState.value = LicenceSummaryUiState.Loading
 
             when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
                     val vehicleList = result.value.vehicles.map { mapper.toUiModel(it) }
-                    _uiState.value = VehicleAndLicenceSummaryUiState.Success(vehicles = vehicleList)
+                    _vehicleSummaryUiState.value = VehicleSummaryUiState.Success(vehicles = vehicleList)
                 }
+
                 else -> {
-                    _uiState.value = VehicleAndLicenceSummaryUiState.Error
+                    _vehicleSummaryUiState.value = VehicleSummaryUiState.Error
+                    _licenceSummaryUiState.value = LicenceSummaryUiState.Error
                 }
             }
         }
