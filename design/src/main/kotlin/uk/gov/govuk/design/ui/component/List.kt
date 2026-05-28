@@ -335,7 +335,7 @@ fun IconListItem(
 
 @Composable
 fun StatusListItem(
-    title: String,
+    title: String? = null,
     description: String,
     @DrawableRes icon: Int?,
     modifier: Modifier = Modifier,
@@ -360,10 +360,12 @@ fun StatusListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                BodyBoldLabel(
-                    text = title,
-                    modifier = modifier.withAltText(titleAltText)
-                )
+                title?.let {
+                    BodyBoldLabel(
+                        text = it,
+                        modifier = modifier.withAltText(titleAltText)
+                    )
+                }
 
                 SmallVerticalSpacer()
 
@@ -494,6 +496,19 @@ private fun StatusListItemPreview() {
     GovUkTheme {
         StatusListItem(
             title = "Tax",
+            description = "Valid until 1 February 2027",
+            icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemNoTitlePreview() {
+    GovUkTheme {
+        StatusListItem(
             description = "Valid until 1 February 2027",
             icon = R.drawable.ic_check_round,
             isFirst = false,
