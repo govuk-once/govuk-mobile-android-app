@@ -391,6 +391,43 @@ fun StatusListItem(
 }
 
 @Composable
+fun AddressListItem(
+    name: String,
+    addressLines: List<String>,
+    modifier: Modifier = Modifier,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                )
+        ) {
+            BodyBoldLabel(
+                text = name,
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+
+            SmallVerticalSpacer()
+
+            BodyRegularLabel(
+                text = addressLines.joinToString(separator = "\n"),
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+        }
+    }
+}
+
+@Composable
 fun CardListItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -511,6 +548,23 @@ private fun StatusListItemNoTitlePreview() {
         StatusListItem(
             description = "Valid until 1 February 2027",
             icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AddressListItemPreview() {
+    GovUkTheme {
+        AddressListItem(
+            name = "Ms Anna Ornella Arenö",
+            addressLines = listOf(
+                "29 Orchard Drive",
+                "Milton Keynes",
+                "PA98 J83"
+            ),
             isFirst = false,
             isLast = false
         )
