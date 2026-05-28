@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.ui.component
 
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
+import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
@@ -95,8 +97,14 @@ internal fun RegistrationPlate(
 
     Box(
         modifier = modifier
+            .height(36.dp)
             .background(
                 color = GovUkTheme.colourScheme.surfaces.registrationPlate,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .border(
+                width = 1.dp,
+                color = GovUkTheme.colourScheme.strokes.registrationPlate,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(
@@ -104,7 +112,8 @@ internal fun RegistrationPlate(
                 start = GovUkTheme.spacing.small,
                 end = GovUkTheme.spacing.small,
                 bottom = 5.dp
-            )
+            ),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = registration,
@@ -163,7 +172,7 @@ fun VehicleSummaryHeader(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             // make and model
             Title1BoldLabel(
@@ -171,9 +180,9 @@ fun VehicleSummaryHeader(
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
-            BodyRegularLabel(
+            Title3RegularLabel(
                 text = model,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
+                color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }
     }
