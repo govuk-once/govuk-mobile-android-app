@@ -18,7 +18,7 @@ class DvlaDataStore @Inject constructor(
         const val SELECTED_CATEGORY = "selected_category"
     }
 
-    suspend fun getSelectedCategory(): Category? {
+    internal suspend fun getSelectedCategory(): Category? {
         dataStore.data.firstOrNull()?.get(stringPreferencesKey(SELECTED_CATEGORY))
             ?.let { category ->
                 return Category.valueOf(category)
@@ -26,7 +26,7 @@ class DvlaDataStore @Inject constructor(
         return null
     }
 
-    suspend fun setSelectedCategory(category: Category) {
+    internal suspend fun setSelectedCategory(category: Category) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(SELECTED_CATEGORY)] = category.name
         }
