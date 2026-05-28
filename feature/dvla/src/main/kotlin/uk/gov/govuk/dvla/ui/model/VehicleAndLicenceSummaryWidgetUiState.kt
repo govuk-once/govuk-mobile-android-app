@@ -5,7 +5,7 @@ internal sealed interface UiState {
     data object Hidden : UiState
 }
 
-internal enum class Category {
+enum class Category {
     VEHICLE, LICENCE
 }
 
