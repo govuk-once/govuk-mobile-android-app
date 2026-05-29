@@ -35,6 +35,10 @@ class DvlaRepo @Inject constructor(
 
     internal suspend fun setSelectedCategory(category: Category) = dvlaDataStore.setSelectedCategory(category)
 
+    suspend fun clear() {
+        dvlaDataStore.clear()
+    }
+
     suspend fun isAccountLinked(): Result<Boolean> {
         val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
 

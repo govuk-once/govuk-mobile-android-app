@@ -188,6 +188,7 @@ internal class AppViewModel @Inject constructor(
                 chatFeature.clear()
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
+                dvlaRepo.clear()
             }
 
             // check dvla link state after login

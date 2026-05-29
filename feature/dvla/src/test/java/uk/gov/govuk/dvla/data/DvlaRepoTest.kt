@@ -58,6 +58,18 @@ class DvlaRepoTest {
         }
 
     @Test
+    fun `Given clear is called, then clear is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.clear() } returns Unit
+
+            repo.clear()
+
+            coVerify(exactly = 1) {
+                dvlaDataStore.clear()
+            }
+        }
+
+    @Test
     fun `Given linking api returns success, when linkAccount is called, then return Success`() = runTest {
         coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
 

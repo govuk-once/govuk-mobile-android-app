@@ -48,9 +48,9 @@ class DvlaDataStoreTest {
     @Test
     fun `Given the data store is empty, then getSelectedCategory returns null`() =
         runTest(dispatcher) {
-            val appDatastore = DvlaDataStore(dataStore)
+            val dvlaDatastore = DvlaDataStore(dataStore)
 
-            assertNull(appDatastore.getSelectedCategory())
+            assertNull(dvlaDatastore.getSelectedCategory())
         }
 
     @Test
@@ -60,18 +60,34 @@ class DvlaDataStoreTest {
                 prefs[stringPreferencesKey(SELECTED_CATEGORY)] = "VEHICLE"
             }
 
-            val appDatastore = DvlaDataStore(dataStore)
+            val dvlaDatastore = DvlaDataStore(dataStore)
 
-            assertTrue(appDatastore.getSelectedCategory() == Category.VEHICLE)
+            assertTrue(dvlaDatastore.getSelectedCategory() == Category.VEHICLE)
         }
 
     @Test
     fun `Given the setSelectedCategory is called with vehicle, then the selected category in the data store is vehicle`() =
         runTest(dispatcher) {
-            val appDatastore = DvlaDataStore(dataStore)
+            val dvlaDatastore = DvlaDataStore(dataStore)
 
-            appDatastore.setSelectedCategory(category = Category.VEHICLE)
+            dvlaDatastore.setSelectedCategory(category = Category.VEHICLE)
 
             assertTrue(dataStore.data.first()[stringPreferencesKey(SELECTED_CATEGORY)] == "VEHICLE")
+        }
+
+    @Test
+    fun `Given the data store is cleared, when clear, then the data store is cleared`() =
+        runTest(dispatcher) {
+            val dvlaDatastore = DvlaDataStore(dataStore)
+
+            dataStore.edit { prefs ->
+                prefs[stringPreferencesKey(SELECTED_CATEGORY)] = "VEHICLE"
+            }
+
+            assertTrue(dataStore.data.first().asMap().isNotEmpty())
+
+            dvlaDatastore.clear()
+
+            assertTrue(dataStore.data.first().asMap().isEmpty())
         }
 }

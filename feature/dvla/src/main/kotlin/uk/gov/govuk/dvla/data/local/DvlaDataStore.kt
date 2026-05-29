@@ -31,4 +31,8 @@ class DvlaDataStore @Inject constructor(
             preferences[stringPreferencesKey(SELECTED_CATEGORY)] = category.name
         }
     }
+
+    internal suspend fun clear() {
+        dataStore.edit { preferences -> preferences.clear() }
+    }
 }
