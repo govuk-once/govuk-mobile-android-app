@@ -225,7 +225,8 @@ data class GovUkColourScheme(
         val chatDivider: Color,
         val chatIntroCardBorder: Color,
         val cardCarousel: Color,
-        val iconSeparator: Color
+        val iconSeparator: Color,
+        val registrationPlate: Color
     )
 }
 
@@ -389,7 +390,8 @@ internal val LightColorScheme = GovUkColourScheme(
         chatDivider = BlueLighter80,
         chatIntroCardBorder = BlueLighter80,
         cardCarousel = BlueDarker50,
-        iconSeparator = BluePrimary
+        iconSeparator = BluePrimary,
+        registrationPlate = Black
     )
 )
 
@@ -553,7 +555,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatDivider = BlueDarker25,
         chatIntroCardBorder = BlueDarker50,
         cardCarousel = BlueDarker50,
-        iconSeparator = BlueAccent
+        iconSeparator = BlueAccent,
+        registrationPlate = Black
     )
 )
 
@@ -712,7 +715,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatDivider = Color.Unspecified,
             chatIntroCardBorder = Color.Unspecified,
             cardCarousel = Color.Unspecified,
-            iconSeparator = Color.Unspecified
+            iconSeparator = Color.Unspecified,
+            registrationPlate = Color.Unspecified
         )
     )
 }

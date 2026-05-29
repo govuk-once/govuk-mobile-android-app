@@ -28,9 +28,13 @@ internal class DvlaViewModel @Inject constructor(
     companion object {
         private const val SCREEN_CLASS_INTRO = "DvlaLinkIntroScreen"
         private const val SCREEN_CLASS_SUCCESS = "DvlaLinkSuccessScreen"
+        private const val SCREEN_CLASS_ERROR_OTHER = "DvlaLinkErrorScreen"
+        private const val SCREEN_CLASS_ERROR_OFFLINE = "DvlaOfflineScreen"
         private const val SCREEN_FORMAT = "account bookend"
         private const val SECTION_CONTINUE = "Continue"
         private const val SECTION_LINK_SUCCESS = "account link success"
+
+        private const val SECTION_LINK_FAIL = "account link fail"
         private const val NAV_TYPE_CLOSE = "Close"
     }
 
@@ -45,7 +49,6 @@ internal class DvlaViewModel @Inject constructor(
         data object Success : UiState
         sealed interface Error : UiState {
             data object Offline : Error
-            // TODO 'offline' and 'other' for now, there is another ticket for errors
             data object Other : Error
         }
     }
@@ -124,6 +127,47 @@ internal class DvlaViewModel @Inject constructor(
         viewModelScope.launch {
             _linkingEvent.emit(LinkingEvent.LinkComplete)
         }
+    }
+
+    fun onErrorOtherPageView(screenTitle: String) {
+        analyticsClient.screenView(
+            screenClass = SCREEN_CLASS_ERROR_OTHER,
+            screenName = screenTitle,
+            title = screenTitle
+        )
+    }
+
+    fun onErrorBackToDrivingClicked(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            external = false,
+            section = SECTION_LINK_FAIL
+        )
+    }
+
+    fun onErrorVisitGovUkClicked(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION_LINK_FAIL
+        )
+    }
+
+    fun onOfflinePageView(screenTitle: String) {
+        analyticsClient.screenView(
+            screenClass = SCREEN_CLASS_ERROR_OFFLINE,
+            screenName = screenTitle,
+            title = screenTitle
+        )
+    }
+
+    fun onOfflineTryAgainClicked(buttonText: String) {
+        analyticsClient.buttonClick(
+            text = buttonText,
+            external = false,
+            section = SECTION_LINK_FAIL
+        )
     }
 
     fun onAuthTabLaunched() {

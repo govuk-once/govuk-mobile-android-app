@@ -360,7 +360,7 @@ fun StatusListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                BodyBoldLabel(
+                Title3BoldLabel(
                     text = title,
                     modifier = modifier.withAltText(titleAltText)
                 )

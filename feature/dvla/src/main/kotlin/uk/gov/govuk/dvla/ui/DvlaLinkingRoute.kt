@@ -100,16 +100,29 @@ internal fun DvlaLinkingRoute(
 
         is DvlaViewModel.UiState.Error.Offline -> {
             DvlaOfflineScreen(
-                onTryAgain = { viewModel.onRetryClicked() },
+                onPageView = { title ->
+                    viewModel.onOfflinePageView(title)
+                },
+                onTryAgain = { buttonText ->
+                    viewModel.onOfflineTryAgainClicked(buttonText)
+                },
                 modifier = modifier
             )
-
         }
 
         is DvlaViewModel.UiState.Error.Other -> {
-            ErrorOtherScreen(
-                onWebFlowClosed = onWebFlowClosed,
-                onLaunchBrowser = onLaunchBrowser,
+            DvlaLinkErrorScreen(
+                onPageView = { title ->
+                    viewModel.onErrorOtherPageView(title)
+                },
+                onBackToDrivingClicked = { buttonText ->
+                    viewModel.onErrorBackToDrivingClicked(buttonText)
+                    onWebFlowClosed()
+                },
+                onVisitGovUkClicked = { buttonText, url ->
+                    viewModel.onErrorVisitGovUkClicked(text = buttonText, url = url)
+                    onLaunchBrowser(url)
+                },
                 modifier = modifier
             )
         }
@@ -156,37 +169,55 @@ private fun DvlaLinkSuccessScreen(
 
 @Composable
 private fun DvlaOfflineScreen(
-    onTryAgain: () -> Unit,
+    onPageView: (String) -> Unit,
+    onTryAgain: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val title = stringResource(uk.gov.govuk.design.R.string.device_offline_title)
+    val buttonText = stringResource(uk.gov.govuk.design.R.string.device_offline_button_title)
+
+    RunOnceLaunchedEffect {
+        onPageView(title)
+    }
+
     FullScreenWrapper(modifier = modifier) {
         DeviceOfflineScreen(
-            onTryAgain = onTryAgain
+            onTryAgain = {
+                onTryAgain(buttonText)
+            }
         )
     }
 }
 
 @Composable
-private fun ErrorOtherScreen(
-    onWebFlowClosed: () -> Unit,
-    onLaunchBrowser: (String) -> Unit,
+private fun DvlaLinkErrorScreen(
+    onPageView: (String) -> Unit,
+    onBackToDrivingClicked: (String) -> Unit,
+    onVisitGovUkClicked: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val title = stringResource(R.string.link_dvla_problem_title)
     val primaryText = stringResource(R.string.link_dvla_problem_primary_button)
     val secondaryText = stringResource(R.string.link_dvla_problem_secondary_button)
+
+    RunOnceLaunchedEffect {
+        onPageView(title)
+    }
+
     ErrorPage(
-        headerText = stringResource(R.string.link_dvla_problem_title),
+        headerText = title,
         subText = listOf(stringResource(R.string.link_dvla_problem_description)),
         footerContent = {
             FixedDoubleButtonGroup(
                 primaryButton = Button(
                     text = primaryText,
-                    onClick = { onWebFlowClosed() }
+                    onClick = { onBackToDrivingClicked(primaryText) }
                 ),
                 secondaryButton = Button(
                     text = secondaryText,
                     onClick = {
-                        onLaunchBrowser(ErrorConstants.GOV_UK_URL)
+                        onVisitGovUkClicked(secondaryText, ErrorConstants.GOV_UK_URL)
                     },
                     isExternal = true
                 )
