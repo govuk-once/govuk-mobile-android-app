@@ -134,7 +134,7 @@ class VehicleAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `When onVehicleSelected, then ui state category is vehicle`() = runTest(dispatcher) {
+    fun `When onVehicleSelected, then ui state driving view is vehicle`() = runTest(dispatcher) {
         val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
         every { repo.linkState } returns linkStateFlow
 
@@ -149,7 +149,7 @@ class VehicleAndLicenceSummaryViewModelTest {
     }
 
     @Test
-    fun `When onLicenceSelected, then ui state category is licence`() = runTest(dispatcher) {
+    fun `When onLicenceSelected, then ui state driving view is licence`() = runTest(dispatcher) {
         val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
         every { repo.linkState } returns linkStateFlow
 
