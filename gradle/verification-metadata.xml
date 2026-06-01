@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verification-metadata
+  xmlns="https://schema.gradle.org/dependency-verification"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://schema.gradle.org/dependency-verification https://schema.gradle.org/dependency-verification/dependency-verification-1.3.xsd">
+  <configuration>
+    <!-- verify .pom and .module files -->
+    <verify-metadata>true</verify-metadata>
+    <!-- verify .asc PGP files that come with the artifacts -->
+    <verify-signatures>true</verify-signatures>
+    <!-- use human readable keyring format -->
+    <keyring-format>armored</keyring-format>
+    <!-- read keys in a local file, fewer requests to network -->
+    <key-servers enabled="false">
+      <key-server uri="https://keyserver.ubuntu.com"/>
+      <key-server uri="https://keys.openpgp.org"/>
+    </key-servers>
+  </configuration>
+  <components>
+  </components>
+</verification-metadata>
