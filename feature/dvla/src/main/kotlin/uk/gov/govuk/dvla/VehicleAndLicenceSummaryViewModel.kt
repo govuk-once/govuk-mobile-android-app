@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
@@ -40,7 +41,8 @@ internal sealed interface LicenceUiState {
 @HiltViewModel
 internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
-    private val mapper: VehicleSummaryMapper
+    private val vehicleMapper: VehicleSummaryMapper,
+    private val licenceMapper: LicenceSummaryMapper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -90,14 +92,11 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
             val newState = when (val result = dvlaRepo.getDriverSummary()) {
                 is Result.Success -> {
-                    if (BuildConfig.DEBUG) println("DriverSummary: SUCCESS: ${result.value}")
-                    // TODO map result.value to LicenceSummaryUiModel
-                    LicenceUiState.Error
+                    val licence = licenceMapper.toUiModel(result.value)
+                    LicenceUiState.Success(licence)
                 }
-                else -> {
-                    if (BuildConfig.DEBUG) println("DriverSummary: ERROR - Failed to fetch driver summary")
-                    LicenceUiState.Error
-                }
+                else -> LicenceUiState.Error
+
             }
 
             updateLicenceState(newState)
@@ -109,10 +108,10 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
             updateVehicleState(VehicleUiState.Loading)
 
             val newState = when (val result = dvlaRepo.getCustomerSummary()) {
-                is Result.Success -> VehicleUiState.Success(result.value.vehicles.map {
-                    mapper.toUiModel(it)
-                })
-
+                is Result.Success -> {
+                    val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it) }
+                    VehicleUiState.Success(vehicles)
+                }
                 else -> VehicleUiState.Error
             }
 

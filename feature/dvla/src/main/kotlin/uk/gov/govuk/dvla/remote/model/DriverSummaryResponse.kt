@@ -14,9 +14,9 @@ data class DriverSummaryResponse(
 data class DriverView(
     @SerializedName("driver") val driver: Driver,
     @SerializedName("licence") val licence: Licence?,
-    @SerializedName("entitlement") val entitlement: List<Entitlement>,
-    @SerializedName("testPass") val testPass: List<TestPass>,
-    @SerializedName("endorsements") val endorsements: List<Endorsement>,
+    @SerializedName("entitlement") val entitlement: List<Entitlement>?,
+    @SerializedName("testPass") val testPass: List<TestPass>?,
+    @SerializedName("endorsements") val endorsements: List<Endorsement>?,
     @SerializedName("token") val token: Token?,
     @SerializedName("holder") val holder: HolderDetails?
 )
@@ -72,8 +72,8 @@ data class PreviousDrivingLicence(
 )
 
 data class Licence(
-    @SerializedName("type") val type: String,
-    @SerializedName("status") val status: String,
+    @SerializedName("type") val type: LicenceType?,
+    @SerializedName("status") val status: LicenceStatus?,
     @SerializedName("statusQualifier") val statusQualifier: String?,
     @SerializedName("countryToWhichExchanged") val countryToWhichExchanged: String?
 )
@@ -263,3 +263,47 @@ data class TachoCard(
     @SerializedName("workshopNumber") val workshopNumber: String?,
     @SerializedName("workshopAddress") val workshopAddress: Any?
 )
+
+enum class LicenceType {
+    @SerializedName("Provisional")
+    PROVISIONAL,
+
+    @SerializedName("Full")
+    FULL,
+}
+
+enum class LicenceStatus {
+    @SerializedName("Valid")
+    VALID,
+
+    @SerializedName("Disqualified")
+    DISQUALIFIED,
+
+    @SerializedName("Revoked")
+    REVOKED,
+
+    @SerializedName("Revoked for medical reasons")
+    REVOKED_FOR_MEDICAL_REASONS,
+
+    @SerializedName("Surrendered")
+    SURRENDERED,
+
+    @SerializedName("Surrendered voluntarily")
+    SURRENDERED_VOLUNTARILY,
+
+    @SerializedName("Surrendered for medical reasons")
+    SURRENDERED_FOR_MEDICAL_REASONS,
+
+    @SerializedName("Expired")
+    EXPIRED,
+
+    @SerializedName("Exchanged")
+    EXCHANGED,
+
+    @SerializedName("Refused")
+    REFUSED,
+
+    @SerializedName("Refused for medical reasons")
+    REFUSED_FOR_MEDICAL_REASONS
+}
+

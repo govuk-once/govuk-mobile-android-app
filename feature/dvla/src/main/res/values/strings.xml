@@ -27,6 +27,8 @@
     <string name="vehicle_details_title">Details</string>
     <string name="registration_plate_alt_text">Number plate %1$s</string>
     <string name="more_options_alt_text">More options</string>
+    <string name="licence_type_full">Full licence</string>
+    <string name="licence_type_provisional">Provisional licence</string>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
