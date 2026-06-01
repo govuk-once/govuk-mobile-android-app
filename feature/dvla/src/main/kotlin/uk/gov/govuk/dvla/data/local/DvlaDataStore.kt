@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.firstOrNull
-import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -15,20 +15,20 @@ class DvlaDataStore @Inject constructor(
     @param:Named("dvla_prefs") private val dataStore: DataStore<Preferences>
 ) {
     internal companion object {
-        const val SELECTED_CATEGORY = "selected_category"
+        const val SELECTED_DRIVING_VIEW = "selected_driving_view"
     }
 
-    internal suspend fun getSelectedCategory(): Category? {
-        dataStore.data.firstOrNull()?.get(stringPreferencesKey(SELECTED_CATEGORY))
-            ?.let { category ->
-                return Category.valueOf(category)
+    internal suspend fun getSelectedDrivingView(): DrivingView? {
+        dataStore.data.firstOrNull()?.get(stringPreferencesKey(SELECTED_DRIVING_VIEW))
+            ?.let { drivingView ->
+                return DrivingView.valueOf(drivingView)
             }
         return null
     }
 
-    internal suspend fun setSelectedCategory(category: Category) {
+    internal suspend fun setSelectedDrivingView(drivingView: DrivingView) {
         dataStore.edit { preferences ->
-            preferences[stringPreferencesKey(SELECTED_CATEGORY)] = category.name
+            preferences[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = drivingView.name
         }
     }
 

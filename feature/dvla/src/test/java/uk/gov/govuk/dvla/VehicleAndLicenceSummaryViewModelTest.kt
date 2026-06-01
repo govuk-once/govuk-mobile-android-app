@@ -21,7 +21,7 @@ import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.DvlaLinkState
-import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
@@ -144,8 +144,8 @@ class VehicleAndLicenceSummaryViewModelTest {
         viewModel.onVehicleSelected()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.setSelectedCategory(category = Category.VEHICLE) }
-        assertEquals(UiState.Default(category = Category.VEHICLE), viewModel.uiState.value)
+        coVerify(exactly = 1) { repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) }
+        assertEquals(UiState.Default(drivingView = DrivingView.VEHICLE), viewModel.uiState.value)
     }
 
     @Test
@@ -159,7 +159,7 @@ class VehicleAndLicenceSummaryViewModelTest {
         viewModel.onLicenceSelected()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.setSelectedCategory(category = Category.LICENCE) }
-        assertEquals(UiState.Default(category = Category.LICENCE), viewModel.uiState.value)
+        coVerify(exactly = 1) { repo.setSelectedDrivingView(drivingView = DrivingView.LICENCE) }
+        assertEquals(UiState.Default(drivingView = DrivingView.LICENCE), viewModel.uiState.value)
     }
 }

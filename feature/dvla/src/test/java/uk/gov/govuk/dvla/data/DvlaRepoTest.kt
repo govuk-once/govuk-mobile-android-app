@@ -11,7 +11,7 @@ import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.remote.DvlaApi
@@ -38,23 +38,23 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given getSelectedCategory is called, then getSelectedCategory is called on the data store`() =
+    fun `Given getSelectedDrivingView is called, then getSelectedDrivingView is called on the data store`() =
         runTest {
-            coEvery { dvlaDataStore.getSelectedCategory() } returns Category.VEHICLE
+            coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLE
 
-            repo.getSelectedCategory()
+            repo.getSelectedDrivingView()
 
-            coVerify(exactly = 1) { dvlaDataStore.getSelectedCategory() }
+            coVerify(exactly = 1) { dvlaDataStore.getSelectedDrivingView() }
         }
 
     @Test
-    fun `Given setSelectedCategory is called, then setSelectedCategory is called on the data store`() =
+    fun `Given setSelectedDrivingView is called, then setSelectedDrivingView is called on the data store`() =
         runTest {
-            coEvery { dvlaDataStore.setSelectedCategory(category = Category.VEHICLE) } returns Unit
+            coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) } returns Unit
 
-            repo.setSelectedCategory(category = Category.VEHICLE)
+            repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
 
-            coVerify(exactly = 1) { dvlaDataStore.setSelectedCategory(category = Category.VEHICLE) }
+            coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) }
         }
 
     @Test

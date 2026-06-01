@@ -17,8 +17,8 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.dvla.ui.model.Category
-import uk.gov.govuk.dvla.data.local.DvlaDataStore.Companion.SELECTED_CATEGORY
+import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.data.local.DvlaDataStore.Companion.SELECTED_DRIVING_VIEW
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -46,33 +46,33 @@ class DvlaDataStoreTest {
     }
 
     @Test
-    fun `Given the data store is empty, then getSelectedCategory returns null`() =
+    fun `Given the data store is empty, then getSelectedDrivingView returns null`() =
         runTest(dispatcher) {
             val dvlaDatastore = DvlaDataStore(dataStore)
 
-            assertNull(dvlaDatastore.getSelectedCategory())
+            assertNull(dvlaDatastore.getSelectedDrivingView())
         }
 
     @Test
-    fun `Given the selected category is vehicle, then getSelectedCategory returns vehicle`() =
+    fun `Given the selected driving view is vehicle, then getSelectedDrivingView returns vehicle`() =
         runTest(dispatcher) {
             dataStore.edit { prefs ->
-                prefs[stringPreferencesKey(SELECTED_CATEGORY)] = "VEHICLE"
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLE"
             }
 
             val dvlaDatastore = DvlaDataStore(dataStore)
 
-            assertTrue(dvlaDatastore.getSelectedCategory() == Category.VEHICLE)
+            assertTrue(dvlaDatastore.getSelectedDrivingView() == DrivingView.VEHICLE)
         }
 
     @Test
-    fun `Given the setSelectedCategory is called with vehicle, then the selected category in the data store is vehicle`() =
+    fun `Given the setSelectedDrivingView is called with vehicle, then the selected driving view in the data store is vehicle`() =
         runTest(dispatcher) {
             val dvlaDatastore = DvlaDataStore(dataStore)
 
-            dvlaDatastore.setSelectedCategory(category = Category.VEHICLE)
+            dvlaDatastore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
 
-            assertTrue(dataStore.data.first()[stringPreferencesKey(SELECTED_CATEGORY)] == "VEHICLE")
+            assertTrue(dataStore.data.first()[stringPreferencesKey(SELECTED_DRIVING_VIEW)] == "VEHICLE")
         }
 
     @Test
@@ -81,7 +81,7 @@ class DvlaDataStoreTest {
             val dvlaDatastore = DvlaDataStore(dataStore)
 
             dataStore.edit { prefs ->
-                prefs[stringPreferencesKey(SELECTED_CATEGORY)] = "VEHICLE"
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLE"
             }
 
             assertTrue(dataStore.data.first().asMap().isNotEmpty())

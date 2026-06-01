@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -18,7 +15,7 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.UiState
@@ -37,15 +34,18 @@ fun VehicleAndLicenceSummaryWidget(
     val uiState by viewModel.uiState.collectAsState()
     val vehicleSummaryUiState by viewModel.vehicleSummaryUiState.collectAsState()
     val licenceSummaryUiState by viewModel.licenceSummaryUiState.collectAsState()
-    var activeButtonState by rememberSaveable { mutableStateOf(VehicleButton) }
 
-    uiState?.let {
+    uiState.let {
         when (it) {
             is UiState.Hidden -> { /* Show nothing */ }
 
             is UiState.Default -> {
-                Column(modifier = modifier) {
+                val activeButtonState = when (it.drivingView) {
+                    DrivingView.VEHICLE -> VehicleButton
+                    DrivingView.LICENCE -> LicenceButton
+                }
 
+                Column(modifier = modifier) {
                     SmallVerticalSpacer()
 
                     ConnectedButtonGroup(
@@ -71,14 +71,12 @@ fun VehicleAndLicenceSummaryWidget(
 
                     MediumVerticalSpacer()
 
-                    when (it.category) {
-                        Category.VEHICLE -> {
-                            activeButtonState = VehicleButton
+                    when (it.drivingView) {
+                        DrivingView.VEHICLE -> {
                             VehicleSummary(uiState = vehicleSummaryUiState)
                         }
 
-                        Category.LICENCE -> {
-                            activeButtonState = LicenceButton
+                        DrivingView.LICENCE -> {
                             LicenceSummary(uiState = licenceSummaryUiState)
                         }
                     }

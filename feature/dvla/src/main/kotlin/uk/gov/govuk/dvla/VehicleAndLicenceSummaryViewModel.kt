@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
-import uk.gov.govuk.dvla.ui.model.Category
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
@@ -22,7 +22,7 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
     private val mapper: VehicleSummaryMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState?>(null)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
     val uiState = _uiState.asStateFlow()
 
     private val _vehicleSummaryUiState =
@@ -54,24 +54,24 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
     }
 
     fun onVehicleSelected() {
-        setSelectedCategory(category = Category.VEHICLE)
+        setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
     }
 
     fun onLicenceSelected() {
-        setSelectedCategory(category = Category.LICENCE)
+        setSelectedDrivingView(drivingView = DrivingView.LICENCE)
     }
 
-    private fun setSelectedCategory(category: Category) {
+    private fun setSelectedDrivingView(drivingView: DrivingView) {
         viewModelScope.launch {
-            dvlaRepo.setSelectedCategory(category = category)
-            _uiState.value = UiState.Default(category = category)
+            dvlaRepo.setSelectedDrivingView(drivingView = drivingView)
+            _uiState.value = UiState.Default(drivingView = drivingView)
         }
     }
 
     private fun setUiStateToDefault() {
         viewModelScope.launch {
-            val category = dvlaRepo.getSelectedCategory() ?: Category.VEHICLE // Default to 'VEHICLE'
-            _uiState.value = UiState.Default(category = category)
+            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLE // Default to 'VEHICLE'
+            _uiState.value = UiState.Default(drivingView = drivingView)
         }
     }
 

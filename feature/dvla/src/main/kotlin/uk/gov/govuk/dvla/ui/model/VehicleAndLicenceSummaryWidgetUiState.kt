@@ -1,11 +1,11 @@
 package uk.gov.govuk.dvla.ui.model
 
 internal sealed interface UiState {
-    data class Default(val category: Category) : UiState
+    data class Default(val drivingView: DrivingView) : UiState
     data object Hidden : UiState
 }
 
-enum class Category {
+enum class DrivingView {
     VEHICLE, LICENCE
 }
 
