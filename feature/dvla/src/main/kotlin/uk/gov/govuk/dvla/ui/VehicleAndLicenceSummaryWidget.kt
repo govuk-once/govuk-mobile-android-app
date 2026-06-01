@@ -1,5 +1,8 @@
 package uk.gov.govuk.dvla.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
@@ -26,6 +32,9 @@ fun VehicleAndLicenceSummaryWidget(
 ) {
     val viewModel: VehicleAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
+
+    val context = LocalContext.current
+    val hapticFeedback = LocalHapticFeedback.current
 
     when (val currentState = state) {
         is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
@@ -47,7 +56,14 @@ fun VehicleAndLicenceSummaryWidget(
                                 // TODO to be handled in next ticket(s)
                             },
                             onLicenceNumberLongClick = {
-                                // TODO to be handled in next ticket(s)
+                                val clipboard =
+                                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText(
+                                    "Licence number",
+                                    licenceState.licence.licenceNumber
+                                )
+                                clipboard.setPrimaryClip(clip)
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
                             modifier = modifier
                         )
