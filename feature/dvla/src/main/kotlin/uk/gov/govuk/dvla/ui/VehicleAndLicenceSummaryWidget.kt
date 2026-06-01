@@ -11,10 +11,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.LicenceUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.VehicleUiState
+import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable
@@ -28,33 +31,53 @@ fun VehicleAndLicenceSummaryWidget(
         is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
         is VehicleAndLicenceSummaryUiState.Content -> {
 
-            when (val vehicleState = currentState.vehicleState) {
-                is VehicleUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier = modifier)
-                is VehicleUiState.Error -> {
-                    // TODO placeholder for now, tbc in future tickets
+            // TODO show vehicles and licence below each other for now until segmented control is added
+            Column(modifier = modifier) {
+
+                when (val licenceState = currentState.licenceState) {
+                    is LicenceUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier = modifier)
+                    is LicenceUiState.Error -> {
+                        // TODO placeholder for now, tbc in future tickets
+                    }
+
+                    is LicenceUiState.Success -> {
+                        LicenceSummarySuccess(
+                            licenceSummary = licenceState.licence,
+                            onMoreClick = {
+                                // TODO to be handled in next ticket(s)
+                            },
+                            onLicenceNumberLongClick = {
+                                // TODO to be handled in next ticket(s)
+                            },
+                            modifier = modifier
+                        )
+                    }
                 }
-                is VehicleUiState.Success -> {
-                    VehicleSummarySuccess(
-                        vehicles = vehicleState.vehicles,
-                        onDetailsClick = {
-                            // TODO to be handled in next ticket(s)
-                        },
-                        onMoreClick = {
-                            // TODO to be handled in next ticket(s)
-                        },
-                        modifier = modifier
-                    )
+
+                // TODO for demonstration purpose at the moment, remove when segmented control is added
+                SmallVerticalSpacer()
+
+                when (val vehicleState = currentState.vehicleState) {
+                    is VehicleUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier = modifier)
+                    is VehicleUiState.Error -> {
+                        // TODO placeholder for now, tbc in future tickets
+                    }
+
+                    is VehicleUiState.Success -> {
+                        VehicleSummarySuccess(
+                            vehicles = vehicleState.vehicles,
+                            onDetailsClick = {
+                                // TODO to be handled in next ticket(s)
+                            },
+                            onMoreClick = {
+                                // TODO to be handled in next ticket(s)
+                            },
+                            modifier = modifier
+                        )
+                    }
                 }
+
             }
-
-//            when (val licenceState = currentState.licenceState) {
-//                is LicenceUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier = modifier)
-//                is LicenceUiState.Error -> {  }
-//                is LicenceUiState.Success -> {
-//                    // LicenceSummaryCard(licence = licenceState.licence)
-//                }
-//            }
-
         }
     }
 }
@@ -88,5 +111,25 @@ private fun VehicleSummarySuccess(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+private fun LicenceSummarySuccess(
+    licenceSummary: LicenceSummaryUiModel,
+    onMoreClick: () -> Unit,
+    onLicenceNumberLongClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+
+        LicenceSummaryCard(
+            licenceSummary = licenceSummary,
+            onMoreClick = { onMoreClick() },
+            onLicenceNumberLongClick = { onLicenceNumberLongClick() },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
