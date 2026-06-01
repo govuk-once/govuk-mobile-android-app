@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.data
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.data.auth.AuthRepo
@@ -13,8 +14,14 @@ import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.CustomerVehicle
+import uk.gov.govuk.dvla.domain.LicenceStatus
+import uk.gov.govuk.dvla.domain.LicenceType
+import uk.gov.govuk.dvla.domain.MotStatus
+import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.io.encoding.Base64
@@ -27,6 +34,50 @@ class DvlaRepo @Inject constructor(
 ) {
     private val _linkState = MutableStateFlow(DvlaLinkState.CHECKING)
     val linkState = _linkState.asStateFlow()
+
+    val mockCustomerSummary = CustomerSummary(
+        customerId = "4cdfa057-09e9-45ca-80d5-a76d6f45730e",
+        firstName = "Anna",
+        lastName = "Arenö",
+        dateOfBirth = "1970-01-01",
+        emailAddress = "anna.areno@example.com",
+        recordStatus = "Substantive",
+        vehicles = listOf(
+            CustomerVehicle(
+                registration = "AA19 AAA",
+                make = "Audi",
+                model = "Q5",
+                taxStatus = TaxStatus.TAXED,
+                taxExpiryDate = LocalDate.of(2027, 5, 31),
+                taxClass = "Petrol Car",
+                motStatus = MotStatus.VALID,
+                motExpiryDate = LocalDate.of(2027, 6, 22)
+            ),
+            CustomerVehicle(
+                registration = "BB71 BBB",
+                make = "Ford",
+                model = null, // Testing the null safety in your UI mapper
+                taxStatus = TaxStatus.TAXED,
+                taxExpiryDate = LocalDate.of(2026, 12, 1),
+                taxClass = "Diesel Car",
+                motStatus = MotStatus.EXPIRED,
+                motExpiryDate = LocalDate.of(2026, 1, 10)
+            )
+        )
+    )
+
+    val mockDriverSummary = DriverSummary(
+        licenceType = LicenceType.FULL,
+        licenceNumber = "ARENO803236AA170",
+        title = "Ms",
+        firstNames = "Anna Ornella",
+        lastName = "Arenö",
+        addressLine1 = "29 Orchard Drive",
+        addressLine5 = "Milton Keynes",
+        postcode = "PA98 J83",
+        status = LicenceStatus.VALID,
+        expiryDate = LocalDate.of(2032, 11, 25)
+    )
 
     suspend fun isAccountLinked(): Result<Boolean> {
         val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
@@ -69,13 +120,24 @@ class DvlaRepo @Inject constructor(
         safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun getDriverSummary(): Result<DriverSummary> =
-        safeAuthApiCall({ api.getDriverSummary() }, authRepo)
-            .map { it.toDomainModel() }
+    suspend fun getDriverSummary(): Result<DriverSummary>
+//    =
+//        safeAuthApiCall({ api.getDriverSummary() }, authRepo)
+//            .map { it.toDomainModel() }
 
-    suspend fun getCustomerSummary(): Result<CustomerSummary> =
-        safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
-            .map { it.toDomainModel() }
+    {
+        delay(3000)
+        return Result.Success(mockDriverSummary)
+    }
+
+
+    suspend fun getCustomerSummary(): Result<CustomerSummary> {
+
+        delay(3000)
+        return Result.Success(mockCustomerSummary)
+    }
+//        safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
+//            .map { it.toDomainModel() }
 
     suspend fun lookupVehicle(registrationNumber: String): Result<VesVehicle> =
         safeAuthApiCall({ api.lookupVehicle(registrationNumber) }, authRepo)
