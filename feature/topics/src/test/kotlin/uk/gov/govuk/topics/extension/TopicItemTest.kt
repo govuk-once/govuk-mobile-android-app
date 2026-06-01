@@ -14,7 +14,7 @@ class TopicItemTest{
             Pair(R.drawable.ic_topic_benefits, TopicItem("benefits", "Title", "Description", true)),
             Pair(R.drawable.ic_topic_business, TopicItem("business", "Title", "Description", false)),
             Pair(R.drawable.ic_topic_care, TopicItem("care", "Title", "Description", true)),
-            Pair(R.drawable.ic_topic_transport, TopicItem("driving-transport", "Title", "Description", false)),
+            Pair(R.drawable.ic_topic_driving, TopicItem("driving-transport", "Title", "Description", false)),
             Pair(R.drawable.ic_topic_employment, TopicItem("employment", "Title", "Description", true)),
             Pair(R.drawable.ic_topic_health, TopicItem("health-disability", "Title", "Description", false)),
             Pair(R.drawable.ic_topic_money, TopicItem("money-tax", "Title", "Description", true)),
