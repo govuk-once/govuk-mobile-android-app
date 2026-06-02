@@ -54,13 +54,8 @@ fun VehicleAndLicenceSummaryWidget(
                         activeButton = activeButtonState,
                         onActiveStateChange = { button ->
                             when (button) {
-                                VehicleButton -> {
-                                    viewModel.onVehicleSelected()
-                                }
-
-                                LicenceButton -> {
-                                    viewModel.onLicenceSelected()
-                                }
+                                VehicleButton -> viewModel.onVehicleSelected()
+                                LicenceButton -> viewModel.onLicenceSelected()
                             }
                         },
                         colours = ButtonColours(
@@ -72,13 +67,8 @@ fun VehicleAndLicenceSummaryWidget(
                     MediumVerticalSpacer()
 
                     when (it.drivingView) {
-                        DrivingView.VEHICLE -> {
-                            VehicleSummary(uiState = vehicleSummaryUiState)
-                        }
-
-                        DrivingView.LICENCE -> {
-                            LicenceSummary(uiState = licenceSummaryUiState)
-                        }
+                        DrivingView.VEHICLE -> VehicleSummary(uiState = vehicleSummaryUiState)
+                        DrivingView.LICENCE -> LicenceSummary(uiState = licenceSummaryUiState)
                     }
                 }
             }
