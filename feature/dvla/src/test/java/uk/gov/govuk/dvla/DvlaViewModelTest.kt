@@ -302,5 +302,93 @@ class DvlaViewModelTest {
 
         coVerify(exactly = 1) { repo.lookupVehicle("AB12CDE") }
     }
+
+    @Test
+    fun `Given screen title, when onErrorOtherPageView is called, then track error screen view`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val title = "There is a problem"
+        viewModel.onErrorOtherPageView(title)
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "DvlaLinkErrorScreen",
+                screenName = title,
+                title = title
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text, when onErrorBackToDrivingClicked is called, then track button click`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val label = "Go back to driving"
+        viewModel.onErrorBackToDrivingClicked(label)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = label,
+                external = false,
+                section = "account link fail"
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text and url, when onErrorVisitGovUkClicked is called, then track external button click with url`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val label = "Go to GOV.UK"
+        val url = "gov.uk"
+
+        viewModel.onErrorVisitGovUkClicked(label, url)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = label,
+                url = url,
+                external = true,
+                section = "account link fail"
+            )
+        }
+    }
+
+    @Test
+    fun `Given screen title, when onOfflinePageView is called, then track offline screen view`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val title = "You are offline"
+        viewModel.onOfflinePageView(title)
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "DvlaOfflineScreen",
+                screenName = title,
+                title = title
+            )
+        }
+    }
+
+    @Test
+    fun `Given button text, when onOfflineTryAgainClicked is called, then track button click`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl)
+
+        val label = "Try again"
+        viewModel.onOfflineTryAgainClicked(label)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = label,
+                external = false,
+                section = "account link fail"
+            )
+        }
+    }
 }
 
