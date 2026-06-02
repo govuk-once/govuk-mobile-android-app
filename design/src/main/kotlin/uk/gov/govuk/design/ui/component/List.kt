@@ -363,11 +363,11 @@ fun StatusListItem(
                 title?.let {
                     BodyBoldLabel(
                         text = it,
-                        modifier = modifier.withAltText(titleAltText)
+                        modifier = Modifier.withAltText(titleAltText)
                     )
-                }
 
-                SmallVerticalSpacer()
+                    SmallVerticalSpacer()
+                }
 
                 BodyRegularLabel(text = description)
             }
