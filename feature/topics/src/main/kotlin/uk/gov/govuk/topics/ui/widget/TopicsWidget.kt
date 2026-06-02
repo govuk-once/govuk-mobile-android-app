@@ -233,7 +233,7 @@ private fun TopicsWidgetPreview() {
         ),
         TopicItemUi(
             "",
-            R.drawable.ic_topic_transport,
+            R.drawable.ic_topic_driving,
             "Driving",
             "",
             isSelected = true
