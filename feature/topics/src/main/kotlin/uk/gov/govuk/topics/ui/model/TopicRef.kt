@@ -12,7 +12,7 @@ internal enum class TopicRef(
     BENEFITS("benefits", R.string.benefits, R.drawable.ic_topic_benefits),
     BUSINESS("business", R.string.business, R.drawable.ic_topic_business),
     CARE("care", R.string.care, R.drawable.ic_topic_care),
-    DRIVING_AND_TRANSPORT("driving-transport", R.string.driving_and_transport, R.drawable.ic_topic_transport),
+    DRIVING("driving-transport", R.string.driving, R.drawable.ic_topic_driving),
     EMPLOYMENT("employment", R.string.employment, R.drawable.ic_topic_employment),
     HEALTH_DISABILITY("health-disability", R.string.health_and_disability, R.drawable.ic_topic_health),
     MONEY_TAX("money-tax", R.string.money_and_tax, R.drawable.ic_topic_money),
@@ -29,4 +29,4 @@ internal enum class TopicRef(
 }
 
 /** Public helper for app module to check if topic is driving */
-fun String?.isDrivingTopic(): Boolean = this == TopicRef.DRIVING_AND_TRANSPORT.ref
+fun String?.isDrivingTopic(): Boolean = this == TopicRef.DRIVING.ref

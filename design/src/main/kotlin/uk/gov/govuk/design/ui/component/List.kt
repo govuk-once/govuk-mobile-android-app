@@ -361,7 +361,7 @@ fun StatusListItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 title?.let {
-                    BodyBoldLabel(
+                    Title3BoldLabel(
                         text = it,
                         modifier = Modifier.withAltText(titleAltText)
                     )

@@ -1,25 +1,28 @@
 package uk.gov.govuk.dvla.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
+import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
@@ -82,8 +85,14 @@ internal fun RegistrationPlate(
 
     Box(
         modifier = modifier
+            .height(36.dp)
             .background(
                 color = GovUkTheme.colourScheme.surfaces.registrationPlate,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .border(
+                width = 1.dp,
+                color = GovUkTheme.colourScheme.strokes.registrationPlate,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(
@@ -91,7 +100,8 @@ internal fun RegistrationPlate(
                 start = GovUkTheme.spacing.small,
                 end = GovUkTheme.spacing.small,
                 bottom = 5.dp
-            )
+            ),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = registration,
@@ -127,9 +137,9 @@ fun VehicleSummaryHeader(
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
-            BodyRegularLabel(
+            Title3RegularLabel(
                 text = model,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
+                color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }
     }
