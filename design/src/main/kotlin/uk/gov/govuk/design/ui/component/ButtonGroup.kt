@@ -12,6 +12,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowSizeClass
 import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST
@@ -195,7 +196,7 @@ fun ConnectedButtonGroup(
     colours: ButtonColours
 ) {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
+    val screenWidth = LocalWindowInfo.current.containerSize.width
     val fontScale = configuration.fontScale
 
     if (screenWidth <= SINGLE_COLUMN_THRESHOLD_DP && fontScale >= FONT_SCALE_THRESHOLD) {
