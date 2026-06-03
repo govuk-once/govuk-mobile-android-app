@@ -335,13 +335,14 @@ fun IconListItem(
 
 @Composable
 fun StatusListItem(
+    modifier: Modifier = Modifier,
     title: String? = null,
     description: String,
     @DrawableRes icon: Int?,
-    modifier: Modifier = Modifier,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    titleAltText: String? = null
+    titleAltText: String? = null,
+    descriptionAltText: String? = null
 ) {
     CardListItem(
         modifier = modifier,
@@ -369,7 +370,10 @@ fun StatusListItem(
                     SmallVerticalSpacer()
                 }
 
-                BodyRegularLabel(text = description)
+                BodyRegularLabel(
+                    text = description,
+                    modifier = Modifier.withAltText(descriptionAltText)
+                )
             }
 
             MediumHorizontalSpacer()
@@ -395,6 +399,8 @@ fun AddressListItem(
     name: String,
     addressLines: List<String>,
     modifier: Modifier = Modifier,
+    nameAltText: String? = null,
+    addressAltText: String? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false,
 ) {
@@ -414,6 +420,7 @@ fun AddressListItem(
         ) {
             BodyBoldLabel(
                 text = name,
+                modifier = Modifier.withAltText(nameAltText),
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
@@ -421,6 +428,7 @@ fun AddressListItem(
 
             BodyRegularLabel(
                 text = addressLines.joinToString(separator = "\n"),
+                modifier = Modifier.withAltText(addressAltText),
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }

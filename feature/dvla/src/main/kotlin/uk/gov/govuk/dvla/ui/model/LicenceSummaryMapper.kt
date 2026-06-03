@@ -7,8 +7,7 @@ import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import uk.gov.govuk.dvla.util.toTitleCase
 import javax.inject.Inject
 
 internal class LicenceSummaryMapper @Inject constructor(
@@ -23,10 +22,10 @@ internal class LicenceSummaryMapper @Inject constructor(
         return LicenceSummaryUiModel(
             licenceType = getLicenceTypeString(driverSummary.licenceType),
             licenceNumber = driverSummary.licenceNumber,
-            name = driverSummary.fullName,
-            addressLine1 = driverSummary.addressLine1,
-            city = driverSummary.addressLine5,
-            postcode = driverSummary.postcode,
+            name = driverSummary.fullName.toTitleCase(),
+            addressLine1 = driverSummary.addressLine1.toTitleCase(),
+            city = driverSummary.addressLine5.toTitleCase(),
+            postcode = driverSummary.postcode.uppercase(),
             licenceStatus = StatusRowUiModel(
                 description = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate),
                 icon = statusIconResId

@@ -27,6 +27,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
+import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
 internal fun VehicleSummaryCard(
@@ -80,7 +81,7 @@ internal fun RegistrationPlate(
     registration: String,
     modifier: Modifier = Modifier
 ) {
-    val accessibleNumberPlate = registration.map { "$it " }.joinToString("").trim() // 'FH08PDH' to 'F H 0 8 P D H'
+    val accessibleNumberPlate = registration.toSpacedString()
     val altText = stringResource(id = R.string.registration_plate_alt_text, accessibleNumberPlate)
 
     Box(

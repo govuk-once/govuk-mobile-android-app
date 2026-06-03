@@ -1,5 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.dvla.util.toSpacedString
+
 data class LicenceSummaryUiModel(
     val licenceType: String,
     val licenceNumber: String,
@@ -10,5 +12,11 @@ data class LicenceSummaryUiModel(
     val licenceStatus: StatusRowUiModel
 ) {
     val formattedAddressLines: List<String>
-        get() = listOf(addressLine1, city, postcode).filter { it.isNotBlank() }
+        get() = asAddressList(formattedPostcode = postcode)
+
+    val accessibleAddressLines: List<String>
+        get() = asAddressList(formattedPostcode = postcode.toSpacedString())
+
+    private fun asAddressList(formattedPostcode: String): List<String> =
+        listOf(addressLine1, city, formattedPostcode).filter { it.isNotBlank() }
 }

@@ -13,11 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.LicenceUiState
+import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.VehicleUiState
@@ -35,6 +37,7 @@ fun VehicleAndLicenceSummaryWidget(
 
     val context = LocalContext.current
     val hapticFeedback = LocalHapticFeedback.current
+    val licenceClipboardLabel = stringResource(R.string.clipboard_data_label_licence_number)
 
     when (val currentState = state) {
         is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
@@ -59,7 +62,7 @@ fun VehicleAndLicenceSummaryWidget(
                                 val clipboard =
                                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 val clip = ClipData.newPlainText(
-                                    "Licence number",
+                                    licenceClipboardLabel,
                                     licenceState.licence.licenceNumber
                                 )
                                 clipboard.setPrimaryClip(clip)
@@ -92,7 +95,6 @@ fun VehicleAndLicenceSummaryWidget(
                         )
                     }
                 }
-
             }
         }
     }
