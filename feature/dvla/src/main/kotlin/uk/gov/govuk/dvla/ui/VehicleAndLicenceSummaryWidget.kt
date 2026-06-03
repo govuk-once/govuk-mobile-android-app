@@ -15,22 +15,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.LoaderCard
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.LicenceUiState
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.VehicleAndLicenceSummaryUiState
 import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
-import uk.gov.govuk.dvla.VehicleUiState
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
+import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
+import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST as VehicleButton
+import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
 @Composable
 fun VehicleAndLicenceSummaryWidget(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: VehicleAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
@@ -40,65 +46,91 @@ fun VehicleAndLicenceSummaryWidget(
     val licenceClipboardLabel = stringResource(R.string.clipboard_data_label_licence_number)
 
     when (val currentState = state) {
-        is VehicleAndLicenceSummaryUiState.Hidden -> return // draw nothing if not linked
-        is VehicleAndLicenceSummaryUiState.Content -> {
+        is UiState.Hidden -> return // draw nothing if not linked
 
-            // TODO show vehicles and licence below each other for now until segmented control is added
+        is UiState.Default -> {
+            val activeButtonState = when (currentState.drivingView) {
+                DrivingView.VEHICLE -> VehicleButton
+                DrivingView.LICENCE -> LicenceButton
+            }
+
             Column(modifier = modifier) {
-
-                when (val licenceState = currentState.licenceState) {
-                    is LicenceUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier = modifier)
-                    is LicenceUiState.Error -> {
-                        // TODO placeholder for now, tbc in future tickets
-                    }
-
-                    is LicenceUiState.Success -> {
-                        LicenceSummarySuccess(
-                            licenceSummary = licenceState.licence,
-                            onMoreClick = {
-                                // TODO to be handled in next ticket(s)
-                            },
-                            onLicenceNumberLongClick = {
-                                val clipboard =
-                                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText(
-                                    licenceClipboardLabel,
-                                    licenceState.licence.licenceNumber
-                                )
-                                clipboard.setPrimaryClip(clip)
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                            },
-                            modifier = modifier
-                        )
-                    }
-                }
-
-                // TODO for demonstration purpose at the moment, remove when segmented control is added
                 SmallVerticalSpacer()
 
-                when (val vehicleState = currentState.vehicleState) {
-                    is VehicleUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier = modifier)
-                    is VehicleUiState.Error -> {
-                        // TODO placeholder for now, tbc in future tickets
+                // Render the segmented toggle buttons
+                ConnectedButtonGroup(
+                    firstText = stringResource(R.string.vehicle),
+                    secondText = stringResource(R.string.licence),
+                    activeButton = activeButtonState,
+                    onActiveStateChange = { button ->
+                        when (button) {
+                            VehicleButton -> viewModel.onVehicleSelected()
+                            LicenceButton -> viewModel.onLicenceSelected()
+                        }
+                    },
+                    colours = ButtonColours(
+                        containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                        containerInactive = GovUkTheme.colourScheme.surfaces.list
+                    )
+                )
+
+                MediumVerticalSpacer()
+
+                // Render the active tab content by unwrapping the sub-states inside Default
+                when (currentState.drivingView) {
+                    DrivingView.VEHICLE -> {
+                        when (val vehicleState = currentState.vehicleState) {
+                            is VehicleSummaryUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier)
+                            is VehicleSummaryUiState.Error -> {
+                                // TODO placeholder for now, tbc in future tickets
+                            }
+                            is VehicleSummaryUiState.Success -> {
+                                VehicleSummarySuccess(
+                                    vehicles = vehicleState.vehicles,
+                                    onDetailsClick = {
+                                        // TODO to be handled in next ticket(s)
+                                    },
+                                    onMoreClick = {
+                                        // TODO to be handled in next ticket(s)
+                                    },
+                                    modifier = modifier
+                                )
+                            }
+                        }
                     }
 
-                    is VehicleUiState.Success -> {
-                        VehicleSummarySuccess(
-                            vehicles = vehicleState.vehicles,
-                            onDetailsClick = {
-                                // TODO to be handled in next ticket(s)
-                            },
-                            onMoreClick = {
-                                // TODO to be handled in next ticket(s)
-                            },
-                            modifier = modifier
-                        )
+                    DrivingView.LICENCE -> {
+                        when (val licenceState = currentState.licenceState) {
+                            is LicenceSummaryUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier)
+                            is LicenceSummaryUiState.Error -> {
+                                // TODO placeholder for now, tbc in future tickets
+                            }
+                            is LicenceSummaryUiState.Success -> {
+                                LicenceSummarySuccess(
+                                    licenceSummary = licenceState.licence,
+                                    onMoreClick = {
+                                        // TODO to be handled in next ticket(s)
+                                    },
+                                    onLicenceNumberLongClick = {
+                                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                        val clip = ClipData.newPlainText(
+                                            licenceClipboardLabel,
+                                            licenceState.licence.licenceNumber
+                                        )
+                                        clipboard.setPrimaryClip(clip)
+                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    },
+                                    modifier = modifier
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun VehicleAndLicenceSummaryLoading(
@@ -151,3 +183,4 @@ private fun LicenceSummarySuccess(
         )
     }
 }
+

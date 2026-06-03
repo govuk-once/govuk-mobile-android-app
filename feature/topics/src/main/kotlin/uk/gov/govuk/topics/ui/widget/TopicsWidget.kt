@@ -24,6 +24,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.error.ProblemMessage
+import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -150,7 +151,11 @@ private fun TopicsCard(
                     activeButton = activeButtonState,
                     onActiveStateChange = {
                         onCategoryChange(if (it == ConnectedButton.FIRST) TopicsCategory.YOUR else TopicsCategory.ALL)
-                    }
+                    },
+                    colours = ButtonColours(
+                        containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                        containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                    )
                 )
             }
         }

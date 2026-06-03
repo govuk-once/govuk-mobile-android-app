@@ -10,33 +10,13 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
-import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
+import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
 import javax.inject.Inject
-
-// top level state for the widget
-internal sealed interface VehicleAndLicenceSummaryUiState {
-    data object Hidden : VehicleAndLicenceSummaryUiState
-    data class Content(
-        val vehicleState: VehicleUiState = VehicleUiState.Loading,
-        val licenceState: LicenceUiState = LicenceUiState.Loading
-    ) : VehicleAndLicenceSummaryUiState
-}
-
-// states for vehicle/licence summaries
-internal sealed interface VehicleUiState {
-    data object Loading : VehicleUiState
-    data class Success(val vehicles: List<VehicleSummaryUiModel>) : VehicleUiState
-    data object Error : VehicleUiState
-}
-
-internal sealed interface LicenceUiState {
-    data object Loading : LicenceUiState
-    data class Success(val licence: LicenceSummaryUiModel) : LicenceUiState
-    data object Error : LicenceUiState
-}
 
 @HiltViewModel
 internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
@@ -46,8 +26,8 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
-        if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) VehicleAndLicenceSummaryUiState.Content()
-        else VehicleAndLicenceSummaryUiState.Hidden
+        if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) UiState.Default()
+        else UiState.Hidden
     )
     val uiState = _uiState.asStateFlow()
 
@@ -56,47 +36,58 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     DvlaLinkState.LINKED -> {
-                        _uiState.value = VehicleAndLicenceSummaryUiState.Content()
-
-                        fetchLicenceData()
-                        // TODO: this is to demonstrate driver & customer summary endpoint call data,
-                        //  until we decide which endpoint to use
+                        // check datastore for the last viewed tab
+                        setUiStateToDefault()
                         fetchDriverSummary()
                         fetchCustomerSummary()
                     }
 
                     DvlaLinkState.UNLINKED,
-                    DvlaLinkState.CHECKING -> _uiState.value = VehicleAndLicenceSummaryUiState.Hidden
+                    DvlaLinkState.CHECKING -> _uiState.value = UiState.Hidden
                 }
             }
         }
     }
 
-    private fun fetchLicenceData() {
-        viewModelScope.launch {
-            val result = dvlaRepo.getLicenceDetails()
+    fun onVehicleSelected() {
+        setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
+    }
 
-            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-            if (BuildConfig.DEBUG) {
-                when (result) {
-                    is Result.Success -> println("Licence data: SUCCESS: ${result.value}")
-                    else -> println("Licence data: ERROR - Failed to fetch Licence data")
-                }
+    fun onLicenceSelected() {
+        setSelectedDrivingView(drivingView = DrivingView.LICENCE)
+    }
+
+    private fun setSelectedDrivingView(drivingView: DrivingView) {
+        viewModelScope.launch {
+            dvlaRepo.setSelectedDrivingView(drivingView = drivingView)
+            _uiState.update { state ->
+                if (state is UiState.Default) {
+                    state.copy(drivingView = drivingView)
+                } else state
+            }
+        }
+    }
+
+    private fun setUiStateToDefault() {
+        viewModelScope.launch {
+            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLE
+            _uiState.update { state ->
+                if (state is UiState.Default) state.copy(drivingView = drivingView)
+                else UiState.Default(drivingView = drivingView)
             }
         }
     }
 
     private fun fetchDriverSummary() {
         viewModelScope.launch {
-            updateLicenceState(LicenceUiState.Loading)
+            updateLicenceState(LicenceSummaryUiState.Loading)
 
             val newState = when (val result = dvlaRepo.getDriverSummary()) {
                 is Result.Success -> {
                     val licence = licenceMapper.toUiModel(result.value)
-                    LicenceUiState.Success(licence)
+                    LicenceSummaryUiState.Success(licence)
                 }
-                else -> LicenceUiState.Error
-
+                else -> LicenceSummaryUiState.Error
             }
 
             updateLicenceState(newState)
@@ -105,29 +96,29 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     private fun fetchCustomerSummary() {
         viewModelScope.launch {
-            updateVehicleState(VehicleUiState.Loading)
+            updateVehicleState(VehicleSummaryUiState.Loading)
 
             val newState = when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
                     val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it) }
-                    VehicleUiState.Success(vehicles)
+                    VehicleSummaryUiState.Success(vehicles)
                 }
-                else -> VehicleUiState.Error
+                else -> VehicleSummaryUiState.Error
             }
 
             updateVehicleState(newState)
         }
     }
 
-    private fun updateVehicleState(newState: VehicleUiState) {
+    private fun updateVehicleState(newState: VehicleSummaryUiState) {
         _uiState.update { state ->
-            if (state is VehicleAndLicenceSummaryUiState.Content) state.copy(vehicleState = newState) else state
+            if (state is UiState.Default) state.copy(vehicleState = newState) else state
         }
     }
 
-    private fun updateLicenceState(newState: LicenceUiState) {
+    private fun updateLicenceState(newState: LicenceSummaryUiState) {
         _uiState.update { state ->
-            if (state is VehicleAndLicenceSummaryUiState.Content) state.copy(licenceState = newState) else state
+            if (state is UiState.Default) state.copy(licenceState = newState) else state
         }
     }
 }
