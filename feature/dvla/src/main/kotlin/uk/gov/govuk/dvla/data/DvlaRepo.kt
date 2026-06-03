@@ -8,6 +8,8 @@ import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
+import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.DvlaLinkState
@@ -23,10 +25,19 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @Singleton
 class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
-    private val authRepo: AuthRepo
+    private val authRepo: AuthRepo,
+    private val dvlaDataStore: DvlaDataStore
 ) {
     private val _linkState = MutableStateFlow(DvlaLinkState.CHECKING)
     val linkState = _linkState.asStateFlow()
+
+    internal suspend fun getSelectedDrivingView(): DrivingView? = dvlaDataStore.getSelectedDrivingView()
+
+    internal suspend fun setSelectedDrivingView(drivingView: DrivingView) = dvlaDataStore.setSelectedDrivingView(drivingView)
+
+    suspend fun clear() {
+        dvlaDataStore.clear()
+    }
 
     suspend fun isAccountLinked(): Result<Boolean> {
         val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
@@ -43,7 +54,7 @@ class DvlaRepo @Inject constructor(
         }
     }
 
-    suspend fun linkAccount(token: String): Result<Unit> {
+    internal suspend fun linkAccount(token: String): Result<Unit> {
         val result = try {
             val linkingId = extractLinkingIdFromJwt(token)
             safeAuthApiCall({ api.linkDvlaIdentity(linkingId) }, authRepo)
@@ -65,31 +76,31 @@ class DvlaRepo @Inject constructor(
         return result
     }
 
-    suspend fun getLicenceDetails(): Result<LicenceDetails> =
+    internal suspend fun getLicenceDetails(): Result<LicenceDetails> =
         safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun getDriverSummary(): Result<DriverSummary> =
+    internal suspend fun getDriverSummary(): Result<DriverSummary> =
         safeAuthApiCall({ api.getDriverSummary() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun getCustomerSummary(): Result<CustomerSummary> =
+    internal suspend fun getCustomerSummary(): Result<CustomerSummary> =
         safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun lookupVehicle(registrationNumber: String): Result<VesVehicle> =
+    internal suspend fun lookupVehicle(registrationNumber: String): Result<VesVehicle> =
         safeAuthApiCall({ api.lookupVehicle(registrationNumber) }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun createCheckCode(): Result<CheckCodeDetails> =
+    internal suspend fun createCheckCode(): Result<CheckCodeDetails> =
         safeAuthApiCall({ api.createShareCode() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun getCheckCodes(): Result<List<CheckCodeDetails>> =
+    internal suspend fun getCheckCodes(): Result<List<CheckCodeDetails>> =
         safeAuthApiCall({ api.getShareCodes() }, authRepo)
             .map { it.toDomainModel() }
 
-    suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
+    internal suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
         safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
             .map { it.toDomainModel() }
 

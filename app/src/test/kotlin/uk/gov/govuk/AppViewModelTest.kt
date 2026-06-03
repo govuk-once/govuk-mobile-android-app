@@ -567,6 +567,7 @@ class AppViewModelTest {
                 chatFeature.clear()
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
+                dvlaRepo.clear()
             }
 
             coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
@@ -596,6 +597,7 @@ class AppViewModelTest {
                 visited.clear()
                 chatFeature.clear()
                 analyticsClient.clear()
+                dvlaRepo.clear()
             }
 
             coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }

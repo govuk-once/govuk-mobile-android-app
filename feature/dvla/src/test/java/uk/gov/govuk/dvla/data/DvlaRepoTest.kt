@@ -11,6 +11,8 @@ import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
@@ -25,14 +27,47 @@ class DvlaRepoTest {
 
     private val api = mockk<DvlaApi>()
     private val authRepo = mockk<AuthRepo>()
+    private val dvlaDataStore = mockk<DvlaDataStore>()
     private lateinit var repo: DvlaRepo
     private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJleHAiOjM2MDAsImxpbmtpbmdfaWQiOiIxMjM0LWFiY2QifQ."
     private val linkingId = "1234-abcd"
 
     @Before
     fun setup() {
-        repo = DvlaRepo(api, authRepo)
+        repo = DvlaRepo(api, authRepo, dvlaDataStore)
     }
+
+    @Test
+    fun `Given getSelectedDrivingView is called, then getSelectedDrivingView is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLE
+
+            repo.getSelectedDrivingView()
+
+            coVerify(exactly = 1) { dvlaDataStore.getSelectedDrivingView() }
+        }
+
+    @Test
+    fun `Given setSelectedDrivingView is called, then setSelectedDrivingView is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) } returns Unit
+
+            repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
+
+            coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) }
+        }
+
+    @Test
+    fun `Given clear is called, then clear is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.clear() } returns Unit
+
+            repo.clear()
+
+            coVerify(exactly = 1) {
+                dvlaDataStore.clear()
+            }
+        }
 
     @Test
     fun `Given linking api returns success, when linkAccount is called, then return Success`() = runTest {
