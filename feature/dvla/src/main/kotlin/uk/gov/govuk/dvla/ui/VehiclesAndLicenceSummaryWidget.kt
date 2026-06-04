@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -112,13 +113,14 @@ fun VehiclesAndLicenceSummaryWidget(
                                         // TODO to be handled in next ticket(s)
                                     },
                                     onLicenceNumberLongClick = {
-                                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                        val clip = ClipData.newPlainText(
-                                            licenceClipboardLabel,
-                                            licenceState.licence.licenceNumber
+                                        copyToClipboard(
+                                            context = context,
+                                            label = licenceClipboardLabel,
+                                            textToCopy = licenceState.licence.licenceNumber,
+                                            hapticFeedback = hapticFeedback
                                         )
-                                        clipboard.setPrimaryClip(clip)
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                                        viewModel.onLicenceNumberCopied()
                                     },
                                     modifier = modifier
                                 )
@@ -131,6 +133,18 @@ fun VehiclesAndLicenceSummaryWidget(
     }
 }
 
+private fun copyToClipboard(
+    context: Context,
+    label: String,
+    textToCopy: String,
+    hapticFeedback: HapticFeedback
+) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(label, textToCopy)
+    clipboard.setPrimaryClip(clip)
+
+    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+}
 
 @Composable
 private fun VehiclesAndLicenceSummaryLoading(

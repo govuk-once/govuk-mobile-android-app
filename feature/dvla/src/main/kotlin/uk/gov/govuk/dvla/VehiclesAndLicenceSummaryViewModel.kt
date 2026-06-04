@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.DvlaLinkState
@@ -22,8 +23,15 @@ import javax.inject.Inject
 internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
     private val vehicleMapper: VehicleSummaryMapper,
-    private val licenceMapper: LicenceSummaryMapper
+    private val licenceMapper: LicenceSummaryMapper,
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
+
+    companion object {
+        private const val SECTION = "Driving"
+        private const val ACTION_COPY = "Copy"
+        private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
+    }
 
     private val _uiState = MutableStateFlow(
         if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) UiState.Default()
@@ -54,6 +62,14 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
     fun onLicenceSelected() {
         setSelectedDrivingView(drivingView = DrivingView.LICENCE)
+    }
+
+    fun onLicenceNumberCopied() {
+        analyticsClient.buttonFunction(
+            text = ANALYTICS_EVENT_CLIPBOARD_COPY,
+            section = SECTION,
+            action = ACTION_COPY
+        )
     }
 
     private fun setSelectedDrivingView(drivingView: DrivingView) {
