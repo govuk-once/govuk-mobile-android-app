@@ -54,7 +54,7 @@ class DvlaDataStoreTest {
         }
 
     @Test
-    fun `Given the selected driving view is vehicles, then getSelectedDrivingView returns vehicle`() =
+    fun `Given the selected driving view is vehicles, then getSelectedDrivingView returns vehicles`() =
         runTest(dispatcher) {
             dataStore.edit { prefs ->
                 prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
