@@ -6,13 +6,13 @@ internal sealed interface UiState {
 }
 
 enum class DrivingView {
-    VEHICLE, LICENCE
+    VEHICLES, LICENCE
 }
 
-internal sealed interface VehicleSummaryUiState {
-    data object Loading : VehicleSummaryUiState
-    data class Success(val vehicles: List<VehicleSummaryUiModel>) : VehicleSummaryUiState
-    data object Error : VehicleSummaryUiState
+internal sealed interface VehiclesSummaryUiState {
+    data object Loading : VehiclesSummaryUiState
+    data class Success(val vehicles: List<VehicleSummaryUiModel>) : VehiclesSummaryUiState
+    data object Error : VehiclesSummaryUiState
 }
 
 internal sealed interface LicenceSummaryUiState {

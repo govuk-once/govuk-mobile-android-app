@@ -13,11 +13,11 @@ import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
+import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import javax.inject.Inject
 
 @HiltViewModel
-internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
+internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
     private val mapper: VehicleSummaryMapper
 ) : ViewModel() {
@@ -25,9 +25,9 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
     val uiState = _uiState.asStateFlow()
 
-    private val _vehicleSummaryUiState =
-        MutableStateFlow<VehicleSummaryUiState>(VehicleSummaryUiState.Loading)
-    val vehicleSummaryUiState = _vehicleSummaryUiState.asStateFlow()
+    private val _vehiclesSummaryUiState =
+        MutableStateFlow<VehiclesSummaryUiState>(VehiclesSummaryUiState.Loading)
+    val vehiclesSummaryUiState = _vehiclesSummaryUiState.asStateFlow()
 
     private val _licenceSummaryUiState =
         MutableStateFlow<LicenceSummaryUiState>(LicenceSummaryUiState.Loading)
@@ -53,8 +53,8 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    fun onVehicleSelected() {
-        setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
+    fun onVehiclesSelected() {
+        setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
     }
 
     fun onLicenceSelected() {
@@ -70,7 +70,7 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     private fun setUiStateToDefault() {
         viewModelScope.launch {
-            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLE // Default to 'VEHICLE'
+            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES // Default to 'VEHICLES'
             _uiState.value = UiState.Default(drivingView = drivingView)
         }
     }
@@ -105,17 +105,17 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     private fun fetchCustomerSummary() {
         viewModelScope.launch {
-            _vehicleSummaryUiState.value = VehicleSummaryUiState.Loading
+            _vehiclesSummaryUiState.value = VehiclesSummaryUiState.Loading
             _licenceSummaryUiState.value = LicenceSummaryUiState.Loading
 
             when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
                     val vehicleList = result.value.vehicles.map { mapper.toUiModel(it) }
-                    _vehicleSummaryUiState.value = VehicleSummaryUiState.Success(vehicles = vehicleList)
+                    _vehiclesSummaryUiState.value = VehiclesSummaryUiState.Success(vehicles = vehicleList)
                 }
 
                 else -> {
-                    _vehicleSummaryUiState.value = VehicleSummaryUiState.Error
+                    _vehiclesSummaryUiState.value = VehiclesSummaryUiState.Error
                     _licenceSummaryUiState.value = LicenceSummaryUiState.Error
                 }
             }

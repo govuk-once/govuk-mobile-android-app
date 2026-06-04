@@ -40,7 +40,7 @@ class DvlaRepoTest {
     @Test
     fun `Given getSelectedDrivingView is called, then getSelectedDrivingView is called on the data store`() =
         runTest {
-            coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLE
+            coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLES
 
             repo.getSelectedDrivingView()
 
@@ -50,11 +50,11 @@ class DvlaRepoTest {
     @Test
     fun `Given setSelectedDrivingView is called, then setSelectedDrivingView is called on the data store`() =
         runTest {
-            coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) } returns Unit
+            coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) } returns Unit
 
-            repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
+            repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
 
-            coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) }
+            coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) }
         }
 
     @Test

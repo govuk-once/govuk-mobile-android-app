@@ -25,10 +25,10 @@ import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
+import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class VehicleAndLicenceSummaryViewModelTest {
+class VehiclesAndLicenceSummaryViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val repo = mockk<DvlaRepo>(relaxed = true)
@@ -49,7 +49,7 @@ class VehicleAndLicenceSummaryViewModelTest {
         runTest(dispatcher) {
             every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
 
-            val viewModel = VehicleAndLicenceSummaryViewModel(repo, mapper)
+            val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
             advanceUntilIdle()
 
             assertEquals(UiState.Hidden, viewModel.uiState.value)
@@ -73,7 +73,7 @@ class VehicleAndLicenceSummaryViewModelTest {
 
             every { mapper.toUiModel(vehicle) } returns vehicleSummaryUiModel
 
-            val viewModel = VehicleAndLicenceSummaryViewModel(repo, mapper)
+            val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
 
             advanceUntilIdle()
 
@@ -82,8 +82,8 @@ class VehicleAndLicenceSummaryViewModelTest {
             coVerify(exactly = 1) { repo.getDriverSummary() }
 
             assertEquals(
-                VehicleSummaryUiState.Success(listOf(vehicleSummaryUiModel)),
-                viewModel.vehicleSummaryUiState.value
+                VehiclesSummaryUiState.Success(listOf(vehicleSummaryUiModel)),
+                viewModel.vehiclesSummaryUiState.value
             )
         }
 
@@ -95,12 +95,12 @@ class VehicleAndLicenceSummaryViewModelTest {
             coEvery { repo.getLicenceDetails() } returns Result.Error()
             coEvery { repo.getDriverSummary() } returns Result.Error()
 
-            val viewModel = VehicleAndLicenceSummaryViewModel(repo, mapper)
+            val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
             advanceUntilIdle()
 
             coVerify(exactly = 1) { repo.getLicenceDetails() }
             coVerify(exactly = 1) { repo.getDriverSummary() }
-            assertEquals(VehicleSummaryUiState.Error, viewModel.vehicleSummaryUiState.value)
+            assertEquals(VehiclesSummaryUiState.Error, viewModel.vehiclesSummaryUiState.value)
         }
 
     @Test
@@ -118,12 +118,12 @@ class VehicleAndLicenceSummaryViewModelTest {
             coEvery { repo.getCustomerSummary() } returns Result.Success(customerSummary)
             every { mapper.toUiModel(vehicle) } returns vehicleSummaryUiModel
 
-            val viewModel = VehicleAndLicenceSummaryViewModel(repo, mapper)
+            val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
             advanceUntilIdle()
 
             assertEquals(
-                VehicleSummaryUiState.Success(listOf(vehicleSummaryUiModel)),
-                viewModel.vehicleSummaryUiState.value
+                VehiclesSummaryUiState.Success(listOf(vehicleSummaryUiModel)),
+                viewModel.vehiclesSummaryUiState.value
             )
 
             // unlinking account in settings
@@ -134,18 +134,18 @@ class VehicleAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `When onVehicleSelected, then ui state driving view is vehicle`() = runTest(dispatcher) {
+    fun `When onVehiclesSelected, then ui state driving view is vehicles`() = runTest(dispatcher) {
         val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
         every { repo.linkState } returns linkStateFlow
 
-        val viewModel = VehicleAndLicenceSummaryViewModel(repo, mapper)
+        val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
         advanceUntilIdle()
 
-        viewModel.onVehicleSelected()
+        viewModel.onVehiclesSelected()
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLE) }
-        assertEquals(UiState.Default(drivingView = DrivingView.VEHICLE), viewModel.uiState.value)
+        coVerify(exactly = 1) { repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) }
+        assertEquals(UiState.Default(drivingView = DrivingView.VEHICLES), viewModel.uiState.value)
     }
 
     @Test
@@ -153,7 +153,7 @@ class VehicleAndLicenceSummaryViewModelTest {
         val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
         every { repo.linkState } returns linkStateFlow
 
-        val viewModel = VehicleAndLicenceSummaryViewModel(repo, mapper)
+        val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
         advanceUntilIdle()
 
         viewModel.onLicenceSelected()
