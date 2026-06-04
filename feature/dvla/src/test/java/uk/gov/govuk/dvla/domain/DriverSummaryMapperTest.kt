@@ -5,48 +5,66 @@ import io.mockk.mockk
 import org.junit.Assert.*
 import org.junit.Test
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
+import java.time.LocalDate
+import uk.gov.govuk.dvla.remote.model.LicenceStatus as RemoteLicenceStatus
+import uk.gov.govuk.dvla.remote.model.LicenceType as RemoteLicenceType
 
 class DriverSummaryMapperTest {
 
     @Test
     fun `Given fully populated DriverSummaryResponse, when mapped to domain model, it maps all fields correctly`() {
         val networkResponse = mockk<DriverSummaryResponse>(relaxed = true) {
+            every { driverView.licence?.type } returns RemoteLicenceType.FULL
             every { driverView.driver.drivingLicenceNumber } returns "DECER607085K99AE"
-            every { driverView.driver.firstNames } returns "Driver"
-            every { driverView.driver.lastName } returns "McDriver"
-            every { driverView.driver.penaltyPoints } returns 3
-            every { driverView.licence?.status } returns "Valid"
+            every { driverView.driver.title } returns "Ms"
+            every { driverView.driver.firstNames } returns "Anna Ornella"
+            every { driverView.driver.lastName } returns "Arenö"
+            every { driverView.driver.address?.unstructuredAddress?.line1 } returns "29 Orchard Drive"
+            every { driverView.driver.address?.unstructuredAddress?.line5 } returns "Milton Keynes"
+            every { driverView.driver.address?.unstructuredAddress?.postcode } returns "PA98 J83"
+            every { driverView.licence?.status } returns RemoteLicenceStatus.VALID
             every { driverView.token?.validToDate } returns "2035-05-01"
         }
 
         val domainModel = networkResponse.toDomainModel()
 
+        assertEquals(LicenceType.FULL, domainModel.licenceType)
         assertEquals("DECER607085K99AE", domainModel.licenceNumber)
-        assertEquals("Driver", domainModel.firstName)
-        assertEquals("McDriver", domainModel.lastName)
-        assertEquals(3, domainModel.penaltyPoints)
-        assertEquals("Valid", domainModel.status)
-        assertEquals("2035-05-01", domainModel.expiryDate)
+        assertEquals("Ms", domainModel.title)
+        assertEquals("Anna Ornella", domainModel.firstNames)
+        assertEquals("Arenö", domainModel.lastName)
+        assertEquals("29 Orchard Drive", domainModel.addressLine1)
+        assertEquals("Milton Keynes", domainModel.addressLine5)
+        assertEquals("PA98 J83", domainModel.postcode)
+        assertEquals(LicenceStatus.VALID, domainModel.status)
+        assertEquals(LocalDate.of(2035, 5, 1), domainModel.expiryDate)
+        assertEquals("Ms Anna Ornella Arenö", domainModel.fullName)
     }
 
     @Test
     fun `Given DriverSummaryResponse with missing fields, when mapped, it sets correct defaults`() {
         val networkResponse = mockk<DriverSummaryResponse>(relaxed = true) {
             every { driverView.driver.drivingLicenceNumber } returns "DECER607085K99AE"
+            every { driverView.driver.title } returns null
             every { driverView.driver.firstNames } returns null
             every { driverView.driver.lastName } returns null
-            every { driverView.driver.penaltyPoints } returns null
+            every { driverView.driver.address } returns null
             every { driverView.licence } returns null
             every { driverView.token } returns null
         }
 
         val domainModel = networkResponse.toDomainModel()
 
+        assertEquals(LicenceType.UNKNOWN, domainModel.licenceType)
         assertEquals("DECER607085K99AE", domainModel.licenceNumber)
-        assertEquals("", domainModel.firstName)
+        assertEquals("", domainModel.title)
+        assertEquals("", domainModel.firstNames)
         assertEquals("", domainModel.lastName)
-        assertEquals("Unknown", domainModel.status)
-        assertNull(domainModel.penaltyPoints)
+        assertEquals("", domainModel.addressLine1)
+        assertEquals("", domainModel.addressLine5)
+        assertEquals("", domainModel.postcode)
+        assertEquals(LicenceStatus.UNKNOWN, domainModel.status)
         assertNull(domainModel.expiryDate)
+        assertEquals("", domainModel.fullName)
     }
 }

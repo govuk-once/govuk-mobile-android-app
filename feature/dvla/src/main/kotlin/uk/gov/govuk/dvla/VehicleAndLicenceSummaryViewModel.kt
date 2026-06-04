@@ -36,7 +36,6 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     DvlaLinkState.LINKED -> {
-                        // check datastore for the last viewed tab
                         setUiStateToDefault()
                         fetchDriverSummary()
                         fetchCustomerSummary()
