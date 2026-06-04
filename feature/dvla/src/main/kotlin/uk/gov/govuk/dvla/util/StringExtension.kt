@@ -15,3 +15,12 @@ fun String.toSpacedString(): String {
     if (this.isBlank()) return this
     return this.toList().joinToString(separator = " ")
 }
+
+/**
+ * Prevents Talkback from announcing addresses like "1 St John" as "First John".
+ */
+fun String.toAccessibleStreetName(): String {
+    return this
+        .replace("1 St ", "1, St ", ignoreCase = true)
+        .replace("1 St. ", "1, St. ", ignoreCase = true)
+}

@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.dvla.util.toAccessibleStreetName
 import uk.gov.govuk.dvla.util.toSpacedString
 
 data class LicenceSummaryUiModel(
@@ -12,11 +13,19 @@ data class LicenceSummaryUiModel(
     val licenceStatus: StatusRowUiModel
 ) {
     val formattedAddressLines: List<String>
-        get() = asAddressList(formattedPostcode = postcode)
+        get() = asAddressList(
+            formattedAddressLine1 = addressLine1,
+            formattedPostcode = postcode
+        )
 
     val accessibleAddressLines: List<String>
-        get() = asAddressList(formattedPostcode = postcode.toSpacedString())
+        get() = asAddressList(
+            formattedAddressLine1 = addressLine1.toAccessibleStreetName(),
+            formattedPostcode = postcode.toSpacedString()
+        )
 
-    private fun asAddressList(formattedPostcode: String): List<String> =
-        listOf(addressLine1, city, formattedPostcode).filter { it.isNotBlank() }
+    private fun asAddressList(
+        formattedAddressLine1: String,
+        formattedPostcode: String): List<String> =
+        listOf(formattedAddressLine1, city, formattedPostcode).filter { it.isNotBlank() }
 }
