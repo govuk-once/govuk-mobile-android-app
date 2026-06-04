@@ -67,7 +67,7 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
-import uk.gov.govuk.dvla.ui.VehicleAndLicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -506,7 +506,7 @@ private fun GovUkNavHost(
                         )
 
                         // and licence summary widget from DVLA module
-                        VehicleAndLicenceSummaryWidget()
+                        VehiclesAndLicenceSummaryWidget()
                     }
                 }
             },

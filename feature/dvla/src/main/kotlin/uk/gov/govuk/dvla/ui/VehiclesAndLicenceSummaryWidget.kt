@@ -22,7 +22,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.VehicleAndLicenceSummaryViewModel
+import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -30,15 +30,15 @@ import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
-import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST as VehicleButton
+import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
+import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST as VehiclesButton
 import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
 @Composable
-fun VehicleAndLicenceSummaryWidget(
+fun VehiclesAndLicenceSummaryWidget(
     modifier: Modifier = Modifier
 ) {
-    val viewModel: VehicleAndLicenceSummaryViewModel = hiltViewModel()
+    val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
     val context = LocalContext.current
@@ -50,7 +50,7 @@ fun VehicleAndLicenceSummaryWidget(
 
         is UiState.Default -> {
             val activeButtonState = when (currentState.drivingView) {
-                DrivingView.VEHICLE -> VehicleButton
+                DrivingView.VEHICLES -> VehiclesButton
                 DrivingView.LICENCE -> LicenceButton
             }
 
@@ -59,12 +59,12 @@ fun VehicleAndLicenceSummaryWidget(
 
                 // Render the segmented toggle buttons
                 ConnectedButtonGroup(
-                    firstText = stringResource(R.string.vehicle),
+                    firstText = stringResource(R.string.vehicles),
                     secondText = stringResource(R.string.licence),
                     activeButton = activeButtonState,
                     onActiveStateChange = { button ->
                         when (button) {
-                            VehicleButton -> viewModel.onVehicleSelected()
+                            VehiclesButton -> viewModel.onVehiclesSelected()
                             LicenceButton -> viewModel.onLicenceSelected()
                         }
                     },
@@ -78,15 +78,15 @@ fun VehicleAndLicenceSummaryWidget(
 
                 // Render the active tab content by unwrapping the sub-states inside Default
                 when (currentState.drivingView) {
-                    DrivingView.VEHICLE -> {
-                        when (val vehicleState = currentState.vehicleState) {
-                            is VehicleSummaryUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier)
-                            is VehicleSummaryUiState.Error -> {
+                    DrivingView.VEHICLES -> {
+                        when (val vehiclesState = currentState.vehiclesState) {
+                            is VehiclesSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
+                            is VehiclesSummaryUiState.Error -> {
                                 // TODO placeholder for now, tbc in future tickets
                             }
-                            is VehicleSummaryUiState.Success -> {
-                                VehicleSummarySuccess(
-                                    vehicles = vehicleState.vehicles,
+                            is VehiclesSummaryUiState.Success -> {
+                                VehiclesSummarySuccess(
+                                    vehicles = vehiclesState.vehicles,
                                     onDetailsClick = {
                                         // TODO to be handled in next ticket(s)
                                     },
@@ -101,7 +101,7 @@ fun VehicleAndLicenceSummaryWidget(
 
                     DrivingView.LICENCE -> {
                         when (val licenceState = currentState.licenceState) {
-                            is LicenceSummaryUiState.Loading -> VehicleAndLicenceSummaryLoading(modifier)
+                            is LicenceSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
                             is LicenceSummaryUiState.Error -> {
                                 // TODO placeholder for now, tbc in future tickets
                             }
@@ -133,7 +133,7 @@ fun VehicleAndLicenceSummaryWidget(
 
 
 @Composable
-private fun VehicleAndLicenceSummaryLoading(
+private fun VehiclesAndLicenceSummaryLoading(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -143,7 +143,7 @@ private fun VehicleAndLicenceSummaryLoading(
 }
 
 @Composable
-private fun VehicleSummarySuccess(
+private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,

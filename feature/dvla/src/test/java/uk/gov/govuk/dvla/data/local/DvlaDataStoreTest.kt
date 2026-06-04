@@ -54,15 +54,15 @@ class DvlaDataStoreTest {
         }
 
     @Test
-    fun `Given the selected driving view is vehicle, then getSelectedDrivingView returns vehicle`() =
+    fun `Given the selected driving view is vehicles, then getSelectedDrivingView returns vehicles`() =
         runTest(dispatcher) {
             dataStore.edit { prefs ->
-                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLE"
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
             }
 
             val dvlaDatastore = DvlaDataStore(dataStore)
 
-            assertTrue(dvlaDatastore.getSelectedDrivingView() == DrivingView.VEHICLE)
+            assertTrue(dvlaDatastore.getSelectedDrivingView() == DrivingView.VEHICLES)
         }
 
     @Test
@@ -70,9 +70,9 @@ class DvlaDataStoreTest {
         runTest(dispatcher) {
             val dvlaDatastore = DvlaDataStore(dataStore)
 
-            dvlaDatastore.setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
+            dvlaDatastore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
 
-            assertTrue(dataStore.data.first()[stringPreferencesKey(SELECTED_DRIVING_VIEW)] == "VEHICLE")
+            assertTrue(dataStore.data.first()[stringPreferencesKey(SELECTED_DRIVING_VIEW)] == "VEHICLES")
         }
 
     @Test
@@ -81,7 +81,7 @@ class DvlaDataStoreTest {
             val dvlaDatastore = DvlaDataStore(dataStore)
 
             dataStore.edit { prefs ->
-                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLE"
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
             }
 
             assertTrue(dataStore.data.first().asMap().isNotEmpty())

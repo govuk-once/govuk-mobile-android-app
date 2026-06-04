@@ -15,11 +15,11 @@ import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiState
+import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import javax.inject.Inject
 
 @HiltViewModel
-internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
+internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
     private val vehicleMapper: VehicleSummaryMapper,
     private val licenceMapper: LicenceSummaryMapper
@@ -48,8 +48,8 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    fun onVehicleSelected() {
-        setSelectedDrivingView(drivingView = DrivingView.VEHICLE)
+    fun onVehiclesSelected() {
+        setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
     }
 
     fun onLicenceSelected() {
@@ -69,7 +69,7 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     private fun setUiStateToDefault() {
         viewModelScope.launch {
-            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLE
+            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
             _uiState.update { state ->
                 if (state is UiState.Default) state.copy(drivingView = drivingView)
                 else UiState.Default(drivingView = drivingView)
@@ -95,23 +95,23 @@ internal class VehicleAndLicenceSummaryViewModel @Inject constructor(
 
     private fun fetchCustomerSummary() {
         viewModelScope.launch {
-            updateVehicleState(VehicleSummaryUiState.Loading)
+            updateVehiclesState(VehiclesSummaryUiState.Loading)
 
             val newState = when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
                     val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it) }
-                    VehicleSummaryUiState.Success(vehicles)
+                    VehiclesSummaryUiState.Success(vehicles)
                 }
-                else -> VehicleSummaryUiState.Error
+                else -> VehiclesSummaryUiState.Error
             }
 
-            updateVehicleState(newState)
+            updateVehiclesState(newState)
         }
     }
 
-    private fun updateVehicleState(newState: VehicleSummaryUiState) {
+    private fun updateVehiclesState(newState: VehiclesSummaryUiState) {
         _uiState.update { state ->
-            if (state is UiState.Default) state.copy(vehicleState = newState) else state
+            if (state is UiState.Default) state.copy(vehiclesState = newState) else state
         }
     }
 

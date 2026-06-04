@@ -40,6 +40,6 @@
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>
 
-    <string name="vehicle">Vehicle</string>
+    <string name="vehicles">Vehicles</string>
     <string name="licence">Licence</string>
 </resources>
