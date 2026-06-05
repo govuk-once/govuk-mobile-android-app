@@ -21,7 +21,6 @@ internal sealed interface VehiclesSummaryUiState {
 
 internal sealed interface LicenceSummaryUiState {
     data object Loading : LicenceSummaryUiState
-    // Must be a data class with the payload!
     data class Success(val licence: LicenceSummaryUiModel) : LicenceSummaryUiState
     data object Error : LicenceSummaryUiState
 }

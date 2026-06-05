@@ -58,7 +58,6 @@ fun VehiclesAndLicenceSummaryWidget(
             Column(modifier = modifier) {
                 SmallVerticalSpacer()
 
-                // Render the segmented toggle buttons
                 ConnectedButtonGroup(
                     firstText = stringResource(R.string.vehicles),
                     secondText = stringResource(R.string.licence),
@@ -77,58 +76,74 @@ fun VehiclesAndLicenceSummaryWidget(
 
                 MediumVerticalSpacer()
 
-                // Render the active tab content by unwrapping the sub-states inside Default
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
-                        when (val vehiclesState = currentState.vehiclesState) {
-                            is VehiclesSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
-                            is VehiclesSummaryUiState.Error -> {
-                                // TODO placeholder for now, tbc in future tickets
-                            }
-                            is VehiclesSummaryUiState.Success -> {
-                                VehiclesSummarySuccess(
-                                    vehicles = vehiclesState.vehicles,
-                                    onDetailsClick = {
-                                        // TODO to be handled in next ticket(s)
-                                    },
-                                    onMoreClick = {
-                                        // TODO to be handled in next ticket(s)
-                                    },
-                                    modifier = modifier
-                                )
-                            }
-                        }
+                        VehiclesViewContent(
+                            vehiclesState = currentState.vehiclesState,
+                            modifier = modifier
+                        )
                     }
 
                     DrivingView.LICENCE -> {
-                        when (val licenceState = currentState.licenceState) {
-                            is LicenceSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
-                            is LicenceSummaryUiState.Error -> {
-                                // TODO placeholder for now, tbc in future tickets
-                            }
-                            is LicenceSummaryUiState.Success -> {
-                                LicenceSummarySuccess(
-                                    licenceSummary = licenceState.licence,
-                                    onMoreClick = {
-                                        // TODO to be handled in next ticket(s)
-                                    },
-                                    onLicenceNumberLongClick = {
-                                        copyToClipboard(
-                                            context = context,
-                                            label = licenceClipboardLabel,
-                                            textToCopy = licenceState.licence.licenceNumber,
-                                            hapticFeedback = hapticFeedback
-                                        )
-
-                                        viewModel.onLicenceNumberCopied()
-                                    },
-                                    modifier = modifier
+                        LicenceViewContent(
+                            licenceState = currentState.licenceState,
+                            onLicenceNumberLongClick = { licenceNumber ->
+                                copyToClipboard(
+                                    context = context,
+                                    label = licenceClipboardLabel,
+                                    textToCopy = licenceNumber,
+                                    hapticFeedback = hapticFeedback
                                 )
-                            }
-                        }
+                                viewModel.onLicenceNumberCopied()
+                            },
+                            modifier = modifier
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun VehiclesViewContent(
+    vehiclesState: VehiclesSummaryUiState,
+    modifier: Modifier = Modifier
+) {
+    when (vehiclesState) {
+        is VehiclesSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
+        is VehiclesSummaryUiState.Error -> {
+            // TODO placeholder for now, tbc in future tickets
+        }
+        is VehiclesSummaryUiState.Success -> {
+            VehiclesSummarySuccess(
+                vehicles = vehiclesState.vehicles,
+                onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
+                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+private fun LicenceViewContent(
+    licenceState: LicenceSummaryUiState,
+    onLicenceNumberLongClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    when (licenceState) {
+        is LicenceSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
+        is LicenceSummaryUiState.Error -> {
+            // TODO placeholder for now, tbc in future tickets
+        }
+        is LicenceSummaryUiState.Success -> {
+            LicenceSummarySuccess(
+                licenceSummary = licenceState.licence,
+                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
+                modifier = modifier
+            )
         }
     }
 }
