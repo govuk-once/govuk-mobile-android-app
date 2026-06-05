@@ -21,7 +21,7 @@ class DvlaDataStore @Inject constructor(
     internal suspend fun getSelectedDrivingView(): DrivingView? {
         dataStore.data.firstOrNull()?.get(stringPreferencesKey(SELECTED_DRIVING_VIEW))
             ?.let { drivingView ->
-                return DrivingView.valueOf(drivingView)
+                return runCatching { DrivingView.valueOf(drivingView) }.getOrDefault(null)
             }
         return null
     }
