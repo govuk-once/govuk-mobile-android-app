@@ -33,7 +33,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
     }
 
-    private val _uiState = MutableStateFlow(
+    private val _uiState = MutableStateFlow<UiState>(
         if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) UiState.Default()
         else UiState.Hidden
     )

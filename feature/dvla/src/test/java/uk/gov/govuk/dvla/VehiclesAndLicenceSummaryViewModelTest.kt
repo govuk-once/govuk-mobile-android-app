@@ -96,7 +96,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
             coVerify(exactly = 1) { repo.getCustomerSummary() }
             coVerify(exactly = 1) { repo.getDriverSummary() }
 
-
             assertEquals(
                 VehiclesSummaryUiState.Success(listOf(vehicleSummaryUiModel)),
                 (viewModel.uiState.value as UiState.Default).vehiclesState
@@ -104,11 +103,10 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `Given isLinked emits true and getLicenceDetails() returns error, when viewModel initialised, then state becomes Error`() =
+    fun `Given isLinked emits true and getDriverSummary() returns error, when viewModel initialised, then state becomes Error`() =
         runTest(dispatcher) {
             every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
             coEvery { repo.getCustomerSummary() } returns Result.Error()
-            coEvery { repo.getLicenceDetails() } returns Result.Error()
             coEvery { repo.getDriverSummary() } returns Result.Error()
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(

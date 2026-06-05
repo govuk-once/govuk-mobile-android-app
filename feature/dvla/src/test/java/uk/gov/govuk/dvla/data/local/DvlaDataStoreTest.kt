@@ -66,7 +66,19 @@ class DvlaDataStoreTest {
         }
 
     @Test
-    fun `Given the setSelectedDrivingView is called with vehicle, then the selected driving view in the data store is vehicle`() =
+    fun `Given the selected driving view is not in the DrivingView enum, then getSelectedDrivingView returns null`() =
+        runTest(dispatcher) {
+            dataStore.edit { prefs ->
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "NOT_IN_ENUM"
+            }
+
+            val dvlaDatastore = DvlaDataStore(dataStore)
+
+            assertNull(dvlaDatastore.getSelectedDrivingView())
+        }
+
+    @Test
+    fun `Given the setSelectedDrivingView is called with vehicles, then the selected driving view in the data store is vehicles`() =
         runTest(dispatcher) {
             val dvlaDatastore = DvlaDataStore(dataStore)
 

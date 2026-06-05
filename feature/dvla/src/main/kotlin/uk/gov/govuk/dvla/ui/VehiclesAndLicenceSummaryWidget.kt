@@ -188,7 +188,6 @@ private fun LicenceSummarySuccess(
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
-
         LicenceSummaryCard(
             licenceSummary = licenceSummary,
             onMoreClick = { onMoreClick() },
@@ -197,4 +196,3 @@ private fun LicenceSummarySuccess(
         )
     }
 }
-
