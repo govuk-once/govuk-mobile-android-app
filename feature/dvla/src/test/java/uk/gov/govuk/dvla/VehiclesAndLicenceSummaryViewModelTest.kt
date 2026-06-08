@@ -18,6 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.DvlaLinkState
@@ -143,4 +144,26 @@ class VehiclesAndLicenceSummaryViewModelTest {
         coVerify(exactly = 1) { repo.setSelectedDrivingView(drivingView = DrivingView.LICENCE) }
         assertEquals(UiState.Default(drivingView = DrivingView.LICENCE), viewModel.uiState.value)
     }
+
+    @Test
+    fun `Given linkState emits LINKED, when viewModel initialised, then check code creation and cancellation are called`() =
+        runTest(dispatcher) {
+            val token = "token-id"
+
+            val mockCheckCode = mockk<CheckCodeDetails> {
+                every { tokenId } returns token
+            }
+
+            every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+            coEvery { repo.getCheckCodes() } returns Result.Success(mockk())
+            coEvery { repo.createCheckCode() } returns Result.Success(mockCheckCode)
+            coEvery { repo.cancelCheckCode(any()) } returns Result.Success(mockk())
+
+            VehiclesAndLicenceSummaryViewModel(repo, mapper)
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { repo.getCheckCodes() }
+            coVerify(exactly = 1) { repo.createCheckCode() }
+            coVerify(exactly = 1) { repo.cancelCheckCode(token) }
+        }
 }

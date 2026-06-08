@@ -75,8 +75,8 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
     private fun fetchDriverSummary() {
         viewModelScope.launch {
-            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-            val result = dvlaRepo.getDriverSummary()
+            // TODO: call unused endpoints for pen testing, to be removed
+            dvlaRepo.getDriverSummary()
         }
     }
 
@@ -100,29 +100,25 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     }
 
     private fun createListCancelCheckCode() {
-        // TODO: this is to demonstrate the endpoint call data, to be removed
+        // TODO: call unused endpoints for pen testing, to be removed
+
+        // launch calls in parallel
         viewModelScope.launch {
+            dvlaRepo.getCheckCodes()
+        }
 
-            // get codes
-            val codesResult = dvlaRepo.getCheckCodes()
-            if (codesResult !is Result.Success) {
-                return@launch
-            }
-
-            // create code
+        viewModelScope.launch {
             val createResult = dvlaRepo.createCheckCode()
-            if (createResult !is Result.Success) {
-                return@launch
+
+            val tokenIdToCancel = if (createResult is Result.Success) {
+                createResult.value.tokenId
+            } else {
+                // if creation fails call the cancel endpoint with a dummy token
+                // call will fail but can still be captured for pen testing
+                "dummy-token"
             }
 
-            val newCode = createResult.value
-            val tokenIdToCancel = newCode.tokenId
-
-            // cancel code
-            val cancelResult = dvlaRepo.cancelCheckCode(tokenIdToCancel)
-            if (cancelResult !is Result.Success) {
-                return@launch
-            }
+            dvlaRepo.cancelCheckCode(tokenIdToCancel)
         }
     }
 }

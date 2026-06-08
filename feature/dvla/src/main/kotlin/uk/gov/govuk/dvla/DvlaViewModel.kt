@@ -210,11 +210,7 @@ internal class DvlaViewModel @Inject constructor(
     private suspend fun getVehicleDetails(registrationNumber: String) {
         val sanitisedInput = registrationNumber.filterNot { it.isWhitespace() }.uppercase()
 
-        // TODO demonstrating for POC, will be removed
-        try {
-            val response = dvlaRepo.lookupVehicle(sanitisedInput)
-        } catch (_: Exception) {
-            // no need to handle, POC at the moment
-        }
+        // TODO: call unused endpoints for pen testing, to be removed
+        runCatching { dvlaRepo.lookupVehicle(sanitisedInput) }
     }
 }
