@@ -39,11 +39,9 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                 when (state) {
                     DvlaLinkState.LINKED -> {
                         setUiStateToDefault()
-                        fetchLicenceData()
-                        // TODO: this is to demonstrate driver & customer summary endpoint call data,
-                        //  until we decide which endpoint to use
-                        fetchDriverSummaryData()
+                        fetchDriverSummary()
                         fetchCustomerSummary()
+                        createListCancelCheckCode()
                     }
 
                     DvlaLinkState.UNLINKED,
@@ -75,31 +73,10 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun fetchLicenceData() {
+    private fun fetchDriverSummary() {
         viewModelScope.launch {
-            val result = dvlaRepo.getLicenceDetails()
-
             // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-            if (BuildConfig.DEBUG) {
-                when (result) {
-                    is Result.Success -> println("Licence data: SUCCESS: ${result.value}")
-                    else -> println("Licence data: ERROR - Failed to fetch Licence data")
-                }
-            }
-        }
-    }
-
-    private fun fetchDriverSummaryData() {
-        viewModelScope.launch {
             val result = dvlaRepo.getDriverSummary()
-
-            // TODO: this is to demonstrate the endpoint call data, until we decide which endpoint to use
-            if (BuildConfig.DEBUG) {
-                when (result) {
-                    is Result.Success -> println("DriverSummary: SUCCESS: ${result.value}")
-                    else -> println("DriverSummary: ERROR - Failed to fetch driver summary")
-                }
-            }
         }
     }
 
@@ -118,6 +95,33 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     _vehiclesSummaryUiState.value = VehiclesSummaryUiState.Error
                     _licenceSummaryUiState.value = LicenceSummaryUiState.Error
                 }
+            }
+        }
+    }
+
+    private fun createListCancelCheckCode() {
+        // TODO: this is to demonstrate the endpoint call data, to be removed
+        viewModelScope.launch {
+
+            // get codes
+            val codesResult = dvlaRepo.getCheckCodes()
+            if (codesResult !is Result.Success) {
+                return@launch
+            }
+
+            // create code
+            val createResult = dvlaRepo.createCheckCode()
+            if (createResult !is Result.Success) {
+                return@launch
+            }
+
+            val newCode = createResult.value
+            val tokenIdToCancel = newCode.tokenId
+
+            // cancel code
+            val cancelResult = dvlaRepo.cancelCheckCode(tokenIdToCancel)
+            if (cancelResult !is Result.Success) {
+                return@launch
             }
         }
     }

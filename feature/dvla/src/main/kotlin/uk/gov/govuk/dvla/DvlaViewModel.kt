@@ -213,10 +213,8 @@ internal class DvlaViewModel @Inject constructor(
         // TODO demonstrating for POC, will be removed
         try {
             val response = dvlaRepo.lookupVehicle(sanitisedInput)
-            println("DVLA VES success: $response")
-        } catch (e: Exception) {
-            println("DVLA VES error: ${e.message}")
-            e.printStackTrace()
+        } catch (_: Exception) {
+            // no need to handle, POC at the moment
         }
     }
 }
