@@ -54,7 +54,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             assertEquals(UiState.Hidden, viewModel.uiState.value)
             coVerify(exactly = 0) { repo.getCustomerSummary() }
-            coVerify(exactly = 0) { repo.getLicenceDetails() }
             coVerify(exactly = 0) { repo.getDriverSummary() }
         }
 
@@ -68,7 +67,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
             }
             every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
             coEvery { repo.getCustomerSummary() } returns Result.Success(customerSummary)
-            coEvery { repo.getLicenceDetails() } returns Result.Success(mockk())
             coEvery { repo.getDriverSummary() } returns Result.Success(mockk())
 
             every { mapper.toUiModel(vehicle) } returns vehicleSummaryUiModel
@@ -78,29 +76,12 @@ class VehiclesAndLicenceSummaryViewModelTest {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { repo.getCustomerSummary() }
-            coVerify(exactly = 1) { repo.getLicenceDetails() }
             coVerify(exactly = 1) { repo.getDriverSummary() }
 
             assertEquals(
                 VehiclesSummaryUiState.Success(listOf(vehicleSummaryUiModel)),
                 viewModel.vehiclesSummaryUiState.value
             )
-        }
-
-    @Test
-    fun `Given isLinked emits true and getLicenceDetails() returns error, when viewModel initialised, then state becomes Error`() =
-        runTest(dispatcher) {
-            every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
-            coEvery { repo.getCustomerSummary() } returns Result.Error()
-            coEvery { repo.getLicenceDetails() } returns Result.Error()
-            coEvery { repo.getDriverSummary() } returns Result.Error()
-
-            val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
-            advanceUntilIdle()
-
-            coVerify(exactly = 1) { repo.getLicenceDetails() }
-            coVerify(exactly = 1) { repo.getDriverSummary() }
-            assertEquals(VehiclesSummaryUiState.Error, viewModel.vehiclesSummaryUiState.value)
         }
 
     @Test
