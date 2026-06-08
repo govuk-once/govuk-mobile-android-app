@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla.remote
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
@@ -18,8 +19,8 @@ interface DvlaApi {
     @GET("app/udp/v1/identity/dvla")
     suspend fun checkDvlaLinked(): Response<LinkStatusResponse>
 
-    @POST("app/udp/v1/identity/dvla/{id}")
-    suspend fun linkDvlaIdentity(@Path("id") id: String): Response<Unit>
+    @POST("app/udp/v1/identity/dvla")
+    suspend fun linkDvlaIdentity(@Header("x-linking-token") id: String): Response<Unit>
 
     @DELETE("app/udp/v1/identity/dvla")
     suspend fun deleteDvlaIdentity(): Response<Unit>
