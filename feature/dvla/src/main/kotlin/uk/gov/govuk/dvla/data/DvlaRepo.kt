@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.data
 
-import com.google.gson.JsonParser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.data.auth.AuthRepo
@@ -19,8 +18,6 @@ import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Singleton
 class DvlaRepo @Inject constructor(
@@ -56,8 +53,7 @@ class DvlaRepo @Inject constructor(
 
     internal suspend fun linkAccount(token: String): Result<Unit> {
         val result = try {
-            val linkingId = extractLinkingIdFromJwt(token)
-            safeAuthApiCall({ api.linkDvlaIdentity(linkingId) }, authRepo)
+            safeAuthApiCall({ api.linkDvlaIdentity(token) }, authRepo)
         } catch (_: Exception) {
             Result.Error()
         }
@@ -103,23 +99,4 @@ class DvlaRepo @Inject constructor(
     internal suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
         safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
             .map { it.toDomainModel() }
-
-    @OptIn(ExperimentalEncodingApi::class)
-    private fun extractLinkingIdFromJwt(jwtToken: String): String {
-        return try {
-            val parts = jwtToken.split(".")
-            require(parts.size >= 2) { "Invalid JWT" }
-
-            val payloadBase64 = parts[1]
-            val decodedBytes = Base64.UrlSafe
-                .withPadding(Base64.PaddingOption.ABSENT_OPTIONAL)
-                .decode(payloadBase64)
-            val decodedString = String(decodedBytes, Charsets.UTF_8)
-            val jsonObject = JsonParser.parseString(decodedString).asJsonObject
-            jsonObject["linking_id"].asString
-
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Failed to extract linking id", e)
-        }
-    }
 }
