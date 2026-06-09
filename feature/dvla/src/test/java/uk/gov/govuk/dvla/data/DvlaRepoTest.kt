@@ -30,7 +30,6 @@ class DvlaRepoTest {
     private val dvlaDataStore = mockk<DvlaDataStore>()
     private lateinit var repo: DvlaRepo
     private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJleHAiOjM2MDAsImxpbmtpbmdfaWQiOiIxMjM0LWFiY2QifQ."
-    private val linkingId = "1234-abcd"
 
     @Before
     fun setup() {
@@ -71,28 +70,28 @@ class DvlaRepoTest {
 
     @Test
     fun `Given linking api returns success, when linkAccount is called, then return Success`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
+        coEvery { api.linkDvlaIdentity(token) } returns Response.success(Unit)
 
         val result = repo.linkAccount(token)
 
         assertTrue(result is Result.Success)
         assertTrue(repo.linkState.value == DvlaLinkState.LINKED)
-        coVerify(exactly = 1) { api.linkDvlaIdentity(linkingId) }
+        coVerify(exactly = 1) { api.linkDvlaIdentity(token) }
     }
 
     @Test
     fun `Given linking api throws exception, when linkAccount is called, then return Error`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } throws Exception("Exception")
+        coEvery { api.linkDvlaIdentity(token) } throws Exception("Exception")
 
         val result = repo.linkAccount(token)
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.linkDvlaIdentity(linkingId) }
+        coVerify(exactly = 1) { api.linkDvlaIdentity(token) }
     }
 
     @Test
     fun `Given unlinking api returns success, when unlinkAccount is called, then return Success and update linkState`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
+        coEvery { api.linkDvlaIdentity(token) } returns Response.success(Unit)
         repo.linkAccount(token)
         assertTrue(repo.linkState.value == DvlaLinkState.LINKED)
 
@@ -106,7 +105,7 @@ class DvlaRepoTest {
 
     @Test
     fun `Given unlinking api throws exception, when unlinkAccount is called, then return error`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
+        coEvery { api.linkDvlaIdentity(token) } returns Response.success(Unit)
         repo.linkAccount(token)
         assertTrue(repo.linkState.value == DvlaLinkState.LINKED)
 
