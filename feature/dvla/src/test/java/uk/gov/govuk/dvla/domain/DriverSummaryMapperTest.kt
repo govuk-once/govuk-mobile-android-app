@@ -2,7 +2,8 @@ package uk.gov.govuk.dvla.domain
 
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import java.time.LocalDate

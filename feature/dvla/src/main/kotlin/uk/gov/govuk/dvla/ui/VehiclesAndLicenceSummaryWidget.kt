@@ -42,9 +42,6 @@ fun VehiclesAndLicenceSummaryWidget(
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
-    val context = LocalContext.current
-    val hapticFeedback = LocalHapticFeedback.current
-    val licenceClipboardLabel = stringResource(R.string.clipboard_data_label_licence_number)
 
     when (val currentState = state) {
         is UiState.Hidden -> return // draw nothing if not linked
@@ -85,13 +82,18 @@ fun VehiclesAndLicenceSummaryWidget(
                     }
 
                     DrivingView.LICENCE -> {
+
+                        val context = LocalContext.current
+                        val hapticFeedback = LocalHapticFeedback.current
+                        val licenceClipboardLabel =
+                            stringResource(R.string.clipboard_data_label_licence_number)
+
                         LicenceViewContent(
                             licenceState = currentState.licenceState,
                             onLicenceNumberLongClick = { licenceNumber ->
-                                copyToClipboard(
+                                licenceNumber.copyToClipboard(
                                     context = context,
                                     label = licenceClipboardLabel,
-                                    textToCopy = licenceNumber,
                                     hapticFeedback = hapticFeedback
                                 )
                                 viewModel.onLicenceNumberCopied()
@@ -148,14 +150,13 @@ private fun LicenceViewContent(
     }
 }
 
-private fun copyToClipboard(
+private fun String.copyToClipboard(
     context: Context,
     label: String,
-    textToCopy: String,
     hapticFeedback: HapticFeedback
 ) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText(label, textToCopy)
+    val clip = ClipData.newPlainText(label, this)
     clipboard.setPrimaryClip(clip)
 
     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
