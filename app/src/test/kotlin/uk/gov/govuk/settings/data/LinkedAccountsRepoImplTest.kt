@@ -14,7 +14,6 @@ import org.junit.Test
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 
 class LinkedAccountsRepoImplTest {
 

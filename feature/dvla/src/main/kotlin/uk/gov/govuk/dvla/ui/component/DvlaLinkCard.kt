@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.design.ui.component.AccountConnectionCard
 import uk.gov.govuk.design.ui.component.LoaderCard
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.R
 
 @Composable

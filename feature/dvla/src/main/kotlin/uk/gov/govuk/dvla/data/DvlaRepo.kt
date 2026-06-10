@@ -1,8 +1,11 @@
 package uk.gov.govuk.dvla.data
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.IdentityRepo
+import uk.gov.govuk.data.identity.model.LinkedService
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.map
@@ -11,7 +14,6 @@ import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.VesVehicle
@@ -23,10 +25,16 @@ import javax.inject.Singleton
 class DvlaRepo @Inject constructor(
     private val api: DvlaApi,
     private val authRepo: AuthRepo,
-    private val dvlaDataStore: DvlaDataStore
+    private val dvlaDataStore: DvlaDataStore,
+    private val identityRepo: IdentityRepo
 ) {
-    private val _linkState = MutableStateFlow(DvlaLinkState.CHECKING)
-    val linkState = _linkState.asStateFlow()
+
+    val linkState: Flow<ServiceLinkStatus> = identityRepo.linkStatusOf(LinkedService.DVLA)
+
+    val currentLinkState: ServiceLinkStatus
+        get() = identityRepo.currentStatusOf(LinkedService.DVLA)
+
+    suspend fun refreshLinkStatus() = identityRepo.getLinkedServices()
 
     internal suspend fun getSelectedDrivingView(): DrivingView? = dvlaDataStore.getSelectedDrivingView()
 
@@ -34,21 +42,6 @@ class DvlaRepo @Inject constructor(
 
     suspend fun clear() {
         dvlaDataStore.clear()
-    }
-
-    suspend fun isAccountLinked(): Result<Boolean> {
-        val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
-
-        return if (result is Result.Success) {
-            val linked = result.value.linked
-            _linkState.value = if (linked) DvlaLinkState.LINKED else DvlaLinkState.UNLINKED
-            Result.Success(linked)
-        } else {
-            _linkState.value = DvlaLinkState.UNLINKED
-
-            @Suppress("UNCHECKED_CAST")
-            result as Result<Boolean>
-        }
     }
 
     internal suspend fun linkAccount(token: String): Result<Unit> {
@@ -59,7 +52,8 @@ class DvlaRepo @Inject constructor(
         }
 
         if (result is Result.Success) {
-            _linkState.value = DvlaLinkState.LINKED
+            // sync linked services state
+            identityRepo.getLinkedServices()
         }
         return result
     }
@@ -67,7 +61,8 @@ class DvlaRepo @Inject constructor(
     suspend fun unlinkAccount(): Result<Unit> {
         val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
         if (result is Result.Success) {
-            _linkState.value = DvlaLinkState.UNLINKED
+            // sync linked services state
+            identityRepo.getLinkedServices()
         }
         return result
     }
