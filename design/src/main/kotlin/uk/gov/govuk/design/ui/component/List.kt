@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.extension.withAltText
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
@@ -336,13 +337,11 @@ fun IconListItem(
 @Composable
 fun StatusListItem(
     modifier: Modifier = Modifier,
-    title: String? = null,
-    description: String,
+    title: AccessibleString? = null,
+    description: AccessibleString,
     @DrawableRes icon: Int?,
     isFirst: Boolean = false,
-    isLast: Boolean = false,
-    titleAltText: String? = null,
-    descriptionAltText: String? = null
+    isLast: Boolean = false
 ) {
     CardListItem(
         modifier = modifier,
@@ -363,16 +362,16 @@ fun StatusListItem(
             Column(modifier = Modifier.weight(1f)) {
                 title?.let {
                     Title3BoldLabel(
-                        text = it,
-                        modifier = Modifier.withAltText(titleAltText)
+                        text = it.displayText,
+                        modifier = Modifier.withAltText(it.altText)
                     )
 
                     SmallVerticalSpacer()
                 }
 
                 BodyRegularLabel(
-                    text = description,
-                    modifier = Modifier.withAltText(descriptionAltText)
+                    text = description.displayText,
+                    modifier = Modifier.withAltText(description.altText)
                 )
             }
 
@@ -396,11 +395,9 @@ fun StatusListItem(
 
 @Composable
 fun AddressListItem(
-    name: String,
-    addressLines: List<String>,
+    name: AccessibleString,
+    address: AccessibleString,
     modifier: Modifier = Modifier,
-    nameAltText: String? = null,
-    addressAltText: String? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false,
 ) {
@@ -419,16 +416,16 @@ fun AddressListItem(
                 )
         ) {
             BodyBoldLabel(
-                text = name,
-                modifier = Modifier.withAltText(nameAltText),
+                text = name.displayText,
+                modifier = Modifier.withAltText(name.altText),
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
             SmallVerticalSpacer()
 
             BodyRegularLabel(
-                text = addressLines.joinToString(separator = "\n"),
-                modifier = Modifier.withAltText(addressAltText),
+                text = address.displayText,
+                modifier = Modifier.withAltText(address.altText),
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }
@@ -540,8 +537,8 @@ private fun ExternalLinkListItemButtonPreview() {
 private fun StatusListItemPreview() {
     GovUkTheme {
         StatusListItem(
-            title = "Tax",
-            description = "Valid until 1 February 2027",
+            title = AccessibleString("Tax"),
+            description = AccessibleString("Valid until 1 February 2027"),
             icon = R.drawable.ic_check_round,
             isFirst = false,
             isLast = false
@@ -554,7 +551,7 @@ private fun StatusListItemPreview() {
 private fun StatusListItemNoTitlePreview() {
     GovUkTheme {
         StatusListItem(
-            description = "Valid until 1 February 2027",
+            description = AccessibleString("Valid until 1 February 2027"),
             icon = R.drawable.ic_check_round,
             isFirst = false,
             isLast = false
@@ -567,11 +564,9 @@ private fun StatusListItemNoTitlePreview() {
 private fun AddressListItemPreview() {
     GovUkTheme {
         AddressListItem(
-            name = "Ms Anna Ornella Arenö",
-            addressLines = listOf(
-                "29 Orchard Drive",
-                "Milton Keynes",
-                "PA98 J83"
+            name = AccessibleString("Ms Anna Ornella Arenö"),
+            address = AccessibleString(
+                "29 Orchard Drive \nMilton Keynes \nPA98 J83"
             ),
             isFirst = false,
             isLast = false

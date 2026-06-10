@@ -13,6 +13,7 @@ import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.extension.longClickWithAltText
 import uk.gov.govuk.design.ui.extension.withAltText
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
@@ -46,17 +47,28 @@ internal fun LicenceSummaryCard(
 
         // address
         AddressListItem(
-            name = licenceSummary.name,
-            addressLines = licenceSummary.formattedAddressLines,
-            nameAltText = stringResource(R.string.licence_name_alt_text, licenceSummary.name),
-            addressAltText = stringResource(R.string.licence_address_alt_text, licenceSummary.accessibleAddressLines),
+            name = AccessibleString(
+                displayText = licenceSummary.name,
+                altText = stringResource(R.string.licence_name_alt_text, licenceSummary.name)
+            ),
+            address = AccessibleString(
+                displayText = licenceSummary.formattedAddressLines.joinToString(separator = "\n"),
+                altText = stringResource(
+                    R.string.licence_address_alt_text,
+                    licenceSummary.accessibleAddressLines
+                )
+            )
         )
 
         // valid until
         StatusListItem(
-            title = licenceSummary.licenceStatus.title,
-            description = licenceExpiration,
-            descriptionAltText = stringResource(R.string.licence_expiration_alt_text, licenceExpiration),
+            title = licenceSummary.licenceStatus.title?.let {
+                AccessibleString(displayText = it)
+            },
+            description = AccessibleString(
+                displayText = licenceExpiration,
+                altText = stringResource(R.string.licence_expiration_alt_text, licenceExpiration)
+            ),
             icon = licenceSummary.licenceStatus.icon,
             isLast = true
         )

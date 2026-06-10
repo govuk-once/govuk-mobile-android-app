@@ -23,6 +23,7 @@ import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
@@ -53,16 +54,26 @@ internal fun VehicleSummaryCard(
 
         // tax
         StatusListItem(
-            title = vehicleSummary.taxStatus.title,
-            description = vehicleSummary.taxStatus.description,
+            title = vehicleSummary.taxStatus.title?.let {
+                AccessibleString(displayText = it)
+            },
+            description = AccessibleString(
+                displayText = vehicleSummary.taxStatus.description
+            ),
             icon = vehicleSummary.taxStatus.icon,
         )
 
         // MOT
         StatusListItem(
-            title = vehicleSummary.motStatus.title,
-            titleAltText = vehicleSummary.motStatus.titleAltText,
-            description = vehicleSummary.motStatus.description,
+            title = vehicleSummary.motStatus.title?.let {
+                AccessibleString(
+                    displayText = it,
+                    altText = vehicleSummary.motStatus.titleAltText
+                )
+            },
+            description = AccessibleString(
+                displayText = vehicleSummary.motStatus.description
+            ),
             icon = vehicleSummary.motStatus.icon,
         )
 
