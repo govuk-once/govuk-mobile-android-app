@@ -20,6 +20,7 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.DvlaLinkState
@@ -66,7 +67,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             assertEquals(UiState.Hidden, viewModel.uiState.value)
             coVerify(exactly = 0) { repo.getCustomerSummary() }
-            coVerify(exactly = 0) { repo.getLicenceDetails() }
             coVerify(exactly = 0) { repo.getDriverSummary() }
         }
 
@@ -226,6 +226,33 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val currentState = viewModel.uiState.value as UiState.Default
             assertEquals(LicenceSummaryUiState.Success(licenceUiModel), currentState.licenceState)
+        }
+
+    @Test
+    fun `Given linkState emits LINKED, when viewModel initialised, then check code creation and cancellation are called`() =
+        runTest(dispatcher) {
+            val token = "token-id"
+
+            val mockCheckCode = mockk<CheckCodeDetails> {
+                every { tokenId } returns token
+            }
+
+            every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+            coEvery { repo.getCheckCodes() } returns Result.Success(mockk())
+            coEvery { repo.createCheckCode() } returns Result.Success(mockCheckCode)
+            coEvery { repo.cancelCheckCode(any()) } returns Result.Success(mockk())
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                repo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient
+            )
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { repo.getCheckCodes() }
+            coVerify(exactly = 1) { repo.createCheckCode() }
+            coVerify(exactly = 1) { repo.cancelCheckCode(token) }
         }
 
     @Test

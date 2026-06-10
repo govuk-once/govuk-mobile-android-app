@@ -47,6 +47,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                         setUiStateToDefault()
                         fetchDriverSummary()
                         fetchCustomerSummary()
+                        createListCancelCheckCode()
                     }
 
                     DvlaLinkState.UNLINKED,
@@ -134,6 +135,29 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private fun updateLicenceState(newState: LicenceSummaryUiState) {
         _uiState.update { state ->
             if (state is UiState.Default) state.copy(licenceState = newState) else state
+        }
+    }
+
+    private fun createListCancelCheckCode() {
+        // TODO: call unused endpoints for pen testing, to be removed
+
+        // launch calls in parallel
+        viewModelScope.launch {
+            dvlaRepo.getCheckCodes()
+        }
+
+        viewModelScope.launch {
+            val createResult = dvlaRepo.createCheckCode()
+
+            val tokenIdToCancel = if (createResult is Result.Success) {
+                createResult.value.tokenId
+            } else {
+                // if creation fails call the cancel endpoint with a dummy token
+                // call will fail but can still be captured for pen testing
+                "dummy-token"
+            }
+
+            dvlaRepo.cancelCheckCode(tokenIdToCancel)
         }
     }
 }

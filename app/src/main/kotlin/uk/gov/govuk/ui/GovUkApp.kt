@@ -389,6 +389,7 @@ private fun GovUkNavHost(
     paddingValues: PaddingValues
 ) {
     val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser)
+    val externalLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
     val context = LocalContext.current
     var showDeepLinkNotFoundAlert by remember { mutableStateOf(false) }
     var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
@@ -616,7 +617,7 @@ private fun GovUkNavHost(
                 navController.navigateToDvlaLink()
             },
             launchBrowser = { url ->
-                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
             },
             onLinkComplete = {
                 navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
