@@ -12,7 +12,9 @@ import uk.gov.govuk.data.identity.remote.IdentityApi
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.data.model.Result
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class IdentityRepo @Inject constructor(
     private val api: IdentityApi,
     private val authRepo: AuthRepo
@@ -53,7 +55,7 @@ class IdentityRepo @Inject constructor(
         }
     }
 
-    // for one-off check
+    // one-off check
     fun currentStatusOf(service: LinkedService): ServiceLinkStatus {
         return when (val state = _state.value) {
             is IdentityState.Checking -> ServiceLinkStatus.CHECKING

@@ -1,7 +1,6 @@
 package uk.gov.govuk.dvla.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.LinkedService

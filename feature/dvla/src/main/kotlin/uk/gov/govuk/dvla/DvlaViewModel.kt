@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
@@ -77,7 +78,7 @@ internal class DvlaViewModel @Inject constructor(
         val token: String? = savedStateHandle[ARG_DVLA_TOKEN]
 
         when {
-            dvlaRepo.linkState.value == DvlaLinkState.LINKED -> unlinkDvlaAccount()
+            dvlaRepo.currentLinkState == ServiceLinkStatus.LINKED -> unlinkDvlaAccount()
             token != null -> handleAuthRedirect(token)
             else -> startAuthFlow()
         }

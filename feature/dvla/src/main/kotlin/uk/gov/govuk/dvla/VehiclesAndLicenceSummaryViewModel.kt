@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -36,15 +37,15 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         viewModelScope.launch {
             dvlaRepo.linkState.collect { state ->
                 when (state) {
-                    DvlaLinkState.LINKED -> {
+                    ServiceLinkStatus.LINKED -> {
                         setUiStateToDefault()
                         fetchDriverSummary()
                         fetchCustomerSummary()
                         createListCancelCheckCode()
                     }
 
-                    DvlaLinkState.UNLINKED,
-                    DvlaLinkState.CHECKING -> _uiState.value = UiState.Hidden
+                    ServiceLinkStatus.UNLINKED,
+                    ServiceLinkStatus.CHECKING -> _uiState.value = UiState.Hidden
                 }
             }
         }

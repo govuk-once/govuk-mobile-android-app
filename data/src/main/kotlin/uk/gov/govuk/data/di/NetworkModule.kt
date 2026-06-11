@@ -35,9 +35,18 @@ class NetworkModule {
     @Singleton
     @Named("FlexRetrofit")
     fun provideAuthenticateRetrofit(authRepo: AuthRepo): Retrofit {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+        }
+
         val client = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor())
             .addInterceptor(AuthorizationInterceptor(authRepo))
+            .addInterceptor(loggingInterceptor)
             // TODO: Consider removing below custom timeouts when Flex is stable
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
