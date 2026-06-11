@@ -172,6 +172,8 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.scalars)
 
+    implementation(libs.qualtrics.digital.sdk)
+
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
