@@ -27,6 +27,14 @@
     <string name="vehicle_details_title">Details</string>
     <string name="registration_plate_alt_text">Number plate %1$s</string>
     <string name="more_options_alt_text">More options</string>
+    <string name="licence_type_full">Full licence</string>
+    <string name="licence_type_provisional">Provisional licence</string>
+    <string name="licence_type_alt_text">Licence type %1$s</string>
+    <string name="licence_number_alt_text">Licence number %1$s</string>
+    <string name="licence_name_alt_text">Name on licence %1$s</string>
+    <string name="licence_address_alt_text">Address on licence %1$s</string>
+    <string name="licence_expiration_alt_text">Licence %1$s</string>
+    <string name="clipboard_data_label_licence_number">copy licence number</string>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>

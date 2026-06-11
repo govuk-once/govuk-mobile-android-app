@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.extension.withAltText
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
@@ -335,13 +336,12 @@ fun IconListItem(
 
 @Composable
 fun StatusListItem(
-    title: String,
-    description: String,
-    @DrawableRes icon: Int?,
     modifier: Modifier = Modifier,
+    title: AccessibleString? = null,
+    description: AccessibleString,
+    @DrawableRes icon: Int?,
     isFirst: Boolean = false,
-    isLast: Boolean = false,
-    titleAltText: String? = null
+    isLast: Boolean = false
 ) {
     CardListItem(
         modifier = modifier,
@@ -360,14 +360,19 @@ fun StatusListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Title3BoldLabel(
-                    text = title,
-                    modifier = modifier.withAltText(titleAltText)
+                title?.let {
+                    Title3BoldLabel(
+                        text = it.displayText,
+                        modifier = Modifier.withAltText(it.altText)
+                    )
+
+                    SmallVerticalSpacer()
+                }
+
+                BodyRegularLabel(
+                    text = description.displayText,
+                    modifier = Modifier.withAltText(description.altText)
                 )
-
-                SmallVerticalSpacer()
-
-                BodyRegularLabel(text = description)
             }
 
             MediumHorizontalSpacer()
@@ -384,6 +389,45 @@ fun StatusListItem(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AddressListItem(
+    name: AccessibleString,
+    address: AccessibleString,
+    modifier: Modifier = Modifier,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                )
+        ) {
+            BodyBoldLabel(
+                text = name.displayText,
+                modifier = Modifier.withAltText(name.altText),
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+
+            SmallVerticalSpacer()
+
+            BodyRegularLabel(
+                text = address.displayText,
+                modifier = Modifier.withAltText(address.altText),
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
         }
     }
 }
@@ -493,9 +537,37 @@ private fun ExternalLinkListItemButtonPreview() {
 private fun StatusListItemPreview() {
     GovUkTheme {
         StatusListItem(
-            title = "Tax",
-            description = "Valid until 1 February 2027",
+            title = AccessibleString("Tax"),
+            description = AccessibleString("Valid until 1 February 2027"),
             icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemNoTitlePreview() {
+    GovUkTheme {
+        StatusListItem(
+            description = AccessibleString("Valid until 1 February 2027"),
+            icon = R.drawable.ic_check_round,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AddressListItemPreview() {
+    GovUkTheme {
+        AddressListItem(
+            name = AccessibleString("Ms Anna Ornella Arenö"),
+            address = AccessibleString(
+                "29 Orchard Drive \nMilton Keynes \nPA98 J83"
+            ),
             isFirst = false,
             isLast = false
         )
