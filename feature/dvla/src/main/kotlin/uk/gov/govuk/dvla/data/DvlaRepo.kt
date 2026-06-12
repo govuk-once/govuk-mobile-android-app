@@ -60,8 +60,8 @@ class DvlaRepo @Inject constructor(
     suspend fun unlinkAccount(): Result<Unit> {
         val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
         if (result is Result.Success) {
-            // sync linked services state
-            identityRepo.getLinkedServices()
+            clear()
+            identityRepo.getLinkedServices() // sync linked services state
         }
         return result
     }

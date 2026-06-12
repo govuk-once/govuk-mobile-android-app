@@ -16,6 +16,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
@@ -47,7 +48,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     @Test
     fun `Given linkState emits UNLINKED, when viewModel initialised, then state is Hidden and no calls are made`() =
         runTest(dispatcher) {
-            every { repo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+            every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
             advanceUntilIdle()
@@ -65,7 +66,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             val customerSummary = mockk<CustomerSummary> {
                 every { vehicles } returns listOf(vehicle)
             }
-            every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+            every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { repo.getCustomerSummary() } returns Result.Success(customerSummary)
             coEvery { repo.getDriverSummary() } returns Result.Success(mockk())
 
@@ -87,7 +88,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     @Test
     fun `Given account is linked then unlinked, state switches from Success to Hidden`() =
         runTest(dispatcher) {
-            val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
+            val linkStateFlow = MutableStateFlow(ServiceLinkStatus.LINKED)
 
             val vehicle = mockk<CustomerVehicle>()
             val vehicleSummaryUiModel = mockk<VehicleSummaryUiModel>()
@@ -108,7 +109,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
 
             // unlinking account in settings
-            linkStateFlow.value = DvlaLinkState.UNLINKED
+            linkStateFlow.value = ServiceLinkStatus.UNLINKED
             advanceUntilIdle()
 
             assertEquals(UiState.Hidden, viewModel.uiState.value)
@@ -116,7 +117,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
     @Test
     fun `When onVehiclesSelected, then ui state driving view is vehicles`() = runTest(dispatcher) {
-        val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
+        val linkStateFlow = MutableStateFlow(ServiceLinkStatus.LINKED)
         every { repo.linkState } returns linkStateFlow
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
@@ -131,7 +132,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
     @Test
     fun `When onLicenceSelected, then ui state driving view is licence`() = runTest(dispatcher) {
-        val linkStateFlow = MutableStateFlow(DvlaLinkState.LINKED)
+        val linkStateFlow = MutableStateFlow(ServiceLinkStatus.LINKED)
         every { repo.linkState } returns linkStateFlow
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(repo, mapper)
@@ -153,7 +154,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 every { tokenId } returns token
             }
 
-            every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+            every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { repo.getCheckCodes() } returns Result.Success(mockk())
             coEvery { repo.createCheckCode() } returns Result.Success(mockCheckCode)
             coEvery { repo.cancelCheckCode(any()) } returns Result.Success(mockk())
