@@ -21,21 +21,21 @@ class LinkedAccountsRepoImpl @Inject constructor(
 
     override fun getLinkedAccounts(): Flow<List<LinkedAccountUiModel>> {
         return identityRepo.state.map { state ->
-            val accounts = mutableListOf<LinkedAccountUiModel>()
+            if (state !is IdentityState.Success) return@map emptyList()
 
-            if (state is IdentityState.Success) {
-                // any future linked service would be checked here
+            buildList {
+                // DVLA
                 if (state.services.contains(LinkedService.DVLA) && flagRepo.isDvlaLinkEnabled()) {
-                    accounts.add(
+                    add(
                         LinkedAccountUiModel(
                             serviceName = LinkedService.DVLA.serviceName,
                             displayTitleRes = uk.gov.govuk.dvla.R.string.dvla_account_title
                         )
                     )
                 }
-            }
 
-            accounts
+                // other services can be added here
+            }
         }
     }
 
