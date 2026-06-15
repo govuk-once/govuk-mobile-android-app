@@ -1,43 +1,34 @@
 package uk.gov.govuk.dvla.ui.component
 
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
+import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
 internal fun VehicleSummaryCard(
@@ -58,22 +49,31 @@ internal fun VehicleSummaryCard(
             registration = vehicleSummary.registration,
             make = vehicleSummary.make,
             model = vehicleSummary.model,
-            onMoreClick = onMoreClick,
-            isFirst = true
+            onMoreClick = onMoreClick
         )
 
         // tax
         StatusListItem(
-            title = vehicleSummary.taxStatus.title,
-            description = vehicleSummary.taxStatus.description,
+            title = vehicleSummary.taxStatus.title?.let {
+                AccessibleString(displayText = it)
+            },
+            description = AccessibleString(
+                displayText = vehicleSummary.taxStatus.description
+            ),
             icon = vehicleSummary.taxStatus.icon,
         )
 
         // MOT
         StatusListItem(
-            title = vehicleSummary.motStatus.title,
-            titleAltText = vehicleSummary.motStatus.titleAltText,
-            description = vehicleSummary.motStatus.description,
+            title = vehicleSummary.motStatus.title?.let {
+                AccessibleString(
+                    displayText = it,
+                    altText = vehicleSummary.motStatus.titleAltText
+                )
+            },
+            description = AccessibleString(
+                displayText = vehicleSummary.motStatus.description
+            ),
             icon = vehicleSummary.motStatus.icon,
         )
 
@@ -92,7 +92,7 @@ internal fun RegistrationPlate(
     registration: String,
     modifier: Modifier = Modifier
 ) {
-    val accessibleNumberPlate = registration.map { "$it " }.joinToString("").trim() // 'FH08PDH' to 'F H 0 8 P D H'
+    val accessibleNumberPlate = registration.toSpacedString()
     val altText = stringResource(id = R.string.registration_plate_alt_text, accessibleNumberPlate)
 
     Box(
@@ -132,49 +132,18 @@ fun VehicleSummaryHeader(
     make: String,
     model: String,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isFirst: Boolean = true
+    modifier: Modifier = Modifier
 ) {
-    CardListItem(
+    SummaryCardHeader(
         modifier = modifier,
-        isFirst = isFirst,
-        isLast = false,
-        drawDivider = true
+        leadingContent = {
+            // reg plate
+            RegistrationPlate(registration = registration)
+        },
+        onMoreClick = onMoreClick
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(GovUkTheme.spacing.medium)
-        ) {
-            // reg plate and overflow menu
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                RegistrationPlate(registration = registration)
-
-                // overflow
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(GovUkTheme.colourScheme.surfaces.cardOverflowButton)
-                        .clickable(onClick = onMoreClick),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_more),
-                        contentDescription = stringResource(R.string.more_options_alt_text),
-                        tint = GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // make and model
+        // make and model
+        Column(modifier = Modifier.semantics(mergeDescendants = true) {}) {
             Title1BoldLabel(
                 text = make,
                 color = GovUkTheme.colourScheme.textAndIcons.primary
