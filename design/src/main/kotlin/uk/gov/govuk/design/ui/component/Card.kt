@@ -24,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -335,25 +336,34 @@ fun CentredCardWithIcon(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     title: String? = null,
-    description: String? = null
+    description: String? = null,
+    drawBottomStroke: Boolean = true
 ) {
-    Card(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
-            .drawBottomStroke(
-                colour = GovUkTheme.colourScheme.strokes.cardDefault,
-                cornerRadius = GovUkTheme.numbers.cornerAndroidList
+            .then(
+                if (drawBottomStroke) {
+                    Modifier.drawBottomStroke(
+                        colour = GovUkTheme.colourScheme.strokes.cardDefault,
+                        cornerRadius = GovUkTheme.numbers.cornerAndroidList
+                    )
+                } else Modifier
             ),
-        colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list)
+        shape = CardDefaults.shape,
+        color = GovUkTheme.colourScheme.surfaces.list
     ) {
-        CentredContentWithIcon(
-            icon = icon,
-            modifier = Modifier
-                .clickable(onClick = onClick),
-            title = title,
-            description = description
-        )
+        Box(
+            modifier = Modifier.clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            CentredContentWithIcon(
+                icon = icon,
+                title = title,
+                description = description
+            )
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,7 +16,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -117,13 +120,22 @@ private fun VehiclesViewContent(
         is VehiclesSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets
         }
+
         is VehiclesSummaryUiState.Success -> {
-            VehiclesSummarySuccess(
-                vehicles = vehiclesState.vehicles,
-                onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
-                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
-                modifier = modifier
-            )
+
+            if (vehiclesState.vehicles.isEmpty()) {
+                VehiclesSummaryEmpty(
+                    onAddVehiclesClick = { /* TODO to be handled in next ticket(s) */ },
+                    modifier = modifier
+                )
+            } else {
+                VehiclesSummarySuccess(
+                    vehicles = vehiclesState.vehicles,
+                    onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
+                    onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                    modifier = modifier
+                )
+            }
         }
     }
 }
@@ -191,6 +203,25 @@ private fun VehiclesSummarySuccess(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+private fun VehiclesSummaryEmpty(
+    onAddVehiclesClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        CentredCardWithIcon(
+            onClick = onAddVehiclesClick,
+            icon = uk.gov.govuk.design.R.drawable.ic_add,
+            description = stringResource(R.string.add_your_vehicles),
+            drawBottomStroke = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 222.dp) // match the LoaderCard height
+        )
+        SmallVerticalSpacer()
     }
 }
 
