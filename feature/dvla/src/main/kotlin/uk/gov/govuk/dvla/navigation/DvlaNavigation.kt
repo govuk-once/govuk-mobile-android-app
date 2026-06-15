@@ -11,14 +11,18 @@ import androidx.navigation.navArgument
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
+import uk.gov.govuk.dvla.ui.VehicleDetailsRoute
 
 const val DVLA_GRAPH_ROUTE = "dvla_graph_route"
 const val DVLA_LINK_INTRO_ROUTE = "dvla_link_intro_route"
 const val DVLA_LINK_ROUTE = "dvla_link_route"
 const val DVLA_DEEP_LINK_PATH = "/returnedToken"
+const val VEHICLE_DETAILS_ROUTE = "vehicle_details_route"
 const val ARG_DVLA_TOKEN = "token"
+const val ARG_VEHICLE_REGISTRATION = "vehicle_registration"
 
 fun NavGraphBuilder.dvlaGraph(
+    onBack: () -> Unit,
     onIntroClose: () -> Unit,
     onContinueToLink: () -> Unit,
     launchBrowser: (String) -> Unit,
@@ -68,6 +72,21 @@ fun NavGraphBuilder.dvlaGraph(
                 modifier = modifier
             )
         }
+
+        composable(
+            route = "$VEHICLE_DETAILS_ROUTE/{$ARG_VEHICLE_REGISTRATION}",
+            arguments = listOf(
+                navArgument(ARG_VEHICLE_REGISTRATION) {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) {
+            VehicleDetailsRoute(
+                onBack = onBack,
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -77,4 +96,8 @@ fun NavController.navigateToDvlaLinkIntro() {
 
 fun NavController.navigateToDvlaLink() {
     navigate(DVLA_LINK_ROUTE)
+}
+
+fun NavController.navigateToVehicleDetails(registration: String) {
+    navigate("$VEHICLE_DETAILS_ROUTE/$registration")
 }

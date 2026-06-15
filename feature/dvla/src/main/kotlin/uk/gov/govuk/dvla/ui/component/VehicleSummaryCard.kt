@@ -1,21 +1,12 @@
 package uk.gov.govuk.dvla.ui.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -28,12 +19,11 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
-import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
 internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
-    onDetailsClick: () -> Unit,
+    onVehicleDetailsClick: (registration: String) -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -80,48 +70,9 @@ internal fun VehicleSummaryCard(
         // details
         InternalLinkListItem(
             title = stringResource(R.string.vehicle_details_title),
-            onClick = onDetailsClick,
+            onClick = { onVehicleDetailsClick(vehicleSummary.registration) },
             isFirst = false,
             isLast = true
-        )
-    }
-}
-
-@Composable
-internal fun RegistrationPlate(
-    registration: String,
-    modifier: Modifier = Modifier
-) {
-    val accessibleNumberPlate = registration.toSpacedString()
-    val altText = stringResource(id = R.string.registration_plate_alt_text, accessibleNumberPlate)
-
-    Box(
-        modifier = modifier
-            .height(36.dp)
-            .background(
-                color = GovUkTheme.colourScheme.surfaces.registrationPlate,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = GovUkTheme.colourScheme.strokes.registrationPlate,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(
-                top = GovUkTheme.spacing.small,
-                start = GovUkTheme.spacing.small,
-                end = GovUkTheme.spacing.small,
-                bottom = 5.dp
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = registration,
-            style = GovUkTheme.typography.registrationPlate,
-            color = GovUkTheme.colourScheme.textAndIcons.registrationPlateText,
-            modifier = Modifier.semantics {
-                contentDescription = altText
-            }
         )
     }
 }
@@ -198,7 +149,7 @@ private fun VehicleSummaryCardPreview() {
                     icon = uk.gov.govuk.design.R.drawable.ic_cancel_round
                 )
             ),
-            onDetailsClick = {},
+            onVehicleDetailsClick = {},
             onMoreClick = {}
         )
     }

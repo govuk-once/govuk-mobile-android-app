@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -46,13 +47,15 @@ fun InternalLinkListItem(
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
+    background: Color? = null,
     style: InternalLinkListItemStyle = InternalLinkListItemStyle.Default
 ) {
     CardListItem(
         modifier = modifier,
         onClick = onClick,
         isFirst = isFirst,
-        isLast = isLast
+        isLast = isLast,
+        background = background
     ) {
         Row(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
@@ -81,8 +84,14 @@ fun InternalLinkListItem(
             when (style) {
                 is InternalLinkListItemStyle.Status -> {
                     BodyRegularLabel(
-                        text = style.title,
+                        text = style.status,
                         color = GovUkTheme.colourScheme.textAndIcons.iconTertiary
+                    )
+                }
+
+                is InternalLinkListItemStyle.Info -> {
+                    BodyRegularLabel(
+                        text = style.info
                     )
                 }
 
@@ -341,13 +350,15 @@ fun StatusListItem(
     description: AccessibleString,
     @DrawableRes icon: Int?,
     isFirst: Boolean = false,
-    isLast: Boolean = false
+    isLast: Boolean = false,
+    background: Color? = null
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = true
+        drawDivider = true,
+        background = background
     ) {
         Row(
             modifier = Modifier
@@ -439,6 +450,7 @@ fun CardListItem(
     isFirst: Boolean = true,
     isLast: Boolean = true,
     drawDivider: Boolean = true,
+    background: Color? = null,
     content: @Composable () -> Unit,
 ) {
     val cornerRadius = 12.dp
@@ -452,7 +464,7 @@ fun CardListItem(
                     bottomEnd = if (isLast) cornerRadius else 0.dp
                 )
             )
-            .background(GovUkTheme.colourScheme.surfaces.list)
+            .background(background ?: GovUkTheme.colourScheme.surfaces.list)
             .then(
                 onClick?.let {
                     Modifier.clickable { it() }
@@ -488,6 +500,14 @@ private fun InternalLinkListItemDescriptionPreview() {
 private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
         InternalLinkListItem("Title", style = InternalLinkListItemStyle.Status("Status"))
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemInfoPreview() {
+    GovUkTheme {
+        InternalLinkListItem(title = "Title", style = InternalLinkListItemStyle.Info("Info"))
     }
 }
 

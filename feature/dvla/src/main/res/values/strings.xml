@@ -23,7 +23,7 @@
     <string name="acronym_mot_alt_text">M.O.T.</string>
 
     <string name="tax_status_title">Tax</string>
-    <string name="valid_until">Valid until %s</string>
+    <string name="valid_until">Valid until %1$s</string>
     <string name="vehicle_details_title">Details</string>
     <string name="registration_plate_alt_text">Number plate %1$s</string>
     <string name="more_options_alt_text">More options</string>
@@ -42,4 +42,57 @@
 
     <string name="vehicles">Vehicles</string>
     <string name="licence">Licence</string>
+
+    <!-- Vehicle Details start-->
+    <string name="diesel">Diesel</string>
+    <string name="petrol">Petrol</string>
+    <string name="hybrid_electric">Hybrid electric</string>
+    <string name="electric">Electric</string>
+    <string name="gas">Gas</string>
+    <string name="steam">Steam</string>
+    <string name="petrol_and_gas">Petrol and gas</string>
+    <string name="gas_bi_fuel">Gas bi-fuel</string>
+    <string name="gas_diesel">Gas and diesel</string>
+    <string name="fuel_cells">Hydrogen</string>
+    <string name="electric_diesel">Electric diesel</string>
+    <string name="other">Other</string>
+
+    <string name="status_title">Status</string>
+    <string name="make_title">Make</string>
+    <string name="model_title">Model</string>
+    <string name="first_registered_title">First registered</string>
+    <string name="fuel_type_title">Fuel type</string>
+    <string name="colour_title">Colour</string>
+    <string name="engine_size_title">Engine size</string>
+    <string name="emissions_title">CO2 emissions</string>
+    <string name="specification">Specification</string>
+    <string name="vehicle_details_success_title">Vehicle Details Screen</string>
+    <string name="and">and</string>
+
+    <string name="first_registered_in_alt_text">First registered in %1$s</string>
+    <string name="fuel_type_alt_text">Fuel type %1$s</string>
+    <string name="colour_alt_text">Colour %1$s</string>
+    <string name="emissions_alt_text">grams per kilometre</string>
+
+    <string name="brown">Brown</string>
+    <string name="bronze">Bronze</string>
+    <string name="red">Red</string>
+    <string name="pink">Pink</string>
+    <string name="orange">Orange</string>
+    <string name="yellow">Yellow</string>
+    <string name="gold">Gold</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="purple">Purple</string>
+    <string name="grey">Grey</string>
+    <string name="silver">Silver</string>
+    <string name="white">White</string>
+    <string name="black">Black</string>
+    <string name="multi_colour">Multi-colour</string>
+    <string name="beige">Beige</string>
+    <string name="maroon">Maroon</string>
+    <string name="turquoise">Turquoise</string>
+    <string name="cream">Cream</string>
+    <string name="not_stated">Not stated</string>
+    <!-- Vehicle Details end-->
 </resources>

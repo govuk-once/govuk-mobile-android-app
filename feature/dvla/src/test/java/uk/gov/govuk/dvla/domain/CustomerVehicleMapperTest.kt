@@ -6,6 +6,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.gov.govuk.dvla.remote.model.Vehicle
+import uk.gov.govuk.dvla.remote.model.common.VehicleColour
 import uk.gov.govuk.dvla.remote.model.common.MotStatus as RemoteMotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus as RemoteTaxStatus
 import java.time.LocalDate
@@ -23,6 +24,12 @@ class CustomerVehicleMapperTest {
             every { motExpiryDate } returns "2026-06-01"
             every { taxStatus } returns RemoteTaxStatus.TAXED
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
+            every { dateOfFirstRegistration } returns "2020-06-01"
+            every { fuelType } returns FuelType.PETROL
+            every { colour } returns VehicleColour.MULTI_COLOUR
+            every { secondaryColour } returns VehicleColour.MULTI_COLOUR
+            every { engineCapacity } returns 1000
+            every { euroStatus } returns "Euro Status"
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -34,6 +41,12 @@ class CustomerVehicleMapperTest {
         assertEquals(LocalDate.of(2025, 12, 1), result.taxExpiryDate)
         assertEquals(LocalDate.of(2026, 6, 1), result.motExpiryDate)
         assertEquals(TaxStatus.TAXED, result.taxStatus)
+        assertEquals(LocalDate.of(2020, 6, 1), result.dateOfFirstRegistration)
+        assertEquals(FuelType.PETROL, result.fuelType)
+        assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
+        assertEquals(VehicleColour.MULTI_COLOUR, result.secondaryColour)
+        assertEquals(1000, result.engineCapacity)
+        assertEquals("Euro Status", result.euroStatus)
     }
 
     @Test
@@ -47,6 +60,12 @@ class CustomerVehicleMapperTest {
             every { motExpiryDate } returns null
             every { taxStatus } returns null
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
+            every { dateOfFirstRegistration } returns "2020-06-01"
+            every { fuelType } returns FuelType.PETROL
+            every { colour } returns VehicleColour.MULTI_COLOUR
+            every { secondaryColour } returns null
+            every { engineCapacity } returns null
+            every { euroStatus } returns null
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -58,5 +77,11 @@ class CustomerVehicleMapperTest {
         assertNull(result.taxExpiryDate)
         assertNull(result.motExpiryDate)
         assertEquals(TaxStatus.UNKNOWN, result.taxStatus)
+        assertEquals(LocalDate.of(2020, 6, 1), result.dateOfFirstRegistration)
+        assertEquals(FuelType.PETROL, result.fuelType)
+        assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
+        assertNull(result.secondaryColour)
+        assertNull(result.engineCapacity)
+        assertNull(result.euroStatus)
     }
 }

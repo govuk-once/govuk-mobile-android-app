@@ -6,6 +6,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
+import java.time.LocalDate
 
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus as RemoteTaxStatus
 import uk.gov.govuk.dvla.remote.model.common.MotStatus as RemoteMotStatus
@@ -20,9 +21,9 @@ class VesVehicleMapperTest {
             every { colour } returns "RED"
             every { yearOfManufacture } returns 2019
             every { taxStatus } returns RemoteTaxStatus.TAXED
-            every { taxDueDate } returns "2027-04-30T00:00:00.000Z"
+            every { taxDueDate } returns "1988-10-25"
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
-            every { motExpiryDate } returns "2025-05-20T00:00:00.000Z"
+            every { motExpiryDate } returns "1988-11-25"
             every { fuelType } returns "PETROL"
             every { engineCapacity } returns 2000
             every { co2Emissions } returns 300
@@ -35,9 +36,9 @@ class VesVehicleMapperTest {
         assertEquals("RED", domainModel.colour)
         assertEquals(2019, domainModel.yearOfManufacture)
         assertEquals(TaxStatus.TAXED, domainModel.taxStatus)
-        assertEquals("2027-04-30T00:00:00.000Z", domainModel.taxDueDate)
+        assertEquals(LocalDate.of(1988, 10, 25), domainModel.taxDueDate)
         assertEquals(MotStatus.UNKNOWN, domainModel.motStatus)
-        assertEquals("2025-05-20T00:00:00.000Z", domainModel.motExpiryDate)
+        assertEquals(LocalDate.of(1988, 11, 25), domainModel.motExpiryDate)
         assertEquals("PETROL", domainModel.fuelType)
         assertEquals(2000, domainModel.engineCapacity)
         assertEquals(300, domainModel.co2Emissions)

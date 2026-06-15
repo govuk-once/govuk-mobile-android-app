@@ -114,9 +114,11 @@ private fun Header(
             .semantics { this.hideFromAccessibility() }
     ) {
         val hasDismissButton = dismissStyle is HeaderDismissStyle.DismissButton
-        val hasActionButton = actionStyle is HeaderActionStyle.ActionButton
+        val hasTextActionButton = actionStyle is HeaderActionStyle.TextActionButton
+        val hasOverflowActionButton = actionStyle is HeaderActionStyle.OverflowActionButton
 
-        if (hasDismissButton || hasActionButton) {
+        val headerHasAButton = hasDismissButton || hasTextActionButton || hasOverflowActionButton
+        if (headerHasAButton) {
             Row(
                 modifier = Modifier
                     .height(64.dp)
@@ -135,7 +137,7 @@ private fun Header(
                     }
                 }
                 when (actionStyle) {
-                    is HeaderActionStyle.ActionButton -> {
+                    is HeaderActionStyle.TextActionButton -> {
                         Spacer(Modifier.weight(1f))
 
                         TextButton(
@@ -150,6 +152,16 @@ private fun Header(
                                 }
                             )
                         }
+                    }
+                    is HeaderActionStyle.OverflowActionButton -> {
+                        Spacer(Modifier.weight(1f))
+
+                        OverflowButton(
+                            onClick = actionStyle.onClick,
+                            modifier = Modifier.padding(end = GovUkTheme.spacing.medium),
+                            altText = actionStyle.altText
+
+                        )
                     }
                     else -> { /* Do nothing */ }
                 }
@@ -218,7 +230,7 @@ private fun FullScreenHeaderNoTextWithBackAndActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             dismissStyle = HeaderDismissStyle.Back {},
-            actionStyle = HeaderActionStyle.ActionButton("Done", {}, "Alt text")
+            actionStyle = HeaderActionStyle.TextActionButton("Done", {}, "Alt text")
         )
     }
 }
@@ -230,7 +242,7 @@ private fun FullScreenHeaderBackAndActionPreview() {
         FullScreenHeader(
             text = "Child page title",
             dismissStyle = HeaderDismissStyle.Back {},
-            actionStyle = HeaderActionStyle.ActionButton("Done", {}, "Alt text")
+            actionStyle = HeaderActionStyle.TextActionButton("Done", {}, "Alt text")
         )
     }
 }
@@ -241,7 +253,7 @@ private fun FullScreenHeaderActionNoBackPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title",
-            actionStyle = HeaderActionStyle.ActionButton("Done", {}, "Alt text")
+            actionStyle = HeaderActionStyle.TextActionButton("Done", {}, "Alt text")
         )
     }
 }
@@ -279,11 +291,22 @@ private fun FullScreenHeaderLongTextNoActionOrBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
+private fun FullScreenHeaderWithOverflowActionPreview() {
+    GovUkTheme {
+        FullScreenHeader(
+            text = "This is a very long child page title that goes on and on",
+            actionStyle = HeaderActionStyle.OverflowActionButton({})
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun ChildPageHeaderNoTextWithBackAndActionPreview() {
     GovUkTheme {
         ChildPageHeader(
             dismissStyle = HeaderDismissStyle.Back {},
-            actionStyle = HeaderActionStyle.ActionButton("Done", {}, "Alt text")
+            actionStyle = HeaderActionStyle.TextActionButton("Done", {}, "Alt text")
         )
     }
 }
@@ -295,7 +318,7 @@ private fun ChildPageHeaderBackAndActionPreview() {
         ChildPageHeader(
             text = "Child page title",
             dismissStyle = HeaderDismissStyle.Back {},
-            actionStyle = HeaderActionStyle.ActionButton("Done", {}, "Alt text")
+            actionStyle = HeaderActionStyle.TextActionButton("Done", {}, "Alt text")
         )
     }
 }
@@ -306,7 +329,7 @@ private fun ChildPageHeaderActionNoBackPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title",
-            actionStyle = HeaderActionStyle.ActionButton("Done", {}, "Alt text")
+            actionStyle = HeaderActionStyle.TextActionButton("Done", {}, "Alt text")
         )
     }
 }
@@ -348,7 +371,7 @@ private fun ModalHeaderPreview() {
     GovUkTheme {
         ModalHeader(
             text = "Modal title",
-            actionStyle = HeaderActionStyle.ActionButton(
+            actionStyle = HeaderActionStyle.TextActionButton(
                 title = "Done",
                 onClick = {}
             )
@@ -363,7 +386,7 @@ private fun ModalHeaderWithClosePreview() {
         ModalHeader(
             text = "Modal title",
             dismissStyle = HeaderDismissStyle.Close {},
-            actionStyle = HeaderActionStyle.ActionButton(
+            actionStyle = HeaderActionStyle.TextActionButton(
                 title = "Done",
                 onClick = {}
             )

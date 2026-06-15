@@ -2,18 +2,35 @@ package uk.gov.govuk.dvla.domain
 
 import uk.gov.govuk.data.extension.toLocalDateOrNull
 import uk.gov.govuk.dvla.remote.model.Vehicle
+import uk.gov.govuk.dvla.remote.model.common.VehicleColour
 import java.time.LocalDate
+
+interface VehicleSummary {
+    val taxStatus: TaxStatus
+    val taxExpiryDate: LocalDate?
+    val taxClass: String
+    val motStatus: MotStatus
+    val motExpiryDate: LocalDate?
+}
 
 data class CustomerVehicle(
     val registration: String,
     val make: String,
     val model: String?,
-    val taxStatus: TaxStatus,
-    val taxExpiryDate: LocalDate?,
-    val taxClass: String,
-    val motStatus: MotStatus,
-    val motExpiryDate: LocalDate?
-)
+    override val taxStatus: TaxStatus,
+    override val taxExpiryDate: LocalDate?,
+    override val taxClass: String,
+    override val motStatus: MotStatus,
+    override val motExpiryDate: LocalDate?,
+
+    // TODO: remove below when vehicle details endpoint is live
+    val dateOfFirstRegistration: LocalDate?,
+    val fuelType: FuelType,
+    val colour: VehicleColour,
+    val secondaryColour: VehicleColour?,
+    val engineCapacity: Int?,
+    val euroStatus: String?
+) : VehicleSummary
 
 internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
     return CustomerVehicle(
@@ -24,6 +41,14 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         taxExpiryDate = this.taxedUntil.toLocalDateOrNull(),
         taxClass = this.taxClass,
         motStatus = this.motStatus.toDomain(),
-        motExpiryDate = this.motExpiryDate.toLocalDateOrNull()
+        motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
+
+        // TODO: remove below when vehicle details endpoint is live
+        dateOfFirstRegistration = this.dateOfFirstRegistration.toLocalDateOrNull(),
+        fuelType = this.fuelType,
+        colour = this.colour,
+        secondaryColour = this.secondaryColour,
+        engineCapacity = this.engineCapacity,
+        euroStatus = this.euroStatus
     )
 }

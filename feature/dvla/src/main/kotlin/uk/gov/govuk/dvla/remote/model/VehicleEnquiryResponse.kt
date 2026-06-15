@@ -11,6 +11,8 @@ data class VehicleEnquiryResponse(
     val taxStatus: TaxStatus? = null,
     @SerializedName("taxDueDate")
     val taxDueDate: String? = null,     // YYYY-MM-dd
+    @SerializedName("taxClass")
+    val taxClass: String,
     @SerializedName("artEndDate")
     val artEndDate: String? = null,     // YYYY-MM-dd
     @SerializedName("motStatus")
@@ -19,6 +21,8 @@ data class VehicleEnquiryResponse(
     val motExpiryDate: String? = null,
     @SerializedName("make")
     val make: String? = null,
+    @SerializedName("model")
+    val model: String? = null,
     @SerializedName("monthOfFirstDvlaRegistration")
     val monthOfFirstDvlaRegistration: String? = null,       // YYYY-MM
     @SerializedName("monthOfFirstRegistration")
