@@ -1,8 +1,12 @@
 package uk.gov.govuk.dvla.ui.model
 
 internal sealed interface UiState {
-    data class Default(val drivingView: DrivingView) : UiState
     data object Hidden : UiState
+    data class Default(
+        val drivingView: DrivingView = DrivingView.VEHICLES,
+        val vehiclesState: VehiclesSummaryUiState = VehiclesSummaryUiState.Loading,
+        val licenceState: LicenceSummaryUiState = LicenceSummaryUiState.Loading
+    ) : UiState
 }
 
 enum class DrivingView {
@@ -17,6 +21,6 @@ internal sealed interface VehiclesSummaryUiState {
 
 internal sealed interface LicenceSummaryUiState {
     data object Loading : LicenceSummaryUiState
-    data object Success : LicenceSummaryUiState
+    data class Success(val licence: LicenceSummaryUiModel) : LicenceSummaryUiState
     data object Error : LicenceSummaryUiState
 }

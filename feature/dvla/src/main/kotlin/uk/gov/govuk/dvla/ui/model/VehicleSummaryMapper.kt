@@ -5,6 +5,8 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
+import uk.gov.govuk.dvla.util.resolveSummaryDescription
+import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -25,22 +27,16 @@ internal class VehicleSummaryMapper @Inject constructor(
             model = vehicle.model ?: "Unknown", // TODO return unknown for now, other states in future tickets
             taxStatus = StatusRowUiModel(
                 title = stringProvider.getString(R.string.tax_status_title),
-                description = resolveDescription(taxStringResId, taxDate),
+                description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
                 icon = taxIconResId
             ),
             motStatus = StatusRowUiModel(
                 title = stringProvider.getString(R.string.acronym_mot),
                 titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
-                description = resolveDescription(motStringResId, motDate),
+                description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
                 icon = motIconResId
             )
         )
-    }
-
-    private fun resolveDescription(resId: Int?, dateArg: String?): String {
-        val id = resId ?: return "Unknown" // TODO return unknown for now, other states in future tickets
-        return dateArg?.let { stringProvider.getString(id, it) }
-            ?: stringProvider.getString(id)
     }
 
     // TODO what if date is null?
@@ -66,6 +62,3 @@ internal class VehicleSummaryMapper @Inject constructor(
         }
 }
 
-private val dvlaDateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-
-private fun LocalDate.toSummaryDisplayFormat(): String = this.format(dvlaDateFormatter)

@@ -1,5 +1,8 @@
 package uk.gov.govuk.dvla.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
@@ -15,14 +22,16 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.ui.model.DrivingView
-import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
-import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
+import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
+import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
+import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST as VehiclesButton
 import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
@@ -31,44 +40,66 @@ fun VehiclesAndLicenceSummaryWidget(
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    val vehiclesSummaryUiState by viewModel.vehiclesSummaryUiState.collectAsState()
-    val licenceSummaryUiState by viewModel.licenceSummaryUiState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
-    uiState.let {
-        when (it) {
-            is UiState.Hidden -> { /* Show nothing */ }
 
-            is UiState.Default -> {
-                val activeButtonState = when (it.drivingView) {
-                    DrivingView.VEHICLES -> VehiclesButton
-                    DrivingView.LICENCE -> LicenceButton
-                }
+    when (val currentState = state) {
+        is UiState.Hidden -> return // draw nothing if not linked
 
-                Column(modifier = modifier) {
-                    SmallVerticalSpacer()
+        is UiState.Default -> {
+            val activeButtonState = when (currentState.drivingView) {
+                DrivingView.VEHICLES -> VehiclesButton
+                DrivingView.LICENCE -> LicenceButton
+            }
 
-                    ConnectedButtonGroup(
-                        firstText = stringResource(R.string.vehicles),
-                        secondText = stringResource(R.string.licence),
-                        activeButton = activeButtonState,
-                        onActiveStateChange = { button ->
-                            when (button) {
-                                VehiclesButton -> viewModel.onVehiclesSelected()
-                                LicenceButton -> viewModel.onLicenceSelected()
-                            }
-                        },
-                        colours = ButtonColours(
-                            containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                            containerInactive = GovUkTheme.colourScheme.surfaces.list
-                        )
+            Column(modifier = modifier) {
+                SmallVerticalSpacer()
+
+                ConnectedButtonGroup(
+                    firstText = stringResource(R.string.vehicles),
+                    secondText = stringResource(R.string.licence),
+                    activeButton = activeButtonState,
+                    onActiveStateChange = { button ->
+                        when (button) {
+                            VehiclesButton -> viewModel.onVehiclesSelected()
+                            LicenceButton -> viewModel.onLicenceSelected()
+                        }
+                    },
+                    colours = ButtonColours(
+                        containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
+                        containerInactive = GovUkTheme.colourScheme.surfaces.list
                     )
+                )
 
-                    MediumVerticalSpacer()
+                MediumVerticalSpacer()
 
-                    when (it.drivingView) {
-                        DrivingView.VEHICLES -> VehiclesSummary(uiState = vehiclesSummaryUiState)
-                        DrivingView.LICENCE -> LicenceSummary(uiState = licenceSummaryUiState)
+                when (currentState.drivingView) {
+                    DrivingView.VEHICLES -> {
+                        VehiclesViewContent(
+                            vehiclesState = currentState.vehiclesState,
+                            modifier = modifier
+                        )
+                    }
+
+                    DrivingView.LICENCE -> {
+
+                        val context = LocalContext.current
+                        val hapticFeedback = LocalHapticFeedback.current
+                        val licenceClipboardLabel =
+                            stringResource(R.string.clipboard_data_label_licence_number)
+
+                        LicenceViewContent(
+                            licenceState = currentState.licenceState,
+                            onLicenceNumberLongClick = { licenceNumber ->
+                                licenceNumber.copyToClipboard(
+                                    context = context,
+                                    label = licenceClipboardLabel,
+                                    hapticFeedback = hapticFeedback
+                                )
+                                viewModel.onLicenceNumberCopied()
+                            },
+                            modifier = modifier
+                        )
                     }
                 }
             }
@@ -77,25 +108,20 @@ fun VehiclesAndLicenceSummaryWidget(
 }
 
 @Composable
-private fun VehiclesSummary(
-    uiState: VehiclesSummaryUiState,
+private fun VehiclesViewContent(
+    vehiclesState: VehiclesSummaryUiState,
     modifier: Modifier = Modifier
 ) {
-    when (uiState) {
-        is VehiclesSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier = modifier)
+    when (vehiclesState) {
+        is VehiclesSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
         is VehiclesSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets
         }
-
         is VehiclesSummaryUiState.Success -> {
             VehiclesSummarySuccess(
-                vehicles = uiState.vehicles,
-                onDetailsClick = {
-                    // TODO to be handled in next ticket(s)
-                },
-                onMoreClick = {
-                    // TODO to be handled in next ticket(s)
-                },
+                vehicles = vehiclesState.vehicles,
+                onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
+                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                 modifier = modifier
             )
         }
@@ -103,20 +129,37 @@ private fun VehiclesSummary(
 }
 
 @Composable
-private fun LicenceSummary(
-    uiState: LicenceSummaryUiState,
+private fun LicenceViewContent(
+    licenceState: LicenceSummaryUiState,
+    onLicenceNumberLongClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (uiState) {
-        is LicenceSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier = modifier)
+    when (licenceState) {
+        is LicenceSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
         is LicenceSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets
         }
-
         is LicenceSummaryUiState.Success -> {
-            // TODO placeholder for now, tbc in future tickets
+            LicenceSummarySuccess(
+                licenceSummary = licenceState.licence,
+                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
+                modifier = modifier
+            )
         }
     }
+}
+
+private fun String.copyToClipboard(
+    context: Context,
+    label: String,
+    hapticFeedback: HapticFeedback
+) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(label, this)
+    clipboard.setPrimaryClip(clip)
+
+    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
 }
 
 @Composable
@@ -148,5 +191,24 @@ private fun VehiclesSummarySuccess(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+private fun LicenceSummarySuccess(
+    licenceSummary: LicenceSummaryUiModel,
+    onMoreClick: () -> Unit,
+    onLicenceNumberLongClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        LicenceSummaryCard(
+            licenceSummary = licenceSummary,
+            onMoreClick = { onMoreClick() },
+            onLicenceNumberLongClick = { onLicenceNumberLongClick() },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

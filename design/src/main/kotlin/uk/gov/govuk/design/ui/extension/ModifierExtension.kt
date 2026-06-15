@@ -1,5 +1,6 @@
 package uk.gov.govuk.design.ui.extension
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -8,9 +9,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -95,3 +98,24 @@ fun Modifier.withAltText(altText: String?): Modifier =
             contentDescription = it
         }
     } ?: this
+
+/**
+ * Modifier that handles long press without triggering "double tap to activate" TalkBack announcement
+ * (caused when using combinedClickable)
+ */
+fun Modifier.longClickWithAltText(
+    altText: String,
+    actionLabel: String,
+    onLongClick: () -> Unit
+): Modifier = this
+    .pointerInput(Unit) {
+        detectTapGestures(onLongPress = { onLongClick() })
+    }
+    .clearAndSetSemantics {
+        contentDescription = altText
+
+        onLongClick(label = actionLabel) {
+            onLongClick()
+            true
+        }
+    }
