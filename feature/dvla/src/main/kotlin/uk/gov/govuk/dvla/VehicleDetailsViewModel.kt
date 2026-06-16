@@ -49,13 +49,6 @@ internal class VehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onBackClicked() {
-        analyticsClient.buttonClick(
-            text = BACK_BUTTON,
-            section = SECTION
-        )
-    }
-
     private fun fetchVehicleDetails() {
         // TODO temporarily get details from summary endpoint until details endpoint is live
         val vehicleRegistration: String = savedStateHandle[ARG_VEHICLE_REGISTRATION] ?: return

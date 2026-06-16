@@ -24,11 +24,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.AddressListItem
+import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
-import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SpecificationsIcons
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
@@ -44,6 +46,7 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
 import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.RegistrationPlate
+import uk.gov.govuk.dvla.ui.model.KeeperUiModel
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
@@ -75,7 +78,6 @@ internal fun VehicleDetailsRoute(
 
             is VehicleDetailsUiState.Success -> SuccessScreen(
                 onBack = {
-                    viewModel.onBackClicked()
                     onBack()
                 },
                 onPageView = { viewModel.onPageView(it) },
@@ -144,7 +146,7 @@ private fun SuccessScreen(
                     .semantics { heading() }
             )
 
-            SmallVerticalSpacer()
+            MediumVerticalSpacer()
 
             StatusListItem(
                 title = details.taxStatus.title?.let {
@@ -166,16 +168,37 @@ private fun SuccessScreen(
                 background = Color.Transparent
             )
 
-            SmallVerticalSpacer()
+            LargeVerticalSpacer()
 
             Title2BoldLabel(
-                text = stringResource(R.string.specification),
+                text = stringResource(R.string.registered_to_title),
                 modifier = Modifier
                     .padding(horizontal = GovUkTheme.spacing.medium)
                     .semantics { heading() }
             )
 
-            SmallVerticalSpacer()
+            AddressListItem(
+                name = AccessibleString(
+                    displayText = details.keeper.name
+                ),
+                address = AccessibleString(
+                    displayText = details.keeper.formattedAddressLines.joinToString(separator = "\n"),
+                    altText = details.keeper.accessibleAddressLines.toString()
+                ),
+                isFirst = true,
+                isLast = true
+            )
+
+            LargeVerticalSpacer()
+
+            Title2BoldLabel(
+                text = stringResource(R.string.specification_title),
+                modifier = Modifier
+                    .padding(horizontal = GovUkTheme.spacing.medium)
+                    .semantics { heading() }
+            )
+
+            MediumVerticalSpacer()
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -187,7 +210,7 @@ private fun SuccessScreen(
                 )
             }
 
-            SmallVerticalSpacer()
+            MediumVerticalSpacer()
 
             details.extraDetails.forEachIndexed { index, detail ->
                 InternalLinkListItem(
@@ -209,6 +232,12 @@ private fun SuccessScreenPreview() {
         "Volkswagen",
         "ID4",
         "TE5T PL8",
+        KeeperUiModel(
+            "Name",
+            "Street",
+            "City",
+            "Postcode"
+        ),
         listOf(
             SpecificationUiModel(
                 R.drawable.ic_calendar,

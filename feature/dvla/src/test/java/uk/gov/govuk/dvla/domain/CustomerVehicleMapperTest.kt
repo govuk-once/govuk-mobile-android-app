@@ -6,9 +6,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import uk.gov.govuk.dvla.remote.model.Vehicle
-import uk.gov.govuk.dvla.remote.model.common.VehicleColour
+import uk.gov.govuk.dvla.remote.model.common.VehicleColour as RemoteVehicleColour
 import uk.gov.govuk.dvla.remote.model.common.MotStatus as RemoteMotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus as RemoteTaxStatus
+import uk.gov.govuk.dvla.remote.model.common.FuelType as RemoteFuelType
 import java.time.LocalDate
 
 class CustomerVehicleMapperTest {
@@ -25,9 +26,9 @@ class CustomerVehicleMapperTest {
             every { taxStatus } returns RemoteTaxStatus.TAXED
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
             every { dateOfFirstRegistration } returns "2020-06-01"
-            every { fuelType } returns FuelType.PETROL
-            every { colour } returns VehicleColour.MULTI_COLOUR
-            every { secondaryColour } returns VehicleColour.MULTI_COLOUR
+            every { fuelType } returns RemoteFuelType.PETROL
+            every { colour } returns RemoteVehicleColour.MULTI_COLOUR
+            every { secondaryColour } returns RemoteVehicleColour.MULTI_COLOUR
             every { engineCapacity } returns 1000
             every { euroStatus } returns "Euro Status"
         }
@@ -61,8 +62,8 @@ class CustomerVehicleMapperTest {
             every { taxStatus } returns null
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
             every { dateOfFirstRegistration } returns "2020-06-01"
-            every { fuelType } returns FuelType.PETROL
-            every { colour } returns VehicleColour.MULTI_COLOUR
+            every { fuelType } returns RemoteFuelType.PETROL
+            every { colour } returns RemoteVehicleColour.MULTI_COLOUR
             every { secondaryColour } returns null
             every { engineCapacity } returns null
             every { euroStatus } returns null

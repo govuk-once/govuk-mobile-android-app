@@ -65,7 +65,8 @@
     <string name="colour_title">Colour</string>
     <string name="engine_size_title">Engine size</string>
     <string name="emissions_title">CO2 emissions</string>
-    <string name="specification">Specification</string>
+    <string name="specification_title">Specification</string>
+    <string name="registered_to_title">Registered to</string>
     <string name="vehicle_details_success_title">Vehicle Details Screen</string>
     <string name="and">and</string>
 
@@ -73,6 +74,7 @@
     <string name="fuel_type_alt_text">Fuel type %1$s</string>
     <string name="colour_alt_text">Colour %1$s</string>
     <string name="emissions_alt_text">grams per kilometre</string>
+    <string name="litres_alt_text">Litres</string>
 
     <string name="brown">Brown</string>
     <string name="bronze">Bronze</string>

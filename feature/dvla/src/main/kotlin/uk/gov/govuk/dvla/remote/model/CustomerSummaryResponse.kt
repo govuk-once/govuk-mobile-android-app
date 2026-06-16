@@ -1,7 +1,7 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
-import uk.gov.govuk.dvla.domain.FuelType
+import uk.gov.govuk.dvla.remote.model.common.FuelType
 import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
 import uk.gov.govuk.dvla.remote.model.common.MotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus

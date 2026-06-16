@@ -7,6 +7,7 @@ data class VehicleDetailsUiModel(
     val make: String,
     val model: String,
     val registration: String,
+    val keeper: KeeperUiModel,
     val specifications: List<SpecificationUiModel>,
     val taxStatus: StatusRowUiModel,
     val motStatus: StatusRowUiModel,

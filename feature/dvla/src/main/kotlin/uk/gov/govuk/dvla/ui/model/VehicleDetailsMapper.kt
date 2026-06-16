@@ -5,9 +5,47 @@ import uk.gov.govuk.design.ui.model.SpecificationUiModel
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
+import uk.gov.govuk.dvla.domain.FuelType
+import uk.gov.govuk.dvla.domain.FuelType.DIESEL
+import uk.gov.govuk.dvla.domain.FuelType.ELECTRICITY
+import uk.gov.govuk.dvla.domain.FuelType.ELECTRIC_DIESEL
+import uk.gov.govuk.dvla.domain.FuelType.FUEL_CELLS
+import uk.gov.govuk.dvla.domain.FuelType.GAS
+import uk.gov.govuk.dvla.domain.FuelType.GAS_BI_FUEL
+import uk.gov.govuk.dvla.domain.FuelType.GAS_DIESEL
+import uk.gov.govuk.dvla.domain.FuelType.HYBRID_ELECTRIC
+import uk.gov.govuk.dvla.domain.FuelType.OTHER
+import uk.gov.govuk.dvla.domain.FuelType.PETROL
+import uk.gov.govuk.dvla.domain.FuelType.PETROL_GAS
+import uk.gov.govuk.dvla.domain.FuelType.STEAM
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
+import uk.gov.govuk.dvla.domain.VehicleColour
+import uk.gov.govuk.dvla.domain.VehicleColour.BEIGE
+import uk.gov.govuk.dvla.domain.VehicleColour.BLACK
+import uk.gov.govuk.dvla.domain.VehicleColour.BLUE
+import uk.gov.govuk.dvla.domain.VehicleColour.BRONZE
+import uk.gov.govuk.dvla.domain.VehicleColour.BROWN
+import uk.gov.govuk.dvla.domain.VehicleColour.CREAM
+import uk.gov.govuk.dvla.domain.VehicleColour.GOLD
+import uk.gov.govuk.dvla.domain.VehicleColour.GREEN
+import uk.gov.govuk.dvla.domain.VehicleColour.GREY
+import uk.gov.govuk.dvla.domain.VehicleColour.MAROON
+import uk.gov.govuk.dvla.domain.VehicleColour.MULTI_COLOUR
+import uk.gov.govuk.dvla.domain.VehicleColour.NOT_STATED
+import uk.gov.govuk.dvla.domain.VehicleColour.ORANGE
+import uk.gov.govuk.dvla.domain.VehicleColour.PINK
+import uk.gov.govuk.dvla.domain.VehicleColour.PURPLE
+import uk.gov.govuk.dvla.domain.VehicleColour.RED
+import uk.gov.govuk.dvla.domain.VehicleColour.SILVER
+import uk.gov.govuk.dvla.domain.VehicleColour.TURQUOISE
+import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
+import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.domain.VehicleSummary
+import uk.gov.govuk.dvla.util.getFormattedEmissionsAltText
+import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
+import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
+import uk.gov.govuk.dvla.util.getFormattedVehicleColour
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -27,6 +65,7 @@ internal class VehicleDetailsMapper @Inject constructor(
             make = vesVehicle.make,
             model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
             registration = vesVehicle.registration,
+            keeper =  vesVehicle.getKeeper(),
             specifications = listOf(
                 vesVehicle.getCalendarSpecification(),
                 vesVehicle.getFuelTypeSpecification(),
@@ -48,20 +87,35 @@ internal class VehicleDetailsMapper @Inject constructor(
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.fuel_type_title),
-                    info = stringProvider.getString(vesVehicle.fuelType.getResources().label)
+                    info = stringProvider.getString(vesVehicle.fuelType.getResources().second)
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.colour_title),
-                    info = vesVehicle.getColour()
+                    info = if (vesVehicle.secondaryColour != null) getFormattedVehicleColour(
+                        colour = stringProvider.getString(vesVehicle.colour.getResource()),
+                        secondaryColour = stringProvider.getString(vesVehicle.secondaryColour.getResource()),
+                        concatenator = stringProvider.getString(R.string.and)
+                    ) else stringProvider.getString(vesVehicle.colour.getResource())
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.engine_size_title),
-                    info = vesVehicle.getEngineSize()
+                    info = if (vesVehicle.engineCapacity != null) getFormattedEngineCapacity(
+                        vesVehicle.engineCapacity
+                    ) else "Unknown",
+                    infoAltText = getFormattedEngineCapacityAltText(
+                        engineCapacity = if (vesVehicle.engineCapacity != null) getFormattedEngineCapacity(
+                            vesVehicle.engineCapacity
+                        ) else "Unknown",
+                        replacementText = stringProvider.getString(R.string.litres_alt_text)
+                    )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.emissions_title),
                     info = vesVehicle.euroStatus ?: "Unknown",
-                    infoAltText = vesVehicle.getEmissionsAltText()
+                    infoAltText = if (vesVehicle.euroStatus != null) getFormattedEmissionsAltText(
+                        euroStatus = vesVehicle.euroStatus,
+                        replacementText = stringProvider.getString(R.string.emissions_alt_text)
+                    ) else "Unknown"
                 )
             )
         )
@@ -80,23 +134,6 @@ internal class VehicleDetailsMapper @Inject constructor(
         this.dateOfFirstRegistration?.toDisplayFormat(
             DATE_FORMAT_YYYY
         ) ?: "Unknown"
-
-    private fun CustomerVehicle.getEngineSize(): String {
-        val capacity = this.engineCapacity ?: return "Unknown"
-        if (capacity < 1000) return "${capacity}cc"
-        val capacityInLitres = "${capacity / 100 / 10.0}L"
-        return capacityInLitres
-    }
-
-    private fun CustomerVehicle.getColour(): String {
-        val colour = stringProvider.getString(this.colour.getResource())
-        this.secondaryColour?.let { secondaryColour ->
-            val and = stringProvider.getString(R.string.and)
-            val secondaryColour = stringProvider.getString(secondaryColour.getResource())
-            return "$colour $and $secondaryColour"
-        }
-        return colour
-    }
 
     private fun getTaxRow(vehicle: VehicleSummary): StatusRowUiModel {
         val taxDate = vehicle.taxExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
@@ -136,8 +173,8 @@ internal class VehicleDetailsMapper @Inject constructor(
     private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationUiModel {
         val fuelType = this.fuelType.getResources()
         return SpecificationUiModel(
-            icon = fuelType.icon,
-            description = stringProvider.getString(fuelType.label),
+            icon = fuelType.first,
+            description = stringProvider.getString(fuelType.second),
             altText = stringProvider.getString(R.string.fuel_type_alt_text, fuelType)
         )
     }
@@ -147,11 +184,6 @@ internal class VehicleDetailsMapper @Inject constructor(
         description = stringProvider.getString(this.colour.getResource()),
         altText = stringProvider.getString(R.string.colour_alt_text, this.colour)
     )
-
-    private fun CustomerVehicle.getEmissionsAltText() : String {
-        this.euroStatus ?: return "Unknown"
-        return this.euroStatus.replace("g/km", stringProvider.getString(R.string.emissions_alt_text))
-    }
 
     // TODO what if date is null?
     private fun getTaxStatusResources(status: TaxStatus): Pair<Int?, Int?> =
@@ -174,6 +206,52 @@ internal class VehicleDetailsMapper @Inject constructor(
 
             else -> Pair(null, null)
         }
+
+    // TODO DVLA are working on sending keeper formatted so below is for demo only
+    private fun CustomerVehicle.getKeeper() = KeeperUiModel(
+        "${this.keeper?.title ?: ""} ${this.keeper?.firstNames ?: ""} ${this.keeper?.lastName ?: ""}",
+        "Address",
+        "City",
+        "Postcode"
+    )
+
+    private fun FuelType.getResources() = when (this) {
+        PETROL -> Pair(R.drawable.ic_petrol_diesel, R.string.petrol)
+        DIESEL -> Pair(R.drawable.ic_petrol_diesel, R.string.diesel)
+        ELECTRICITY -> Pair(R.drawable.ic_electric, R.string.electric)
+        STEAM -> Pair(R.drawable.ic_steam, R.string.steam)
+        GAS -> Pair(R.drawable.ic_gas, R.string.gas)
+        PETROL_GAS -> Pair(R.drawable.ic_petrol_diesel, R.string.petrol_and_gas)
+        GAS_BI_FUEL -> Pair(R.drawable.ic_petrol_diesel, R.string.gas_bi_fuel)
+        HYBRID_ELECTRIC -> Pair(R.drawable.ic_hybrid, R.string.hybrid_electric)
+        GAS_DIESEL -> Pair(R.drawable.ic_petrol_diesel, R.string.gas_diesel)
+        FUEL_CELLS -> Pair(R.drawable.ic_petrol_diesel, R.string.fuel_cells)
+        ELECTRIC_DIESEL -> Pair(R.drawable.ic_petrol_diesel, R.string.electric_diesel)
+        OTHER -> Pair(R.drawable.ic_petrol_diesel, R.string.other)
+    }
+
+    private fun VehicleColour.getResource() = when (this) {
+        BROWN -> R.string.brown
+        BRONZE -> R.string.bronze
+        RED -> R.string.red
+        PINK -> R.string.pink
+        ORANGE -> R.string.orange
+        YELLOW -> R.string.yellow
+        GOLD -> R.string.gold
+        GREEN -> R.string.green
+        BLUE -> R.string.blue
+        PURPLE -> R.string.purple
+        GREY -> R.string.grey
+        SILVER -> R.string.silver
+        WHITE -> R.string.white
+        BLACK -> R.string.black
+        MULTI_COLOUR -> R.string.multi_colour
+        BEIGE -> R.string.beige
+        MAROON -> R.string.maroon
+        TURQUOISE -> R.string.turquoise
+        CREAM -> R.string.cream
+        NOT_STATED -> R.string.not_stated
+    }
 
     private fun LocalDate.toDisplayFormat(pattern: String): String =
         runCatching { this.format(DateTimeFormatter.ofPattern(pattern)) }.getOrDefault("")

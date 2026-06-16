@@ -11,7 +11,7 @@ data class VesVehicle(
     val registrationNumber: String,
     val make: String,
     val model: String,
-    val colour: String,
+    val colour: VehicleColour,
     val yearOfManufacture: Int?,
     val dateOfFirstRegistration: LocalDate?,
     override val taxStatus: TaxStatus,
@@ -20,7 +20,7 @@ data class VesVehicle(
     override val taxClass: String,
     override val motStatus: MotStatus,
     override val motExpiryDate: LocalDate?,
-    val fuelType: String,
+    val fuelType: FuelType,
     val engineCapacity: Int?,
     val co2Emissions: Int?
 ): VehicleSummary
@@ -29,7 +29,7 @@ fun VehicleEnquiryResponse.toDomainModel() = VesVehicle(
     registrationNumber = this.registrationNumber,
     make = this.make ?: "",
     model = this.model ?: "",
-    colour = this.colour ?: "",
+    colour = this.colour.toDomain() ?: VehicleColour.NOT_STATED,
     yearOfManufacture = this.yearOfManufacture,
     dateOfFirstRegistration = this.monthOfFirstRegistration.toLocalDateOrNull(),
     taxStatus = this.taxStatus?.toDomain() ?: TaxStatus.UNKNOWN,
@@ -38,7 +38,7 @@ fun VehicleEnquiryResponse.toDomainModel() = VesVehicle(
     taxClass = this.taxClass,
     motStatus = this.motStatus?.toDomain() ?: MotStatus.UNKNOWN,
     motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
-    fuelType = this.fuelType ?: "",
+    fuelType = this.fuelType.toDomain(),
     engineCapacity = this.engineCapacity,
     co2Emissions = this.co2Emissions
 )

@@ -77,7 +77,10 @@ fun VehiclesAndLicenceSummaryWidget(
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
                         VehiclesViewContent(
-                            onVehicleDetailsClick = onVehicleDetailsClick,
+                            onVehicleDetailsClick = { text, registration ->
+                                viewModel.onButtonClicked(text)
+                                onVehicleDetailsClick(registration)
+                            },
                             vehiclesState = currentState.vehiclesState,
                             modifier = modifier
                         )
@@ -111,7 +114,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
 @Composable
 private fun VehiclesViewContent(
-    onVehicleDetailsClick: (registration: String) -> Unit,
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     modifier: Modifier = Modifier
 ) {
@@ -178,7 +181,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 @Composable
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
-    onVehicleDetailsClick: (registration: String) -> Unit,
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

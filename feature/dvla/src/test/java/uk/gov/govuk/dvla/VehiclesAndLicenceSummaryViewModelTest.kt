@@ -299,4 +299,27 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `When onButtonClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+
+        val viewModel = VehiclesAndLicenceSummaryViewModel(
+            repo,
+            vehicleMapper,
+            licenceMapper,
+            analyticsClient
+        )
+        advanceUntilIdle()
+
+        viewModel.onButtonClicked("Test")
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            analyticsClient.buttonClick(
+                text = "Test",
+                section = "Driving",
+            )
+        }
+    }
 }

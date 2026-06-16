@@ -53,17 +53,4 @@ class VehicleDetailsViewModelTest {
                 )
             }
         }
-
-    @Test
-    fun `Given screen title, when onBackClicked is called, then track button click`() =
-        runTest(dispatcher) {
-            viewModel.onBackClicked()
-
-            verify {
-                analyticsClient.buttonClick(
-                    text = "Back Button",
-                    section = "Driving"
-                )
-            }
-        }
 }

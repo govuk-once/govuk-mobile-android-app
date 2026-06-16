@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
@@ -23,7 +22,7 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 @Composable
 internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
-    onVehicleDetailsClick: (registration: String) -> Unit,
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -68,9 +67,10 @@ internal fun VehicleSummaryCard(
         )
 
         // details
+        val title = stringResource(R.string.vehicle_details_title)
         InternalLinkListItem(
-            title = stringResource(R.string.vehicle_details_title),
-            onClick = { onVehicleDetailsClick(vehicleSummary.registration) },
+            title = title,
+            onClick = { onVehicleDetailsClick(title, vehicleSummary.registration) },
             isFirst = false,
             isLast = true
         )
@@ -149,7 +149,7 @@ private fun VehicleSummaryCardPreview() {
                     icon = uk.gov.govuk.design.R.drawable.ic_cancel_round
                 )
             ),
-            onVehicleDetailsClick = {},
+            onVehicleDetailsClick = { _, _ -> },
             onMoreClick = {}
         )
     }

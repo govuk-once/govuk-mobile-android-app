@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
+import uk.gov.govuk.dvla.remote.model.common.VehicleColour
+import uk.gov.govuk.dvla.remote.model.common.FuelType
 import uk.gov.govuk.dvla.remote.model.common.MotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus
 
@@ -34,11 +36,11 @@ data class VehicleEnquiryResponse(
     @SerializedName("co2Emissions")
     val co2Emissions: Int? = null,
     @SerializedName("fuelType")
-    val fuelType: String? = null,
+    val fuelType: FuelType? = null,
     @SerializedName("markedForExport")
     val markedForExport: Boolean? = null,
     @SerializedName("colour")
-    val colour: String? = null,
+    val colour: VehicleColour? = null,
     @SerializedName("typeApproval")
     val typeApproval: String? = null,
     @SerializedName("wheelplan")

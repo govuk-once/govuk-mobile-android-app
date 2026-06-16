@@ -2,7 +2,7 @@ package uk.gov.govuk.dvla.domain
 
 import uk.gov.govuk.data.extension.toLocalDateOrNull
 import uk.gov.govuk.dvla.remote.model.Vehicle
-import uk.gov.govuk.dvla.remote.model.common.VehicleColour
+import uk.gov.govuk.dvla.remote.model.VehicleKeeper
 import java.time.LocalDate
 
 interface VehicleSummary {
@@ -24,6 +24,7 @@ data class CustomerVehicle(
     override val motExpiryDate: LocalDate?,
 
     // TODO: remove below when vehicle details endpoint is live
+    val keeper: VehicleKeeper?,
     val dateOfFirstRegistration: LocalDate?,
     val fuelType: FuelType,
     val colour: VehicleColour,
@@ -44,10 +45,11 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
 
         // TODO: remove below when vehicle details endpoint is live
+        keeper = this.keeper,
         dateOfFirstRegistration = this.dateOfFirstRegistration.toLocalDateOrNull(),
-        fuelType = this.fuelType,
-        colour = this.colour,
-        secondaryColour = this.secondaryColour,
+        fuelType = this.fuelType.toDomain(),
+        colour = this.colour.toDomain() ?: VehicleColour.NOT_STATED,
+        secondaryColour = this.secondaryColour.toDomain(),
         engineCapacity = this.engineCapacity,
         euroStatus = this.euroStatus
     )

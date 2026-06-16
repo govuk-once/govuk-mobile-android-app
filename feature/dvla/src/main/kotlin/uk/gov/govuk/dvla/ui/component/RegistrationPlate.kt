@@ -44,7 +44,8 @@ internal fun RegistrationPlate(
                 color = GovUkTheme.colourScheme.strokes.registrationPlate,
                 shape = RoundedCornerShape(radius)
             )
-            .padding(padding),
+            .padding(padding)
+            .padding(top = 3.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
