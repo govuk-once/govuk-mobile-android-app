@@ -36,6 +36,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -339,7 +340,7 @@ fun StatusListItem(
     modifier: Modifier = Modifier,
     title: AccessibleString? = null,
     description: AccessibleString,
-    @DrawableRes icon: Int?,
+    iconStyle: StatusListItemIconStyle?,
     isFirst: Boolean = false,
     isLast: Boolean = false
 ) {
@@ -377,15 +378,27 @@ fun StatusListItem(
 
             MediumHorizontalSpacer()
 
-            icon?.let {
+            iconStyle?.let {
+                val (icon, tint) = when (it) {
+                    StatusListItemIconStyle.Success -> Pair(
+                        R.drawable.ic_check_round,
+                        GovUkTheme.colourScheme.surfaces.buttonPrimary
+                    )
+
+                    StatusListItemIconStyle.Warning -> Pair(
+                        R.drawable.ic_error,
+                        GovUkTheme.colourScheme.textAndIcons.iconPrimary
+                    )
+                }
+
                 Box(
                     modifier = Modifier.size(36.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = it),
+                        painter = painterResource(id = icon),
                         contentDescription = null,  // decorative icon
-                        tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
+                        tint = tint
                     )
                 }
             }
@@ -539,7 +552,7 @@ private fun StatusListItemPreview() {
         StatusListItem(
             title = AccessibleString("Tax"),
             description = AccessibleString("Valid until 1 February 2027"),
-            icon = R.drawable.ic_check_round,
+            iconStyle = StatusListItemIconStyle.Success,
             isFirst = false,
             isLast = false
         )
@@ -552,7 +565,7 @@ private fun StatusListItemNoTitlePreview() {
     GovUkTheme {
         StatusListItem(
             description = AccessibleString("Valid until 1 February 2027"),
-            icon = R.drawable.ic_check_round,
+            iconStyle = StatusListItemIconStyle.Success,
             isFirst = false,
             isLast = false
         )

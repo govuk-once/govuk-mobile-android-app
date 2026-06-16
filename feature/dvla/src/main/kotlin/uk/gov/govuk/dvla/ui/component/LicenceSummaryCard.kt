@@ -60,18 +60,25 @@ internal fun LicenceSummaryCard(
             )
         )
 
-        // valid until
-        StatusListItem(
-            title = licenceSummary.licenceStatus.title?.let {
-                AccessibleString(displayText = it)
-            },
-            description = AccessibleString(
-                displayText = licenceExpiration,
-                altText = stringResource(R.string.licence_expiration_alt_text, licenceExpiration)
-            ),
-            icon = licenceSummary.licenceStatus.icon,
-            isLast = true
-        )
+        // status
+        if (licenceSummary.isExpired) {
+            ExpiredLicenceStatusItem(
+                status = licenceSummary.licenceStatus,
+                onRenewClick = { /* TODO to be handled in next ticket(s) */ }
+            )
+        } else {
+            StatusListItem(
+                title = licenceSummary.licenceStatus.title?.let {
+                    AccessibleString(displayText = it)
+                },
+                description = AccessibleString(
+                    displayText = licenceExpiration,
+                    altText = stringResource(R.string.licence_expiration_alt_text, licenceExpiration)
+                ),
+                iconStyle = licenceSummary.licenceStatus.iconStyle,
+                isLast = true
+            )
+        }
     }
 }
 
@@ -141,8 +148,32 @@ private fun LicenceSummaryCardPreview() {
                 postcode = "PA98 J83",
                 licenceStatus = StatusRowUiModel(
                     description = "Valid until 1 February 2027",
-                    icon = uk.gov.govuk.design.R.drawable.ic_check_round,
+                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 )
+            ),
+            onMoreClick = {},
+            onLicenceNumberLongClick = {}
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LicenceSummaryCardExpiredPreview() {
+    GovUkTheme {
+        LicenceSummaryCard(
+            licenceSummary = LicenceSummaryUiModel(
+                licenceType = "Full licence",
+                licenceNumber = "ARENO803236AA170",
+                name = "Ms Anna Ornella Arenö",
+                addressLine1 = "29 Orchard Drive",
+                city = "Milton Keynes",
+                postcode = "PA98 J83",
+                licenceStatus = StatusRowUiModel(
+                    description = "Expired 24 April 2026",
+                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
+                ),
+                isExpired = true
             ),
             onMoreClick = {},
             onLicenceNumberLongClick = {}

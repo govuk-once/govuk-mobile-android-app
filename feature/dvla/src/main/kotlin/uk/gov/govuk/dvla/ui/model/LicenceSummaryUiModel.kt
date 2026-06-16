@@ -10,7 +10,8 @@ data class LicenceSummaryUiModel(
     val addressLine1: String,
     val city: String,
     val postcode: String,
-    val licenceStatus: StatusRowUiModel
+    val licenceStatus: StatusRowUiModel,
+    val isExpired: Boolean = false
 ) {
     val formattedAddressLines: List<String>
         get() = asAddressList(

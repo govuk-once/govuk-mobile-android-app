@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceStatus
@@ -17,7 +18,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     fun toUiModel(driverSummary: DriverSummary): LicenceSummaryUiModel {
         val formattedExpiryDate = driverSummary.expiryDate?.toSummaryDisplayFormat()
 
-        val (statusStringResId, statusIconResId) = getLicenceStatusResources(driverSummary.status)
+        val (statusStringResId, statusIconStyle) = getLicenceStatusResources(driverSummary.status)
 
         return LicenceSummaryUiModel(
             licenceType = getLicenceTypeString(driverSummary.licenceType),
@@ -28,8 +29,9 @@ internal class LicenceSummaryMapper @Inject constructor(
             postcode = driverSummary.postcode.uppercase(),
             licenceStatus = StatusRowUiModel(
                 description = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate),
-                icon = statusIconResId
-            )
+                iconStyle = statusIconStyle
+            ),
+            isExpired = driverSummary.status == LicenceStatus.EXPIRED
         )
     }
 
@@ -40,13 +42,10 @@ internal class LicenceSummaryMapper @Inject constructor(
             LicenceType.UNKNOWN -> "Unknown"    // TODO return unknown for now, other states in future tickets
         }
 
-    private fun getLicenceStatusResources(status: LicenceStatus): Pair<Int?, Int?> =
-        when(status) {
-            LicenceStatus.VALID -> Pair(
-                R.string.valid_until,
-                uk.gov.govuk.design.R.drawable.ic_check_round
-            )
-
+    private fun getLicenceStatusResources(status: LicenceStatus): Pair<Int?, StatusListItemIconStyle?> =
+        when (status) {
+            LicenceStatus.VALID -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
+            LicenceStatus.EXPIRED -> Pair(R.string.expired_on, StatusListItemIconStyle.Warning)
             else -> Pair(null, null)
         }
 }

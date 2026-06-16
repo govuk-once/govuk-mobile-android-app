@@ -60,7 +60,7 @@ internal fun VehicleSummaryCard(
             description = AccessibleString(
                 displayText = vehicleSummary.taxStatus.description
             ),
-            icon = vehicleSummary.taxStatus.icon,
+            iconStyle = vehicleSummary.taxStatus.iconStyle,
         )
 
         // MOT
@@ -74,7 +74,7 @@ internal fun VehicleSummaryCard(
             description = AccessibleString(
                 displayText = vehicleSummary.motStatus.description
             ),
-            icon = vehicleSummary.motStatus.icon,
+            iconStyle = vehicleSummary.motStatus.iconStyle,
         )
 
         // details
@@ -190,12 +190,12 @@ private fun VehicleSummaryCardPreview() {
                 taxStatus = StatusRowUiModel(
                     title = "Tax",
                     description = "Valid until 1 February 2027",
-                    icon = uk.gov.govuk.design.R.drawable.ic_check_round,
+                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 ),
                 motStatus = StatusRowUiModel(
                     title = "MOT",
                     description = "Valid until 24 April 2026",
-                    icon = uk.gov.govuk.design.R.drawable.ic_cancel_round
+                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning
                 )
             ),
             onDetailsClick = {},

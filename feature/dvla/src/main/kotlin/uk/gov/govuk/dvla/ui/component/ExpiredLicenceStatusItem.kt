@@ -1,0 +1,67 @@
+package uk.gov.govuk.dvla.ui.component
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.component.StatusListItem
+import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
+import uk.gov.govuk.design.ui.model.AccessibleString
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
+import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+
+@Composable
+internal fun ExpiredLicenceStatusItem(
+    status: StatusRowUiModel,
+    onRenewClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        StatusListItem(
+            title = status.title?.let { AccessibleString(displayText = it) },
+            description = AccessibleString(displayText = status.description),
+            iconStyle = status.iconStyle,
+            isLast = true
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = GovUkTheme.spacing.medium)
+                .padding(bottom = GovUkTheme.spacing.large)
+        ) {
+            PrimaryButton(
+                text = stringResource(R.string.renew_licence_button),
+                onClick = onRenewClick
+            )
+
+            SmallVerticalSpacer()
+
+            SubheadlineRegularLabel(
+                text = stringResource(R.string.renew_licence_caption),
+                color = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ExpiredLicenceStatusItemPreview() {
+    GovUkTheme {
+        ExpiredLicenceStatusItem(
+            status = StatusRowUiModel(
+                description = "Expired 24 April 2026",
+                iconStyle = StatusListItemIconStyle.Warning
+            ),
+            onRenewClick = {}
+        )
+    }
+}
