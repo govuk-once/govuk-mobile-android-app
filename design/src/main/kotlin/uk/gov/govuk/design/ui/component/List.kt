@@ -411,12 +411,14 @@ fun AddressListItem(
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
     isLast: Boolean = false,
+    background: Color? = null
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = true
+        drawDivider = true,
+        background = background
     ) {
         Column(
             modifier = Modifier

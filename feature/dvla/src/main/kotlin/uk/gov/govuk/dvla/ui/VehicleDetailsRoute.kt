@@ -77,9 +77,7 @@ internal fun VehicleDetailsRoute(
             is VehicleDetailsUiState.Error -> { /* TODO: no designs yet */ }
 
             is VehicleDetailsUiState.Success -> SuccessScreen(
-                onBack = {
-                    onBack()
-                },
+                onBack = onBack,
                 onPageView = { viewModel.onPageView(it) },
                 details = state.details
             )
@@ -106,7 +104,10 @@ private fun SuccessScreen(
         FullScreenHeader(
             dismissStyle = HeaderDismissStyle.Back(onBack),
             actionStyle = HeaderActionStyle.OverflowActionButton(
-                {})
+                {
+                    // TODO in future ticket
+                }
+            )
         )
 
         Column(
@@ -186,7 +187,8 @@ private fun SuccessScreen(
                     altText = details.keeper.accessibleAddressLines.toString()
                 ),
                 isFirst = true,
-                isLast = true
+                isLast = true,
+                background = Color.Transparent
             )
 
             LargeVerticalSpacer()
