@@ -31,6 +31,7 @@ class CustomerVehicleMapperTest {
             every { secondaryColour } returns RemoteVehicleColour.MULTI_COLOUR
             every { engineCapacity } returns 1000
             every { euroStatus } returns "Euro Status"
+            every { keeper } returns null
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -48,6 +49,7 @@ class CustomerVehicleMapperTest {
         assertEquals(VehicleColour.MULTI_COLOUR, result.secondaryColour)
         assertEquals(1000, result.engineCapacity)
         assertEquals("Euro Status", result.euroStatus)
+        assertEquals(null, result.keeper)
     }
 
     @Test
@@ -67,6 +69,7 @@ class CustomerVehicleMapperTest {
             every { secondaryColour } returns null
             every { engineCapacity } returns null
             every { euroStatus } returns null
+            every { keeper } returns null
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -84,5 +87,6 @@ class CustomerVehicleMapperTest {
         assertNull(result.secondaryColour)
         assertNull(result.engineCapacity)
         assertNull(result.euroStatus)
+        assertNull(result.keeper)
     }
 }
