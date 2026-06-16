@@ -27,11 +27,11 @@ internal class LicenceSummaryMapper @Inject constructor(
             addressLine1 = driverSummary.addressLine1.toTitleCase(),
             city = driverSummary.addressLine5.toTitleCase(),
             postcode = driverSummary.postcode.uppercase(),
-            licenceStatus = StatusRowUiModel(
+            status = driverSummary.status,
+            statusRowUi = StatusRowUiModel(
                 description = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate),
                 iconStyle = statusIconStyle
-            ),
-            isExpired = driverSummary.status == LicenceStatus.EXPIRED
+            )
         )
     }
 

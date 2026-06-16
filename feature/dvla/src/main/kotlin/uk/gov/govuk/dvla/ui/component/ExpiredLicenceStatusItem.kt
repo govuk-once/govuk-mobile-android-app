@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import uk.gov.govuk.design.ui.component.CalloutRegularLabel
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.StatusListItem
@@ -28,7 +30,7 @@ internal fun ExpiredLicenceStatusItem(
             title = status.title?.let { AccessibleString(displayText = it) },
             description = AccessibleString(displayText = status.description),
             iconStyle = status.iconStyle,
-            isLast = true
+            drawDivider = false
         )
 
         Column(
@@ -42,11 +44,11 @@ internal fun ExpiredLicenceStatusItem(
                 onClick = onRenewClick
             )
 
-            SmallVerticalSpacer()
+            MediumVerticalSpacer()
 
-            SubheadlineRegularLabel(
+            CalloutRegularLabel(
                 text = stringResource(R.string.renew_licence_caption),
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
+                color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }
     }

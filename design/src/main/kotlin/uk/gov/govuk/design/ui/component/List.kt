@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -342,13 +345,14 @@ fun StatusListItem(
     description: AccessibleString,
     iconStyle: StatusListItemIconStyle?,
     isFirst: Boolean = false,
-    isLast: Boolean = false
+    isLast: Boolean = false,
+    drawDivider: Boolean = true
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = true
+        drawDivider = drawDivider
     ) {
         Row(
             modifier = Modifier
@@ -381,13 +385,13 @@ fun StatusListItem(
             iconStyle?.let {
                 val (icon, tint) = when (it) {
                     StatusListItemIconStyle.Success -> Pair(
-                        R.drawable.ic_check_round,
+                        painterResource(R.drawable.ic_check_round),
                         GovUkTheme.colourScheme.surfaces.buttonPrimary
                     )
 
                     StatusListItemIconStyle.Warning -> Pair(
-                        R.drawable.ic_error,
-                        GovUkTheme.colourScheme.textAndIcons.iconPrimary
+                        rememberVectorPainter(Icons.Filled.Warning),
+                        GovUkTheme.colourScheme.textAndIcons.primary
                     )
                 }
 
@@ -396,7 +400,7 @@ fun StatusListItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = icon),
+                        painter = icon,
                         contentDescription = null,  // decorative icon
                         tint = tint
                     )
@@ -553,6 +557,20 @@ private fun StatusListItemPreview() {
             title = AccessibleString("Tax"),
             description = AccessibleString("Valid until 1 February 2027"),
             iconStyle = StatusListItemIconStyle.Success,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemWarningPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = AccessibleString("Tax"),
+            description = AccessibleString("Expired 1 February 2027"),
+            iconStyle = StatusListItemIconStyle.Warning,
             isFirst = false,
             isLast = false
         )
