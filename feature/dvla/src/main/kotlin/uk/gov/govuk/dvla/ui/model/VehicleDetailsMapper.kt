@@ -96,11 +96,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.colour_title),
-                    info = if (vesVehicle.secondaryColour != null) getFormattedVehicleColour(
-                        colour = stringProvider.getString(vesVehicle.colour.getResource()),
-                        concatenator = stringProvider.getString(R.string.and),
-                        secondaryColour = stringProvider.getString(vesVehicle.secondaryColour.getResource())
-                    ) else stringProvider.getString(vesVehicle.colour.getResource())
+                    info = vesVehicle.getVehicleColour()
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.engine_size_title),
@@ -174,11 +170,23 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getColourSpecification() = SpecificationUiModel(
-        icon = R.drawable.ic_colour,
-        description = stringProvider.getString(this.colour.getResource()),
-        altText = stringProvider.getString(R.string.colour_alt_text, this.colour)
-    )
+    private fun CustomerVehicle.getColourSpecification(): SpecificationUiModel {
+        val colour = this.getVehicleColour()
+        return SpecificationUiModel(
+            icon = R.drawable.ic_colour,
+            description = colour,
+            altText = stringProvider.getString(R.string.colour_alt_text, colour)
+        )
+    }
+
+    private fun CustomerVehicle.getVehicleColour(): String {
+        val colour = stringProvider.getString(this.colour.getResource())
+        return if (this.secondaryColour != null) getFormattedVehicleColour(
+            colour = colour,
+            concatenator = stringProvider.getString(R.string.and),
+            secondaryColour = stringProvider.getString(this.secondaryColour.getResource())
+        ) else colour
+    }
 
     // TODO what if date is null?
     private fun getTaxStatusResources(status: TaxStatus): Pair<Int?, Int?> =
