@@ -51,6 +51,7 @@ dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
     implementation(projects.data)
+    implementation(projects.config)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.lifecycle.compose)

@@ -80,18 +80,21 @@ fun VehiclesAndLicenceSummaryWidget(
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
 
-                        // TODO move this somewhere else?
-                        val addVehicleUrl = "https://driver-and-vehicles-account.service.gov.uk/add_vehicle"
+                        val addVehicleUrl = viewModel.dvlaUrls?.addVehicle
 
                         VehiclesViewContent(
                             vehiclesState = currentState.vehiclesState,
-                            onAddVehiclesClick = { label ->
-                                viewModel.onAddVehiclesClicked(label, addVehicleUrl)
-                                onLaunchBrowser(addVehicleUrl)
+                            onAddVehiclesClick = addVehicleUrl?.let { url ->
+                                { label ->
+                                    viewModel.onAddVehiclesClicked(label, url)
+                                    onLaunchBrowser(url)
+                                }
                             },
-                            onAddAnotherVehicleClick = { label ->
-                                viewModel.onAddAnotherVehicleClicked(label, addVehicleUrl)
-                                onLaunchBrowser(addVehicleUrl)
+                            onAddAnotherVehicleClick = addVehicleUrl?.let { url ->
+                                { label ->
+                                    viewModel.onAddAnotherVehicleClicked(label, url)
+                                    onLaunchBrowser(url)
+                                }
                             },
                             modifier = modifier
                         )
@@ -126,8 +129,8 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     vehiclesState: VehiclesSummaryUiState,
-    onAddVehiclesClick: (String) -> Unit,
-    onAddAnotherVehicleClick: (String) -> Unit,
+    onAddVehiclesClick: ((String) -> Unit)?,
+    onAddAnotherVehicleClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -138,14 +141,17 @@ private fun VehiclesViewContent(
 
         is VehiclesSummaryUiState.Success -> {
             if (vehiclesState.vehicles.isEmpty()) {
-                VehiclesSummaryEmpty(
-                    onAddVehiclesClick = onAddVehiclesClick,
-                    modifier = modifier
-                )
+
+                if (onAddVehiclesClick != null) {
+                    VehiclesSummaryEmpty(
+                        onAddVehiclesClick = onAddVehiclesClick,
+                        modifier = modifier
+                    )
+                }
             } else {
                 VehiclesSummarySuccess(
                     vehicles = vehiclesState.vehicles,
-                    onAddVehicleClick = onAddVehiclesClick,
+                    onAddVehicleClick = onAddAnotherVehicleClick,
                     onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
                     onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                     modifier = modifier
@@ -202,7 +208,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 @Composable
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
-    onAddVehicleClick: (String) -> Unit,
+    onAddVehicleClick: ((String) -> Unit)?,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -220,15 +226,17 @@ private fun VehiclesSummarySuccess(
             )
         }
 
-        val title = stringResource(R.string.add_vehicle)
+        if (onAddVehicleClick != null) {
+            val title = stringResource(R.string.add_vehicle)
 
-        AddVehicleListItem(
-            title = title,
-            icon = uk.gov.govuk.design.R.drawable.ic_add,
-            onClick = { onAddVehicleClick(title) },
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+            AddVehicleListItem(
+                title = title,
+                icon = uk.gov.govuk.design.R.drawable.ic_add,
+                onClick = { onAddVehicleClick(title) },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 

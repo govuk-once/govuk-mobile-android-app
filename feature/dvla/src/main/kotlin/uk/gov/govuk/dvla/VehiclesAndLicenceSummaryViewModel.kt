@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
+    configRepo: ConfigRepo,
     private val vehicleMapper: VehicleSummaryMapper,
     private val licenceMapper: LicenceSummaryMapper,
     private val analyticsClient: AnalyticsClient
@@ -35,6 +37,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
     val uiState = _uiState.asStateFlow()
+    val dvlaUrls = configRepo.dvlaUrls
 
     init {
         viewModelScope.launch {
