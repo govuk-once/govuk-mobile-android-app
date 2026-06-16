@@ -15,14 +15,14 @@ import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
-import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import javax.inject.Inject
 
 @HiltViewModel
 internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
-    private val vehicleMapper: VehicleDetailsMapper,
+    private val vehicleMapper: VehicleSummaryMapper,
     private val licenceMapper: LicenceSummaryMapper,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {

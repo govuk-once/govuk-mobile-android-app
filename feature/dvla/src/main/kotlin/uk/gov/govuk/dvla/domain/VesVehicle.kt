@@ -14,16 +14,16 @@ data class VesVehicle(
     val colour: VehicleColour,
     val yearOfManufacture: Int?,
     val dateOfFirstRegistration: LocalDate?,
-    override val taxStatus: TaxStatus,
+    val taxStatus: TaxStatus,
     val taxDueDate: LocalDate?,
-    override val taxExpiryDate: LocalDate?,
-    override val taxClass: String,
-    override val motStatus: MotStatus,
-    override val motExpiryDate: LocalDate?,
+    val taxExpiryDate: LocalDate?,
+    val taxClass: String,
+    val motStatus: MotStatus,
+    val motExpiryDate: LocalDate?,
     val fuelType: FuelType,
     val engineCapacity: Int?,
     val co2Emissions: Int?
-): VehicleSummary
+)
 
 fun VehicleEnquiryResponse.toDomainModel() = VesVehicle(
     registrationNumber = this.registrationNumber,

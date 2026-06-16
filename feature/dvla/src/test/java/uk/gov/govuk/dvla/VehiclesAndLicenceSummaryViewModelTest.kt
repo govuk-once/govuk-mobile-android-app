@@ -29,7 +29,7 @@ import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
-import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
+import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 
@@ -38,7 +38,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val repo = mockk<DvlaRepo>(relaxed = true)
-    private val vehicleMapper = mockk<VehicleDetailsMapper>(relaxed = true)
+    private val vehicleMapper = mockk<VehicleSummaryMapper>(relaxed = true)
     private val licenceMapper = mockk<LicenceSummaryMapper>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
 

@@ -91,7 +91,8 @@ fun InternalLinkListItem(
 
                 is InternalLinkListItemStyle.Info -> {
                     BodyRegularLabel(
-                        text = style.info
+                        text = style.info,
+                        modifier = Modifier.talkBackText(style.altText)
                     )
                 }
 

@@ -56,7 +56,7 @@ internal class VehicleDetailsViewModel @Inject constructor(
             when (val result = dvlaRepo.getCustomerSummary()) {
                 is uk.gov.govuk.data.model.Result.Success -> {
                     val vehicle = result.value.vehicles[0]
-                    val vehicleDetails = mapper.toDetailsUiModel(vehicle)
+                    val vehicleDetails = mapper.toUiModel(vehicle)
                     _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
                 }
 

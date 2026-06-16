@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -132,6 +134,9 @@ private fun HorizontalSpecificationItem(
                 if (textLayoutResult.hasVisualOverflow) {
                     onTruncatedText()
                 }
+            },
+            modifier = Modifier.semantics {
+                contentDescription = uiModel.altText
             }
         )
     }
@@ -160,7 +165,10 @@ private fun VerticalSpecificationItem(
         MediumHorizontalSpacer()
 
         BodyRegularLabel(
-            text = uiModel.description
+            text = uiModel.description,
+            modifier = Modifier.semantics {
+                contentDescription = uiModel.altText
+            }
         )
     }
 }

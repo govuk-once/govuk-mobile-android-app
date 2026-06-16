@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.AddressListItem
-import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -161,7 +160,9 @@ private fun SuccessScreen(
 
             StatusListItem(
                 title = details.motStatus.title?.let {
-                    AccessibleString(displayText = it)
+                    AccessibleString(
+                        displayText = it,
+                        altText = stringResource(R.string.acronym_mot_alt_text))
                 },
                 description = AccessibleString(displayText = details.motStatus.description),
                 icon = details.motStatus.icon,
@@ -220,7 +221,10 @@ private fun SuccessScreen(
                     isFirst = index == 0,
                     isLast = index == details.extraDetails.size,
                     background = Color.Transparent,
-                    style = InternalLinkListItemStyle.Info(detail.info)
+                    style = InternalLinkListItemStyle.Info(
+                        info = detail.info,
+                        altText = detail.altText
+                    )
                 )
             }
         }

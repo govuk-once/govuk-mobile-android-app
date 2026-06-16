@@ -5,23 +5,15 @@ import uk.gov.govuk.dvla.remote.model.Vehicle
 import uk.gov.govuk.dvla.remote.model.VehicleKeeper
 import java.time.LocalDate
 
-interface VehicleSummary {
-    val taxStatus: TaxStatus
-    val taxExpiryDate: LocalDate?
-    val taxClass: String
-    val motStatus: MotStatus
-    val motExpiryDate: LocalDate?
-}
-
 data class CustomerVehicle(
     val registration: String,
     val make: String,
     val model: String?,
-    override val taxStatus: TaxStatus,
-    override val taxExpiryDate: LocalDate?,
-    override val taxClass: String,
-    override val motStatus: MotStatus,
-    override val motExpiryDate: LocalDate?,
+    val taxStatus: TaxStatus,
+    val taxExpiryDate: LocalDate?,
+    val taxClass: String,
+    val motStatus: MotStatus,
+    val motExpiryDate: LocalDate?,
 
     // TODO: remove below when vehicle details endpoint is live
     val keeper: VehicleKeeper?,
@@ -31,7 +23,7 @@ data class CustomerVehicle(
     val secondaryColour: VehicleColour?,
     val engineCapacity: Int?,
     val euroStatus: String?
-) : VehicleSummary
+)
 
 internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
     return CustomerVehicle(

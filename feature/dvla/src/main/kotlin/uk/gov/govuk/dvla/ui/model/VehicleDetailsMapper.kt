@@ -41,7 +41,6 @@ import uk.gov.govuk.dvla.domain.VehicleColour.SILVER
 import uk.gov.govuk.dvla.domain.VehicleColour.TURQUOISE
 import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
-import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.util.getFormattedEmissionsAltText
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
@@ -55,24 +54,26 @@ internal class VehicleDetailsMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
     private companion object {
-        const val DATE_FORMAT_d_MMMM_yyyy = "d-MMMM-yyyy"
+        const val DATE_FORMAT_d_MMMM_yyyy = "d MMMM yyyy"
         const val DATE_FORMAT_YYYY = "YYYY"
     }
 
     // TODO change param to VesVehicle when details endpoint live
-    fun toDetailsUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
+    fun toUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
+        val engineCapacity =
+            vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
         return VehicleDetailsUiModel(
             make = vesVehicle.make,
             model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
             registration = vesVehicle.registration,
-            keeper =  vesVehicle.getKeeper(),
+            keeper = vesVehicle.getKeeper(),
             specifications = listOf(
                 vesVehicle.getCalendarSpecification(),
                 vesVehicle.getFuelTypeSpecification(),
                 vesVehicle.getColourSpecification()
             ),
-            taxStatus = getTaxRow(vesVehicle),
-            motStatus = getMotRow(vesVehicle),
+            taxStatus = vesVehicle.getTaxRow(),
+            motStatus = vesVehicle.getMotRow(),
             extraDetails = listOf(
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.make_title), info = vesVehicle.make
@@ -83,7 +84,11 @@ internal class VehicleDetailsMapper @Inject constructor(
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.first_registered_title),
-                    info = vesVehicle.getDateOfFirstRegistration()
+                    info = vesVehicle.getDateOfFirstRegistration(),
+                    altText = stringProvider.getString(
+                        R.string.first_registered_in_alt_text,
+                        vesVehicle.getDateOfFirstRegistration()
+                    )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.fuel_type_title),
@@ -93,51 +98,40 @@ internal class VehicleDetailsMapper @Inject constructor(
                     title = stringProvider.getString(R.string.colour_title),
                     info = if (vesVehicle.secondaryColour != null) getFormattedVehicleColour(
                         colour = stringProvider.getString(vesVehicle.colour.getResource()),
-                        secondaryColour = stringProvider.getString(vesVehicle.secondaryColour.getResource()),
-                        concatenator = stringProvider.getString(R.string.and)
+                        concatenator = stringProvider.getString(R.string.and),
+                        secondaryColour = stringProvider.getString(vesVehicle.secondaryColour.getResource())
                     ) else stringProvider.getString(vesVehicle.colour.getResource())
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.engine_size_title),
-                    info = if (vesVehicle.engineCapacity != null) getFormattedEngineCapacity(
-                        vesVehicle.engineCapacity
-                    ) else "Unknown",
-                    infoAltText = getFormattedEngineCapacityAltText(
-                        engineCapacity = if (vesVehicle.engineCapacity != null) getFormattedEngineCapacity(
-                            vesVehicle.engineCapacity
-                        ) else "Unknown",
+                    info = engineCapacity,
+                    altText = getFormattedEngineCapacityAltText(
+                        engineCapacity,
                         replacementText = stringProvider.getString(R.string.litres_alt_text)
                     )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.emissions_title),
                     info = vesVehicle.euroStatus ?: "Unknown",
-                    infoAltText = if (vesVehicle.euroStatus != null) getFormattedEmissionsAltText(
-                        euroStatus = vesVehicle.euroStatus,
-                        replacementText = stringProvider.getString(R.string.emissions_alt_text)
-                    ) else "Unknown"
+                    altText = vesVehicle.euroStatus?.let {
+                        getFormattedEmissionsAltText(
+                            euroStatus = it,
+                            replacementText = stringProvider.getString(R.string.emissions_alt_text)
+                        )
+                    } ?: "Unknown"
                 )
             )
         )
     }
-
-    fun toUiModel(vehicle: CustomerVehicle): VehicleSummaryUiModel = VehicleSummaryUiModel(
-        registration = vehicle.registration,
-        make = vehicle.make,
-        model = vehicle.model
-            ?: "Unknown", // TODO return unknown for now, other states in future tickets
-        taxStatus = getTaxRow(vehicle),
-        motStatus = getMotRow(vehicle)
-    )
 
     private fun CustomerVehicle.getDateOfFirstRegistration() =
         this.dateOfFirstRegistration?.toDisplayFormat(
             DATE_FORMAT_YYYY
         ) ?: "Unknown"
 
-    private fun getTaxRow(vehicle: VehicleSummary): StatusRowUiModel {
-        val taxDate = vehicle.taxExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
-        val (taxStringResId, taxIconResId) = getTaxStatusResources(vehicle.taxStatus)
+    private fun CustomerVehicle.getTaxRow(): StatusRowUiModel {
+        val taxDate = this.taxExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
+        val (taxStringResId, taxIconResId) = getTaxStatusResources(this.taxStatus)
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.tax_status_title),
             description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
@@ -145,9 +139,9 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun getMotRow(vehicle: VehicleSummary): StatusRowUiModel {
-        val motDate = vehicle.motExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
-        val (motStringResId, motIconResId) = getMotStatusResources(vehicle.motStatus)
+    private fun CustomerVehicle.getMotRow(): StatusRowUiModel {
+        val motDate = this.motExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
+        val (motStringResId, motIconResId) = getMotStatusResources(this.motStatus)
 
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.acronym_mot),
@@ -172,10 +166,11 @@ internal class VehicleDetailsMapper @Inject constructor(
 
     private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationUiModel {
         val fuelType = this.fuelType.getResources()
+        val fuelName = stringProvider.getString(fuelType.second)
         return SpecificationUiModel(
             icon = fuelType.first,
-            description = stringProvider.getString(fuelType.second),
-            altText = stringProvider.getString(R.string.fuel_type_alt_text, fuelType)
+            description = fuelName,
+            altText = stringProvider.getString(R.string.fuel_type_alt_text, fuelName)
         )
     }
 
