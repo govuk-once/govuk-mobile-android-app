@@ -71,6 +71,15 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     }
 
     fun onAddVehiclesClicked(text: String, url: String) {
+        analyticsClient.accountCardClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION
+        )
+    }
+
+    fun onAddAnotherVehicleClicked(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,

@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -86,8 +85,12 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         VehiclesViewContent(
                             vehiclesState = currentState.vehiclesState,
-                            onAddVehicleClick = { label ->
+                            onAddVehiclesClick = { label ->
                                 viewModel.onAddVehiclesClicked(label, addVehicleUrl)
+                                onLaunchBrowser(addVehicleUrl)
+                            },
+                            onAddAnotherVehicleClick = { label ->
+                                viewModel.onAddAnotherVehicleClicked(label, addVehicleUrl)
                                 onLaunchBrowser(addVehicleUrl)
                             },
                             modifier = modifier
@@ -123,7 +126,8 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     vehiclesState: VehiclesSummaryUiState,
-    onAddVehicleClick: (String) -> Unit,
+    onAddVehiclesClick: (String) -> Unit,
+    onAddAnotherVehicleClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -135,13 +139,13 @@ private fun VehiclesViewContent(
         is VehiclesSummaryUiState.Success -> {
             if (vehiclesState.vehicles.isEmpty()) {
                 VehiclesSummaryEmpty(
-                    onAddVehiclesClick = onAddVehicleClick,
+                    onAddVehiclesClick = onAddVehiclesClick,
                     modifier = modifier
                 )
             } else {
                 VehiclesSummarySuccess(
                     vehicles = vehiclesState.vehicles,
-                    onAddVehicleClick = onAddVehicleClick,
+                    onAddVehicleClick = onAddVehiclesClick,
                     onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
                     onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                     modifier = modifier
@@ -216,10 +220,12 @@ private fun VehiclesSummarySuccess(
             )
         }
 
+        val title = stringResource(R.string.add_vehicle)
+
         AddVehicleListItem(
-            title = stringResource(R.string.add_vehicle),
+            title = title,
             icon = uk.gov.govuk.design.R.drawable.ic_add,
-            onClick = { },
+            onClick = { onAddVehicleClick(title) },
             modifier = Modifier
                 .fillMaxWidth()
         )
