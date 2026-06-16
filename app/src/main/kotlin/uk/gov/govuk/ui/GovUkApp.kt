@@ -507,7 +507,11 @@ private fun GovUkNavHost(
                         )
 
                         // and licence summary widget from DVLA module
-                        VehiclesAndLicenceSummaryWidget()
+                        VehiclesAndLicenceSummaryWidget(
+                            onLaunchBrowser = { url ->
+                                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                            }
+                        )
                     }
                 }
             },

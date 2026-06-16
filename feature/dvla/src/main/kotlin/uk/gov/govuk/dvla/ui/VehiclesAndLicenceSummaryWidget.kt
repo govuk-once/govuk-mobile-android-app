@@ -27,6 +27,7 @@ import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
+import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -40,6 +41,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
+    onLaunchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
@@ -78,8 +80,16 @@ fun VehiclesAndLicenceSummaryWidget(
 
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
+
+                        // TODO move this somewhere else?
+                        val addVehicleUrl = "https://driver-and-vehicles-account.service.gov.uk/add_vehicle"
+
                         VehiclesViewContent(
                             vehiclesState = currentState.vehiclesState,
+                            onAddVehicleClick = { label ->
+                                viewModel.onAddVehiclesClicked(label, addVehicleUrl)
+                                onLaunchBrowser(addVehicleUrl)
+                            },
                             modifier = modifier
                         )
                     }
@@ -113,6 +123,7 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     vehiclesState: VehiclesSummaryUiState,
+    onAddVehicleClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -122,15 +133,15 @@ private fun VehiclesViewContent(
         }
 
         is VehiclesSummaryUiState.Success -> {
-
             if (vehiclesState.vehicles.isEmpty()) {
                 VehiclesSummaryEmpty(
-                    onAddVehiclesClick = { /* TODO to be handled in next ticket(s) */ },
+                    onAddVehiclesClick = onAddVehicleClick,
                     modifier = modifier
                 )
             } else {
                 VehiclesSummarySuccess(
                     vehicles = vehiclesState.vehicles,
+                    onAddVehicleClick = onAddVehicleClick,
                     onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
                     onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                     modifier = modifier
@@ -187,6 +198,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 @Composable
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
+    onAddVehicleClick: (String) -> Unit,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -203,23 +215,33 @@ private fun VehiclesSummarySuccess(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+        AddVehicleListItem(
+            title = stringResource(R.string.add_vehicle),
+            icon = uk.gov.govuk.design.R.drawable.ic_add,
+            onClick = { },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 
 @Composable
 private fun VehiclesSummaryEmpty(
-    onAddVehiclesClick: () -> Unit,
+    onAddVehiclesClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val description = stringResource(R.string.add_your_vehicles)
+
     Column(modifier = modifier) {
         CentredCardWithIcon(
-            onClick = onAddVehiclesClick,
+            onClick = { onAddVehiclesClick(description) },
             icon = uk.gov.govuk.design.R.drawable.ic_add,
-            description = stringResource(R.string.add_your_vehicles),
+            description = description,
             drawBottomStroke = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 222.dp) // match the LoaderCard height
+            verticalPadding = 52.dp,
+            modifier = Modifier.fillMaxWidth()
         )
         SmallVerticalSpacer()
     }

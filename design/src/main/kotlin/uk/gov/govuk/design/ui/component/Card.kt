@@ -337,9 +337,10 @@ fun CentredCardWithIcon(
     modifier: Modifier = Modifier,
     title: String? = null,
     description: String? = null,
-    drawBottomStroke: Boolean = true
+    drawBottomStroke: Boolean = true,
+    verticalPadding: Dp = GovUkTheme.spacing.extraLarge
 ) {
-    Surface(
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
@@ -351,19 +352,15 @@ fun CentredCardWithIcon(
                     )
                 } else Modifier
             ),
-        shape = CardDefaults.shape,
-        color = GovUkTheme.colourScheme.surfaces.list
+        colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list)
     ) {
-        Box(
+        CentredContentWithIcon(
+            icon = icon,
             modifier = Modifier.clickable(onClick = onClick),
-            contentAlignment = Alignment.Center
-        ) {
-            CentredContentWithIcon(
-                icon = icon,
-                title = title,
-                description = description
-            )
-        }
+            title = title,
+            description = description,
+            verticalPadding = verticalPadding
+        )
     }
 }
 
@@ -372,21 +369,23 @@ fun CentredContentWithIcon(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     title: String? = null,
-    description: String? = null
+    description: String? = null,
+    verticalPadding: Dp = GovUkTheme.spacing.extraLarge
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
+            .padding(
+                vertical = verticalPadding,
+                horizontal = GovUkTheme.spacing.extraLarge
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ExtraLargeVerticalSpacer()
-
         Icon(
             painterResource(icon),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(32.dp),
+            modifier = Modifier.size(32.dp),
             tint = GovUkTheme.colourScheme.textAndIcons.icon
         )
 
@@ -396,10 +395,7 @@ fun CentredContentWithIcon(
             BodyBoldLabel(
                 text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clearAndSetSemantics { }
-                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
@@ -410,15 +406,10 @@ fun CentredContentWithIcon(
             BodyRegularLabel(
                 text = description,
                 color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clearAndSetSemantics { }
-                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
-
-        ExtraLargeVerticalSpacer()
     }
 }
 
