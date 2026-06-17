@@ -6,12 +6,6 @@ internal fun getFormattedEngineCapacity(engineCapacity: Int): String {
     return capacityInLitres
 }
 
-internal fun getFormattedVehicleColour(
-    colour: String,
-    concatenator: String,
-    secondaryColour: String
-) = "$colour $concatenator $secondaryColour"
-
 internal fun getFormattedEngineCapacityAltText(engineCapacity: String, replacementText: String) =
     engineCapacity.replace("L", " $replacementText")
 
