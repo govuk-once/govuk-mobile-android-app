@@ -26,7 +26,10 @@ internal fun ExpiredLicenceStatusItem(
     Column(modifier = modifier.fillMaxWidth()) {
         StatusListItem(
             title = status.title?.let { AccessibleString(displayText = it) },
-            description = AccessibleString(displayText = status.description),
+            description = AccessibleString(
+                displayText = status.description,
+                altText = stringResource(R.string.licence_expiration_alt_text, status.description)
+            ),
             iconStyle = status.iconStyle,
             drawDivider = false
         )
