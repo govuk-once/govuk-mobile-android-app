@@ -27,12 +27,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
-import uk.gov.govuk.design.ui.model.SpecificationUiModel
+import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 fun SpecificationsIcons(
-    uiModels: List<SpecificationUiModel>,
+    uiModels: List<SpecificationIconUiModel>,
     modifier: Modifier = Modifier
 ) {
     var shouldShowVertical by remember { mutableStateOf(false) }
@@ -103,7 +103,7 @@ private fun getRoundedCornerShape(
 
 @Composable
 private fun HorizontalSpecificationItem(
-    uiModel: SpecificationUiModel,
+    uiModel: SpecificationIconUiModel,
     modifier: Modifier = Modifier,
     onTruncatedText: () -> Unit
 ) {
@@ -113,14 +113,12 @@ private fun HorizontalSpecificationItem(
             .padding(GovUkTheme.spacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        uiModel.icon?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier.size(30.dp),
-                colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.primary)
-            )
-        }
+        Image(
+            painter = painterResource(uiModel.icon),
+            contentDescription = null,
+            modifier = Modifier.size(30.dp),
+            colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.primary)
+        )
 
         SmallVerticalSpacer()
 
@@ -144,7 +142,7 @@ private fun HorizontalSpecificationItem(
 
 @Composable
 private fun VerticalSpecificationItem(
-    uiModel: SpecificationUiModel,
+    uiModel: SpecificationIconUiModel,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -153,14 +151,12 @@ private fun VerticalSpecificationItem(
             .padding(GovUkTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        uiModel.icon?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier.size(30.dp),
-                colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.primary)
-            )
-        }
+        Image(
+            painter = painterResource(uiModel.icon),
+            contentDescription = null,
+            modifier = Modifier.size(30.dp),
+            colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.primary)
+        )
 
         MediumHorizontalSpacer()
 
@@ -177,17 +173,17 @@ private fun VerticalSpecificationItem(
 @Composable
 private fun HorizontalSpecificationsIconsPreview() {
     val uiModels = listOf(
-        SpecificationUiModel(
+        SpecificationIconUiModel(
             icon = R.drawable.ic_home,
             description = "Home",
             altText = ""
         ),
-        SpecificationUiModel(
+        SpecificationIconUiModel(
             icon = R.drawable.crown,
             description = "Crown",
             altText = ""
         ),
-        SpecificationUiModel(
+        SpecificationIconUiModel(
             icon = R.drawable.ic_settings,
             description = "Settings",
             altText = ""
@@ -204,17 +200,17 @@ private fun HorizontalSpecificationsIconsPreview() {
 @Composable
 private fun VerticalSpecificationsIconsPreview() {
     val uiModels = listOf(
-        SpecificationUiModel(
+        SpecificationIconUiModel(
             icon = R.drawable.ic_home,
             description = "Home",
             altText = ""
         ),
-        SpecificationUiModel(
+        SpecificationIconUiModel(
             icon = R.drawable.crown,
             description = "Crown with really long description",
             altText = ""
         ),
-        SpecificationUiModel(
+        SpecificationIconUiModel(
             icon = R.drawable.ic_settings,
             description = "Settings",
             altText = ""

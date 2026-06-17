@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
-import uk.gov.govuk.design.ui.model.SpecificationUiModel
+import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
@@ -131,7 +130,7 @@ private fun SuccessScreen(
             MediumVerticalSpacer()
 
             SpecificationsIcons(
-                details.specifications,
+                details.specificationsIcons,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = GovUkTheme.spacing.medium)
@@ -216,11 +215,11 @@ private fun SuccessScreen(
 
             MediumVerticalSpacer()
 
-            details.extraDetails.forEachIndexed { index, detail ->
+            details.specifications.forEachIndexed { index, detail ->
                 InternalLinkListItem(
                     title = detail.title,
                     isFirst = index == 0,
-                    isLast = index == details.extraDetails.size,
+                    isLast = index == details.specifications.size,
                     background = Color.Transparent,
                     style = InternalLinkListItemStyle.Info(
                         info = detail.info,
@@ -246,17 +245,17 @@ private fun SuccessScreenPreview() {
             "Postcode"
         ),
         listOf(
-            SpecificationUiModel(
+            SpecificationIconUiModel(
                 R.drawable.ic_calendar,
                 "Calendar",
                 "Calendar alt text"
             ),
-            SpecificationUiModel(
+            SpecificationIconUiModel(
                 R.drawable.ic_petrol_diesel,
                 "Diesel",
                 "Diesel alt text"
             ),
-            SpecificationUiModel(
+            SpecificationIconUiModel(
                 R.drawable.ic_colour,
                 "Red",
                 "Colour alt text"
@@ -272,7 +271,7 @@ private fun SuccessScreenPreview() {
             description = "",
             icon = uk.gov.govuk.design.R.drawable.ic_check_round
         ),
-        extraDetails = listOf()
+        specifications = listOf()
     )
     GovUkTheme {
         SuccessScreen({}, {}, details)

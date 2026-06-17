@@ -1,7 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
-import uk.gov.govuk.design.ui.model.SpecificationUiModel
+import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
@@ -67,14 +67,14 @@ internal class VehicleDetailsMapper @Inject constructor(
             model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
             registration = vesVehicle.registration,
             keeper = vesVehicle.getKeeper(),
-            specifications = listOf(
+            specificationsIcons = listOf(
                 vesVehicle.getCalendarSpecification(),
                 vesVehicle.getFuelTypeSpecification(),
                 vesVehicle.getColourSpecification()
             ),
             taxStatus = vesVehicle.getTaxRow(),
             motStatus = vesVehicle.getMotRow(),
-            extraDetails = listOf(
+            specifications = listOf(
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.make_title), info = vesVehicle.make
                 ),
@@ -147,10 +147,10 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getCalendarSpecification(): SpecificationUiModel {
+    private fun CustomerVehicle.getCalendarSpecification(): SpecificationIconUiModel {
         val registrationDate =
             this.dateOfFirstRegistration?.toDisplayFormat(DATE_FORMAT_YYYY) ?: ""
-        return SpecificationUiModel(
+        return SpecificationIconUiModel(
             icon = R.drawable.ic_calendar,
             description = registrationDate,
             altText = stringProvider.getString(
@@ -160,19 +160,19 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationUiModel {
+    private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationIconUiModel {
         val fuelType = this.fuelType.getResources()
         val fuelName = stringProvider.getString(fuelType.second)
-        return SpecificationUiModel(
+        return SpecificationIconUiModel(
             icon = fuelType.first,
             description = fuelName,
             altText = stringProvider.getString(R.string.fuel_type_alt_text, fuelName)
         )
     }
 
-    private fun CustomerVehicle.getColourSpecification(): SpecificationUiModel {
+    private fun CustomerVehicle.getColourSpecification(): SpecificationIconUiModel {
         val colour = this.getVehicleColour()
-        return SpecificationUiModel(
+        return SpecificationIconUiModel(
             icon = R.drawable.ic_colour,
             description = colour,
             altText = stringProvider.getString(R.string.colour_alt_text, colour)
