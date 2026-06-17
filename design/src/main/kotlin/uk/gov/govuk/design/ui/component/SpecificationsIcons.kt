@@ -44,16 +44,11 @@ fun SpecificationsIcons(
             uiModels.forEachIndexed { index, uiModel ->
                 VerticalSpecificationItem(
                     uiModel = uiModel,
-                    modifier = Modifier
-                        .clip(
-                            getRoundedCornerShape(
-                                index = index,
-                                maxIndex = uiModels.size - 1,
-                                isHorizontal = false
-                            )
-                        )
-                        .fillMaxWidth()
-                        .padding(top = if (index == 0) 0.dp else 1.dp)
+                    modifier = Modifier.getModifier(
+                        index = index,
+                        maxIndex = uiModels.size - 1,
+                        isHorizontal = false
+                    )
                 )
             }
         }
@@ -65,16 +60,12 @@ fun SpecificationsIcons(
             uiModels.forEachIndexed { index, uiModel ->
                 HorizontalSpecificationItem(
                     uiModel = uiModel,
-                    modifier = Modifier
-                        .clip(
-                            getRoundedCornerShape(
-                                index = index,
-                                maxIndex = uiModels.size - 1,
-                                isHorizontal = true
-                            )
+                    modifier = Modifier.getModifier(
+                            index = index,
+                            maxIndex = uiModels.size - 1,
+                            isHorizontal = true
                         )
-                        .weight(1f)
-                        .padding(start = if (index == 0) 0.dp else 1.dp),
+                        .weight(1f),
                     onTruncatedText = {
                         if (!shouldShowVertical) {
                             shouldShowVertical = true
@@ -87,18 +78,24 @@ fun SpecificationsIcons(
 }
 
 @Composable
-private fun getRoundedCornerShape(
+private fun Modifier.getModifier(
     index: Int,
     maxIndex: Int,
     isHorizontal: Boolean
-): RoundedCornerShape {
+): Modifier {
     val firstCorners = if (index == 0) GovUkTheme.numbers.cornerAndroidList else 0.dp
     val lastCorners =
         if (index == maxIndex) GovUkTheme.numbers.cornerAndroidList else 0.dp
+    val padding = if (index == 0) 0.dp else 1.dp
     return if (isHorizontal)
-        RoundedCornerShape(firstCorners, lastCorners, lastCorners, firstCorners)
+        this
+            .clip(RoundedCornerShape(firstCorners, lastCorners, lastCorners, firstCorners))
+            .padding(start = padding)
     else
-        RoundedCornerShape(firstCorners, firstCorners, lastCorners, lastCorners)
+        this
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(firstCorners, firstCorners, lastCorners, lastCorners))
+            .padding(top = padding)
 }
 
 @Composable
