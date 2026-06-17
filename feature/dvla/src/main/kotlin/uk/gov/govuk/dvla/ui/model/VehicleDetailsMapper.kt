@@ -179,10 +179,11 @@ internal class VehicleDetailsMapper @Inject constructor(
     private fun CustomerVehicle.getVehicleColour(): String {
         val colour = stringProvider.getString(this.colour.getResource())
         return this.secondaryColour?.let { secondaryColour ->
+            val secondaryColour = stringProvider.getString(secondaryColour.getResource())
             stringProvider.getString(
                 R.string.concatenated_vehicle_colours,
                 colour,
-                stringProvider.getString(secondaryColour.getResource())
+                secondaryColour.lowercase()
             )
         } ?: colour
     }
