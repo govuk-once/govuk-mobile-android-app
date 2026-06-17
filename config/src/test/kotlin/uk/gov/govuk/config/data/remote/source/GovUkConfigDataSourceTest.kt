@@ -15,6 +15,7 @@ import uk.gov.govuk.config.data.remote.ConfigApi
 import uk.gov.govuk.config.data.remote.ContentApi
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.ConfigResponse
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
 import uk.gov.govuk.data.model.Result
@@ -42,6 +43,10 @@ class GovUkConfigDataSourceTest {
             url = "url",
             contentItemApiUrl = "contentItemUrl"
         )
+        val dvlaUrls = DvlaUrls(
+            addVehicle = "https://www.gov.uk/add-vehicle",
+            renewLicence = "https://www.gov.uk/renew-driving-licence"
+        )
         val config = Config(
             available = true,
             minimumVersion = "1.0.0",
@@ -54,7 +59,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = dvlaUrls
         )
 
         coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
@@ -146,7 +152,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -179,7 +186,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -209,7 +217,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -243,7 +252,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
