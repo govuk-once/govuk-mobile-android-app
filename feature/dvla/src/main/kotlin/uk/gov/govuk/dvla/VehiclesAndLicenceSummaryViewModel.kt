@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
@@ -33,25 +33,22 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
     }
 
-    private val _uiState = MutableStateFlow<UiState>(
-        if (dvlaRepo.linkState.value == DvlaLinkState.LINKED) UiState.Default()
-        else UiState.Hidden
-    )
+    private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             dvlaRepo.linkState.collect { state ->
                 when (state) {
-                    DvlaLinkState.LINKED -> {
+                    ServiceLinkStatus.LINKED -> {
                         setUiStateToDefault()
                         fetchDriverSummary()
                         fetchCustomerSummary()
                         createListCancelCheckCode()
                     }
 
-                    DvlaLinkState.UNLINKED,
-                    DvlaLinkState.CHECKING -> _uiState.value = UiState.Hidden
+                    ServiceLinkStatus.UNLINKED,
+                    ServiceLinkStatus.CHECKING -> _uiState.value = UiState.Hidden
                 }
             }
         }

@@ -16,9 +16,6 @@ import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 interface DvlaApi {
 
-    @GET("app/udp/v1/identity/dvla")
-    suspend fun checkDvlaLinked(): Response<LinkStatusResponse>
-
     @POST("app/udp/v1/identity/dvla")
     suspend fun linkDvlaIdentity(@Header("x-linking-token") id: String): Response<Unit>
 
