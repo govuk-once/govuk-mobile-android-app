@@ -24,6 +24,7 @@ internal fun LicenceSummaryCard(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
+    onRenewClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -60,7 +61,7 @@ internal fun LicenceSummaryCard(
         LicenceStatusItem(
             status = licenceSummary.status,
             licenceStatus = licenceSummary.statusRowUi,
-            onRenewClick = { /* TODO to be handled in next ticket(s) */ }
+            onRenewClick = onRenewClick
         )
     }
 }
@@ -136,7 +137,8 @@ private fun LicenceSummaryCardPreview() {
                 )
             ),
             onMoreClick = {},
-            onLicenceNumberLongClick = {}
+            onLicenceNumberLongClick = {},
+            onRenewClick = {_,_ -> }
         )
     }
 }
@@ -160,7 +162,8 @@ private fun LicenceSummaryCardExpiredPreview() {
                 )
             ),
             onMoreClick = {},
-            onLicenceNumberLongClick = {}
+            onLicenceNumberLongClick = {},
+            onRenewClick = {_,_ -> }
         )
     }
 }

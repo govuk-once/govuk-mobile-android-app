@@ -10,9 +10,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
-import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.StatusListItem
-import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -22,7 +20,7 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 @Composable
 internal fun ExpiredLicenceStatusItem(
     status: StatusRowUiModel,
-    onRenewClick: () -> Unit,
+    onRenewClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -39,9 +37,12 @@ internal fun ExpiredLicenceStatusItem(
                 .padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(bottom = GovUkTheme.spacing.large)
         ) {
+            val text = stringResource(R.string.renew_licence_button)
             PrimaryButton(
-                text = stringResource(R.string.renew_licence_button),
-                onClick = onRenewClick
+                text = text,
+                onClick = {
+                    onRenewClick(text, "" /* Todo - replace with url!!! */)
+                }
             )
 
             MediumVerticalSpacer()
@@ -63,7 +64,7 @@ private fun ExpiredLicenceStatusItemPreview() {
                 description = "Expired 24 April 2026",
                 iconStyle = StatusListItemIconStyle.Warning
             ),
-            onRenewClick = {}
+            onRenewClick = {_,_ -> }
         )
     }
 }

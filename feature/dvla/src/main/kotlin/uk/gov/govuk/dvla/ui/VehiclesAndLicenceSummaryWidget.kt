@@ -98,6 +98,12 @@ fun VehiclesAndLicenceSummaryWidget(
                                 )
                                 viewModel.onLicenceNumberCopied()
                             },
+                            onRenewLicenceClick = { text, url ->
+                                viewModel.onRenewLicenceClicked(
+                                    text = text,
+                                    url = url
+                                )
+                            },
                             modifier = modifier
                         )
                     }
@@ -132,6 +138,7 @@ private fun VehiclesViewContent(
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
     onLicenceNumberLongClick: (String) -> Unit,
+    onRenewLicenceClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -144,6 +151,7 @@ private fun LicenceViewContent(
                 licenceSummary = licenceState.licence,
                 onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
+                onRenewLicenceClick = onRenewLicenceClick,
                 modifier = modifier
             )
         }
@@ -199,6 +207,7 @@ private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
+    onRenewLicenceClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -208,6 +217,7 @@ private fun LicenceSummarySuccess(
             licenceSummary = licenceSummary,
             onMoreClick = { onMoreClick() },
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
+            onRenewClick = onRenewLicenceClick,
             modifier = Modifier.fillMaxWidth()
         )
     }
