@@ -54,7 +54,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
@@ -146,7 +147,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -179,7 +181,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -209,7 +212,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -243,7 +247,8 @@ class GovUkConfigDataSourceTest {
             refreshTokenExpirySeconds = 3600,
             emergencyBanners = null,
             chatBanner = null,
-            termsAndConditions = termsAndConditions
+            termsAndConditions = termsAndConditions,
+            dvlaUrls = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
