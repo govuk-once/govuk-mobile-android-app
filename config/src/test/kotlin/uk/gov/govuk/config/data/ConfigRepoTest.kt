@@ -11,6 +11,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.Config
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
@@ -126,6 +127,7 @@ class ConfigRepoTest {
         val mockFeedback = mockk<UserFeedbackBanner>()
         val mockChatBanner = mockk<ChatBanner>()
         val mockTerms = mockk<TermsAndConditions>()
+        val mockDvlaUrls = mockk<DvlaUrls>()
 
         every { config.recommendedVersion } returns "2.0.0"
         every { config.releaseFlags.recentActivity } returns true
@@ -139,6 +141,7 @@ class ConfigRepoTest {
         every { config.userFeedbackBanner } returns mockFeedback
         every { config.chatBanner } returns mockChatBanner
         every { config.termsAndConditions } returns mockTerms
+        every { config.dvlaUrls } returns mockDvlaUrls
         coEvery { govUkDataSource.fetchConfig() } returns Success(config)
         coEvery { firebaseDataSource.fetch() } returns true
 
@@ -157,5 +160,6 @@ class ConfigRepoTest {
         assertSame(mockFeedback, repo.userFeedbackBanner)
         assertSame(mockChatBanner, repo.chatBanner)
         assertSame(mockTerms, repo.termsAndConditions)
+        assertSame(mockDvlaUrls, repo.dvlaUrls)
     }
 }

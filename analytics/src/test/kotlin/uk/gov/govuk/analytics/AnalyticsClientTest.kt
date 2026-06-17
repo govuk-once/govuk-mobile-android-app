@@ -982,4 +982,21 @@ class AnalyticsClientTest {
             )
         }
     }
+
+    @Test
+    fun `Given an account card click, then log event`() {
+        analyticsClient.accountCardClick("text")
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "Navigation",
+                mapOf(
+                    "type" to "Account card",
+                    "external" to false,
+                    "language" to Locale.getDefault().language,
+                    "text" to "text"
+                )
+            )
+        }
+    }
 }
