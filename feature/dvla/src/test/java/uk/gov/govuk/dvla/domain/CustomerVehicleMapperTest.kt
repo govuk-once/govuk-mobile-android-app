@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import uk.gov.govuk.dvla.remote.model.ExhaustEmissions
 import uk.gov.govuk.dvla.remote.model.Vehicle
 import uk.gov.govuk.dvla.remote.model.common.VehicleColour as RemoteVehicleColour
 import uk.gov.govuk.dvla.remote.model.common.MotStatus as RemoteMotStatus
@@ -30,7 +31,7 @@ class CustomerVehicleMapperTest {
             every { colour } returns RemoteVehicleColour.MULTI_COLOUR
             every { secondaryColour } returns RemoteVehicleColour.MULTI_COLOUR
             every { engineCapacity } returns 1000
-            every { euroStatus } returns "Euro Status"
+            every { exhaustEmissions } returns ExhaustEmissions(100, 2.0, 3.0, 4.0, 5.0, 6.0)
             every { keeper } returns null
         }
 
@@ -48,7 +49,7 @@ class CustomerVehicleMapperTest {
         assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
         assertEquals(VehicleColour.MULTI_COLOUR, result.secondaryColour)
         assertEquals(1000, result.engineCapacity)
-        assertEquals("Euro Status", result.euroStatus)
+        assertEquals(ExhaustEmissions(100, 2.0, 3.0, 4.0, 5.0, 6.0), result.exhaustEmissions)
         assertEquals(null, result.keeper)
     }
 
@@ -68,7 +69,7 @@ class CustomerVehicleMapperTest {
             every { colour } returns RemoteVehicleColour.MULTI_COLOUR
             every { secondaryColour } returns null
             every { engineCapacity } returns null
-            every { euroStatus } returns null
+            every { exhaustEmissions } returns null
             every { keeper } returns null
         }
 
@@ -86,7 +87,7 @@ class CustomerVehicleMapperTest {
         assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
         assertNull(result.secondaryColour)
         assertNull(result.engineCapacity)
-        assertNull(result.euroStatus)
+        assertNull(result.exhaustEmissions)
         assertNull(result.keeper)
     }
 }

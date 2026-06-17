@@ -27,16 +27,4 @@ class SpecificationsFormatterTest {
         val result = getFormattedEngineCapacityAltText("1000L", "Litres")
         assertEquals("1000 Litres", result)
     }
-
-    @Test
-    fun `getFormattedEmissionsAltText correctly formats`() {
-        val result = getFormattedEmissionsAltText("200g/km", "grams per kilometre")
-        assertEquals("200 grams per kilometre", result)
-    }
-
-    @Test
-    fun `getFormattedVehicleColour correctly formats`() {
-        val result = getFormattedVehicleColour("Red", "and", "Blue")
-        assertEquals("Red and Blue", result)
-    }
 }

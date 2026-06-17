@@ -12,9 +12,6 @@ internal fun getFormattedVehicleColour(
     secondaryColour: String
 ) = "$colour $concatenator $secondaryColour"
 
-
 internal fun getFormattedEngineCapacityAltText(engineCapacity: String, replacementText: String) =
     engineCapacity.replace("L", " $replacementText")
 
-internal fun getFormattedEmissionsAltText(euroStatus: String, replacementText: String) =
-    euroStatus.replace("g/km", " $replacementText")

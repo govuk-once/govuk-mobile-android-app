@@ -41,10 +41,8 @@ import uk.gov.govuk.dvla.domain.VehicleColour.SILVER
 import uk.gov.govuk.dvla.domain.VehicleColour.TURQUOISE
 import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
-import uk.gov.govuk.dvla.util.getFormattedEmissionsAltText
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
-import uk.gov.govuk.dvla.util.getFormattedVehicleColour
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -108,12 +106,11 @@ internal class VehicleDetailsMapper @Inject constructor(
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.emissions_title),
-                    info = vesVehicle.euroStatus ?: "Unknown",
-                    altText = vesVehicle.euroStatus?.let {
-                        getFormattedEmissionsAltText(
-                            euroStatus = it,
-                            replacementText = stringProvider.getString(R.string.emissions_alt_text)
-                        )
+                    info = vesVehicle.exhaustEmissions?.co2?.let {
+                        stringProvider.getString(R.string.emissions_info, it)
+                    } ?: "Unknown",
+                    altText = vesVehicle.exhaustEmissions?.co2?.let {
+                        stringProvider.getString(R.string.emissions_alt_text, it)
                     } ?: "Unknown"
                 )
             )
@@ -181,11 +178,13 @@ internal class VehicleDetailsMapper @Inject constructor(
 
     private fun CustomerVehicle.getVehicleColour(): String {
         val colour = stringProvider.getString(this.colour.getResource())
-        return if (this.secondaryColour != null) getFormattedVehicleColour(
-            colour = colour,
-            concatenator = stringProvider.getString(R.string.and),
-            secondaryColour = stringProvider.getString(this.secondaryColour.getResource())
-        ) else colour
+        return this.secondaryColour?.let { secondaryColour ->
+            stringProvider.getString(
+                R.string.concatenated_vehicle_colours,
+                colour,
+                stringProvider.getString(secondaryColour.getResource())
+            )
+        } ?: colour
     }
 
     // TODO what if date is null?

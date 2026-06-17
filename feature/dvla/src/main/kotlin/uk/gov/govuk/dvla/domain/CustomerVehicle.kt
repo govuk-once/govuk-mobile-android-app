@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.domain
 
 import uk.gov.govuk.data.extension.toLocalDateOrNull
+import uk.gov.govuk.dvla.remote.model.ExhaustEmissions
 import uk.gov.govuk.dvla.remote.model.Vehicle
 import uk.gov.govuk.dvla.remote.model.VehicleKeeper
 import java.time.LocalDate
@@ -22,7 +23,7 @@ data class CustomerVehicle(
     val colour: VehicleColour,
     val secondaryColour: VehicleColour?,
     val engineCapacity: Int?,
-    val euroStatus: String?
+    val exhaustEmissions: ExhaustEmissions?
 )
 
 internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
@@ -43,6 +44,6 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         colour = this.colour.toDomain() ?: VehicleColour.NOT_STATED,
         secondaryColour = this.secondaryColour.toDomain(),
         engineCapacity = this.engineCapacity,
-        euroStatus = this.euroStatus
+        exhaustEmissions = this.exhaustEmissions
     )
 }
