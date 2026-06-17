@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +25,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -338,7 +338,7 @@ fun CentredCardWithIcon(
     title: String? = null,
     description: String? = null,
     drawBottomStroke: Boolean = true,
-    verticalPadding: Dp = GovUkTheme.spacing.extraLarge
+    paddingValues: PaddingValues = PaddingValues(vertical = GovUkTheme.spacing.extraLarge)
 ) {
     Card(
         modifier = modifier
@@ -359,7 +359,7 @@ fun CentredCardWithIcon(
             modifier = Modifier.clickable(onClick = onClick),
             title = title,
             description = description,
-            verticalPadding = verticalPadding
+            paddingValues = paddingValues
         )
     }
 }
@@ -370,16 +370,16 @@ fun CentredContentWithIcon(
     modifier: Modifier = Modifier,
     title: String? = null,
     description: String? = null,
-    verticalPadding: Dp = GovUkTheme.spacing.extraLarge
+    paddingValues: PaddingValues = PaddingValues(
+        vertical = GovUkTheme.spacing.extraLarge,
+        horizontal = GovUkTheme.spacing.extraLarge
+    )
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
-            .padding(
-                vertical = verticalPadding,
-                horizontal = GovUkTheme.spacing.extraLarge
-            ),
+            .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(

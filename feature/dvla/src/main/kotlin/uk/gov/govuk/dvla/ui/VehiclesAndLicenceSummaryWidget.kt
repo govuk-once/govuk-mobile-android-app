@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -254,7 +255,10 @@ private fun VehiclesSummaryEmpty(
             icon = uk.gov.govuk.design.R.drawable.ic_add,
             description = description,
             drawBottomStroke = false,
-            verticalPadding = 52.dp,
+            paddingValues = PaddingValues(
+                vertical = 52.dp,
+                horizontal = GovUkTheme.spacing.extraLarge
+            ),
             modifier = Modifier.fillMaxWidth()
         )
         SmallVerticalSpacer()

@@ -41,7 +41,7 @@ fun AddVehicleListItem(
             BodyRegularLabel(
                 text = title,
                 modifier = Modifier.weight(1f),
-                color = GovUkTheme.colourScheme.textAndIcons.primary // Assuming it's blue
+                color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
             SmallHorizontalSpacer()
