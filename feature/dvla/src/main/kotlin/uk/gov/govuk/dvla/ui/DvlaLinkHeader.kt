@@ -6,8 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.dvla.DvlaLinkWidgetViewModel
 import uk.gov.govuk.dvla.ui.component.DvlaLinkCard
 
@@ -17,10 +17,11 @@ fun DvlaLinkHeader(
     modifier: Modifier = Modifier
 ) {
     val viewModel: DvlaLinkWidgetViewModel = hiltViewModel()
-    val state by viewModel.dvlaState.collectAsState()
+    val state by viewModel.dvlaState.collectAsState(initial = ServiceLinkStatus.CHECKING)
 
     when (state) {
-        DvlaLinkState.UNLINKED, DvlaLinkState.CHECKING -> {
+        ServiceLinkStatus.UNLINKED,
+        ServiceLinkStatus.CHECKING -> {
             Column(modifier = modifier) {
                 DvlaLinkCard(
                     state = state,
@@ -32,6 +33,6 @@ fun DvlaLinkHeader(
                 SmallVerticalSpacer()
             }
         }
-        DvlaLinkState.LINKED -> { /* Show nothing */ }
+        ServiceLinkStatus.LINKED -> { /* Show nothing */ }
     }
 }

@@ -19,11 +19,11 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
@@ -52,7 +52,8 @@ internal class AppViewModel @Inject constructor(
     private val chatFeature: ChatFeature,
     private val analyticsClient: AnalyticsClient,
     private val notificationsRepo: NotificationsRepo,
-    private val dvlaRepo: DvlaRepo
+    private val dvlaRepo: DvlaRepo,
+    private val identityRepo: IdentityRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -117,7 +118,7 @@ internal class AppViewModel @Inject constructor(
                             if (authRepo.isUserSessionActive() && flagRepo.isDvlaLinkEnabled()) {
                                 async {
                                     runCatching {
-                                        dvlaRepo.isAccountLinked()
+                                        identityRepo.getLinkedServices()
                                     }
                                 }
                             } else null
@@ -196,7 +197,7 @@ internal class AppViewModel @Inject constructor(
                 // check in background
                 launch {
                     runCatching {
-                        dvlaRepo.isAccountLinked()
+                        identityRepo.getLinkedServices()
                     }
                 }
             }

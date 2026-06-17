@@ -8,6 +8,7 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -18,9 +19,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaLinkWidgetViewModelTest {
@@ -35,7 +36,7 @@ class DvlaLinkWidgetViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.CHECKING)
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.CHECKING)
         viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
     }
 
@@ -45,52 +46,55 @@ class DvlaLinkWidgetViewModelTest {
     }
 
     @Test
-    fun `When the viewModel is initialized, then state matches the repository's`() {
-        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.CHECKING)
+    fun `When the viewModel is initialized, then state matches the repository's`() = runTest {
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.CHECKING)
         val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
 
-        assertEquals(DvlaLinkState.CHECKING, viewModel.dvlaState.value)
+        assertEquals(ServiceLinkStatus.CHECKING, viewModel.dvlaState.first())
     }
 
     @Test
     fun `Given state is UNLINKED, when checkStatus is called, then repository is called`() = runTest {
-        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
-        coEvery { dvlaRepo.isAccountLinked() } returns Result.Success(false)
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
+        every { dvlaRepo.currentLinkState } returns ServiceLinkStatus.UNLINKED
+        coEvery { dvlaRepo.refreshLinkStatus() } returns Unit
 
         val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
         viewModel.checkStatus()
 
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+        coVerify(exactly = 1) { dvlaRepo.refreshLinkStatus() }
     }
 
     @Test
     fun `Given state is CHECKING, when checkStatus is called, then repository is called`() = runTest {
-        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.CHECKING)
-        coEvery { dvlaRepo.isAccountLinked() } returns Result.Success(true)
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.CHECKING)
+        every { dvlaRepo.currentLinkState } returns ServiceLinkStatus.CHECKING
+        coEvery { dvlaRepo.refreshLinkStatus() } returns Unit
 
         val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
         viewModel.checkStatus()
 
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { dvlaRepo.isAccountLinked() }
+        coVerify(exactly = 1) { dvlaRepo.refreshLinkStatus() }
     }
 
     @Test
     fun `Given state is already LINKED, when checkStatus is called, then return without calling repository`() = runTest {
-        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+        every { dvlaRepo.currentLinkState } returns ServiceLinkStatus.LINKED
         val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
 
         viewModel.checkStatus()
 
-        coVerify(exactly = 0) { dvlaRepo.isAccountLinked() }
+        coVerify(exactly = 0) { dvlaRepo.refreshLinkStatus() }
     }
 
     @Test
     fun `Given a card click, when onLinkCardClicked is called, then track card click event`() {
-        every { dvlaRepo.linkState } returns MutableStateFlow(DvlaLinkState.UNLINKED)
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
         val viewModel = DvlaLinkWidgetViewModel(dvlaRepo, analyticsClient)
 
         val expectedText = "Link DVLA account"
