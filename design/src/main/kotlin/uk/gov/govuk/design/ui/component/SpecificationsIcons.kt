@@ -44,11 +44,13 @@ fun SpecificationsIcons(
             uiModels.forEachIndexed { index, uiModel ->
                 VerticalSpecificationItem(
                     uiModel = uiModel,
-                    modifier = Modifier.getModifier(
-                        index = index,
-                        maxIndex = uiModels.size - 1,
-                        isHorizontal = false
-                    )
+                    modifier = Modifier
+                        .getModifier(
+                            index = index,
+                            maxIndex = uiModels.size - 1,
+                            isHorizontal = false
+                        )
+                        .fillMaxWidth()
                 )
             }
         }
@@ -60,7 +62,8 @@ fun SpecificationsIcons(
             uiModels.forEachIndexed { index, uiModel ->
                 HorizontalSpecificationItem(
                     uiModel = uiModel,
-                    modifier = Modifier.getModifier(
+                    modifier = Modifier
+                        .getModifier(
                             index = index,
                             maxIndex = uiModels.size - 1,
                             isHorizontal = true
@@ -93,7 +96,6 @@ private fun Modifier.getModifier(
             .padding(start = padding)
     else
         this
-            .fillMaxWidth()
             .clip(RoundedCornerShape(firstCorners, firstCorners, lastCorners, lastCorners))
             .padding(top = padding)
 }
