@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -24,8 +25,11 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
     private val vehicleMapper: VehicleSummaryMapper,
     private val licenceMapper: LicenceSummaryMapper,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    configRepo: ConfigRepo
 ) : ViewModel() {
+
+    val dvlaUrls = configRepo.dvlaUrls
 
     companion object {
         private const val SECTION = "Driving"

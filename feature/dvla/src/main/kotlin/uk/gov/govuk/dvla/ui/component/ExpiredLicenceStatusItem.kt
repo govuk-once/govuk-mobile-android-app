@@ -20,7 +20,7 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 @Composable
 internal fun ExpiredLicenceStatusItem(
     status: StatusRowUiModel,
-    onRenewClick: (String, String) -> Unit,
+    onRenewClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -44,7 +44,7 @@ internal fun ExpiredLicenceStatusItem(
             PrimaryButton(
                 text = text,
                 onClick = {
-                    onRenewClick(text, "" /* Todo - replace with url!!! */)
+                    onRenewClick(text)
                 }
             )
 
@@ -67,7 +67,7 @@ private fun ExpiredLicenceStatusItemPreview() {
                 description = "Expired 24 April 2026",
                 iconStyle = StatusListItemIconStyle.Warning
             ),
-            onRenewClick = {_,_ -> }
+            onRenewClick = {_ -> }
         )
     }
 }

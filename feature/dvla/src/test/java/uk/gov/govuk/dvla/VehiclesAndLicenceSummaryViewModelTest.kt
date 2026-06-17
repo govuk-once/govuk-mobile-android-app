@@ -18,6 +18,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
@@ -41,6 +42,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     private val vehicleMapper = mockk<VehicleSummaryMapper>(relaxed = true)
     private val licenceMapper = mockk<LicenceSummaryMapper>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
+    private val configRepo = mockk<ConfigRepo>(relaxed = true)
 
     @Before
     fun setup() {
@@ -61,7 +63,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
             advanceUntilIdle()
 
@@ -88,7 +91,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -113,7 +117,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -143,7 +148,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -170,7 +176,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             repo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
@@ -194,7 +201,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             repo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
@@ -221,7 +229,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -248,7 +257,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
             advanceUntilIdle()
 
@@ -268,7 +278,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 repo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -285,7 +296,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             repo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
@@ -314,7 +326,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             repo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()

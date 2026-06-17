@@ -37,6 +37,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
@@ -98,11 +99,11 @@ fun VehiclesAndLicenceSummaryWidget(
                                 )
                                 viewModel.onLicenceNumberCopied()
                             },
-                            onRenewLicenceClick = { text, url ->
-                                viewModel.onRenewLicenceClicked(
-                                    text = text,
-                                    url = url
-                                )
+                            onRenewLicenceClick = { text ->
+                                viewModel.dvlaUrls?.renewLicence?.let { url ->
+                                    viewModel.onRenewLicenceClicked(text = text, url = url)
+                                    launchBrowser(url)
+                                }
                             },
                             modifier = modifier
                         )
@@ -138,7 +139,7 @@ private fun VehiclesViewContent(
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
     onLicenceNumberLongClick: (String) -> Unit,
-    onRenewLicenceClick: (String, String) -> Unit,
+    onRenewLicenceClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -207,7 +208,7 @@ private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
-    onRenewLicenceClick: (String, String) -> Unit,
+    onRenewLicenceClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
