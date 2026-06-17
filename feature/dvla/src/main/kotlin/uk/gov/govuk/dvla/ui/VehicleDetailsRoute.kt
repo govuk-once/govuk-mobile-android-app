@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,30 +58,28 @@ internal fun VehicleDetailsRoute(
     val viewModel: VehicleDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(modifier = modifier.safeDrawingPadding()) {
-        when (val state = uiState) {
-            is VehicleDetailsUiState.Loading -> {
-                // TODO temporary until designed
-                Box(
-                    modifier = modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(36.dp),
-                        color = GovUkTheme.colourScheme.surfaces.primary
-                    )
-                }
+    when (val state = uiState) {
+        is VehicleDetailsUiState.Loading -> {
+            // TODO temporary until designed
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(36.dp),
+                    color = GovUkTheme.colourScheme.surfaces.primary
+                )
             }
-
-            is VehicleDetailsUiState.Error -> { /* TODO: no designs yet */ }
-
-            is VehicleDetailsUiState.Success -> SuccessScreen(
-                onBack = onBack,
-                onPageView = { viewModel.onPageView(it) },
-                details = state.details
-            )
         }
+
+        is VehicleDetailsUiState.Error -> { /* TODO: no designs yet */ }
+
+        is VehicleDetailsUiState.Success -> SuccessScreen(
+            onBack = onBack,
+            onPageView = { viewModel.onPageView(it) },
+            details = state.details
+        )
     }
 }
 
@@ -97,7 +96,8 @@ private fun SuccessScreen(
     }
 
     Column(
-        modifier
+        modifier = modifier
+            .safeDrawingPadding()
             .fillMaxWidth()
     ) {
         FullScreenHeader(
@@ -162,7 +162,8 @@ private fun SuccessScreen(
                 title = details.motStatus.title?.let {
                     AccessibleString(
                         displayText = it,
-                        altText = stringResource(R.string.acronym_mot_alt_text))
+                        altText = stringResource(R.string.acronym_mot_alt_text)
+                    )
                 },
                 description = AccessibleString(displayText = details.motStatus.description),
                 icon = details.motStatus.icon,
