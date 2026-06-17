@@ -47,11 +47,11 @@ fun InternalLinkListItem(
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
-    background: Color? = null,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     style: InternalLinkListItemStyle = InternalLinkListItemStyle.Default
 ) {
     CardListItem(
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) { },
         onClick = onClick,
         isFirst = isFirst,
         isLast = isLast,
@@ -352,7 +352,7 @@ fun StatusListItem(
     @DrawableRes icon: Int?,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    background: Color? = null
+    background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     CardListItem(
         modifier = modifier,
@@ -412,7 +412,7 @@ fun AddressListItem(
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    background: Color? = null
+    background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     CardListItem(
         modifier = modifier,
@@ -453,7 +453,7 @@ fun CardListItem(
     isFirst: Boolean = true,
     isLast: Boolean = true,
     drawDivider: Boolean = true,
-    background: Color? = null,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     content: @Composable () -> Unit,
 ) {
     val cornerRadius = 12.dp
@@ -467,7 +467,7 @@ fun CardListItem(
                     bottomEnd = if (isLast) cornerRadius else 0.dp
                 )
             )
-            .background(background ?: GovUkTheme.colourScheme.surfaces.list)
+            .background(background)
             .then(
                 onClick?.let {
                     Modifier.clickable { it() }

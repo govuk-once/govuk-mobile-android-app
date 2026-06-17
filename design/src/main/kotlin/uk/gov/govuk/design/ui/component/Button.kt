@@ -377,13 +377,14 @@ private fun ExternalLinkIcon() {
 fun OverflowButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    altText: String? = null
+    altText: String? = null,
+    background: Color = GovUkTheme.colourScheme.surfaces.cardOverflowButton
 ) {
     Box(
         modifier = modifier
             .size(36.dp)
             .clip(CircleShape)
-            .background(GovUkTheme.colourScheme.surfaces.cardOverflowButton)
+            .background(background)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

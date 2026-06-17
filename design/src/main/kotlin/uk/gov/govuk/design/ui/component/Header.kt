@@ -159,8 +159,8 @@ private fun Header(
                         OverflowButton(
                             onClick = actionStyle.onClick,
                             modifier = Modifier.padding(end = GovUkTheme.spacing.medium),
-                            altText = actionStyle.altText
-
+                            altText = actionStyle.altText,
+                            background = actionColour
                         )
                     }
                     else -> { /* Do nothing */ }
