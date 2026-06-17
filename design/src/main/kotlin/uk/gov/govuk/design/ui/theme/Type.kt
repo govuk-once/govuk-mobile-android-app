@@ -177,18 +177,12 @@ internal val Typography = GovUkTypography(
     registrationPlateRegular = TextStyle(
         fontFamily = dvlaVrm,
         fontWeight = FontWeight.Bold,
-        fontSize = 17.sp,
-        platformStyle = PlatformTextStyle(
-            includeFontPadding = true
-        )
+        fontSize = 17.sp
     ),
     registrationPlateLarge = TextStyle(
         fontFamily = dvlaVrm,
         fontWeight = FontWeight.Bold,
-        fontSize = 56.sp,
-        platformStyle = PlatformTextStyle(
-            includeFontPadding = true
-        )
+        fontSize = 56.sp
     )
 )
 
