@@ -290,7 +290,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
     @Test
     fun `When onRenewLicenceClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
-        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+        every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
             repo,
