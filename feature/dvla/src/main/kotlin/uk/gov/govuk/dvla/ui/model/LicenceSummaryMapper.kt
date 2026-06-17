@@ -27,8 +27,7 @@ internal class LicenceSummaryMapper @Inject constructor(
             addressLine1 = driverSummary.addressLine1.toTitleCase(),
             city = driverSummary.addressLine5.toTitleCase(),
             postcode = driverSummary.postcode.uppercase(),
-            status = LicenceStatus.EXPIRED,
-//            status = driverSummary.status,
+            status = driverSummary.status,
             statusRowUi = StatusRowUiModel(
                 description = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate),
                 iconStyle = statusIconStyle
@@ -44,12 +43,9 @@ internal class LicenceSummaryMapper @Inject constructor(
         }
 
     private fun getLicenceStatusResources(status: LicenceStatus): Pair<Int?, StatusListItemIconStyle?> =
-        Pair(R.string.expired_on, StatusListItemIconStyle.Warning)
-        /*
         when (status) {
             LicenceStatus.VALID -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
             LicenceStatus.EXPIRED -> Pair(R.string.expired_on, StatusListItemIconStyle.Warning)
             else -> Pair(null, null)
         }
-         */
 }

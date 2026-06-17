@@ -278,6 +278,35 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
+    fun `When onRenewLicenceClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(DvlaLinkState.LINKED)
+
+        val viewModel = VehiclesAndLicenceSummaryViewModel(
+            repo,
+            vehicleMapper,
+            licenceMapper,
+            analyticsClient
+        )
+
+        advanceUntilIdle()
+
+        viewModel.onRenewLicenceClicked(
+            text = "Renew licence",
+            url = "https://www.gov.uk/renew-driving-licence"
+        )
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            analyticsClient.buttonClick(
+                text = "Renew licence",
+                url = "https://www.gov.uk/renew-driving-licence",
+                external = true,
+                section = "Driving"
+            )
+        }
+    }
+
+    @Test
     fun `When onLicenceNumberCopied is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
         every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
