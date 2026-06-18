@@ -45,7 +45,11 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     ServiceLinkStatus.LINKED -> {
-                        setUiStateToDefault()
+                        val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
+                        _uiState.update { current ->
+                            if (current is UiState.Default) current.copy(drivingView = drivingView)
+                            else UiState.Default(drivingView = drivingView)
+                        }
                         fetchDriverSummary()
                         fetchCustomerSummary()
                         createListCancelCheckCode()
@@ -90,16 +94,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                 if (state is UiState.Default) {
                     state.copy(drivingView = drivingView)
                 } else state
-            }
-        }
-    }
-
-    private fun setUiStateToDefault() {
-        viewModelScope.launch {
-            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
-            _uiState.update { state ->
-                if (state is UiState.Default) state.copy(drivingView = drivingView)
-                else UiState.Default(drivingView = drivingView)
             }
         }
     }
