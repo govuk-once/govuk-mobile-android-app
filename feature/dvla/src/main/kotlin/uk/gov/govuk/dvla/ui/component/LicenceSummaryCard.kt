@@ -24,7 +24,8 @@ internal fun LicenceSummaryCard(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
-    onRenewClick: (String) -> Unit,
+    renewUrl: String?,
+    onRenewClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -61,6 +62,7 @@ internal fun LicenceSummaryCard(
         LicenceStatusItem(
             status = licenceSummary.status,
             licenceStatus = licenceSummary.statusRowUi,
+            renewUrl = renewUrl,
             onRenewClick = onRenewClick
         )
     }
@@ -138,7 +140,8 @@ private fun LicenceSummaryCardPreview() {
             ),
             onMoreClick = {},
             onLicenceNumberLongClick = {},
-            onRenewClick = {_ -> }
+            renewUrl = "https://www.gov.uk/renew-driving-licence",
+            onRenewClick = { _, _ -> }
         )
     }
 }
@@ -163,7 +166,8 @@ private fun LicenceSummaryCardExpiredPreview() {
             ),
             onMoreClick = {},
             onLicenceNumberLongClick = {},
-            onRenewClick = {_ -> }
+            renewUrl = "https://www.gov.uk/renew-driving-licence",
+            onRenewClick = { _, _ -> }
         )
     }
 }

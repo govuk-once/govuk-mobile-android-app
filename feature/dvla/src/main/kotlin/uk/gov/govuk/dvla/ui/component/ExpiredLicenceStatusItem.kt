@@ -20,7 +20,8 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 @Composable
 internal fun ExpiredLicenceStatusItem(
     status: StatusRowUiModel,
-    onRenewClick: (String) -> Unit,
+    renewUrl: String?,
+    onRenewClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -40,13 +41,15 @@ internal fun ExpiredLicenceStatusItem(
                 .padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(bottom = GovUkTheme.spacing.large)
         ) {
-            val text = stringResource(R.string.renew_licence_button)
-            PrimaryButton(
-                text = text,
-                onClick = {
-                    onRenewClick(text)
-                }
-            )
+            renewUrl?.let { url ->
+                val text = stringResource(R.string.renew_licence_button)
+                PrimaryButton(
+                    text = text,
+                    onClick = {
+                        onRenewClick(text, url)
+                    }
+                )
+            }
 
             MediumVerticalSpacer()
 
@@ -60,6 +63,21 @@ internal fun ExpiredLicenceStatusItem(
 
 @PreviewLightDark
 @Composable
+private fun ExpiredLicenceStatusItemNoUrlPreview() {
+    GovUkTheme {
+        ExpiredLicenceStatusItem(
+            status = StatusRowUiModel(
+                description = "Expired 24 April 2026",
+                iconStyle = StatusListItemIconStyle.Warning
+            ),
+            renewUrl = null,
+            onRenewClick = { _, _ -> }
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
 private fun ExpiredLicenceStatusItemPreview() {
     GovUkTheme {
         ExpiredLicenceStatusItem(
@@ -67,7 +85,8 @@ private fun ExpiredLicenceStatusItemPreview() {
                 description = "Expired 24 April 2026",
                 iconStyle = StatusListItemIconStyle.Warning
             ),
-            onRenewClick = {_ -> }
+            renewUrl = "https://www.gov.uk/renew-driving-licence",
+            onRenewClick = { _, _ -> }
         )
     }
 }

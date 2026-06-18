@@ -16,12 +16,14 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 internal fun LicenceStatusItem(
     status: LicenceStatus,
     licenceStatus: StatusRowUiModel,
-    onRenewClick: (String) -> Unit,
+    renewUrl: String?,
+    onRenewClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (status) {
         LicenceStatus.EXPIRED -> ExpiredLicenceStatusItem(
             status = licenceStatus,
+            renewUrl = renewUrl,
             onRenewClick = onRenewClick,
             modifier = modifier
         )
@@ -54,7 +56,8 @@ private fun LicenceStatusItemValidPreview() {
                 description = "Valid until 1 February 2027",
                 iconStyle = StatusListItemIconStyle.Success
             ),
-            onRenewClick = {_ -> }
+            renewUrl = "https://www.gov.uk/renew-driving-licence",
+            onRenewClick = { _, _ -> }
         )
     }
 }
@@ -69,7 +72,8 @@ private fun LicenceStatusItemExpiredPreview() {
                 description = "Expired 24 April 2026",
                 iconStyle = StatusListItemIconStyle.Warning
             ),
-            onRenewClick = {_ -> }
+            renewUrl = "https://www.gov.uk/renew-driving-licence",
+            onRenewClick = { _, _ -> }
         )
     }
 }
