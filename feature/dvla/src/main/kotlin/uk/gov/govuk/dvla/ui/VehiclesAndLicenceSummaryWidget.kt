@@ -45,7 +45,9 @@ fun VehiclesAndLicenceSummaryWidget(
 
 
     when (val currentState = state) {
-        is UiState.Hidden -> return // draw nothing if not linked
+        is UiState.Hidden -> {
+            return // draw nothing if not linked
+        }
 
         is UiState.Default -> {
             val activeButtonState = when (currentState.drivingView) {
@@ -99,10 +101,11 @@ fun VehiclesAndLicenceSummaryWidget(
                                 )
                                 viewModel.onLicenceNumberCopied()
                             },
-                            renewUrl = viewModel.dvlaUrls?.renewLicence,
-                            onRenewLicenceClick = { text, url ->
-                                viewModel.onRenewLicenceClicked(text = text, url = url)
-                                launchBrowser(url)
+                            onRenewLicenceClick = viewModel.dvlaUrls?.renewLicence?.let { url ->
+                                { text: String ->
+                                    viewModel.onRenewLicenceClicked(text = text, url = url)
+                                    launchBrowser(url)
+                                }
                             },
                             modifier = modifier
                         )
@@ -138,8 +141,7 @@ private fun VehiclesViewContent(
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
     onLicenceNumberLongClick: (String) -> Unit,
-    renewUrl: String?,
-    onRenewLicenceClick: (String, String) -> Unit,
+    onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -152,7 +154,6 @@ private fun LicenceViewContent(
                 licenceSummary = licenceState.licence,
                 onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
-                renewUrl = renewUrl,
                 onRenewLicenceClick = onRenewLicenceClick,
                 modifier = modifier
             )
@@ -209,8 +210,7 @@ private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
-    renewUrl: String?,
-    onRenewLicenceClick: (String, String) -> Unit,
+    onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -220,7 +220,6 @@ private fun LicenceSummarySuccess(
             licenceSummary = licenceSummary,
             onMoreClick = { onMoreClick() },
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
-            renewUrl = renewUrl,
             onRenewClick = onRenewLicenceClick,
             modifier = Modifier.fillMaxWidth()
         )

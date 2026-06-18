@@ -20,8 +20,7 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 @Composable
 internal fun ExpiredLicenceStatusItem(
     status: StatusRowUiModel,
-    renewUrl: String?,
-    onRenewClick: (String, String) -> Unit,
+    onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -41,38 +40,23 @@ internal fun ExpiredLicenceStatusItem(
                 .padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(bottom = GovUkTheme.spacing.large)
         ) {
-            renewUrl?.let { url ->
+            onRenewClick?.let {
                 val text = stringResource(R.string.renew_licence_button)
                 PrimaryButton(
                     text = text,
                     onClick = {
-                        onRenewClick(text, url)
+                        it(text)
                     }
                 )
-            }
 
-            MediumVerticalSpacer()
+                MediumVerticalSpacer()
+            }
 
             CalloutRegularLabel(
                 text = stringResource(R.string.renew_licence_caption),
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }
-    }
-}
-
-@PreviewLightDark
-@Composable
-private fun ExpiredLicenceStatusItemNoUrlPreview() {
-    GovUkTheme {
-        ExpiredLicenceStatusItem(
-            status = StatusRowUiModel(
-                description = "Expired 24 April 2026",
-                iconStyle = StatusListItemIconStyle.Warning
-            ),
-            renewUrl = null,
-            onRenewClick = { _, _ -> }
-        )
     }
 }
 
@@ -85,8 +69,21 @@ private fun ExpiredLicenceStatusItemPreview() {
                 description = "Expired 24 April 2026",
                 iconStyle = StatusListItemIconStyle.Warning
             ),
-            renewUrl = "https://www.gov.uk/renew-driving-licence",
-            onRenewClick = { _, _ -> }
+            onRenewClick = { _ -> }
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ExpiredLicenceStatusItemNoButtonPreview() {
+    GovUkTheme {
+        ExpiredLicenceStatusItem(
+            status = StatusRowUiModel(
+                description = "Expired 24 April 2026",
+                iconStyle = StatusListItemIconStyle.Warning
+            ),
+            onRenewClick = null
         )
     }
 }
