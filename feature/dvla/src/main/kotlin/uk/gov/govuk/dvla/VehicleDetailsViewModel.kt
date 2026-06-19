@@ -50,14 +50,16 @@ internal class VehicleDetailsViewModel @Inject constructor(
     }
 
     private fun fetchVehicleDetails() {
-        // TODO temporarily get details from summary endpoint until details endpoint is live
+        // TODO temporarily get details from summary endpoint until lookup vehicle endpoint is live
         val vehicleRegistration: String = savedStateHandle[ARG_VEHICLE_REGISTRATION] ?: return
         viewModelScope.launch {
             when (val result = dvlaRepo.getCustomerSummary()) {
                 is uk.gov.govuk.data.model.Result.Success -> {
-                    val vehicle = result.value.vehicles[0]
-                    val vehicleDetails = mapper.toUiModel(vehicle)
-                    _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
+                    // TODO get first vehicle for now until lookup vehicle endpoint is live
+                    result.value.vehicles.getOrNull(0)?.let { vehicle ->
+                        val vehicleDetails = mapper.toUiModel(vehicle)
+                        _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
+                    }
                 }
 
                 else -> _uiState.value = VehicleDetailsUiState.Error

@@ -47,7 +47,7 @@ fun SpecificationsIcons(
                     modifier = Modifier
                         .getModifier(
                             index = index,
-                            maxIndex = uiModels.size - 1,
+                            maxIndex = uiModels.lastIndex,
                             isHorizontal = false
                         )
                         .fillMaxWidth()
@@ -65,7 +65,7 @@ fun SpecificationsIcons(
                     modifier = Modifier
                         .getModifier(
                             index = index,
-                            maxIndex = uiModels.size - 1,
+                            maxIndex = uiModels.lastIndex,
                             isHorizontal = true
                         )
                         .weight(1f),

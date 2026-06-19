@@ -11,9 +11,21 @@ class SpecificationsFormatterTest {
     }
 
     @Test
-    fun `getFormattedEngineCapacity correctly formats when engine capacity is 1000 or over`() {
+    fun `getFormattedEngineCapacity correctly formats when engine capacity is 1000`() {
         val result = getFormattedEngineCapacity(1000)
         assertEquals("1.0L", result)
+    }
+
+    @Test
+    fun `getFormattedEngineCapacity correctly formats when engine capacity is 1950`() {
+        val result = getFormattedEngineCapacity(1950)
+        assertEquals("2.0L", result)
+    }
+
+    @Test
+    fun `getFormattedEngineCapacity correctly formats when engine capacity is 1949`() {
+        val result = getFormattedEngineCapacity(1949)
+        assertEquals("1.9L", result)
     }
 
     @Test

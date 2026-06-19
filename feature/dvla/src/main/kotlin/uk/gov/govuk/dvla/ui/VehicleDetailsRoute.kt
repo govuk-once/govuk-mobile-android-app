@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +23,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.AddressListItem
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
@@ -55,7 +55,7 @@ internal fun VehicleDetailsRoute(
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehicleDetailsViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
         is VehicleDetailsUiState.Loading -> {
@@ -219,7 +219,7 @@ private fun SuccessScreen(
                 InternalLinkListItem(
                     title = detail.title,
                     isFirst = index == 0,
-                    isLast = index == details.specifications.size,
+                    isLast = index == details.specifications.lastIndex,
                     background = Color.Transparent,
                     style = InternalLinkListItemStyle.Info(
                         info = detail.info,

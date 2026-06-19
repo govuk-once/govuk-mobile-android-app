@@ -509,7 +509,9 @@ private fun GovUkNavHost(
 
                         // and licence summary widget from DVLA module
                         VehiclesAndLicenceSummaryWidget(
-                            onVehicleDetailsClick = { navController.navigateToVehicleDetails(it) }
+                            onVehicleDetailsClick = { registration ->
+                                navController.navigateToVehicleDetails(registration)
+                            }
                         )
                     }
                 }
