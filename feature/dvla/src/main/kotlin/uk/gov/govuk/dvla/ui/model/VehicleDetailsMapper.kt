@@ -124,7 +124,7 @@ internal class VehicleDetailsMapper @Inject constructor(
 
     private fun CustomerVehicle.getTaxRow(): StatusRowUiModel {
         val taxDate = this.taxExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
-        val (taxStringResId, taxIconResId) = getTaxStatusResources(this.taxStatus)
+        val (taxStringResId, taxIconResId) = this.taxStatus.getResources()
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.tax_status_title),
             description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
@@ -132,9 +132,17 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
+    private fun TaxStatus.getResources() = when (this) {
+        TaxStatus.TAXED -> Pair(
+            R.string.valid_until,
+            uk.gov.govuk.design.R.drawable.ic_check_round
+        )
+        else -> Pair(null, null)
+    }
+
     private fun CustomerVehicle.getMotRow(): StatusRowUiModel {
         val motDate = this.motExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
-        val (motStringResId, motIconResId) = getMotStatusResources(this.motStatus)
+        val (motStringResId, motIconResId) = this.motStatus.getResources()
 
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.acronym_mot),
@@ -142,6 +150,14 @@ internal class VehicleDetailsMapper @Inject constructor(
             description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
             icon = motIconResId
         )
+    }
+
+    private fun MotStatus.getResources() = when (this) {
+        MotStatus.VALID -> Pair(
+            R.string.valid_until,
+            uk.gov.govuk.design.R.drawable.ic_check_round
+        )
+        else -> Pair(null, null)
     }
 
     private fun CustomerVehicle.getCalendarSpecification(): SpecificationIconUiModel {
@@ -187,28 +203,6 @@ internal class VehicleDetailsMapper @Inject constructor(
             )
         } ?: colour
     }
-
-    // TODO what if date is null?
-    private fun getTaxStatusResources(status: TaxStatus): Pair<Int?, Int?> =
-        when (status) {
-            TaxStatus.TAXED -> Pair(
-                R.string.valid_until,
-                uk.gov.govuk.design.R.drawable.ic_check_round
-            )
-
-            else -> Pair(null, null)
-        }
-
-    // TODO what if date is null?
-    private fun getMotStatusResources(status: MotStatus): Pair<Int?, Int?> =
-        when (status) {
-            MotStatus.VALID -> Pair(
-                R.string.valid_until,
-                uk.gov.govuk.design.R.drawable.ic_check_round
-            )
-
-            else -> Pair(null, null)
-        }
 
     // TODO DVLA are working on sending keeper formatted so below is for demo only
     private fun CustomerVehicle.getKeeper() = KeeperUiModel(
