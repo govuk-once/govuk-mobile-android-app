@@ -2,6 +2,7 @@ package uk.gov.govuk.design.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -39,7 +40,8 @@ fun SpecificationsIcons(
 
     if (shouldShowVertical) {
         Column(
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             uiModels.forEachIndexed { index, uiModel ->
                 VerticalSpecificationItem(
@@ -57,7 +59,8 @@ fun SpecificationsIcons(
     } else {
         Row(
             modifier = modifier
-                .height(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             uiModels.forEachIndexed { index, uiModel ->
                 HorizontalSpecificationItem(
@@ -89,15 +92,12 @@ private fun Modifier.getModifier(
     val firstCorners = if (index == 0) GovUkTheme.numbers.cornerAndroidList else 0.dp
     val lastCorners =
         if (index == maxIndex) GovUkTheme.numbers.cornerAndroidList else 0.dp
-    val padding = if (index == 0) 0.dp else 1.dp
     return if (isHorizontal)
         this
             .clip(RoundedCornerShape(firstCorners, lastCorners, lastCorners, firstCorners))
-            .padding(start = padding)
     else
         this
             .clip(RoundedCornerShape(firstCorners, firstCorners, lastCorners, lastCorners))
-            .padding(top = padding)
 }
 
 @Composable
