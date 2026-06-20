@@ -54,26 +54,15 @@ internal fun VehicleSummaryCard(
 
         // tax
         StatusListItem(
-            title = vehicleSummary.taxStatus.title?.let {
-                AccessibleString(displayText = it)
-            },
-            description = AccessibleString(
-                displayText = vehicleSummary.taxStatus.description
-            ),
+            title = vehicleSummary.taxStatus.title,
+            description = vehicleSummary.taxStatus.description,
             iconStyle = vehicleSummary.taxStatus.iconStyle,
         )
 
         // MOT
         StatusListItem(
-            title = vehicleSummary.motStatus.title?.let {
-                AccessibleString(
-                    displayText = it,
-                    altText = vehicleSummary.motStatus.titleAltText
-                )
-            },
-            description = AccessibleString(
-                displayText = vehicleSummary.motStatus.description
-            ),
+            title = vehicleSummary.motStatus.title,
+            description = vehicleSummary.motStatus.description,
             iconStyle = vehicleSummary.motStatus.iconStyle,
         )
 
@@ -188,13 +177,13 @@ private fun VehicleSummaryCardPreview() {
                 make = "Volkswagen",
                 model = "ID4",
                 taxStatus = StatusRowUiModel(
-                    title = "Tax",
-                    description = "Valid until 1 February 2027",
+                    title = AccessibleString("Tax"),
+                    description = AccessibleString("Valid until 1 February 2027"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 ),
                 motStatus = StatusRowUiModel(
-                    title = "MOT",
-                    description = "Valid until 24 April 2026",
+                    title = AccessibleString("MOT"),
+                    description = AccessibleString("Valid until 24 April 2026"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning
                 )
             ),

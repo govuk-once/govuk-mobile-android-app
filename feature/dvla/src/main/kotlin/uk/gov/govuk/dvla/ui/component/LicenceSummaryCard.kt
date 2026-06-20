@@ -132,7 +132,7 @@ private fun LicenceSummaryCardPreview() {
                 postcode = "PA98 J83",
                 status = uk.gov.govuk.dvla.domain.LicenceStatus.VALID,
                 statusRowUi = StatusRowUiModel(
-                    description = "Valid until 1 February 2027",
+                    description = AccessibleString("Valid until 1 February 2027"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 )
             ),
@@ -157,7 +157,7 @@ private fun LicenceSummaryCardExpiredPreview() {
                 postcode = "PA98 J83",
                 status = uk.gov.govuk.dvla.domain.LicenceStatus.EXPIRED,
                 statusRowUi = StatusRowUiModel(
-                    description = "Expired 24 April 2026",
+                    description = AccessibleString("Expired 24 April 2026"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
                 )
             ),

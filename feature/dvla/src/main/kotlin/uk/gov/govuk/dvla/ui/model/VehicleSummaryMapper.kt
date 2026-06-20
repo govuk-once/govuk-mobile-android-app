@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
@@ -22,19 +23,30 @@ internal class VehicleSummaryMapper @Inject constructor(
         val (taxStringResId, taxIconStyle) = getTaxStatusResources(vehicle.taxStatus)
         val (motStringResId, motIconStyle) = getMotStatusResources(vehicle.motStatus)
 
+        val taxDescriptionText = stringProvider.resolveSummaryDescription(taxStringResId, taxDate)
+        val motDescriptionText = stringProvider.resolveSummaryDescription(motStringResId, motDate)
+
         return VehicleSummaryUiModel(
             registration = vehicle.registration,
             make = vehicle.make,
             model = vehicle.model ?: "Unknown", // TODO return unknown for now, other states in future tickets
             taxStatus = StatusRowUiModel(
-                title = stringProvider.getString(R.string.tax_status_title),
-                description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
+                title = AccessibleString(
+                    displayText = stringProvider.getString(R.string.tax_status_title)
+                ),
+                description = AccessibleString(
+                    displayText = taxDescriptionText
+                ),
                 iconStyle = taxIconStyle
             ),
             motStatus = StatusRowUiModel(
-                title = stringProvider.getString(R.string.acronym_mot),
-                titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
-                description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
+                title = AccessibleString(
+                    displayText = stringProvider.getString(R.string.acronym_mot),
+                    altText = stringProvider.getString(R.string.acronym_mot_alt_text)
+                ),
+                description = AccessibleString(
+                    displayText = motDescriptionText
+                ),
                 iconStyle = motIconStyle
             )
         )

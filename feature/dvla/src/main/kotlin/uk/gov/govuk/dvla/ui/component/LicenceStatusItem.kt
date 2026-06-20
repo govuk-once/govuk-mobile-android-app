@@ -20,8 +20,10 @@ internal fun LicenceStatusItem(
     modifier: Modifier = Modifier
 ) {
     when (status) {
-        LicenceStatus.EXPIRED -> ExpiredLicenceStatusItem(
+        LicenceStatus.EXPIRED -> ExpiredStatusItem(
             status = licenceStatus,
+            buttonText = stringResource(R.string.renew_licence_button),
+            caption = stringResource(R.string.renew_licence_caption),
             onRenewClick = onRenewClick,
             modifier = modifier
         )
@@ -29,13 +31,8 @@ internal fun LicenceStatusItem(
             val licenceExpiration = licenceStatus.description
 
             StatusListItem(
-                title = licenceStatus.title?.let {
-                    AccessibleString(displayText = it)
-                },
-                description = AccessibleString(
-                    displayText = licenceExpiration,
-                    altText = stringResource(R.string.licence_expiration_alt_text, licenceExpiration)
-                ),
+                title = licenceStatus.title,
+                description = licenceStatus.description,
                 iconStyle = licenceStatus.iconStyle,
                 isLast = true,
                 modifier = modifier
@@ -51,7 +48,7 @@ private fun LicenceStatusItemValidPreview() {
         LicenceStatusItem(
             status = LicenceStatus.VALID,
             licenceStatus = StatusRowUiModel(
-                description = "Valid until 1 February 2027",
+                description = AccessibleString("Valid until 1 February 2027"),
                 iconStyle = StatusListItemIconStyle.Success
             ),
             onRenewClick = { _ -> }
@@ -66,7 +63,7 @@ private fun LicenceStatusItemExpiredPreview() {
         LicenceStatusItem(
             status = LicenceStatus.EXPIRED,
             licenceStatus = StatusRowUiModel(
-                description = "Expired 24 April 2026",
+                description = AccessibleString("Expired 24 April 2026"),
                 iconStyle = StatusListItemIconStyle.Warning
             ),
             onRenewClick = { _ -> }

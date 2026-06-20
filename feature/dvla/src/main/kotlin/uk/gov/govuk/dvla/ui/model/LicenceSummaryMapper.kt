@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
@@ -17,8 +18,9 @@ internal class LicenceSummaryMapper @Inject constructor(
 
     fun toUiModel(driverSummary: DriverSummary): LicenceSummaryUiModel {
         val formattedExpiryDate = driverSummary.expiryDate?.toSummaryDisplayFormat()
-
         val (statusStringResId, statusIconStyle) = getLicenceStatusResources(driverSummary.status)
+        val descriptionText = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate)
+        val descriptionAltText = stringProvider.getString(R.string.licence_expiration_alt_text, descriptionText)
 
         return LicenceSummaryUiModel(
             licenceType = getLicenceTypeString(driverSummary.licenceType),
@@ -29,7 +31,10 @@ internal class LicenceSummaryMapper @Inject constructor(
             postcode = driverSummary.postcode.uppercase(),
             status = driverSummary.status,
             statusRowUi = StatusRowUiModel(
-                description = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate),
+                description = AccessibleString(
+                    displayText = descriptionText,
+                    altText = descriptionAltText
+                ),
                 iconStyle = statusIconStyle
             )
         )
