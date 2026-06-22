@@ -66,7 +66,7 @@ class VesVehicleMapperTest {
 
         assertEquals("AA19AAA", domainModel.registrationNumber)
         assertEquals("", domainModel.make)
-        assertEquals(VehicleColour.NOT_STATED, domainModel.colour)
+        assertEquals(VehicleColour.UNKNOWN, domainModel.colour)
         assertNull(domainModel.yearOfManufacture)
         assertEquals(TaxStatus.UNKNOWN, domainModel.taxStatus)
         assertEquals(MotStatus.UNKNOWN, domainModel.motStatus)

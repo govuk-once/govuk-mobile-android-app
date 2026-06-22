@@ -22,7 +22,8 @@ enum class VehicleColour {
     MAROON,
     TURQUOISE,
     CREAM,
-    NOT_STATED
+    NOT_STATED,
+    UNKNOWN
 }
 
 internal fun RemoteVehicleColour?.toDomain() =
@@ -47,5 +48,5 @@ internal fun RemoteVehicleColour?.toDomain() =
         RemoteVehicleColour.TURQUOISE -> VehicleColour.TURQUOISE
         RemoteVehicleColour.CREAM -> VehicleColour.CREAM
         RemoteVehicleColour.NOT_STATED -> VehicleColour.NOT_STATED
-        else -> null
+        else -> VehicleColour.UNKNOWN
     }

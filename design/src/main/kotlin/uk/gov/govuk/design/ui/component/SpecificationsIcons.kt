@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -122,7 +123,7 @@ private fun HorizontalSpecificationItem(
         SmallVerticalSpacer()
 
         Text(
-            text = uiModel.description,
+            text = uiModel.description.displayText,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             style = GovUkTheme.typography.bodyRegular,
             maxLines = 1,
@@ -133,7 +134,9 @@ private fun HorizontalSpecificationItem(
                 }
             },
             modifier = Modifier.semantics {
-                contentDescription = uiModel.altText
+                uiModel.description.altText?.let { altText ->
+                    contentDescription = altText
+                }
             }
         )
     }
@@ -160,9 +163,11 @@ private fun VerticalSpecificationItem(
         MediumHorizontalSpacer()
 
         BodyRegularLabel(
-            text = uiModel.description,
+            text = uiModel.description.displayText,
             modifier = Modifier.semantics {
-                contentDescription = uiModel.altText
+                uiModel.description.altText?.let { altText ->
+                    contentDescription = altText
+                }
             }
         )
     }
@@ -171,21 +176,21 @@ private fun VerticalSpecificationItem(
 @PreviewLightDark
 @Composable
 private fun HorizontalSpecificationsIconsPreview() {
+    val home = AccessibleString("Home")
+    val crown = AccessibleString("Crown")
+    val settings = AccessibleString("Settings")
     val uiModels = listOf(
         SpecificationIconUiModel(
             icon = R.drawable.ic_home,
-            description = "Home",
-            altText = ""
+            description = home
         ),
         SpecificationIconUiModel(
             icon = R.drawable.crown,
-            description = "Crown",
-            altText = ""
+            description = crown
         ),
         SpecificationIconUiModel(
             icon = R.drawable.ic_settings,
-            description = "Settings",
-            altText = ""
+            description = settings
         )
     )
     GovUkTheme {
@@ -198,21 +203,21 @@ private fun HorizontalSpecificationsIconsPreview() {
 @PreviewLightDark
 @Composable
 private fun VerticalSpecificationsIconsPreview() {
+    val home = AccessibleString("Home")
+    val crown = AccessibleString("Crown with really long description")
+    val settings = AccessibleString("Settings")
     val uiModels = listOf(
         SpecificationIconUiModel(
             icon = R.drawable.ic_home,
-            description = "Home",
-            altText = ""
+            description = home
         ),
         SpecificationIconUiModel(
             icon = R.drawable.crown,
-            description = "Crown with really long description",
-            altText = ""
+            description = crown
         ),
         SpecificationIconUiModel(
             icon = R.drawable.ic_settings,
-            description = "Settings",
-            altText = ""
+            description = settings
         )
     )
     GovUkTheme {

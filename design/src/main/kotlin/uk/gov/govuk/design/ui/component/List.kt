@@ -91,8 +91,8 @@ fun InternalLinkListItem(
 
                 is InternalLinkListItemStyle.Info -> {
                     BodyRegularLabel(
-                        text = style.info,
-                        modifier = Modifier.talkBackText(style.altText)
+                        text = style.info.displayText,
+                        modifier = Modifier.talkBackText(style.info.altText)
                     )
                 }
 
@@ -509,8 +509,14 @@ private fun InternalLinkListItemStatusPreview() {
 @Preview
 @Composable
 private fun InternalLinkListItemInfoPreview() {
+    val info = AccessibleString("Info")
     GovUkTheme {
-        InternalLinkListItem(title = "Title", style = InternalLinkListItemStyle.Info("Info"))
+        InternalLinkListItem(
+            title = "Title",
+            style = InternalLinkListItemStyle.Info(
+                info
+            )
+        )
     }
 }
 

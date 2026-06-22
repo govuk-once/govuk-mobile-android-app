@@ -19,8 +19,7 @@ sealed interface InternalLinkListItemStyle {
     ) : InternalLinkListItemStyle
 
     data class Info(
-        val info: String,
-        val altText: String? = null
+        val info: AccessibleString
     ) : InternalLinkListItemStyle
 
     data class Button(
@@ -37,6 +36,5 @@ sealed interface IconListItemStyle {
 
 data class InternalLinkListItemModel(
     val title: String,
-    val info: String,
-    val altText: String? = null
+    val info: AccessibleString
 )

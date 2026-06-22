@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.dvla.util.StringProvider
@@ -74,44 +75,52 @@ internal class VehicleDetailsMapper @Inject constructor(
             motStatus = vesVehicle.getMotRow(),
             specifications = listOf(
                 InternalLinkListItemModel(
-                    title = stringProvider.getString(R.string.make_title), info = vesVehicle.make
+                    title = stringProvider.getString(R.string.make_title),
+                    info = AccessibleString(displayText = vesVehicle.make)
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.model_title),
-                    info = vesVehicle.model ?: "Unknown"
+                    info = AccessibleString(displayText = vesVehicle.model ?: "Unknown")
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.first_registered_title),
-                    info = vesVehicle.getDateOfFirstRegistration(),
-                    altText = stringProvider.getString(
-                        R.string.first_registered_in_alt_text,
-                        vesVehicle.getDateOfFirstRegistration()
+                    info = AccessibleString(
+                        displayText = vesVehicle.getDateOfFirstRegistration(),
+                        altText = stringProvider.getString(
+                            R.string.first_registered_in_alt_text,
+                            vesVehicle.getDateOfFirstRegistration()
+                        )
                     )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.fuel_type_title),
-                    info = stringProvider.getString(vesVehicle.fuelType.getResources().second)
+                    info = AccessibleString(
+                        displayText = stringProvider.getString(vesVehicle.fuelType.getResources().second)
+                    )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.colour_title),
-                    info = vesVehicle.getVehicleColour()
+                    info = AccessibleString(displayText = vesVehicle.getVehicleColour())
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.engine_size_title),
-                    info = engineCapacity,
-                    altText = getFormattedEngineCapacityAltText(
-                        engineCapacity,
-                        replacementText = stringProvider.getString(R.string.litres_alt_text)
+                    info = AccessibleString(
+                        displayText = engineCapacity,
+                        altText = getFormattedEngineCapacityAltText(
+                            engineCapacity,
+                            replacementText = stringProvider.getString(R.string.litres_alt_text)
+                        )
                     )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.emissions_title),
-                    info = vesVehicle.exhaustEmissions?.co2?.let {
-                        stringProvider.getString(R.string.emissions_info, it)
-                    } ?: "Unknown",
-                    altText = vesVehicle.exhaustEmissions?.co2?.let {
-                        stringProvider.getString(R.string.emissions_alt_text, it)
-                    } ?: "Unknown"
+                    info = AccessibleString(
+                        displayText = vesVehicle.exhaustEmissions?.co2?.let {
+                            stringProvider.getString(R.string.emissions_info, it)
+                        } ?: "Unknown",
+                        altText = vesVehicle.exhaustEmissions?.co2?.let {
+                            stringProvider.getString(R.string.emissions_alt_text, it)
+                        } ?: "Unknown")
                 )
             )
         )
@@ -137,6 +146,7 @@ internal class VehicleDetailsMapper @Inject constructor(
             R.string.valid_until,
             uk.gov.govuk.design.R.drawable.ic_check_round
         )
+
         else -> Pair(null, null)
     }
 
@@ -157,6 +167,7 @@ internal class VehicleDetailsMapper @Inject constructor(
             R.string.valid_until,
             uk.gov.govuk.design.R.drawable.ic_check_round
         )
+
         else -> Pair(null, null)
     }
 
@@ -165,10 +176,12 @@ internal class VehicleDetailsMapper @Inject constructor(
             this.dateOfFirstRegistration?.toDisplayFormat(DATE_FORMAT_YYYY) ?: ""
         return SpecificationIconUiModel(
             icon = R.drawable.ic_calendar,
-            description = registrationDate,
-            altText = stringProvider.getString(
-                R.string.first_registered_in_alt_text,
-                registrationDate
+            description = AccessibleString(
+                displayText = registrationDate,
+                altText = stringProvider.getString(
+                    R.string.first_registered_in_alt_text,
+                    registrationDate
+                )
             )
         )
     }
@@ -178,8 +191,10 @@ internal class VehicleDetailsMapper @Inject constructor(
         val fuelName = stringProvider.getString(fuelType.second)
         return SpecificationIconUiModel(
             icon = fuelType.first,
-            description = fuelName,
-            altText = stringProvider.getString(R.string.fuel_type_alt_text, fuelName)
+            description = AccessibleString(
+                displayText = fuelName,
+                altText = stringProvider.getString(R.string.fuel_type_alt_text, fuelName)
+            )
         )
     }
 
@@ -187,21 +202,22 @@ internal class VehicleDetailsMapper @Inject constructor(
         val colour = this.getVehicleColour()
         return SpecificationIconUiModel(
             icon = R.drawable.ic_colour,
-            description = colour,
-            altText = stringProvider.getString(R.string.colour_alt_text, colour)
+            description = AccessibleString(
+                displayText = colour,
+                altText = stringProvider.getString(R.string.colour_alt_text, colour)
+            )
         )
     }
 
     private fun CustomerVehicle.getVehicleColour(): String {
-        val colour = stringProvider.getString(this.colour.getResource())
+        val colourRes = stringProvider.getString(this.colour.getResource())
         return this.secondaryColour?.let { secondaryColour ->
-            val secondaryColour = stringProvider.getString(secondaryColour.getResource())
+            val secondaryColourRes = stringProvider.getString(secondaryColour.getResource())
             stringProvider.getString(
                 R.string.concatenated_vehicle_colours,
-                colour,
-                secondaryColour.lowercase()
+                colourRes, secondaryColourRes.lowercase()
             )
-        } ?: colour
+        } ?: run { colourRes }
     }
 
     // TODO DVLA are working on sending keeper formatted so below is for demo only
@@ -248,6 +264,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         TURQUOISE -> R.string.turquoise
         CREAM -> R.string.cream
         NOT_STATED -> R.string.not_stated
+        else -> R.string.not_stated
     }
 
     private fun LocalDate.toDisplayFormat(pattern: String): String =

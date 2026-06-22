@@ -4,6 +4,5 @@ import androidx.annotation.DrawableRes
 
 data class SpecificationIconUiModel(
     @param:DrawableRes val icon: Int,
-    val description: String,
-    val altText: String
+    val description: AccessibleString
 )

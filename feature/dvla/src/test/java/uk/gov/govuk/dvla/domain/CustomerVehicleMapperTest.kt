@@ -85,7 +85,7 @@ class CustomerVehicleMapperTest {
         assertEquals(LocalDate.of(2020, 6, 1), result.dateOfFirstRegistration)
         assertEquals(FuelType.PETROL, result.fuelType)
         assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
-        assertNull(result.secondaryColour)
+        assertEquals(VehicleColour.UNKNOWN, result.secondaryColour)
         assertNull(result.engineCapacity)
         assertNull(result.exhaustEmissions)
         assertNull(result.keeper)

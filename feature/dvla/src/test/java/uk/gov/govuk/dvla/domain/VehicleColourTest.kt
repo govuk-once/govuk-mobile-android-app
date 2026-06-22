@@ -6,9 +6,9 @@ import uk.gov.govuk.dvla.remote.model.common.VehicleColour as RemoteVehicleColou
 
 class VehicleColourTest {
     @Test
-    fun `Verify a null status is null`() {
+    fun `Verify a null status is UNKNOWN`() {
         val remote: RemoteVehicleColour? = null
-        assertEquals(null, remote.toDomain())
+        assertEquals(VehicleColour.UNKNOWN, remote.toDomain())
     }
 
     @Test

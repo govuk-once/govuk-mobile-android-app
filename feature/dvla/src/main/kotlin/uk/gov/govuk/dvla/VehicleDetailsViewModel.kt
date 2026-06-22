@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_REGISTRATION
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
 import javax.inject.Inject
@@ -30,8 +29,6 @@ internal class VehicleDetailsViewModel @Inject constructor(
 
     private companion object {
         const val SCREEN_CLASS = "VehicleDetailsScreen"
-        const val SECTION = "Driving"
-        const val BACK_BUTTON = "Back Button"
     }
 
     private val _uiState = MutableStateFlow<VehicleDetailsUiState>(VehicleDetailsUiState.Loading)

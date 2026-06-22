@@ -222,8 +222,7 @@ private fun SuccessScreen(
                     isLast = index == details.specifications.lastIndex,
                     background = Color.Transparent,
                     style = InternalLinkListItemStyle.Info(
-                        info = detail.info,
-                        altText = detail.altText
+                        info = detail.info
                     )
                 )
             }
@@ -234,6 +233,9 @@ private fun SuccessScreen(
 @Preview
 @Composable
 private fun SuccessScreenPreview() {
+    val date = AccessibleString("Calendar")
+    val fuelType = AccessibleString("Diesel")
+    val colour = AccessibleString("Red")
     val details = VehicleDetailsUiModel(
         "Volkswagen",
         "ID4",
@@ -247,18 +249,15 @@ private fun SuccessScreenPreview() {
         listOf(
             SpecificationIconUiModel(
                 R.drawable.ic_calendar,
-                "Calendar",
-                "Calendar alt text"
+                date
             ),
             SpecificationIconUiModel(
                 R.drawable.ic_petrol_diesel,
-                "Diesel",
-                "Diesel alt text"
+                fuelType
             ),
             SpecificationIconUiModel(
                 R.drawable.ic_colour,
-                "Red",
-                "Colour alt text"
+                colour
             )
         ),
         StatusRowUiModel(
