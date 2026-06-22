@@ -16,22 +16,23 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 
 @Composable
-internal fun ExpiredStatusItem(
+internal fun SummaryStatusItem(
     status: StatusRowUiModel,
-    buttonText: String,
-    onRenewClick: ((String) -> Unit)?,
-    modifier: Modifier = Modifier,
-    caption: String
+    onActionClick: ((String) -> Unit)?,
+    modifier: Modifier = Modifier
 ) {
+    val actionButton = status.action
+    val showActionBlock = status.action != null && onActionClick != null
+
     Column(modifier = modifier.fillMaxWidth()) {
         StatusListItem(
             title = status.title,
             description = status.description,
             iconStyle = status.iconStyle,
-            drawDivider = false
+            drawDivider = status.action == null
         )
 
-        onRenewClick?.let {
+        if (showActionBlock) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -39,16 +40,14 @@ internal fun ExpiredStatusItem(
                     .padding(bottom = GovUkTheme.spacing.large)
             ) {
                 PrimaryButton(
-                    text = buttonText,
-                    onClick = {
-                        it(buttonText)
-                    }
+                    text = actionButton.buttonText,
+                    onClick = { onActionClick.invoke(actionButton.buttonText) }
                 )
 
                 MediumVerticalSpacer()
 
                 CalloutRegularLabel(
-                    text = caption,
+                    text = actionButton.caption,
                     color = GovUkTheme.colourScheme.textAndIcons.primary
                 )
             }
@@ -58,32 +57,28 @@ internal fun ExpiredStatusItem(
 
 @PreviewLightDark
 @Composable
-private fun ExpiredLicenceStatusItemPreview() {
+private fun SummaryStatusItemValidPreview() {
     GovUkTheme {
-        ExpiredStatusItem(
+        SummaryStatusItem(
             status = StatusRowUiModel(
-                description = AccessibleString("Expired 24 April 2026"),
-                iconStyle = StatusListItemIconStyle.Warning
+                description = AccessibleString("Valid until 1 February 2027"),
+                iconStyle = StatusListItemIconStyle.Success
             ),
-            buttonText = "Renew licence",
-            caption = "Your licence status may not update immediately when you renew it",
-            onRenewClick = { _ -> }
+            onActionClick = { _ -> }
         )
     }
 }
 
 @PreviewLightDark
 @Composable
-private fun ExpiredLicenceStatusItemNoButtonPreview() {
+private fun SummaryStatusItemExpiredPreview() {
     GovUkTheme {
-        ExpiredStatusItem(
+        SummaryStatusItem(
             status = StatusRowUiModel(
                 description = AccessibleString("Expired 24 April 2026"),
                 iconStyle = StatusListItemIconStyle.Warning
             ),
-            buttonText = "Renew licence",
-            caption = "Your licence status may not update immediately when you renew it",
-            onRenewClick = null
+            onActionClick = { _ -> }
         )
     }
 }

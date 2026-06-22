@@ -58,10 +58,9 @@ internal fun LicenceSummaryCard(
         )
 
         // status
-        LicenceStatusItem(
-            status = licenceSummary.status,
-            licenceStatus = licenceSummary.statusRowUi,
-            onRenewClick = onRenewClick
+        SummaryStatusItem(
+            status = licenceSummary.statusRowUi,
+            onActionClick = onRenewClick
         )
     }
 }
@@ -130,7 +129,6 @@ private fun LicenceSummaryCardPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                status = uk.gov.govuk.dvla.domain.LicenceStatus.VALID,
                 statusRowUi = StatusRowUiModel(
                     description = AccessibleString("Valid until 1 February 2027"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
@@ -155,7 +153,6 @@ private fun LicenceSummaryCardExpiredPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                status = uk.gov.govuk.dvla.domain.LicenceStatus.EXPIRED,
                 statusRowUi = StatusRowUiModel(
                     description = AccessibleString("Expired 24 April 2026"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,

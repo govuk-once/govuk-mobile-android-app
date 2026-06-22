@@ -21,6 +21,7 @@ internal class LicenceSummaryMapper @Inject constructor(
         val (statusStringResId, statusIconStyle) = getLicenceStatusResources(driverSummary.status)
         val descriptionText = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate)
         val descriptionAltText = stringProvider.getString(R.string.licence_expiration_alt_text, descriptionText)
+        val actionUiModel = getLicenceActionUiModel(driverSummary.status)
 
         return LicenceSummaryUiModel(
             licenceType = getLicenceTypeString(driverSummary.licenceType),
@@ -29,16 +30,25 @@ internal class LicenceSummaryMapper @Inject constructor(
             addressLine1 = driverSummary.addressLine1.toTitleCase(),
             city = driverSummary.addressLine5.toTitleCase(),
             postcode = driverSummary.postcode.uppercase(),
-            status = driverSummary.status,
             statusRowUi = StatusRowUiModel(
                 description = AccessibleString(
                     displayText = descriptionText,
                     altText = descriptionAltText
                 ),
-                iconStyle = statusIconStyle
+                iconStyle = statusIconStyle,
+                action = actionUiModel
             )
         )
     }
+
+    private fun getLicenceActionUiModel(status: LicenceStatus): StatusActionUiModel? =
+        when (status) {
+            LicenceStatus.EXPIRED -> StatusActionUiModel(
+                buttonText = stringProvider.getString(R.string.renew_licence_button),
+                caption = stringProvider.getString(R.string.renew_licence_caption)
+            )
+            else -> null
+        }
 
     private fun getLicenceTypeString(type: LicenceType): String =
         when (type) {

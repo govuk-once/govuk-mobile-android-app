@@ -15,6 +15,7 @@ import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
@@ -72,7 +73,7 @@ class DvlaRepo @Inject constructor(
 
     internal suspend fun getDriverSummary(): Result<DriverSummary> =
         safeAuthApiCall({ api.getDriverSummary() }, authRepo)
-            .map { it.toDomainModel() }
+            .map { it.toDomainModel().copy(status = LicenceStatus.EXPIRED) }
 
     internal suspend fun getCustomerSummary(): Result<CustomerSummary> =
         safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
