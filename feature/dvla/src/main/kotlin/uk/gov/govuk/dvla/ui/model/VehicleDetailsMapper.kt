@@ -80,7 +80,12 @@ internal class VehicleDetailsMapper @Inject constructor(
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.first_registered_title),
-                    info = vesVehicle.getDateOfFirstRegistration()
+                    info = AccessibleString(
+                        displayText = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat()
+                            ?: "Unknown",
+                        altText = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat()
+                            ?.chunked(2)?.joinToString(separator = " ")
+                    )
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.fuel_type_title),
@@ -282,7 +287,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
 
         OTHER -> Triple(
-            R.drawable.ic_petrol_diesel, 
+            R.drawable.ic_petrol_diesel,
             R.string.other,
             R.string.other
         )
