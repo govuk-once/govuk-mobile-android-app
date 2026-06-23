@@ -84,7 +84,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.fuel_type_title),
                     info = AccessibleString(
-                        displayText = stringProvider.getString(vesVehicle.fuelType.getResources().second)
+                        displayText = stringProvider.getString(vesVehicle.fuelType.getResources().third)
                     )
                 ),
                 InternalLinkListItemModel(
@@ -185,7 +185,7 @@ internal class VehicleDetailsMapper @Inject constructor(
     }
 
     private fun CustomerVehicle.getColourSpecification(): SpecificationIconUiModel {
-        val colour = this.getVehicleColour()
+        val colour = stringProvider.getString(this.colour.getResource())
         return SpecificationIconUiModel(
             icon = R.drawable.ic_colour,
             description = AccessibleString(
@@ -209,24 +209,82 @@ internal class VehicleDetailsMapper @Inject constructor(
     // TODO DVLA are working on sending keeper formatted so below is for demo only
     private fun CustomerVehicle.getKeeper() = KeeperUiModel(
         "${this.keeper?.title ?: ""} ${this.keeper?.firstNames ?: ""} ${this.keeper?.lastName ?: ""}",
-        "Address",
-        "City",
-        "Postcode"
+        "29 Orchard Drive",
+        "Milton Keynes",
+        "PA98 J83"
     )
 
     private fun FuelType.getResources() = when (this) {
-        PETROL -> Pair(R.drawable.ic_petrol_diesel, R.string.petrol)
-        DIESEL -> Pair(R.drawable.ic_petrol_diesel, R.string.diesel)
-        ELECTRICITY -> Pair(R.drawable.ic_electric, R.string.electric)
-        STEAM -> Pair(R.drawable.ic_steam, R.string.steam)
-        GAS -> Pair(R.drawable.ic_gas, R.string.gas)
-        PETROL_GAS -> Pair(R.drawable.ic_petrol_diesel, R.string.petrol_and_gas)
-        GAS_BI_FUEL -> Pair(R.drawable.ic_petrol_diesel, R.string.gas_bi_fuel)
-        HYBRID_ELECTRIC -> Pair(R.drawable.ic_hybrid, R.string.hybrid_electric)
-        GAS_DIESEL -> Pair(R.drawable.ic_petrol_diesel, R.string.gas_diesel)
-        FUEL_CELLS -> Pair(R.drawable.ic_petrol_diesel, R.string.fuel_cells)
-        ELECTRIC_DIESEL -> Pair(R.drawable.ic_petrol_diesel, R.string.electric_diesel)
-        OTHER -> Pair(R.drawable.ic_petrol_diesel, R.string.other)
+        PETROL -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.petrol_summary,
+            R.string.petrol_specification
+        )
+
+        DIESEL -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.diesel_summary,
+            R.string.diesel_specification
+        )
+
+        ELECTRICITY -> Triple(
+            R.drawable.ic_electric,
+            R.string.electric_summary,
+            R.string.electric_specification
+        )
+
+        STEAM -> Triple(
+            R.drawable.ic_steam,
+            R.string.steam_summary,
+            R.string.steam_specification
+        )
+
+        GAS -> Triple(R.drawable.ic_gas,
+            R.string.gas_summary,
+            R.string.gas_specification
+        )
+
+        PETROL_GAS -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.petrol_gas_summary,
+            R.string.petrol_gas_specification
+        )
+
+        GAS_BI_FUEL -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.gas_bi_fuel_summary,
+            R.string.gas_bi_fuel_specification
+        )
+
+        HYBRID_ELECTRIC -> Triple(
+            R.drawable.ic_hybrid,
+            R.string.hybrid_electric_summary,
+            R.string.hybrid_electric_specification
+        )
+
+        GAS_DIESEL -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.gas_diesel_summary,
+            R.string.gas_diesel_specification
+        )
+
+        FUEL_CELLS -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.fuel_cells_summary,
+            R.string.fuel_cells_specification
+        )
+
+        ELECTRIC_DIESEL -> Triple(
+            R.drawable.ic_petrol_diesel,
+            R.string.electric_diesel_summary,
+            R.string.electric_diesel_specification
+        )
+
+        OTHER -> Triple(
+            R.drawable.ic_petrol_diesel, 
+            R.string.other,
+            R.string.other
+        )
     }
 
     private fun VehicleColour.getResource() = when (this) {

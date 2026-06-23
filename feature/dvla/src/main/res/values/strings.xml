@@ -44,17 +44,28 @@
     <string name="licence">Licence</string>
 
     <!-- Vehicle Details start -->
-    <string name="diesel">Diesel</string>
-    <string name="petrol">Petrol</string>
-    <string name="hybrid_electric">Hybrid electric</string>
-    <string name="electric">Electric</string>
-    <string name="gas">Gas</string>
-    <string name="steam">Steam</string>
-    <string name="petrol_and_gas">Petrol and gas</string>
-    <string name="gas_bi_fuel">Gas bi-fuel</string>
-    <string name="gas_diesel">Gas and diesel</string>
-    <string name="fuel_cells">Hydrogen</string>
-    <string name="electric_diesel">Electric diesel</string>
+    <string name="diesel_summary">Diesel</string>
+    <string name="diesel_specification">Diesel</string>
+    <string name="petrol_summary">Petrol</string>
+    <string name="petrol_specification">Petrol</string>
+    <string name="hybrid_electric_summary">Hybrid</string>
+    <string name="hybrid_electric_specification">Hybrid electric</string>
+    <string name="electric_summary">Electric</string>
+    <string name="electric_specification">Electric</string>
+    <string name="gas_summary">Gas</string>
+    <string name="gas_specification">Gas</string>
+    <string name="steam_summary">Steam</string>
+    <string name="steam_specification">Steam</string>
+    <string name="petrol_gas_summary">Bi-fuel</string>
+    <string name="petrol_gas_specification">Petrol and gas</string>
+    <string name="gas_bi_fuel_summary">Bi-fuel</string>
+    <string name="gas_bi_fuel_specification">Gas bi-fuel</string>
+    <string name="gas_diesel_summary">Bi-fuel</string>
+    <string name="gas_diesel_specification">Gas and diesel</string>
+    <string name="fuel_cells_summary">Hydrogen</string>
+    <string name="fuel_cells_specification">Hydrogen</string>
+    <string name="electric_diesel_summary">Hybrid</string>
+    <string name="electric_diesel_specification">Electric diesel</string>
     <string name="other">Other</string>
 
     <string name="status_title">Status</string>
