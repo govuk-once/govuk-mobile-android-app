@@ -129,18 +129,18 @@ internal class VehicleDetailsMapper @Inject constructor(
 
     private fun CustomerVehicle.getTaxRow(): StatusRowUiModel {
         val taxDate = this.taxExpiryDate?.toSummaryDisplayFormat()
-        val (taxStringResId, taxIconResId) = this.taxStatus.getResources()
+        val (taxStringResId, iconStyle) = this.taxStatus.getResources()
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.tax_status_title),
             description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
-            iconStyle = StatusListItemIconStyle.Success
+            iconStyle = iconStyle
         )
     }
 
     private fun TaxStatus.getResources() = when (this) {
         TaxStatus.TAXED -> Pair(
             R.string.valid_until,
-            uk.gov.govuk.design.R.drawable.ic_check_round
+            StatusListItemIconStyle.Success
         )
 
         else -> Pair(null, null)
@@ -148,20 +148,20 @@ internal class VehicleDetailsMapper @Inject constructor(
 
     private fun CustomerVehicle.getMotRow(): StatusRowUiModel {
         val motDate = this.motExpiryDate?.toSummaryDisplayFormat()
-        val (motStringResId, motIconResId) = this.motStatus.getResources()
+        val (motStringResId, iconStyle) = this.motStatus.getResources()
 
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.acronym_mot),
             titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
             description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
-            iconStyle = StatusListItemIconStyle.Success
+            iconStyle = iconStyle
         )
     }
 
     private fun MotStatus.getResources() = when (this) {
         MotStatus.VALID -> Pair(
             R.string.valid_until,
-            uk.gov.govuk.design.R.drawable.ic_check_round
+            StatusListItemIconStyle.Success
         )
 
         else -> Pair(null, null)
