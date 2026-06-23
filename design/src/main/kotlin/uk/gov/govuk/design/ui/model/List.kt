@@ -39,7 +39,11 @@ sealed interface StatusListItemIconStyle {
     data object Warning : StatusListItemIconStyle
 }
 
-data class InternalLinkListItemModel(
-    val title: String,
-    val info: AccessibleString
-)
+sealed interface InternalLinkListItemModel {
+    val title: String
+
+    data class Info(
+        override val title: String,
+        val info: AccessibleString
+    ) : InternalLinkListItemModel
+}

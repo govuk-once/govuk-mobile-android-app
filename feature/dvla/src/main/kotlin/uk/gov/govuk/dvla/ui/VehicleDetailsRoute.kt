@@ -38,6 +38,7 @@ import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
+import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
@@ -221,15 +222,19 @@ private fun SuccessScreen(
             MediumVerticalSpacer()
 
             details.specifications.forEachIndexed { index, detail ->
-                InternalLinkListItem(
-                    title = detail.title,
-                    isFirst = index == 0,
-                    isLast = index == details.specifications.lastIndex,
-                    background = Color.Transparent,
-                    style = InternalLinkListItemStyle.Info(
-                        info = detail.info
-                    )
-                )
+                when (detail) {
+                    is InternalLinkListItemModel.Info -> {
+                        InternalLinkListItem(
+                            title = detail.title,
+                            isFirst = index == 0,
+                            isLast = index == details.specifications.lastIndex,
+                            background = Color.Transparent,
+                            style = InternalLinkListItemStyle.Info(
+                                info = detail.info
+                            )
+                        )
+                    }
+                }
             }
         }
     }

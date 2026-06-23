@@ -45,6 +45,7 @@ import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
+import uk.gov.govuk.dvla.util.getFormattedYearAltText
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
@@ -57,6 +58,7 @@ internal class VehicleDetailsMapper @Inject constructor(
     fun toUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
         val engineCapacity =
             vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
+        val yearOfFirstRegistration = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat()
         return VehicleDetailsUiModel(
             make = vesVehicle.make,
             model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
@@ -70,34 +72,33 @@ internal class VehicleDetailsMapper @Inject constructor(
             taxStatus = vesVehicle.getTaxRow(),
             motStatus = vesVehicle.getMotRow(),
             specifications = listOf(
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.make_title),
                     info = AccessibleString(displayText = vesVehicle.make)
                 ),
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.model_title),
                     info = AccessibleString(displayText = vesVehicle.model ?: "Unknown")
                 ),
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.first_registered_title),
                     info = AccessibleString(
-                        displayText = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat()
+                        displayText = yearOfFirstRegistration
                             ?: "Unknown",
-                        altText = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat()
-                            ?.chunked(2)?.joinToString(separator = " ")
+                        altText = getFormattedYearAltText(yearOfFirstRegistration)
                     )
                 ),
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.fuel_type_title),
                     info = AccessibleString(
                         displayText = stringProvider.getString(vesVehicle.fuelType.getResources().third)
                     )
                 ),
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.colour_title),
                     info = AccessibleString(displayText = vesVehicle.getVehicleColour())
                 ),
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.engine_size_title),
                     info = AccessibleString(
                         displayText = engineCapacity,
@@ -107,7 +108,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                         )
                     )
                 ),
-                InternalLinkListItemModel(
+                InternalLinkListItemModel.Info(
                     title = stringProvider.getString(R.string.emissions_title),
                     info = AccessibleString(
                         displayText = vesVehicle.exhaustEmissions?.co2?.let {
