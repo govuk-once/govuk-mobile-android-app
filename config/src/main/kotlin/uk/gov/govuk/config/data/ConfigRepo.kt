@@ -2,6 +2,7 @@ package uk.gov.govuk.config.data
 
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.ChatUrls
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
@@ -26,6 +27,7 @@ interface ConfigRepo {
     val chatBanner: ChatBanner?
     val termsAndConditions: TermsAndConditions?
     val isFlexEnabled: Boolean
+    val dvlaUrls: DvlaUrls?
 
     suspend fun initConfig(): Result<Unit>
     suspend fun activateRemoteConfig(): Boolean

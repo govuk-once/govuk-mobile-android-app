@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla.ui.model
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
@@ -132,7 +133,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.tax_status_title),
             description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
-            icon = taxIconResId
+            iconStyle = StatusListItemIconStyle.Success
         )
     }
 
@@ -153,7 +154,7 @@ internal class VehicleDetailsMapper @Inject constructor(
             title = stringProvider.getString(R.string.acronym_mot),
             titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
             description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
-            icon = motIconResId
+            iconStyle = StatusListItemIconStyle.Success
         )
     }
 

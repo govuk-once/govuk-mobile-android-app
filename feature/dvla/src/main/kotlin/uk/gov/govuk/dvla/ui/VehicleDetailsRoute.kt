@@ -40,6 +40,7 @@ import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
@@ -151,8 +152,10 @@ private fun SuccessScreen(
                 title = details.taxStatus.title?.let {
                     AccessibleString(displayText = it)
                 },
-                description = AccessibleString(displayText = details.taxStatus.description),
-                icon = details.taxStatus.icon,
+                description = AccessibleString(
+                    displayText = details.taxStatus.description
+                ),
+                iconStyle = details.taxStatus.iconStyle,
                 isFirst = true,
                 background = Color.Transparent
             )
@@ -161,11 +164,13 @@ private fun SuccessScreen(
                 title = details.motStatus.title?.let {
                     AccessibleString(
                         displayText = it,
-                        altText = stringResource(R.string.acronym_mot_alt_text)
+                        altText = details.motStatus.titleAltText
                     )
                 },
-                description = AccessibleString(displayText = details.motStatus.description),
-                icon = details.motStatus.icon,
+                description = AccessibleString(
+                    displayText = details.motStatus.description
+                ),
+                iconStyle = details.motStatus.iconStyle,
                 isLast = true,
                 background = Color.Transparent
             )
@@ -263,12 +268,12 @@ private fun SuccessScreenPreview() {
         StatusRowUiModel(
             title = "Tax status",
             description = "",
-            icon = uk.gov.govuk.design.R.drawable.ic_check_round
+            iconStyle = StatusListItemIconStyle.Success
         ),
         StatusRowUiModel(
             title = "MOT status",
             description = "",
-            icon = uk.gov.govuk.design.R.drawable.ic_check_round
+            iconStyle = StatusListItemIconStyle.Success
         ),
         specifications = listOf()
     )

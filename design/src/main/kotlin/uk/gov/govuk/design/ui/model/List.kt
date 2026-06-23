@@ -34,6 +34,11 @@ sealed interface IconListItemStyle {
     data object Bold : IconListItemStyle
 }
 
+sealed interface StatusListItemIconStyle {
+    data object Success : StatusListItemIconStyle
+    data object Warning : StatusListItemIconStyle
+}
+
 data class InternalLinkListItemModel(
     val title: String,
     val info: AccessibleString

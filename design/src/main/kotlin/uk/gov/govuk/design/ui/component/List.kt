@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -37,6 +40,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -349,16 +353,17 @@ fun StatusListItem(
     modifier: Modifier = Modifier,
     title: AccessibleString? = null,
     description: AccessibleString,
-    @DrawableRes icon: Int?,
+    iconStyle: StatusListItemIconStyle?,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    background: Color = GovUkTheme.colourScheme.surfaces.list
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
+    drawDivider: Boolean = true
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = true,
+        drawDivider = drawDivider,
         background = background
     ) {
         Row(
@@ -389,15 +394,27 @@ fun StatusListItem(
 
             MediumHorizontalSpacer()
 
-            icon?.let {
+            iconStyle?.let {
+                val (icon, tint) = when (it) {
+                    StatusListItemIconStyle.Success -> Pair(
+                        painterResource(R.drawable.ic_check_round),
+                        GovUkTheme.colourScheme.surfaces.buttonPrimary
+                    )
+
+                    StatusListItemIconStyle.Warning -> Pair(
+                        rememberVectorPainter(Icons.Filled.Warning),
+                        GovUkTheme.colourScheme.textAndIcons.primary
+                    )
+                }
+
                 Box(
                     modifier = Modifier.size(36.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = it),
+                        painter = icon,
                         contentDescription = null,  // decorative icon
-                        tint = GovUkTheme.colourScheme.surfaces.buttonPrimary
+                        tint = tint
                     )
                 }
             }
@@ -568,7 +585,21 @@ private fun StatusListItemPreview() {
         StatusListItem(
             title = AccessibleString("Tax"),
             description = AccessibleString("Valid until 1 February 2027"),
-            icon = R.drawable.ic_check_round,
+            iconStyle = StatusListItemIconStyle.Success,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemWarningPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = AccessibleString("Tax"),
+            description = AccessibleString("Expired 1 February 2027"),
+            iconStyle = StatusListItemIconStyle.Warning,
             isFirst = false,
             isLast = false
         )
@@ -581,7 +612,7 @@ private fun StatusListItemNoTitlePreview() {
     GovUkTheme {
         StatusListItem(
             description = AccessibleString("Valid until 1 February 2027"),
-            icon = R.drawable.ic_check_round,
+            iconStyle = StatusListItemIconStyle.Success,
             isFirst = false,
             isLast = false
         )
