@@ -19,5 +19,5 @@ class StringProviderImpl @Inject constructor(
 
 fun StringProvider.resolveSummaryDescription(@StringRes resId: Int?, dateArg: String?): String {
     val id = resId ?: return "Unknown" // TODO: return unknown for now, other states in future tickets
-    return dateArg?.let { getString(id, it) } ?: getString(id)
+    return (dateArg?.let { getString(id, it) } ?: getString(id, "")).trim()
 }

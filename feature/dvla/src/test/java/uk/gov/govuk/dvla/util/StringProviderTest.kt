@@ -27,7 +27,7 @@ class StringProviderTest {
     @Test
     fun `resolveSummaryDescription returns standard string when date is null`() {
         val resId = 123
-        every { stringProvider.getString(resId) } returns "Expired"
+        every { stringProvider.getString(resId, "") } returns "Expired"
 
         val result = stringProvider.resolveSummaryDescription(resId = resId, dateArg = null)
         assertEquals("Expired", result)
