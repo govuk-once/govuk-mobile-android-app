@@ -41,7 +41,7 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         keeper = this.keeper,
         dateOfFirstRegistration = this.dateOfFirstRegistration.toLocalDateOrNull(),
         fuelType = this.fuelType.toDomain(),
-        colour = this.colour.toDomain() ?: VehicleColour.NOT_STATED,
+        colour = this.colour.toDomain(),
         secondaryColour = this.secondaryColour.toDomain(),
         engineCapacity = this.engineCapacity,
         exhaustEmissions = this.exhaustEmissions
