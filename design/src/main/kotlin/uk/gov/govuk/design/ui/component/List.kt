@@ -356,8 +356,8 @@ fun StatusListItem(
     iconStyle: StatusListItemIconStyle?,
     isFirst: Boolean = false,
     isLast: Boolean = false,
+    drawDivider: Boolean = true,
     background: Color = GovUkTheme.colourScheme.surfaces.list,
-    drawDivider: Boolean = true
 ) {
     CardListItem(
         modifier = modifier,
