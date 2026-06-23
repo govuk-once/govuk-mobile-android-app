@@ -20,3 +20,4 @@
 -keep class uk.gov.govuk.config.data.remote.model.ChatBanner
 -keep class uk.gov.govuk.config.data.remote.model.TermsAndConditions
 -keep class uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
+-keep class uk.gov.govuk.config.data.remote.model.DvlaUrls

@@ -24,6 +24,9 @@
 
     <string name="tax_status_title">Tax</string>
     <string name="valid_until">Valid until %s</string>
+    <string name="expired_on">Expired %s</string>
+    <string name="renew_licence_button">Renew licence</string>
+    <string name="renew_licence_caption">Your licence status may not update immediately when you renew it</string>
     <string name="vehicle_details_title">Details</string>
     <string name="registration_plate_alt_text">Number plate %1$s</string>
     <string name="more_options_alt_text">More options</string>

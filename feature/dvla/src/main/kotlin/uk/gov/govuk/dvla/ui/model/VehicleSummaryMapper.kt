@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
@@ -18,8 +19,8 @@ internal class VehicleSummaryMapper @Inject constructor(
         val taxDate = vehicle.taxExpiryDate?.toSummaryDisplayFormat()
         val motDate = vehicle.motExpiryDate?.toSummaryDisplayFormat()
 
-        val (taxStringResId, taxIconResId) = getTaxStatusResources(vehicle.taxStatus)
-        val (motStringResId, motIconResId) = getMotStatusResources(vehicle.motStatus)
+        val (taxStringResId, taxIconStyle) = getTaxStatusResources(vehicle.taxStatus)
+        val (motStringResId, motIconStyle) = getMotStatusResources(vehicle.motStatus)
 
         return VehicleSummaryUiModel(
             registration = vehicle.registration,
@@ -28,36 +29,28 @@ internal class VehicleSummaryMapper @Inject constructor(
             taxStatus = StatusRowUiModel(
                 title = stringProvider.getString(R.string.tax_status_title),
                 description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
-                icon = taxIconResId
+                iconStyle = taxIconStyle
             ),
             motStatus = StatusRowUiModel(
                 title = stringProvider.getString(R.string.acronym_mot),
                 titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
                 description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
-                icon = motIconResId
+                iconStyle = motIconStyle
             )
         )
     }
 
     // TODO what if date is null?
-    private fun getTaxStatusResources(status: TaxStatus): Pair<Int?, Int?> =
+    private fun getTaxStatusResources(status: TaxStatus): Pair<Int?, StatusListItemIconStyle?> =
         when (status) {
-            TaxStatus.TAXED -> Pair(
-                R.string.valid_until,
-                uk.gov.govuk.design.R.drawable.ic_check_round
-            )
-
+            TaxStatus.TAXED -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
             else -> Pair(null, null)
         }
 
     // TODO what if date is null?
-    private fun getMotStatusResources(status: MotStatus): Pair<Int?, Int?> =
+    private fun getMotStatusResources(status: MotStatus): Pair<Int?, StatusListItemIconStyle?> =
         when (status) {
-            MotStatus.VALID -> Pair(
-                R.string.valid_until,
-                uk.gov.govuk.design.R.drawable.ic_check_round
-            )
-
+            MotStatus.VALID -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
             else -> Pair(null, null)
         }
 }

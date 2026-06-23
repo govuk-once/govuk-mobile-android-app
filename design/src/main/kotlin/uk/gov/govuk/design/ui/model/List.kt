@@ -28,3 +28,8 @@ sealed interface IconListItemStyle {
     data object Regular : IconListItemStyle
     data object Bold : IconListItemStyle
 }
+
+sealed interface StatusListItemIconStyle {
+    data object Success : StatusListItemIconStyle
+    data object Warning : StatusListItemIconStyle
+}

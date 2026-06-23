@@ -5,6 +5,7 @@ import kotlinx.coroutines.coroutineScope
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.config.data.remote.model.Config
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
@@ -111,4 +112,6 @@ class ConfigRepoImpl @Inject constructor(
         firebaseDataSource.clearRemoteValues()
     }
 
+    override val dvlaUrls: DvlaUrls?
+        get() = safeConfig.dvlaUrls
 }

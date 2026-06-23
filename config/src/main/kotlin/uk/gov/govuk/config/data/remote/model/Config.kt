@@ -14,5 +14,6 @@ data class Config(
     @SerializedName("refreshTokenExpirySeconds") val refreshTokenExpirySeconds: Long?,
     @SerializedName("emergencyBanners") var emergencyBanners: List<EmergencyBanner>?,
     @SerializedName("chatBanner_v2") var chatBanner: ChatBanner?,
-    @SerializedName("termsAndConditions") var termsAndConditions: TermsAndConditions?
+    @SerializedName("termsAndConditions") var termsAndConditions: TermsAndConditions?,
+    @SerializedName("dvlaUrls") val dvlaUrls: DvlaUrls?,
 )

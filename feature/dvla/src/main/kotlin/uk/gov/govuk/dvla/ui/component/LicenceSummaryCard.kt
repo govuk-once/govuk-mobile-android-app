@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.ui.component.AddressListItem
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.extension.longClickWithAltText
 import uk.gov.govuk.design.ui.extension.withAltText
@@ -25,6 +24,7 @@ internal fun LicenceSummaryCard(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
+    onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -34,9 +34,6 @@ internal fun LicenceSummaryCard(
             containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
         )
     ) {
-
-        val licenceExpiration = licenceSummary.licenceStatus.description
-
         // header
         LicenceSummaryHeader(
             licenceType = licenceSummary.licenceType,
@@ -60,17 +57,11 @@ internal fun LicenceSummaryCard(
             )
         )
 
-        // valid until
-        StatusListItem(
-            title = licenceSummary.licenceStatus.title?.let {
-                AccessibleString(displayText = it)
-            },
-            description = AccessibleString(
-                displayText = licenceExpiration,
-                altText = stringResource(R.string.licence_expiration_alt_text, licenceExpiration)
-            ),
-            icon = licenceSummary.licenceStatus.icon,
-            isLast = true
+        // status
+        LicenceStatusItem(
+            status = licenceSummary.status,
+            licenceStatus = licenceSummary.statusRowUi,
+            onRenewClick = onRenewClick
         )
     }
 }
@@ -139,13 +130,40 @@ private fun LicenceSummaryCardPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                licenceStatus = StatusRowUiModel(
+                status = uk.gov.govuk.dvla.domain.LicenceStatus.VALID,
+                statusRowUi = StatusRowUiModel(
                     description = "Valid until 1 February 2027",
-                    icon = uk.gov.govuk.design.R.drawable.ic_check_round,
+                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 )
             ),
             onMoreClick = {},
-            onLicenceNumberLongClick = {}
+            onLicenceNumberLongClick = {},
+            onRenewClick = { _ -> }
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LicenceSummaryCardExpiredPreview() {
+    GovUkTheme {
+        LicenceSummaryCard(
+            licenceSummary = LicenceSummaryUiModel(
+                licenceType = "Full licence",
+                licenceNumber = "ARENO803236AA170",
+                name = "Ms Anna Ornella Arenö",
+                addressLine1 = "29 Orchard Drive",
+                city = "Milton Keynes",
+                postcode = "PA98 J83",
+                status = uk.gov.govuk.dvla.domain.LicenceStatus.EXPIRED,
+                statusRowUi = StatusRowUiModel(
+                    description = "Expired 24 April 2026",
+                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
+                )
+            ),
+            onMoreClick = {},
+            onLicenceNumberLongClick = {},
+            onRenewClick = { _ -> }
         )
     }
 }
