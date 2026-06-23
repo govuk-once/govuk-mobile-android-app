@@ -63,6 +63,7 @@ internal class VehicleSummaryMapper @Inject constructor(
     private fun getMotStatusResources(status: MotStatus): Pair<Int?, StatusListItemIconStyle?> =
         when (status) {
             MotStatus.VALID -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
+            MotStatus.EXPIRED -> Pair(R.string.expired_on, StatusListItemIconStyle.Warning)
             else -> Pair(null, null)
         }
 }

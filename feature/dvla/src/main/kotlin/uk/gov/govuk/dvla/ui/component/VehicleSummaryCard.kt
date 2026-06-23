@@ -20,7 +20,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
-import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -35,6 +34,8 @@ internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
+    onTaxActionClick: ((String) -> Unit)?,
+    onMotActionClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -53,17 +54,15 @@ internal fun VehicleSummaryCard(
         )
 
         // tax
-        StatusListItem(
-            title = vehicleSummary.taxStatus.title,
-            description = vehicleSummary.taxStatus.description,
-            iconStyle = vehicleSummary.taxStatus.iconStyle,
+        SummaryStatusItem(
+            status = vehicleSummary.taxStatus,
+            onActionClick = onTaxActionClick
         )
 
         // MOT
-        StatusListItem(
-            title = vehicleSummary.motStatus.title,
-            description = vehicleSummary.motStatus.description,
-            iconStyle = vehicleSummary.motStatus.iconStyle,
+        SummaryStatusItem(
+            status = vehicleSummary.motStatus,
+            onActionClick = onMotActionClick
         )
 
         // details
@@ -188,7 +187,9 @@ private fun VehicleSummaryCardPreview() {
                 )
             ),
             onDetailsClick = {},
-            onMoreClick = {}
+            onMoreClick = {},
+            onTaxActionClick = {},
+            onMotActionClick = {}
         )
     }
 }
