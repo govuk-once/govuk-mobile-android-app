@@ -45,18 +45,13 @@ import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
+import uk.gov.govuk.dvla.util.toYearDisplayFormat
 import javax.inject.Inject
 
 internal class VehicleDetailsMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
-    private companion object {
-        const val DATE_FORMAT_d_MMMM_yyyy = "d MMMM yyyy"
-        const val DATE_FORMAT_YYYY = "YYYY"
-    }
-
     // TODO change param to VesVehicle when details endpoint live
     fun toUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
         val engineCapacity =
@@ -84,13 +79,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.first_registered_title),
-                    info = AccessibleString(
-                        displayText = vesVehicle.getDateOfFirstRegistration(),
-                        altText = stringProvider.getString(
-                            R.string.first_registered_in_alt_text,
-                            vesVehicle.getDateOfFirstRegistration()
-                        )
-                    )
+                    info = vesVehicle.getDateOfFirstRegistration()
                 ),
                 InternalLinkListItemModel(
                     title = stringProvider.getString(R.string.fuel_type_title),
@@ -126,13 +115,19 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getDateOfFirstRegistration() =
-        this.dateOfFirstRegistration?.toDisplayFormat(
-            DATE_FORMAT_YYYY
-        ) ?: "Unknown"
+    private fun CustomerVehicle.getDateOfFirstRegistration(): AccessibleString {
+        val year = this.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
+        return AccessibleString(
+            displayText = year,
+            altText = stringProvider.getString(
+                R.string.first_registered_in_alt_text,
+                year
+            )
+        )
+    }
 
     private fun CustomerVehicle.getTaxRow(): StatusRowUiModel {
-        val taxDate = this.taxExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
+        val taxDate = this.taxExpiryDate?.toSummaryDisplayFormat()
         val (taxStringResId, taxIconResId) = this.taxStatus.getResources()
         return StatusRowUiModel(
             title = stringProvider.getString(R.string.tax_status_title),
@@ -151,7 +146,7 @@ internal class VehicleDetailsMapper @Inject constructor(
     }
 
     private fun CustomerVehicle.getMotRow(): StatusRowUiModel {
-        val motDate = this.motExpiryDate?.toDisplayFormat(DATE_FORMAT_d_MMMM_yyyy)
+        val motDate = this.motExpiryDate?.toSummaryDisplayFormat()
         val (motStringResId, motIconResId) = this.motStatus.getResources()
 
         return StatusRowUiModel(
@@ -171,20 +166,11 @@ internal class VehicleDetailsMapper @Inject constructor(
         else -> Pair(null, null)
     }
 
-    private fun CustomerVehicle.getCalendarSpecification(): SpecificationIconUiModel {
-        val registrationDate =
-            this.dateOfFirstRegistration?.toDisplayFormat(DATE_FORMAT_YYYY) ?: ""
-        return SpecificationIconUiModel(
+    private fun CustomerVehicle.getCalendarSpecification() =
+        SpecificationIconUiModel(
             icon = R.drawable.ic_calendar,
-            description = AccessibleString(
-                displayText = registrationDate,
-                altText = stringProvider.getString(
-                    R.string.first_registered_in_alt_text,
-                    registrationDate
-                )
-            )
+            description = this.getDateOfFirstRegistration()
         )
-    }
 
     private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationIconUiModel {
         val fuelType = this.fuelType.getResources()
@@ -266,7 +252,4 @@ internal class VehicleDetailsMapper @Inject constructor(
         NOT_STATED -> R.string.not_stated
         else -> R.string.not_stated
     }
-
-    private fun LocalDate.toDisplayFormat(pattern: String): String =
-        runCatching { this.format(DateTimeFormatter.ofPattern(pattern)) }.getOrDefault("")
 }
