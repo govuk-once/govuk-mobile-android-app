@@ -1,12 +1,15 @@
 package uk.gov.govuk.design.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.gov.govuk.design.R
 
@@ -29,7 +32,8 @@ data class GovUkTypography(
     val footnoteRegular: TextStyle,
     val captionBold: TextStyle,
     val captionRegular: TextStyle,
-    val registrationPlate: TextStyle
+    val registrationPlateRegular: TextStyle,
+    val registrationPlateLarge: TextStyle
 )
 
 private val transport = FontFamily(
@@ -170,10 +174,15 @@ internal val Typography = GovUkTypography(
         lineHeight = 17.sp,
         letterSpacing = letterSpacing
     ),
-    registrationPlate = TextStyle(
+    registrationPlateRegular = TextStyle(
         fontFamily = dvlaVrm,
         fontWeight = FontWeight.Bold,
-        fontSize = 17.sp,
+        fontSize = 17.sp
+    ),
+    registrationPlateLarge = TextStyle(
+        fontFamily = dvlaVrm,
+        fontWeight = FontWeight.Bold,
+        fontSize = 56.sp
     )
 )
 
@@ -197,6 +206,7 @@ internal val LocalTypography = staticCompositionLocalOf {
         footnoteRegular = TextStyle.Default,
         captionBold = TextStyle.Default,
         captionRegular = TextStyle.Default,
-        registrationPlate = TextStyle.Default
+        registrationPlateRegular = TextStyle.Default,
+        registrationPlateLarge = TextStyle.Default
     )
 }

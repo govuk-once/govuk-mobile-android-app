@@ -6,7 +6,7 @@ sealed interface ExternalLinkListItemStyle {
     data object Default : ExternalLinkListItemStyle
     data object Icon : ExternalLinkListItemStyle
     data class Button(
-        @DrawableRes val icon: Int,
+        @param:DrawableRes val icon: Int,
         val altText: String,
         val onClick: () -> Unit
     ) : ExternalLinkListItemStyle
@@ -15,10 +15,15 @@ sealed interface ExternalLinkListItemStyle {
 sealed interface InternalLinkListItemStyle {
     data object Default : InternalLinkListItemStyle
     data class Status(
-        val title: String
+        val status: String
     ) : InternalLinkListItemStyle
+
+    data class Info(
+        val info: AccessibleString
+    ) : InternalLinkListItemStyle
+
     data class Button(
-        @DrawableRes val icon: Int,
+        @param:DrawableRes val icon: Int,
         val altText: String,
         val onClick: () -> Unit
     ) : InternalLinkListItemStyle
@@ -32,4 +37,13 @@ sealed interface IconListItemStyle {
 sealed interface StatusListItemIconStyle {
     data object Success : StatusListItemIconStyle
     data object Warning : StatusListItemIconStyle
+}
+
+sealed interface InternalLinkListItemModel {
+    val title: AccessibleString
+
+    data class Info(
+        override val title: AccessibleString,
+        val info: AccessibleString
+    ) : InternalLinkListItemModel
 }

@@ -23,7 +23,7 @@
     <string name="acronym_mot_alt_text">M.O.T.</string>
 
     <string name="tax_status_title">Tax</string>
-    <string name="valid_until">Valid until %s</string>
+    <string name="valid_until">Valid until %1$s</string>
     <string name="expired_on">Expired %s</string>
     <string name="renew_licence_button">Renew licence</string>
     <string name="renew_licence_caption">Your licence status may not update immediately when you renew it</string>
@@ -45,4 +45,72 @@
 
     <string name="vehicles">Vehicles</string>
     <string name="licence">Licence</string>
+
+    <!-- Vehicle Details start -->
+    <string name="diesel_summary">Diesel</string>
+    <string name="diesel_specification">Diesel</string>
+    <string name="petrol_summary">Petrol</string>
+    <string name="petrol_specification">Petrol</string>
+    <string name="hybrid_electric_summary">Hybrid</string>
+    <string name="hybrid_electric_specification">Hybrid electric</string>
+    <string name="electric_summary">Electric</string>
+    <string name="electric_specification">Electric</string>
+    <string name="gas_summary">Gas</string>
+    <string name="gas_specification">Gas</string>
+    <string name="steam_summary">Steam</string>
+    <string name="steam_specification">Steam</string>
+    <string name="petrol_gas_summary">Bi-fuel</string>
+    <string name="petrol_gas_specification">Petrol and gas</string>
+    <string name="gas_bi_fuel_summary">Bi-fuel</string>
+    <string name="gas_bi_fuel_specification">Gas bi-fuel</string>
+    <string name="gas_diesel_summary">Bi-fuel</string>
+    <string name="gas_diesel_specification">Gas and diesel</string>
+    <string name="fuel_cells_summary">Hydrogen</string>
+    <string name="fuel_cells_specification">Hydrogen</string>
+    <string name="electric_diesel_summary">Hybrid</string>
+    <string name="electric_diesel_specification">Electric diesel</string>
+    <string name="other">Other</string>
+
+    <string name="status_title">Status</string>
+    <string name="make_title">Make</string>
+    <string name="model_title">Model</string>
+    <string name="first_registered_title">First registered</string>
+    <string name="fuel_type_title">Fuel type</string>
+    <string name="colour_title">Colour</string>
+    <string name="engine_size_title">Engine size</string>
+    <string name="emissions_title">CO2 emissions</string>
+    <string name="specification_title">Specification</string>
+    <string name="registered_to_title">Registered to</string>
+    <string name="vehicle_details_success_title">Vehicle Details Screen</string>
+    <string name="concatenated_vehicle_colours">%1$s and %2$s</string>
+    <string name="emissions_info">%1$s g/km</string>
+
+    <string name="first_registered_alt_text">First registered %1$s</string>
+    <string name="first_registered_in_alt_text">First registered in %1$s</string>
+    <string name="fuel_type_alt_text">Fuel type %1$s</string>
+    <string name="colour_alt_text">Colour %1$s</string>
+    <string name="emissions_alt_text">%1$s grams per kilometre</string>
+    <string name="litres_alt_text">Litres</string>
+
+    <string name="brown">Brown</string>
+    <string name="bronze">Bronze</string>
+    <string name="red">Red</string>
+    <string name="pink">Pink</string>
+    <string name="orange">Orange</string>
+    <string name="yellow">Yellow</string>
+    <string name="gold">Gold</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="purple">Purple</string>
+    <string name="grey">Grey</string>
+    <string name="silver">Silver</string>
+    <string name="white">White</string>
+    <string name="black">Black</string>
+    <string name="multi_colour">Multi-colour</string>
+    <string name="beige">Beige</string>
+    <string name="maroon">Maroon</string>
+    <string name="turquoise">Turquoise</string>
+    <string name="cream">Cream</string>
+    <string name="not_stated">Not stated</string>
+    <!-- Vehicle Details end -->
 </resources>

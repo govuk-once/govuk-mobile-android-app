@@ -87,6 +87,13 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
+    fun onButtonClicked(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            section = SECTION
+        )
+    }
+
     private fun setSelectedDrivingView(drivingView: DrivingView) {
         viewModelScope.launch {
             dvlaRepo.setSelectedDrivingView(drivingView = drivingView)

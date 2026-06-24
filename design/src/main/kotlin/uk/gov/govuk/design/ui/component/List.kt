@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,19 +45,21 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 fun InternalLinkListItem(
-    title: String,
+    title: AccessibleString,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     style: InternalLinkListItemStyle = InternalLinkListItemStyle.Default
 ) {
     CardListItem(
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) { },
         onClick = onClick,
         isFirst = isFirst,
-        isLast = isLast
+        isLast = isLast,
+        background = background
     ) {
         Row(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
@@ -68,8 +71,13 @@ fun InternalLinkListItem(
                     .weight(1f)
             ) {
                 BodyRegularLabel(
-                    text = title,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
+                    text = title.displayText,
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier.semantics {
+                        title.altText?.let { altText ->
+                            contentDescription = altText
+                        }
+                    }
                 )
                 description?.let { description ->
                     ExtraSmallVerticalSpacer()
@@ -85,8 +93,24 @@ fun InternalLinkListItem(
             when (style) {
                 is InternalLinkListItemStyle.Status -> {
                     BodyRegularLabel(
-                        text = style.title,
+                        text = style.status,
                         color = GovUkTheme.colourScheme.textAndIcons.iconTertiary
+                    )
+                }
+
+                is InternalLinkListItemStyle.Info -> {
+                    BodyRegularLabel(
+                        text = style.info.displayText,
+                        modifier = Modifier
+                            .clearAndSetSemantics {
+                                /* Override semantics so we can set alt text to
+                                an empty string without the text then being read */
+                                style.info.altText?.let { altText ->
+                                    contentDescription = altText
+                                } ?: run {
+                                    contentDescription = style.info.displayText
+                                }
+                            }
                     )
                 }
 
@@ -346,13 +370,15 @@ fun StatusListItem(
     iconStyle: StatusListItemIconStyle?,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    drawDivider: Boolean = true
+    drawDivider: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = drawDivider
+        drawDivider = drawDivider,
+        background = background
     ) {
         Row(
             modifier = Modifier
@@ -417,12 +443,14 @@ fun AddressListItem(
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
     isLast: Boolean = false,
+    background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = true
+        drawDivider = true,
+        background = background
     ) {
         Column(
             modifier = Modifier
@@ -456,6 +484,7 @@ fun CardListItem(
     isFirst: Boolean = true,
     isLast: Boolean = true,
     drawDivider: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     content: @Composable () -> Unit,
 ) {
     val cornerRadius = 12.dp
@@ -469,7 +498,7 @@ fun CardListItem(
                     bottomEnd = if (isLast) cornerRadius else 0.dp
                 )
             )
-            .background(GovUkTheme.colourScheme.surfaces.list)
+            .background(background)
             .then(
                 onClick?.let {
                     Modifier.clickable { it() }
@@ -488,7 +517,7 @@ fun CardListItem(
 @Composable
 private fun InternalLinkListItemPreview() {
     GovUkTheme {
-        InternalLinkListItem(title = "Title")
+        InternalLinkListItem(AccessibleString("Title"))
     }
 }
 
@@ -496,7 +525,7 @@ private fun InternalLinkListItemPreview() {
 @Composable
 private fun InternalLinkListItemDescriptionPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", description = "Description")
+        InternalLinkListItem(AccessibleString("Title"), description = "Description")
     }
 }
 
@@ -504,7 +533,21 @@ private fun InternalLinkListItemDescriptionPreview() {
 @Composable
 private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", style = InternalLinkListItemStyle.Status("Status"))
+        InternalLinkListItem(AccessibleString("Title"), style = InternalLinkListItemStyle.Status("Status"))
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemInfoPreview() {
+    val info = AccessibleString("Info")
+    GovUkTheme {
+        InternalLinkListItem(
+            title = AccessibleString("Title"),
+            style = InternalLinkListItemStyle.Info(
+                info
+            )
+        )
     }
 }
 
@@ -513,7 +556,7 @@ private fun InternalLinkListItemStatusPreview() {
 private fun InternalLinkListItemButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
-            "Title",
+            AccessibleString("Title"),
             style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
     }
 }

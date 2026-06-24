@@ -8,8 +8,6 @@ import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 internal class VehicleSummaryMapper @Inject constructor(
@@ -54,4 +52,3 @@ internal class VehicleSummaryMapper @Inject constructor(
             else -> Pair(null, null)
         }
 }
-

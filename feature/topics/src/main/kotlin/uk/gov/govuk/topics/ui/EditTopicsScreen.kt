@@ -72,7 +72,7 @@ private fun EditTopicsScreen(
     Column(modifier) {
         ModalHeader(
             text = title,
-            actionStyle = HeaderActionStyle.ActionButton(
+            actionStyle = HeaderActionStyle.TextActionButton(
                 title = stringResource(R.string.done_button),
                 onClick = onDone
             ),

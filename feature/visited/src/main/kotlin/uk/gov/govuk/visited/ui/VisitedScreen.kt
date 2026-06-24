@@ -105,7 +105,7 @@ private fun VisitedScreen(
             actionStyle = if (visitedItems.isNullOrEmpty()) {
                 HeaderActionStyle.None
             } else {
-                HeaderActionStyle.ActionButton(
+                HeaderActionStyle.TextActionButton(
                     onClick = { showRemoveAllDialog = true },
                     title = removeAllText,
                     altText = removeAllAltText

@@ -38,6 +38,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
+    onVehicleDetailsClick: (registration: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
@@ -79,6 +80,10 @@ fun VehiclesAndLicenceSummaryWidget(
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
                         VehiclesViewContent(
+                            onVehicleDetailsClick = { text, registration ->
+                                viewModel.onButtonClicked(text)
+                                onVehicleDetailsClick(registration)
+                            },
                             vehiclesState = currentState.vehiclesState,
                             modifier = modifier
                         )
@@ -118,6 +123,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
 @Composable
 private fun VehiclesViewContent(
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     modifier: Modifier = Modifier
 ) {
@@ -129,7 +135,7 @@ private fun VehiclesViewContent(
         is VehiclesSummaryUiState.Success -> {
             VehiclesSummarySuccess(
                 vehicles = vehiclesState.vehicles,
-                onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
+                onVehicleDetailsClick = onVehicleDetailsClick,
                 onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                 modifier = modifier
             )
@@ -186,7 +192,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 @Composable
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
-    onDetailsClick: () -> Unit,
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -197,7 +203,7 @@ private fun VehiclesSummarySuccess(
         vehicles.forEach { vehicle ->
             VehicleSummaryCard(
                 vehicleSummary = vehicle,
-                onDetailsClick = { onDetailsClick() },
+                onVehicleDetailsClick = onVehicleDetailsClick,
                 onMoreClick = { onMoreClick() },
                 modifier = Modifier.fillMaxWidth()
             )

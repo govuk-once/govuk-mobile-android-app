@@ -1,9 +1,11 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
+import uk.gov.govuk.dvla.remote.model.common.FuelType
 import uk.gov.govuk.dvla.remote.model.common.DriversEligibility
 import uk.gov.govuk.dvla.remote.model.common.MotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus
+import uk.gov.govuk.dvla.remote.model.common.VehicleColour
 
 data class CustomerSummaryResponse(
     @SerializedName("customerResponse") val customerResponse: CustomerResponse,
@@ -167,7 +169,7 @@ data class Vehicle(
     @SerializedName("typeApprovalCategory") val typeApprovalCategory: String,
     @SerializedName("typeApprovalNumber") val typeApprovalNumber: String?,
     @SerializedName("engineNumber") val engineNumber: String,
-    @SerializedName("euroStatus") val euroStatus: String,
+    @SerializedName("euroStatus") val euroStatus: String?,
     @SerializedName("dateOfManufacture") val dateOfManufacture: String?,
     @SerializedName("dateOfFirstRegistration") val dateOfFirstRegistration: String,
     @SerializedName("dateOfFirstDvlaRegistration") val dateOfFirstDvlaRegistration: String?,
@@ -191,9 +193,9 @@ data class Vehicle(
     @SerializedName("artEndDate") val artEndDate: String?,
     @SerializedName("motExpiryDate") val motExpiryDate: String?,  // 2008-12-25
     @SerializedName("motStatus") val motStatus: MotStatus,
-    @SerializedName("colour") val colour: String,
-    @SerializedName("secondaryColour") val secondaryColour: String?,
-    @SerializedName("fuelType") val fuelType: String,
+    @SerializedName("colour") val colour: VehicleColour,
+    @SerializedName("secondaryColour") val secondaryColour: VehicleColour?,
+    @SerializedName("fuelType") val fuelType: FuelType,
     @SerializedName("wheelplan") val wheelplan: String,
     @SerializedName("revenueWeight") val revenueWeight: Int?,
     @SerializedName("massInService") val massInService: Int?,
