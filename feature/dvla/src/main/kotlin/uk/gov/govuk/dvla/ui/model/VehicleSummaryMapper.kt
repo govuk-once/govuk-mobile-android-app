@@ -36,7 +36,8 @@ internal class VehicleSummaryMapper @Inject constructor(
                 titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
                 description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
                 iconStyle = motIconStyle
-            )
+            ),
+            hasSorn = vehicle.sornStart != null
         )
     }
 

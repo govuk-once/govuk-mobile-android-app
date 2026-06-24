@@ -6,5 +6,6 @@ data class VehicleSummaryUiModel(
     val make: String,
     val model: String,
     val taxStatus: StatusRowUiModel,
-    val motStatus: StatusRowUiModel
+    val motStatus: StatusRowUiModel,
+    val hasSorn: Boolean = false
 )

@@ -23,6 +23,7 @@ class CustomerVehicleMapperTest {
             every { motExpiryDate } returns "2026-06-01"
             every { taxStatus } returns RemoteTaxStatus.TAXED
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
+            every { sornStart } returns "2025-01-01"
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -34,6 +35,7 @@ class CustomerVehicleMapperTest {
         assertEquals(LocalDate.of(2025, 12, 1), result.taxExpiryDate)
         assertEquals(LocalDate.of(2026, 6, 1), result.motExpiryDate)
         assertEquals(TaxStatus.TAXED, result.taxStatus)
+        assertEquals("2025-01-01", result.sornStart)
     }
 
     @Test
@@ -47,6 +49,7 @@ class CustomerVehicleMapperTest {
             every { motExpiryDate } returns null
             every { taxStatus } returns null
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
+            every { sornStart } returns null
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -58,5 +61,6 @@ class CustomerVehicleMapperTest {
         assertNull(result.taxExpiryDate)
         assertNull(result.motExpiryDate)
         assertEquals(TaxStatus.UNKNOWN, result.taxStatus)
+        assertNull(result.sornStart)
     }
 }

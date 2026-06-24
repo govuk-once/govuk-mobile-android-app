@@ -80,6 +80,7 @@ fun VehiclesAndLicenceSummaryWidget(
                     DrivingView.VEHICLES -> {
                         VehiclesViewContent(
                             vehiclesState = currentState.vehiclesState,
+                            onMenuItemClick = launchBrowser,
                             modifier = modifier
                         )
                     }
@@ -93,6 +94,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         LicenceViewContent(
                             licenceState = currentState.licenceState,
+                            onMenuItemClick = launchBrowser,
                             onLicenceNumberLongClick = { licenceNumber ->
                                 licenceNumber.copyToClipboard(
                                     context = context,
@@ -119,6 +121,7 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     vehiclesState: VehiclesSummaryUiState,
+    onMenuItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -130,7 +133,7 @@ private fun VehiclesViewContent(
             VehiclesSummarySuccess(
                 vehicles = vehiclesState.vehicles,
                 onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
-                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                onMenuItemClick = onMenuItemClick,
                 modifier = modifier
             )
         }
@@ -140,6 +143,7 @@ private fun VehiclesViewContent(
 @Composable
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
+    onMenuItemClick: (String) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
     onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -152,7 +156,7 @@ private fun LicenceViewContent(
         is LicenceSummaryUiState.Success -> {
             LicenceSummarySuccess(
                 licenceSummary = licenceState.licence,
-                onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                onMenuItemClick = onMenuItemClick,
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
                 onRenewLicenceClick = onRenewLicenceClick,
                 modifier = modifier
@@ -187,7 +191,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
     onDetailsClick: () -> Unit,
-    onMoreClick: () -> Unit,
+    onMenuItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -198,7 +202,7 @@ private fun VehiclesSummarySuccess(
             VehicleSummaryCard(
                 vehicleSummary = vehicle,
                 onDetailsClick = { onDetailsClick() },
-                onMoreClick = { onMoreClick() },
+                onMenuItemClick = onMenuItemClick,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -208,7 +212,7 @@ private fun VehiclesSummarySuccess(
 @Composable
 private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
-    onMoreClick: () -> Unit,
+    onMenuItemClick: (String) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -218,7 +222,7 @@ private fun LicenceSummarySuccess(
     ) {
         LicenceSummaryCard(
             licenceSummary = licenceSummary,
-            onMoreClick = { onMoreClick() },
+            onMenuItemClick = onMenuItemClick,
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
             onRenewClick = onRenewLicenceClick,
             modifier = Modifier.fillMaxWidth()

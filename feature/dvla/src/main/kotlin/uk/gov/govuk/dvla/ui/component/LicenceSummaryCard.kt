@@ -16,13 +16,14 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
 internal fun LicenceSummaryCard(
     licenceSummary: LicenceSummaryUiModel,
-    onMoreClick: () -> Unit,
+    onMenuItemClick: (String) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -38,7 +39,8 @@ internal fun LicenceSummaryCard(
         LicenceSummaryHeader(
             licenceType = licenceSummary.licenceType,
             licenceNumber = licenceSummary.licenceNumber,
-            onMoreClick = onMoreClick,
+            menuItems = emptyList(),
+            onMenuItemClick = onMenuItemClick,
             onLicenceNumberLongClick = onLicenceNumberLongClick,
         )
 
@@ -67,10 +69,11 @@ internal fun LicenceSummaryCard(
 }
 
 @Composable
-fun LicenceSummaryHeader(
+internal fun LicenceSummaryHeader(
     licenceType: String,
     licenceNumber: String,
-    onMoreClick: () -> Unit,
+    menuItems: List<OverflowMenuItem>,
+    onMenuItemClick: (String) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -88,7 +91,8 @@ fun LicenceSummaryHeader(
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         },
-        onMoreClick = onMoreClick
+        menuItems = menuItems,
+        onMenuItemClick = onMenuItemClick
     ) {
         // licence number
         Title1BoldLabel(
@@ -110,7 +114,8 @@ private fun LicenceHeaderPreview() {
         LicenceSummaryHeader(
             licenceType = "Full licence",
             licenceNumber = "ARENO803236AA170",
-            onMoreClick = {},
+            menuItems = emptyList(),
+            onMenuItemClick = {},
             onLicenceNumberLongClick = {}
         )
     }
@@ -136,7 +141,7 @@ private fun LicenceSummaryCardPreview() {
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 )
             ),
-            onMoreClick = {},
+            onMenuItemClick = {},
             onLicenceNumberLongClick = {},
             onRenewClick = { _ -> }
         )
@@ -161,7 +166,7 @@ private fun LicenceSummaryCardExpiredPreview() {
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
                 )
             ),
-            onMoreClick = {},
+            onMenuItemClick = {},
             onLicenceNumberLongClick = {},
             onRenewClick = { _ -> }
         )
