@@ -35,13 +35,15 @@ fun ProgressBar(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .height(barHeight)
-                    .width(leadingBarWidth)
-                    .background(GovUkTheme.colourScheme.surfaces.progressBar)
-            )
+            if (percentage != 0) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .height(barHeight)
+                        .width(leadingBarWidth)
+                        .background(GovUkTheme.colourScheme.surfaces.progressBar)
+                )
+            }
 
             Box(
                 modifier = Modifier
@@ -50,13 +52,15 @@ fun ProgressBar(
                     .background(GovUkTheme.colourScheme.textAndIcons.primary)
             )
 
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .height(barHeight)
-                    .width(trailingBarWidth)
-                    .background(GovUkTheme.colourScheme.surfaces.screenBackground)
-            )
+            if (percentage != 100) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .height(barHeight)
+                        .width(trailingBarWidth)
+                        .background(GovUkTheme.colourScheme.surfaces.screenBackground)
+                )
+            }
         }
     }
 }

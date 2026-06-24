@@ -11,11 +11,11 @@ internal fun LocalDate.toSummaryDisplayFormat(): String = this.format(dayMonthYe
 
 internal fun LocalDate.toYearDisplayFormat(): String = this.format(yearFormat)
 
-internal fun LocalDate.getDifferenceBetweenDaysAsPercentage(daysThreshold: Int): Int {
-    val daysLeft = this.getDaysBetweenNow().toFloat()
+internal fun LocalDate.getNumberOfDaysFromNowAsPercentageOfThreshold(daysThreshold: Int): Int {
+    val daysLeft = this.getNumberOfDaysFromNow().toFloat()
     return daysLeft.div(daysThreshold).times(100).toInt()
 }
 
-internal fun LocalDate.getDaysBetweenNow() =
+internal fun LocalDate.getNumberOfDaysFromNow() =
     Duration.between(LocalDate.now().atStartOfDay(), this.atStartOfDay())
         .toDays().toInt()

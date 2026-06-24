@@ -8,8 +8,8 @@ import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
-import uk.gov.govuk.dvla.util.getDifferenceBetweenDaysAsPercentage
-import uk.gov.govuk.dvla.util.getDaysBetweenNow
+import uk.gov.govuk.dvla.util.getNumberOfDaysFromNowAsPercentageOfThreshold
+import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.dvla.util.toTitleCase
@@ -57,7 +57,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     }
 
     private fun isLicenceExpiring(expiryDate: LocalDate?) =
-        (expiryDate?.getDaysBetweenNow() ?: 0) < EXPIRING_DAYS_THRESHOLD
+        (expiryDate?.getNumberOfDaysFromNow() ?: 0) < EXPIRING_DAYS_THRESHOLD + 1
 
     private fun getValid(expiryDate: String) = LicenceStatusUiModel.Valid(
         statusRowUi = StatusRowUiModel(
@@ -79,16 +79,25 @@ internal class LicenceSummaryMapper @Inject constructor(
                         formattedExpiryDate
                     )
                 ),
-                percentage = expiryDate?.getDifferenceBetweenDaysAsPercentage(
+                percentage = expiryDate?.getNumberOfDaysFromNowAsPercentageOfThreshold(
                     EXPIRING_DAYS_THRESHOLD
                 ) ?: 0,
                 bottomText = AccessibleString(
-                    displayText = stringProvider.getPlural(
-                        R.plurals.expiring_licence_days_left, expiryDate?.getDaysBetweenNow() ?: 0
-                    )
+                    displayText = getExpiringBottomText(expiryDate)
                 )
             )
         )
+    }
+
+    private fun getExpiringBottomText(expiryDate: LocalDate?): String {
+        val daysLeft = expiryDate?.getNumberOfDaysFromNow() ?: return "Unknown"
+        return if (daysLeft == 0) {
+            stringProvider.getString(R.string.today)
+        } else {
+            stringProvider.getPlural(
+                R.plurals.expiring_licence_days_left, daysLeft
+            )
+        }
     }
 
     private fun getExpired(expiryDate: String) = LicenceStatusUiModel.Expired(

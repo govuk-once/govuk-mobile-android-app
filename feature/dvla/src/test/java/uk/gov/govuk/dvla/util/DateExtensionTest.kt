@@ -29,15 +29,15 @@ class DateExtensionTest {
     }
 
     @Test
-    fun `getDifferenceBetweenDaysAsPercentage correctly returns percentage`() {
-        val dateNowPlusTwoDays = LocalDate.now().plusDays(2)
-        val result = dateNowPlusTwoDays.getDifferenceBetweenDaysAsPercentage(4)
+    fun `getNumberOfDaysFromNowAsPercentageOfThreshold correctly returns percentage`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(2)
+        val result = todayPlusTwoDays.getNumberOfDaysFromNowAsPercentageOfThreshold(4)
         assertEquals(50, result)
     }
 
     @Test
-    fun `Given getDaysBetweenNow is called, when date is 2 days ahead, then return 2`() {
-        val dateNowPlusTwoDays = LocalDate.now().plusDays(2)
-        assertEquals(2, dateNowPlusTwoDays.getDaysBetweenNow())
+    fun `Given getNumberOfDaysFromNow is called, when date is 2 days ahead, then return 2`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(2)
+        assertEquals(2, todayPlusTwoDays.getNumberOfDaysFromNow())
     }
 }
