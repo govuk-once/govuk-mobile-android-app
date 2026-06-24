@@ -18,9 +18,9 @@ class MotStatusTest {
     }
 
     @Test
-    fun `Verify NOT_VALID status is EXPIRED`() {
+    fun `Verify NOT_VALID status is NOT_VALID`() {
         val remote = RemoteMotStatus.NOT_VALID
-        assertEquals(MotStatus.EXPIRED, remote.toDomain())
+        assertEquals(MotStatus.NOT_VALID, remote.toDomain())
     }
 
     @Test

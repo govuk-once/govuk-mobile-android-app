@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
@@ -8,8 +9,6 @@ import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 internal class VehicleSummaryMapper @Inject constructor(
@@ -20,21 +19,32 @@ internal class VehicleSummaryMapper @Inject constructor(
         val motDate = vehicle.motExpiryDate?.toSummaryDisplayFormat()
 
         val (taxStringResId, taxIconStyle) = getTaxStatusResources(vehicle.taxStatus)
-        val (motStringResId, motIconStyle) = getMotStatusResources(vehicle.motStatus)
+        val (motStringResId, motIconStyle) = getMotStatusResources(vehicle.motStatus, vehicle.taxStatus)
+
+        val taxDescriptionText = stringProvider.resolveSummaryDescription(taxStringResId, taxDate)
+        val motDescriptionText = stringProvider.resolveSummaryDescription(motStringResId, motDate)
 
         return VehicleSummaryUiModel(
             registration = vehicle.registration,
             make = vehicle.make,
             model = vehicle.model ?: "Unknown", // TODO return unknown for now, other states in future tickets
             taxStatus = StatusRowUiModel(
-                title = stringProvider.getString(R.string.tax_status_title),
-                description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
+                title = AccessibleString(
+                    displayText = stringProvider.getString(R.string.tax_status_title)
+                ),
+                description = AccessibleString(
+                    displayText = taxDescriptionText
+                ),
                 iconStyle = taxIconStyle
             ),
             motStatus = StatusRowUiModel(
-                title = stringProvider.getString(R.string.acronym_mot),
-                titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
-                description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
+                title = AccessibleString(
+                    displayText = stringProvider.getString(R.string.acronym_mot),
+                    altText = stringProvider.getString(R.string.acronym_mot_alt_text)
+                ),
+                description = AccessibleString(
+                    displayText = motDescriptionText
+                ),
                 iconStyle = motIconStyle
             )
         )
@@ -48,9 +58,14 @@ internal class VehicleSummaryMapper @Inject constructor(
         }
 
     // TODO what if date is null?
-    private fun getMotStatusResources(status: MotStatus): Pair<Int?, StatusListItemIconStyle?> =
-        when (status) {
-            MotStatus.VALID -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
+    private fun getMotStatusResources(motStatus: MotStatus, taxStatus: TaxStatus): Pair<Int?, StatusListItemIconStyle?> =
+        when {
+            // exempt
+            motStatus == MotStatus.NOT_VALID && taxStatus == TaxStatus.SORN -> Pair(R.string.exempt, null)
+
+            // standard states
+            motStatus == MotStatus.VALID -> Pair(R.string.valid_until, StatusListItemIconStyle.Success)
+            motStatus == MotStatus.NOT_VALID -> Pair(R.string.expired_on, StatusListItemIconStyle.Warning)
             else -> Pair(null, null)
         }
 }

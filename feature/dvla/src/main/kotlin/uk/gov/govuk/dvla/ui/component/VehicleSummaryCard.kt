@@ -20,7 +20,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
-import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -35,6 +34,8 @@ internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
+    onTaxActionClick: ((String) -> Unit)?,
+    onMotActionClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -53,28 +54,15 @@ internal fun VehicleSummaryCard(
         )
 
         // tax
-        StatusListItem(
-            title = vehicleSummary.taxStatus.title?.let {
-                AccessibleString(displayText = it)
-            },
-            description = AccessibleString(
-                displayText = vehicleSummary.taxStatus.description
-            ),
-            iconStyle = vehicleSummary.taxStatus.iconStyle,
+        SummaryStatusItem(
+            status = vehicleSummary.taxStatus,
+            onActionClick = onTaxActionClick
         )
 
         // MOT
-        StatusListItem(
-            title = vehicleSummary.motStatus.title?.let {
-                AccessibleString(
-                    displayText = it,
-                    altText = vehicleSummary.motStatus.titleAltText
-                )
-            },
-            description = AccessibleString(
-                displayText = vehicleSummary.motStatus.description
-            ),
-            iconStyle = vehicleSummary.motStatus.iconStyle,
+        SummaryStatusItem(
+            status = vehicleSummary.motStatus,
+            onActionClick = onMotActionClick
         )
 
         // details
@@ -188,18 +176,20 @@ private fun VehicleSummaryCardPreview() {
                 make = "Volkswagen",
                 model = "ID4",
                 taxStatus = StatusRowUiModel(
-                    title = "Tax",
-                    description = "Valid until 1 February 2027",
+                    title = AccessibleString("Tax"),
+                    description = AccessibleString("Valid until 1 February 2027"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                 ),
                 motStatus = StatusRowUiModel(
-                    title = "MOT",
-                    description = "Valid until 24 April 2026",
+                    title = AccessibleString("MOT"),
+                    description = AccessibleString("Valid until 24 April 2026"),
                     iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning
                 )
             ),
             onDetailsClick = {},
-            onMoreClick = {}
+            onMoreClick = {},
+            onTaxActionClick = {},
+            onMotActionClick = {}
         )
     }
 }

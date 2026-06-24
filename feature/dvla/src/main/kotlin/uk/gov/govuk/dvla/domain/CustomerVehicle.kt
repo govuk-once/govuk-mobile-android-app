@@ -12,7 +12,8 @@ data class CustomerVehicle(
     val taxExpiryDate: LocalDate?,
     val taxClass: String,
     val motStatus: MotStatus,
-    val motExpiryDate: LocalDate?
+    val motExpiryDate: LocalDate?,
+    val dateOfFirstRegistration: LocalDate?,
 )
 
 internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
@@ -24,6 +25,7 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         taxExpiryDate = this.taxedUntil.toLocalDateOrNull(),
         taxClass = this.taxClass,
         motStatus = this.motStatus.toDomain(),
-        motExpiryDate = this.motExpiryDate.toLocalDateOrNull()
+        motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
+        dateOfFirstRegistration = this.dateOfFirstRegistration.toLocalDateOrNull()
     )
 }

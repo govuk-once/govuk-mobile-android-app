@@ -131,6 +131,8 @@ private fun VehiclesViewContent(
                 vehicles = vehiclesState.vehicles,
                 onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
                 onMoreClick = { /* TODO to be handled in next ticket(s) */ },
+                onTaxActionClick = null, // TODO to be handled in next ticket(s)
+                onMotActionClick = null,
                 modifier = modifier
             )
         }
@@ -188,6 +190,8 @@ private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
     onDetailsClick: () -> Unit,
     onMoreClick: () -> Unit,
+    onTaxActionClick: ((String) -> Unit)?,
+    onMotActionClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -197,8 +201,10 @@ private fun VehiclesSummarySuccess(
         vehicles.forEach { vehicle ->
             VehicleSummaryCard(
                 vehicleSummary = vehicle,
-                onDetailsClick = { onDetailsClick() },
-                onMoreClick = { onMoreClick() },
+                onDetailsClick = onDetailsClick,
+                onMoreClick = onMoreClick,
+                onTaxActionClick = onTaxActionClick,
+                onMotActionClick = onMotActionClick,
                 modifier = Modifier.fillMaxWidth()
             )
         }
