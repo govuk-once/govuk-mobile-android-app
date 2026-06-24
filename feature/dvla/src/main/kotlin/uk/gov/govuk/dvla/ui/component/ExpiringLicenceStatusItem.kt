@@ -11,6 +11,7 @@ import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.ProgressBarListItem
+import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ProgressBarUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -26,10 +27,10 @@ internal fun ExpiringLicenceStatusItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = GovUkTheme.spacing.medium)
-            .padding(bottom = GovUkTheme.spacing.large)
+            .padding(vertical = GovUkTheme.spacing.large)
     ) {
-        MediumVerticalSpacer()
-
+        SmallVerticalSpacer()
+        
         ProgressBarListItem(
             topText = uiModel.topText,
             percentage = uiModel.percentage,
