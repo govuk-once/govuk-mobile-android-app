@@ -85,7 +85,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             coEvery { repo.getCustomerSummary() } returns Result.Success(customerSummary)
             coEvery { repo.getDriverSummary() } returns Result.Success(mockk())
 
-            every { vehicleMapper.toUiModel(vehicle) } returns vehicleSummaryUiModel
+            every { vehicleMapper.toUiModel(vehicle, any()) } returns vehicleSummaryUiModel
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 repo,
@@ -142,7 +142,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             every { repo.linkState } returns linkStateFlow
             coEvery { repo.getCustomerSummary() } returns Result.Success(customerSummary)
-            every { vehicleMapper.toUiModel(vehicle) } returns vehicleSummaryUiModel
+            every { vehicleMapper.toUiModel(vehicle, any()) } returns vehicleSummaryUiModel
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 repo,

@@ -49,7 +49,7 @@
     <string name="menu_sorn_rules">SORN rules</string>
     <string name="menu_report_as_sold">Report as sold</string>
     <string name="menu_report_as_sold_alt_text">Report vehicle as sold</string>
-    <string name="menu_register_off_road">Register as off road (SORN…)</string>
+    <string name="menu_register_off_road">Register as off road (SORN)</string>
     <string name="menu_register_off_road_alt_text">Register vehicle as off road</string>
     <string name="menu_get_log_book">Get a log book (V5C)</string>
     <string name="menu_change_log_book_address">Change log book address</string>

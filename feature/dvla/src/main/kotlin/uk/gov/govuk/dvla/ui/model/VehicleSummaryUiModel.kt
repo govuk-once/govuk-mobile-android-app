@@ -7,5 +7,5 @@ data class VehicleSummaryUiModel(
     val model: String,
     val taxStatus: StatusRowUiModel,
     val motStatus: StatusRowUiModel,
-    val hasSorn: Boolean = false
+    val menuItems: List<OverflowMenuItem> = emptyList()
 )

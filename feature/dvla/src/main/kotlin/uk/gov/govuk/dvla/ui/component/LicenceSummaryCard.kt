@@ -39,7 +39,7 @@ internal fun LicenceSummaryCard(
         LicenceSummaryHeader(
             licenceType = licenceSummary.licenceType,
             licenceNumber = licenceSummary.licenceNumber,
-            menuItems = emptyList(),
+            menuItems = licenceSummary.menuItems,
             onMenuItemClick = onMenuItemClick,
             onLicenceNumberLongClick = onLicenceNumberLongClick,
         )

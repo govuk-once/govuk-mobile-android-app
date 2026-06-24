@@ -120,7 +120,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
             val newState = when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
-                    val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it) }
+                    val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it, dvlaUrls) }
                     VehiclesSummaryUiState.Success(vehicles)
                 }
                 else -> VehiclesSummaryUiState.Error

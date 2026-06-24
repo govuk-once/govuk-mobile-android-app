@@ -5,4 +5,10 @@ import com.google.gson.annotations.SerializedName
 data class DvlaUrls(
     @SerializedName("addVehicle") val addVehicle: String,
     @SerializedName("renewLicence") val renewLicence: String,
+    @SerializedName("soldVehicle") val soldVehicle: String,
+    @SerializedName("sornRules") val sornRules: String,
+    @SerializedName("makeSorn") val makeSorn: String,
+    @SerializedName("getLogbook") val getLogbook: String,
+    @SerializedName("changeLogbookAddress") val changeLogbookAddress: String,
+    @SerializedName("cancelTax") val cancelTax: String,
 )

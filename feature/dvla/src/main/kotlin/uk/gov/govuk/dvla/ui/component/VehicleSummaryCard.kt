@@ -31,13 +31,6 @@ import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.util.toSpacedString
 
-private const val URL_SORN_RULES = "https://www.gov.uk/sorn-statutory-off-road-notification"
-private const val URL_REPORT_AS_SOLD = "https://www.gov.uk/sold-bought-vehicle"
-private const val URL_REGISTER_OFF_ROAD = "https://www.gov.uk/make-a-sorn"
-private const val URL_GET_LOG_BOOK = "https://www.gov.uk/vehicle-log-book"
-private const val URL_CHANGE_LOG_BOOK_ADDRESS = "https://www.gov.uk/change-address-v5c"
-private const val URL_CANCEL_TAX = "https://www.gov.uk/vehicle-tax-refund"
-
 @Composable
 internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
@@ -45,8 +38,6 @@ internal fun VehicleSummaryCard(
     onMenuItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val menuItems = buildVehicleMenuItems(hasSorn = vehicleSummary.hasSorn)
-
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -59,7 +50,7 @@ internal fun VehicleSummaryCard(
             registration = vehicleSummary.registration,
             make = vehicleSummary.make,
             model = vehicleSummary.model,
-            menuItems = menuItems,
+            menuItems = vehicleSummary.menuItems,
             onMenuItemClick = onMenuItemClick
         )
 
@@ -94,40 +85,6 @@ internal fun VehicleSummaryCard(
             onClick = onDetailsClick,
             isFirst = false,
             isLast = true
-        )
-    }
-}
-
-@Composable
-private fun buildVehicleMenuItems(hasSorn: Boolean): List<OverflowMenuItem> {
-    return buildList {
-        if (hasSorn) {
-            add(OverflowMenuItem(text = stringResource(R.string.menu_sorn_rules), url = URL_SORN_RULES))
-        }
-        add(
-            OverflowMenuItem(
-                text = stringResource(R.string.menu_report_as_sold),
-                url = URL_REPORT_AS_SOLD,
-                altText = stringResource(R.string.menu_report_as_sold_alt_text)
-            )
-        )
-        if (!hasSorn) {
-            add(
-                OverflowMenuItem(
-                    text = stringResource(R.string.menu_register_off_road),
-                    url = URL_REGISTER_OFF_ROAD,
-                    altText = stringResource(R.string.menu_register_off_road_alt_text)
-                )
-            )
-        }
-        add(OverflowMenuItem(text = stringResource(R.string.menu_get_log_book), url = URL_GET_LOG_BOOK))
-        add(OverflowMenuItem(text = stringResource(R.string.menu_change_log_book_address), url = URL_CHANGE_LOG_BOOK_ADDRESS))
-        add(
-            OverflowMenuItem(
-                text = stringResource(R.string.menu_cancel_tax),
-                url = URL_CANCEL_TAX,
-                altText = stringResource(R.string.menu_cancel_tax_alt_text)
-            )
         )
     }
 }
