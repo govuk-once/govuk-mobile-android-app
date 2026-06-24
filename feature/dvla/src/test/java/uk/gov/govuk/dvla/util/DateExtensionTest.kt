@@ -29,9 +29,9 @@ class DateExtensionTest {
     }
 
     @Test
-    fun `getNumberOfDaysFromNowAsPercentageOfThreshold correctly returns percentage`() {
+    fun `getNumberOfDaysUntilExpiryAsPercentage correctly returns percentage`() {
         val todayPlusTwoDays = LocalDate.now().plusDays(2)
-        val result = todayPlusTwoDays.getNumberOfDaysFromNowAsPercentageOfThreshold(4)
+        val result = todayPlusTwoDays.getNumberOfDaysUntilExpiryAsPercentage(4)
         assertEquals(50, result)
     }
 
