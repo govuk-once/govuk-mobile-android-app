@@ -40,4 +40,28 @@ class DateExtensionTest {
         val todayPlusTwoDays = LocalDate.now().plusDays(2)
         assertEquals(2, todayPlusTwoDays.getNumberOfDaysFromNow())
     }
+
+    @Test
+    fun `Given isLicenceExpiring is called, when date is 2 days ahead and threshold is 2 days, then return true`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(2)
+        assertEquals(true, todayPlusTwoDays.isLicenceExpiring(2))
+    }
+
+    @Test
+    fun `Given isLicenceExpiring is called, when date is 4 days ahead and threshold is 2 days, then return true`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(4)
+        assertEquals(false, todayPlusTwoDays.isLicenceExpiring(2))
+    }
+
+    @Test
+    fun `Given isToday is called, when date is today, then return true`() {
+        val todayPlusTwoDays = LocalDate.now()
+        assertEquals(true, todayPlusTwoDays.isToday())
+    }
+
+    @Test
+    fun `Given isToday is called, when date is tomorrow, then return false`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(1)
+        assertEquals(false, todayPlusTwoDays.isToday())
+    }
 }

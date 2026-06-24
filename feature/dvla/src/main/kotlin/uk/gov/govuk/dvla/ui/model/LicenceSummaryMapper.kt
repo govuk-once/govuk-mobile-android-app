@@ -10,6 +10,8 @@ import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNowAsPercentageOfThreshold
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
+import uk.gov.govuk.dvla.util.isLicenceExpiring
+import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.dvla.util.toTitleCase
@@ -45,7 +47,7 @@ internal class LicenceSummaryMapper @Inject constructor(
         return when (status) {
             LicenceStatus.EXPIRED -> getExpired(formattedExpiryDate)
             LicenceStatus.VALID -> {
-                if (isLicenceExpiring(expiryDate)) {
+                if (expiryDate?.isLicenceExpiring(EXPIRING_DAYS_THRESHOLD) == true) {
                     getExpiring(expiryDate)
                 } else {
                     getValid(formattedExpiryDate)
@@ -55,9 +57,6 @@ internal class LicenceSummaryMapper @Inject constructor(
             else -> getValid(formattedExpiryDate)
         }
     }
-
-    private fun isLicenceExpiring(expiryDate: LocalDate?) =
-        (expiryDate?.getNumberOfDaysFromNow() ?: 0) < EXPIRING_DAYS_THRESHOLD + 1
 
     private fun getValid(expiryDate: String) = LicenceStatusUiModel.Valid(
         statusRowUi = StatusRowUiModel(
@@ -69,8 +68,8 @@ internal class LicenceSummaryMapper @Inject constructor(
         )
     )
 
-    private fun getExpiring(expiryDate: LocalDate?): LicenceStatusUiModel.Expiring {
-        val formattedExpiryDate = expiryDate?.toSummaryDisplayFormat() ?: "Unknown"
+    private fun getExpiring(expiryDate: LocalDate): LicenceStatusUiModel.Expiring {
+        val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return LicenceStatusUiModel.Expiring(
             progressBarUi = ProgressBarUiModel(
                 topText = AccessibleString(
@@ -79,9 +78,9 @@ internal class LicenceSummaryMapper @Inject constructor(
                         formattedExpiryDate
                     )
                 ),
-                percentage = expiryDate?.getNumberOfDaysFromNowAsPercentageOfThreshold(
+                percentage = expiryDate.getNumberOfDaysFromNowAsPercentageOfThreshold(
                     EXPIRING_DAYS_THRESHOLD
-                ) ?: 0,
+                ),
                 bottomText = AccessibleString(
                     displayText = getExpiringBottomText(expiryDate)
                 )
@@ -90,12 +89,11 @@ internal class LicenceSummaryMapper @Inject constructor(
     }
 
     private fun getExpiringBottomText(expiryDate: LocalDate?): String {
-        val daysLeft = expiryDate?.getNumberOfDaysFromNow() ?: return "Unknown"
-        return if (daysLeft == 0) {
+        return if (expiryDate?.isToday() == true) {
             stringProvider.getString(R.string.today)
         } else {
             stringProvider.getPlural(
-                R.plurals.expiring_licence_days_left, daysLeft
+                R.plurals.expiring_licence_days_left, expiryDate?.getNumberOfDaysFromNow() ?: 0
             )
         }
     }

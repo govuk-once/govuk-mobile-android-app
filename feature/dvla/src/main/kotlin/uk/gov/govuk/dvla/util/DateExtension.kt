@@ -19,3 +19,9 @@ internal fun LocalDate.getNumberOfDaysFromNowAsPercentageOfThreshold(daysThresho
 internal fun LocalDate.getNumberOfDaysFromNow() =
     Duration.between(LocalDate.now().atStartOfDay(), this.atStartOfDay())
         .toDays().toInt()
+
+internal fun LocalDate.isLicenceExpiring(expiringDaysThreshold: Int) =
+    this.getNumberOfDaysFromNow() < expiringDaysThreshold + 1
+
+internal fun LocalDate.isToday() =
+    this.getNumberOfDaysFromNow() == 0
