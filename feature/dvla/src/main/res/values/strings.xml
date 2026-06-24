@@ -38,6 +38,11 @@
     <string name="licence_address_alt_text">Address on licence %1$s</string>
     <string name="licence_expiration_alt_text">Licence %1$s</string>
     <string name="clipboard_data_label_licence_number">copy licence number</string>
+    <string name="expiring_licence_date">Expiring %1$s</string>
+    <plurals name="expiring_licence_days_left">
+        <item quantity="one">1 day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>

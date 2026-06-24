@@ -27,4 +27,17 @@ class DateExtensionTest {
         val date2 = LocalDate.of(2024, 12, 15)
         assertEquals("2024", date2.toYearDisplayFormat())
     }
+
+    @Test
+    fun `getDifferenceBetweenDaysAsPercentage correctly returns percentage`() {
+        val dateNowPlusTwoDays = LocalDate.now().plusDays(2)
+        val result = dateNowPlusTwoDays.getDifferenceBetweenDaysAsPercentage(4)
+        assertEquals(50, result)
+    }
+
+    @Test
+    fun `Given getDaysBetweenNow is called, when date is 2 days ahead, then return 2`() {
+        val dateNowPlusTwoDays = LocalDate.now().plusDays(2)
+        assertEquals(2, dateNowPlusTwoDays.getDaysBetweenNow())
+    }
 }

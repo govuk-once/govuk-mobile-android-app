@@ -15,6 +15,7 @@ import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.model.LicenceStatusUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.util.toSpacedString
@@ -58,11 +59,27 @@ internal fun LicenceSummaryCard(
         )
 
         // status
-        LicenceStatusItem(
-            status = licenceSummary.status,
-            licenceStatus = licenceSummary.statusRowUi,
-            onRenewClick = onRenewClick
-        )
+        when (val statusUi = licenceSummary.statusUi) {
+            is LicenceStatusUiModel.Valid ->
+                ValidLicenceStatusItem(
+                    status = statusUi.statusRowUi,
+                    modifier = modifier
+                )
+
+            is LicenceStatusUiModel.Expiring ->
+                ExpiringLicenceStatusItem(
+                    uiModel = statusUi.progressBarUi,
+                    onRenewClick = onRenewClick,
+                    modifier = modifier
+                )
+
+            is LicenceStatusUiModel.Expired ->
+                ExpiredLicenceStatusItem(
+                    status = statusUi.statusRowUi,
+                    onRenewClick = onRenewClick,
+                    modifier = modifier
+                )
+        }
     }
 }
 
@@ -76,7 +93,8 @@ fun LicenceSummaryHeader(
 ) {
 
     val licenceTypeAltText = stringResource(R.string.licence_type_alt_text, licenceType)
-    val licenceNumberAltText = stringResource(R.string.licence_number_alt_text, licenceNumber.toSpacedString())
+    val licenceNumberAltText =
+        stringResource(R.string.licence_number_alt_text, licenceNumber.toSpacedString())
     val clipboardCopyLabel = stringResource(R.string.clipboard_data_label_licence_number)
 
     SummaryCardHeader(
@@ -117,7 +135,6 @@ private fun LicenceHeaderPreview() {
 }
 
 
-
 @PreviewLightDark
 @Composable
 private fun LicenceSummaryCardPreview() {
@@ -130,10 +147,11 @@ private fun LicenceSummaryCardPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                status = uk.gov.govuk.dvla.domain.LicenceStatus.VALID,
-                statusRowUi = StatusRowUiModel(
-                    description = "Valid until 1 February 2027",
-                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
+                statusUi = LicenceStatusUiModel.Valid(
+                    statusRowUi = StatusRowUiModel(
+                        description = "Valid until 1 February 2027",
+                        iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
+                    )
                 )
             ),
             onMoreClick = {},
@@ -155,10 +173,11 @@ private fun LicenceSummaryCardExpiredPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                status = uk.gov.govuk.dvla.domain.LicenceStatus.EXPIRED,
-                statusRowUi = StatusRowUiModel(
-                    description = "Expired 24 April 2026",
-                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
+                statusUi = LicenceStatusUiModel.Expired(
+                    statusRowUi = StatusRowUiModel(
+                        description = "Expired on 1 February 2027",
+                        iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
+                    )
                 )
             ),
             onMoreClick = {},

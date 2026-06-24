@@ -513,6 +513,40 @@ fun CardListItem(
     }
 }
 
+@Composable
+fun ProgressBarListItem(
+    topText: AccessibleString,
+    percentage: Int,
+    bottomText: AccessibleString,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        BodyRegularLabel(
+            text = topText.displayText,
+            modifier = Modifier.semantics {
+                topText.altText?.let { altText ->
+                    contentDescription = altText
+                }
+            }
+        )
+
+        SmallVerticalSpacer()
+
+        ProgressBar(percentage = percentage)
+
+        SmallVerticalSpacer()
+
+        BodyRegularLabel(
+            text = bottomText.displayText,
+            modifier = Modifier.semantics {
+                bottomText.altText?.let { altText ->
+                    contentDescription = altText
+                }
+            }
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun InternalLinkListItemPreview() {
