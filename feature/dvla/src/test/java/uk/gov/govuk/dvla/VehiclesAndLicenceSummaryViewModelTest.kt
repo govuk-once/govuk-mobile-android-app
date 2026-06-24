@@ -39,7 +39,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
-    private val configRepo = mockk<ConfigRepo>(relaxed = true)
     private val vehicleMapper = mockk<VehicleSummaryMapper>(relaxed = true)
     private val licenceMapper = mockk<LicenceSummaryMapper>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
@@ -62,7 +61,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -91,7 +89,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -118,7 +115,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -150,7 +146,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -179,7 +174,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
             dvlaRepo,
-            configRepo,
             vehicleMapper,
             licenceMapper,
             analyticsClient,
@@ -205,7 +199,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
             dvlaRepo,
-            configRepo,
             vehicleMapper,
             licenceMapper,
             analyticsClient,
@@ -234,7 +227,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -263,7 +255,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -285,7 +276,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
-                configRepo,
                 vehicleMapper,
                 licenceMapper,
                 analyticsClient,
@@ -300,10 +290,10 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
     @Test
     fun `When onRenewLicenceClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
-        every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
-            repo,
+            dvlaRepo,
             vehicleMapper,
             licenceMapper,
             analyticsClient,
@@ -334,7 +324,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
             dvlaRepo,
-            configRepo,
             vehicleMapper,
             licenceMapper,
             analyticsClient,
@@ -363,10 +352,10 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
             dvlaRepo,
-            configRepo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
@@ -392,10 +381,10 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
             dvlaRepo,
-            configRepo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
