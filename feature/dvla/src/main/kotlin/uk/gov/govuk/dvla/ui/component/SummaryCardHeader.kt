@@ -17,8 +17,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
@@ -68,8 +69,6 @@ internal fun SummaryCardHeader(
     modifier: Modifier = Modifier,
     mainContent: @Composable ColumnScope.() -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     CardListItem(
         modifier = modifier,
         isFirst = true,
@@ -88,46 +87,63 @@ internal fun SummaryCardHeader(
             ) {
                 leadingContent()
 
-                Box {
-                    CardOverflowButton(onClick = { expanded = true })
-
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-                        containerColor = GovUkTheme.colourScheme.surfaces.cardDefault,
-                    ) {
-                        menuItems.forEach { item ->
-                            DropdownMenuItem(
-                                text = {
-                                    BodyRegularLabel(
-                                        text = item.text,
-                                        color = GovUkTheme.colourScheme.textAndIcons.primary
-                                    )
-                                },
-                                onClick = {
-                                    onMenuItemClick(item.url)
-                                    expanded = false
-                                },
-                                contentPadding = PaddingValues(
-                                    horizontal = GovUkTheme.spacing.medium,
-                                    vertical = GovUkTheme.spacing.small
-                                ),
-                                colors = MenuDefaults.itemColors(
-                                    textColor = GovUkTheme.colourScheme.textAndIcons.primary
-                                ),
-                                modifier = item.altText?.let {
-                                    Modifier.semantics { contentDescription = it }
-                                } ?: Modifier
-                            )
-                        }
-                    }
-                }
+                CardOverflowMenu(
+                    menuItems = menuItems,
+                    onMenuItemClick = onMenuItemClick
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             mainContent()
+        }
+    }
+}
+
+@Composable
+private fun CardOverflowMenu(
+    menuItems: List<OverflowMenuItem>,
+    onMenuItemClick: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        CardOverflowButton(onClick = { expanded = true })
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
+            containerColor = GovUkTheme.colourScheme.surfaces.cardDefault,
+            offset = DpOffset(x = 0.dp, y = GovUkTheme.spacing.extraSmall)
+        ) {
+            menuItems.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = {
+                        BodyRegularLabel(
+                            text = item.text,
+                            color = GovUkTheme.colourScheme.textAndIcons.primary
+                        )
+                    },
+                    onClick = {
+                        onMenuItemClick(item.url)
+                        expanded = false
+                    },
+                    contentPadding = PaddingValues(
+                        horizontal = GovUkTheme.spacing.medium,
+                        vertical = GovUkTheme.spacing.small
+                    ),
+                    colors = MenuDefaults.itemColors(
+                        textColor = GovUkTheme.colourScheme.textAndIcons.primary
+                    ),
+                    modifier = item.altText?.let {
+                        Modifier.semantics { contentDescription = it }
+                    } ?: Modifier
+                )
+                if (index < menuItems.lastIndex) {
+                    ListDivider()
+                }
+            }
         }
     }
 }
