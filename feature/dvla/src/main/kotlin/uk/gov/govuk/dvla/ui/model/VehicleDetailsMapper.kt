@@ -45,7 +45,6 @@ import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
-import uk.gov.govuk.dvla.util.getFormattedYearAltText
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
@@ -58,7 +57,7 @@ internal class VehicleDetailsMapper @Inject constructor(
     fun toUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
         val engineCapacity =
             vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
-        val yearOfFirstRegistration = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat()
+        val yearOfFirstRegistration = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
             make = vesVehicle.make,
             model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
@@ -73,33 +72,33 @@ internal class VehicleDetailsMapper @Inject constructor(
             motStatus = vesVehicle.getMotRow(),
             specifications = listOf(
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.make_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
                     info = AccessibleString(displayText = vesVehicle.make)
                 ),
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.model_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
                     info = AccessibleString(displayText = vesVehicle.model ?: "Unknown")
                 ),
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.first_registered_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.first_registered_title),
+                        altText = stringProvider.getString(R.string.first_registered_alt_text, yearOfFirstRegistration)),
                     info = AccessibleString(
-                        displayText = yearOfFirstRegistration
-                            ?: "Unknown",
-                        altText = getFormattedYearAltText(yearOfFirstRegistration)
+                        displayText = yearOfFirstRegistration,
+                        altText = "" // Set as empty string so nothing read as alt text handled in the title
                     )
                 ),
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.fuel_type_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.fuel_type_title)),
                     info = AccessibleString(
                         displayText = stringProvider.getString(vesVehicle.fuelType.getResources().third)
                     )
                 ),
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.colour_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.colour_title)),
                     info = AccessibleString(displayText = vesVehicle.getVehicleColour())
                 ),
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.engine_size_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
                     info = AccessibleString(
                         displayText = engineCapacity,
                         altText = getFormattedEngineCapacityAltText(
@@ -109,7 +108,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                     )
                 ),
                 InternalLinkListItemModel.Info(
-                    title = stringProvider.getString(R.string.emissions_title),
+                    title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
                     info = AccessibleString(
                         displayText = vesVehicle.exhaustEmissions?.co2?.let {
                             stringProvider.getString(R.string.emissions_info, it)
@@ -118,17 +117,6 @@ internal class VehicleDetailsMapper @Inject constructor(
                             stringProvider.getString(R.string.emissions_alt_text, it)
                         } ?: "Unknown")
                 )
-            )
-        )
-    }
-
-    private fun CustomerVehicle.getDateOfFirstRegistration(): AccessibleString {
-        val year = this.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
-        return AccessibleString(
-            displayText = year,
-            altText = stringProvider.getString(
-                R.string.first_registered_in_alt_text,
-                year
             )
         )
     }
@@ -173,11 +161,19 @@ internal class VehicleDetailsMapper @Inject constructor(
         else -> Pair(null, null)
     }
 
-    private fun CustomerVehicle.getCalendarSpecification() =
-        SpecificationIconUiModel(
+    private fun CustomerVehicle.getCalendarSpecification(): SpecificationIconUiModel {
+        val year = this.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
+        return SpecificationIconUiModel(
             icon = R.drawable.ic_calendar,
-            description = this.getDateOfFirstRegistration()
+            description = AccessibleString(
+                displayText = year,
+                altText = stringProvider.getString(
+                    R.string.first_registered_in_alt_text,
+                    year
+                )
+            )
         )
+    }
 
     private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationIconUiModel {
         val fuelType = this.fuelType.getResources()

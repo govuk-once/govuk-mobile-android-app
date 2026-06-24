@@ -85,6 +85,7 @@
     <string name="concatenated_vehicle_colours">%1$s and %2$s</string>
     <string name="emissions_info">%1$s g/km</string>
 
+    <string name="first_registered_alt_text">First registered %1$s</string>
     <string name="first_registered_in_alt_text">First registered in %1$s</string>
     <string name="fuel_type_alt_text">Fuel type %1$s</string>
     <string name="colour_alt_text">Colour %1$s</string>

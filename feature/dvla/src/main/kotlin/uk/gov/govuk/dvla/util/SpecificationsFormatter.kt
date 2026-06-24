@@ -8,6 +8,3 @@ internal fun getFormattedEngineCapacity(engineCapacity: Int): String {
 
 internal fun getFormattedEngineCapacityAltText(engineCapacity: String, replacementText: String) =
     engineCapacity.replace("L", " $replacementText")
-
-internal fun getFormattedYearAltText(year: String?) =
-    year?.chunked(2)?.joinToString(separator = " ") // add a space between a string

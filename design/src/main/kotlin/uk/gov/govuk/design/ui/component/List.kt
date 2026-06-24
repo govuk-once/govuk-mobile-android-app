@@ -45,7 +45,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 fun InternalLinkListItem(
-    title: String,
+    title: AccessibleString,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     description: String? = null,
@@ -71,8 +71,13 @@ fun InternalLinkListItem(
                     .weight(1f)
             ) {
                 BodyRegularLabel(
-                    text = title,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
+                    text = title.displayText,
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier.semantics {
+                        title.altText?.let { altText ->
+                            contentDescription = altText
+                        }
+                    }
                 )
                 description?.let { description ->
                     ExtraSmallVerticalSpacer()
@@ -96,7 +101,16 @@ fun InternalLinkListItem(
                 is InternalLinkListItemStyle.Info -> {
                     BodyRegularLabel(
                         text = style.info.displayText,
-                        modifier = Modifier.talkBackText(style.info.altText)
+                        modifier = Modifier
+                            .clearAndSetSemantics {
+                                /* Override semantics so we can set alt text to
+                                an empty string without the text then being read */
+                                style.info.altText?.let { altText ->
+                                    contentDescription = altText
+                                } ?: run {
+                                    contentDescription = style.info.displayText
+                                }
+                            }
                     )
                 }
 
@@ -503,7 +517,7 @@ fun CardListItem(
 @Composable
 private fun InternalLinkListItemPreview() {
     GovUkTheme {
-        InternalLinkListItem(title = "Title")
+        InternalLinkListItem(AccessibleString("Title"))
     }
 }
 
@@ -511,7 +525,7 @@ private fun InternalLinkListItemPreview() {
 @Composable
 private fun InternalLinkListItemDescriptionPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", description = "Description")
+        InternalLinkListItem(AccessibleString("Title"), description = "Description")
     }
 }
 
@@ -519,7 +533,7 @@ private fun InternalLinkListItemDescriptionPreview() {
 @Composable
 private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", style = InternalLinkListItemStyle.Status("Status"))
+        InternalLinkListItem(AccessibleString("Title"), style = InternalLinkListItemStyle.Status("Status"))
     }
 }
 
@@ -529,7 +543,7 @@ private fun InternalLinkListItemInfoPreview() {
     val info = AccessibleString("Info")
     GovUkTheme {
         InternalLinkListItem(
-            title = "Title",
+            title = AccessibleString("Title"),
             style = InternalLinkListItemStyle.Info(
                 info
             )
@@ -542,7 +556,7 @@ private fun InternalLinkListItemInfoPreview() {
 private fun InternalLinkListItemButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
-            "Title",
+            AccessibleString("Title"),
             style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
     }
 }

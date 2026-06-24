@@ -40,16 +40,4 @@ class SpecificationsFormatterTest {
         val result = getFormattedEngineCapacityAltText("1000L", "Litres")
         assertEquals("1000 Litres", result)
     }
-
-    @Test
-    fun `getFormattedYearAltText returns null when year is null`() {
-        val result = getFormattedYearAltText(null)
-        assertNull(result)
-    }
-
-    @Test
-    fun `getFormattedYearAltText correctly formats when the year is 2010`() {
-        val result = getFormattedYearAltText("2010")
-        assertEquals("20 10", result)
-    }
 }

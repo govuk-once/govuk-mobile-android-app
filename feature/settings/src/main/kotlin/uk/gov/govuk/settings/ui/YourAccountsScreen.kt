@@ -32,6 +32,7 @@ import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.NonTappableCard
 import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.component.error.ErrorPage
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -182,7 +183,7 @@ private fun AccountsListContent(
                     val displayTitle =
                         stringResource(id = account.displayTitleRes).replaceFirstChar { it.uppercase() }
                     InternalLinkListItem(
-                        title = displayTitle,
+                        title = AccessibleString(displayText = displayTitle),
                         onClick = null,
                         style = InternalLinkListItemStyle.Button(
                             icon = uk.gov.govuk.design.R.drawable.ic_cancel_round,

@@ -69,7 +69,7 @@ internal fun VehicleSummaryCard(
         // details
         val title = stringResource(R.string.vehicle_details_title)
         InternalLinkListItem(
-            title = title,
+            title = AccessibleString(displayText = title),
             onClick = { onVehicleDetailsClick(title, vehicleSummary.registration) },
             isFirst = false,
             isLast = true
