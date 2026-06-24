@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,10 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
+import uk.gov.govuk.design.ui.component.ListDivider
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
@@ -89,15 +93,29 @@ internal fun SummaryCardHeader(
 
                     DropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                        onDismissRequest = { expanded = false },
+                        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
+                        containerColor = GovUkTheme.colourScheme.surfaces.cardDefault,
                     ) {
                         menuItems.forEach { item ->
                             DropdownMenuItem(
-                                text = { Text(item.text) },
+                                text = {
+                                    BodyRegularLabel(
+                                        text = item.text,
+                                        color = GovUkTheme.colourScheme.textAndIcons.primary
+                                    )
+                                },
                                 onClick = {
                                     onMenuItemClick(item.url)
                                     expanded = false
                                 },
+                                contentPadding = PaddingValues(
+                                    horizontal = GovUkTheme.spacing.medium,
+                                    vertical = GovUkTheme.spacing.small
+                                ),
+                                colors = MenuDefaults.itemColors(
+                                    textColor = GovUkTheme.colourScheme.textAndIcons.primary
+                                ),
                                 modifier = item.altText?.let {
                                     Modifier.semantics { contentDescription = it }
                                 } ?: Modifier
