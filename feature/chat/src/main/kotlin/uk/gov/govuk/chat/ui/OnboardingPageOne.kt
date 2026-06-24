@@ -73,7 +73,7 @@ private fun OnboardingPageOneScreen(
         title = stringResource(id = R.string.onboarding_page_one_header),
         headerContent = {
             FullScreenHeader(
-                actionStyle = HeaderActionStyle.ActionButton(
+                actionStyle = HeaderActionStyle.TextActionButton(
                     title = stringResource(id = R.string.onboarding_page_cancel_text),
                     onClick = onCancel
                 )

@@ -41,7 +41,8 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
-    onLaunchBrowser: (String) -> Unit,
+    launchBrowser: (String) -> Unit,
+    onVehicleDetailsClick: (registration: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
@@ -49,7 +50,9 @@ fun VehiclesAndLicenceSummaryWidget(
 
 
     when (val currentState = state) {
-        is UiState.Hidden -> return // draw nothing if not linked
+        is UiState.Hidden -> {
+            return // draw nothing if not linked
+        }
 
         is UiState.Default -> {
             val activeButtonState = when (currentState.drivingView) {
@@ -84,17 +87,21 @@ fun VehiclesAndLicenceSummaryWidget(
                         val addVehicleUrl = viewModel.dvlaUrls?.addVehicle
 
                         VehiclesViewContent(
+                            onVehicleDetailsClick = { text, registration ->
+                                viewModel.onButtonClicked(text)
+                                onVehicleDetailsClick(registration)
+                            },
                             vehiclesState = currentState.vehiclesState,
                             onAddVehiclesClick = addVehicleUrl?.let { url ->
                                 { label ->
                                     viewModel.onAddVehiclesClicked(label, url)
-                                    onLaunchBrowser(url)
+                                    launchBrowser(url)
                                 }
                             },
                             onAddAnotherVehicleClick = addVehicleUrl?.let { url ->
                                 { label ->
                                     viewModel.onAddAnotherVehicleClicked(label, url)
-                                    onLaunchBrowser(url)
+                                    launchBrowser(url)
                                 }
                             },
                             modifier = modifier
@@ -118,6 +125,12 @@ fun VehiclesAndLicenceSummaryWidget(
                                 )
                                 viewModel.onLicenceNumberCopied()
                             },
+                            onRenewLicenceClick = viewModel.dvlaUrls?.renewLicence?.let { url ->
+                                { text: String ->
+                                    viewModel.onRenewLicenceClicked(text = text, url = url)
+                                    launchBrowser(url)
+                                }
+                            },
                             modifier = modifier
                         )
                     }
@@ -129,6 +142,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
 @Composable
 private fun VehiclesViewContent(
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     onAddVehiclesClick: ((String) -> Unit)?,
     onAddAnotherVehicleClick: ((String) -> Unit)?,
@@ -153,7 +167,7 @@ private fun VehiclesViewContent(
                 VehiclesSummarySuccess(
                     vehicles = vehiclesState.vehicles,
                     onAddVehicleClick = onAddAnotherVehicleClick,
-                    onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
+                    onVehicleDetailsClick = onVehicleDetailsClick,
                     onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                     modifier = modifier
                 )
@@ -166,6 +180,7 @@ private fun VehiclesViewContent(
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
     onLicenceNumberLongClick: (String) -> Unit,
+    onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -178,6 +193,7 @@ private fun LicenceViewContent(
                 licenceSummary = licenceState.licence,
                 onMoreClick = { /* TODO to be handled in next ticket(s) */ },
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
+                onRenewLicenceClick = onRenewLicenceClick,
                 modifier = modifier
             )
         }
@@ -210,7 +226,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
     onAddVehicleClick: ((String) -> Unit)?,
-    onDetailsClick: () -> Unit,
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -221,7 +237,7 @@ private fun VehiclesSummarySuccess(
         vehicles.forEach { vehicle ->
             VehicleSummaryCard(
                 vehicleSummary = vehicle,
-                onDetailsClick = { onDetailsClick() },
+                onVehicleDetailsClick = onVehicleDetailsClick,
                 onMoreClick = { onMoreClick() },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -270,6 +286,7 @@ private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
     onMoreClick: () -> Unit,
     onLicenceNumberLongClick: () -> Unit,
+    onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -279,6 +296,7 @@ private fun LicenceSummarySuccess(
             licenceSummary = licenceSummary,
             onMoreClick = { onMoreClick() },
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
+            onRenewClick = onRenewLicenceClick,
             modifier = Modifier.fillMaxWidth()
         )
     }

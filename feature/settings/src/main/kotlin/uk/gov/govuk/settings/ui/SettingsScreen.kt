@@ -37,6 +37,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.component.TabHeader
 import uk.gov.govuk.design.ui.component.ToggleListItem
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -250,7 +251,7 @@ private fun YourAccounts(
     modifier: Modifier = Modifier
 ) {
     InternalLinkListItem(
-        title = title,
+        title = AccessibleString(displayText = title),
         onClick = onYourAccountsClick,
         modifier = modifier,
         isFirst = true,
@@ -277,7 +278,7 @@ private fun NotificationsAndPrivacy(
         if (uiState.isAuthenticationEnabled) {
             val biometricTitle = stringResource(R.string.biometric_title)
             InternalLinkListItem(
-                title = biometricTitle,
+                title = AccessibleString(displayText = biometricTitle),
                 onClick = { actions.onBiometricsClick(biometricTitle) },
                 isFirst = !uiState.isNotificationsEnabled,
                 isLast = false
@@ -327,7 +328,7 @@ private fun Notifications(
     }
 
     InternalLinkListItem(
-        title = stringResource(R.string.notifications_title),
+        title = AccessibleString(displayText = stringResource(R.string.notifications_title)),
         onClick = onNotificationsClick,
         modifier = modifier,
         isFirst = true,
@@ -408,7 +409,7 @@ private fun OpenSourceLicenses(
     modifier: Modifier = Modifier
 ) {
     InternalLinkListItem(
-        title = stringResource(R.string.oss_licenses_title),
+        title = AccessibleString(displayText = stringResource(R.string.oss_licenses_title)),
         onClick = onLicenseClick,
         modifier = modifier,
         isFirst = false,

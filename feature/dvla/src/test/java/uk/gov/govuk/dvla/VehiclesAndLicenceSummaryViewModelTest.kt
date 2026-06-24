@@ -43,6 +43,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     private val vehicleMapper = mockk<VehicleSummaryMapper>(relaxed = true)
     private val licenceMapper = mockk<LicenceSummaryMapper>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
+    private val configRepo = mockk<ConfigRepo>(relaxed = true)
 
     @Before
     fun setup() {
@@ -64,7 +65,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
             advanceUntilIdle()
 
@@ -92,7 +94,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -118,7 +121,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -149,7 +153,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -177,7 +182,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             configRepo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
@@ -202,7 +208,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             configRepo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()
@@ -230,7 +237,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -258,7 +266,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
             advanceUntilIdle()
 
@@ -279,7 +288,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 configRepo,
                 vehicleMapper,
                 licenceMapper,
-                analyticsClient
+                analyticsClient,
+                configRepo
             )
 
             advanceUntilIdle()
@@ -287,6 +297,36 @@ class VehiclesAndLicenceSummaryViewModelTest {
             val currentState = viewModel.uiState.value as UiState.Default
             assertEquals(LicenceSummaryUiState.Error, currentState.licenceState)
         }
+
+    @Test
+    fun `When onRenewLicenceClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+
+        val viewModel = VehiclesAndLicenceSummaryViewModel(
+            repo,
+            vehicleMapper,
+            licenceMapper,
+            analyticsClient,
+            configRepo
+        )
+
+        advanceUntilIdle()
+
+        viewModel.onRenewLicenceClicked(
+            text = "Renew licence",
+            url = "https://www.gov.uk/renew-driving-licence"
+        )
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            analyticsClient.buttonClick(
+                text = "Renew licence",
+                url = "https://www.gov.uk/renew-driving-licence",
+                external = true,
+                section = "Driving"
+            )
+        }
+    }
 
     @Test
     fun `When onLicenceNumberCopied is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
@@ -297,7 +337,8 @@ class VehiclesAndLicenceSummaryViewModelTest {
             configRepo,
             vehicleMapper,
             licenceMapper,
-            analyticsClient
+            analyticsClient,
+            configRepo
         )
 
         advanceUntilIdle()

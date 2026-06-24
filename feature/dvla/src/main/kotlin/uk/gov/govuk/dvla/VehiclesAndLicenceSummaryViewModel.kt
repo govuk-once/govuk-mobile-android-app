@@ -23,10 +23,10 @@ import javax.inject.Inject
 @HiltViewModel
 internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
-    configRepo: ConfigRepo,
     private val vehicleMapper: VehicleSummaryMapper,
     private val licenceMapper: LicenceSummaryMapper,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    configRepo: ConfigRepo
 ) : ViewModel() {
 
     companion object {
@@ -44,7 +44,11 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     ServiceLinkStatus.LINKED -> {
-                        setUiStateToDefault()
+                        val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
+                        _uiState.update { current ->
+                            if (current is UiState.Default) current.copy(drivingView = drivingView)
+                            else UiState.Default(drivingView = drivingView)
+                        }
                         fetchDriverSummary()
                         fetchCustomerSummary()
                         createListCancelCheckCode()
@@ -91,6 +95,22 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
+    fun onRenewLicenceClicked(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            external = true,
+            section = SECTION,
+            url = url
+        )
+    }
+
+    fun onButtonClicked(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            section = SECTION
+        )
+    }
+
     private fun setSelectedDrivingView(drivingView: DrivingView) {
         viewModelScope.launch {
             dvlaRepo.setSelectedDrivingView(drivingView = drivingView)
@@ -98,16 +118,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                 if (state is UiState.Default) {
                     state.copy(drivingView = drivingView)
                 } else state
-            }
-        }
-    }
-
-    private fun setUiStateToDefault() {
-        viewModelScope.launch {
-            val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
-            _uiState.update { state ->
-                if (state is UiState.Default) state.copy(drivingView = drivingView)
-                else UiState.Default(drivingView = drivingView)
             }
         }
     }
