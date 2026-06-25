@@ -276,8 +276,8 @@ private fun SegmentedText(
     val links = remember(content) { collectLinks(content) }
 
     when {
-        links.size <= 1 -> {
-            // 0 or 1 link: render as single Text element
+        links.isEmpty() -> {
+            // 0 links: render as single Text element
             val annotatedString = remember(content) {
                 buildAnnotatedString {
                     appendInlineContent(content, this, emptyList(), linkColor, codeBackground)
