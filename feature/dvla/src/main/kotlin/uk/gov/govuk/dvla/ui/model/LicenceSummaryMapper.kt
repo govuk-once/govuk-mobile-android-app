@@ -63,7 +63,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                         R.string.valid_until,
                         expiryDate
                     )
-                } ?: run { "" },
+                } ?: run { stringProvider.getString(R.string.valid) },
                 iconStyle = StatusListItemIconStyle.Success
             )
         )
@@ -105,15 +105,13 @@ internal class LicenceSummaryMapper @Inject constructor(
         }
 
     private fun getExpired(expiryDate: LocalDate?): LicenceStatusUiModel {
-        val expiryDate = expiryDate?.toSummaryDisplayFormat()
+        val expiryDate = expiryDate?.toSummaryDisplayFormat() ?: ""
         return LicenceStatusUiModel.Expired(
             statusRowUi = StatusRowUiModel(
-                description = expiryDate?.let {
-                    stringProvider.resolveSummaryDescription(
+                description = stringProvider.resolveSummaryDescription(
                         R.string.expired_on,
                         expiryDate
-                    )
-                } ?: run { "" },
+                    ),
                 iconStyle = StatusListItemIconStyle.Warning
             )
         )
