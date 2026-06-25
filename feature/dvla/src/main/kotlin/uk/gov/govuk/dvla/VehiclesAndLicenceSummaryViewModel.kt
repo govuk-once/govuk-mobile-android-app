@@ -29,8 +29,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     configRepo: ConfigRepo
 ) : ViewModel() {
 
-    val dvlaUrls = configRepo.dvlaUrls
-
     companion object {
         private const val SECTION = "Driving"
         private const val ACTION_COPY = "Copy"
@@ -39,6 +37,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
     val uiState = _uiState.asStateFlow()
+    val dvlaUrls = configRepo.dvlaUrls
 
     init {
         viewModelScope.launch {
@@ -75,6 +74,24 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             text = ANALYTICS_EVENT_CLIPBOARD_COPY,
             section = SECTION,
             action = ACTION_COPY
+        )
+    }
+
+    fun onAddVehiclesClicked(text: String, url: String) {
+        analyticsClient.accountCardClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION
+        )
+    }
+
+    fun onAddAnotherVehicleClicked(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION
         )
     }
 

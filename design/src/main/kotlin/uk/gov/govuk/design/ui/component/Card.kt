@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -335,24 +336,30 @@ fun CentredCardWithIcon(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     title: String? = null,
-    description: String? = null
+    description: String? = null,
+    drawBottomStroke: Boolean = true,
+    paddingValues: PaddingValues = PaddingValues(vertical = GovUkTheme.spacing.extraLarge)
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
-            .drawBottomStroke(
-                colour = GovUkTheme.colourScheme.strokes.cardDefault,
-                cornerRadius = GovUkTheme.numbers.cornerAndroidList
+            .then(
+                if (drawBottomStroke) {
+                    Modifier.drawBottomStroke(
+                        colour = GovUkTheme.colourScheme.strokes.cardDefault,
+                        cornerRadius = GovUkTheme.numbers.cornerAndroidList
+                    )
+                } else Modifier
             ),
         colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list)
     ) {
         CentredContentWithIcon(
             icon = icon,
-            modifier = Modifier
-                .clickable(onClick = onClick),
+            modifier = Modifier.clickable(onClick = onClick),
             title = title,
-            description = description
+            description = description,
+            paddingValues = paddingValues
         )
     }
 }
@@ -362,21 +369,23 @@ fun CentredContentWithIcon(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     title: String? = null,
-    description: String? = null
+    description: String? = null,
+    paddingValues: PaddingValues = PaddingValues(
+        vertical = GovUkTheme.spacing.extraLarge,
+        horizontal = GovUkTheme.spacing.extraLarge
+    )
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ExtraLargeVerticalSpacer()
-
         Icon(
             painterResource(icon),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(32.dp),
+            modifier = Modifier.size(32.dp),
             tint = GovUkTheme.colourScheme.textAndIcons.icon
         )
 
@@ -386,10 +395,7 @@ fun CentredContentWithIcon(
             BodyBoldLabel(
                 text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clearAndSetSemantics { }
-                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
@@ -400,15 +406,10 @@ fun CentredContentWithIcon(
             BodyRegularLabel(
                 text = description,
                 color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clearAndSetSemantics { }
-                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
-
-        ExtraLargeVerticalSpacer()
     }
 }
 

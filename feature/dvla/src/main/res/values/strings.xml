@@ -45,6 +45,9 @@
 
     <string name="vehicles">Vehicles</string>
     <string name="licence">Licence</string>
+    <string name="add_your_vehicles">Add your vehicles</string>
+    <string name="add_vehicle">Add vehicle</string>
+
 
     <!-- Vehicle Details start -->
     <string name="diesel_summary">Diesel</string>
