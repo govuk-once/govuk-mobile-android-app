@@ -93,8 +93,8 @@ internal class LicenceSummaryMapper @Inject constructor(
         )
     }
 
-    private fun getExpiringBottomText(expiryDate: LocalDate): String {
-        return if (expiryDate.isToday()) {
+    private fun getExpiringBottomText(expiryDate: LocalDate) =
+        if (expiryDate.isToday()) {
             stringProvider.getString(R.string.today)
         } else {
             stringProvider.getQuantityString(
@@ -103,7 +103,6 @@ internal class LicenceSummaryMapper @Inject constructor(
                 expiryDate.getNumberOfDaysFromNow()
             )
         }
-    }
 
     private fun getExpired(expiryDate: LocalDate?): LicenceStatusUiModel {
         val expiryDate = expiryDate?.toSummaryDisplayFormat()
@@ -115,7 +114,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                         expiryDate
                     )
                 } ?: run { "" },
-                iconStyle = StatusListItemIconStyle.Success
+                iconStyle = StatusListItemIconStyle.Warning
             )
         )
     }
