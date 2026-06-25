@@ -22,19 +22,20 @@ class AnalyticsClientTest {
 
     private val analyticsRepo = mockk<AnalyticsRepo>(relaxed = true)
     private val firebaseAnalyticClient = mockk<FirebaseAnalyticsClient>(relaxed = true)
+    private val analyticsCoordinator = mockk<AnalyticsCoordinator>(relaxed = true)
 
     private lateinit var analyticsClient: AnalyticsClient
 
     @Before
     fun setup() {
-        analyticsClient = AnalyticsClient(analyticsRepo, firebaseAnalyticClient)
+        analyticsClient = AnalyticsClient(analyticsRepo, firebaseAnalyticClient, analyticsCoordinator)
 
         every { analyticsRepo.analyticsEnabledState } returns ENABLED
         analyticsClient.isUserSessionActive = { true }
     }
 
     @Test
-    fun `Given analytics are disabled, when an event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are disabled, when an event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns DISABLED
 
         analyticsClient.screenView(
@@ -44,12 +45,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given analytics are not set, when an event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are not set, when an event is logged, then do not log event`() = runTest {
         analyticsClient.isUserSessionActive = { false }
 
         analyticsClient.screenView(
@@ -59,12 +60,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given user session is not active, when an event is logged, then do not log to firebase`() = runTest {
+    fun `Given user session is not active, when an event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns NOT_SET
 
         analyticsClient.screenView(
@@ -74,12 +75,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given analytics are disabled, when a select item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are disabled, when a select item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns DISABLED
 
         analyticsClient.selectItemEvent(
@@ -93,12 +94,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
     @Test
-    fun `Given analytics are not set, when a select item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are not set, when a select item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns NOT_SET
 
         analyticsClient.selectItemEvent(
@@ -112,12 +113,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), 42)
         }
     }
 
     @Test
-    fun `Given analytics are disabled, when a view list item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are disabled, when a view list item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns DISABLED
 
         analyticsClient.viewItemListEvent(
@@ -130,12 +131,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
     @Test
-    fun `Given analytics are not set, when a view list item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are not set, when a view list item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns NOT_SET
 
         analyticsClient.viewItemListEvent(
@@ -148,12 +149,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
     @Test
-    fun `Given a user session is not active, when an ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given a user session is not active, when an ecommerce event is logged, then do not log event`() = runTest {
         analyticsClient.isUserSessionActive = { false }
 
         analyticsClient.selectItemEvent(
@@ -167,7 +168,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
@@ -179,16 +180,16 @@ class AnalyticsClientTest {
             title = "title"
         )
 
+        val event = FirebaseAnalytics.Event.SCREEN_VIEW
+        val params = mapOf(
+            FirebaseAnalytics.Param.SCREEN_CLASS to "screenClass",
+            FirebaseAnalytics.Param.SCREEN_NAME to "screenName",
+            "screen_title" to "title",
+            "language" to Locale.getDefault().language
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                FirebaseAnalytics.Event.SCREEN_VIEW,
-                mapOf(
-                    FirebaseAnalytics.Param.SCREEN_CLASS to "screenClass",
-                    FirebaseAnalytics.Param.SCREEN_NAME to "screenName",
-                    "screen_title" to "title",
-                    "language" to Locale.getDefault().language
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -201,34 +202,34 @@ class AnalyticsClientTest {
             type = "type"
         )
 
+        val event = FirebaseAnalytics.Event.SCREEN_VIEW
+        val params = mapOf(
+            FirebaseAnalytics.Param.SCREEN_CLASS to "screenClass",
+            FirebaseAnalytics.Param.SCREEN_NAME to "screenName",
+            "screen_title" to "title",
+            "type" to "type",
+            "language" to Locale.getDefault().language
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                FirebaseAnalytics.Event.SCREEN_VIEW,
-                mapOf(
-                    FirebaseAnalytics.Param.SCREEN_CLASS to "screenClass",
-                    FirebaseAnalytics.Param.SCREEN_NAME to "screenName",
-                    "screen_title" to "title",
-                    "type" to "type",
-                    "language" to Locale.getDefault().language
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
-    }
+   }
 
     @Test
     fun `Given a button click, then log event`() {
         analyticsClient.buttonClick("text")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "Button",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "text"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "Button",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "text"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -241,18 +242,18 @@ class AnalyticsClientTest {
             section = "section"
         )
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "Button",
+            "external" to true,
+            "url" to "url",
+            "section" to "section",
+            "language" to Locale.getDefault().language,
+            "text" to "text"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "Button",
-                    "external" to true,
-                    "url" to "url",
-                    "section" to "section",
-                    "language" to Locale.getDefault().language,
-                    "text" to "text"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -260,14 +261,14 @@ class AnalyticsClientTest {
     fun `Given a chat question, then log event`() {
         analyticsClient.chat()
 
+        val event = "Chat"
+        val params = mapOf(
+            "action" to "Ask Question",
+            "type" to "typed",
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Chat",
-                mapOf(
-                    "action" to "Ask Question",
-                    "type" to "typed",
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -275,14 +276,14 @@ class AnalyticsClientTest {
     fun `Given a search, then log event`() {
         analyticsClient.search("search term")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "typed",
+            "text" to "search term"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "typed",
-                    "text" to "search term"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -290,14 +291,14 @@ class AnalyticsClientTest {
     fun `Given a search with postcode, then redact and log event`() {
         analyticsClient.search("search term A1 1AA")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "typed",
+            "text" to "search term [postcode]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "typed",
-                    "text" to "search term [postcode]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -305,14 +306,14 @@ class AnalyticsClientTest {
     fun `Given a search with email address, then redact and log event`() {
         analyticsClient.search("search term test@email.com")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "typed",
+            "text" to "search term [email]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "typed",
-                    "text" to "search term [email]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -320,14 +321,14 @@ class AnalyticsClientTest {
     fun `Given a search with NI number, then redact and log event`() {
         analyticsClient.search("search term AA 00 00 00 A")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "typed",
+            "text" to "search term [NI number]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "typed",
-                    "text" to "search term [NI number]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -335,14 +336,14 @@ class AnalyticsClientTest {
     fun `Given an autocomplete, then log event`() {
         analyticsClient.autocomplete("input")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "autocomplete",
+            "text" to "input"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "autocomplete",
-                    "text" to "input"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -350,14 +351,14 @@ class AnalyticsClientTest {
     fun `Given an autocomplete with postcode, then redact and log event`() {
         analyticsClient.autocomplete("input A1 1AA")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "autocomplete",
+            "text" to "input [postcode]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "autocomplete",
-                    "text" to "input [postcode]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -365,14 +366,14 @@ class AnalyticsClientTest {
     fun `Given an autocomplete with email address, then redact and log event`() {
         analyticsClient.autocomplete("input test@email.com")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "autocomplete",
+            "text" to "input [email]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "autocomplete",
-                    "text" to "input [email]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -380,14 +381,14 @@ class AnalyticsClientTest {
     fun `Given an autocomplete with NI number, then redact and log event`() {
         analyticsClient.autocomplete("input AA 00 00 00 A")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "autocomplete",
+            "text" to "input [NI number]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "autocomplete",
-                    "text" to "input [NI number]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -395,14 +396,14 @@ class AnalyticsClientTest {
     fun `Given a history search, then log event`() {
         analyticsClient.history("input")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "history",
+            "text" to "input"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "history",
-                    "text" to "input"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -410,14 +411,14 @@ class AnalyticsClientTest {
     fun `Given a history search with postcode, then redact and log event`() {
         analyticsClient.history("input A1 1AA")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "history",
+            "text" to "input [postcode]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "history",
-                    "text" to "input [postcode]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -425,14 +426,14 @@ class AnalyticsClientTest {
     fun `Given a history search with email address, then redact and log event`() {
         analyticsClient.history("input test@email.com")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "history",
+            "text" to "input [email]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "history",
-                    "text" to "input [email]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -440,14 +441,14 @@ class AnalyticsClientTest {
     fun `Given a history search with NI number, then redact and log event`() {
         analyticsClient.history("input AA 00 00 00 A")
 
+        val event = "Search"
+        val params = mapOf(
+            "type" to "history",
+            "text" to "input [NI number]"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Search",
-                mapOf(
-                    "type" to "history",
-                    "text" to "input [NI number]"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -455,17 +456,17 @@ class AnalyticsClientTest {
     fun `Given a search result click, then log event`() {
         analyticsClient.searchResultClick("search result title", "search result link")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "SearchResult",
+            "external" to true,
+            "language" to Locale.getDefault().language,
+            "text" to "search result title",
+            "url" to "search result link"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "SearchResult",
-                    "external" to true,
-                    "language" to Locale.getDefault().language,
-                    "text" to "search result title",
-                    "url" to "search result link"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -473,16 +474,16 @@ class AnalyticsClientTest {
     fun `Given a question answer is returned in chat, then log event`() {
         analyticsClient.chatQuestionAnswerReturnedEvent()
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "ChatQuestionAnswerReturned",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "Chat Question Answer Returned"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "ChatQuestionAnswerReturned",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "Chat Question Answer Returned"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -490,17 +491,17 @@ class AnalyticsClientTest {
     fun `Given a chat response markdown link click, then log event`() {
         analyticsClient.chatMarkdownLinkClick("chat title", "chat link")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "ChatMarkdownLink",
+            "external" to true,
+            "language" to Locale.getDefault().language,
+            "text" to "chat title",
+            "url" to "chat link"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "ChatMarkdownLink",
-                    "external" to true,
-                    "language" to Locale.getDefault().language,
-                    "text" to "chat title",
-                    "url" to "chat link"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -508,17 +509,17 @@ class AnalyticsClientTest {
     fun `Given a visited item click, then log event`() {
         analyticsClient.visitedItemClick("visited item title", "visited item link")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "VisitedItem",
+            "external" to true,
+            "language" to Locale.getDefault().language,
+            "text" to "visited item title",
+            "url" to "visited item link"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "VisitedItem",
-                    "external" to true,
-                    "language" to Locale.getDefault().language,
-                    "text" to "visited item title",
-                    "url" to "visited item link"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -526,17 +527,17 @@ class AnalyticsClientTest {
     fun `Given an external settings item click, then log event`() {
         analyticsClient.settingsItemClick("settings item title", "settings item link")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "SettingsItem",
+            "external" to true,
+            "language" to Locale.getDefault().language,
+            "text" to "settings item title",
+            "url" to "settings item link"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "SettingsItem",
-                    "external" to true,
-                    "language" to Locale.getDefault().language,
-                    "text" to "settings item title",
-                    "url" to "settings item link"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -544,16 +545,16 @@ class AnalyticsClientTest {
     fun `Given a internal settings item click, then log event`() {
         analyticsClient.settingsItemClick("settings item title", external = false)
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "SettingsItem",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "settings item title"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "SettingsItem",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "settings item title"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -561,16 +562,16 @@ class AnalyticsClientTest {
     fun `Given a tab click, then log event`() {
         analyticsClient.tabClick("text")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "Tab",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "text"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "Tab",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "text"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -582,17 +583,17 @@ class AnalyticsClientTest {
             section = "section"
         )
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "Widget",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "text",
+            "section" to "section"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "Widget",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "text",
-                    "section" to "section"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -605,18 +606,18 @@ class AnalyticsClientTest {
             section = "section"
         )
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "Widget",
+            "url" to "url",
+            "external" to true,
+            "language" to Locale.getDefault().language,
+            "text" to "text",
+            "section" to "section"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "Widget",
-                    "url" to "url",
-                    "external" to true,
-                    "language" to Locale.getDefault().language,
-                    "text" to "text",
-                    "section" to "section"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -624,17 +625,17 @@ class AnalyticsClientTest {
     fun `Given a suppress widget click, then log event`() {
         analyticsClient.suppressWidgetClick("id", "section")
 
+        val event = "Function"
+        val params = mapOf(
+            "type" to "Widget",
+            "language" to Locale.getDefault().language,
+            "text" to "id",
+            "section" to "section",
+            "action" to "Remove"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Function",
-                mapOf(
-                    "type" to "Widget",
-                    "language" to Locale.getDefault().language,
-                    "text" to "id",
-                    "section" to "section",
-                    "action" to "Remove"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -642,17 +643,17 @@ class AnalyticsClientTest {
     fun `Given a deep link event, When the app has the deep link, then log event`() {
         analyticsClient.deepLinkEvent(true, "url")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "DeepLink",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "Opened",
+            "url" to "url"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "DeepLink",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "Opened",
-                    "url" to "url"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -660,17 +661,17 @@ class AnalyticsClientTest {
     fun `Given a deep link event, When the app doesn't have the deep link, then log event`() {
         analyticsClient.deepLinkEvent(false, "url")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "DeepLink",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "Failed",
+            "url" to "url"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "DeepLink",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "Failed",
-                    "url" to "url"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -682,17 +683,17 @@ class AnalyticsClientTest {
             action = "action"
         )
 
+        val event = "Function"
+        val params = mapOf(
+            "type" to "Toggle",
+            "language" to Locale.getDefault().language,
+            "text" to "text",
+            "section" to "section",
+            "action" to "action"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Function",
-                mapOf(
-                    "type" to "Toggle",
-                    "language" to Locale.getDefault().language,
-                    "text" to "text",
-                    "section" to "section",
-                    "action" to "action"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -704,17 +705,17 @@ class AnalyticsClientTest {
             action = "action"
         )
 
+        val event = "Function"
+        val params = mapOf(
+            "type" to "Button",
+            "language" to Locale.getDefault().language,
+            "text" to "text",
+            "section" to "section",
+            "action" to "action"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Function",
-                mapOf(
-                    "type" to "Button",
-                    "language" to Locale.getDefault().language,
-                    "text" to "text",
-                    "section" to "section",
-                    "action" to "action"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -833,15 +834,13 @@ class AnalyticsClientTest {
             totalItemCount = 5
         )
 
-        println(ecommerceEvent)
-
         analyticsClient.selectItemEvent(
             ecommerceEvent = ecommerceEvent,
             selectedItemIndex = 42
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.SELECT_ITEM,
                 ecommerceEvent = ecommerceEvent,
                 selectedItemIndex = 42
@@ -881,9 +880,10 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
+                ecommerceEvent = ecommerceEvent,
+                null
             )
         }
     }
@@ -904,9 +904,10 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
+                ecommerceEvent = ecommerceEvent,
+                null
             )
         }
     }
@@ -926,16 +927,16 @@ class AnalyticsClientTest {
     fun `Given a card click, then log event`() {
         analyticsClient.cardClick("text")
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "trigger card",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "text"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "trigger card",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "text"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -948,18 +949,18 @@ class AnalyticsClientTest {
             section = "section"
         )
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "trigger card",
+            "external" to true,
+            "url" to "url",
+            "section" to "section",
+            "language" to Locale.getDefault().language,
+            "text" to "text"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "trigger card",
-                    "external" to true,
-                    "url" to "url",
-                    "section" to "section",
-                    "language" to Locale.getDefault().language,
-                    "text" to "text"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
@@ -970,16 +971,16 @@ class AnalyticsClientTest {
             external = false
         )
 
+        val event = "Navigation"
+        val params = mapOf(
+            "type" to "Icon type",
+            "external" to false,
+            "language" to Locale.getDefault().language,
+            "text" to "N/A"
+        )
+
         verify {
-            firebaseAnalyticClient.logEvent(
-                "Navigation",
-                mapOf(
-                    "type" to "Icon type",
-                    "external" to false,
-                    "language" to Locale.getDefault().language,
-                    "text" to "N/A"
-                )
-            )
+            analyticsCoordinator.logEvent(event, params)
         }
     }
 
