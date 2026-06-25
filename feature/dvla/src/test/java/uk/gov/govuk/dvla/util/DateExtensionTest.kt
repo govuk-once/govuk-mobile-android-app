@@ -32,7 +32,7 @@ class DateExtensionTest {
     fun `getNumberOfDaysWithinDayRangeAsPercentage correctly returns percentage`() {
         val todayPlusTwoDays = LocalDate.now().plusDays(2)
         val result = todayPlusTwoDays.getNumberOfDaysWithinDayRangeAsPercentage(4)
-        assertEquals(50, result)
+        assertEquals(50f, result)
     }
 
     @Test

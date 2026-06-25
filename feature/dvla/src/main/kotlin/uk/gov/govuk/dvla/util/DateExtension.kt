@@ -11,9 +11,9 @@ internal fun LocalDate.toSummaryDisplayFormat(): String = this.format(dayMonthYe
 
 internal fun LocalDate.toYearDisplayFormat(): String = this.format(yearFormat)
 
-internal fun LocalDate.getNumberOfDaysWithinDayRangeAsPercentage(dayRange: Int): Int {
+internal fun LocalDate.getNumberOfDaysWithinDayRangeAsPercentage(dayRange: Int): Float {
     val daysLeft = this.getNumberOfDaysFromNow().toFloat()
-    return daysLeft.div(dayRange).times(100).toInt()
+    return daysLeft.div(dayRange).times(100)
 }
 
 internal fun LocalDate.getNumberOfDaysFromNow() =

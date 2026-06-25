@@ -516,7 +516,7 @@ fun CardListItem(
 @Composable
 fun ProgressBarListItem(
     topText: AccessibleString,
-    percentage: Int,
+    percentage: Float,
     bottomText: AccessibleString,
     modifier: Modifier = Modifier
 ) {
@@ -688,7 +688,7 @@ private fun ProgressItemListItemPreview() {
     GovUkTheme {
         ProgressBarListItem(
             AccessibleString("Top text"),
-            50,
+            50f,
             AccessibleString("Bottom text")
         )
     }

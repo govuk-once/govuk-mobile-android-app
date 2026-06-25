@@ -62,7 +62,7 @@ private fun ExpiringLicenceStatusItemPreview() {
     GovUkTheme {
         ExpiringLicenceStatusItem(
             ProgressBarListItemUiModel(
-                AccessibleString("12 December"), 50, AccessibleString("5 days left")
+                AccessibleString("12 December"), 50f, AccessibleString("5 days left")
             ),
             onRenewClick = { _ -> }
         )
