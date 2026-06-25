@@ -48,7 +48,7 @@ class DateExtensionTest {
     }
 
     @Test
-    fun `Given isDateWithinDayRange is called, when date is 4 days ahead and threshold is 2 days, then return true`() {
+    fun `Given isDateWithinDayRange is called, when date is 4 days ahead and threshold is 2 days, then return false`() {
         val todayPlusTwoDays = LocalDate.now().plusDays(4)
         assertEquals(false, todayPlusTwoDays.isDateWithinDayRange(2))
     }

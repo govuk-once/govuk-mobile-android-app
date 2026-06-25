@@ -35,7 +35,7 @@ fun ProgressBar(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            if (percentage != 0) {
+            if (percentage > 0) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
@@ -52,7 +52,7 @@ fun ProgressBar(
                     .background(GovUkTheme.colourScheme.textAndIcons.primary)
             )
 
-            if (percentage != 100) {
+            if (percentage < 100) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
