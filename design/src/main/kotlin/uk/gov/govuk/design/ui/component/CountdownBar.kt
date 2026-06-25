@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun ProgressBar(
+fun CountdownBar(
     percentage: Float,
     modifier: Modifier = Modifier
 ) {
@@ -30,7 +30,7 @@ fun ProgressBar(
                     .clip(CircleShape)
                     .height(barHeight)
                     .weight(percentage)
-                    .background(GovUkTheme.colourScheme.surfaces.progressBar)
+                    .background(GovUkTheme.colourScheme.surfaces.countdownBar)
             )
         }
 

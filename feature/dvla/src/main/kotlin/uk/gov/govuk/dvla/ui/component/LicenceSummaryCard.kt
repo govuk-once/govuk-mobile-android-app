@@ -68,7 +68,7 @@ internal fun LicenceSummaryCard(
 
             is LicenceStatusUiModel.Expiring ->
                 ExpiringLicenceStatusItem(
-                    uiModel = statusUi.progressBarUi,
+                    uiModel = statusUi.countdownBarUi,
                     onRenewClick = onRenewClick,
                     modifier = modifier
                 )

@@ -10,16 +10,16 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
-import uk.gov.govuk.design.ui.component.ProgressBarListItem
+import uk.gov.govuk.design.ui.component.CountdownBarListItem
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.ProgressBarListItemUiModel
+import uk.gov.govuk.design.ui.model.CountdownBarListItemUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @Composable
 internal fun ExpiringLicenceStatusItem(
-    uiModel: ProgressBarListItemUiModel,
+    uiModel: CountdownBarListItemUiModel,
     onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
@@ -31,7 +31,7 @@ internal fun ExpiringLicenceStatusItem(
     ) {
         SmallVerticalSpacer()
         
-        ProgressBarListItem(
+        CountdownBarListItem(
             topText = uiModel.topText,
             percentage = uiModel.percentage,
             bottomText = uiModel.bottomText
@@ -61,7 +61,7 @@ internal fun ExpiringLicenceStatusItem(
 private fun ExpiringLicenceStatusItemPreview() {
     GovUkTheme {
         ExpiringLicenceStatusItem(
-            ProgressBarListItemUiModel(
+            CountdownBarListItemUiModel(
                 AccessibleString("12 December"), 50f, AccessibleString("5 days left")
             ),
             onRenewClick = { _ -> }

@@ -514,7 +514,7 @@ fun CardListItem(
 }
 
 @Composable
-fun ProgressBarListItem(
+fun CountdownBarListItem(
     topText: AccessibleString,
     percentage: Float,
     bottomText: AccessibleString,
@@ -532,7 +532,7 @@ fun ProgressBarListItem(
 
         SmallVerticalSpacer()
 
-        ProgressBar(percentage = percentage)
+        CountdownBar(percentage = percentage)
 
         SmallVerticalSpacer()
 
@@ -684,9 +684,9 @@ private fun AddressListItemPreview() {
 
 @PreviewLightDark
 @Composable
-private fun ProgressItemListItemPreview() {
+private fun CountdownBarItemListItemPreview() {
     GovUkTheme {
-        ProgressBarListItem(
+        CountdownBarListItem(
             AccessibleString("Top text"),
             50f,
             AccessibleString("Bottom text")

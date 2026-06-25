@@ -1,8 +1,8 @@
 package uk.gov.govuk.dvla.util
 
-import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 private val dayMonthYearFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
 private val yearFormat = DateTimeFormatter.ofPattern("yyyy")
@@ -17,8 +17,7 @@ internal fun LocalDate.getNumberOfDaysWithinDayRangeAsPercentage(dayRange: Int):
 }
 
 internal fun LocalDate.getNumberOfDaysFromNow() =
-    Duration.between(LocalDate.now().atStartOfDay(), this.atStartOfDay())
-        .toDays().toInt()
+    ChronoUnit.DAYS.between(LocalDate.now(), this).toInt()
 
 internal fun LocalDate.isDateWithinDayRange(dayRange: Int) =
     this.getNumberOfDaysFromNow() < dayRange + 1

@@ -1,7 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.ProgressBarListItemUiModel
+import uk.gov.govuk.design.ui.model.CountdownBarListItemUiModel
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
@@ -72,7 +72,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     private fun getExpiring(expiryDate: LocalDate): LicenceStatusUiModel.Expiring {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return LicenceStatusUiModel.Expiring(
-            progressBarUi = ProgressBarListItemUiModel(
+            countdownBarUi = CountdownBarListItemUiModel(
                 topText = AccessibleString(
                     displayText = stringProvider.resolveSummaryDescription(
                         R.string.expiring_licence_date,

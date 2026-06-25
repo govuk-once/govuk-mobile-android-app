@@ -48,7 +48,7 @@ sealed interface InternalLinkListItemModel {
     ) : InternalLinkListItemModel
 }
 
-data class ProgressBarListItemUiModel(
+data class CountdownBarListItemUiModel(
     val topText: AccessibleString,
     val percentage: Float,
     val bottomText: AccessibleString
