@@ -26,6 +26,7 @@ import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
@@ -35,7 +36,7 @@ import uk.gov.govuk.dvla.util.toSpacedString
 internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
     onDetailsClick: () -> Unit,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -134,7 +135,7 @@ internal fun VehicleSummaryHeader(
     make: String,
     model: String,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SummaryCardHeader(

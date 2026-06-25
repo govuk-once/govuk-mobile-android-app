@@ -29,6 +29,7 @@ import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
+import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
@@ -76,25 +77,31 @@ fun VehiclesAndLicenceSummaryWidget(
 
                 MediumVerticalSpacer()
 
+                val context = LocalContext.current
+                val hapticFeedback = LocalHapticFeedback.current
+                val licenceClipboardLabel =
+                    stringResource(R.string.clipboard_data_label_licence_number)
+                val handleMenuAction: (MenuAction) -> Unit = { action ->
+                    when (action) {
+                        is MenuAction.WebLink -> launchBrowser(action.url)
+                        is MenuAction.ClipboardCopy -> action.textToCopy.copyToClipboard(context, licenceClipboardLabel, hapticFeedback)
+                    }
+                }
+
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
                         VehiclesViewContent(
                             vehiclesState = currentState.vehiclesState,
-                            onMenuItemClick = launchBrowser,
+                            onMenuItemClick = handleMenuAction,
                             modifier = modifier
                         )
                     }
 
                     DrivingView.LICENCE -> {
 
-                        val context = LocalContext.current
-                        val hapticFeedback = LocalHapticFeedback.current
-                        val licenceClipboardLabel =
-                            stringResource(R.string.clipboard_data_label_licence_number)
-
                         LicenceViewContent(
                             licenceState = currentState.licenceState,
-                            onMenuItemClick = launchBrowser,
+                            onMenuItemClick = handleMenuAction,
                             onLicenceNumberLongClick = { licenceNumber ->
                                 licenceNumber.copyToClipboard(
                                     context = context,
@@ -121,7 +128,7 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     vehiclesState: VehiclesSummaryUiState,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -143,7 +150,7 @@ private fun VehiclesViewContent(
 @Composable
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
     onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -191,7 +198,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
     onDetailsClick: () -> Unit,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -212,7 +219,7 @@ private fun VehiclesSummarySuccess(
 @Composable
 private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier

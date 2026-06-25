@@ -104,7 +104,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
             val newState = when (val result = dvlaRepo.getDriverSummary()) {
                 is Result.Success -> {
-                    val licence = licenceMapper.toUiModel(result.value)
+                    val licence = licenceMapper.toUiModel(result.value, dvlaUrls)
                     LicenceSummaryUiState.Success(licence)
                 }
                 else -> LicenceSummaryUiState.Error

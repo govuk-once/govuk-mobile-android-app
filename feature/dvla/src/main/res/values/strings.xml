@@ -55,4 +55,6 @@
     <string name="menu_change_log_book_address">Change log book address</string>
     <string name="menu_cancel_tax">Cancel tax</string>
     <string name="menu_cancel_tax_alt_text">Cancel vehicle tax</string>
+
+    <string name="menu_copy_licence_number">Copy licence number</string>
 </resources>

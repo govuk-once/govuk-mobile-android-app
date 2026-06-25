@@ -1,5 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
@@ -15,7 +17,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
 
-    fun toUiModel(driverSummary: DriverSummary): LicenceSummaryUiModel {
+    fun toUiModel(driverSummary: DriverSummary, dvlaUrls: DvlaUrls?): LicenceSummaryUiModel {
         val formattedExpiryDate = driverSummary.expiryDate?.toSummaryDisplayFormat()
 
         val (statusStringResId, statusIconStyle) = getLicenceStatusResources(driverSummary.status)
@@ -31,8 +33,23 @@ internal class LicenceSummaryMapper @Inject constructor(
             statusRowUi = StatusRowUiModel(
                 description = stringProvider.resolveSummaryDescription(statusStringResId, formattedExpiryDate),
                 iconStyle = statusIconStyle
-            )
+            ),
+            menuItems = buildMenuItems(licenceNumber = driverSummary.licenceNumber, dvlaUrls = dvlaUrls)
         )
+    }
+
+    private fun buildMenuItems(licenceNumber: String, dvlaUrls: DvlaUrls?): List<OverflowMenuItem> {
+        dvlaUrls ?: return emptyList()
+        return buildList {
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_copy_licence_number)
+                    ),
+                    action = MenuAction.ClipboardCopy(licenceNumber)
+                )
+            )
+        }
     }
 
     private fun getLicenceTypeString(type: LicenceType): String =

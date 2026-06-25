@@ -16,6 +16,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.util.toSpacedString
@@ -23,7 +24,7 @@ import uk.gov.govuk.dvla.util.toSpacedString
 @Composable
 internal fun LicenceSummaryCard(
     licenceSummary: LicenceSummaryUiModel,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -73,7 +74,7 @@ internal fun LicenceSummaryHeader(
     licenceType: String,
     licenceNumber: String,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

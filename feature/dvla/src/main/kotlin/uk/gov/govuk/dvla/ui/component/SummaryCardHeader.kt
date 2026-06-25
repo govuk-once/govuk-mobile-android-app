@@ -38,6 +38,7 @@ import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ListDivider
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 
 @Composable
@@ -65,7 +66,7 @@ internal fun CardOverflowButton(
 internal fun SummaryCardHeader(
     leadingContent: @Composable () -> Unit,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (String) -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     modifier: Modifier = Modifier,
     mainContent: @Composable ColumnScope.() -> Unit
 ) {
@@ -103,7 +104,7 @@ internal fun SummaryCardHeader(
 @Composable
 private fun CardOverflowMenu(
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (String) -> Unit
+    onMenuItemClick: (MenuAction) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -121,12 +122,12 @@ private fun CardOverflowMenu(
                 DropdownMenuItem(
                     text = {
                         BodyRegularLabel(
-                            text = item.text,
+                            text = item.text.displayText,
                             color = GovUkTheme.colourScheme.textAndIcons.primary
                         )
                     },
                     onClick = {
-                        onMenuItemClick(item.url)
+                        onMenuItemClick(item.action)
                         expanded = false
                     },
                     contentPadding = PaddingValues(
@@ -136,7 +137,7 @@ private fun CardOverflowMenu(
                     colors = MenuDefaults.itemColors(
                         textColor = GovUkTheme.colourScheme.textAndIcons.primary
                     ),
-                    modifier = item.altText?.let {
+                    modifier = item.text.altText?.let {
                         Modifier.semantics { contentDescription = it }
                     } ?: Modifier
                 )
