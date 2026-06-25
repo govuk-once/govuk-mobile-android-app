@@ -97,10 +97,11 @@ internal class LicenceSummaryMapper @Inject constructor(
         if (expiryDate.isToday()) {
             stringProvider.getString(R.string.today)
         } else {
+            val numberOfDaysFromNow = expiryDate.getNumberOfDaysFromNow()
             stringProvider.getQuantityString(
                 R.plurals.expiring_licence_days_left,
-                expiryDate.getNumberOfDaysFromNow(),
-                expiryDate.getNumberOfDaysFromNow()
+                numberOfDaysFromNow,
+                numberOfDaysFromNow
             )
         }
 
