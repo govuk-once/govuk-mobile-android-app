@@ -29,9 +29,9 @@ class DateExtensionTest {
     }
 
     @Test
-    fun `getNumberOfDaysUntilExpiryAsPercentage correctly returns percentage`() {
+    fun `getNumberOfDaysWithinDayRangeAsPercentage correctly returns percentage`() {
         val todayPlusTwoDays = LocalDate.now().plusDays(2)
-        val result = todayPlusTwoDays.getNumberOfDaysUntilExpiryAsPercentage(4)
+        val result = todayPlusTwoDays.getNumberOfDaysWithinDayRangeAsPercentage(4)
         assertEquals(50, result)
     }
 
@@ -42,15 +42,15 @@ class DateExtensionTest {
     }
 
     @Test
-    fun `Given isLicenceExpiring is called, when date is 2 days ahead and threshold is 2 days, then return true`() {
+    fun `Given isDateWithinDayRange is called, when date is 2 days ahead and threshold is 2 days, then return true`() {
         val todayPlusTwoDays = LocalDate.now().plusDays(2)
-        assertEquals(true, todayPlusTwoDays.isLicenceExpiring(2))
+        assertEquals(true, todayPlusTwoDays.isDateWithinDayRange(2))
     }
 
     @Test
-    fun `Given isLicenceExpiring is called, when date is 4 days ahead and threshold is 2 days, then return true`() {
+    fun `Given isDateWithinDayRange is called, when date is 4 days ahead and threshold is 2 days, then return true`() {
         val todayPlusTwoDays = LocalDate.now().plusDays(4)
-        assertEquals(false, todayPlusTwoDays.isLicenceExpiring(2))
+        assertEquals(false, todayPlusTwoDays.isDateWithinDayRange(2))
     }
 
     @Test

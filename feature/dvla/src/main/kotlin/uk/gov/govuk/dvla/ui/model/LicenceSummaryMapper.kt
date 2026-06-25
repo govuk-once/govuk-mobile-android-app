@@ -8,9 +8,9 @@ import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
-import uk.gov.govuk.dvla.util.getNumberOfDaysUntilExpiryAsPercentage
+import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
-import uk.gov.govuk.dvla.util.isLicenceExpiring
+import uk.gov.govuk.dvla.util.isDateWithinDayRange
 import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
@@ -22,7 +22,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
     private companion object {
-        const val DAYS_UNTIL_LICENCE_EXPIRY = 56
+        const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
     }
 
     fun toUiModel(driverSummary: DriverSummary) = LicenceSummaryUiModel(
@@ -44,7 +44,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     ) = when (status) {
         LicenceStatus.EXPIRED -> getExpired(expiryDate)
         LicenceStatus.VALID -> {
-            if (expiryDate?.isLicenceExpiring(DAYS_UNTIL_LICENCE_EXPIRY) == true) {
+            if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_EXPIRY_DAYS) == true) {
                 getExpiring(expiryDate)
             } else {
                 getValid(expiryDate)
@@ -83,8 +83,8 @@ internal class LicenceSummaryMapper @Inject constructor(
                         formattedExpiryDate
                     )
                 ),
-                percentage = expiryDate.getNumberOfDaysUntilExpiryAsPercentage(
-                    DAYS_UNTIL_LICENCE_EXPIRY
+                percentage = expiryDate.getNumberOfDaysWithinDayRangeAsPercentage(
+                    UPPER_RANGE_OF_EXPIRY_DAYS
                 ),
                 bottomText = AccessibleString(
                     displayText = getExpiringBottomText(expiryDate)
