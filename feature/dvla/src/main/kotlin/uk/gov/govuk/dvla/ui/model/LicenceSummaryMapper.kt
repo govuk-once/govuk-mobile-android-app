@@ -1,7 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.ProgressBarUiModel
+import uk.gov.govuk.design.ui.model.ProgressBarListItemUiModel
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
@@ -71,7 +71,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     private fun getExpiring(expiryDate: LocalDate): LicenceStatusUiModel.Expiring {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return LicenceStatusUiModel.Expiring(
-            progressBarUi = ProgressBarUiModel(
+            progressBarUi = ProgressBarListItemUiModel(
                 topText = AccessibleString(
                     displayText = stringProvider.resolveSummaryDescription(
                         R.string.expiring_licence_date,
@@ -80,7 +80,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                     altText = stringProvider.resolveSummaryDescription(
                         R.string.expiring_licence_date_alt_text,
                         formattedExpiryDate
-                        )
+                    )
                 ),
                 percentage = expiryDate.getNumberOfDaysUntilExpiryAsPercentage(
                     DAYS_UNTIL_LICENCE_EXPIRY
@@ -96,8 +96,10 @@ internal class LicenceSummaryMapper @Inject constructor(
         return if (expiryDate.isToday()) {
             stringProvider.getString(R.string.today)
         } else {
-            stringProvider.getPlural(
-                R.plurals.expiring_licence_days_left, expiryDate.getNumberOfDaysFromNow()
+            stringProvider.getQuantityString(
+                R.plurals.expiring_licence_days_left,
+                expiryDate.getNumberOfDaysFromNow(),
+                expiryDate.getNumberOfDaysFromNow()
             )
         }
     }

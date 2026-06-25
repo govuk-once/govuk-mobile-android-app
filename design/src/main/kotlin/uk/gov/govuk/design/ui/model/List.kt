@@ -47,3 +47,9 @@ sealed interface InternalLinkListItemModel {
         val info: AccessibleString
     ) : InternalLinkListItemModel
 }
+
+data class ProgressBarListItemUiModel(
+    val topText: AccessibleString,
+    val percentage: Int,
+    val bottomText: AccessibleString
+)

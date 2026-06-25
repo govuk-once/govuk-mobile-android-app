@@ -682,3 +682,14 @@ private fun AddressListItemPreview() {
     }
 }
 
+@PreviewLightDark
+@Composable
+private fun ProgressItemListItemPreview() {
+    GovUkTheme {
+        ProgressBarListItem(
+            AccessibleString("Top text"),
+            50,
+            AccessibleString("Bottom text")
+        )
+    }
+}

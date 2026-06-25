@@ -13,13 +13,13 @@ import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.ProgressBarListItem
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.ProgressBarUiModel
+import uk.gov.govuk.design.ui.model.ProgressBarListItemUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @Composable
 internal fun ExpiringLicenceStatusItem(
-    uiModel: ProgressBarUiModel,
+    uiModel: ProgressBarListItemUiModel,
     onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
@@ -61,7 +61,7 @@ internal fun ExpiringLicenceStatusItem(
 private fun ExpiringLicenceStatusItemPreview() {
     GovUkTheme {
         ExpiringLicenceStatusItem(
-            ProgressBarUiModel(
+            ProgressBarListItemUiModel(
                 AccessibleString("12 December"), 50, AccessibleString("5 days left")
             ),
             onRenewClick = { _ -> }

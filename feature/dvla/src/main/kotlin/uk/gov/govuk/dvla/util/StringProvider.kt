@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 interface StringProvider {
     fun getString(@StringRes resId: Int, vararg formatArgs: Any): String
-    fun getPlural(@PluralsRes resId: Int, quantity: Int): String
+    fun getQuantityString(@PluralsRes resId: Int, quantity: Int, vararg formatArgs: Any): String
 }
 
 class StringProviderImpl @Inject constructor(
@@ -18,8 +18,8 @@ class StringProviderImpl @Inject constructor(
         return context.getString(resId, *formatArgs)
     }
 
-    override fun getPlural(resId: Int, quantity: Int): String {
-        return context.resources.getQuantityString(resId, quantity, quantity)
+    override fun getQuantityString(resId: Int, quantity: Int, vararg formatArgs: Any): String {
+        return context.resources.getQuantityString(resId, quantity, *formatArgs)
     }
 }
 

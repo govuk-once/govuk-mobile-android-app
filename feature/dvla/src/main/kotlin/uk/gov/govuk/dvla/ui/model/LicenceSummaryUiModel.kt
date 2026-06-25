@@ -1,6 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
-import uk.gov.govuk.design.ui.model.ProgressBarUiModel
+import uk.gov.govuk.design.ui.model.ProgressBarListItemUiModel
 import uk.gov.govuk.dvla.util.toAccessibleStreetName
 import uk.gov.govuk.dvla.util.toSpacedString
 
@@ -41,6 +41,6 @@ sealed interface LicenceStatusUiModel {
     ) : LicenceStatusUiModel
 
     data class Expiring(
-        val progressBarUi: ProgressBarUiModel
+        val progressBarUi: ProgressBarListItemUiModel
     ) : LicenceStatusUiModel
 }
