@@ -21,7 +21,6 @@ import javax.inject.Inject
 internal class LicenceSummaryMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
-
     private companion object {
         const val DAYS_UNTIL_LICENCE_EXPIRY = 56
     }
@@ -42,31 +41,33 @@ internal class LicenceSummaryMapper @Inject constructor(
     private fun getLicenceStatusUiModel(
         status: LicenceStatus,
         expiryDate: LocalDate?
-    ): LicenceStatusUiModel {
-        val formattedExpiryDate = expiryDate?.toSummaryDisplayFormat() ?: "Unknown"
-        return when (status) {
-            LicenceStatus.EXPIRED -> getExpired(formattedExpiryDate)
-            LicenceStatus.VALID -> {
-                if (expiryDate?.isLicenceExpiring(DAYS_UNTIL_LICENCE_EXPIRY) == true) {
-                    getExpiring(expiryDate)
-                } else {
-                    getValid(formattedExpiryDate)
-                }
+    ) = when (status) {
+        LicenceStatus.EXPIRED -> getExpired(expiryDate)
+        LicenceStatus.VALID -> {
+            if (expiryDate?.isLicenceExpiring(DAYS_UNTIL_LICENCE_EXPIRY) == true) {
+                getExpiring(expiryDate)
+            } else {
+                getValid(expiryDate)
             }
-            // TODO: temporary, other states to be added on future tickets
-            else -> getValid(formattedExpiryDate)
         }
+        // TODO: temporary, other states to be added on future tickets
+        else -> getValid(expiryDate)
     }
 
-    private fun getValid(expiryDate: String) = LicenceStatusUiModel.Valid(
-        statusRowUi = StatusRowUiModel(
-            description = stringProvider.resolveSummaryDescription(
-                R.string.valid_until,
-                expiryDate
-            ),
-            iconStyle = StatusListItemIconStyle.Success
+    private fun getValid(expiryDate: LocalDate?): LicenceStatusUiModel {
+        val expiryDate = expiryDate?.toSummaryDisplayFormat()
+        return LicenceStatusUiModel.Valid(
+            statusRowUi = StatusRowUiModel(
+                description = expiryDate?.let {
+                    stringProvider.resolveSummaryDescription(
+                        R.string.valid_until,
+                        expiryDate
+                    )
+                } ?: run { "" },
+                iconStyle = StatusListItemIconStyle.Success
+            )
         )
-    )
+    }
 
     private fun getExpiring(expiryDate: LocalDate): LicenceStatusUiModel.Expiring {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
@@ -104,15 +105,20 @@ internal class LicenceSummaryMapper @Inject constructor(
         }
     }
 
-    private fun getExpired(expiryDate: String) = LicenceStatusUiModel.Expired(
-        statusRowUi = StatusRowUiModel(
-            description = stringProvider.resolveSummaryDescription(
-                R.string.expired_on,
-                expiryDate
-            ),
-            iconStyle = StatusListItemIconStyle.Success
+    private fun getExpired(expiryDate: LocalDate?): LicenceStatusUiModel {
+        val expiryDate = expiryDate?.toSummaryDisplayFormat()
+        return LicenceStatusUiModel.Expired(
+            statusRowUi = StatusRowUiModel(
+                description = expiryDate?.let {
+                    stringProvider.resolveSummaryDescription(
+                        R.string.expired_on,
+                        expiryDate
+                    )
+                } ?: run { "" },
+                iconStyle = StatusListItemIconStyle.Success
+            )
         )
-    )
+    }
 
     private fun getLicenceTypeString(type: LicenceType): String =
         when (type) {
