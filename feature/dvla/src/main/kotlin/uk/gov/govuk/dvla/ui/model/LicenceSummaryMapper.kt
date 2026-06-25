@@ -49,6 +49,33 @@ internal class LicenceSummaryMapper @Inject constructor(
                     action = MenuAction.ClipboardCopy(licenceNumber)
                 )
             )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_change_licence_address)
+                    ),
+                    // TODO add correct url
+                    action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                )
+            )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_change_licence_name_gender)
+                    ),
+                    // TODO add correct url
+                    action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                )
+            )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_replace_licence)
+                    ),
+                    // TODO add correct url
+                    action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                )
+            )
         }
     }
 

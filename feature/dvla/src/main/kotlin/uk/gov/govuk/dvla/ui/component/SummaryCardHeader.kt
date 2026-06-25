@@ -118,7 +118,7 @@ private fun CardOverflowMenu(
             containerColor = GovUkTheme.colourScheme.surfaces.cardDefault,
             offset = DpOffset(x = 0.dp, y = GovUkTheme.spacing.extraSmall)
         ) {
-            menuItems.forEachIndexed { index, item ->
+            menuItems.forEach { item ->
                 DropdownMenuItem(
                     text = {
                         BodyRegularLabel(
@@ -141,9 +141,6 @@ private fun CardOverflowMenu(
                         Modifier.semantics { contentDescription = it }
                     } ?: Modifier
                 )
-                if (index < menuItems.lastIndex) {
-                    ListDivider()
-                }
             }
         }
     }

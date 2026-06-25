@@ -57,4 +57,7 @@
     <string name="menu_cancel_tax_alt_text">Cancel vehicle tax</string>
 
     <string name="menu_copy_licence_number">Copy licence number</string>
+    <string name="menu_change_licence_address">Change address</string>
+    <string name="menu_change_licence_name_gender">Change name or gender</string>
+    <string name="menu_replace_licence">Replace licence</string>
 </resources>
