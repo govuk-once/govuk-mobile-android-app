@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
@@ -18,8 +21,8 @@ internal fun RenewLicenceButton(
     modifier: Modifier = Modifier
 ) {
     ButtonWithCaption(
-        text = stringResource(R.string.renew_licence_button),
-        caption = stringResource(R.string.renew_licence_caption),
+        text = AccessibleString(displayText = stringResource(R.string.renew_licence_button)),
+        caption = AccessibleString(displayText = stringResource(R.string.renew_licence_caption)),
         onClick = onRenewClick,
         modifier = modifier
     )
@@ -27,8 +30,8 @@ internal fun RenewLicenceButton(
 
 @Composable
 internal fun ButtonWithCaption(
-    text: String,
-    caption: String,
+    text: AccessibleString,
+    caption: AccessibleString,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -39,16 +42,26 @@ internal fun ButtonWithCaption(
             .padding(bottom = GovUkTheme.spacing.large)
     ) {
         PrimaryButton(
-            text = text,
+            text = text.displayText,
             onClick = {
-                onClick(text)
+                onClick(text.displayText)
+            },
+            modifier = Modifier.semantics {
+                text.altText?.let { altText ->
+                    contentDescription = altText
+                }
             }
         )
 
         MediumVerticalSpacer()
 
         CalloutRegularLabel(
-            text = caption,
+            text = caption.displayText,
+            modifier = Modifier.semantics {
+                caption.altText?.let { altText ->
+                    contentDescription = altText
+                }
+            },
             color = GovUkTheme.colourScheme.textAndIcons.secondary
         )
     }
