@@ -24,7 +24,7 @@ import uk.gov.govuk.dvla.util.toSpacedString
 @Composable
 internal fun LicenceSummaryCard(
     licenceSummary: LicenceSummaryUiModel,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -74,7 +74,7 @@ internal fun LicenceSummaryHeader(
     licenceType: String,
     licenceNumber: String,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

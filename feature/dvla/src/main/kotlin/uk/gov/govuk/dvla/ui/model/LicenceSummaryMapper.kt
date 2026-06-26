@@ -52,7 +52,8 @@ internal class LicenceSummaryMapper @Inject constructor(
             add(
                 OverflowMenuItem(
                     text = AccessibleString(
-                        stringProvider.getString(R.string.menu_change_licence_address)
+                        stringProvider.getString(R.string.menu_change_licence_address),
+                        stringProvider.getString(R.string.menu_change_licence_address_alt_text)
                     ),
                     // TODO add correct url
                     action = MenuAction.WebLink(dvlaUrls.makeSorn)
@@ -61,7 +62,8 @@ internal class LicenceSummaryMapper @Inject constructor(
             add(
                 OverflowMenuItem(
                     text = AccessibleString(
-                        stringProvider.getString(R.string.menu_change_licence_name_gender)
+                        stringProvider.getString(R.string.menu_change_licence_name_gender),
+                        stringProvider.getString(R.string.menu_change_licence_name_gender_alt_text)
                     ),
                     // TODO add correct url
                     action = MenuAction.WebLink(dvlaUrls.makeSorn)

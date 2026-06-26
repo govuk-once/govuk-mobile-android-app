@@ -35,10 +35,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
-import uk.gov.govuk.design.ui.component.ListDivider
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 
 @Composable
@@ -66,7 +64,7 @@ internal fun CardOverflowButton(
 internal fun SummaryCardHeader(
     leadingContent: @Composable () -> Unit,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier,
     mainContent: @Composable ColumnScope.() -> Unit
 ) {
@@ -104,7 +102,7 @@ internal fun SummaryCardHeader(
 @Composable
 private fun CardOverflowMenu(
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (MenuAction) -> Unit
+    onMenuItemClick: (OverflowMenuItem) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -127,7 +125,7 @@ private fun CardOverflowMenu(
                         )
                     },
                     onClick = {
-                        onMenuItemClick(item.action)
+                        onMenuItemClick(item)
                         expanded = false
                     },
                     contentPadding = PaddingValues(

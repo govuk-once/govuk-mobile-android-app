@@ -36,7 +36,7 @@ import uk.gov.govuk.dvla.util.toSpacedString
 internal fun VehicleSummaryCard(
     vehicleSummary: VehicleSummaryUiModel,
     onDetailsClick: () -> Unit,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -135,7 +135,7 @@ internal fun VehicleSummaryHeader(
     make: String,
     model: String,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SummaryCardHeader(

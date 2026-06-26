@@ -30,6 +30,7 @@ import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.MenuAction
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
@@ -81,9 +82,15 @@ fun VehiclesAndLicenceSummaryWidget(
                 val hapticFeedback = LocalHapticFeedback.current
                 val licenceClipboardLabel =
                     stringResource(R.string.clipboard_data_label_licence_number)
-                val handleMenuAction: (MenuAction) -> Unit = { action ->
-                    when (action) {
-                        is MenuAction.WebLink -> launchBrowser(action.url)
+                val handleMenuItemClick: (OverflowMenuItem) -> Unit = { item ->
+                    when (val action = item.action) {
+                        is MenuAction.WebLink -> {
+                            viewModel.onMenuItemClicked(
+                                text = item.text.displayText,
+                                url = action.url
+                            )
+                            launchBrowser(action.url)
+                        }
                         is MenuAction.ClipboardCopy -> action.textToCopy.copyToClipboard(context, licenceClipboardLabel, hapticFeedback)
                     }
                 }
@@ -92,7 +99,7 @@ fun VehiclesAndLicenceSummaryWidget(
                     DrivingView.VEHICLES -> {
                         VehiclesViewContent(
                             vehiclesState = currentState.vehiclesState,
-                            onMenuItemClick = handleMenuAction,
+                            onMenuItemClick = handleMenuItemClick,
                             modifier = modifier
                         )
                     }
@@ -101,7 +108,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         LicenceViewContent(
                             licenceState = currentState.licenceState,
-                            onMenuItemClick = handleMenuAction,
+                            onMenuItemClick = handleMenuItemClick,
                             onLicenceNumberLongClick = { licenceNumber ->
                                 licenceNumber.copyToClipboard(
                                     context = context,
@@ -128,7 +135,7 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     vehiclesState: VehiclesSummaryUiState,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -150,7 +157,7 @@ private fun VehiclesViewContent(
 @Composable
 private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
     onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
@@ -198,7 +205,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
     onDetailsClick: () -> Unit,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -219,7 +226,7 @@ private fun VehiclesSummarySuccess(
 @Composable
 private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
-    onMenuItemClick: (MenuAction) -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier

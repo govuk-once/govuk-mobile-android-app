@@ -32,7 +32,8 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     val dvlaUrls = configRepo.dvlaUrls
 
     companion object {
-        private const val SECTION = "Driving"
+        private const val SECTION_DRIVING = "Driving"
+        private const val SECTION_DRIVER_ACCOUNT = "Driver account"
         private const val ACTION_COPY = "Copy"
         private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
     }
@@ -73,7 +74,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     fun onLicenceNumberCopied() {
         analyticsClient.buttonFunction(
             text = ANALYTICS_EVENT_CLIPBOARD_COPY,
-            section = SECTION,
+            section = SECTION_DRIVING,
             action = ACTION_COPY
         )
     }
@@ -82,7 +83,16 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         analyticsClient.buttonClick(
             text = text,
             external = true,
-            section = SECTION,
+            section = SECTION_DRIVING,
+            url = url
+        )
+    }
+
+    fun onMenuItemClicked(text: String, url: String) {
+        analyticsClient.menuItemClick(
+            text = text,
+            external = true,
+            section = SECTION_DRIVER_ACCOUNT,
             url = url
         )
     }
