@@ -20,10 +20,11 @@ internal fun RenewLicenceButton(
     onRenewClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val text = stringResource(R.string.renew_licence_button)
     ButtonWithCaption(
-        text = AccessibleString(displayText = stringResource(R.string.renew_licence_button)),
+        text = AccessibleString(displayText = text),
         caption = AccessibleString(displayText = stringResource(R.string.renew_licence_caption)),
-        onClick = onRenewClick,
+        onClick = { onRenewClick(text) },
         modifier = modifier
     )
 }
@@ -32,7 +33,7 @@ internal fun RenewLicenceButton(
 internal fun ButtonWithCaption(
     text: AccessibleString,
     caption: AccessibleString,
-    onClick: (String) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -43,9 +44,7 @@ internal fun ButtonWithCaption(
     ) {
         PrimaryButton(
             text = text.displayText,
-            onClick = {
-                onClick(text.displayText)
-            },
+            onClick = onClick,
             modifier = Modifier.semantics {
                 text.altText?.let { altText ->
                     contentDescription = altText
