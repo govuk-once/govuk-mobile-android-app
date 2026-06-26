@@ -513,6 +513,43 @@ fun CardListItem(
     }
 }
 
+@Composable
+fun CountdownBarListItem(
+    topText: AccessibleString,
+    percentage: Float,
+    bottomText: AccessibleString,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(all = GovUkTheme.spacing.medium)
+    ) {
+        BodyRegularLabel(
+            text = topText.displayText,
+            modifier = Modifier.semantics {
+                topText.altText?.let { altText ->
+                    contentDescription = altText
+                }
+            }
+        )
+
+        SmallVerticalSpacer()
+
+        CountdownBar(percentage = percentage)
+
+        SmallVerticalSpacer()
+
+        CalloutRegularLabel(
+            text = bottomText.displayText,
+            modifier = Modifier.semantics {
+                bottomText.altText?.let { altText ->
+                    contentDescription = altText
+                }
+            }
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun InternalLinkListItemPreview() {
@@ -648,3 +685,14 @@ private fun AddressListItemPreview() {
     }
 }
 
+@PreviewLightDark
+@Composable
+private fun CountdownBarItemListItemPreview() {
+    GovUkTheme {
+        CountdownBarListItem(
+            AccessibleString("Top text"),
+            50f,
+            AccessibleString("Bottom text")
+        )
+    }
+}
