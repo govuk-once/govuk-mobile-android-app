@@ -520,7 +520,10 @@ fun CountdownBarListItem(
     bottomText: AccessibleString,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier
+            .padding(all = GovUkTheme.spacing.medium)
+    ) {
         BodyRegularLabel(
             text = topText.displayText,
             modifier = Modifier.semantics {
@@ -536,7 +539,7 @@ fun CountdownBarListItem(
 
         SmallVerticalSpacer()
 
-        BodyRegularLabel(
+        CalloutRegularLabel(
             text = bottomText.displayText,
             modifier = Modifier.semantics {
                 bottomText.altText?.let { altText ->
