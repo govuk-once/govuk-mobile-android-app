@@ -29,8 +29,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     configRepo: ConfigRepo
 ) : ViewModel() {
 
-    val dvlaUrls = configRepo.dvlaUrls
-
     companion object {
         private const val SECTION_DRIVING = "Driving"
         private const val SECTION_DRIVER_ACCOUNT = "Driver account"
@@ -40,6 +38,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
     val uiState = _uiState.asStateFlow()
+    val dvlaUrls = configRepo.dvlaUrls
 
     init {
         viewModelScope.launch {
@@ -79,6 +78,24 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
+    fun onAddVehiclesClicked(text: String, url: String) {
+        analyticsClient.accountCardClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION_DRIVING
+        )
+    }
+
+    fun onAddAnotherVehicleClicked(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION_DRIVING
+        )
+    }
+
     fun onRenewLicenceClicked(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
@@ -94,6 +111,13 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             external = true,
             section = SECTION_DRIVER_ACCOUNT,
             url = url
+        )
+    }
+
+    fun onButtonClicked(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            section = SECTION_DRIVING
         )
     }
 

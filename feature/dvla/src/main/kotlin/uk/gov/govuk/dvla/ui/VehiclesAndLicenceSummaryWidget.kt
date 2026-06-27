@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,7 +16,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -24,6 +27,7 @@ import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
+import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -40,6 +44,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
+    onVehicleDetailsClick: (registration: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
@@ -97,9 +102,28 @@ fun VehiclesAndLicenceSummaryWidget(
 
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
+
+                        val addVehicleUrl = viewModel.dvlaUrls?.addVehicle
+
                         VehiclesViewContent(
+                            onVehicleDetailsClick = { text, registration ->
+                                viewModel.onButtonClicked(text)
+                                onVehicleDetailsClick(registration)
+                            },
                             vehiclesState = currentState.vehiclesState,
                             onMenuItemClick = handleMenuItemClick,
+                            onAddVehiclesClick = addVehicleUrl?.let { url ->
+                                { label ->
+                                    viewModel.onAddVehiclesClicked(label, url)
+                                    launchBrowser(url)
+                                }
+                            },
+                            onAddAnotherVehicleClick = addVehicleUrl?.let { url ->
+                                { label ->
+                                    viewModel.onAddAnotherVehicleClicked(label, url)
+                                    launchBrowser(url)
+                                }
+                            },
                             modifier = modifier
                         )
                     }
@@ -134,8 +158,11 @@ fun VehiclesAndLicenceSummaryWidget(
 
 @Composable
 private fun VehiclesViewContent(
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
+    onAddVehiclesClick: ((String) -> Unit)?,
+    onAddAnotherVehicleClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     when (vehiclesState) {
@@ -143,13 +170,24 @@ private fun VehiclesViewContent(
         is VehiclesSummaryUiState.Error -> {
             // TODO placeholder for now, tbc in future tickets
         }
+
         is VehiclesSummaryUiState.Success -> {
-            VehiclesSummarySuccess(
-                vehicles = vehiclesState.vehicles,
-                onDetailsClick = { /* TODO to be handled in next ticket(s) */ },
-                onMenuItemClick = onMenuItemClick,
-                modifier = modifier
-            )
+            if (vehiclesState.vehicles.isEmpty()) {
+                if (onAddVehiclesClick != null) {
+                    VehiclesSummaryEmpty(
+                        onAddVehiclesClick = onAddVehiclesClick,
+                        modifier = modifier
+                    )
+                }
+            } else {
+                VehiclesSummarySuccess(
+                    vehicles = vehiclesState.vehicles,
+                    onAddVehicleClick = onAddAnotherVehicleClick,
+                    onVehicleDetailsClick = onVehicleDetailsClick,
+                    onMenuItemClick = onMenuItemClick,
+                    modifier = modifier
+                )
+            }
         }
     }
 }
@@ -204,7 +242,8 @@ private fun VehiclesAndLicenceSummaryLoading(
 @Composable
 private fun VehiclesSummarySuccess(
     vehicles: List<VehicleSummaryUiModel>,
-    onDetailsClick: () -> Unit,
+    onAddVehicleClick: ((String) -> Unit)?,
+    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -215,11 +254,47 @@ private fun VehiclesSummarySuccess(
         vehicles.forEach { vehicle ->
             VehicleSummaryCard(
                 vehicleSummary = vehicle,
-                onDetailsClick = { onDetailsClick() },
+                onVehicleDetailsClick = onVehicleDetailsClick,
                 onMenuItemClick = onMenuItemClick,
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+        if (onAddVehicleClick != null) {
+            val title = stringResource(R.string.add_vehicle)
+
+            AddVehicleListItem(
+                title = title,
+                icon = uk.gov.govuk.design.R.drawable.ic_add,
+                onClick = { onAddVehicleClick(title) },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+private fun VehiclesSummaryEmpty(
+    onAddVehiclesClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    val description = stringResource(R.string.add_your_vehicles)
+
+    Column(modifier = modifier) {
+        CentredCardWithIcon(
+            onClick = { onAddVehiclesClick(description) },
+            icon = uk.gov.govuk.design.R.drawable.ic_add,
+            description = description,
+            drawBottomStroke = false,
+            paddingValues = PaddingValues(
+                vertical = 52.dp,
+                horizontal = GovUkTheme.spacing.extraLarge
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+        SmallVerticalSpacer()
     }
 }
 

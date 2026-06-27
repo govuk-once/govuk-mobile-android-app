@@ -204,6 +204,21 @@ class AnalyticsClient @Inject constructor(
         navigation(text = text, type = "SettingsItem", url = url, external = external)
     }
 
+    fun accountCardClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
+        navigation(
+            text = text,
+            type = "Account card",
+            url = url,
+            external = external,
+            section = section
+        )
+    }
+
     fun toggleFunction(text: String, section: String, action: String) {
         function(
             text = text,

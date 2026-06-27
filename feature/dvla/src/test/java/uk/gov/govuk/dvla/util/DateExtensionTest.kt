@@ -16,4 +16,15 @@ class DateExtensionTest {
         val date2 = LocalDate.of(2024, 12, 15)
         assertEquals("15 December 2024", date2.toSummaryDisplayFormat())
     }
+
+    @Test
+    fun `toYearDisplayFormat correctly formats local date`() {
+        // 1 February 2027
+        val date = LocalDate.of(2027, 2, 1)
+        assertEquals("2027", date.toYearDisplayFormat())
+
+        // 15 December 2024
+        val date2 = LocalDate.of(2024, 12, 15)
+        assertEquals("2024", date2.toYearDisplayFormat())
+    }
 }

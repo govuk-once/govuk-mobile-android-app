@@ -66,6 +66,7 @@ import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
+import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
@@ -510,6 +511,9 @@ private fun GovUkNavHost(
                         VehiclesAndLicenceSummaryWidget(
                             launchBrowser = { url ->
                                 browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                            },
+                            onVehicleDetailsClick = { registration ->
+                                navController.navigateToVehicleDetails(registration)
                             }
                         )
                     }
@@ -617,6 +621,9 @@ private fun GovUkNavHost(
         )
 
         dvlaGraph(
+            onBack = {
+                navController.popBackStack()
+            },
             onContinueToLink = {
                 navController.navigateToDvlaLink()
             },

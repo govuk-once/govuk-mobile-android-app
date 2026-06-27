@@ -81,7 +81,7 @@ private fun OnboardingPageTwoScreen(
         headerContent = {
             FullScreenHeader(
                 dismissStyle = HeaderDismissStyle.Back(onBack),
-                actionStyle = HeaderActionStyle.ActionButton(
+                actionStyle = HeaderActionStyle.TextActionButton(
                     title = stringResource(id = R.string.onboarding_page_cancel_text),
                     onClick = onCancel
                 )

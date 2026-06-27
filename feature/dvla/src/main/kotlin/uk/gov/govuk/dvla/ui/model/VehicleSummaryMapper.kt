@@ -110,4 +110,3 @@ internal class VehicleSummaryMapper @Inject constructor(
             else -> Pair(null, null)
         }
 }
-
