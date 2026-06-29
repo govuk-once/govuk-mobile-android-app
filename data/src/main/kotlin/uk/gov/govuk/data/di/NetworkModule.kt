@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import uk.gov.govuk.data.BuildConfig
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.remote.AuthorizationInterceptor
-import uk.gov.govuk.data.remote.DvlaStubInterceptor
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
@@ -37,8 +36,6 @@ class NetworkModule {
     @Named("FlexRetrofit")
     fun provideAuthenticateRetrofit(authRepo: AuthRepo): Retrofit {
         val client = OkHttpClient.Builder()
-            // Todo - remove!!!
-            .apply { if (BuildConfig.DEBUG) addInterceptor(DvlaStubInterceptor()) }
             .addInterceptor(HeaderInterceptor())
             .addInterceptor(AuthorizationInterceptor(authRepo))
             // TODO: Consider removing below custom timeouts when Flex is stable
