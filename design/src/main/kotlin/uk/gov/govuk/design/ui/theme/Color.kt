@@ -6,6 +6,8 @@ import uk.gov.govuk.design.ui.theme.GovUkColourScheme.Strokes
 import uk.gov.govuk.design.ui.theme.GovUkColourScheme.Surfaces
 import uk.gov.govuk.design.ui.theme.GovUkColourScheme.TextAndIcons
 
+private val AccentPurple = Color(0xFFBA4AFF)
+
 private val BluePrimary = Color(0xFF1D70B8)
 private val BlueAccent = Color(0xFF11E0F1)
 private val Blue99 = Color(0xFF092237)
@@ -198,7 +200,8 @@ data class GovUkColourScheme(
         val screenBackground: Color,
         val fullScreenLinkAccount: Color,
         val registrationPlate: Color,
-        val cardOverflowButton: Color
+        val cardOverflowButton: Color,
+        val countdownBar: Color
     )
 
     data class Strokes(
@@ -365,7 +368,8 @@ internal val LightColorScheme = GovUkColourScheme(
         screenBackground = BlueLighter90,
         fullScreenLinkAccount = GreenPrimary,
         registrationPlate = YellowRegPlate,
-        cardOverflowButton = BluePrimary
+        cardOverflowButton = BluePrimary,
+        countdownBar = AccentPurple
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -531,7 +535,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         screenBackground = BlueDarker80,
         fullScreenLinkAccount = GreenPrimary,
         registrationPlate = YellowRegPlate,
-        cardOverflowButton = White
+        cardOverflowButton = White,
+        countdownBar = AccentPurple
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -692,7 +697,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             screenBackground = Color.Unspecified,
             fullScreenLinkAccount = Color.Unspecified,
             registrationPlate = Color.Unspecified,
-            cardOverflowButton = Color.Unspecified
+            cardOverflowButton = Color.Unspecified,
+            countdownBar = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,

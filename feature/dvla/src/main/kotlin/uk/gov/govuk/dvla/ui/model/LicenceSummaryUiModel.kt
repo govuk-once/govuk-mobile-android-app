@@ -1,6 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
-import uk.gov.govuk.dvla.domain.LicenceStatus
+import uk.gov.govuk.design.ui.model.CountdownBarListItemUiModel
 import uk.gov.govuk.dvla.util.toAccessibleStreetName
 import uk.gov.govuk.dvla.util.toSpacedString
 
@@ -11,8 +11,7 @@ data class LicenceSummaryUiModel(
     val addressLine1: String,
     val city: String,
     val postcode: String,
-    val status: LicenceStatus,
-    val statusRowUi: StatusRowUiModel,
+    val statusUi: LicenceStatusUiModel,
     val menuItems: List<OverflowMenuItem> = emptyList()
 ) {
     val formattedAddressLines: List<String>
@@ -31,4 +30,18 @@ data class LicenceSummaryUiModel(
         formattedAddressLine1: String,
         formattedPostcode: String): List<String> =
         listOf(formattedAddressLine1, city, formattedPostcode).filter { it.isNotBlank() }
+}
+
+sealed interface LicenceStatusUiModel {
+    data class Expired(
+        val statusRowUi: StatusRowUiModel
+    ) : LicenceStatusUiModel
+
+    data class Valid(
+        val statusRowUi: StatusRowUiModel
+    ) : LicenceStatusUiModel
+
+    data class Expiring(
+        val countdownBarUi: CountdownBarListItemUiModel
+    ) : LicenceStatusUiModel
 }
