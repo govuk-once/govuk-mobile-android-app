@@ -122,7 +122,10 @@ private fun CardOverflowMenu(
                     text = {
                         BodyRegularLabel(
                             text = item.text.displayText,
-                            color = GovUkTheme.colourScheme.textAndIcons.primary
+                            color = GovUkTheme.colourScheme.textAndIcons.primary,
+                            modifier = item.text.altText?.let {
+                                Modifier.semantics { contentDescription = it }
+                            } ?: Modifier
                         )
                     },
                     onClick = {
@@ -135,10 +138,7 @@ private fun CardOverflowMenu(
                     ),
                     colors = MenuDefaults.itemColors(
                         textColor = GovUkTheme.colourScheme.textAndIcons.primary
-                    ),
-                    modifier = item.text.altText?.let {
-                        Modifier.semantics { contentDescription = it }
-                    } ?: Modifier
+                    )
                 )
             }
         }
