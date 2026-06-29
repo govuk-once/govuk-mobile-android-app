@@ -47,3 +47,9 @@ sealed interface InternalLinkListItemModel {
         val info: AccessibleString
     ) : InternalLinkListItemModel
 }
+
+data class CountdownBarListItemUiModel(
+    val topText: AccessibleString,
+    val percentage: Float,
+    val bottomText: AccessibleString
+)

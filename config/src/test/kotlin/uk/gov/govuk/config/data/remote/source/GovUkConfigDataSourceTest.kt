@@ -1,6 +1,7 @@
 package uk.gov.govuk.config.data.remote.source
 
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -45,8 +46,18 @@ class GovUkConfigDataSourceTest {
         )
         val dvlaUrls = DvlaUrls(
             addVehicle = "https://www.gov.uk/add-vehicle",
-            renewLicence = "https://www.gov.uk/renew-driving-licence"
+            renewLicence = "https://www.gov.uk/renew-driving-licence",
+            soldVehicle = "https://www.gov.uk/sold-vehicle",
+            sornRules = "https://www.gov.uk/sorn-rules",
+            makeSorn = "https://www.gov.uk/make-sorn",
+            getLogbook = "https://www.gov.uk/get-logbook",
+            changeLogbookAddress = "https://www.gov.uk/change-logbook-address",
+            cancelTax = "https://www.gov.uk/cancel-tax",
+            changeLicenceAddress = "https://www.gov.uk/change-licence-address",
+            changeNameGenderLicence = "https://www.gov.uk/change-name-gender-licence",
+            replaceLicence = "https://www.gov.uk/replace-licence"
         )
+
         val config = Config(
             available = true,
             minimumVersion = "1.0.0",

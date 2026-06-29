@@ -332,7 +332,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         advanceUntilIdle()
 
-        viewModel.onLicenceNumberCopied()
+        viewModel.onLicenceNumberLongPressed()
         advanceUntilIdle()
 
         verify(exactly = 1) {

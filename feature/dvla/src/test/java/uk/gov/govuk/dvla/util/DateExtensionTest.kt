@@ -27,4 +27,41 @@ class DateExtensionTest {
         val date2 = LocalDate.of(2024, 12, 15)
         assertEquals("2024", date2.toYearDisplayFormat())
     }
+
+    @Test
+    fun `getNumberOfDaysWithinDayRangeAsPercentage correctly returns percentage`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(2)
+        val result = todayPlusTwoDays.getNumberOfDaysWithinDayRangeAsPercentage(4)
+        assertEquals(50f, result)
+    }
+
+    @Test
+    fun `Given getNumberOfDaysFromNow is called, when date is 2 days ahead, then return 2`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(2)
+        assertEquals(2, todayPlusTwoDays.getNumberOfDaysFromNow())
+    }
+
+    @Test
+    fun `Given isDateWithinDayRange is called, when date is 2 days ahead and threshold is 2 days, then return true`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(2)
+        assertEquals(true, todayPlusTwoDays.isDateWithinDayRange(2))
+    }
+
+    @Test
+    fun `Given isDateWithinDayRange is called, when date is 4 days ahead and threshold is 2 days, then return false`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(4)
+        assertEquals(false, todayPlusTwoDays.isDateWithinDayRange(2))
+    }
+
+    @Test
+    fun `Given isToday is called, when date is today, then return true`() {
+        val todayPlusTwoDays = LocalDate.now()
+        assertEquals(true, todayPlusTwoDays.isToday())
+    }
+
+    @Test
+    fun `Given isToday is called, when date is tomorrow, then return false`() {
+        val todayPlusTwoDays = LocalDate.now().plusDays(1)
+        assertEquals(false, todayPlusTwoDays.isToday())
+    }
 }

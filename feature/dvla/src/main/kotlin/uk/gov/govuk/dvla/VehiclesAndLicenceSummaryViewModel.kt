@@ -70,7 +70,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         setSelectedDrivingView(drivingView = DrivingView.LICENCE)
     }
 
-    fun onLicenceNumberCopied() {
+    fun onLicenceNumberLongPressed() {
         analyticsClient.buttonFunction(
             text = ANALYTICS_EVENT_CLIPBOARD_COPY,
             section = SECTION_DRIVING,
@@ -111,6 +111,14 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             external = true,
             section = SECTION_DRIVER_ACCOUNT,
             url = url
+        )
+    }
+
+    fun onCopyLicenceMenuOptionClicked() {
+        analyticsClient.menuItemFunction(
+            text = ANALYTICS_EVENT_CLIPBOARD_COPY,
+            section = SECTION_DRIVER_ACCOUNT,
+            action = ACTION_COPY
         )
     }
 

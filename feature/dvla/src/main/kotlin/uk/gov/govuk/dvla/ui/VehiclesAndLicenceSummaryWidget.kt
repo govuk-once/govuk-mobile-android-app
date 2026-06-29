@@ -96,7 +96,15 @@ fun VehiclesAndLicenceSummaryWidget(
                             )
                             launchBrowser(action.url)
                         }
-                        is MenuAction.ClipboardCopy -> action.textToCopy.copyToClipboard(context, licenceClipboardLabel, hapticFeedback)
+
+                        is MenuAction.ClipboardCopy -> {
+                            viewModel.onCopyLicenceMenuOptionClicked()
+                            action.textToCopy.copyToClipboard(
+                                context,
+                                licenceClipboardLabel,
+                                hapticFeedback
+                            )
+                        }
                     }
                 }
 
@@ -139,7 +147,7 @@ fun VehiclesAndLicenceSummaryWidget(
                                     label = licenceClipboardLabel,
                                     hapticFeedback = hapticFeedback
                                 )
-                                viewModel.onLicenceNumberCopied()
+                                viewModel.onLicenceNumberLongPressed()
                             },
                             onRenewLicenceClick = viewModel.dvlaUrls?.renewLicence?.let { url ->
                                 { text: String ->
