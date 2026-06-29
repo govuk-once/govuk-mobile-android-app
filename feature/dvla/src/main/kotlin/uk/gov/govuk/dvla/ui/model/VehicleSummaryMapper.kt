@@ -37,11 +37,19 @@ internal class VehicleSummaryMapper @Inject constructor(
                 description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
                 iconStyle = motIconStyle
             ),
-            menuItems = buildMenuItems(hasSorn = vehicle.sornStart != null, dvlaUrls = dvlaUrls)
+            menuItems = buildMenuItems(
+                hasSorn = vehicle.sornStart != null,
+                isTaxed = vehicle.taxStatus == TaxStatus.TAXED,
+                dvlaUrls = dvlaUrls
+            )
         )
     }
 
-    private fun buildMenuItems(hasSorn: Boolean, dvlaUrls: DvlaUrls?): List<OverflowMenuItem> {
+    private fun buildMenuItems(
+        hasSorn: Boolean,
+        isTaxed: Boolean,
+        dvlaUrls: DvlaUrls?
+    ): List<OverflowMenuItem> {
         dvlaUrls ?: return emptyList()
         return buildList {
             if (hasSorn) {
@@ -84,15 +92,17 @@ internal class VehicleSummaryMapper @Inject constructor(
                     action = MenuAction.WebLink(dvlaUrls.changeLogbookAddress)
                 )
             )
-            add(
-                OverflowMenuItem(
-                    text = AccessibleString(
-                        stringProvider.getString(R.string.menu_cancel_tax),
-                        stringProvider.getString(R.string.menu_cancel_tax_alt_text)
-                    ),
-                    action = MenuAction.WebLink(dvlaUrls.cancelTax)
+            if (isTaxed) {
+                add(
+                    OverflowMenuItem(
+                        text = AccessibleString(
+                            stringProvider.getString(R.string.menu_cancel_tax),
+                            stringProvider.getString(R.string.menu_cancel_tax_alt_text)
+                        ),
+                        action = MenuAction.WebLink(dvlaUrls.cancelTax)
+                    )
                 )
-            )
+            }
         }
     }
 
