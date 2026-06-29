@@ -55,8 +55,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                         stringProvider.getString(R.string.menu_change_licence_address),
                         stringProvider.getString(R.string.menu_change_licence_address_alt_text)
                     ),
-                    // TODO add correct url
-                    action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                    action = MenuAction.WebLink(dvlaUrls.changeLicenceAddress)
                 )
             )
             add(
@@ -65,8 +64,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                         stringProvider.getString(R.string.menu_change_licence_name_gender),
                         stringProvider.getString(R.string.menu_change_licence_name_gender_alt_text)
                     ),
-                    // TODO add correct url
-                    action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                    action = MenuAction.WebLink(dvlaUrls.changeNameGenderLicence)
                 )
             )
             add(
@@ -74,8 +72,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                     text = AccessibleString(
                         stringProvider.getString(R.string.menu_replace_licence)
                     ),
-                    // TODO add correct url
-                    action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                    action = MenuAction.WebLink(dvlaUrls.replaceLicence)
                 )
             )
         }

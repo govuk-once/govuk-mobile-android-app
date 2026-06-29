@@ -241,6 +241,19 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun menuItemFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
+        function(
+            text = text,
+            type = "menu",
+            section = section,
+            action = action
+        )
+    }
+
     fun topicsCustomised() {
         firebaseAnalyticsClient.setUserProperty("topics_customised", "true")
     }
