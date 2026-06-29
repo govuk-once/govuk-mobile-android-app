@@ -35,27 +35,9 @@ internal fun ExpiredLicenceStatusItem(
         )
 
         onRenewClick?.let {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = GovUkTheme.spacing.medium)
-                    .padding(bottom = GovUkTheme.spacing.large)
-            ) {
-                val text = stringResource(R.string.renew_licence_button)
-                PrimaryButton(
-                    text = text,
-                    onClick = {
-                        it(text)
-                    }
-                )
-
-                MediumVerticalSpacer()
-
-                CalloutRegularLabel(
-                    text = stringResource(R.string.renew_licence_caption),
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
-                )
-            }
+           RenewLicenceButton(
+               onRenewClick = onRenewClick
+           )
         }
     }
 }

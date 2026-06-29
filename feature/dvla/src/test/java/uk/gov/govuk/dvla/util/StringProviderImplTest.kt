@@ -46,4 +46,33 @@ class StringProviderImplTest {
         assertEquals(expectedString, result)
         verify(exactly = 1) { context.getString(resId, argument1, argument2) }
     }
+
+    @Test
+    fun `Given a resource id and a single argument, when getQuantityString is called, then return the formatted string from context`() {
+        val resId = 123
+        val quantity = 1
+        val argument = "argument"
+        val expectedString = "argument"
+        every { context.resources.getQuantityString(resId, quantity, argument) } returns expectedString
+
+        val result = stringProvider.getQuantityString(resId, quantity, argument)
+
+        assertEquals(expectedString, result)
+        verify(exactly = 1) { context.resources.getQuantityString(resId, quantity, argument) }
+    }
+
+    @Test
+    fun `Given a resource id and multiple arguments, when getQuantityString is called, then return the formatted string from context`() {
+        val resId = 123
+        val quantity = 1
+        val argument1 = "argument"
+        val argument2 = 999
+        val expectedString = "expected argument 999"
+        every { context.resources.getQuantityString(resId, quantity, argument1, argument2) } returns expectedString
+
+        val result = stringProvider.getQuantityString(resId, quantity, argument1, argument2)
+
+        assertEquals(expectedString, result)
+        verify(exactly = 1) { context.resources.getQuantityString(resId, quantity, argument1, argument2) }
+    }
 }
