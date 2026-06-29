@@ -29,8 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
@@ -137,7 +137,7 @@ private fun CardOverflowMenu(
                         textColor = GovUkTheme.colourScheme.textAndIcons.primary
                     ),
                     modifier = item.text.altText?.let {
-                        Modifier.semantics { contentDescription = it }
+                        Modifier.clearAndSetSemantics { contentDescription = it }
                     } ?: Modifier
                 )
             }
