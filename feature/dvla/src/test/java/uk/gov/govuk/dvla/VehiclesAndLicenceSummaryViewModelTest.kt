@@ -319,7 +319,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     }
 
     @Test
-    fun `When onLicenceNumberCopied is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
+    fun `When onLicenceNumberLongPressed is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
         every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
@@ -398,6 +398,61 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 url = url,
                 external = true,
                 section = "Driving"
+            )
+        }
+    }
+
+    @Test
+    fun `When onMenuItemClicked is called, then menuItemClick analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+        val text = "Change address"
+        val url = "https://www.gov.uk/change-naddress"
+
+        val viewModel = VehiclesAndLicenceSummaryViewModel(
+            dvlaRepo,
+            vehicleMapper,
+            licenceMapper,
+            analyticsClient,
+            configRepo
+        )
+
+        advanceUntilIdle()
+
+        viewModel.onMenuItemClicked(text = text, url = url)
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            analyticsClient.menuItemClick(
+                text = text,
+                url = url,
+                external = true,
+                section = "Driver account"
+            )
+        }
+    }
+
+    @Test
+    fun `When onCopyLicenceMenuOptionClicked is called, then menuItemFunction analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+
+        val viewModel = VehiclesAndLicenceSummaryViewModel(
+            dvlaRepo,
+            vehicleMapper,
+            licenceMapper,
+            analyticsClient,
+            configRepo
+        )
+
+        advanceUntilIdle()
+
+        viewModel.onCopyLicenceMenuOptionClicked()
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            analyticsClient.menuItemFunction(
+                text = "Copy to clipboard",
+                section = "Driver account",
+                action = "Copy"
             )
         }
     }
