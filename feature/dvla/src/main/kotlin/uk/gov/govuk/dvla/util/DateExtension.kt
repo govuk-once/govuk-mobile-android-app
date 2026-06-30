@@ -24,3 +24,6 @@ internal fun LocalDate.isDateWithinDayRange(dayRange: Int) =
 
 internal fun LocalDate.isToday() =
     this.getNumberOfDaysFromNow() == 0
+
+internal fun LocalDate.isInThePast() =
+    this.getNumberOfDaysFromNow() < 0

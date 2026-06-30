@@ -57,7 +57,8 @@ internal class VehicleDetailsMapper @Inject constructor(
     fun toUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
         val engineCapacity =
             vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
-        val yearOfFirstRegistration = vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
+        val yearOfFirstRegistration =
+            vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
             make = vesVehicle.make,
             model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
@@ -80,8 +81,13 @@ internal class VehicleDetailsMapper @Inject constructor(
                     info = AccessibleString(displayText = vesVehicle.model ?: "Unknown")
                 ),
                 InternalLinkListItemModel.Info(
-                    title = AccessibleString(displayText = stringProvider.getString(R.string.first_registered_title),
-                        altText = stringProvider.getString(R.string.first_registered_alt_text, yearOfFirstRegistration)),
+                    title = AccessibleString(
+                        displayText = stringProvider.getString(R.string.first_registered_title),
+                        altText = stringProvider.getString(
+                            R.string.first_registered_alt_text,
+                            yearOfFirstRegistration
+                        )
+                    ),
                     info = AccessibleString(
                         displayText = yearOfFirstRegistration,
                         altText = "" // Set as empty string so nothing read as alt text handled in the title
@@ -125,8 +131,13 @@ internal class VehicleDetailsMapper @Inject constructor(
         val taxDate = this.taxExpiryDate?.toSummaryDisplayFormat()
         val (taxStringResId, iconStyle) = this.taxStatus.getResources()
         return StatusRowUiModel(
-            title = stringProvider.getString(R.string.tax_status_title),
-            description = stringProvider.resolveSummaryDescription(taxStringResId, taxDate),
+            title = AccessibleString(displayText = stringProvider.getString(R.string.tax_status_title)),
+            description = AccessibleString(
+                displayText = stringProvider.resolveSummaryDescription(
+                    taxStringResId,
+                    taxDate
+                )
+            ),
             iconStyle = iconStyle
         )
     }
@@ -145,9 +156,13 @@ internal class VehicleDetailsMapper @Inject constructor(
         val (motStringResId, iconStyle) = this.motStatus.getResources()
 
         return StatusRowUiModel(
-            title = stringProvider.getString(R.string.acronym_mot),
-            titleAltText = stringProvider.getString(R.string.acronym_mot_alt_text),
-            description = stringProvider.resolveSummaryDescription(motStringResId, motDate),
+            title = AccessibleString(
+                displayText = stringProvider.getString(R.string.acronym_mot),
+                altText = stringProvider.getString(R.string.acronym_mot_alt_text)
+            ),
+            description = AccessibleString(
+                displayText = stringProvider.resolveSummaryDescription(motStringResId, motDate)
+            ),
             iconStyle = iconStyle
         )
     }
@@ -242,7 +257,8 @@ internal class VehicleDetailsMapper @Inject constructor(
             R.string.steam_specification
         )
 
-        GAS -> Triple(R.drawable.ic_gas,
+        GAS -> Triple(
+            R.drawable.ic_gas,
             R.string.gas_summary,
             R.string.gas_specification
         )

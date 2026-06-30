@@ -1,7 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.CountdownBarListItemUiModel
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
@@ -19,7 +19,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 internal class LicenceSummaryMapper @Inject constructor(
-    private val stringProvider: StringProvider
+    private val stringProvider: StringProvider,
+    private val configRepo: ConfigRepo
 ) {
     private companion object {
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
@@ -54,28 +55,28 @@ internal class LicenceSummaryMapper @Inject constructor(
         else -> getValid(expiryDate)
     }
 
-    private fun getValid(expiryDate: LocalDate?): LicenceStatusUiModel {
+    private fun getValid(expiryDate: LocalDate?): StatusUiModel {
         val expiryDate = expiryDate?.toSummaryDisplayFormat()
-        return LicenceStatusUiModel.Valid(
+        return StatusUiModel.StatusRow(
             statusRowUi = StatusRowUiModel(
-                description = expiryDate?.let {
+                description = AccessibleString(displayText = expiryDate?.let {
                     stringProvider.resolveSummaryDescription(
                         R.string.valid_until,
                         expiryDate
                     )
-                } ?: run { stringProvider.getString(R.string.valid) },
+                } ?: run { stringProvider.getString(R.string.valid) }),
                 iconStyle = StatusListItemIconStyle.Success
             )
         )
     }
 
-    private fun getExpiring(expiryDate: LocalDate): LicenceStatusUiModel.Expiring {
+    private fun getExpiring(expiryDate: LocalDate): StatusUiModel {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
-        return LicenceStatusUiModel.Expiring(
-            countdownBarUi = CountdownBarListItemUiModel(
+        return StatusUiModel.CountdownRow(
+            countdownBarUi = StatusCountdownUiModel(
                 topText = AccessibleString(
                     displayText = stringProvider.resolveSummaryDescription(
-                        R.string.expiring_licence_date,
+                        R.string.expiring_status_date,
                         formattedExpiryDate
                     ),
                     altText = stringProvider.resolveSummaryDescription(
@@ -88,7 +89,8 @@ internal class LicenceSummaryMapper @Inject constructor(
                 ),
                 bottomText = AccessibleString(
                     displayText = getExpiringBottomText(expiryDate)
-                )
+                ),
+                style = getLicenceExpiringStyle()
             )
         )
     }
@@ -99,22 +101,38 @@ internal class LicenceSummaryMapper @Inject constructor(
         } else {
             val numberOfDaysFromNow = expiryDate.getNumberOfDaysFromNow()
             stringProvider.getQuantityString(
-                R.plurals.expiring_licence_days_left,
+                R.plurals.expiring_status_days_left,
                 numberOfDaysFromNow,
                 numberOfDaysFromNow
             )
         }
 
-    private fun getExpired(expiryDate: LocalDate?): LicenceStatusUiModel {
+    private fun getExpired(expiryDate: LocalDate?): StatusUiModel {
         val expiryDate = expiryDate?.toSummaryDisplayFormat() ?: ""
-        return LicenceStatusUiModel.Expired(
+        val description = stringProvider.resolveSummaryDescription(
+            R.string.expired_on,
+            expiryDate
+        )
+        return StatusUiModel.StatusRow(
             statusRowUi = StatusRowUiModel(
-                description = stringProvider.resolveSummaryDescription(
-                        R.string.expired_on,
-                        expiryDate
-                    ),
-                iconStyle = StatusListItemIconStyle.Warning
+                description = AccessibleString(
+                    displayText = description,
+                    altText = stringProvider.getString(
+                        R.string.licence_expiration_alt_text,
+                        description
+                    )
+                ),
+                iconStyle = StatusListItemIconStyle.Warning,
+                style = getLicenceExpiringStyle()
             )
+        )
+    }
+
+    private fun getLicenceExpiringStyle() = configRepo.dvlaUrls?.renewLicence?.let { taxVehicleUrl ->
+        StatusStyle.ActionButton(
+            text = AccessibleString(stringProvider.getString(R.string.renew_licence_button)),
+            url = taxVehicleUrl,
+            caption = AccessibleString(displayText = stringProvider.getString(R.string.renew_licence_caption))
         )
     }
 

@@ -45,7 +45,9 @@ class GovUkConfigDataSourceTest {
         )
         val dvlaUrls = DvlaUrls(
             addVehicle = "https://www.gov.uk/add-vehicle",
-            renewLicence = "https://www.gov.uk/renew-driving-licence"
+            renewLicence = "https://www.gov.uk/renew-driving-licence",
+            manageTaxPayment = "https://www.gov.uk/vehicle-tax-direct-debit/renewing",
+            taxVehicle = "https://www.gov.uk/vehicle-tax"
         )
         val config = Config(
             available = true,

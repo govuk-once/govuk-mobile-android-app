@@ -5,63 +5,62 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.R
 
 @Composable
-internal fun RenewLicenceButton(
-    onRenewClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val text = stringResource(R.string.renew_licence_button)
-    ButtonWithCaption(
-        text = AccessibleString(displayText = text),
-        caption = AccessibleString(displayText = stringResource(R.string.renew_licence_caption)),
-        onClick = { onRenewClick(text) },
-        modifier = modifier
-    )
-}
-
-@Composable
-internal fun ButtonWithCaption(
+internal fun StatusButton(
     text: AccessibleString,
-    caption: AccessibleString,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isPrimary: Boolean = true,
+    caption: AccessibleString? = null
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = GovUkTheme.spacing.medium)
-            .padding(bottom = GovUkTheme.spacing.large)
+            .padding(bottom = GovUkTheme.spacing.medium)
     ) {
-        PrimaryButton(
-            text = text.displayText,
-            onClick = onClick,
-            modifier = Modifier.semantics {
-                text.altText?.let { altText ->
-                    contentDescription = altText
+        if (isPrimary) {
+            PrimaryButton(
+                text = text.displayText,
+                onClick = onClick,
+                modifier = Modifier.semantics {
+                    text.altText?.let { altText ->
+                        contentDescription = altText
+                    }
                 }
-            }
-        )
-
-        MediumVerticalSpacer()
-
-        CalloutRegularLabel(
-            text = caption.displayText,
-            modifier = Modifier.semantics {
-                caption.altText?.let { altText ->
-                    contentDescription = altText
+            )
+        } else {
+            SecondaryButton(
+                text = text.displayText,
+                onClick = onClick,
+                modifier = Modifier.semantics {
+                    text.altText?.let { altText ->
+                        contentDescription = altText
+                    }
                 }
-            },
-            color = GovUkTheme.colourScheme.textAndIcons.secondary
-        )
+            )
+        }
+
+        caption?.let {
+            MediumVerticalSpacer()
+
+            CalloutRegularLabel(
+                text = caption.displayText,
+                modifier = Modifier.semantics {
+                    caption.altText?.let { altText ->
+                        contentDescription = altText
+                    }
+                },
+                color = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
+        }
     }
 }

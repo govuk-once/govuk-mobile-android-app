@@ -49,19 +49,31 @@ class DateExtensionTest {
 
     @Test
     fun `Given isDateWithinDayRange is called, when date is 4 days ahead and threshold is 2 days, then return false`() {
-        val todayPlusTwoDays = LocalDate.now().plusDays(4)
-        assertEquals(false, todayPlusTwoDays.isDateWithinDayRange(2))
+        val todayPlusFourDays = LocalDate.now().plusDays(4)
+        assertEquals(false, todayPlusFourDays.isDateWithinDayRange(2))
     }
 
     @Test
     fun `Given isToday is called, when date is today, then return true`() {
-        val todayPlusTwoDays = LocalDate.now()
-        assertEquals(true, todayPlusTwoDays.isToday())
+        val today = LocalDate.now()
+        assertEquals(true, today.isToday())
     }
 
     @Test
     fun `Given isToday is called, when date is tomorrow, then return false`() {
-        val todayPlusTwoDays = LocalDate.now().plusDays(1)
-        assertEquals(false, todayPlusTwoDays.isToday())
+        val todayPlusOneDay = LocalDate.now().plusDays(1)
+        assertEquals(false, todayPlusOneDay.isToday())
+    }
+
+    @Test
+    fun `Given isInThePast is called, when date is today, then return false`() {
+        val today = LocalDate.now()
+        assertEquals(false, today.isInThePast())
+    }
+
+    @Test
+    fun `Given isInThePast is called, when date is yesterday, then return true`() {
+        val todayMinusOneDay = LocalDate.now().minusDays(1)
+        assertEquals(true, todayMinusOneDay.isInThePast())
     }
 }

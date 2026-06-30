@@ -372,6 +372,7 @@ fun StatusListItem(
     isLast: Boolean = false,
     drawDivider: Boolean = true,
     background: Color = GovUkTheme.colourScheme.surfaces.list,
+    footerContent: @Composable (() -> Unit)? = null
 ) {
     CardListItem(
         modifier = modifier,
@@ -380,58 +381,62 @@ fun StatusListItem(
         drawDivider = drawDivider,
         background = background
     ) {
-        Row(
-            modifier = Modifier
+        Column(
+            modifier
                 .fillMaxWidth()
                 .padding(
                     horizontal = GovUkTheme.spacing.medium,
                     vertical = GovUkTheme.spacing.large
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                title?.let {
-                    Title3BoldLabel(
-                        text = it.displayText,
-                        modifier = Modifier.withAltText(it.altText)
-                    )
-
-                    SmallVerticalSpacer()
-                }
-
-                BodyRegularLabel(
-                    text = description.displayText,
-                    modifier = Modifier.withAltText(description.altText)
                 )
-            }
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    title?.let {
+                        Title3BoldLabel(
+                            text = it.displayText,
+                            modifier = Modifier.withAltText(it.altText)
+                        )
 
-            MediumHorizontalSpacer()
+                        SmallVerticalSpacer()
+                    }
 
-            iconStyle?.let {
-                val (icon, tint) = when (it) {
-                    StatusListItemIconStyle.Success -> Pair(
-                        painterResource(R.drawable.ic_check_round),
-                        GovUkTheme.colourScheme.surfaces.buttonPrimary
-                    )
-
-                    StatusListItemIconStyle.Warning -> Pair(
-                        rememberVectorPainter(Icons.Filled.Warning),
-                        GovUkTheme.colourScheme.textAndIcons.primary
-                    )
-                }
-
-                Box(
-                    modifier = Modifier.size(36.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = icon,
-                        contentDescription = null,  // decorative icon
-                        tint = tint
+                    BodyRegularLabel(
+                        text = description.displayText,
+                        modifier = Modifier.withAltText(description.altText)
                     )
                 }
+
+                MediumHorizontalSpacer()
+
+                iconStyle?.let {
+                    val (icon, tint) = when (it) {
+                        StatusListItemIconStyle.Success -> Pair(
+                            painterResource(R.drawable.ic_check_round),
+                            GovUkTheme.colourScheme.surfaces.buttonPrimary
+                        )
+
+                        StatusListItemIconStyle.Warning -> Pair(
+                            rememberVectorPainter(Icons.Filled.Warning),
+                            GovUkTheme.colourScheme.textAndIcons.primary
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.size(36.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = icon,
+                            contentDescription = null,  // decorative icon
+                            tint = tint
+                        )
+                    }
+                }
             }
+            footerContent?.invoke()
         }
     }
 }
@@ -518,35 +523,58 @@ fun CountdownBarListItem(
     topText: AccessibleString,
     percentage: Float,
     bottomText: AccessibleString,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: AccessibleString? = null,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
+    footerContent: @Composable (() -> Unit)? = null
 ) {
-    Column(
-        modifier = modifier
-            .padding(all = GovUkTheme.spacing.medium)
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true,
+        background = background
     ) {
-        BodyRegularLabel(
-            text = topText.displayText,
-            modifier = Modifier.semantics {
-                topText.altText?.let { altText ->
-                    contentDescription = altText
-                }
+        Column(
+            modifier = modifier
+                .padding(all = GovUkTheme.spacing.medium)
+        ) {
+            title?.let {
+                Title3BoldLabel(
+                    text = it.displayText,
+                    modifier = Modifier.withAltText(it.altText)
+                )
+
+                SmallVerticalSpacer()
             }
-        )
 
-        SmallVerticalSpacer()
-
-        CountdownBar(percentage = percentage)
-
-        SmallVerticalSpacer()
-
-        CalloutRegularLabel(
-            text = bottomText.displayText,
-            modifier = Modifier.semantics {
-                bottomText.altText?.let { altText ->
-                    contentDescription = altText
+            BodyRegularLabel(
+                text = topText.displayText,
+                modifier = Modifier.semantics {
+                    topText.altText?.let { altText ->
+                        contentDescription = altText
+                    }
                 }
-            }
-        )
+            )
+
+            SmallVerticalSpacer()
+
+            CountdownBar(percentage = percentage)
+
+            SmallVerticalSpacer()
+
+            CalloutRegularLabel(
+                text = bottomText.displayText,
+                modifier = Modifier.semantics {
+                    bottomText.altText?.let { altText ->
+                        contentDescription = altText
+                    }
+                }
+            )
+            footerContent?.invoke()
+        }
     }
 }
 
