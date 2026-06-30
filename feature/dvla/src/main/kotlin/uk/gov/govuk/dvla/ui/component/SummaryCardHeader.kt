@@ -29,13 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
-import uk.gov.govuk.design.ui.component.OverflowButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
@@ -122,7 +121,10 @@ private fun CardOverflowMenu(
                     text = {
                         BodyRegularLabel(
                             text = item.text.displayText,
-                            color = GovUkTheme.colourScheme.textAndIcons.primary
+                            color = GovUkTheme.colourScheme.textAndIcons.primary,
+                            modifier = item.text.altText?.let {
+                                Modifier.semantics { contentDescription = it }
+                            } ?: Modifier
                         )
                     },
                     onClick = {
@@ -135,10 +137,7 @@ private fun CardOverflowMenu(
                     ),
                     colors = MenuDefaults.itemColors(
                         textColor = GovUkTheme.colourScheme.textAndIcons.primary
-                    ),
-                    modifier = item.text.altText?.let {
-                        Modifier.clearAndSetSemantics { contentDescription = it }
-                    } ?: Modifier
+                    )
                 )
             }
         }

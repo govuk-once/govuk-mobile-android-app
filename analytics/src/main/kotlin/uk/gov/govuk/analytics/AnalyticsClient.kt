@@ -248,7 +248,7 @@ class AnalyticsClient @Inject constructor(
     ) {
         function(
             text = text,
-            type = "menu",
+            type = "Menu",
             section = section,
             action = action
         )
