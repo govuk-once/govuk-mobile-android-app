@@ -25,7 +25,8 @@ internal fun StatusButton(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = GovUkTheme.spacing.medium)
+            .padding(top = GovUkTheme.spacing.medium)
+            .padding(bottom = GovUkTheme.spacing.small)
     ) {
         if (isPrimary) {
             PrimaryButton(

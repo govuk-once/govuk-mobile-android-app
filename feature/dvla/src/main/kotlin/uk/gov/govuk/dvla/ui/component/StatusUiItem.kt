@@ -26,8 +26,6 @@ internal fun StatusUiItem(
                         statusUiModel.statusRowUi.style?.let { style ->
                             when (val style = style) {
                                 is StatusStyle.ActionButton -> {
-                                    MediumVerticalSpacer()
-
                                     StatusButton(
                                         text = style.text,
                                         onClick = { launchBrowser(style.text.displayText, style.url) },
@@ -51,8 +49,6 @@ internal fun StatusUiItem(
                         statusUiModel.countdownBarUi.style?.let { style ->
                             when (val style = style) {
                                 is StatusStyle.ActionButton -> {
-                                    MediumVerticalSpacer()
-
                                     StatusButton(
                                         text = style.text,
                                         onClick = { launchBrowser(style.text.displayText, style.url)},
