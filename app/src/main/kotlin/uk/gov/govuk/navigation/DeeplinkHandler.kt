@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.chatDeepLinks
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
 import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
@@ -22,6 +23,13 @@ internal class DeeplinkHandler @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val topicsDeepLinksProvider: TopicsDeepLinksProvider
 ) {
+
+    companion object {
+        private const val LINKED_SERVICE_CALLBACK_PREFIX = "callback"
+        private const val LINKED_SERVICE_AUTH_SUFFIX = "auth"
+        private const val LINKED_SERVICE_SEGMENT_COUNT = 3
+    }
+
     var deepLink: Uri? = null
 
     private val deepLinks: Map<String, List<String>> by lazy {
@@ -54,7 +62,7 @@ internal class DeeplinkHandler @Inject constructor(
         deepLink?.let {
 
             // check for intercepted route first
-            if (interceptDvlaAuthCallback(it, navController)) {
+            if (interceptLinkedServiceCallback(it, navController)) {
                 deepLink = null
                 return
             }
@@ -79,25 +87,48 @@ internal class DeeplinkHandler @Inject constructor(
                     validDeeplink = false
                     onDeeplinkNotFound?.invoke()
                 }
-            }
+            }        // prevent accidentally intercepting longer paths
+
 
             analyticsClient.deepLinkEvent(validDeeplink, it.toString())
             deepLink = null
         }
     }
 
+    /** Intercepts /callback/{service}/auth routes */
+    private fun interceptLinkedServiceCallback(uri: Uri, navController: NavController): Boolean {
+        val segments = uri.pathSegments
+
+        // prevent accidentally handling longer paths
+        if (segments.size != LINKED_SERVICE_SEGMENT_COUNT) return false
+
+        val (prefix, serviceName, suffix) = segments
+        if (prefix != LINKED_SERVICE_CALLBACK_PREFIX || suffix != LINKED_SERVICE_AUTH_SUFFIX) return false
+
+        val service = LinkedService.entries.find { it.serviceName == serviceName }
+
+        return when (service) {
+            LinkedService.DVLA -> handleDvlaCallback(uri, navController)
+            // add any future linked service callbacks here
+            null -> false
+        }
+    }
+
+
     /** Intercepts the DVLA auth callback */
-    private fun interceptDvlaAuthCallback(uri: Uri, navController: NavController): Boolean {
+    private fun handleDvlaCallback(uri: Uri, navController: NavController): Boolean {
         if (uri.path != DVLA_DEEP_LINK_PATH) return false
 
-        uri.getQueryParameter(ARG_DVLA_TOKEN)?.let { token ->
+        val token = uri.getQueryParameter(ARG_DVLA_TOKEN)
+
+        // TODO Awaiting clarification from DVLA, success and 'do nothing' cases only are handled at the moment
+        if (!token.isNullOrBlank()) {
             navController.navigate("$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN=$token") {
                 popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
                 launchSingleTop = true
             }
-        } ?: run {
-            // TODO: Handle auth failure (missing token etc) in future ticket when we get requirements
         }
+        // error messages are shown in the web flow and the user is taken back to the app
 
         return true
     }
