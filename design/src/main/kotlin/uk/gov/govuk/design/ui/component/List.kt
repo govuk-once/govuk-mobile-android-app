@@ -378,7 +378,7 @@ fun StatusListItem(
         background = background
     ) {
         Column(
-            modifier
+            Modifier
                 .fillMaxWidth()
                 .padding(
                     horizontal = GovUkTheme.spacing.medium,
