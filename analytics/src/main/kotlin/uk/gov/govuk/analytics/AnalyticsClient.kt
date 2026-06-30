@@ -1,7 +1,5 @@
 package uk.gov.govuk.analytics
 
-import android.os.Debug
-import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
@@ -163,10 +161,6 @@ class AnalyticsClient @Inject constructor(
                 "url" to url
             )
         )
-    }
-
-    fun notificationCentreNotFound() {
-        logEvent( "NotificationCentreNotFound", mapOf())
     }
 
     fun notificationCentreMarkUnread() {
@@ -347,7 +341,6 @@ class AnalyticsClient @Inject constructor(
     }
 
     private fun logEvent(name: String, parameters: Map<String, Any>) {
-        Log.d("Analytics", "Event: $name $parameters" )
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             firebaseAnalyticsClient.logEvent(name, parameters)
         }

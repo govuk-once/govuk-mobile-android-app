@@ -18,8 +18,6 @@ android {
         minSdk = Version.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -57,6 +55,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.icons)
     implementation(libs.hilt.android)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
     implementation(libs.multiplatform.markdown.renderer)
     implementation(libs.multiplatform.markdown.renderer.m3)

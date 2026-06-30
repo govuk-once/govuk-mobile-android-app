@@ -1,42 +1,41 @@
-package uk.gov.govuk.data.notificationcentre
+package uk.gov.govuk.notificationcentre.data
 
-import retrofit2.HttpException
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.model.Result.AuthError
-import uk.gov.govuk.data.model.Result.DeviceOffline
-import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
 import uk.gov.govuk.data.model.Result.Success
-import uk.gov.govuk.data.notificationcentre.model.Notification
-import uk.gov.govuk.data.notificationcentre.model.UpdateNotificationRequestBody
-import uk.gov.govuk.data.notificationcentre.remote.NotificationCentreApi
-import uk.gov.govuk.data.remote.AuthenticationException
 import uk.gov.govuk.data.remote.safeAuthApiCall
-import uk.gov.govuk.data.remote.withAuthRetry
-import java.net.UnknownHostException
+import uk.gov.govuk.notificationcentre.data.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.UpdateNotificationRequestBody
+import uk.gov.govuk.notificationcentre.data.remote.NotificationCentreApi
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
+
+class DateProviderImpl: DateProvider {
+    override val date: Instant
+        get() = Instant.now()
+}
 
 @Singleton
 class NotificationCentreRepoImpl @Inject constructor(
     private val notificationCentreApi: NotificationCentreApi,
-    private val authRepo: AuthRepo
+    private val authRepo: AuthRepo,
+    private val dateProvider: DateProvider
 ) : NotificationCentreRepo {
 
     data class CacheEntry<T>(val value: T, val lastUpdated: Instant = Instant.now()) {
-        val hasExpired: Boolean
-            get() = Instant.now().isAfter(lastUpdated.plus(30, ChronoUnit.SECONDS))
+        fun hasExpired(now: Instant): Boolean =
+            now.isAfter(lastUpdated.plus(30, ChronoUnit.SECONDS))
     }
 
     private var notifications: CacheEntry<List<Notification>>? = null
 
     override suspend fun getNotifications(): Result<List<Notification>> {
         val currNotifications = notifications
-        if (currNotifications != null && !currNotifications.hasExpired) {
+
+        if (currNotifications != null && !currNotifications.hasExpired(dateProvider.date)) {
             return Success(currNotifications.value)
         }
 
@@ -47,33 +46,25 @@ class NotificationCentreRepoImpl @Inject constructor(
         if (res is Success) {
             notifications = CacheEntry(res.value)
         }
+
         return res
     }
 
     override suspend fun getSingleNotification(notificationId: String): Result<Notification?> {
-        return try {
-
-            notifications?.value?.first { it.id == notificationId }?.apply {
-                return Success(this)
-            }
-            val response = withAuthRetry( {notificationCentreApi.getSingleNotification(notificationId) }, authRepo)
-            val body = response.body()
-            return if (response.isSuccessful && body != null) {
-                Success(body)
-            } else {
-                if (response.code() == 404) {
-                    Success(null)
-                } else {
-                    Error()
+        if (notifications?.hasExpired(dateProvider.date) == false) {
+            notifications?.value?.firstOrNull { notification -> notification.id == notificationId }
+                ?.apply {
+                    return Success(this)
                 }
-            }
-        } catch (e: Exception) {
-            when (e) {
-                is AuthenticationException -> AuthError()
-                is UnknownHostException -> DeviceOffline()
-                is HttpException -> ServiceNotResponding(e.code())
-                else -> Error()
-            }
+        }
+
+        val response =
+            safeAuthApiCall({ notificationCentreApi.getSingleNotification(notificationId) }, authRepo)
+
+        return if (response is ServiceNotResponding && response.code == 404) {
+            Success(null)
+        } else {
+            response
         }
     }
 

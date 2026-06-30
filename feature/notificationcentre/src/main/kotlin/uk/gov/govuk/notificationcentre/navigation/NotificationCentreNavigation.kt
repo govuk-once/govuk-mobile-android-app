@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import uk.gov.govuk.data.notificationcentre.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.Notification
 import uk.gov.govuk.notificationcentre.ui.NotificationCentreDetailRoute
 import uk.gov.govuk.notificationcentre.ui.NotificationCentreRoute
 

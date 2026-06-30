@@ -51,22 +51,17 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
-import uk.gov.govuk.data.notificationcentre.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.Notification
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.DestructiveButton
 import uk.gov.govuk.design.ui.component.SecondaryButton
-import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailViewModel
 import uk.gov.govuk.notificationcentre.R
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun NotificationCentreDetailRoute(
@@ -85,7 +80,8 @@ internal fun NotificationCentreDetailRoute(
         NotificationCentreDetailScreen(
             {
                 viewModel.onPageView()
-            }, uiState,
+            },
+            uiState,
             onBack = onBack,
             onUnread = {
                 viewModel.onTapMarkUnread()
@@ -94,17 +90,18 @@ internal fun NotificationCentreDetailRoute(
             onTapDelete = {
                 viewModel.onTapDelete()
             },
+            onCancelDelete = {
+                viewModel.onCancelDelete()
+            },
             onConfirmDelete = {
                 viewModel.onConfirmDelete()
                 onBack()
             },
-            onCancelDelete = {
-                viewModel.onCancelDelete()
-            },
             launchBrowser = {
                 launchBrowser(it)
                 viewModel.onLinkTap(it)
-            }
+            },
+            showDeleteConfirmation = (uiState as? NotificationCentreDetailUiState.Loaded)?.showDeleteConfirmation ?: false
         )
     }
 }
@@ -119,10 +116,15 @@ private fun NotificationCentreDetailScreen(
     onTapDelete: () -> Unit,
     onCancelDelete: () -> Unit,
     onConfirmDelete: () -> Unit,
-    launchBrowser: (url: String) -> Unit
+    launchBrowser: (url: String) -> Unit,
+    showDeleteConfirmation: Boolean
 ) {
     val deleteBottomSheetState = rememberModalBottomSheetState()
     var showDeleteBottomSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showDeleteConfirmation) {
+        showDeleteBottomSheet = showDeleteConfirmation
+    }
 
     Column(
         Modifier
@@ -135,7 +137,6 @@ private fun NotificationCentreDetailScreen(
             onUnread = onUnread,
             onDelete = {
                 onTapDelete()
-                showDeleteBottomSheet = true
             }
         )
 
@@ -151,6 +152,7 @@ private fun NotificationCentreDetailScreen(
                     state.notification,
                     launchBrowser
                 )
+                else -> {}
             }
         }
 
@@ -158,16 +160,14 @@ private fun NotificationCentreDetailScreen(
             ModalBottomSheet(
                 sheetState = deleteBottomSheetState,
                 onDismissRequest = {
-                    showDeleteBottomSheet = false
+                    onCancelDelete()
                 }, dragHandle = null
             ) {
                 ConfirmationSheet(
                     onConfirm = {
-                        showDeleteBottomSheet = false
                         onConfirmDelete()
                     },
                     onCancel = {
-                        showDeleteBottomSheet = false
                         onCancelDelete()
                     }
                 )
@@ -437,7 +437,9 @@ private fun NotificationCentreDetailLoadingPreview() {
             {},
             {},
             {},
-            {})
+            {},
+            false
+        )
 
     }
 }
@@ -454,7 +456,9 @@ private fun NotificationCentreDetailErrorPreview() {
             {},
             {},
             {},
-            {})
+            {},
+            false
+        )
 
     }
 }
@@ -465,13 +469,14 @@ private fun NotificationCentreDetailLoadedPreview() {
     GovUkTheme {
         NotificationCentreDetailScreen(
             {},
-            NotificationCentreDetailUiState.Loaded(Notification.mockNotifications.recent.first()),
+            NotificationCentreDetailUiState.Loaded(Notification.mockNotifications.recent.first(), false),
             {},
             {},
             {},
             {},
             {},
-            {}
+            {},
+            false
         )
     }
 }

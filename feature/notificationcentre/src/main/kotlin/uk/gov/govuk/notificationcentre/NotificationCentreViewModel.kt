@@ -10,13 +10,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
-import uk.gov.govuk.data.notificationcentre.model.NotificationGroups
+import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
+import uk.gov.govuk.notificationcentre.data.model.NotificationGroups
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 internal sealed class NotificationCentreUiState {
+    data object Default: NotificationCentreUiState()
     data object Loading: NotificationCentreUiState()
     data object Empty : NotificationCentreUiState()
     data object Error: NotificationCentreUiState()
@@ -36,7 +37,7 @@ internal class NotificationCentreViewModel @Inject constructor(
         private const val TITLE = "NotificationCentreScreen"
     }
 
-    private val _uiState: MutableStateFlow<NotificationCentreUiState> = MutableStateFlow(NotificationCentreUiState.Loading)
+    private val _uiState: MutableStateFlow<NotificationCentreUiState> = MutableStateFlow(NotificationCentreUiState.Default)
     val uiState = _uiState.asStateFlow()
 
     fun onPageView() {
@@ -51,9 +52,7 @@ internal class NotificationCentreViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            withContext(Dispatchers.Main) {
-                _uiState.value = NotificationCentreUiState.Loading
-            }
+            _uiState.value = NotificationCentreUiState.Loading
 
             val notifications = notificationCentreRepo.getNotifications()
             withContext(Dispatchers.Main) {

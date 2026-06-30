@@ -1,8 +1,13 @@
-package uk.gov.govuk.data.notificationcentre
+package uk.gov.govuk.notificationcentre.data
 
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.notificationcentre.model.Notification
-import uk.gov.govuk.data.notificationcentre.model.UpdateNotificationRequestBody
+import uk.gov.govuk.notificationcentre.data.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.UpdateNotificationRequestBody
+import java.time.Instant
+
+interface DateProvider {
+    val date: Instant
+}
 
 interface NotificationCentreRepo {
     suspend fun getNotifications(): Result<List<Notification>>

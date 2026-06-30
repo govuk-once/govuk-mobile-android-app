@@ -35,8 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import uk.gov.govuk.data.notificationcentre.model.Notification
-import uk.gov.govuk.data.notificationcentre.model.NotificationGroups
+import uk.gov.govuk.notificationcentre.data.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.NotificationGroups
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.FootnoteRegularLabel
@@ -103,6 +103,7 @@ private fun NotificationCentreScreen(
                 state.notifications,
                 onTapNotification,
             )
+            else -> {}
         }
         LaunchedEffect(Unit) {
             onPageView()

@@ -11,10 +11,10 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
+import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.DvlaLinkState
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
@@ -82,17 +82,14 @@ internal class SettingsViewModel @Inject constructor(
             viewModelScope.launch {
                 _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
 
-                when (dvlaRepo.linkState.value) {
-                    DvlaLinkState.CHECKING -> {
-                        when (val linkState = dvlaRepo.isAccountLinked()) {
-                            is Result.Success -> loadMessageCount(linkState.value)
-                            else -> _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
-                        }
+                when (dvlaRepo.currentLinkState) {
+                    ServiceLinkStatus.CHECKING -> {
+                        // TODO Implement
                     }
-                    DvlaLinkState.UNLINKED -> {
+                    ServiceLinkStatus.UNLINKED -> {
                         loadMessageCount(false)
                     }
-                    DvlaLinkState.LINKED -> {
+                    ServiceLinkStatus.LINKED -> {
                         loadMessageCount(true)
                     }
                 }
@@ -115,7 +112,6 @@ internal class SettingsViewModel @Inject constructor(
             }
 
         }
-
     }
 
     fun onPageView() {

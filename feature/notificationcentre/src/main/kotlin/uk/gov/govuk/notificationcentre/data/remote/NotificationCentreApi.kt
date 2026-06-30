@@ -1,4 +1,4 @@
-package uk.gov.govuk.data.notificationcentre.remote
+package uk.gov.govuk.notificationcentre.data.remote
 
 import retrofit2.Response
 import retrofit2.http.Body
@@ -6,8 +6,8 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Path
-import uk.gov.govuk.data.notificationcentre.model.Notification
-import uk.gov.govuk.data.notificationcentre.model.UpdateNotificationRequestBody
+import uk.gov.govuk.notificationcentre.data.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.UpdateNotificationRequestBody
 
 
 interface NotificationCentreApi {

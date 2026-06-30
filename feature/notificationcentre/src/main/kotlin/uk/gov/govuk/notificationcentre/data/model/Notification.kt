@@ -1,4 +1,4 @@
-package uk.gov.govuk.data.notificationcentre.model
+package uk.gov.govuk.notificationcentre.data.model
 
 import com.google.gson.annotations.SerializedName
 import java.time.Instant

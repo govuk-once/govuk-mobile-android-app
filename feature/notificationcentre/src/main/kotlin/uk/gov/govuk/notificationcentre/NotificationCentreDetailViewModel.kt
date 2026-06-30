@@ -7,19 +7,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.notificationcentre.NotificationCentreRepo
-import uk.gov.govuk.data.notificationcentre.model.Notification
-import uk.gov.govuk.data.notificationcentre.model.UpdateNotificationRequestBody
+import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
+import uk.gov.govuk.notificationcentre.data.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.UpdateNotificationRequestBody
 import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_DETAIL_ID_ARG
 import javax.inject.Inject
 
 internal sealed class NotificationCentreDetailUiState {
+    data object Default: NotificationCentreDetailUiState()
     data object Loading: NotificationCentreDetailUiState()
-    data class Loaded(val notification: Notification): NotificationCentreDetailUiState()
+    data class Loaded(val notification: Notification, val showDeleteConfirmation: Boolean): NotificationCentreDetailUiState()
     data object Error: NotificationCentreDetailUiState()
     data object NoInternet: NotificationCentreDetailUiState()
 }
@@ -27,8 +29,8 @@ internal sealed class NotificationCentreDetailUiState {
 
 @HiltViewModel
 internal class NotificationCentreDetailViewModel @Inject constructor(
-    private val analyticsClient: AnalyticsClient,
     private val notificationCentreRepo: NotificationCentreRepo,
+    private val analyticsClient: AnalyticsClient,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -39,7 +41,7 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
     }
 
     private val _uiState: MutableStateFlow<NotificationCentreDetailUiState> = MutableStateFlow(
-        NotificationCentreDetailUiState.Loading)
+        NotificationCentreDetailUiState.Default)
     val uiState = _uiState.asStateFlow()
 
     fun onPageView() {
@@ -66,26 +68,33 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
     }
 
     fun onTapDelete() {
-        analyticsClient.notificationCentreDelete()
+        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let { state: NotificationCentreDetailUiState.Loaded ->
+            _uiState.update { state.copy(showDeleteConfirmation = true) }
+            analyticsClient.notificationCentreDelete()
+        }
     }
 
     fun onConfirmDelete() {
-        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let {
+        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let { state: NotificationCentreDetailUiState.Loaded ->
+            _uiState.update { state.copy(showDeleteConfirmation = false) }
             analyticsClient.notificationCentreConfirmDelete()
             viewModelScope.launch {
-                notificationCentreRepo.deleteNotification(it.notification.id)
+                notificationCentreRepo.deleteNotification(state.notification.id)
             }
         }
     }
 
     fun onCancelDelete() {
-        analyticsClient.notificationCentreCancelDelete()
-
+        (_uiState.value as? NotificationCentreDetailUiState.Loaded)?.let { state: NotificationCentreDetailUiState.Loaded ->
+            _uiState.update { state.copy(showDeleteConfirmation = false) }
+            analyticsClient.notificationCentreCancelDelete()
+        }
     }
 
     private fun loadData() {
         savedStateHandle.get<String>(NOTIFICATION_CENTRE_DETAIL_ID_ARG)?.let { id ->
             viewModelScope.launch {
+                _uiState.value = NotificationCentreDetailUiState.Loading
                 val result = notificationCentreRepo.getSingleNotification(id)
 
                 withContext(Dispatchers.Main) {
@@ -99,9 +108,8 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
                                             UpdateNotificationRequestBody.Status.READ)
                                     }
                                 }
-                                NotificationCentreDetailUiState.Loaded(notification)
+                                NotificationCentreDetailUiState.Loaded(notification, false)
                             } else {
-                                analyticsClient.notificationCentreNotFound()
                                 NotificationCentreDetailUiState.Error
                             }
                         }
