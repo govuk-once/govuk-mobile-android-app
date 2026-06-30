@@ -1029,7 +1029,7 @@ class AnalyticsClientTest {
             firebaseAnalyticClient.logEvent(
                 "Function",
                 mapOf(
-                    "type" to "menu",
+                    "type" to "Menu",
                     "language" to Locale.getDefault().language,
                     "text" to "text",
                     "section" to "section",
