@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.SecondaryButton
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -32,21 +31,13 @@ internal fun StatusButton(
             PrimaryButton(
                 text = text.displayText,
                 onClick = onClick,
-                modifier = Modifier.semantics {
-                    text.altText?.let { altText ->
-                        contentDescription = altText
-                    }
-                }
+                modifier = Modifier.withAltText(text.altText)
             )
         } else {
             SecondaryButton(
                 text = text.displayText,
                 onClick = onClick,
-                modifier = Modifier.semantics {
-                    text.altText?.let { altText ->
-                        contentDescription = altText
-                    }
-                }
+                modifier = Modifier.withAltText(text.altText)
             )
         }
 
@@ -55,11 +46,7 @@ internal fun StatusButton(
 
             CalloutRegularLabel(
                 text = caption.displayText,
-                modifier = Modifier.semantics {
-                    caption.altText?.let { altText ->
-                        contentDescription = altText
-                    }
-                },
+                modifier = Modifier.withAltText(caption.altText),
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }

@@ -73,11 +73,7 @@ fun InternalLinkListItem(
                 BodyRegularLabel(
                     text = title.displayText,
                     color = GovUkTheme.colourScheme.textAndIcons.primary,
-                    modifier = Modifier.semantics {
-                        title.altText?.let { altText ->
-                            contentDescription = altText
-                        }
-                    }
+                    modifier = Modifier.withAltText(title.altText)
                 )
                 description?.let { description ->
                     ExtraSmallVerticalSpacer()
@@ -541,10 +537,10 @@ fun CountdownBarListItem(
             modifier = modifier
                 .padding(all = GovUkTheme.spacing.medium)
         ) {
-            title?.let {
+            title?.let { title ->
                 Title3BoldLabel(
-                    text = it.displayText,
-                    modifier = Modifier.withAltText(it.altText)
+                    text = title.displayText,
+                    modifier = Modifier.withAltText(title.altText)
                 )
 
                 SmallVerticalSpacer()
@@ -552,11 +548,7 @@ fun CountdownBarListItem(
 
             BodyRegularLabel(
                 text = topText.displayText,
-                modifier = Modifier.semantics {
-                    topText.altText?.let { altText ->
-                        contentDescription = altText
-                    }
-                }
+                modifier = Modifier.withAltText(topText.altText)
             )
 
             SmallVerticalSpacer()
@@ -567,11 +559,7 @@ fun CountdownBarListItem(
 
             CalloutRegularLabel(
                 text = bottomText.displayText,
-                modifier = Modifier.semantics {
-                    bottomText.altText?.let { altText ->
-                        contentDescription = altText
-                    }
-                }
+                modifier = Modifier.withAltText(bottomText.altText)
             )
             footerContent?.invoke()
         }

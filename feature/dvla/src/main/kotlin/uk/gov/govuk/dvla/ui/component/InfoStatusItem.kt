@@ -11,13 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.MediumHorizontalSpacer
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
@@ -54,21 +53,13 @@ internal fun InfoStatusItem(
             Column {
                 BodyBoldLabel(
                     text = title.displayText,
-                    modifier.semantics {
-                        title.altText?.let { altText ->
-                            contentDescription = altText
-                        }
-                    }
+                    modifier.withAltText(title.altText)
                 )
 
                 subtitle?.let {
                     BodyRegularLabel(
                         text = subtitle.displayText,
-                        modifier.semantics {
-                            subtitle.altText?.let { altText ->
-                                contentDescription = altText
-                            }
-                        }
+                        modifier.withAltText(subtitle.altText)
                     )
                 }
             }
