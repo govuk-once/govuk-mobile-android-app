@@ -47,6 +47,7 @@
     <string name="licence_expiration_alt_text">Licence %1$s</string>
     <string name="clipboard_data_label_licence_number">copy licence number</string>
     <string name="expiring_status_date">Expiring %1$s</string>
+    <string name="expiring_direct_debit_status_date">Renews %1$s</string>
     <string name="expiring_licence_date_alt_text">Licence expiring %1$s</string>
     <string name="expiring_tax_date_alt_text">Tax expiring %1$s</string>
     <string name="today">Today</string>

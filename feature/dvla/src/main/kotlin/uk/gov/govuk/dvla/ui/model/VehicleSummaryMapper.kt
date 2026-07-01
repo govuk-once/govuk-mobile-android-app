@@ -82,6 +82,13 @@ internal class VehicleSummaryMapper @Inject constructor(
         )
     )
 
+    private fun getExpiringDirectDebitTopText(expiryDate: String) = AccessibleString(
+        displayText = stringProvider.resolveSummaryDescription(
+            R.string.expiring_direct_debit_status_date,
+            expiryDate
+        )
+    )
+
     private fun getUnknown(title: AccessibleString) = StatusUiModel.StatusRow(
         statusRowUi = StatusRowUiModel(
             title = title,
@@ -163,7 +170,7 @@ internal class VehicleSummaryMapper @Inject constructor(
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return StatusUiModel.CountdownRow(
             countdownBarUi = StatusCountdownUiModel(
-                topText = getExpiringTopText(formattedExpiryDate),
+                topText = getExpiringDirectDebitTopText(formattedExpiryDate),
                 percentage = expiryDate.asPercentageOfDaysLeftForTax(),
                 bottomText = AccessibleString(stringProvider.getString(R.string.paying_by_direct_debit)),
                 title = getTaxStatusTitle(),
