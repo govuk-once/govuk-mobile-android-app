@@ -1,5 +1,6 @@
 package uk.gov.govuk.chat.data.remote
 
+import kotlinx.coroutines.CancellationException
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.remote.AuthenticationException
@@ -22,6 +23,7 @@ internal suspend fun <T> safeChatApiCall(
                     else -> ChatResult.Error()
                 }
             }
+
             else -> {
                 when (code) {
                     404 -> ChatResult.NotFound()
@@ -31,6 +33,8 @@ internal suspend fun <T> safeChatApiCall(
                 }
             }
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: AuthenticationException) {
         ChatResult.AuthError()
     } catch (e: Exception) {
