@@ -22,12 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -133,11 +132,7 @@ private fun HorizontalSpecificationItem(
                     onTruncatedText()
                 }
             },
-            modifier = Modifier.semantics {
-                uiModel.description.altText?.let { altText ->
-                    contentDescription = altText
-                }
-            }
+            modifier = Modifier.withAltText(uiModel.description.altText)
         )
     }
 }
@@ -164,11 +159,7 @@ private fun VerticalSpecificationItem(
 
         BodyRegularLabel(
             text = uiModel.description.displayText,
-            modifier = Modifier.semantics {
-                uiModel.description.altText?.let { altText ->
-                    contentDescription = altText
-                }
-            }
+            modifier = Modifier.withAltText(uiModel.description.altText)
         )
     }
 }

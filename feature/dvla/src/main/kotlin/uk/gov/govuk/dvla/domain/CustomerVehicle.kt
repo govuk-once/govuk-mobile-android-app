@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.domain
 
 import uk.gov.govuk.data.extension.toLocalDateOrNull
+import uk.gov.govuk.dvla.remote.model.CurrentLicence
 import uk.gov.govuk.dvla.remote.model.ExhaustEmissions
 import uk.gov.govuk.dvla.remote.model.Vehicle
 import uk.gov.govuk.dvla.remote.model.VehicleKeeper
@@ -15,6 +16,8 @@ data class CustomerVehicle(
     val taxClass: String,
     val motStatus: MotStatus,
     val motExpiryDate: LocalDate?,
+    val sornStart: LocalDate?,
+    val currentLicence: CurrentLicence?,
 
     // TODO: remove below when vehicle details endpoint is live
     val keeper: VehicleKeeper?,
@@ -36,6 +39,8 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         taxClass = this.taxClass,
         motStatus = this.motStatus.toDomain(),
         motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
+        sornStart = this.sornStart.toLocalDateOrNull(),
+        currentLicence = this.currentLicence,
 
         // TODO: remove below when vehicle details endpoint is live
         keeper = this.keeper,

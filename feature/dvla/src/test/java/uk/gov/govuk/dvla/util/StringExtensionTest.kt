@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.util
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class StringExtensionTest {
@@ -21,5 +23,17 @@ class StringExtensionTest {
 
         assertEquals("", "".toSpacedString())
         assertEquals(" ", " ".toSpacedString())
+    }
+
+    @Test
+    fun `Given isDirectDebit is called, when the string is Direct Debit, then return true`() {
+        val result = "Direct Debit".isDirectDebit()
+        assertTrue(result)
+    }
+
+    @Test
+    fun `Given isDirectDebit is called, when the string is Not Direct Debit, then return false`() {
+        val result = "Not Direct Debit".isDirectDebit()
+        assertFalse(result)
     }
 }

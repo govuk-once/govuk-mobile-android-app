@@ -150,27 +150,16 @@ private fun SuccessScreen(
             MediumVerticalSpacer()
 
             StatusListItem(
-                title = details.taxStatus.title?.let {
-                    AccessibleString(displayText = it)
-                },
-                description = AccessibleString(
-                    displayText = details.taxStatus.description
-                ),
+                title = details.taxStatus.title,
+                description = details.taxStatus.description,
                 iconStyle = details.taxStatus.iconStyle,
                 isFirst = true,
                 background = Color.Transparent
             )
 
             StatusListItem(
-                title = details.motStatus.title?.let {
-                    AccessibleString(
-                        displayText = it,
-                        altText = details.motStatus.titleAltText
-                    )
-                },
-                description = AccessibleString(
-                    displayText = details.motStatus.description
-                ),
+                title = details.motStatus.title,
+                description = details.motStatus.description,
                 iconStyle = details.motStatus.iconStyle,
                 isLast = true,
                 background = Color.Transparent
@@ -271,13 +260,13 @@ private fun SuccessScreenPreview() {
             )
         ),
         StatusRowUiModel(
-            title = "Tax status",
-            description = "",
+            title = AccessibleString("Tax status"),
+            description = AccessibleString(""),
             iconStyle = StatusListItemIconStyle.Success
         ),
         StatusRowUiModel(
-            title = "MOT status",
-            description = "",
+            title = AccessibleString("MOT status"),
+            description = AccessibleString(""),
             iconStyle = StatusListItemIconStyle.Success
         ),
         specifications = listOf()

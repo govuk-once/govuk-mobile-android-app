@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import uk.gov.govuk.dvla.remote.model.CurrentLicence
 import uk.gov.govuk.dvla.remote.model.ExhaustEmissions
 import uk.gov.govuk.dvla.remote.model.Vehicle
 import uk.gov.govuk.dvla.remote.model.common.VehicleColour as RemoteVehicleColour
@@ -33,6 +34,8 @@ class CustomerVehicleMapperTest {
             every { engineCapacity } returns 1000
             every { exhaustEmissions } returns ExhaustEmissions(100, 2.0, 3.0, 4.0, 5.0, 6.0)
             every { keeper } returns null
+            every { sornStart } returns "2020-06-01"
+            every { currentLicence } returns CurrentLicence(0, "Payment Method")
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -51,6 +54,8 @@ class CustomerVehicleMapperTest {
         assertEquals(1000, result.engineCapacity)
         assertEquals(ExhaustEmissions(100, 2.0, 3.0, 4.0, 5.0, 6.0), result.exhaustEmissions)
         assertEquals(null, result.keeper)
+        assertEquals(LocalDate.of(2020, 6, 1), result.sornStart)
+        assertEquals(CurrentLicence(0, "Payment Method"), result.currentLicence)
     }
 
     @Test
@@ -71,6 +76,8 @@ class CustomerVehicleMapperTest {
             every { engineCapacity } returns null
             every { exhaustEmissions } returns null
             every { keeper } returns null
+            every { sornStart } returns null
+            every { currentLicence } returns null
         }
 
         val result = remoteVehicle.toCustomerVehicle()
@@ -89,5 +96,7 @@ class CustomerVehicleMapperTest {
         assertNull(result.engineCapacity)
         assertNull(result.exhaustEmissions)
         assertNull(result.keeper)
+        assertNull(result.sornStart)
+        assertNull(result.currentLicence)
     }
 }

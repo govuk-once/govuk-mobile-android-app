@@ -95,18 +95,18 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onRenewLicenceClicked(text: String, url: String) {
-        analyticsClient.buttonClick(
-            text = text,
-            external = true,
-            section = SECTION,
-            url = url
-        )
-    }
-
     fun onButtonClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
+            section = SECTION
+        )
+    }
+
+    fun onExternalButtonClicked(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
             section = SECTION
         )
     }
