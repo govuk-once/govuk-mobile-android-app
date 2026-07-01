@@ -24,10 +24,13 @@ internal class DeeplinkHandler @Inject constructor(
     private val topicsDeepLinksProvider: TopicsDeepLinksProvider
 ) {
 
-    companion object {
-        private const val LINKED_SERVICE_CALLBACK_PREFIX = "callback"
-        private const val LINKED_SERVICE_AUTH_SUFFIX = "auth"
-        private const val LINKED_SERVICE_SEGMENT_COUNT = 3
+    private object LinkedServiceCallbackParams {
+        const val CALLBACK_PREFIX = "callback"
+        const val AUTH_SUFFIX = "auth"
+        const val SEGMENT_COUNT = 3
+
+        const val PARAM_FAILURE = "failure"
+        const val PARAM_ERROR_MESSAGE = "errormessage"
     }
 
     var deepLink: Uri? = null
@@ -100,10 +103,10 @@ internal class DeeplinkHandler @Inject constructor(
         val segments = uri.pathSegments
 
         // prevent accidentally handling longer paths
-        if (segments.size != LINKED_SERVICE_SEGMENT_COUNT) return false
+        if (segments.size != LinkedServiceCallbackParams.SEGMENT_COUNT) return false
 
         val (prefix, serviceName, suffix) = segments
-        if (prefix != LINKED_SERVICE_CALLBACK_PREFIX || suffix != LINKED_SERVICE_AUTH_SUFFIX) return false
+        if (prefix != LinkedServiceCallbackParams.CALLBACK_PREFIX || suffix != LinkedServiceCallbackParams.AUTH_SUFFIX) return false
 
         val service = LinkedService.entries.find { it.serviceName == serviceName }
 
@@ -127,8 +130,18 @@ internal class DeeplinkHandler @Inject constructor(
                 popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
                 launchSingleTop = true
             }
+        } else {
+            // error messages are shown in the web flow and the user is taken back to the app
+
+            val isFailure = uri.getQueryParameter(LinkedServiceCallbackParams.PARAM_FAILURE)
+                ?.toBoolean() == true
+
+            if (isFailure) {
+                val errorMessage = uri.getQueryParameter(LinkedServiceCallbackParams.PARAM_ERROR_MESSAGE)
+
+                // TODO We may need to report to analytics (with error message if present or generic one if not), awaiting requirements
+            }
         }
-        // error messages are shown in the web flow and the user is taken back to the app
 
         return true
     }
