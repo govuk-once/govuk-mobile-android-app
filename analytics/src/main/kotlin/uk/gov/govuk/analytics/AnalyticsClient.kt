@@ -144,6 +144,21 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun menuItemClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
+        navigation(
+            text = text,
+            type = "menu",
+            url = url,
+            external = external,
+            section = section
+        )
+    }
+
     fun chat() {
         logEvent(
             "Chat",
@@ -221,6 +236,19 @@ class AnalyticsClient @Inject constructor(
         function(
             text = text,
             type = "Button",
+            section = section,
+            action = action
+        )
+    }
+
+    fun menuItemFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
+        function(
+            text = text,
+            type = "Menu",
             section = section,
             action = action
         )

@@ -11,7 +11,8 @@ data class LicenceSummaryUiModel(
     val addressLine1: String,
     val city: String,
     val postcode: String,
-    val statusUi: LicenceStatusUiModel
+    val statusUi: LicenceStatusUiModel,
+    val menuItems: List<OverflowMenuItem> = emptyList()
 ) {
     val formattedAddressLines: List<String>
         get() = asAddressList(
