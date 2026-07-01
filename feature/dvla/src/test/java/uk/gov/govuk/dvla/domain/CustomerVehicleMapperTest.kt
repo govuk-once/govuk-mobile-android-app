@@ -26,6 +26,7 @@ class CustomerVehicleMapperTest {
             every { motExpiryDate } returns "2026-06-01"
             every { taxStatus } returns RemoteTaxStatus.TAXED
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
+            every { sornStart } returns "2025-01-01"
             every { dateOfFirstRegistration } returns "2020-06-01"
             every { fuelType } returns RemoteFuelType.PETROL
             every { colour } returns RemoteVehicleColour.MULTI_COLOUR
@@ -44,6 +45,7 @@ class CustomerVehicleMapperTest {
         assertEquals(LocalDate.of(2025, 12, 1), result.taxExpiryDate)
         assertEquals(LocalDate.of(2026, 6, 1), result.motExpiryDate)
         assertEquals(TaxStatus.TAXED, result.taxStatus)
+        assertEquals("2025-01-01", result.sornStart)
         assertEquals(LocalDate.of(2020, 6, 1), result.dateOfFirstRegistration)
         assertEquals(FuelType.PETROL, result.fuelType)
         assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
@@ -64,6 +66,7 @@ class CustomerVehicleMapperTest {
             every { motExpiryDate } returns null
             every { taxStatus } returns null
             every { motStatus } returns RemoteMotStatus.NO_DETAILS_HELD
+            every { sornStart } returns null
             every { dateOfFirstRegistration } returns "2020-06-01"
             every { fuelType } returns RemoteFuelType.PETROL
             every { colour } returns RemoteVehicleColour.MULTI_COLOUR
@@ -82,6 +85,7 @@ class CustomerVehicleMapperTest {
         assertNull(result.taxExpiryDate)
         assertNull(result.motExpiryDate)
         assertEquals(TaxStatus.UNKNOWN, result.taxStatus)
+        assertNull(result.sornStart)
         assertEquals(LocalDate.of(2020, 6, 1), result.dateOfFirstRegistration)
         assertEquals(FuelType.PETROL, result.fuelType)
         assertEquals(VehicleColour.MULTI_COLOUR, result.colour)

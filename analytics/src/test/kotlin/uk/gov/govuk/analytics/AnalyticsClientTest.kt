@@ -999,4 +999,43 @@ class AnalyticsClientTest {
             )
         }
     }
+
+    @Test
+    fun `Given a menu item click, then log event`() {
+        analyticsClient.menuItemClick("text")
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "Navigation",
+                mapOf(
+                    "type" to "menu",
+                    "external" to false,
+                    "language" to Locale.getDefault().language,
+                    "text" to "text"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a menu item function, then log event`() {
+        analyticsClient.menuItemFunction(
+            text = "text",
+            section = "section",
+            action = "action"
+        )
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "Function",
+                mapOf(
+                    "type" to "Menu",
+                    "language" to Locale.getDefault().language,
+                    "text" to "text",
+                    "section" to "section",
+                    "action" to "action"
+                )
+            )
+        }
+    }
 }
