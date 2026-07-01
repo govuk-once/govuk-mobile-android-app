@@ -84,7 +84,7 @@ private fun CardOverflowMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-            containerColor = GovUkTheme.colourScheme.surfaces.cardDefault,
+            containerColor = GovUkTheme.colourScheme.surfaces.actionMenu,
             offset = DpOffset(x = 0.dp, y = GovUkTheme.spacing.extraSmall)
         ) {
             menuItems.forEach { item ->

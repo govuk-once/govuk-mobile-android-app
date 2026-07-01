@@ -201,7 +201,8 @@ data class GovUkColourScheme(
         val fullScreenLinkAccount: Color,
         val registrationPlate: Color,
         val cardOverflowButton: Color,
-        val countdownBar: Color
+        val countdownBar: Color,
+        val actionMenu: Color
     )
 
     data class Strokes(
@@ -369,7 +370,8 @@ internal val LightColorScheme = GovUkColourScheme(
         fullScreenLinkAccount = GreenPrimary,
         registrationPlate = YellowRegPlate,
         cardOverflowButton = BluePrimary,
-        countdownBar = AccentPurple
+        countdownBar = AccentPurple,
+        actionMenu = White
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -536,7 +538,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         fullScreenLinkAccount = GreenPrimary,
         registrationPlate = YellowRegPlate,
         cardOverflowButton = White,
-        countdownBar = AccentPurple
+        countdownBar = AccentPurple,
+        actionMenu = BlueDarker80
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -698,7 +701,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             fullScreenLinkAccount = Color.Unspecified,
             registrationPlate = Color.Unspecified,
             cardOverflowButton = Color.Unspecified,
-            countdownBar = Color.Unspecified
+            countdownBar = Color.Unspecified,
+            actionMenu = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
