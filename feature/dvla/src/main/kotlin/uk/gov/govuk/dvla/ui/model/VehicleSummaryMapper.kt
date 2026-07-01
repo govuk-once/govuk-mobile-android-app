@@ -67,7 +67,7 @@ internal class VehicleSummaryMapper @Inject constructor(
     }
 
     private fun CustomerVehicle.isPaymentMethodDirectDebit() =
-        this.currentLicence?.paymentMethod == "DirectDebit"
+        this.currentLicence?.paymentMethod == "Direct Debit"
 
     private fun getValid(title: AccessibleString, expiryDate: LocalDate?): StatusUiModel {
         val resources =
