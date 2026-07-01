@@ -41,6 +41,7 @@
     <string name="user_question_loading_text">Sending…</string>
     <string name="answer_received">Answer received</string>
     <string name="clear_dialog_title">Do you want to clear your chat history?</string>
+    <string name="clear_dialog_subtext">This will delete your chat history.</string>
     <string name="clear_dialog_positive_button">Yes, clear chat</string>
     <string name="clear_dialog_negative_button">No, not now</string>
     <string name="onboarding_page_one_header">Get quick answers from GOV.UK Chat</string>

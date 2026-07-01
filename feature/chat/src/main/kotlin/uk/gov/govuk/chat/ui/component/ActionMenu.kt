@@ -222,10 +222,16 @@ private fun ClearMenuItem(
             AlertDialog(
                 onDismissRequest = { openDialog.value = false },
                 shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-                text = {
+                title = {
                     BodyBoldLabel(
                         text = stringResource(id = R.string.clear_dialog_title),
                         color = GovUkTheme.colourScheme.textAndIcons.primary
+                    )
+                },
+                text = {
+                    BodyRegularLabel(
+                        text = stringResource(id = R.string.clear_dialog_subtext),
+                        color = GovUkTheme.colourScheme.textAndIcons.secondary
                     )
                 },
                 confirmButton = {
