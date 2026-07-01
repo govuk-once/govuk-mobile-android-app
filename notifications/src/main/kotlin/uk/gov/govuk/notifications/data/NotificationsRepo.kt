@@ -20,7 +20,7 @@ class NotificationsRepo @Inject constructor(
             // Todo - will be re-added for phase 2 or 3 of Hello UDP
             /*
             if (isNotificationsOnboardingCompleted()) {
-                sendExistingConsentWhenPreferenceUnknown(notifications.consentStatus)
+                sendExistingConsentWhenPreferenceUnknown(ConsentStatus.ACCEPTED)
             }
              */
         }

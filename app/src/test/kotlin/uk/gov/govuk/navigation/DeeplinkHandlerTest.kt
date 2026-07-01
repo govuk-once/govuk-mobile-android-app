@@ -15,6 +15,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.CHAT_ROUTE
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
+import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_DETAIL_ROUTE
 import uk.gov.govuk.search.navigation.SEARCH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPICS_EDIT_ROUTE
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
@@ -291,6 +292,23 @@ class DeeplinkHandlerTest {
         verify(exactly = 0) {
             navController.navigate(any(), any<NavOptionsBuilder.() -> Unit>())
             onLaunchBrowser.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle notifications deeplink`() {
+        every { deeplink.path } returns "/notificationcentre/detail"
+        every { deeplink.getQueryParameter("id") } returns "12345"
+        every { deeplink.toString() } returns "govuk://gov.uk/notificationcentre/detail?id=12345"
+
+        deeplinkHandler.deepLink = deeplink
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate("$NOTIFICATION_CENTRE_DETAIL_ROUTE/12345", any<NavOptionsBuilder.() -> Unit>())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk/notificationcentre/detail?id=12345")
         }
     }
 }

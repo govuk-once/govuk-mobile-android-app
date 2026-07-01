@@ -55,6 +55,7 @@ private val Grey100 = Color(0xFFE5E5E5)
 private val Grey60 = Color(0xFFF0F0F0)
 
 private val Black = Color(0xFF000000)
+private val BlackLighter25 = Color(0xFF484949)
 private val BlackLighter50 = Color(0xFF858686)
 private val BlackLighter80 = Color(0xFFCECECE)
 private val BlackAlpha30 = Color(0x4D000000)
@@ -201,7 +202,11 @@ data class GovUkColourScheme(
         val fullScreenLinkAccount: Color,
         val registrationPlate: Color,
         val cardOverflowButton: Color,
-        val countdownBar: Color
+        val countdownBar: Color,
+        val msgRead: Color,
+        val msgUnread: Color,
+        val cardMsgHeader: Color,
+        val fullScreen: Color
     )
 
     data class Strokes(
@@ -369,7 +374,11 @@ internal val LightColorScheme = GovUkColourScheme(
         fullScreenLinkAccount = GreenPrimary,
         registrationPlate = YellowRegPlate,
         cardOverflowButton = BluePrimary,
-        countdownBar = AccentPurple
+        countdownBar = AccentPurple,
+        msgRead = BlackLighter80,
+        msgUnread = RedAccent,
+        cardMsgHeader = BlackLighter95,
+        fullScreen = White
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -536,7 +545,11 @@ internal val DarkColorScheme = GovUkColourScheme(
         fullScreenLinkAccount = GreenPrimary,
         registrationPlate = YellowRegPlate,
         cardOverflowButton = White,
-        countdownBar = AccentPurple
+        countdownBar = AccentPurple,
+        msgRead = BlackLighter25,
+        msgUnread = RedAccent,
+        cardMsgHeader = BlueDarker65,
+        fullScreen = BlueDarker80
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -698,7 +711,11 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             fullScreenLinkAccount = Color.Unspecified,
             registrationPlate = Color.Unspecified,
             cardOverflowButton = Color.Unspecified,
-            countdownBar = Color.Unspecified
+            countdownBar = Color.Unspecified,
+            msgRead = Color.Unspecified,
+            msgUnread = Color.Unspecified,
+            cardMsgHeader = Color.Unspecified,
+            fullScreen = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
