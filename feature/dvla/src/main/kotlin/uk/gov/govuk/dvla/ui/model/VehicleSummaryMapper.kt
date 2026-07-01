@@ -10,6 +10,7 @@ import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
+import uk.gov.govuk.dvla.util.isDirectDebit
 import uk.gov.govuk.dvla.util.isInThePast
 import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
@@ -67,7 +68,7 @@ internal class VehicleSummaryMapper @Inject constructor(
     }
 
     private fun CustomerVehicle.isPaymentMethodDirectDebit() =
-        this.currentLicence?.paymentMethod == "Direct Debit"
+        this.currentLicence?.paymentMethod.isDirectDebit()
 
     private fun getValid(title: AccessibleString, expiryDate: LocalDate?): StatusUiModel {
         val resources =
@@ -162,7 +163,8 @@ internal class VehicleSummaryMapper @Inject constructor(
     private fun getTaxExpiringStyle() = configRepo.dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
         StatusStyle.ActionButton(
             text = AccessibleString(stringProvider.getString(R.string.renew_tax_button)),
-            url = taxVehicleUrl
+            url = taxVehicleUrl,
+            caption = AccessibleString(stringProvider.getString(R.string.renew_tax_button_caption))
         )
     }
 

@@ -24,3 +24,5 @@ fun String.toAccessibleStreetName(): String {
         .replace("1 St ", "1, St ", ignoreCase = true)
         .replace("1 St. ", "1, St. ", ignoreCase = true)
 }
+
+internal fun String?.isDirectDebit() = this == "Direct Debit"
