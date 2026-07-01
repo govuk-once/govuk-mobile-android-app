@@ -550,6 +550,27 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `Question with spaces gets trimmed`() = runTest {
+        viewModel.onSubmit("  one two three  ")
+
+        coVerify { chatRepo.askQuestion("one two three") }
+    }
+
+    @Test
+    fun `Question with new lines gets trimmed`() = runTest {
+        viewModel.onSubmit("\n\none two three\n\n")
+
+        coVerify { chatRepo.askQuestion("one two three") }
+    }
+
+    @Test
+    fun `Question with spaces and new lines gets trimmed`() = runTest {
+        viewModel.onSubmit("\n\n  one two three\n\n  ")
+
+        coVerify { chatRepo.askQuestion("one two three") }
+    }
+
+    @Test
     fun `setChatIntroSeen calls repo and updates uiState`() = runTest {
         val uiStates = mutableListOf<ChatUiState?>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
