@@ -1,7 +1,6 @@
 package uk.gov.govuk.config.data.remote.source
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
