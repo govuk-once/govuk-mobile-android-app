@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.CountdownBarListItemUiModel
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
@@ -25,18 +26,24 @@ internal class LicenceSummaryMapper @Inject constructor(
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
     }
 
-    fun toUiModel(driverSummary: DriverSummary) = LicenceSummaryUiModel(
-        licenceType = getLicenceTypeString(driverSummary.licenceType),
-        licenceNumber = driverSummary.licenceNumber,
-        name = driverSummary.fullName.toTitleCase(),
-        addressLine1 = driverSummary.addressLine1.toTitleCase(),
-        city = driverSummary.addressLine5.toTitleCase(),
-        postcode = driverSummary.postcode.uppercase(),
-        statusUi = getLicenceStatusUiModel(
-            status = driverSummary.status,
-            expiryDate = driverSummary.expiryDate
+    fun toUiModel(driverSummary: DriverSummary, dvlaUrls: DvlaUrls?): LicenceSummaryUiModel {
+        return LicenceSummaryUiModel(
+            licenceType = getLicenceTypeString(driverSummary.licenceType),
+            licenceNumber = driverSummary.licenceNumber,
+            name = driverSummary.fullName.toTitleCase(),
+            addressLine1 = driverSummary.addressLine1.toTitleCase(),
+            city = driverSummary.addressLine5.toTitleCase(),
+            postcode = driverSummary.postcode.uppercase(),
+            statusUi = getLicenceStatusUiModel(
+                status = driverSummary.status,
+                expiryDate = driverSummary.expiryDate
+            ),
+            menuItems = buildMenuItems(
+                licenceNumber = driverSummary.licenceNumber,
+                dvlaUrls = dvlaUrls
+            )
         )
-    )
+    }
 
     private fun getLicenceStatusUiModel(
         status: LicenceStatus,
@@ -110,12 +117,52 @@ internal class LicenceSummaryMapper @Inject constructor(
         return LicenceStatusUiModel.Expired(
             statusRowUi = StatusRowUiModel(
                 description = stringProvider.resolveSummaryDescription(
-                        R.string.expired_on,
-                        expiryDate
-                    ),
+                    R.string.expired_on,
+                    expiryDate
+                ),
                 iconStyle = StatusListItemIconStyle.Warning
             )
         )
+    }
+
+    private fun buildMenuItems(licenceNumber: String, dvlaUrls: DvlaUrls?): List<OverflowMenuItem> {
+        dvlaUrls ?: return emptyList()
+        return buildList {
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_copy_licence_number)
+                    ),
+                    action = MenuAction.ClipboardCopy(licenceNumber)
+                )
+            )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_change_licence_address),
+                        stringProvider.getString(R.string.menu_change_licence_address_alt_text)
+                    ),
+                    action = MenuAction.WebLink(dvlaUrls.changeLicenceAddress)
+                )
+            )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_change_licence_name_gender),
+                        stringProvider.getString(R.string.menu_change_licence_name_gender_alt_text)
+                    ),
+                    action = MenuAction.WebLink(dvlaUrls.changeNameGenderLicence)
+                )
+            )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_replace_licence)
+                    ),
+                    action = MenuAction.WebLink(dvlaUrls.replaceLicence)
+                )
+            )
+        }
     }
 
     private fun getLicenceTypeString(type: LicenceType): String =

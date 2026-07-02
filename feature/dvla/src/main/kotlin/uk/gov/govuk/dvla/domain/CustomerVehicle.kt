@@ -15,6 +15,7 @@ data class CustomerVehicle(
     val taxClass: String,
     val motStatus: MotStatus,
     val motExpiryDate: LocalDate?,
+    val sornStart: String?,
 
     // TODO: remove below when vehicle details endpoint is live
     val keeper: VehicleKeeper?,
@@ -36,6 +37,7 @@ internal fun Vehicle.toCustomerVehicle(): CustomerVehicle {
         taxClass = this.taxClass,
         motStatus = this.motStatus.toDomain(),
         motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
+        sornStart = this.sornStart,
 
         // TODO: remove below when vehicle details endpoint is live
         keeper = this.keeper,
