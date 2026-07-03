@@ -35,7 +35,6 @@ class CustomerVehicleMapperTest {
             every { engineCapacity } returns 1000
             every { exhaustEmissions } returns ExhaustEmissions(100, 2.0, 3.0, 4.0, 5.0, 6.0)
             every { keeper } returns null
-            every { sornStart } returns "2020-06-01"
             every { currentLicence } returns CurrentLicence(0, "Payment Method")
         }
 
@@ -48,7 +47,7 @@ class CustomerVehicleMapperTest {
         assertEquals(LocalDate.of(2025, 12, 1), result.taxExpiryDate)
         assertEquals(LocalDate.of(2026, 6, 1), result.motExpiryDate)
         assertEquals(TaxStatus.TAXED, result.taxStatus)
-        assertEquals("2025-01-01", result.sornStart)
+        assertEquals(LocalDate.of(2025, 1, 1), result.sornStart)
         assertEquals(LocalDate.of(2020, 6, 1), result.dateOfFirstRegistration)
         assertEquals(FuelType.PETROL, result.fuelType)
         assertEquals(VehicleColour.MULTI_COLOUR, result.colour)
@@ -56,7 +55,6 @@ class CustomerVehicleMapperTest {
         assertEquals(1000, result.engineCapacity)
         assertEquals(ExhaustEmissions(100, 2.0, 3.0, 4.0, 5.0, 6.0), result.exhaustEmissions)
         assertEquals(null, result.keeper)
-        assertEquals(LocalDate.of(2020, 6, 1), result.sornStart)
         assertEquals(CurrentLicence(0, "Payment Method"), result.currentLicence)
     }
 
@@ -79,7 +77,6 @@ class CustomerVehicleMapperTest {
             every { engineCapacity } returns null
             every { exhaustEmissions } returns null
             every { keeper } returns null
-            every { sornStart } returns null
             every { currentLicence } returns null
         }
 
@@ -100,7 +97,6 @@ class CustomerVehicleMapperTest {
         assertNull(result.engineCapacity)
         assertNull(result.exhaustEmissions)
         assertNull(result.keeper)
-        assertNull(result.sornStart)
         assertNull(result.currentLicence)
     }
 }
