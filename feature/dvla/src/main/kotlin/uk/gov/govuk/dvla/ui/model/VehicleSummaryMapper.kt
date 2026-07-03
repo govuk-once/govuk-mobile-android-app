@@ -11,7 +11,7 @@ import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
 import uk.gov.govuk.dvla.util.isDirectDebit
-import uk.gov.govuk.dvla.util.isInThePast
+import uk.gov.govuk.dvla.util.isInTheFuture
 import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
@@ -201,13 +201,16 @@ internal class VehicleSummaryMapper @Inject constructor(
     }
 
     private fun getSorn(sornStart: LocalDate?): StatusUiModel {
-        val subtitle =
-            if (sornStart?.isInThePast() == true) null else AccessibleString(
+        val subtitle = if (sornStart.isInTheFuture()) {
+            AccessibleString(
                 stringProvider.resolveSummaryDescription(
                     R.string.sorn_from,
                     sornStart?.toSummaryDisplayFormat()
                 )
             )
+        } else {
+            null
+        }
         return StatusUiModel.InfoRow(
             InfoRowUiModel(
                 title = AccessibleString(stringProvider.getString(R.string.off_the_road_sorn_message)),

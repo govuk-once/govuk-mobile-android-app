@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.util
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -66,14 +68,19 @@ class DateExtensionTest {
     }
 
     @Test
-    fun `Given isInThePast is called, when date is today, then return false`() {
+    fun `Given isInTheFuture is called, when the date is today, then return false`() {
         val today = LocalDate.now()
-        assertEquals(false, today.isInThePast())
+        assertFalse(today.isInTheFuture())
     }
 
     @Test
-    fun `Given isInThePast is called, when date is yesterday, then return true`() {
-        val todayMinusOneDay = LocalDate.now().minusDays(1)
-        assertEquals(true, todayMinusOneDay.isInThePast())
+    fun `Given isInTheFuture is called, when the date is tomorrow, then return true`() {
+        val tomorrow = LocalDate.now().plusDays(1)
+        assertTrue(tomorrow.isInTheFuture())
+    }
+
+    @Test
+    fun `Given isInTheFuture is called, when the date is null, then return false`() {
+        assertFalse(null.isInTheFuture())
     }
 }
