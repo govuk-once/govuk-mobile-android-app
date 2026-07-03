@@ -16,4 +16,5 @@
     <string name="footer">Messages are deleted after 30 days.</string>
     <string name="section_recent">Recent</string>
     <string name="section_older">Last 30 days</string>
+    <string name="notification_detail_header_content_description">%1$s Sender: %2$s</string>
 </resources>

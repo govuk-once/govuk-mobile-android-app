@@ -38,6 +38,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
@@ -263,6 +266,10 @@ private fun NotificationCentreDetailScreenLoaded(
     notification: Notification,
     launchBrowser: (url: String) -> Unit
 ) {
+        val headerContentDescription = stringResource(
+            R.string.notification_detail_header_content_description,
+            notification.detailFormattedDate,
+            notification.metadata.sender.displayName)
 
         Column(
             modifier = Modifier
@@ -280,6 +287,10 @@ private fun NotificationCentreDetailScreenLoaded(
                     .clip(RoundedCornerShape(10.dp))
                     .background(GovUkTheme.colourScheme.surfaces.cardMsgHeader)
                     .padding(16.dp)
+                    .clearAndSetSemantics {
+                        heading()
+                        contentDescription = headerContentDescription
+                    }
             ) {
                 BodyRegularLabel(
                     notification.detailFormattedDate,
@@ -288,7 +299,7 @@ private fun NotificationCentreDetailScreenLoaded(
                 )
 
                 BodyBoldLabel(
-                    "Placeholder Sender",
+                    notification.metadata.sender.displayName,
                     color = GovUkTheme.colourScheme.textAndIcons.primary,
                 )
             }

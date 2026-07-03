@@ -11,13 +11,15 @@ class NotificationCentreFixtures {
         private val referenceDate: OffsetDateTime = LocalDateTime.now()
             .atOffset(ZoneOffset.ofHours(1))
 
+        val metadata = Notification.Metadata(Notification.Metadata.Sender("test"))
         val mockNotifications = listOf(
             Notification(
                 "1",
                 "Title1",
                 "Body1",
                 "UNREAD",
-                referenceDate.format(DateTimeFormatter.ISO_DATE_TIME)
+                referenceDate.format(DateTimeFormatter.ISO_DATE_TIME),
+                metadata = metadata
             ),
             Notification(
                 "2",
@@ -25,7 +27,8 @@ class NotificationCentreFixtures {
                 "Body2",
                 "UNREAD",
                 referenceDate.minusDays(21)
-                    .format(DateTimeFormatter.ISO_DATE_TIME)
+                    .format(DateTimeFormatter.ISO_DATE_TIME),
+                metadata = metadata
             )
         )
     }

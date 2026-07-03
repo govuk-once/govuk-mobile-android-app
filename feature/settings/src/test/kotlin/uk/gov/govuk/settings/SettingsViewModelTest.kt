@@ -359,8 +359,8 @@ class SettingsViewModelTest {
             every { dvlaRepo.currentLinkState } returns ServiceLinkStatus.LINKED
             coEvery { notificationCentreRepo.getNotifications() } coAnswers { Result.Success(
                 listOf(
-                    Notification("1", "A", "B", "UNREAD", "aa"),
-                    Notification("2", "AA", "BB", "READ", "bb")
+                    Notification("1", "A", "B", "UNREAD", "aa", metadata = Notification.Metadata(Notification.Metadata.Sender("aaaaaa"))),
+                    Notification("2", "AA", "BB", "READ", "bb", metadata = Notification.Metadata(Notification.Metadata.Sender("bbbbbb")))
             )) }
 
             viewModel.onPageView()
