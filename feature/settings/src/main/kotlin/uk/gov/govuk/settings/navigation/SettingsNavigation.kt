@@ -9,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_PERMISSION_ROUTE
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
@@ -40,6 +39,7 @@ val settingsDeepLinks = mapOf("/settings" to listOf(SETTINGS_ROUTE))
 fun NavGraphBuilder.settingsGraph(
     navController: NavController,
     onBiometricsClick: () -> Unit,
+    onMessagesClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
     modifier: Modifier = Modifier
@@ -59,9 +59,7 @@ fun NavGraphBuilder.settingsGraph(
                     onYourAccountsClick = {
                         navController.navigate(YOUR_ACCOUNTS_ROUTE)
                     },
-                    onMessagesClick = {
-                        navController.navigate(NOTIFICATION_CENTRE_GRAPH_ROUTE)
-                    },
+                    onMessagesClick = onMessagesClick,
                     onSignOutClick = {
                         navController.navigate(SIGN_OUT_GRAPH_ROUTE)
                     },

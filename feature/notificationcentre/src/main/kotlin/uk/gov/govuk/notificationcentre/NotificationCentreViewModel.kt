@@ -62,7 +62,7 @@ internal class NotificationCentreViewModel @Inject constructor(
                             NotificationCentreUiState.Empty
                         } else {
                             val sorted = notifications.value.sortedBy { it.date }
-                            val sevenDaysBack = Instant.now().minus(7, ChronoUnit.HOURS)
+                            val sevenDaysBack = Instant.now().minus(7, ChronoUnit.DAYS)
                             val groups = NotificationGroups(
                                 sorted.filter { it.date >= sevenDaysBack },
                                 sorted.filter { it.date < sevenDaysBack }

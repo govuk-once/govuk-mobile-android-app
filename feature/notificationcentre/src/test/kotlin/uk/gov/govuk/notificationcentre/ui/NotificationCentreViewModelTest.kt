@@ -170,10 +170,11 @@ class NotificationCentreViewModelTest {
 
             val notifications = (lastState as NotificationCentreUiState.Loaded).notifications
 
-            assertTrue(notifications.recent.size == 1)
+            assertTrue(notifications.recent.size == 2)
             assertTrue(notifications.recent.contains(mockNotifications[0]))
+            assertTrue(notifications.recent.contains(mockNotifications[1]))
             assertTrue(notifications.older.size == 1)
-            assertTrue(notifications.older.contains(mockNotifications[1]))
+            assertTrue(notifications.older.contains(mockNotifications[2]))
 
         }
     }

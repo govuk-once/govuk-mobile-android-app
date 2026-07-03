@@ -9,7 +9,7 @@ interface DateProvider {
     val date: Instant
 }
 
-interface NotificationCentreRepo {
+internal interface NotificationCentreRepo {
     suspend fun getNotifications(): Result<List<Notification>>
     suspend fun getSingleNotification(notificationId: String): Result<Notification?>
     suspend fun updateNotification(notificationId: String, status: UpdateNotificationRequestBody.Status): Result<Unit>

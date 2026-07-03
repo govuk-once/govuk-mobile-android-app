@@ -7,14 +7,15 @@
     <string name="unread_content_description">Unread</string>
     <string name="empty_body">Your messages will appear here</string>
     <string name="notification_centre_title">Messages</string>
-    <string name="mark_as_unread">Mark notification as unread</string>
-    <string name="delete_notification">Delete notification</string>
-    <string name="delete_notification_sheet_title">Delete notification?</string>
-    <string name="delete_notification_sheet_body">This notification will be permanently deleted. This action cannot be undone.</string>
-    <string name="delete_notification_sheet_confirm">Delete notification</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="delete_notification">Delete</string>
+    <string name="delete_notification_sheet_title">Delete this message?</string>
+    <string name="delete_notification_sheet_body">You won’t be able to recover it once deleted.</string>
+    <string name="delete_notification_sheet_confirm">Delete</string>
     <string name="delete_notification_sheet_cancel">Cancel</string>
     <string name="footer">Messages are deleted after 30 days.</string>
     <string name="section_recent">Recent</string>
     <string name="section_older">Last 30 days</string>
     <string name="notification_detail_header_content_description">%1$s Sender: %2$s</string>
+    <string name="notification_markdown_link_opens_in_browser">opens in web browser</string>
 </resources>

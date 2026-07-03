@@ -571,6 +571,7 @@ private fun GovUkNavHost(
         settingsGraph(
             navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
+            onMessagesClick = { navController.navigateToNotificationCentre() },
             appVersion = BuildConfig.VERSION_NAME_USER_FACING,
             launchBrowser = { url ->
                 browserLauncher.launchPartial(

@@ -7,6 +7,7 @@
     </base-config>
     <debug-overrides>
         <trust-anchors>
+            <certificates src="system" />
             <certificates src="user" />
         </trust-anchors>
     </debug-overrides>

@@ -12,8 +12,7 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
-import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
+import uk.gov.govuk.notificationcentre.NotificationCentreFeature
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
@@ -53,7 +52,7 @@ internal class SettingsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val configRepo: ConfigRepo,
     private val dvlaRepo: DvlaRepo,
-    private val notificationCentreRepo: NotificationCentreRepo
+    private val notificationCentreFeature: NotificationCentreFeature
 ): ViewModel() {
 
     companion object {
@@ -78,19 +77,20 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     private fun loadMessages() {
-        if (_uiState.value?.messageRowState == MessageRowState.Unknown) {
-            viewModelScope.launch {
-                _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
-
-                when (dvlaRepo.currentLinkState) {
+        viewModelScope.launch {
+            dvlaRepo.linkState.collect { state ->
+                when (state) {
                     ServiceLinkStatus.CHECKING -> {
-                        // TODO Implement
+                        _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
                     }
                     ServiceLinkStatus.UNLINKED -> {
                         loadMessageCount(false)
                     }
                     ServiceLinkStatus.LINKED -> {
                         loadMessageCount(true)
+                    }
+                    ServiceLinkStatus.ERROR -> {
+                        loadMessageCount(false)
                     }
                 }
             }
@@ -103,14 +103,9 @@ internal class SettingsViewModel @Inject constructor(
             return
         }
 
-        when (val messages = notificationCentreRepo.getNotifications()) {
-            is Result.Success -> {
-                _uiState.update { it?.copy(messageRowState = MessageRowState.Loaded(messages.value.count { msg -> msg.isUnread })) }
-            }
-            else -> {
-                _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
-            }
-
+        when (val unreadCount = notificationCentreFeature.getUnreadCount()) {
+            null -> _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
+            else -> _uiState.update { it?.copy(messageRowState = MessageRowState.Loaded(unreadCount)) }
         }
     }
 

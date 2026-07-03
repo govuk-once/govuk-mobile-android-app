@@ -1,4 +1,4 @@
-package uk.gov.govuk.chat.parser
+package uk.gov.govuk.design.markdown
 
 import org.commonmark.node.BlockQuote
 import org.commonmark.node.BulletList
@@ -18,8 +18,8 @@ import org.commonmark.node.StrongEmphasis
 import org.commonmark.node.Text
 import org.commonmark.node.ThematicBreak
 import org.commonmark.parser.Parser
-import uk.gov.govuk.chat.parser.model.InlineContent
-import uk.gov.govuk.chat.parser.model.MarkdownElement
+import uk.gov.govuk.design.markdown.model.InlineContent
+import uk.gov.govuk.design.markdown.model.MarkdownElement
 import java.util.UUID
 
 class MarkdownParser {

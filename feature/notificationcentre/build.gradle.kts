@@ -59,9 +59,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
 
-    implementation(libs.multiplatform.markdown.renderer)
-    implementation(libs.multiplatform.markdown.renderer.m3)
-
     implementation(libs.androidx.compose.animation)
 
     ksp(libs.hilt.compiler)

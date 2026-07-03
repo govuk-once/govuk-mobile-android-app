@@ -26,6 +26,15 @@ class NotificationCentreFixtures {
                 "Title2",
                 "Body2",
                 "UNREAD",
+                referenceDate.minusDays(3)
+                    .format(DateTimeFormatter.ISO_DATE_TIME),
+                metadata = metadata
+            ),
+            Notification(
+                "2",
+                "Title2",
+                "Body2",
+                "UNREAD",
                 referenceDate.minusDays(21)
                     .format(DateTimeFormatter.ISO_DATE_TIME),
                 metadata = metadata

@@ -19,7 +19,7 @@ class DateProviderImpl: DateProvider {
 }
 
 @Singleton
-class NotificationCentreRepoImpl @Inject constructor(
+internal class NotificationCentreRepoImpl @Inject constructor(
     private val notificationCentreApi: NotificationCentreApi,
     private val authRepo: AuthRepo,
     private val dateProvider: DateProvider

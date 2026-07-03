@@ -1,4 +1,4 @@
-package uk.gov.govuk.chat.ui.component
+package uk.gov.govuk.notificationcentre.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +31,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.chat.R
+import uk.gov.govuk.notificationcentre.R
 import uk.gov.govuk.design.markdown.MarkdownParser
 import uk.gov.govuk.design.markdown.appendInlineContent
 import uk.gov.govuk.design.markdown.collectLinks
@@ -44,27 +44,22 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 internal fun Markdown(
     text: String,
-    onMarkdownLinkClicked: (String, String) -> Unit,
-    markdownLinkType: String,
-    modifier: Modifier = Modifier,
-    accessibilityPrefix: String? = null
+    onLinkClick: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val parser = remember { MarkdownParser() }
     val elements = remember(text) { parser.parse(text) }
-    val linkAccessibilityLabel = stringResource(R.string.sources_open_in_text)
+    val linkAccessibilityLabel = stringResource(R.string.notification_markdown_link_opens_in_browser)
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = GovUkTheme.spacing.medium),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        elements.forEachIndexed { index, element ->
+        elements.forEach { element ->
             MarkdownElementItem(
                 element = element,
-                onLinkClick = { url -> onMarkdownLinkClicked(markdownLinkType, url) },
-                linkAccessibilityLabel = linkAccessibilityLabel,
-                accessibilityPrefix = if (index == 0) accessibilityPrefix else null
+                onLinkClick = onLinkClick,
+                linkAccessibilityLabel = linkAccessibilityLabel
             )
         }
     }
@@ -74,16 +69,27 @@ internal fun Markdown(
 private fun MarkdownElementItem(
     element: MarkdownElement,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String,
-    accessibilityPrefix: String? = null
+    linkAccessibilityLabel: String
 ) {
     when (element) {
-        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
-        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
-        is MarkdownElement.CodeBlock -> CodeBlockItem(element, accessibilityPrefix)
-        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
-        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick, linkAccessibilityLabel, accessibilityPrefix)
+        is MarkdownElement.Heading -> HeadingItem(element, onLinkClick, linkAccessibilityLabel)
+        is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick, linkAccessibilityLabel)
+        is MarkdownElement.CodeBlock -> CodeBlockItem(element)
+        is MarkdownElement.BlockQuote -> BlockQuoteItem(element, onLinkClick, linkAccessibilityLabel)
+        is MarkdownElement.ListItem -> ListItemItem(element, onLinkClick, linkAccessibilityLabel)
         is MarkdownElement.ThematicBreak -> ThematicBreakItem()
+    }
+}
+
+@Composable
+private fun headingStyle(level: Int): TextStyle {
+    return when (level) {
+        1 -> GovUkTheme.typography.titleLargeBold
+        2 -> GovUkTheme.typography.title1Bold
+        3 -> GovUkTheme.typography.title2Bold
+        4 -> GovUkTheme.typography.title3Bold
+        5 -> GovUkTheme.typography.subheadlineBold
+        else -> GovUkTheme.typography.captionBold
     }
 }
 
@@ -91,12 +97,11 @@ private fun MarkdownElementItem(
 private fun HeadingItem(
     heading: MarkdownElement.Heading,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String,
-    accessibilityPrefix: String? = null
+    linkAccessibilityLabel: String
 ) {
     SegmentedText(
         content = heading.content,
-        style = GovUkTheme.typography.bodyBold,
+        style = headingStyle(heading.level),
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
@@ -104,7 +109,6 @@ private fun HeadingItem(
                 heading.content,
                 heading.plainText,
                 linkAccessibilityLabel,
-                accessibilityPrefix,
                 isHeading = true
             )
     )
@@ -114,8 +118,7 @@ private fun HeadingItem(
 private fun ParagraphItem(
     paragraph: MarkdownElement.Paragraph,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String,
-    accessibilityPrefix: String? = null
+    linkAccessibilityLabel: String
 ) {
     SegmentedText(
         content = paragraph.content,
@@ -123,25 +126,15 @@ private fun ParagraphItem(
         onLinkClick = onLinkClick,
         modifier = Modifier
             .fillMaxWidth()
-            .withLinkAccessibility(
-                paragraph.content,
-                paragraph.plainText,
-                linkAccessibilityLabel,
-                accessibilityPrefix
-            )
+            .withLinkAccessibility(paragraph.content, paragraph.plainText, linkAccessibilityLabel)
     )
 }
 
 @Composable
-private fun CodeBlockItem(
-    codeBlock: MarkdownElement.CodeBlock,
-    accessibilityPrefix: String? = null
-) {
-    val accessibilityText = accessibilityPrefix?.let { "$it ${codeBlock.plainText}" }
-
+private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = GovUkTheme.colourScheme.surfaces.chatIntroCardBackground,
+        color = GovUkTheme.colourScheme.surfaces.cardMsgHeader,
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
@@ -150,13 +143,7 @@ private fun CodeBlockItem(
                 fontFamily = FontFamily.Monospace
             ),
             color = GovUkTheme.colourScheme.textAndIcons.primary,
-            modifier = Modifier
-                .padding(12.dp)
-                .then(
-                    if (accessibilityText != null) {
-                        Modifier.semantics { contentDescription = accessibilityText }
-                    } else Modifier
-                )
+            modifier = Modifier.padding(12.dp)
         )
     }
 }
@@ -165,8 +152,7 @@ private fun CodeBlockItem(
 private fun BlockQuoteItem(
     blockQuote: MarkdownElement.BlockQuote,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String,
-    accessibilityPrefix: String? = null
+    linkAccessibilityLabel: String
 ) {
     Row(
         modifier = Modifier
@@ -181,22 +167,15 @@ private fun BlockQuoteItem(
         )
         Surface(
             modifier = Modifier.weight(1f),
-            color = GovUkTheme.colourScheme.surfaces.chatIntroCardBackground
+            color = GovUkTheme.colourScheme.surfaces.cardMsgHeader
         ) {
             SegmentedText(
                 content = blockQuote.content,
-                style = GovUkTheme.typography.bodyRegular.copy(
-                    fontStyle = FontStyle.Italic
-                ),
+                style = GovUkTheme.typography.bodyRegular.copy(fontStyle = FontStyle.Italic),
                 onLinkClick = onLinkClick,
                 modifier = Modifier
                     .padding(12.dp)
-                    .withLinkAccessibility(
-                        blockQuote.content,
-                        blockQuote.plainText,
-                        linkAccessibilityLabel,
-                        accessibilityPrefix
-                    )
+                    .withLinkAccessibility(blockQuote.content, blockQuote.plainText, linkAccessibilityLabel)
             )
         }
     }
@@ -206,15 +185,10 @@ private fun BlockQuoteItem(
 private fun ListItemItem(
     listItem: MarkdownElement.ListItem,
     onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String,
-    accessibilityPrefix: String? = null
+    linkAccessibilityLabel: String
 ) {
     val indent = ((listItem.depth + 1) * 16).dp
-    val bullet = if (listItem.isOrdered) {
-        "${listItem.number}."
-    } else {
-        "\u2022"
-    }
+    val bullet = if (listItem.isOrdered) "${listItem.number}." else "\u2022"
 
     Row(
         modifier = Modifier
@@ -225,8 +199,7 @@ private fun ListItemItem(
             text = bullet,
             style = GovUkTheme.typography.bodyRegular,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
-            modifier = Modifier
-                .clearAndSetSemantics { }
+            modifier = Modifier.clearAndSetSemantics { }
         )
         SegmentedText(
             content = listItem.content,
@@ -235,12 +208,7 @@ private fun ListItemItem(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp)
-                .withLinkAccessibility(
-                    listItem.content,
-                    listItem.plainText,
-                    linkAccessibilityLabel,
-                    accessibilityPrefix
-                )
+                .withLinkAccessibility(listItem.content, listItem.plainText, linkAccessibilityLabel)
         )
     }
 }
@@ -264,13 +232,12 @@ private fun SegmentedText(
     onLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.linkPrimary
     val codeBackground = GovUkTheme.colourScheme.surfaces.background
     val links = remember(content) { collectLinks(content) }
 
     when {
         links.isEmpty() -> {
-            // 0 links: render as single Text element
             val annotatedString = remember(content) {
                 buildAnnotatedString {
                     appendInlineContent(content, this, emptyList(), linkColor, codeBackground)
@@ -280,21 +247,27 @@ private fun SegmentedText(
                 text = annotatedString,
                 style = style,
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = if (links.size == 1) {
-                    modifier.clickable { onLinkClick(links[0]) }
-                } else {
-                    modifier
+                modifier = modifier
+            )
+        }
+        links.size == 1 -> {
+            val annotatedString = remember(content) {
+                buildAnnotatedString {
+                    appendInlineContent(content, this, emptyList(), linkColor, codeBackground)
                 }
+            }
+            Text(
+                text = annotatedString,
+                style = style,
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                modifier = modifier.clickable { onLinkClick(links[0]) }
             )
         }
         else -> {
-            // Multiple links: split into segments
             val segments = remember(content) {
                 splitIntoSegments(content, linkColor, codeBackground)
             }
-            FlowRow(
-                modifier = modifier
-            ) {
+            FlowRow(modifier = modifier) {
                 segments.forEach { segment ->
                     Text(
                         text = segment.text,
@@ -313,13 +286,11 @@ private fun Modifier.withLinkAccessibility(
     content: List<InlineContent>,
     plainText: String,
     linkAccessibilityLabel: String,
-    accessibilityPrefix: String? = null,
     isHeading: Boolean = false
 ): Modifier {
     val hasLinks = hasLinks(content)
     val accessibilityText =
         buildString {
-            accessibilityPrefix?.let { append("$it. ") }
             append(plainText)
             if (hasLinks) append(". $linkAccessibilityLabel")
         }.replace(
@@ -332,4 +303,3 @@ private fun Modifier.withLinkAccessibility(
         contentDescription = accessibilityText
     }
 }
-

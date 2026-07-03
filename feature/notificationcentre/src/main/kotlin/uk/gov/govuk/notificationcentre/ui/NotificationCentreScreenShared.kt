@@ -1,6 +1,7 @@
 package uk.gov.govuk.notificationcentre.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -104,14 +105,19 @@ internal fun NotificationCentreScreenError() {
 
 @Composable
 internal fun Footer() {
-    CalloutRegularLabel(
-        stringResource(R.string.footer),
-        textAlign = TextAlign.Center,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-        color = GovUkTheme.colourScheme.textAndIcons.secondary
-    )
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+    ) {
+        CalloutRegularLabel(
+            stringResource(R.string.footer),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth(),
+            color = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
+    }
 }
 
 @Preview(showBackground = true)

@@ -30,9 +30,7 @@ internal sealed class TopLevelDestination(
         associatedRoutes = listOf(
             VISITED_ROUTE,
             TOPIC_ROUTE,
-            TOPICS_ALL_STEP_BY_STEPS_ROUTE,
-            NOTIFICATION_CENTRE_GRAPH_START_DESTINATION,
-            NOTIFICATION_CENTRE_DETAIL_ROUTE
+            TOPICS_ALL_STEP_BY_STEPS_ROUTE
         )
     )
 
@@ -45,7 +43,11 @@ internal sealed class TopLevelDestination(
     internal data object Settings : TopLevelDestination(
         route = SETTINGS_GRAPH_ROUTE,
         stringResId = R.string.settings,
-        icon = ic_settings
+        icon = ic_settings,
+        associatedRoutes = listOf(
+            NOTIFICATION_CENTRE_GRAPH_START_DESTINATION,
+            NOTIFICATION_CENTRE_DETAIL_ROUTE
+        )
     )
 
     companion object {
