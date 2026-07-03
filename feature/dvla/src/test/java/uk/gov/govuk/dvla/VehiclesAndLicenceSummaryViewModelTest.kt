@@ -289,6 +289,35 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
+    fun `When onButtonClicked is called, then analytics event is fired with correct parameters`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+
+            advanceUntilIdle()
+
+            viewModel.onButtonClicked(
+                text = "Text"
+            )
+            advanceUntilIdle()
+
+            verify(exactly = 1) {
+                analyticsClient.buttonClick(
+                    text = "Text",
+                    external = false,
+                    section = "Driving"
+                )
+            }
+        }
+
+    @Test
     fun `When onExternalButtonClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
         every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
