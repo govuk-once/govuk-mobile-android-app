@@ -1,9 +1,8 @@
 package uk.gov.govuk.dvla.ui.model
 
-import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
-import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.TaxStatus
@@ -13,54 +12,122 @@ import uk.gov.govuk.dvla.util.isDateWithinDayRange
 import uk.gov.govuk.dvla.util.isDirectDebit
 import uk.gov.govuk.dvla.util.isInTheFuture
 import uk.gov.govuk.dvla.util.isToday
+import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import java.time.LocalDate
 import javax.inject.Inject
 
 internal class VehicleSummaryMapper @Inject constructor(
-    private val stringProvider: StringProvider,
-    private val configRepo: ConfigRepo
+    private val stringProvider: StringProvider
 ) {
     private companion object {
         const val UPPER_RANGE_OF_TAX_EXPIRY_DAYS = 28
     }
 
-    fun toUiModel(vehicle: CustomerVehicle): VehicleSummaryUiModel {
+    fun toUiModel(vehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): VehicleSummaryUiModel {
         return VehicleSummaryUiModel(
             registration = vehicle.registration,
             make = vehicle.make,
             model = vehicle.model
                 ?: "Unknown", // TODO return unknown for now, other states in future tickets
-            taxStatus = getTaxStatus(vehicle = vehicle),
-            motStatus = getMotStatus(vehicle = vehicle)
+            taxStatus = getTaxStatus(vehicle = vehicle, dvlaUrls = dvlaUrls),
+            motStatus = getMotStatus(vehicle = vehicle),
+            menuItems = buildMenuItems(
+                hasSorn = vehicle.sornStart != null,
+                isTaxed = vehicle.taxStatus == TaxStatus.TAXED,
+                dvlaUrls = dvlaUrls
+            )
         )
+    }
+
+    private fun buildMenuItems(
+        hasSorn: Boolean,
+        isTaxed: Boolean,
+        dvlaUrls: DvlaUrls?
+    ): List<OverflowMenuItem> {
+        dvlaUrls ?: return emptyList()
+        return buildList {
+            if (hasSorn) {
+                add(
+                    OverflowMenuItem(
+                        text = AccessibleString(stringProvider.getString(R.string.menu_sorn_rules)),
+                        action = MenuAction.WebLink(dvlaUrls.sornRules)
+                    )
+                )
+            }
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_report_as_sold),
+                        stringProvider.getString(R.string.menu_report_as_sold_alt_text)
+                    ),
+                    action = MenuAction.WebLink(dvlaUrls.soldVehicle)
+                )
+            )
+            if (!hasSorn) {
+                add(
+                    OverflowMenuItem(
+                        text = AccessibleString(
+                            stringProvider.getString(R.string.menu_register_off_road),
+                            stringProvider.getString(R.string.menu_register_off_road_alt_text)
+                        ),
+                        action = MenuAction.WebLink(dvlaUrls.makeSorn)
+                    )
+                )
+            }
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(stringProvider.getString(R.string.menu_get_log_book)),
+                    action = MenuAction.WebLink(dvlaUrls.getLogbook)
+                )
+            )
+            add(
+                OverflowMenuItem(
+                    text = AccessibleString(stringProvider.getString(R.string.menu_change_log_book_address)),
+                    action = MenuAction.WebLink(dvlaUrls.changeLogbookAddress)
+                )
+            )
+            if (isTaxed) {
+                add(
+                    OverflowMenuItem(
+                        text = AccessibleString(
+                            stringProvider.getString(R.string.menu_cancel_tax),
+                            stringProvider.getString(R.string.menu_cancel_tax_alt_text)
+                        ),
+                        action = MenuAction.WebLink(dvlaUrls.cancelTax)
+                    )
+                )
+            }
+        }
     }
 
     private fun getMotStatus(vehicle: CustomerVehicle): StatusUiModel {
         when (vehicle.taxStatus) {
             TaxStatus.SORN -> return StatusUiModel.NoStatus
-            else -> { /* Do nothing */ }
+            else -> { /* Do nothing */
+            }
         }
         // TODO: MOT states in future ticket
         return getValid(getMotStatusTitle(), vehicle.motExpiryDate)
     }
 
-    private fun getTaxStatus(vehicle: CustomerVehicle): StatusUiModel {
+    private fun getTaxStatus(vehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): StatusUiModel {
         val expiryDate = vehicle.taxExpiryDate
         return when (vehicle.taxStatus) {
             TaxStatus.TAXED -> {
                 if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_TAX_EXPIRY_DAYS) == true) {
                     if (vehicle.isPaymentMethodDirectDebit()) {
-                        getTaxExpiringDirectDebit(expiryDate)
+                        getTaxExpiringDirectDebit(expiryDate, dvlaUrls)
                     } else {
-                        getTaxExpiring(expiryDate)
+                        getTaxExpiring(expiryDate, dvlaUrls)
                     }
                 } else {
                     getValid(getTaxStatusTitle(), expiryDate)
                 }
             }
-            TaxStatus.UNTAXED -> getTaxExpired(expiryDate)
+
+            TaxStatus.UNTAXED -> getTaxExpired(expiryDate, dvlaUrls)
             TaxStatus.SORN -> getSorn(vehicle.sornStart)
             TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getNotNeeded(getTaxStatusTitle())
             TaxStatus.UNKNOWN -> getUnknown(getTaxStatusTitle())
@@ -147,7 +214,7 @@ internal class VehicleSummaryMapper @Inject constructor(
 
     /* Tax specific functions START */
 
-    private fun getTaxExpiring(expiryDate: LocalDate): StatusUiModel {
+    private fun getTaxExpiring(expiryDate: LocalDate, dvlaUrls: DvlaUrls?): StatusUiModel {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return StatusUiModel.CountdownRow(
             countdownBarUi = StatusCountdownUiModel(
@@ -155,12 +222,12 @@ internal class VehicleSummaryMapper @Inject constructor(
                 percentage = expiryDate.asPercentageOfDaysLeftForTax(),
                 bottomText = getExpiringBottomText(expiryDate),
                 title = getTaxStatusTitle(),
-                style = getTaxExpiringStyle()
+                style = getTaxExpiringStyle(dvlaUrls)
             )
         )
     }
 
-    private fun getTaxExpiringStyle() = configRepo.dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
+    private fun getTaxExpiringStyle(dvlaUrls: DvlaUrls?) = dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
         StatusStyle.ActionButton(
             text = AccessibleString(stringProvider.getString(R.string.renew_tax_button)),
             url = taxVehicleUrl,
@@ -168,7 +235,7 @@ internal class VehicleSummaryMapper @Inject constructor(
         )
     }
 
-    private fun getTaxExpiringDirectDebit(expiryDate: LocalDate): StatusUiModel {
+    private fun getTaxExpiringDirectDebit(expiryDate: LocalDate, dvlaUrls: DvlaUrls?): StatusUiModel {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return StatusUiModel.CountdownRow(
             countdownBarUi = StatusCountdownUiModel(
@@ -176,17 +243,18 @@ internal class VehicleSummaryMapper @Inject constructor(
                 percentage = expiryDate.asPercentageOfDaysLeftForTax(),
                 bottomText = AccessibleString(stringProvider.getString(R.string.paying_by_direct_debit)),
                 title = getTaxStatusTitle(),
-                style = getExpiringDirectDebitStyle()
+                style = getExpiringDirectDebitStyle(dvlaUrls)
             )
         )
     }
 
-    private fun LocalDate.asPercentageOfDaysLeftForTax() = this.getNumberOfDaysWithinDayRangeAsPercentage(
-        UPPER_RANGE_OF_TAX_EXPIRY_DAYS
-    )
+    private fun LocalDate.asPercentageOfDaysLeftForTax() =
+        this.getNumberOfDaysWithinDayRangeAsPercentage(
+            UPPER_RANGE_OF_TAX_EXPIRY_DAYS
+        )
 
-    private fun getExpiringDirectDebitStyle() =
-        configRepo.dvlaUrls?.manageTaxPayment?.let { manageTaxPaymentUrl ->
+    private fun getExpiringDirectDebitStyle(dvlaUrls: DvlaUrls?) =
+        dvlaUrls?.manageTaxPayment?.let { manageTaxPaymentUrl ->
             StatusStyle.ActionButton(
                 text = AccessibleString(stringProvider.getString(R.string.manage_payment_button)),
                 url = manageTaxPaymentUrl,
@@ -194,10 +262,10 @@ internal class VehicleSummaryMapper @Inject constructor(
             )
         }
 
-    private fun getTaxExpired(expiryDate: LocalDate?): StatusUiModel {
+    private fun getTaxExpired(expiryDate: LocalDate?, dvlaUrls: DvlaUrls?): StatusUiModel {
         val resources =
             Triple(R.string.expired_on, R.string.expired, StatusListItemIconStyle.Warning)
-        return getStatusRow(getTaxStatusTitle(), expiryDate, resources, getTaxExpiringStyle())
+        return getStatusRow(getTaxStatusTitle(), expiryDate, resources, getTaxExpiringStyle(dvlaUrls))
     }
 
     private fun getSorn(sornStart: LocalDate?): StatusUiModel {

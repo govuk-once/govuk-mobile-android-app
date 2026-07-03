@@ -10,7 +10,8 @@ internal data class LicenceSummaryUiModel(
     val addressLine1: String,
     val city: String,
     val postcode: String,
-    val statusUi: StatusUiModel
+    val statusUi: StatusUiModel,
+    val menuItems: List<OverflowMenuItem> = emptyList()
 ) {
     val formattedAddressLines: List<String>
         get() = asAddressList(

@@ -30,7 +30,8 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val SECTION = "Driving"
+        private const val SECTION_DRIVING = "Driving"
+        private const val SECTION_DRIVER_ACCOUNT = "Driver account"
         private const val ACTION_COPY = "Copy"
         private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
     }
@@ -69,10 +70,10 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         setSelectedDrivingView(drivingView = DrivingView.LICENCE)
     }
 
-    fun onLicenceNumberCopied() {
+    fun onLicenceNumberLongPressed() {
         analyticsClient.buttonFunction(
             text = ANALYTICS_EVENT_CLIPBOARD_COPY,
-            section = SECTION,
+            section = SECTION_DRIVING,
             action = ACTION_COPY
         )
     }
@@ -82,7 +83,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             text = text,
             url = url,
             external = true,
-            section = SECTION
+            section = SECTION_DRIVING
         )
     }
 
@@ -91,14 +92,14 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             text = text,
             url = url,
             external = true,
-            section = SECTION
+            section = SECTION_DRIVING
         )
     }
 
     fun onButtonClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
-            section = SECTION
+            section = SECTION_DRIVING
         )
     }
 
@@ -107,7 +108,24 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             text = text,
             url = url,
             external = true,
-            section = SECTION
+            section = SECTION_DRIVING
+        )
+    }
+
+    fun onMenuItemClicked(text: String, url: String) {
+        analyticsClient.menuItemClick(
+            text = text,
+            external = true,
+            section = SECTION_DRIVER_ACCOUNT,
+            url = url
+        )
+    }
+
+    fun onCopyLicenceMenuOptionClicked() {
+        analyticsClient.menuItemFunction(
+            text = ANALYTICS_EVENT_CLIPBOARD_COPY,
+            section = SECTION_DRIVER_ACCOUNT,
+            action = ACTION_COPY
         )
     }
 
@@ -128,7 +146,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
             val newState = when (val result = dvlaRepo.getDriverSummary()) {
                 is Result.Success -> {
-                    val licence = licenceMapper.toUiModel(result.value)
+                    val licence = licenceMapper.toUiModel(result.value, dvlaUrls)
                     LicenceSummaryUiState.Success(licence)
                 }
                 else -> LicenceSummaryUiState.Error
@@ -144,7 +162,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
             val newState = when (val result = dvlaRepo.getCustomerSummary()) {
                 is Result.Success -> {
-                    val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it) }
+                    val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it, dvlaUrls) }
                     VehiclesSummaryUiState.Success(vehicles)
                 }
                 else -> VehiclesSummaryUiState.Error

@@ -16,6 +16,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.util.toSpacedString
@@ -24,7 +25,7 @@ import uk.gov.govuk.dvla.util.toSpacedString
 internal fun LicenceSummaryCard(
     launchBrowser: (text: String, url: String) -> Unit,
     licenceSummary: LicenceSummaryUiModel,
-    onMoreClick: () -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -39,7 +40,8 @@ internal fun LicenceSummaryCard(
         LicenceSummaryHeader(
             licenceType = licenceSummary.licenceType,
             licenceNumber = licenceSummary.licenceNumber,
-            onMoreClick = onMoreClick,
+            menuItems = licenceSummary.menuItems,
+            onMenuItemClick = onMenuItemClick,
             onLicenceNumberLongClick = onLicenceNumberLongClick,
         )
 
@@ -66,10 +68,11 @@ internal fun LicenceSummaryCard(
 }
 
 @Composable
-fun LicenceSummaryHeader(
+internal fun LicenceSummaryHeader(
     licenceType: String,
     licenceNumber: String,
-    onMoreClick: () -> Unit,
+    menuItems: List<OverflowMenuItem>,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -88,7 +91,8 @@ fun LicenceSummaryHeader(
                 color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         },
-        onMoreClick = onMoreClick
+        menuItems = menuItems,
+        onMenuItemClick = onMenuItemClick
     ) {
         // licence number
         Title1BoldLabel(
@@ -110,7 +114,8 @@ private fun LicenceHeaderPreview() {
         LicenceSummaryHeader(
             licenceType = "Full licence",
             licenceNumber = "ARENO803236AA170",
-            onMoreClick = {},
+            menuItems = emptyList(),
+            onMenuItemClick = {},
             onLicenceNumberLongClick = {}
         )
     }
@@ -137,8 +142,8 @@ private fun LicenceSummaryCardPreview() {
                     )
                 )
             ),
-            onMoreClick = {},
-            onLicenceNumberLongClick = {}
+            onMenuItemClick = {},
+            onLicenceNumberLongClick = {},
         )
     }
 }
@@ -163,7 +168,7 @@ private fun LicenceSummaryCardExpiredPreview() {
                     )
                 )
             ),
-            onMoreClick = {},
+            onMenuItemClick = {},
             onLicenceNumberLongClick = {}
         )
     }

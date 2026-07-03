@@ -5,7 +5,8 @@ internal data class VehicleSummaryUiModel(
     val make: String,
     val model: String,
     val taxStatus: StatusUiModel,
-    val motStatus: StatusUiModel
+    val motStatus: StatusUiModel,
+    val menuItems: List<OverflowMenuItem> = emptyList()
 )
 
 internal sealed interface StatusUiModel {

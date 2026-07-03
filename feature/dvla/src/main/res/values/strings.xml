@@ -67,6 +67,23 @@
     <string name="add_your_vehicles">Add your vehicles</string>
     <string name="add_vehicle">Add vehicle</string>
 
+    <string name="menu_sorn_rules">SORN rules</string>
+    <string name="menu_report_as_sold">Report as sold</string>
+    <string name="menu_report_as_sold_alt_text">Report vehicle as sold</string>
+    <string name="menu_register_off_road">Register as off road (SORN)</string>
+    <string name="menu_register_off_road_alt_text">Register vehicle as off road (SORN)</string>
+    <string name="menu_get_log_book">Get a log book (V5C)</string>
+    <string name="menu_change_log_book_address">Change log book address</string>
+    <string name="menu_cancel_tax">Cancel tax</string>
+    <string name="menu_cancel_tax_alt_text">Cancel vehicle tax</string>
+
+    <string name="menu_copy_licence_number">Copy licence number</string>
+    <string name="menu_change_licence_address">Change address</string>
+    <string name="menu_change_licence_address_alt_text">Change licence address</string>
+    <string name="menu_change_licence_name_gender">Change name or gender</string>
+    <string name="menu_change_licence_name_gender_alt_text">Change name or gender on licence</string>
+    <string name="menu_replace_licence">Replace licence</string>
+
 
     <!-- Vehicle Details start -->
     <string name="diesel_summary">Diesel</string>

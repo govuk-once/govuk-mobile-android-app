@@ -15,6 +15,7 @@ import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
@@ -24,7 +25,7 @@ internal fun VehicleSummaryCard(
     launchBrowser: (text: String, url: String) -> Unit,
     vehicleSummary: VehicleSummaryUiModel,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
-    onMoreClick: () -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -39,7 +40,8 @@ internal fun VehicleSummaryCard(
             registration = vehicleSummary.registration,
             make = vehicleSummary.make,
             model = vehicleSummary.model,
-            onMoreClick = onMoreClick
+            menuItems = vehicleSummary.menuItems,
+            onMenuItemClick = onMenuItemClick
         )
 
         // Tax
@@ -66,11 +68,12 @@ internal fun VehicleSummaryCard(
 }
 
 @Composable
-fun VehicleSummaryHeader(
+internal fun VehicleSummaryHeader(
     registration: String,
     make: String,
     model: String,
-    onMoreClick: () -> Unit,
+    menuItems: List<OverflowMenuItem>,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SummaryCardHeader(
@@ -79,7 +82,8 @@ fun VehicleSummaryHeader(
             // reg plate
             RegistrationPlate(registration = registration)
         },
-        onMoreClick = onMoreClick
+        menuItems = menuItems,
+        onMenuItemClick = onMenuItemClick
     ) {
         // make and model
         Column(modifier = Modifier.semantics(mergeDescendants = true) {}) {
@@ -112,7 +116,8 @@ private fun VehicleHeaderPreview() {
             registration = "FH08 PDH",
             make = "Volkswagen",
             model = "ID4",
-            onMoreClick = {}
+            menuItems = emptyList(),
+            onMenuItemClick = {}
         )
     }
 }
@@ -145,8 +150,8 @@ private fun VehicleSummaryCardPreview() {
                 taxStatus = taxStatus,
                 motStatus = motStatus
             ),
-            onVehicleDetailsClick = { _, _ -> },
-            onMoreClick = {}
+            onMenuItemClick = {},
+            onVehicleDetailsClick = { _, _ -> }
         )
     }
 }
