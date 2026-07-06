@@ -153,8 +153,6 @@ private fun SuccessScreen(
                     .semantics { heading() }
             )
 
-            MediumVerticalSpacer()
-
             StatusUiItem(
                 launchBrowser = launchBrowser,
                 statusUiModel = details.taxStatus,
