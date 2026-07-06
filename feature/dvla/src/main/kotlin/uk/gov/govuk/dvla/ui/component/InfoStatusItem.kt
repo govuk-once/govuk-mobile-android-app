@@ -37,7 +37,7 @@ internal fun InfoStatusItem(
         drawDivider = true
     ) {
         Row(
-            modifier = modifier.fillMaxWidth().padding(horizontal = GovUkTheme.spacing.medium)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(vertical = GovUkTheme.spacing.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -53,13 +53,13 @@ internal fun InfoStatusItem(
             Column {
                 BodyBoldLabel(
                     text = title.displayText,
-                    modifier.withAltText(title.altText)
+                    modifier = Modifier.withAltText(title.altText)
                 )
 
                 subtitle?.let {
                     BodyRegularLabel(
                         text = subtitle.displayText,
-                        modifier.withAltText(subtitle.altText)
+                        modifier = Modifier.withAltText(subtitle.altText)
                     )
                 }
             }

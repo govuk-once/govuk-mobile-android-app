@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.ui.component
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import uk.gov.govuk.design.ui.component.CountdownBarListItem
@@ -47,21 +46,20 @@ private fun StatusRow(
     statusUiModel: StatusUiModel.StatusRow,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        StatusListItem(
-            title = statusUiModel.statusRowUi.title,
-            description = statusUiModel.statusRowUi.description,
-            iconStyle = statusUiModel.statusRowUi.iconStyle,
-            footerContent = {
-                statusUiModel.statusRowUi.style?.let { style ->
-                    Style(
-                        launchBrowser = launchBrowser,
-                        style = style
-                    )
-                }
+    StatusListItem(
+        modifier = modifier,
+        title = statusUiModel.statusRowUi.title,
+        description = statusUiModel.statusRowUi.description,
+        iconStyle = statusUiModel.statusRowUi.iconStyle,
+        footerContent = {
+            statusUiModel.statusRowUi.style?.let { style ->
+                Style(
+                    launchBrowser = launchBrowser,
+                    style = style
+                )
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable
@@ -70,22 +68,21 @@ private fun CountdownRow(
     statusUiModel: StatusUiModel.CountdownRow,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        CountdownBarListItem(
-            title = statusUiModel.countdownBarUi.title,
-            topText = statusUiModel.countdownBarUi.topText,
-            percentage = statusUiModel.countdownBarUi.percentage,
-            bottomText = statusUiModel.countdownBarUi.bottomText,
-            footerContent = {
-                statusUiModel.countdownBarUi.style?.let { style ->
-                    Style(
-                        launchBrowser = launchBrowser,
-                        style = style
-                    )
-                }
+    CountdownBarListItem(
+        title = statusUiModel.countdownBarUi.title,
+        topText = statusUiModel.countdownBarUi.topText,
+        percentage = statusUiModel.countdownBarUi.percentage,
+        bottomText = statusUiModel.countdownBarUi.bottomText,
+        modifier = modifier,
+        footerContent = {
+            statusUiModel.countdownBarUi.style?.let { style ->
+                Style(
+                    launchBrowser = launchBrowser,
+                    style = style
+                )
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable
@@ -93,13 +90,12 @@ private fun InfoRow(
     statusUiModel: StatusUiModel.InfoRow,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        InfoStatusItem(
-            title = statusUiModel.infoRowUi.title,
-            subtitle = statusUiModel.infoRowUi.subtitle,
-            icon = statusUiModel.infoRowUi.icon
-        )
-    }
+    InfoStatusItem(
+        title = statusUiModel.infoRowUi.title,
+        modifier = modifier,
+        subtitle = statusUiModel.infoRowUi.subtitle,
+        icon = statusUiModel.infoRowUi.icon
+    )
 }
 
 @Composable
@@ -108,18 +104,17 @@ private fun LinkRow(
     statusUiModel: StatusUiModel.LinkRow,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        LinkStatusItem(
-            title = statusUiModel.linkRowUi.title,
-            text = statusUiModel.linkRowUi.text,
-            onClick = {
-                launchBrowser(
-                    statusUiModel.linkRowUi.text.displayText,
-                    statusUiModel.linkRowUi.url
-                )
-            },
-        )
-    }
+    LinkStatusItem(
+        title = statusUiModel.linkRowUi.title,
+        text = statusUiModel.linkRowUi.text,
+        onClick = {
+            launchBrowser(
+                statusUiModel.linkRowUi.text.displayText,
+                statusUiModel.linkRowUi.url
+            )
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable
