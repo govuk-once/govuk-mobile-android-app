@@ -31,7 +31,9 @@ class VehicleSummaryMapperTest {
         changeNameGenderLicence = "https://www.gov.uk/change-name-gender-licence",
         replaceLicence = "https://www.gov.uk/replace-licence",
         manageTaxPayment = "https://www.gov.uk/vehicle-tax-direct-debit/renewing",
-        taxVehicle = "https://www.gov.uk/vehicle-tax"
+        taxVehicle = "https://www.gov.uk/vehicle-tax",
+        historicVehicles = "https://www.gov.uk/historic-vehicles",
+        checkMot = "https://www.check-mot.service.gov.uk/results?registration=[NUMBER PLATE]&checkRecalls=true"
     )
 
     @Before

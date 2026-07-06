@@ -21,6 +21,9 @@
 
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
+    <string name="no_details_held_link_text">See status on the website</string>
+    <string name="check_mot_link_text">Check if it needs an MOT</string>
+    <string name="check_mot_link_alt_text">Check if it needs an M.O.T.</string>
 
     <string name="manage_payment_button">Manage payment</string>
     <string name="status_unknown">Unknown</string>

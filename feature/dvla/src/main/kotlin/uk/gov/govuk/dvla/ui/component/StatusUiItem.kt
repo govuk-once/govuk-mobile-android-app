@@ -32,6 +32,11 @@ internal fun StatusUiItem(
             modifier = modifier
         )
 
+        is StatusUiModel.LinkRow -> LinkRow(
+            launchBrowser = launchBrowser,
+            statusUiModel = statusUiModel,
+        )
+
         is StatusUiModel.NoStatus -> { /* Show nothing */ }
     }
 }
@@ -93,6 +98,26 @@ private fun InfoRow(
             title = statusUiModel.infoRowUi.title,
             subtitle = statusUiModel.infoRowUi.subtitle,
             icon = statusUiModel.infoRowUi.icon
+        )
+    }
+}
+
+@Composable
+private fun LinkRow(
+    launchBrowser: (text: String, url: String) -> Unit,
+    statusUiModel: StatusUiModel.LinkRow,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        LinkStatusItem(
+            title = statusUiModel.linkRowUi.title,
+            text = statusUiModel.linkRowUi.text,
+            onClick = {
+                launchBrowser(
+                    statusUiModel.linkRowUi.text.displayText,
+                    statusUiModel.linkRowUi.url
+                )
+            },
         )
     }
 }

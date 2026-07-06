@@ -22,5 +22,9 @@ internal sealed interface StatusUiModel {
         val infoRowUi: InfoRowUiModel
     ) : StatusUiModel
 
+    data class LinkRow(
+        val linkRowUi: LinkRowUiModel
+    ) : StatusUiModel
+
     data object NoStatus : StatusUiModel
 }
