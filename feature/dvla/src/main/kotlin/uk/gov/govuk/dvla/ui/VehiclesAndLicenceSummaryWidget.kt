@@ -114,6 +114,10 @@ fun VehiclesAndLicenceSummaryWidget(
                         val addVehicleUrl = viewModel.dvlaUrls?.addVehicle
 
                         VehiclesViewContent(
+                            launchBrowser = { text, url ->
+                                launchBrowser(url)
+                                viewModel.onExternalButtonClicked(text, url)
+                            },
                             onVehicleDetailsClick = { text, registration ->
                                 viewModel.onButtonClicked(text)
                                 onVehicleDetailsClick(registration)
@@ -139,6 +143,10 @@ fun VehiclesAndLicenceSummaryWidget(
                     DrivingView.LICENCE -> {
 
                         LicenceViewContent(
+                            launchBrowser = { text, url ->
+                                launchBrowser(url)
+                                viewModel.onExternalButtonClicked(text, url)
+                            },
                             licenceState = currentState.licenceState,
                             onMenuItemClick = handleMenuItemClick,
                             onLicenceNumberLongClick = { licenceNumber ->
@@ -148,12 +156,6 @@ fun VehiclesAndLicenceSummaryWidget(
                                     hapticFeedback = hapticFeedback
                                 )
                                 viewModel.onLicenceNumberLongPressed()
-                            },
-                            onRenewLicenceClick = viewModel.dvlaUrls?.renewLicence?.let { url ->
-                                { text: String ->
-                                    viewModel.onRenewLicenceClicked(text = text, url = url)
-                                    launchBrowser(url)
-                                }
                             },
                             modifier = modifier
                         )
@@ -166,6 +168,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
 @Composable
 private fun VehiclesViewContent(
+    launchBrowser: (text: String, url: String) -> Unit,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
@@ -189,6 +192,7 @@ private fun VehiclesViewContent(
                 }
             } else {
                 VehiclesSummarySuccess(
+                    launchBrowser = launchBrowser,
                     vehicles = vehiclesState.vehicles,
                     onAddVehicleClick = onAddAnotherVehicleClick,
                     onVehicleDetailsClick = onVehicleDetailsClick,
@@ -202,10 +206,10 @@ private fun VehiclesViewContent(
 
 @Composable
 private fun LicenceViewContent(
+    launchBrowser: (text: String, url: String) -> Unit,
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
-    onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -215,10 +219,10 @@ private fun LicenceViewContent(
         }
         is LicenceSummaryUiState.Success -> {
             LicenceSummarySuccess(
+                launchBrowser = launchBrowser,
                 licenceSummary = licenceState.licence,
                 onMenuItemClick = onMenuItemClick,
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
-                onRenewLicenceClick = onRenewLicenceClick,
                 modifier = modifier
             )
         }
@@ -249,6 +253,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 
 @Composable
 private fun VehiclesSummarySuccess(
+    launchBrowser: (text: String, url: String) -> Unit,
     vehicles: List<VehicleSummaryUiModel>,
     onAddVehicleClick: ((String) -> Unit)?,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
@@ -261,6 +266,7 @@ private fun VehiclesSummarySuccess(
     ) {
         vehicles.forEach { vehicle ->
             VehicleSummaryCard(
+                launchBrowser = launchBrowser,
                 vehicleSummary = vehicle,
                 onVehicleDetailsClick = onVehicleDetailsClick,
                 onMenuItemClick = onMenuItemClick,
@@ -308,20 +314,20 @@ private fun VehiclesSummaryEmpty(
 
 @Composable
 private fun LicenceSummarySuccess(
+    launchBrowser: (text: String, url: String) -> Unit,
     licenceSummary: LicenceSummaryUiModel,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
-    onRenewLicenceClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
         LicenceSummaryCard(
+            launchBrowser = launchBrowser,
             licenceSummary = licenceSummary,
             onMenuItemClick = onMenuItemClick,
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
-            onRenewClick = onRenewLicenceClick,
             modifier = Modifier.fillMaxWidth()
         )
     }

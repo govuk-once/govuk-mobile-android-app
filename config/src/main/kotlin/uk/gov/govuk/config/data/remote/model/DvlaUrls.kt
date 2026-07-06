@@ -13,5 +13,7 @@ data class DvlaUrls(
     @SerializedName("cancelTax") val cancelTax: String,
     @SerializedName("changeLicenceAddress") val changeLicenceAddress: String,
     @SerializedName("changeNameGenderLicence") val changeNameGenderLicence: String,
-    @SerializedName("replaceLicence") val replaceLicence: String
+    @SerializedName("replaceLicence") val replaceLicence: String,
+    @SerializedName("manageTaxPayment") val manageTaxPayment: String,
+    @SerializedName("taxVehicle") val taxVehicle: String
 )

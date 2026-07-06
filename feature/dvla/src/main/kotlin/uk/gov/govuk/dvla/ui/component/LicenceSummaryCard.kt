@@ -15,19 +15,18 @@ import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.ui.model.LicenceStatusUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
-import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
 internal fun LicenceSummaryCard(
+    launchBrowser: (text: String, url: String) -> Unit,
     licenceSummary: LicenceSummaryUiModel,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
-    onRenewClick: ((String) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -61,28 +60,10 @@ internal fun LicenceSummaryCard(
             )
         )
 
-        // status
-        when (val statusUi = licenceSummary.statusUi) {
-            is LicenceStatusUiModel.Valid ->
-                ValidLicenceStatusItem(
-                    status = statusUi.statusRowUi,
-                    modifier = modifier
-                )
-
-            is LicenceStatusUiModel.Expiring ->
-                ExpiringLicenceStatusItem(
-                    uiModel = statusUi.countdownBarUi,
-                    onRenewClick = onRenewClick,
-                    modifier = modifier
-                )
-
-            is LicenceStatusUiModel.Expired ->
-                ExpiredLicenceStatusItem(
-                    status = statusUi.statusRowUi,
-                    onRenewClick = onRenewClick,
-                    modifier = modifier
-                )
-        }
+        StatusUiItem(
+            launchBrowser = launchBrowser,
+            licenceSummary.statusUi
+        )
     }
 }
 
@@ -146,6 +127,7 @@ private fun LicenceHeaderPreview() {
 private fun LicenceSummaryCardPreview() {
     GovUkTheme {
         LicenceSummaryCard(
+            launchBrowser = {_,_ ->},
             licenceSummary = LicenceSummaryUiModel(
                 licenceType = "Full licence",
                 licenceNumber = "ARENO803236AA170",
@@ -153,16 +135,15 @@ private fun LicenceSummaryCardPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                statusUi = LicenceStatusUiModel.Valid(
+                statusUi = StatusUiModel.StatusRow(
                     statusRowUi = StatusRowUiModel(
-                        description = "Valid until 1 February 2027",
+                        description = AccessibleString("Valid until 1 February 2027"),
                         iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
                     )
                 )
             ),
             onMenuItemClick = {},
             onLicenceNumberLongClick = {},
-            onRenewClick = { _ -> }
         )
     }
 }
@@ -172,6 +153,7 @@ private fun LicenceSummaryCardPreview() {
 private fun LicenceSummaryCardExpiredPreview() {
     GovUkTheme {
         LicenceSummaryCard(
+            launchBrowser = {_,_ ->},
             licenceSummary = LicenceSummaryUiModel(
                 licenceType = "Full licence",
                 licenceNumber = "ARENO803236AA170",
@@ -179,16 +161,15 @@ private fun LicenceSummaryCardExpiredPreview() {
                 addressLine1 = "29 Orchard Drive",
                 city = "Milton Keynes",
                 postcode = "PA98 J83",
-                statusUi = LicenceStatusUiModel.Expired(
+                statusUi = StatusUiModel.StatusRow(
                     statusRowUi = StatusRowUiModel(
-                        description = "Expired on 1 February 2027",
+                        description = AccessibleString("Expired on 1 February 2027"),
                         iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
                     )
                 )
             ),
             onMenuItemClick = {},
-            onLicenceNumberLongClick = {},
-            onRenewClick = { _ -> }
+            onLicenceNumberLongClick = {}
         )
     }
 }

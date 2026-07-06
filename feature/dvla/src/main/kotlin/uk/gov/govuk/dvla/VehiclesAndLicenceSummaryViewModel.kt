@@ -96,12 +96,19 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onRenewLicenceClicked(text: String, url: String) {
+    fun onButtonClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
+            section = SECTION_DRIVING
+        )
+    }
+
+    fun onExternalButtonClicked(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
             external = true,
-            section = SECTION_DRIVING,
-            url = url
+            section = SECTION_DRIVING
         )
     }
 
@@ -119,13 +126,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             text = ANALYTICS_EVENT_CLIPBOARD_COPY,
             section = SECTION_DRIVER_ACCOUNT,
             action = ACTION_COPY
-        )
-    }
-
-    fun onButtonClicked(text: String) {
-        analyticsClient.buttonClick(
-            text = text,
-            section = SECTION_DRIVING
         )
     }
 

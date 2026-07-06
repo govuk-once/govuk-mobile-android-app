@@ -11,6 +11,7 @@ import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.util.StringProvider
+import java.time.LocalDate
 
 class VehicleSummaryMapperTest {
 
@@ -28,7 +29,9 @@ class VehicleSummaryMapperTest {
         cancelTax = "https://cancel-tax",
         changeLicenceAddress = "https://www.gov.uk/change-licence-address",
         changeNameGenderLicence = "https://www.gov.uk/change-name-gender-licence",
-        replaceLicence = "https://www.gov.uk/replace-licence"
+        replaceLicence = "https://www.gov.uk/replace-licence",
+        manageTaxPayment = "https://www.gov.uk/vehicle-tax-direct-debit/renewing",
+        taxVehicle = "https://www.gov.uk/vehicle-tax"
     )
 
     @Before
@@ -37,7 +40,7 @@ class VehicleSummaryMapperTest {
     }
 
     private fun makeVehicle(
-        sornStart: String? = null,
+        sornStart: LocalDate? = null,
         taxStatus: TaxStatus = TaxStatus.UNKNOWN
     ) = mockk<CustomerVehicle> {
         every { registration } returns "AA19 AAA"
@@ -70,19 +73,19 @@ class VehicleSummaryMapperTest {
 
     @Test
     fun `Given vehicle has SORN, then menu contains SORN rules`() {
-        val result = mapper.toUiModel(makeVehicle(sornStart = "2025-01-01"), dvlaUrls)
+        val result = mapper.toUiModel(makeVehicle(sornStart = LocalDate.of(2025, 1, 1)), dvlaUrls)
         assertTrue(result.menuItems.any { (it.action as? MenuAction.WebLink)?.url == dvlaUrls.sornRules })
     }
 
     @Test
     fun `Given vehicle has SORN, then menu does not contain Register as off road`() {
-        val result = mapper.toUiModel(makeVehicle(sornStart = "2025-01-01"), dvlaUrls)
+        val result = mapper.toUiModel(makeVehicle(sornStart = LocalDate.of(2025, 1, 1)), dvlaUrls)
         assertTrue(result.menuItems.none { (it.action as? MenuAction.WebLink)?.url == dvlaUrls.makeSorn })
     }
 
     @Test
     fun `Given dvlaUrls is non-null, then common menu items are always present`() {
-        listOf(null, "2025-01-01").forEach { sornStart ->
+        listOf(null, LocalDate.of(2025, 1, 1)).forEach { sornStart ->
             val result = mapper.toUiModel(makeVehicle(sornStart = sornStart), dvlaUrls)
             val urls = result.menuItems.map { (it.action as? MenuAction.WebLink)?.url }
             assertTrue(urls.contains(dvlaUrls.soldVehicle))
@@ -101,7 +104,7 @@ class VehicleSummaryMapperTest {
 
     @Test
     fun `Given vehicle has SORN then the make sorn menu item is not present and the sorn rules menu item is present`() {
-        val result = mapper.toUiModel(makeVehicle(sornStart = "2026-01-01"), dvlaUrls)
+        val result = mapper.toUiModel(makeVehicle(sornStart = LocalDate.of(2026, 1, 1)), dvlaUrls)
         val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
         assertTrue(urls.contains(dvlaUrls.sornRules))
         assertFalse(urls.contains(dvlaUrls.makeSorn))

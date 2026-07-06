@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.util
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -49,19 +51,36 @@ class DateExtensionTest {
 
     @Test
     fun `Given isDateWithinDayRange is called, when date is 4 days ahead and threshold is 2 days, then return false`() {
-        val todayPlusTwoDays = LocalDate.now().plusDays(4)
-        assertEquals(false, todayPlusTwoDays.isDateWithinDayRange(2))
+        val todayPlusFourDays = LocalDate.now().plusDays(4)
+        assertEquals(false, todayPlusFourDays.isDateWithinDayRange(2))
     }
 
     @Test
     fun `Given isToday is called, when date is today, then return true`() {
-        val todayPlusTwoDays = LocalDate.now()
-        assertEquals(true, todayPlusTwoDays.isToday())
+        val today = LocalDate.now()
+        assertEquals(true, today.isToday())
     }
 
     @Test
     fun `Given isToday is called, when date is tomorrow, then return false`() {
-        val todayPlusTwoDays = LocalDate.now().plusDays(1)
-        assertEquals(false, todayPlusTwoDays.isToday())
+        val todayPlusOneDay = LocalDate.now().plusDays(1)
+        assertEquals(false, todayPlusOneDay.isToday())
+    }
+
+    @Test
+    fun `Given isInTheFuture is called, when the date is today, then return false`() {
+        val today = LocalDate.now()
+        assertFalse(today.isInTheFuture())
+    }
+
+    @Test
+    fun `Given isInTheFuture is called, when the date is tomorrow, then return true`() {
+        val tomorrow = LocalDate.now().plusDays(1)
+        assertTrue(tomorrow.isInTheFuture())
+    }
+
+    @Test
+    fun `Given isInTheFuture is called, when the date is null, then return false`() {
+        assertFalse(null.isInTheFuture())
     }
 }

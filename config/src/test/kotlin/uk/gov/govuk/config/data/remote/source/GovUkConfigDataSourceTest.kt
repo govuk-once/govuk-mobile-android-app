@@ -54,7 +54,9 @@ class GovUkConfigDataSourceTest {
             cancelTax = "https://www.gov.uk/cancel-tax",
             changeLicenceAddress = "https://www.gov.uk/change-licence-address",
             changeNameGenderLicence = "https://www.gov.uk/change-name-gender-licence",
-            replaceLicence = "https://www.gov.uk/replace-licence"
+            replaceLicence = "https://www.gov.uk/replace-licence",
+            manageTaxPayment = "https://www.gov.uk/vehicle-tax-direct-debit/renewing",
+            taxVehicle = "https://www.gov.uk/vehicle-tax"
         )
 
         val config = Config(

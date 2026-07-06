@@ -10,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
-import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -18,10 +17,12 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable
 internal fun VehicleSummaryCard(
+    launchBrowser: (text: String, url: String) -> Unit,
     vehicleSummary: VehicleSummaryUiModel,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
@@ -43,29 +44,16 @@ internal fun VehicleSummaryCard(
             onMenuItemClick = onMenuItemClick
         )
 
-        // tax
-        StatusListItem(
-            title = vehicleSummary.taxStatus.title?.let {
-                AccessibleString(displayText = it)
-            },
-            description = AccessibleString(
-                displayText = vehicleSummary.taxStatus.description
-            ),
-            iconStyle = vehicleSummary.taxStatus.iconStyle,
+        // Tax
+        StatusUiItem(
+            launchBrowser = launchBrowser,
+            statusUiModel = vehicleSummary.taxStatus
         )
 
         // MOT
-        StatusListItem(
-            title = vehicleSummary.motStatus.title?.let {
-                AccessibleString(
-                    displayText = it,
-                    altText = vehicleSummary.motStatus.titleAltText
-                )
-            },
-            description = AccessibleString(
-                displayText = vehicleSummary.motStatus.description
-            ),
-            iconStyle = vehicleSummary.motStatus.iconStyle,
+        StatusUiItem(
+            launchBrowser = launchBrowser,
+            statusUiModel = vehicleSummary.motStatus
         )
 
         // details
@@ -137,22 +125,30 @@ private fun VehicleHeaderPreview() {
 @PreviewLightDark
 @Composable
 private fun VehicleSummaryCardPreview() {
+    val taxStatus = StatusUiModel.StatusRow(
+        StatusRowUiModel(
+            AccessibleString("Tax"),
+            AccessibleString("Valid until 1 February 2027"),
+            iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
+        )
+    )
+
+    val motStatus = StatusUiModel.StatusRow(
+        StatusRowUiModel(
+            AccessibleString("Mot"),
+            AccessibleString("Valid until 1 February 2027"),
+            iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
+        )
+    )
     GovUkTheme {
         VehicleSummaryCard(
+            launchBrowser = { _, _ -> },
             vehicleSummary = VehicleSummaryUiModel(
                 registration = "FH08 PDH",
                 make = "Volkswagen",
                 model = "ID4",
-                taxStatus = StatusRowUiModel(
-                    title = "Tax",
-                    description = "Valid until 1 February 2027",
-                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
-                ),
-                motStatus = StatusRowUiModel(
-                    title = "MOT",
-                    description = "Valid until 24 April 2026",
-                    iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning
-                )
+                taxStatus = taxStatus,
+                motStatus = motStatus
             ),
             onMenuItemClick = {},
             onVehicleDetailsClick = { _, _ -> }

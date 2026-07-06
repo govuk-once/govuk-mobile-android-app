@@ -24,3 +24,10 @@ internal fun LocalDate.isDateWithinDayRange(dayRange: Int) =
 
 internal fun LocalDate.isToday() =
     this.getNumberOfDaysFromNow() == 0
+
+/**
+ * Returns true if the date is in the future.
+ * Returns false if the date is now, in the past or null.
+ */
+internal fun LocalDate?.isInTheFuture() =
+    this?.let { getNumberOfDaysFromNow() > 0 } ?: run { false }
