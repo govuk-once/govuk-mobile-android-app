@@ -79,7 +79,7 @@ internal fun VehicleDetailsRoute(
 
         is VehicleDetailsUiState.Success -> SuccessScreen(
             launchBrowser = { text, url ->
-                launchBrowser.invoke(text)
+                launchBrowser(url)
                 viewModel.onExternalButtonClicked(text, url)
             },
             onBack = onBack,
