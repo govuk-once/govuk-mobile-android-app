@@ -2,8 +2,10 @@ package uk.gov.govuk.dvla.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import uk.gov.govuk.design.ui.component.CountdownBarListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
+import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.ui.model.StatusStyle
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 
@@ -11,29 +13,34 @@ import uk.gov.govuk.dvla.ui.model.StatusUiModel
 internal fun StatusUiItem(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     when (statusUiModel) {
         is StatusUiModel.StatusRow -> StatusRow(
             launchBrowser = launchBrowser,
             statusUiModel = statusUiModel,
-            modifier = modifier
+            modifier = modifier,
+            background = background
         )
 
         is StatusUiModel.CountdownRow -> CountdownRow(
             launchBrowser = launchBrowser,
             statusUiModel = statusUiModel,
-            modifier = modifier
+            modifier = modifier,
+            background = background
         )
 
         is StatusUiModel.InfoRow -> InfoRow(
             statusUiModel = statusUiModel,
-            modifier = modifier
+            modifier = modifier,
+            background = background
         )
 
         is StatusUiModel.LinkRow -> LinkRow(
             launchBrowser = launchBrowser,
             statusUiModel = statusUiModel,
+            background = background
         )
 
         is StatusUiModel.NoStatus -> { /* Show nothing */ }
@@ -44,13 +51,15 @@ internal fun StatusUiItem(
 private fun StatusRow(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel.StatusRow,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color,
 ) {
     StatusListItem(
         modifier = modifier,
         title = statusUiModel.statusRowUi.title,
         description = statusUiModel.statusRowUi.description,
         iconStyle = statusUiModel.statusRowUi.iconStyle,
+        background = background,
         footerContent = {
             statusUiModel.statusRowUi.style?.let { style ->
                 Style(
@@ -66,7 +75,8 @@ private fun StatusRow(
 private fun CountdownRow(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel.CountdownRow,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color
 ) {
     CountdownBarListItem(
         title = statusUiModel.countdownBarUi.title,
@@ -74,6 +84,7 @@ private fun CountdownRow(
         percentage = statusUiModel.countdownBarUi.percentage,
         bottomText = statusUiModel.countdownBarUi.bottomText,
         modifier = modifier,
+        background = background,
         footerContent = {
             statusUiModel.countdownBarUi.style?.let { style ->
                 Style(
@@ -88,13 +99,15 @@ private fun CountdownRow(
 @Composable
 private fun InfoRow(
     statusUiModel: StatusUiModel.InfoRow,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color
 ) {
     InfoStatusItem(
         title = statusUiModel.infoRowUi.title,
         modifier = modifier,
         subtitle = statusUiModel.infoRowUi.subtitle,
-        icon = statusUiModel.infoRowUi.icon
+        icon = statusUiModel.infoRowUi.icon,
+        background = background
     )
 }
 
@@ -102,7 +115,8 @@ private fun InfoRow(
 private fun LinkRow(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel.LinkRow,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color
 ) {
     LinkStatusItem(
         title = statusUiModel.linkRowUi.title,
@@ -114,6 +128,7 @@ private fun LinkRow(
             )
         },
         modifier = modifier,
+        background = background
     )
 }
 

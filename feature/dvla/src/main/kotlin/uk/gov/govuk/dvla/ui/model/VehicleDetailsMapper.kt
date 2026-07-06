@@ -1,9 +1,9 @@
 package uk.gov.govuk.dvla.ui.model
 
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
-import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
@@ -20,8 +20,6 @@ import uk.gov.govuk.dvla.domain.FuelType.OTHER
 import uk.gov.govuk.dvla.domain.FuelType.PETROL
 import uk.gov.govuk.dvla.domain.FuelType.PETROL_GAS
 import uk.gov.govuk.dvla.domain.FuelType.STEAM
-import uk.gov.govuk.dvla.domain.MotStatus
-import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.domain.VehicleColour
 import uk.gov.govuk.dvla.domain.VehicleColour.BEIGE
 import uk.gov.govuk.dvla.domain.VehicleColour.BLACK
@@ -45,16 +43,15 @@ import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
-import uk.gov.govuk.dvla.util.resolveSummaryDescription
-import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
 import javax.inject.Inject
 
 internal class VehicleDetailsMapper @Inject constructor(
-    private val stringProvider: StringProvider
+    private val stringProvider: StringProvider,
+    private val taxAndMotStatusMapper: TaxAndMotStatusMapper
 ) {
     // TODO change param to VesVehicle when details endpoint live
-    fun toUiModel(vesVehicle: CustomerVehicle): VehicleDetailsUiModel {
+    fun toUiModel(vesVehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
         val engineCapacity =
             vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
         val yearOfFirstRegistration =
@@ -69,8 +66,8 @@ internal class VehicleDetailsMapper @Inject constructor(
                 vesVehicle.getFuelTypeSpecification(),
                 vesVehicle.getColourSpecification()
             ),
-            taxStatus = vesVehicle.getTaxRow(),
-            motStatus = vesVehicle.getMotRow(),
+            taxStatus = taxAndMotStatusMapper.getTaxStatus(vesVehicle, dvlaUrls),
+            motStatus = taxAndMotStatusMapper.getMotStatus(vesVehicle, dvlaUrls),
             specifications = listOf(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
@@ -125,55 +122,6 @@ internal class VehicleDetailsMapper @Inject constructor(
                 )
             )
         )
-    }
-
-    private fun CustomerVehicle.getTaxRow(): StatusRowUiModel {
-        val taxDate = this.taxExpiryDate?.toSummaryDisplayFormat()
-        val (taxStringResId, iconStyle) = this.taxStatus.getResources()
-        return StatusRowUiModel(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.tax_status_title)),
-            description = AccessibleString(
-                displayText = stringProvider.resolveSummaryDescription(
-                    taxStringResId,
-                    taxDate
-                )
-            ),
-            iconStyle = iconStyle
-        )
-    }
-
-    private fun TaxStatus.getResources() = when (this) {
-        TaxStatus.TAXED -> Pair(
-            R.string.valid_until,
-            StatusListItemIconStyle.Success
-        )
-
-        else -> Pair(null, null)
-    }
-
-    private fun CustomerVehicle.getMotRow(): StatusRowUiModel {
-        val motDate = this.motExpiryDate?.toSummaryDisplayFormat()
-        val (motStringResId, iconStyle) = this.motStatus.getResources()
-
-        return StatusRowUiModel(
-            title = AccessibleString(
-                displayText = stringProvider.getString(R.string.acronym_mot),
-                altText = stringProvider.getString(R.string.acronym_mot_alt_text)
-            ),
-            description = AccessibleString(
-                displayText = stringProvider.resolveSummaryDescription(motStringResId, motDate)
-            ),
-            iconStyle = iconStyle
-        )
-    }
-
-    private fun MotStatus.getResources() = when (this) {
-        MotStatus.VALID -> Pair(
-            R.string.valid_until,
-            StatusListItemIconStyle.Success
-        )
-
-        else -> Pair(null, null)
     }
 
     private fun CustomerVehicle.getCalendarSpecification(): SpecificationIconUiModel {

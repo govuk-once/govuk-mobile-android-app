@@ -31,7 +31,6 @@ import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SpecificationsIcons
-import uk.gov.govuk.design.ui.component.StatusListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
@@ -41,18 +40,20 @@ import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
-import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
 import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.RegistrationPlate
+import uk.gov.govuk.dvla.ui.component.StatusUiItem
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @Composable
 internal fun VehicleDetailsRoute(
+    launchBrowser: (String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -77,6 +78,10 @@ internal fun VehicleDetailsRoute(
         is VehicleDetailsUiState.Error -> { /* TODO: no designs yet */ }
 
         is VehicleDetailsUiState.Success -> SuccessScreen(
+            launchBrowser = { text, url ->
+                launchBrowser.invoke(text)
+                viewModel.onExternalButtonClicked(text, url)
+            },
             onBack = onBack,
             onPageView = { viewModel.onPageView(it) },
             details = state.details
@@ -86,6 +91,7 @@ internal fun VehicleDetailsRoute(
 
 @Composable
 private fun SuccessScreen(
+    launchBrowser: (text: String, url: String) -> Unit,
     onBack: () -> Unit,
     onPageView: (title: String) -> Unit,
     details: VehicleDetailsUiModel,
@@ -149,19 +155,15 @@ private fun SuccessScreen(
 
             MediumVerticalSpacer()
 
-            StatusListItem(
-                title = details.taxStatus.title,
-                description = details.taxStatus.description,
-                iconStyle = details.taxStatus.iconStyle,
-                isFirst = true,
+            StatusUiItem(
+                launchBrowser = launchBrowser,
+                statusUiModel = details.taxStatus,
                 background = Color.Transparent
             )
 
-            StatusListItem(
-                title = details.motStatus.title,
-                description = details.motStatus.description,
-                iconStyle = details.motStatus.iconStyle,
-                isLast = true,
+            StatusUiItem(
+                launchBrowser = launchBrowser,
+                statusUiModel = details.motStatus,
                 background = Color.Transparent
             )
 
@@ -235,6 +237,21 @@ private fun SuccessScreenPreview() {
     val date = AccessibleString("Calendar")
     val fuelType = AccessibleString("Diesel")
     val colour = AccessibleString("Red")
+    val taxStatus = StatusUiModel.StatusRow(
+        StatusRowUiModel(
+            AccessibleString("Tax"),
+            AccessibleString("Valid until 1 February 2027"),
+            iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
+        )
+    )
+
+    val motStatus = StatusUiModel.StatusRow(
+        StatusRowUiModel(
+            AccessibleString("Mot"),
+            AccessibleString("Valid until 1 February 2027"),
+            iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
+        )
+    )
     val details = VehicleDetailsUiModel(
         "Volkswagen",
         "ID4",
@@ -259,19 +276,11 @@ private fun SuccessScreenPreview() {
                 colour
             )
         ),
-        StatusRowUiModel(
-            title = AccessibleString("Tax status"),
-            description = AccessibleString(""),
-            iconStyle = StatusListItemIconStyle.Success
-        ),
-        StatusRowUiModel(
-            title = AccessibleString("MOT status"),
-            description = AccessibleString(""),
-            iconStyle = StatusListItemIconStyle.Success
-        ),
+        taxStatus,
+        motStatus,
         specifications = listOf()
     )
     GovUkTheme {
-        SuccessScreen({}, {}, details)
+        SuccessScreen({ _, _ -> },{}, {}, details)
     }
 }

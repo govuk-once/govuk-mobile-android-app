@@ -16,7 +16,8 @@ import java.time.LocalDate
 class VehicleSummaryMapperTest {
 
     private val stringProvider = mockk<StringProvider>()
-    private val mapper = VehicleSummaryMapper(stringProvider)
+    private val taxAndMotStatusMapper = TaxAndMotStatusMapper(stringProvider)
+    private val mapper = VehicleSummaryMapper(stringProvider, taxAndMotStatusMapper)
 
     private val dvlaUrls = DvlaUrls(
         addVehicle = "https://add-vehicle",
