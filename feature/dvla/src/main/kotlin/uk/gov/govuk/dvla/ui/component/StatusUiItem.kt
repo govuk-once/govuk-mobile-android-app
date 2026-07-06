@@ -14,6 +14,7 @@ internal fun StatusUiItem(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel,
     modifier: Modifier = Modifier,
+    isLast: Boolean = false,
     background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     when (statusUiModel) {
@@ -21,6 +22,7 @@ internal fun StatusUiItem(
             launchBrowser = launchBrowser,
             statusUiModel = statusUiModel,
             modifier = modifier,
+            isLast = isLast,
             background = background
         )
 
@@ -28,18 +30,21 @@ internal fun StatusUiItem(
             launchBrowser = launchBrowser,
             statusUiModel = statusUiModel,
             modifier = modifier,
+            isLast = isLast,
             background = background
         )
 
         is StatusUiModel.InfoRow -> InfoRow(
             statusUiModel = statusUiModel,
             modifier = modifier,
+            isLast = isLast,
             background = background
         )
 
         is StatusUiModel.LinkRow -> LinkRow(
             launchBrowser = launchBrowser,
             statusUiModel = statusUiModel,
+            isLast = isLast,
             background = background
         )
 
@@ -52,6 +57,7 @@ private fun StatusRow(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel.StatusRow,
     modifier: Modifier = Modifier,
+    isLast: Boolean,
     background: Color,
 ) {
     StatusListItem(
@@ -59,6 +65,7 @@ private fun StatusRow(
         title = statusUiModel.statusRowUi.title,
         description = statusUiModel.statusRowUi.description,
         iconStyle = statusUiModel.statusRowUi.iconStyle,
+        isLast = isLast,
         background = background,
         footerContent = {
             statusUiModel.statusRowUi.style?.let { style ->
@@ -76,6 +83,7 @@ private fun CountdownRow(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel.CountdownRow,
     modifier: Modifier = Modifier,
+    isLast: Boolean,
     background: Color
 ) {
     CountdownBarListItem(
@@ -84,6 +92,7 @@ private fun CountdownRow(
         percentage = statusUiModel.countdownBarUi.percentage,
         bottomText = statusUiModel.countdownBarUi.bottomText,
         modifier = modifier,
+        isLast = isLast,
         background = background,
         footerContent = {
             statusUiModel.countdownBarUi.style?.let { style ->
@@ -100,6 +109,7 @@ private fun CountdownRow(
 private fun InfoRow(
     statusUiModel: StatusUiModel.InfoRow,
     modifier: Modifier = Modifier,
+    isLast: Boolean,
     background: Color
 ) {
     InfoStatusItem(
@@ -107,6 +117,7 @@ private fun InfoRow(
         modifier = modifier,
         subtitle = statusUiModel.infoRowUi.subtitle,
         icon = statusUiModel.infoRowUi.icon,
+        isLast = isLast,
         background = background
     )
 }
@@ -116,6 +127,7 @@ private fun LinkRow(
     launchBrowser: (text: String, url: String) -> Unit,
     statusUiModel: StatusUiModel.LinkRow,
     modifier: Modifier = Modifier,
+    isLast: Boolean,
     background: Color
 ) {
     LinkStatusItem(
@@ -128,6 +140,7 @@ private fun LinkRow(
             )
         },
         modifier = modifier,
+        isLast = isLast,
         background = background
     )
 }

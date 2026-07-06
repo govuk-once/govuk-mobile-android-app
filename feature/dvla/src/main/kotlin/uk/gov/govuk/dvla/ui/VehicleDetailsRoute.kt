@@ -164,7 +164,8 @@ private fun SuccessScreen(
             StatusUiItem(
                 launchBrowser = launchBrowser,
                 statusUiModel = details.motStatus,
-                background = Color.Transparent
+                background = Color.Transparent,
+                isLast = true
             )
 
             LargeVerticalSpacer()
