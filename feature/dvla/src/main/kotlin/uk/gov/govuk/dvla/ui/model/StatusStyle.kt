@@ -9,4 +9,8 @@ internal sealed interface StatusStyle {
         val caption: AccessibleString? = null,
         val isPrimary: Boolean = true
     ) : StatusStyle
+
+    data class Caption(
+        val text: AccessibleString,
+    ) : StatusStyle
 }

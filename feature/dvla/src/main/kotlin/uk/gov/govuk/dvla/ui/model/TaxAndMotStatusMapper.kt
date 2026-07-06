@@ -213,6 +213,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         dvlaUrls?.manageTaxPayment?.let { manageTaxPaymentUrl ->
             StatusStyle.ActionButton(
                 text = AccessibleString(stringProvider.getString(R.string.manage_payment_button)),
+                caption = AccessibleString(stringProvider.getString(R.string.manage_payment_button_caption)),
                 url = manageTaxPaymentUrl,
                 isPrimary = false
             )
@@ -264,7 +265,13 @@ internal class TaxAndMotStatusMapper @Inject constructor(
                 topText = getExpiringTopText(formattedExpiryDate),
                 percentage = expiryDate.asPercentageOfDaysLeftForMot(),
                 bottomText = getExpiringBottomText(expiryDate),
-                title = getMotStatusTitle()
+                title = getMotStatusTitle(),
+                style = StatusStyle.Caption(
+                    text = AccessibleString(
+                        displayText = stringProvider.getString(R.string.expiring_mot_caption),
+                        altText = stringProvider.getString(R.string.expiring_mot_caption_alt_text)
+                    )
+                )
             )
         )
     }

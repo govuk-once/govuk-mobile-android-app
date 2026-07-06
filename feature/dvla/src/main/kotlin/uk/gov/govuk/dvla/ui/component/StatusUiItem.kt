@@ -158,5 +158,7 @@ private fun Style(
                 isPrimary = style.isPrimary,
                 caption = style.caption
             )
+        is StatusStyle.Caption ->
+            Caption(text = style.text)
     }
 }
