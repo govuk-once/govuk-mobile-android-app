@@ -3,7 +3,6 @@ package uk.gov.govuk.dvla.ui.model
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceStatus
