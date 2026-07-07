@@ -36,6 +36,8 @@ import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
+import uk.gov.govuk.config.data.remote.model.PromoBanner
+import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
@@ -778,6 +780,40 @@ class AppViewModelTest {
             val homeWidgets = viewModel.homeWidgets.first { it != null }!!
             val bannerWidget1 = HomeWidget.Banner(banner1)
             val bannerWidget2 = HomeWidget.Banner(banner2)
+            assertFalse("Suppressed banner (id1) should NOT be shown", homeWidgets.contains(bannerWidget1))
+            assertTrue("Unsuppressed banner (id2) SHOULD be shown", homeWidgets.contains(bannerWidget2))
+        }
+    }
+
+    @Test
+    fun `Given multiple promo banners where one is suppressed, When init, then show only unsuppressed banners`() {
+        val banner1 = PromoBanner(
+            id = "id1",
+            title = "Title 1",
+            body = "Body 1",
+            link = Link("Link Title", "http://url1"),
+            type = PromoBannerType.EXTERNAL
+        )
+
+        val banner2 = PromoBanner(
+            id = "id2",
+            title = "Title 2",
+            body = "Body 2",
+            link = Link("Link Title", "http://url2"),
+            type = PromoBannerType.INTERNAL
+        )
+
+        coEvery { flagRepo.isLocalServicesEnabled() } returns true
+        every { configRepo.promoBanners } returns listOf(banner1, banner2)
+        every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("id1"))
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.first { it != null }!!
+            val bannerWidget1 = HomeWidget.Promo(banner1)
+            val bannerWidget2 = HomeWidget.Promo(banner2)
             assertFalse("Suppressed banner (id1) should NOT be shown", homeWidgets.contains(bannerWidget1))
             assertTrue("Unsuppressed banner (id2) SHOULD be shown", homeWidgets.contains(bannerWidget2))
         }

@@ -247,6 +247,12 @@ internal class AppViewModel @Inject constructor(
                     }
                 }
 
+                configRepo.promoBanners?.forEach { promoBanner ->
+                    if (!suppressedWidgets.contains(promoBanner.id)) {
+                        widgets.add(HomeWidget.Promo(promoBanner = promoBanner))
+                    }
+                }
+
                 if (isTopicsEnabled()) {
                     widgets.add(HomeWidget.Topics)
                 }

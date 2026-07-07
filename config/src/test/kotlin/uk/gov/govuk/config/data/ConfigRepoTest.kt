@@ -13,6 +13,7 @@ import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
@@ -128,6 +129,7 @@ class ConfigRepoTest {
         val mockChatBanner = mockk<ChatBanner>()
         val mockTerms = mockk<TermsAndConditions>()
         val mockDvlaUrls = mockk<DvlaUrls>()
+        val mockPromoBanners = listOf(mockk<PromoBanner>())
 
         every { config.recommendedVersion } returns "2.0.0"
         every { config.releaseFlags.recentActivity } returns true
@@ -142,6 +144,7 @@ class ConfigRepoTest {
         every { config.chatBanner } returns mockChatBanner
         every { config.termsAndConditions } returns mockTerms
         every { config.dvlaUrls } returns mockDvlaUrls
+        every { config.promoBanners } returns mockPromoBanners
         coEvery { govUkDataSource.fetchConfig() } returns Success(config)
         coEvery { firebaseDataSource.fetch() } returns true
 
@@ -161,5 +164,6 @@ class ConfigRepoTest {
         assertSame(mockChatBanner, repo.chatBanner)
         assertSame(mockTerms, repo.termsAndConditions)
         assertSame(mockDvlaUrls, repo.dvlaUrls)
+        assertSame(mockPromoBanners, repo.promoBanners)
     }
 }

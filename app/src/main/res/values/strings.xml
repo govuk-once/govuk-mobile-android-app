@@ -72,4 +72,6 @@
     <string name="timeout_warning_dialog_message">For your security, we sign you out when you have not used the app for a while</string>
     <string name="timeout_warning_dialog_button">Stay signed in</string>
 
+    <string name="promo_banner_dismiss_content_desc">Dismiss</string>
+
 </resources>

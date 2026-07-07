@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import uk.gov.govuk.chat.navigation.navigateToChat
 import uk.gov.govuk.chat.ui.widget.ChatBanner
+import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
 import uk.gov.govuk.topics.ui.widget.TopicsWidget
@@ -55,6 +56,28 @@ internal fun homeWidgets(
                         },
                         onDismiss = { text ->
                             onSuppressClick(banner.id, text)
+                        },
+                        modifier = modifier
+                    )
+                }
+            }
+
+            is HomeWidget.Promo -> {
+                widgets.add { modifier ->
+                    PromoBanner(
+                        promoBanner = it.promoBanner,
+                        onClick = { text, url ->
+                            if (it.promoBanner.type == PromoBannerType.EXTERNAL) {
+                                onExternalClick(text, url)
+                            } else {
+                                onInternalClick(text)
+                            }
+                            if (url != null) {
+                                launchBrowser(url)
+                            }
+                        },
+                        onDismiss = { text ->
+                            onSuppressClick(it.promoBanner.id, text)
                         },
                         modifier = modifier
                     )
