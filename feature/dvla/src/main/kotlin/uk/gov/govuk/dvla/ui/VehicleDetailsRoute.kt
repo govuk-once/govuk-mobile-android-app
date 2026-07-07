@@ -83,7 +83,7 @@ internal fun VehicleDetailsRoute(
             SuccessScreen(
                 launchBrowser = { text, url ->
                     launchBrowser(url.external)
-                    viewModel.onExternalButtonClicked(text, url.internal, section)
+                    viewModel.onExternalButtonClicked(text, url.original, section)
                 },
                 onBack = onBack,
                 onPageView = { viewModel.onPageView(section) },

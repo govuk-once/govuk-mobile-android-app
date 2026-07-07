@@ -117,7 +117,7 @@ fun VehiclesAndLicenceSummaryWidget(
                         VehiclesViewContent(
                             launchBrowser = { text, url ->
                                 launchBrowser(url.external)
-                                viewModel.onExternalButtonClicked(text, url.internal)
+                                viewModel.onExternalButtonClicked(text, url.original)
                             },
                             onVehicleDetailsClick = { text, registration ->
                                 viewModel.onButtonClicked(text)
@@ -146,7 +146,7 @@ fun VehiclesAndLicenceSummaryWidget(
                         LicenceViewContent(
                             launchBrowser = { text, url ->
                                 launchBrowser(url.external)
-                                viewModel.onExternalButtonClicked(text, url.internal)
+                                viewModel.onExternalButtonClicked(text, url.original)
                             },
                             licenceState = currentState.licenceState,
                             onMenuItemClick = handleMenuItemClick,
