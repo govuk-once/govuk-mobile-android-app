@@ -14,10 +14,15 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.CHAT_ROUTE
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
+import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
+import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.SEARCH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPICS_EDIT_ROUTE
+import uk.gov.govuk.topics.navigation.TOPIC_ROUTE
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
+import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
 import uk.gov.govuk.visited.navigation.VISITED_ROUTE
 
 class DeeplinkHandlerTest {
@@ -291,6 +296,117 @@ class DeeplinkHandlerTest {
         verify(exactly = 0) {
             navController.navigate(any(), any<NavOptionsBuilder.() -> Unit>())
             onLaunchBrowser.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle dvla callback with token`() {
+        every { deeplink.path } returns DVLA_DEEP_LINK_PATH
+        every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
+        every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns "abc123"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(
+                "$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN=abc123",
+                any<NavOptionsBuilder.() -> Unit>()
+            )
+        }
+
+        verify(exactly = 0) {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            analyticsClient.deepLinkEvent(any(), any())
+            analyticsClient.logException(any())
+        }
+    }
+
+    @Test
+    fun `Handle dvla callback with no token and no failure`() {
+        every { deeplink.path } returns DVLA_DEEP_LINK_PATH
+        every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
+        every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns null
+        every { deeplink.queryParameterNames } returns emptySet()
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate("$TOPIC_ROUTE/$DRIVING_TOPIC_REF?isSubtopic=false")
+        }
+
+        verify(exactly = 0) {
+            analyticsClient.deepLinkEvent(any(), any())
+            analyticsClient.logException(any())
+        }
+    }
+
+    @Test
+    fun `Handle dvla callback with failure and no error message`() {
+        every { deeplink.path } returns DVLA_DEEP_LINK_PATH
+        every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
+        every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns null
+        every { deeplink.queryParameterNames } returns setOf("failure")
+        every { deeplink.getQueryParameter("failure") } returns "true"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate("$TOPIC_ROUTE/$DRIVING_TOPIC_REF?isSubtopic=false")
+            analyticsClient.logException(match { it.message == "DVLA auth callback error - Unknown" })
+        }
+    }
+
+    @Test
+    fun `Handle dvla callback with failure and error message`() {
+        every { deeplink.path } returns DVLA_DEEP_LINK_PATH
+        every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
+        every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns null
+        every { deeplink.queryParameterNames } returns setOf("failure", "errorMessage")
+        every { deeplink.getQueryParameter("failure") } returns "true"
+        every { deeplink.getQueryParameter("errorMessage") } returns "Something went wrong"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate("$TOPIC_ROUTE/$DRIVING_TOPIC_REF?isSubtopic=false")
+            analyticsClient.logException(match { it.message == "DVLA auth callback error - Something went wrong" })
+        }
+    }
+
+    @Test
+    fun `Handle dvla callback resolves failure param name case-insensitively`() {
+        every { deeplink.path } returns DVLA_DEEP_LINK_PATH
+        every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
+        every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns null
+        every { deeplink.queryParameterNames } returns setOf("Failure")
+        every { deeplink.getQueryParameter("Failure") } returns "true"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            deeplink.getQueryParameter("Failure")
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate("$TOPIC_ROUTE/$DRIVING_TOPIC_REF?isSubtopic=false")
+        }
+    }
+
+    @Test
+    fun `Handle dvla callback resolves error message param name case-insensitively`() {
+        every { deeplink.path } returns DVLA_DEEP_LINK_PATH
+        every { deeplink.pathSegments } returns listOf("callback", "dvla", "auth")
+        every { deeplink.getQueryParameter(ARG_DVLA_TOKEN) } returns null
+        every { deeplink.queryParameterNames } returns setOf("failure", "errormessage")
+        every { deeplink.getQueryParameter("failure") } returns "true"
+        every { deeplink.getQueryParameter("errormessage") } returns "Something went wrong"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            deeplink.getQueryParameter("errormessage")
+            analyticsClient.logException(match { it.message == "DVLA auth callback error - Something went wrong" })
         }
     }
 }

@@ -15,6 +15,8 @@ import uk.gov.govuk.home.navigation.homeDeepLinks
 import uk.gov.govuk.search.navigation.searchDeepLinks
 import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
+import uk.gov.govuk.topics.navigation.navigateToTopic
+import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ internal class DeeplinkHandler @Inject constructor(
         const val SEGMENT_COUNT = 3
 
         const val PARAM_FAILURE = "failure"
-        const val PARAM_ERROR_MESSAGE = "errormessage"
+        const val PARAM_ERROR_MESSAGE = "errorMessage"
     }
 
     var deepLink: Uri? = null
@@ -90,8 +92,7 @@ internal class DeeplinkHandler @Inject constructor(
                     validDeeplink = false
                     onDeeplinkNotFound?.invoke()
                 }
-            }        // prevent accidentally intercepting longer paths
-
+            }
 
             analyticsClient.deepLinkEvent(validDeeplink, it.toString())
             deepLink = null
@@ -124,7 +125,6 @@ internal class DeeplinkHandler @Inject constructor(
 
         val token = uri.getQueryParameter(ARG_DVLA_TOKEN)
 
-        // TODO Awaiting clarification from DVLA, success and 'do nothing' cases only are handled at the moment
         if (!token.isNullOrBlank()) {
             navController.navigate("$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN=$token") {
                 popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
@@ -132,17 +132,27 @@ internal class DeeplinkHandler @Inject constructor(
             }
         } else {
             // error messages are shown in the web flow and the user is taken back to the app
-
-            val isFailure = uri.getQueryParameter(LinkedServiceCallbackParams.PARAM_FAILURE)
+            val isFailure = uri.getQueryParameterIgnoreCase(LinkedServiceCallbackParams.PARAM_FAILURE)
                 ?.toBoolean() == true
 
             if (isFailure) {
-                val errorMessage = uri.getQueryParameter(LinkedServiceCallbackParams.PARAM_ERROR_MESSAGE)
+                val errorMessage = uri.getQueryParameterIgnoreCase(LinkedServiceCallbackParams.PARAM_ERROR_MESSAGE)
 
-                // TODO We may need to report to analytics (with error message if present or generic one if not), awaiting requirements
+                analyticsClient.logException(RuntimeException("DVLA auth callback error - ${errorMessage ?: "Unknown"}"))
             }
+
+            navController.navigate(HOME_GRAPH_ROUTE) {
+                popUpTo(0) { inclusive = true }
+            }
+            navController.navigateToTopic(DRIVING_TOPIC_REF)
         }
 
         return true
+    }
+
+    /** Matches a query parameter name case-insensitively, since callback URLs are outside our control */
+    private fun Uri.getQueryParameterIgnoreCase(name: String): String? {
+        val actualKey = queryParameterNames.firstOrNull { it.equals(name, ignoreCase = true) }
+        return actualKey?.let { getQueryParameter(it) }
     }
 }
