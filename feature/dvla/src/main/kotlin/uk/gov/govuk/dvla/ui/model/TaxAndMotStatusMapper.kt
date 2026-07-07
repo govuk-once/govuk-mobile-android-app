@@ -30,10 +30,6 @@ internal class TaxAndMotStatusMapper @Inject constructor(
     }
 
     fun getMotStatus(vehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): StatusUiModel {
-        when (vehicle.taxStatus) {
-            TaxStatus.SORN -> return StatusUiModel.NoStatus
-            else -> { /* Do nothing */ }
-        }
         val expiryDate = vehicle.motExpiryDate
         return when (vehicle.motStatus) {
             MotStatus.VALID -> {
