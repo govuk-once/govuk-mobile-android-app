@@ -24,6 +24,7 @@ import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.ButtonColours
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
@@ -115,8 +116,8 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         VehiclesViewContent(
                             launchBrowser = { text, url ->
-                                launchBrowser(url)
-                                viewModel.onExternalButtonClicked(text, url)
+                                launchBrowser(url.external)
+                                viewModel.onExternalButtonClicked(text, url.internal)
                             },
                             onVehicleDetailsClick = { text, registration ->
                                 viewModel.onButtonClicked(text)
@@ -144,8 +145,8 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         LicenceViewContent(
                             launchBrowser = { text, url ->
-                                launchBrowser(url)
-                                viewModel.onExternalButtonClicked(text, url)
+                                launchBrowser(url.external)
+                                viewModel.onExternalButtonClicked(text, url.internal)
                             },
                             licenceState = currentState.licenceState,
                             onMenuItemClick = handleMenuItemClick,
@@ -168,7 +169,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
 @Composable
 private fun VehiclesViewContent(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
@@ -206,7 +207,7 @@ private fun VehiclesViewContent(
 
 @Composable
 private fun LicenceViewContent(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
@@ -253,7 +254,7 @@ private fun VehiclesAndLicenceSummaryLoading(
 
 @Composable
 private fun VehiclesSummarySuccess(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     vehicles: List<VehicleSummaryUiModel>,
     onAddVehicleClick: ((String) -> Unit)?,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
@@ -314,7 +315,7 @@ private fun VehiclesSummaryEmpty(
 
 @Composable
 private fun LicenceSummarySuccess(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceSummary: LicenceSummaryUiModel,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,

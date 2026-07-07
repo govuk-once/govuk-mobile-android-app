@@ -40,6 +40,7 @@ import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
@@ -79,8 +80,8 @@ internal fun VehicleDetailsRoute(
 
         is VehicleDetailsUiState.Success -> SuccessScreen(
             launchBrowser = { text, url ->
-                launchBrowser(url)
-                viewModel.onExternalButtonClicked(text, url)
+                launchBrowser(url.external)
+                viewModel.onExternalButtonClicked(text, url.internal)
             },
             onBack = onBack,
             onPageView = { viewModel.onPageView(it) },
@@ -91,7 +92,7 @@ internal fun VehicleDetailsRoute(
 
 @Composable
 private fun SuccessScreen(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     onBack: () -> Unit,
     onPageView: (title: String) -> Unit,
     details: VehicleDetailsUiModel,

@@ -13,6 +13,7 @@ import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.extension.longClickWithAltText
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
@@ -23,7 +24,7 @@ import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
 internal fun LicenceSummaryCard(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceSummary: LicenceSummaryUiModel,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,

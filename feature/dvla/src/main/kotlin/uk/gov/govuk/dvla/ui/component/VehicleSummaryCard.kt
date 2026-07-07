@@ -13,6 +13,7 @@ import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
@@ -22,7 +23,7 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable
 internal fun VehicleSummaryCard(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     vehicleSummary: VehicleSummaryUiModel,
     onVehicleDetailsClick: (text: String, registration: String) -> Unit,
     onMenuItemClick: (OverflowMenuItem) -> Unit,

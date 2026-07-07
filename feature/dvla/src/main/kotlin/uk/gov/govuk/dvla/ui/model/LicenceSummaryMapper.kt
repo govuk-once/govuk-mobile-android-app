@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla.ui.model
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceStatus
@@ -138,7 +139,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     private fun getLicenceExpiringStyle(dvlaUrls: DvlaUrls?) = dvlaUrls?.renewLicence?.let { taxVehicleUrl ->
         StatusStyle.ActionButton(
             text = AccessibleString(stringProvider.getString(R.string.renew_licence_button)),
-            url = taxVehicleUrl,
+            url = UrlModel(taxVehicleUrl),
             caption = AccessibleString(displayText = stringProvider.getString(R.string.renew_licence_caption))
         )
     }

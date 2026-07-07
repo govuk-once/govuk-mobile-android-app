@@ -5,13 +5,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import uk.gov.govuk.design.ui.component.CountdownBarListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.ui.model.StatusStyle
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 
 @Composable
 internal fun StatusUiItem(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     statusUiModel: StatusUiModel,
     modifier: Modifier = Modifier,
     isLast: Boolean = false,
@@ -54,7 +55,7 @@ internal fun StatusUiItem(
 
 @Composable
 private fun StatusRow(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     statusUiModel: StatusUiModel.StatusRow,
     modifier: Modifier = Modifier,
     isLast: Boolean,
@@ -80,7 +81,7 @@ private fun StatusRow(
 
 @Composable
 private fun CountdownRow(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     statusUiModel: StatusUiModel.CountdownRow,
     modifier: Modifier = Modifier,
     isLast: Boolean,
@@ -124,7 +125,7 @@ private fun InfoRow(
 
 @Composable
 private fun LinkRow(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     statusUiModel: StatusUiModel.LinkRow,
     modifier: Modifier = Modifier,
     isLast: Boolean,
@@ -147,7 +148,7 @@ private fun LinkRow(
 
 @Composable
 private fun Style(
-    launchBrowser: (text: String, url: String) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
     style: StatusStyle
 ) {
     when (val style = style) {

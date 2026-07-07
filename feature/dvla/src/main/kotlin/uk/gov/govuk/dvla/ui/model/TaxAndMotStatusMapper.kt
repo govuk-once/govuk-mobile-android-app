@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla.ui.model
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
@@ -46,8 +47,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             MotStatus.EXPIRED -> getMotExpired(expiryDate)
             MotStatus.NO_DETAILS_HELD -> {
                 dvlaUrls?.checkMot?.let { checkMotUrl ->
-                    val formattedCheckMotUrl = checkMotUrl.insertRegistration(vehicle.registration)
-                    getNoMotDetailsHeld(formattedCheckMotUrl)
+                    getNoMotDetailsHeld(checkMotUrl, vehicle.registration)
                 } ?: run {
                     getUnknown(getMotStatusTitle())
                 }
@@ -183,7 +183,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
             StatusStyle.ActionButton(
                 text = AccessibleString(stringProvider.getString(R.string.renew_tax_button)),
-                url = taxVehicleUrl,
+                url = UrlModel(taxVehicleUrl),
                 caption = AccessibleString(stringProvider.getString(R.string.renew_tax_button_caption))
             )
         }
@@ -214,7 +214,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             StatusStyle.ActionButton(
                 text = AccessibleString(stringProvider.getString(R.string.manage_payment_button)),
                 caption = AccessibleString(stringProvider.getString(R.string.manage_payment_button_caption)),
-                url = manageTaxPaymentUrl,
+                url = UrlModel(manageTaxPaymentUrl),
                 isPrimary = false
             )
         }
@@ -292,13 +292,16 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             UPPER_RANGE_OF_MOT_EXPIRY_DAYS
         )
 
-    private fun getNoMotDetailsHeld(url: String) = StatusUiModel.LinkRow(
-        linkRowUi = LinkRowUiModel(
-            title = getMotStatusTitle(),
-            text = AccessibleString(stringProvider.getString(R.string.no_details_held_link_text)),
-            url = url
+    private fun getNoMotDetailsHeld(url: String, registration: String): StatusUiModel {
+        val formattedUrl = url.insertRegistration(registration)
+        return StatusUiModel.LinkRow(
+            linkRowUi = LinkRowUiModel(
+                title = getMotStatusTitle(),
+                text = AccessibleString(stringProvider.getString(R.string.no_details_held_link_text)),
+                url = UrlModel(original = url, formatted = formattedUrl)
+            )
         )
-    )
+    }
 
     private fun getNoMotResultsReturned(url: String) = StatusUiModel.LinkRow(
         linkRowUi = LinkRowUiModel(
@@ -307,7 +310,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
                 displayText = stringProvider.getString(R.string.check_mot_link_text),
                 altText = stringProvider.getString(R.string.check_mot_link_alt_text)
             ),
-            url = url
+            url = UrlModel(url)
         )
     )
 
