@@ -1,7 +1,5 @@
 package uk.gov.govuk.dvla
 
-import androidx.lifecycle.SavedStateHandle
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -55,14 +53,14 @@ class VehicleDetailsViewModelTest {
 
     @Test
     fun `When onExternalButtonClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
-        viewModel.onExternalButtonClicked("Text", "https://www.test.com")
+        viewModel.onExternalButtonClicked("Text", "https://www.test.com", "Section")
 
         verify(exactly = 1) {
             analyticsClient.buttonClick(
                 text = "Text",
                 url = "https://www.test.com",
                 external = true,
-                section = "VehicleDetailsScreen"
+                section = "Section"
             )
         }
     }

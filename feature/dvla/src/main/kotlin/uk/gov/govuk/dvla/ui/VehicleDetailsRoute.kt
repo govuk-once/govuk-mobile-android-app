@@ -78,15 +78,18 @@ internal fun VehicleDetailsRoute(
 
         is VehicleDetailsUiState.Error -> { /* TODO: no designs yet */ }
 
-        is VehicleDetailsUiState.Success -> SuccessScreen(
-            launchBrowser = { text, url ->
-                launchBrowser(url.external)
-                viewModel.onExternalButtonClicked(text, url.internal)
-            },
-            onBack = onBack,
-            onPageView = { viewModel.onPageView(it) },
-            details = state.details
-        )
+        is VehicleDetailsUiState.Success -> {
+            val section = stringResource(R.string.vehicle_details_success_title)
+            SuccessScreen(
+                launchBrowser = { text, url ->
+                    launchBrowser(url.external)
+                    viewModel.onExternalButtonClicked(text, url.internal, section)
+                },
+                onBack = onBack,
+                onPageView = { viewModel.onPageView(section) },
+                details = state.details
+            )
+        }
     }
 }
 
@@ -94,13 +97,12 @@ internal fun VehicleDetailsRoute(
 private fun SuccessScreen(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     onBack: () -> Unit,
-    onPageView: (title: String) -> Unit,
+    onPageView: () -> Unit,
     details: VehicleDetailsUiModel,
     modifier: Modifier = Modifier
 ) {
-    val title = stringResource(R.string.vehicle_details_success_title)
     RunOnceLaunchedEffect {
-        onPageView(title)
+        onPageView()
     }
 
     Column(

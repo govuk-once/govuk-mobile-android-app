@@ -48,12 +48,12 @@ internal class VehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onExternalButtonClicked(text: String, url: String) {
+    fun onExternalButtonClicked(text: String, url: String, section: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
             external = true,
-            section = SCREEN_CLASS
+            section = section
         )
     }
 
