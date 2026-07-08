@@ -11,11 +11,13 @@ import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import javax.inject.Inject
@@ -149,7 +151,10 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     val licence = licenceMapper.toUiModel(result.value, dvlaUrls)
                     LicenceSummaryUiState.Success(licence)
                 }
-                else -> LicenceSummaryUiState.Error
+                else -> {
+                    val fallbackUrl = UrlModel(dvlaUrls?.driverDetails ?: GOV_UK_URL)
+                    LicenceSummaryUiState.Error(fallbackUrl)
+                }
             }
 
             updateLicenceState(newState)
@@ -165,7 +170,10 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it, dvlaUrls) }
                     VehiclesSummaryUiState.Success(vehicles)
                 }
-                else -> VehiclesSummaryUiState.Error
+                else -> {
+                    val fallbackUrl = UrlModel(dvlaUrls?.account ?: GOV_UK_URL)
+                    VehiclesSummaryUiState.Error(fallbackUrl)
+                }
             }
 
             updateVehiclesState(newState)

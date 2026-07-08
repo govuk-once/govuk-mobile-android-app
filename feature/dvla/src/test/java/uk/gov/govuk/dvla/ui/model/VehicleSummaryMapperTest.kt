@@ -34,7 +34,9 @@ class VehicleSummaryMapperTest {
         manageTaxPayment = "https://www.gov.uk/vehicle-tax-direct-debit/renewing",
         taxVehicle = "https://www.gov.uk/vehicle-tax",
         historicVehicles = "https://www.gov.uk/historic-vehicles",
-        checkMot = "https://www.check-mot.service.gov.uk/results?registration=[NUMBER PLATE]&checkRecalls=true"
+        checkMot = "https://www.check-mot.service.gov.uk/results?registration=[NUMBER PLATE]&checkRecalls=true",
+        driverDetails = "https://driver-and-vehicles-account.service.gov.uk/driver_details",
+        account = "https://driver-and-vehicles-account.service.gov.uk"
     )
 
     @Before
