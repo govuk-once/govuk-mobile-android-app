@@ -7,6 +7,7 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
+import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
@@ -66,6 +67,60 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             TaxStatus.TAXED -> {
                 if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_TAX_EXPIRY_DAYS) == true) {
                     if (vehicle.isPaymentMethodDirectDebit()) {
+                        getTaxExpiringDirectDebit(expiryDate, dvlaUrls)
+                    } else {
+                        getTaxExpiring(expiryDate, dvlaUrls)
+                    }
+                } else {
+                    getValid(getTaxStatusTitle(), expiryDate)
+                }
+            }
+
+            TaxStatus.UNTAXED -> getTaxExpired(expiryDate, dvlaUrls)
+            TaxStatus.SORN -> getSorn(vehicle.sornStart)
+            TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getNotNeeded(getTaxStatusTitle())
+            TaxStatus.UNKNOWN -> getUnknown(getTaxStatusTitle())
+        }
+    }
+
+    fun getMotStatus(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): StatusUiModel {
+        val expiryDate = vehicle.motExpiryDate
+        return when (vehicle.motStatus) {
+            MotStatus.VALID -> {
+                if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_MOT_EXPIRY_DAYS) == true) {
+                    getMotExpiring(expiryDate)
+                } else {
+                    getValid(getMotStatusTitle(), expiryDate)
+                }
+            }
+
+            MotStatus.EXPIRED -> getMotExpired(expiryDate)
+            MotStatus.NO_DETAILS_HELD -> {
+                dvlaUrls?.checkMot?.let { checkMotUrl ->
+                    getNoMotDetailsHeld(checkMotUrl, vehicle.registration)
+                } ?: run {
+                    getUnknown(getMotStatusTitle())
+                }
+            }
+
+            MotStatus.NO_RESULTS_RETURNED -> {
+                dvlaUrls?.historicVehicles?.let { historicVehiclesUrl ->
+                    getNoMotResultsReturned(historicVehiclesUrl)
+                } ?: run {
+                    getUnknown(getMotStatusTitle())
+                }
+            }
+
+            MotStatus.UNKNOWN -> getUnknown(getMotStatusTitle())
+        }
+    }
+
+    fun getTaxStatus(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): StatusUiModel {
+        val expiryDate = vehicle.taxExpiryDate
+        return when (vehicle.taxStatus) {
+            TaxStatus.TAXED -> {
+                if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_TAX_EXPIRY_DAYS) == true) {
+                    if (vehicle.currentLicencePaymentMethod.isDirectDebit()) {
                         getTaxExpiringDirectDebit(expiryDate, dvlaUrls)
                     } else {
                         getTaxExpiring(expiryDate, dvlaUrls)

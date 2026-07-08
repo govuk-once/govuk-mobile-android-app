@@ -7,6 +7,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
+import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.LinkStatusResponse
@@ -30,6 +31,9 @@ interface DvlaApi {
 
     @GET("app/dvla/v1/customer-summary")
     suspend fun getCustomerSummary(): Response<CustomerSummaryResponse>
+
+    @GET("app/dvla/v1/customer/vehicles")
+    suspend fun getCustomerVehicles(): Response<CustomerVehiclesResponse>
 
     @GET("app/dvla/v1/vehicle-enquiry/{reg}")
     suspend fun lookupVehicle(@Path("reg") registrationNumber: String): Response<VehicleEnquiryResponse>
