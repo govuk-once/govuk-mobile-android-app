@@ -321,14 +321,14 @@ private fun VehicleSummaryError(
     onClick: (text: String) -> Unit
 ) {
     val vehicles = stringResource(R.string.vehicles)
-    val linkText =
-        AccessibleString(stringResource(R.string.vehicles_summary_loading_error_link_text))
+    val linkText = stringResource(R.string.vehicles_summary_loading_error_link_text)
     SummaryErrorCard(
         text = AccessibleString(stringResource(R.string.vehicles_summary_loading_error_text)),
-        subText = AccessibleString(stringResource(R.string.vehicles_summary_loading_error_sub_text)),
-        linkText = linkText,
+        subIntroText = stringResource(R.string.vehicles_summary_loading_error_sub_text),
+        subOutroText = "",
+        subLinkText = linkText,
         onClick = {
-            onClick("$vehicles ${linkText.displayText}")
+            onClick("$vehicles $linkText")
         }
     )
 }
@@ -359,14 +359,14 @@ private fun LicenceSummaryError(
     onClick: (text: String) -> Unit
 ) {
     val licence = stringResource(R.string.licence)
-    val linkText =
-        AccessibleString(stringResource(R.string.licence_summary_loading_error_link_text))
+    val linkText = stringResource(R.string.licence_summary_loading_error_link_text)
     SummaryErrorCard(
         text = AccessibleString(stringResource(R.string.licence_summary_loading_error_text)),
-        subText = AccessibleString(stringResource(R.string.licence_summary_loading_error_sub_text)),
-        linkText = linkText,
+        subIntroText = stringResource(R.string.licence_summary_loading_error_sub_text),
+        subOutroText = "",
+        subLinkText = linkText,
         onClick = {
-            onClick("$licence ${linkText.displayText}")
+            onClick("$licence $linkText")
         }
     )
 }

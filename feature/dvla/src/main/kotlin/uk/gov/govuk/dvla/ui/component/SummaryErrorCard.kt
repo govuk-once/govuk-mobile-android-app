@@ -27,10 +27,12 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 internal fun SummaryErrorCard(
     text: AccessibleString,
-    subText: AccessibleString,
-    linkText: AccessibleString,
+    subIntroText: String,
+    subOutroText: String,
+    subLinkText: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    subAltText: String? = null
 ) {
     CardListItem(
         modifier = modifier,
@@ -65,10 +67,11 @@ internal fun SummaryErrorCard(
             ExtraSmallVerticalSpacer()
 
             BodyRegularLabelTrailingLink(
-                introText = subText.displayText,
-                outroText = "",
-                linkText = linkText.displayText,
+                introText = subIntroText,
+                outroText = subOutroText,
+                linkText = subLinkText,
                 onClick = onClick,
+                altText = subAltText,
                 textAlign = TextAlign.Center,
                 textDecoration = TextDecoration.Underline
             )
@@ -84,8 +87,9 @@ private fun SummaryErrorCardPreview() {
     GovUkTheme {
         SummaryErrorCard(
             AccessibleString("Text"),
-            AccessibleString("Sub text"),
-            AccessibleString("link text"),
+            "Sub text",
+            "",
+            "link text",
             {}
         )
     }
