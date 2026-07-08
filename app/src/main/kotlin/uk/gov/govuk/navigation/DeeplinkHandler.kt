@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.chatDeepLinks
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
 import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
@@ -14,6 +15,8 @@ import uk.gov.govuk.home.navigation.homeDeepLinks
 import uk.gov.govuk.search.navigation.searchDeepLinks
 import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
+import uk.gov.govuk.topics.navigation.navigateToTopic
+import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
 import javax.inject.Inject
 
@@ -22,6 +25,16 @@ internal class DeeplinkHandler @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val topicsDeepLinksProvider: TopicsDeepLinksProvider
 ) {
+
+    private object LinkedServiceCallbackParams {
+        const val CALLBACK_PREFIX = "callback"
+        const val AUTH_SUFFIX = "auth"
+        const val SEGMENT_COUNT = 3
+
+        const val PARAM_FAILURE = "failure"
+        const val PARAM_ERROR_MESSAGE = "errorMessage"
+    }
+
     var deepLink: Uri? = null
 
     private val deepLinks: Map<String, List<String>> by lazy {
@@ -54,7 +67,7 @@ internal class DeeplinkHandler @Inject constructor(
         deepLink?.let {
 
             // check for intercepted route first
-            if (interceptDvlaAuthCallback(it, navController)) {
+            if (interceptLinkedServiceCallback(it, navController)) {
                 deepLink = null
                 return
             }
@@ -86,19 +99,60 @@ internal class DeeplinkHandler @Inject constructor(
         }
     }
 
+    /** Intercepts /callback/{service}/auth routes */
+    private fun interceptLinkedServiceCallback(uri: Uri, navController: NavController): Boolean {
+        val segments = uri.pathSegments
+
+        // prevent accidentally handling longer paths
+        if (segments.size != LinkedServiceCallbackParams.SEGMENT_COUNT) return false
+
+        val (prefix, serviceName, suffix) = segments
+        if (prefix != LinkedServiceCallbackParams.CALLBACK_PREFIX || suffix != LinkedServiceCallbackParams.AUTH_SUFFIX) return false
+
+        val service = LinkedService.entries.find { it.serviceName == serviceName }
+
+        return when (service) {
+            LinkedService.DVLA -> handleDvlaCallback(uri, navController)
+            // add any future linked service callbacks here
+            null -> false
+        }
+    }
+
+
     /** Intercepts the DVLA auth callback */
-    private fun interceptDvlaAuthCallback(uri: Uri, navController: NavController): Boolean {
+    private fun handleDvlaCallback(uri: Uri, navController: NavController): Boolean {
         if (uri.path != DVLA_DEEP_LINK_PATH) return false
 
-        uri.getQueryParameter(ARG_DVLA_TOKEN)?.let { token ->
+        val token = uri.getQueryParameter(ARG_DVLA_TOKEN)
+
+        if (!token.isNullOrBlank()) {
             navController.navigate("$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN=$token") {
                 popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
                 launchSingleTop = true
             }
-        } ?: run {
-            // TODO: Handle auth failure (missing token etc) in future ticket when we get requirements
+        } else {
+            // error messages are shown in the web flow and the user is taken back to the app
+            val isFailure = uri.getQueryParameterIgnoreCase(LinkedServiceCallbackParams.PARAM_FAILURE)
+                ?.toBoolean() == true
+
+            if (isFailure) {
+                val errorMessage = uri.getQueryParameterIgnoreCase(LinkedServiceCallbackParams.PARAM_ERROR_MESSAGE)
+
+                analyticsClient.logException(RuntimeException("DVLA auth callback error - ${errorMessage ?: "Unknown"}"))
+            }
+
+            navController.navigate(HOME_GRAPH_ROUTE) {
+                popUpTo(0) { inclusive = true }
+            }
+            navController.navigateToTopic(DRIVING_TOPIC_REF)
         }
 
         return true
+    }
+
+    /** Matches a query parameter name case-insensitively, since callback URLs are outside our control */
+    private fun Uri.getQueryParameterIgnoreCase(name: String): String? {
+        val actualKey = queryParameterNames.firstOrNull { it.equals(name, ignoreCase = true) }
+        return actualKey?.let { getQueryParameter(it) }
     }
 }
