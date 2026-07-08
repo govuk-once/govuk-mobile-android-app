@@ -14,6 +14,7 @@ internal class VehicleSummaryMapper @Inject constructor(
 ) {
     fun toUiModel(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): VehicleSummaryUiModel {
         return VehicleSummaryUiModel(
+            vehicleId = vehicle.vehicleId,
             registration = vehicle.registration,
             make = vehicle.make,
             model = vehicle.model

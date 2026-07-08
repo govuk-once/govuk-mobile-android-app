@@ -5,6 +5,7 @@ import uk.gov.govuk.dvla.remote.model.VehicleSummary as RemoteVehicleSummary
 import java.time.LocalDate
 
 data class VehicleSummary(
+    val vehicleId: Int,
     val registration: String,
     val make: String,
     val model: String?,
@@ -18,6 +19,7 @@ data class VehicleSummary(
 
 internal fun RemoteVehicleSummary.toDomainModel(): VehicleSummary {
     return VehicleSummary(
+        vehicleId = this.vehicleId,
         registration = this.registrationNumber,
         make = this.make,
         model = this.model,

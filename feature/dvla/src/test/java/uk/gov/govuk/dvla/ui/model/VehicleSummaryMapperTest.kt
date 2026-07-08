@@ -7,9 +7,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
-import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
+import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.util.StringProvider
 import java.time.LocalDate
 
@@ -45,16 +45,18 @@ class VehicleSummaryMapperTest {
     private fun makeVehicle(
         sornStart: LocalDate? = null,
         taxStatus: TaxStatus = TaxStatus.UNKNOWN
-    ) = mockk<CustomerVehicle> {
-        every { registration } returns "AA19 AAA"
-        every { make } returns "FORD"
-        every { model } returns "FIESTA"
-        every { this@mockk.taxStatus } returns taxStatus
-        every { motStatus } returns MotStatus.UNKNOWN
-        every { taxExpiryDate } returns null
-        every { motExpiryDate } returns null
-        every { this@mockk.sornStart } returns sornStart
-    }
+    ) = VehicleSummary(
+        vehicleId = 156487251,
+        registration = "AA19 AAA",
+        make = "FORD",
+        model = "FIESTA",
+        taxStatus = taxStatus,
+        taxExpiryDate = null,
+        motStatus = MotStatus.UNKNOWN,
+        motExpiryDate = null,
+        sornStart = sornStart,
+        currentLicencePaymentMethod = null
+    )
 
     @Test
     fun `Given dvlaUrls is null, then menu items is empty`() {

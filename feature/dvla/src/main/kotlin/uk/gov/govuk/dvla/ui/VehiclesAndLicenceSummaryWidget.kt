@@ -45,7 +45,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
-    onVehicleDetailsClick: (registration: String) -> Unit,
+    onVehicleDetailsClick: (vehicleId: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
@@ -119,9 +119,9 @@ fun VehiclesAndLicenceSummaryWidget(
                                 launchBrowser(url.external)
                                 viewModel.onExternalButtonClicked(text, url.original)
                             },
-                            onVehicleDetailsClick = { text, registration ->
+                            onVehicleDetailsClick = { text, vehicleId ->
                                 viewModel.onButtonClicked(text)
-                                onVehicleDetailsClick(registration)
+                                onVehicleDetailsClick(vehicleId)
                             },
                             vehiclesState = currentState.vehiclesState,
                             onMenuItemClick = handleMenuItemClick,
@@ -170,7 +170,7 @@ fun VehiclesAndLicenceSummaryWidget(
 @Composable
 private fun VehiclesViewContent(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
-    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
+    onVehicleDetailsClick: (text: String, vehicleId: Int) -> Unit,
     vehiclesState: VehiclesSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onAddVehiclesClick: ((String) -> Unit)?,
@@ -257,7 +257,7 @@ private fun VehiclesSummarySuccess(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     vehicles: List<VehicleSummaryUiModel>,
     onAddVehicleClick: ((String) -> Unit)?,
-    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
+    onVehicleDetailsClick: (text: String, vehicleId: Int) -> Unit,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
