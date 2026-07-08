@@ -42,13 +42,25 @@ internal fun StatusButton(
         }
 
         caption?.let {
-            MediumVerticalSpacer()
-
-            CalloutRegularLabel(
-                text = caption.displayText,
-                modifier = Modifier.withAltText(caption.altText),
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
+            Caption(
+                text = caption
             )
         }
+    }
+}
+
+@Composable
+internal fun Caption(
+    text: AccessibleString,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        MediumVerticalSpacer()
+
+        CalloutRegularLabel(
+            text = text.displayText,
+            modifier = Modifier.withAltText(text.altText),
+            color = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
     }
 }

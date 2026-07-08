@@ -24,14 +24,14 @@ class MotStatusTest {
     }
 
     @Test
-    fun `Verify NO_DETAILS_HELD status is UNKNOWN`() {
+    fun `Verify NO_DETAILS_HELD status is NO_DETAILS_HELD`() {
         val remote = RemoteMotStatus.NO_DETAILS_HELD
-        assertEquals(MotStatus.UNKNOWN, remote.toDomain())
+        assertEquals(MotStatus.NO_DETAILS_HELD, remote.toDomain())
     }
 
     @Test
-    fun `Verify NO_RESULTS_RETURNED status is UNKNOWN`() {
+    fun `Verify NO_RESULTS_RETURNED status is NO_RESULTS_RETURNED`() {
         val remote = RemoteMotStatus.NO_RESULTS_RETURNED
-        assertEquals(MotStatus.UNKNOWN, remote.toDomain())
+        assertEquals(MotStatus.NO_RESULTS_RETURNED, remote.toDomain())
     }
 }

@@ -9,7 +9,7 @@ internal data class VehicleDetailsUiModel(
     val registration: String,
     val keeper: KeeperUiModel,
     val specificationsIcons: List<SpecificationIconUiModel>,
-    val taxStatus: StatusRowUiModel,
-    val motStatus: StatusRowUiModel,
+    val taxStatus: StatusUiModel,
+    val motStatus: StatusUiModel,
     val specifications: List<InternalLinkListItemModel>
 )

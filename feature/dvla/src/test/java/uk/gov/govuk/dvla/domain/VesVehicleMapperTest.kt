@@ -39,7 +39,7 @@ class VesVehicleMapperTest {
         assertEquals(2019, domainModel.yearOfManufacture)
         assertEquals(TaxStatus.TAXED, domainModel.taxStatus)
         assertEquals(LocalDate.of(1988, 10, 25), domainModel.taxDueDate)
-        assertEquals(MotStatus.UNKNOWN, domainModel.motStatus)
+        assertEquals(MotStatus.NO_DETAILS_HELD, domainModel.motStatus)
         assertEquals(LocalDate.of(1988, 11, 25), domainModel.motExpiryDate)
         assertEquals(FuelType.PETROL, domainModel.fuelType)
         assertEquals(2000, domainModel.engineCapacity)

@@ -26,3 +26,8 @@ fun String.toAccessibleStreetName(): String {
 }
 
 internal fun String?.isDirectDebit() = this == "Direct Debit"
+
+internal fun String.insertRegistration(registration: String): String {
+    val registrationNoWhitespace = registration.filterNot { it.isWhitespace() }
+    return this.replace("[NUMBER PLATE]", registrationNoWhitespace)
+}

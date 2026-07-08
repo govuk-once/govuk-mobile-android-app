@@ -510,7 +510,7 @@ private fun GovUkNavHost(
                         // and licence summary widget from DVLA module
                         VehiclesAndLicenceSummaryWidget(
                             launchBrowser = { url ->
-                                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                             },
                             onVehicleDetailsClick = { registration ->
                                 navController.navigateToVehicleDetails(registration)

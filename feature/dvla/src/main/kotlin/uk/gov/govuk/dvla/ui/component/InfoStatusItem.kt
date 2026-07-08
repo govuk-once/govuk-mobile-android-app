@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -28,16 +29,18 @@ internal fun InfoStatusItem(
     subtitle: AccessibleString? = null,
     @DrawableRes icon: Int? = null,
     isFirst: Boolean = false,
-    isLast: Boolean = false
+    isLast: Boolean = false,
+    background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
         isLast = isLast,
-        drawDivider = true
+        drawDivider = true,
+        background = background
     ) {
         Row(
-            modifier = modifier.fillMaxWidth().padding(horizontal = GovUkTheme.spacing.medium)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(vertical = GovUkTheme.spacing.large),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -53,13 +56,13 @@ internal fun InfoStatusItem(
             Column {
                 BodyBoldLabel(
                     text = title.displayText,
-                    modifier.withAltText(title.altText)
+                    modifier = Modifier.withAltText(title.altText)
                 )
 
                 subtitle?.let {
                     BodyRegularLabel(
                         text = subtitle.displayText,
-                        modifier.withAltText(subtitle.altText)
+                        modifier = Modifier.withAltText(subtitle.altText)
                     )
                 }
             }

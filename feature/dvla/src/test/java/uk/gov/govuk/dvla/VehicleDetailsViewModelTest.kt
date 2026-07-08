@@ -1,7 +1,5 @@
 package uk.gov.govuk.dvla
 
-import androidx.lifecycle.SavedStateHandle
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +12,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
 
@@ -23,16 +22,14 @@ class VehicleDetailsViewModelTest {
 
     private lateinit var viewModel: VehicleDetailsViewModel
     private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
-    private val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val mapper = mockk<VehicleDetailsMapper>(relaxed = true)
-    private val registration = "TE5T PL8"
+    private val configRepo = mockk<ConfigRepo>(relaxed = true)
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        every { savedStateHandle.get<String>("vehicle_registration") } returns registration
-        viewModel = VehicleDetailsViewModel(savedStateHandle, dvlaRepo, analyticsClient, mapper)
+        viewModel = VehicleDetailsViewModel(dvlaRepo, analyticsClient, mapper, configRepo)
     }
 
     @After
@@ -53,4 +50,18 @@ class VehicleDetailsViewModelTest {
                 )
             }
         }
+
+    @Test
+    fun `When onExternalButtonClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        viewModel.onExternalButtonClicked("Text", "https://www.test.com", "Section")
+
+        verify(exactly = 1) {
+            analyticsClient.buttonClick(
+                text = "Text",
+                url = "https://www.test.com",
+                external = true,
+                section = "Section"
+            )
+        }
+    }
 }

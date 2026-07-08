@@ -138,7 +138,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     private fun getLicenceExpiringStyle(dvlaUrls: DvlaUrls?) = dvlaUrls?.renewLicence?.let { taxVehicleUrl ->
         StatusStyle.ActionButton(
             text = AccessibleString(stringProvider.getString(R.string.renew_licence_button)),
-            url = taxVehicleUrl,
+            url = UrlModel(taxVehicleUrl),
             caption = AccessibleString(displayText = stringProvider.getString(R.string.renew_licence_caption))
         )
     }

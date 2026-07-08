@@ -36,4 +36,10 @@ class StringExtensionTest {
         val result = "Not Direct Debit".isDirectDebit()
         assertFalse(result)
     }
+
+    @Test
+    fun `Given insertRegistration is called, when the string contains NUMBER PLATE, then return formatted string`() {
+        val result = "Test [NUMBER PLATE]".insertRegistration("ABC 123")
+        assertEquals("Test ABC123", result)
+    }
 }

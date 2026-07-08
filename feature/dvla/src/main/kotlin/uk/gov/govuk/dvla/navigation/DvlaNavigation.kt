@@ -83,6 +83,7 @@ fun NavGraphBuilder.dvlaGraph(
             )
         ) {
             VehicleDetailsRoute(
+                launchBrowser = launchBrowser,
                 onBack = onBack,
                 modifier = modifier
             )

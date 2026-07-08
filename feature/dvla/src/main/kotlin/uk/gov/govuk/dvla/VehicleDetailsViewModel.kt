@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
@@ -21,10 +21,10 @@ internal sealed interface VehicleDetailsUiState {
 
 @HiltViewModel
 internal class VehicleDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient,
-    private val mapper: VehicleDetailsMapper
+    private val mapper: VehicleDetailsMapper,
+    configRepo: ConfigRepo
 ) : ViewModel() {
 
     private companion object {
@@ -33,6 +33,8 @@ internal class VehicleDetailsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<VehicleDetailsUiState>(VehicleDetailsUiState.Loading)
     val uiState = _uiState.asStateFlow()
+
+    private val dvlaUrls = configRepo.dvlaUrls
 
     init {
         fetchVehicleDetails()
@@ -46,6 +48,15 @@ internal class VehicleDetailsViewModel @Inject constructor(
         )
     }
 
+    fun onExternalButtonClicked(text: String, url: String, section: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
+            section = section
+        )
+    }
+
     private fun fetchVehicleDetails() {
         // TODO temporarily get details from summary endpoint until lookup vehicle endpoint is live
         // val vehicleRegistration: String = savedStateHandle[ARG_VEHICLE_REGISTRATION] ?: return
@@ -54,7 +65,7 @@ internal class VehicleDetailsViewModel @Inject constructor(
                 is uk.gov.govuk.data.model.Result.Success -> {
                     // TODO get first vehicle for now until lookup vehicle endpoint is live
                     result.value.vehicles.getOrNull(0)?.let { vehicle ->
-                        val vehicleDetails = mapper.toUiModel(vehicle)
+                        val vehicleDetails = mapper.toUiModel(vehicle, dvlaUrls)
                         _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
                     }
                 }

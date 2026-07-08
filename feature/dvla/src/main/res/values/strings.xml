@@ -21,13 +21,19 @@
 
     <string name="acronym_mot">MOT</string>
     <string name="acronym_mot_alt_text">M.O.T.</string>
+    <string name="no_details_held_link_text">See status on the website</string>
+    <string name="check_mot_link_text">Check if it needs an MOT</string>
+    <string name="check_mot_link_alt_text">Check if it needs an M.O.T.</string>
 
     <string name="manage_payment_button">Manage payment</string>
+    <string name="manage_payment_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
     <string name="status_unknown">Unknown</string>
     <string name="status_not_needed">Not needed</string>
     <string name="tax_status_title">Tax</string>
     <string name="renew_tax_button">Renew tax</string>
     <string name="renew_tax_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
+    <string name="expiring_mot_caption">It can take a couple of days after your MOT for your status to update</string>
+    <string name="expiring_mot_caption_alt_text">It can take a couple of days after your M.O.T for your status to update</string>
     <string name="valid_until">Valid until %1$s</string>
     <string name="valid">Valid</string>
     <string name="expired_on">Expired %s</string>

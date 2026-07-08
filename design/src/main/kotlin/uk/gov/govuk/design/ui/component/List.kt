@@ -534,9 +534,11 @@ fun CountdownBarListItem(
         background = background
     ) {
         Column(
-            modifier = modifier
-                .padding(all = GovUkTheme.spacing.medium)
+            modifier = Modifier
+                .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
+            MediumVerticalSpacer()
+
             title?.let { title ->
                 Title3BoldLabel(
                     text = title.displayText,
@@ -562,6 +564,8 @@ fun CountdownBarListItem(
                 modifier = Modifier.withAltText(bottomText.altText)
             )
             footerContent?.invoke()
+
+            MediumVerticalSpacer()
         }
     }
 }
