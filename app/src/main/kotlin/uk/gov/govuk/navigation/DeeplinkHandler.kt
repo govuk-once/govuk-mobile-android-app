@@ -67,9 +67,7 @@ internal class DeeplinkHandler @Inject constructor(
         deepLink?.let {
 
             // check for intercepted route first
-//            if (interceptLinkedServiceCallback(it, navController)) {
-            // Todo - remove when DVLA deploy new deeplinks!!!
-            if (interceptDvlaAuthCallback(it, navController)) {
+            if (interceptLinkedServiceCallback(it, navController)) {
                 deepLink = null
                 return
             }
@@ -99,22 +97,6 @@ internal class DeeplinkHandler @Inject constructor(
             analyticsClient.deepLinkEvent(validDeeplink, it.toString())
             deepLink = null
         }
-    }
-
-    // Todo - remove when DVLA deploy new deeplinks!!!
-    private fun interceptDvlaAuthCallback(uri: Uri, navController: NavController): Boolean {
-        if (uri.path != DVLA_DEEP_LINK_PATH) return false
-
-        uri.getQueryParameter(ARG_DVLA_TOKEN)?.let { token ->
-            navController.navigate("$DVLA_LINK_ROUTE?$ARG_DVLA_TOKEN=$token") {
-                popUpTo(DVLA_LINK_ROUTE) { inclusive = true }
-                launchSingleTop = true
-            }
-        } ?: run {
-            // TODO: Handle auth failure (missing token etc) in future ticket when we get requirements
-        }
-
-        return true
     }
 
     /** Intercepts /callback/{service}/auth routes */
