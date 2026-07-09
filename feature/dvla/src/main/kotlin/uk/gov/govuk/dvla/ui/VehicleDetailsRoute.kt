@@ -260,9 +260,7 @@ private fun SuccessScreenPreview() {
         "TE5T PL8",
         KeeperUiModel(
             "Name",
-            "Street",
-            "City",
-            "Postcode"
+            listOf("Street", "City", "Postcode")
         ),
         listOf(
             SpecificationIconUiModel(

@@ -11,10 +11,11 @@ import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
-import uk.gov.govuk.dvla.domain.CustomerSummary
 import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
 import javax.inject.Inject
@@ -74,9 +75,13 @@ class DvlaRepo @Inject constructor(
         safeAuthApiCall({ api.getDriverSummary() }, authRepo)
             .map { it.toDomainModel() }
 
-    internal suspend fun getCustomerSummary(): Result<CustomerSummary> =
-        safeAuthApiCall({ api.getCustomerSummary() }, authRepo)
-            .map { it.toDomainModel() }
+    internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> =
+        safeAuthApiCall({ api.getCustomerVehicles() }, authRepo)
+            .map { it.customerVehicles.map { vehicle -> vehicle.toDomainModel() } }
+
+    internal suspend fun getVehicleDetails(vehicleId: Int): Result<VehicleDetails> =
+        safeAuthApiCall({ api.getVehicleDetails(vehicleId) }, authRepo)
+            .map { it.customerVehicleDetails.toDomainModel() }
 
     internal suspend fun lookupVehicle(registrationNumber: String): Result<VesVehicle> =
         safeAuthApiCall({ api.lookupVehicle(registrationNumber) }, authRepo)

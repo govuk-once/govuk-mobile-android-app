@@ -3,8 +3,8 @@ package uk.gov.govuk.dvla.ui.model
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.TaxStatus
+import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.util.StringProvider
 import javax.inject.Inject
 
@@ -12,8 +12,9 @@ internal class VehicleSummaryMapper @Inject constructor(
     private val stringProvider: StringProvider,
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper
 ) {
-    fun toUiModel(vehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): VehicleSummaryUiModel {
+    fun toUiModel(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): VehicleSummaryUiModel {
         return VehicleSummaryUiModel(
+            vehicleId = vehicle.vehicleId,
             registration = vehicle.registration,
             make = vehicle.make,
             model = vehicle.model

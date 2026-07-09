@@ -6,7 +6,6 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.FuelType
 import uk.gov.govuk.dvla.domain.FuelType.DIESEL
 import uk.gov.govuk.dvla.domain.FuelType.ELECTRICITY
@@ -41,6 +40,7 @@ import uk.gov.govuk.dvla.domain.VehicleColour.SILVER
 import uk.gov.govuk.dvla.domain.VehicleColour.TURQUOISE
 import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
+import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
@@ -50,32 +50,31 @@ internal class VehicleDetailsMapper @Inject constructor(
     private val stringProvider: StringProvider,
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper
 ) {
-    // TODO change param to VesVehicle when details endpoint live
-    fun toUiModel(vesVehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
+    fun toUiModel(vesVehicle: VehicleDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
         val engineCapacity =
             vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
         val yearOfFirstRegistration =
             vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
-            make = vesVehicle.make,
-            model = vesVehicle.model ?: "Unknown", // TODO: no requirement for null model yet
-            registration = vesVehicle.registration,
+            make = vesVehicle.summary.make,
+            model = vesVehicle.summary.model ?: "Unknown", // TODO: no requirement for null model yet
+            registration = vesVehicle.summary.registration,
             keeper = vesVehicle.getKeeper(),
             specificationsIcons = listOf(
                 vesVehicle.getCalendarSpecification(),
                 vesVehicle.getFuelTypeSpecification(),
                 vesVehicle.getColourSpecification()
             ),
-            taxStatus = taxAndMotStatusMapper.getTaxStatus(vesVehicle, dvlaUrls),
-            motStatus = taxAndMotStatusMapper.getMotStatus(vesVehicle, dvlaUrls),
+            taxStatus = taxAndMotStatusMapper.getTaxStatus(vesVehicle.summary, dvlaUrls),
+            motStatus = taxAndMotStatusMapper.getMotStatus(vesVehicle.summary, dvlaUrls),
             specifications = listOf(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
-                    info = AccessibleString(displayText = vesVehicle.make)
+                    info = AccessibleString(displayText = vesVehicle.summary.make)
                 ),
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
-                    info = AccessibleString(displayText = vesVehicle.model ?: "Unknown")
+                    info = AccessibleString(displayText = vesVehicle.summary.model ?: "Unknown")
                 ),
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(
@@ -113,10 +112,10 @@ internal class VehicleDetailsMapper @Inject constructor(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
                     info = AccessibleString(
-                        displayText = vesVehicle.exhaustEmissions?.co2?.let {
+                        displayText = vesVehicle.exhaustEmissionsCo2?.let {
                             stringProvider.getString(R.string.emissions_info, it)
                         } ?: "Unknown",
-                        altText = vesVehicle.exhaustEmissions?.co2?.let {
+                        altText = vesVehicle.exhaustEmissionsCo2?.let {
                             stringProvider.getString(R.string.emissions_alt_text, it)
                         } ?: "Unknown")
                 )
@@ -124,7 +123,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getCalendarSpecification(): SpecificationIconUiModel {
+    private fun VehicleDetails.getCalendarSpecification(): SpecificationIconUiModel {
         val year = this.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
         return SpecificationIconUiModel(
             icon = R.drawable.ic_calendar,
@@ -138,7 +137,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getFuelTypeSpecification(): SpecificationIconUiModel {
+    private fun VehicleDetails.getFuelTypeSpecification(): SpecificationIconUiModel {
         val fuelType = this.fuelType.getResources()
         val fuelName = stringProvider.getString(fuelType.second)
         return SpecificationIconUiModel(
@@ -150,7 +149,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getColourSpecification(): SpecificationIconUiModel {
+    private fun VehicleDetails.getColourSpecification(): SpecificationIconUiModel {
         val colour = stringProvider.getString(this.colour.getResource())
         return SpecificationIconUiModel(
             icon = R.drawable.ic_colour,
@@ -161,7 +160,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun CustomerVehicle.getVehicleColour(): String {
+    private fun VehicleDetails.getVehicleColour(): String {
         val colourRes = stringProvider.getString(this.colour.getResource())
         return this.secondaryColour?.let { secondaryColour ->
             val secondaryColourRes = stringProvider.getString(secondaryColour.getResource())
@@ -172,13 +171,20 @@ internal class VehicleDetailsMapper @Inject constructor(
         } ?: run { colourRes }
     }
 
-    // TODO DVLA are working on sending keeper formatted so below is for demo only
-    private fun CustomerVehicle.getKeeper() = KeeperUiModel(
-        "${this.keeper?.title ?: ""} ${this.keeper?.firstNames ?: ""} ${this.keeper?.lastName ?: ""}",
-        "29 Orchard Drive",
-        "Milton Keynes",
-        "PA98 J83"
-    )
+    private fun VehicleDetails.getKeeper(): KeeperUiModel {
+        val name = listOfNotNull(
+            this.keeperTitle,
+            this.keeperFirstNames,
+            this.keeperLastName
+        ).joinToString(separator = " ")
+
+        val addressLines = this.keeperFullAddress
+            ?.split("\n")
+            ?.filter { it.isNotBlank() }
+            ?: emptyList()
+
+        return KeeperUiModel(name = name, addressLines = addressLines)
+    }
 
     private fun FuelType.getResources() = when (this) {
         PETROL -> Triple(

@@ -30,3 +30,6 @@ internal enum class TopicRef(
 
 /** Public helper for app module to check if topic is driving */
 fun String?.isDrivingTopic(): Boolean = this == TopicRef.DRIVING.ref
+
+/** Public ref value for the driving topic, for use outside the topics module (e.g. deep link handling) */
+val DRIVING_TOPIC_REF: String = TopicRef.DRIVING.ref

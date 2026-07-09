@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,7 +9,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
 import javax.inject.Inject
@@ -21,6 +24,7 @@ internal sealed interface VehicleDetailsUiState {
 
 @HiltViewModel
 internal class VehicleDetailsViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient,
     private val mapper: VehicleDetailsMapper,
@@ -58,16 +62,13 @@ internal class VehicleDetailsViewModel @Inject constructor(
     }
 
     private fun fetchVehicleDetails() {
-        // TODO temporarily get details from summary endpoint until lookup vehicle endpoint is live
-        // val vehicleRegistration: String = savedStateHandle[ARG_VEHICLE_REGISTRATION] ?: return
+        val vehicleId: Int = savedStateHandle[ARG_VEHICLE_ID] ?: return
+
         viewModelScope.launch {
-            when (val result = dvlaRepo.getCustomerSummary()) {
-                is uk.gov.govuk.data.model.Result.Success -> {
-                    // TODO get first vehicle for now until lookup vehicle endpoint is live
-                    result.value.vehicles.getOrNull(0)?.let { vehicle ->
-                        val vehicleDetails = mapper.toUiModel(vehicle, dvlaUrls)
-                        _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
-                    }
+            when (val result = dvlaRepo.getVehicleDetails(vehicleId)) {
+                is Result.Success -> {
+                    val vehicleDetails = mapper.toUiModel(result.value, dvlaUrls)
+                    _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
                 }
 
                 else -> _uiState.value = VehicleDetailsUiState.Error

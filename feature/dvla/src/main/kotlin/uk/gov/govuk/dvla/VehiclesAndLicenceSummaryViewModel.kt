@@ -53,7 +53,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                             else UiState.Default(drivingView = drivingView)
                         }
                         fetchDriverSummary()
-                        fetchCustomerSummary()
+                        fetchVehicles()
                         createListCancelCheckCode()
                     }
 
@@ -161,13 +161,13 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCustomerSummary() {
+    private fun fetchVehicles() {
         viewModelScope.launch {
             updateVehiclesState(VehiclesSummaryUiState.Loading)
 
-            val newState = when (val result = dvlaRepo.getCustomerSummary()) {
+            val newState = when (val result = dvlaRepo.getCustomerVehicles()) {
                 is Result.Success -> {
-                    val vehicles = result.value.vehicles.map { vehicleMapper.toUiModel(it, dvlaUrls) }
+                    val vehicles = result.value.map { vehicleMapper.toUiModel(it, dvlaUrls) }
                     VehiclesSummaryUiState.Success(vehicles)
                 }
                 else -> {
