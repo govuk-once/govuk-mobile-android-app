@@ -1,11 +1,11 @@
-package uk.gov.govuk.widgets.model
+package uk.gov.govuk.config.data.local.model
 
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 
-internal sealed interface HomeWidget {
+sealed interface HomeWidget {
     data class Banner(val emergencyBanner: EmergencyBanner) : HomeWidget
     data class Chat(val chatBanner: ChatBanner) : HomeWidget
     data object Search : HomeWidget

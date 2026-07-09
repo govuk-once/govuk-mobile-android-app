@@ -54,7 +54,7 @@ import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
-import uk.gov.govuk.widgets.model.HomeWidget
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
 
 @OptIn(ExperimentalCoroutinesApi::class)

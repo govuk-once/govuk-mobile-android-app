@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.home.ui.HomeRoute
 
 const val HOME_GRAPH_ROUTE = "home_graph_route"
@@ -17,6 +18,7 @@ val homeDeepLinks = mapOf("/home" to listOf(HOME_ROUTE))
 
 fun NavGraphBuilder.homeGraph(
     widgets: List<@Composable (Modifier) -> Unit>,
+    homeWidgets: List<HomeWidget>?,
     modifier: Modifier = Modifier,
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
     transitionOverrideRoutes: List<String> = emptyList()
@@ -44,6 +46,7 @@ fun NavGraphBuilder.homeGraph(
         ) {
             HomeRoute(
                 widgets = widgets,
+                homeWidgets = homeWidgets,
                 modifier = modifier,
                 headerWidget = headerWidget
             )

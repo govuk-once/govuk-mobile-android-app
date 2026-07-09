@@ -5,13 +5,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import uk.gov.govuk.chat.navigation.navigateToChat
 import uk.gov.govuk.chat.ui.widget.ChatBanner
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
 import uk.gov.govuk.topics.ui.widget.TopicsWidget
 import uk.gov.govuk.visited.navigation.VISITED_GRAPH_ROUTE
 import uk.gov.govuk.visited.ui.widget.VisitedWidget
-import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.navigation.LOCAL_GRAPH_ROUTE
 import uk.govuk.app.local.navigation.LOCAL_LOOKUP_ROUTE
 import uk.govuk.app.local.ui.LocalWidget
