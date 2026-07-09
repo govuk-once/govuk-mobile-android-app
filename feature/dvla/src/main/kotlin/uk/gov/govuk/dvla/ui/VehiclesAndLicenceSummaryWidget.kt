@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
@@ -354,7 +355,7 @@ private fun LicenceSummarySuccess(
         )
 
         licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
-            MediumVerticalSpacer()
+            LargeVerticalSpacer()
 
             DrivingRecordSection(
                 onLinkClick = launchBrowser,
