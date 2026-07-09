@@ -1,18 +1,25 @@
 package uk.gov.govuk.chat.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -22,6 +29,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
@@ -38,10 +47,23 @@ internal fun Sources(
     modifier: Modifier = Modifier
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val degrees by animateFloatAsState(if (expanded) 0f else -180f)
 
+    LaunchedEffect(expanded) {
+        if (expanded) {
+            launch {
+                // Prevents scroll request being dropped mid-animation
+                repeat(20) {
+                    bringIntoViewRequester.bringIntoView()
+                    delay(16)
+                }
+            }
+        }
+    }
+
     Column(
-        modifier = modifier
+        modifier = modifier.animateContentSize()
     ) {
         Row(
             modifier = Modifier
@@ -128,6 +150,13 @@ internal fun Sources(
                 MediumVerticalSpacer()
             }
         }
+
+        // Scroll target - for full source list visibility
+        Spacer(
+            modifier = Modifier
+                .size(1.dp)
+                .bringIntoViewRequester(bringIntoViewRequester)
+        )
     }
 }
 
