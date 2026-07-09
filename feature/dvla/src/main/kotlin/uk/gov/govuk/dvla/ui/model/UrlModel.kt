@@ -1,8 +1,8 @@
 package uk.gov.govuk.dvla.ui.model
 
 internal data class UrlModel(
-    val original: String,
-    private val formatted: String? = null
+    val originalUrl: String,
+    private val formattedUrl: String? = null
 ) {
-    val external = formatted ?: original
+    val urlToOpen = formattedUrl ?: originalUrl
 }

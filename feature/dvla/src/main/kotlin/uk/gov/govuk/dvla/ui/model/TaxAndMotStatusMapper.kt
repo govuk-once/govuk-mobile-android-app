@@ -290,7 +290,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             linkRowUi = LinkRowUiModel(
                 title = getMotStatusTitle(),
                 text = AccessibleString(stringProvider.getString(R.string.no_details_held_link_text)),
-                url = UrlModel(original = url, formatted = formattedUrl)
+                url = UrlModel(originalUrl = url, formattedUrl = formattedUrl)
             )
         )
     }

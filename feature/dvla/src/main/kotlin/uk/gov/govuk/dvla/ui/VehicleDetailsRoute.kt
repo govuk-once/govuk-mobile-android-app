@@ -82,8 +82,8 @@ internal fun VehicleDetailsRoute(
             val section = stringResource(R.string.vehicle_details_success_title)
             SuccessScreen(
                 launchBrowser = { text, url ->
-                    launchBrowser(url.external)
-                    viewModel.onExternalButtonClicked(text, url.original, section)
+                    launchBrowser(url.urlToOpen)
+                    viewModel.onExternalButtonClicked(text, url.originalUrl, section)
                 },
                 onBack = onBack,
                 onPageView = { viewModel.onPageView(section) },

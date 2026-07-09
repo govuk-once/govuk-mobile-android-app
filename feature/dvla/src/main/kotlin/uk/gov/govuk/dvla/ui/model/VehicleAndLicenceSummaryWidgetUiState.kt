@@ -16,11 +16,11 @@ enum class DrivingView {
 internal sealed interface VehiclesSummaryUiState {
     data object Loading : VehiclesSummaryUiState
     data class Success(val vehicles: List<VehicleSummaryUiModel>) : VehiclesSummaryUiState
-    data object Error : VehiclesSummaryUiState
+    data class Error(val fallbackUrl: UrlModel) : VehiclesSummaryUiState
 }
 
 internal sealed interface LicenceSummaryUiState {
     data object Loading : LicenceSummaryUiState
     data class Success(val licence: LicenceSummaryUiModel) : LicenceSummaryUiState
-    data object Error : LicenceSummaryUiState
+    data class Error(val fallbackUrl: UrlModel) : LicenceSummaryUiState
 }

@@ -23,6 +23,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -30,6 +31,7 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
+import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
@@ -116,8 +118,8 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         VehiclesViewContent(
                             launchBrowser = { text, url ->
-                                launchBrowser(url.external)
-                                viewModel.onExternalButtonClicked(text, url.original)
+                                launchBrowser(url.urlToOpen)
+                                viewModel.onExternalButtonClicked(text, url.originalUrl)
                             },
                             onVehicleDetailsClick = { text, vehicleId ->
                                 viewModel.onButtonClicked(text)
@@ -145,8 +147,8 @@ fun VehiclesAndLicenceSummaryWidget(
 
                         LicenceViewContent(
                             launchBrowser = { text, url ->
-                                launchBrowser(url.external)
-                                viewModel.onExternalButtonClicked(text, url.original)
+                                launchBrowser(url.urlToOpen)
+                                viewModel.onExternalButtonClicked(text, url.originalUrl)
                             },
                             licenceState = currentState.licenceState,
                             onMenuItemClick = handleMenuItemClick,
@@ -179,9 +181,9 @@ private fun VehiclesViewContent(
 ) {
     when (vehiclesState) {
         is VehiclesSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
-        is VehiclesSummaryUiState.Error -> {
-            // TODO placeholder for now, tbc in future tickets
-        }
+        is VehiclesSummaryUiState.Error -> VehicleSummaryError(onClick = { text ->
+            launchBrowser(text, vehiclesState.fallbackUrl)
+        })
 
         is VehiclesSummaryUiState.Success -> {
             if (vehiclesState.vehicles.isEmpty()) {
@@ -215,9 +217,10 @@ private fun LicenceViewContent(
 ) {
     when (licenceState) {
         is LicenceSummaryUiState.Loading -> VehiclesAndLicenceSummaryLoading(modifier)
-        is LicenceSummaryUiState.Error -> {
-            // TODO placeholder for now, tbc in future tickets
-        }
+        is LicenceSummaryUiState.Error -> LicenceSummaryError(onClick = { text ->
+            launchBrowser(text, licenceState.fallbackUrl)
+        })
+
         is LicenceSummaryUiState.Success -> {
             LicenceSummarySuccess(
                 launchBrowser = launchBrowser,
@@ -314,6 +317,23 @@ private fun VehiclesSummaryEmpty(
 }
 
 @Composable
+private fun VehicleSummaryError(
+    onClick: (text: String) -> Unit
+) {
+    val vehicles = stringResource(R.string.vehicles)
+    val linkText = stringResource(R.string.vehicles_summary_loading_error_link_text)
+    SummaryErrorCard(
+        text = AccessibleString(stringResource(R.string.vehicles_summary_loading_error_text)),
+        subIntroText = stringResource(R.string.vehicles_summary_loading_error_sub_text),
+        subOutroText = "",
+        subLinkText = linkText,
+        onClick = {
+            onClick("$vehicles $linkText")
+        }
+    )
+}
+
+@Composable
 private fun LicenceSummarySuccess(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceSummary: LicenceSummaryUiModel,
@@ -332,4 +352,21 @@ private fun LicenceSummarySuccess(
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+@Composable
+private fun LicenceSummaryError(
+    onClick: (text: String) -> Unit
+) {
+    val licence = stringResource(R.string.licence)
+    val linkText = stringResource(R.string.licence_summary_loading_error_link_text)
+    SummaryErrorCard(
+        text = AccessibleString(stringResource(R.string.licence_summary_loading_error_text)),
+        subIntroText = stringResource(R.string.licence_summary_loading_error_sub_text),
+        subOutroText = "",
+        subLinkText = linkText,
+        onClick = {
+            onClick("$licence $linkText")
+        }
+    )
 }
