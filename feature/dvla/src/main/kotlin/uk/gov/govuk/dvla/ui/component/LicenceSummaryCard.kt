@@ -133,9 +133,7 @@ private fun LicenceSummaryCardPreview() {
                 licenceType = "Full licence",
                 licenceNumber = "ARENO803236AA170",
                 name = "Ms Anna Ornella Arenö",
-                addressLine1 = "29 Orchard Drive",
-                city = "Milton Keynes",
-                postcode = "PA98 J83",
+                addressLines = listOf("29 Orchard Drive", "Milton Keynes", "PA98 J83"),
                 statusUi = StatusUiModel.StatusRow(
                     statusRowUi = StatusRowUiModel(
                         description = AccessibleString("Valid until 1 February 2027"),
@@ -159,9 +157,7 @@ private fun LicenceSummaryCardExpiredPreview() {
                 licenceType = "Full licence",
                 licenceNumber = "ARENO803236AA170",
                 name = "Ms Anna Ornella Arenö",
-                addressLine1 = "29 Orchard Drive",
-                city = "Milton Keynes",
-                postcode = "PA98 J83",
+                addressLines = listOf("29 Orchard Drive", "Milton Keynes", "PA98 J83"),
                 statusUi = StatusUiModel.StatusRow(
                     statusRowUi = StatusRowUiModel(
                         description = AccessibleString("Expired on 1 February 2027"),

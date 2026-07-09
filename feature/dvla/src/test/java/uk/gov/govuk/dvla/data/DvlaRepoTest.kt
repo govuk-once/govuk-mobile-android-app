@@ -20,7 +20,6 @@ import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.model.CustomerVehicleDetailsResponse
 import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
-import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
@@ -155,24 +154,24 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given driver summary api returns success, when getDriverSummary is called, then return Success with DriverSummaryDetails`() = runTest {
-        val summaryResponse = mockk<DriverSummaryResponse>(relaxed = true)
-        coEvery { api.getDriverSummary() } returns Response.success(summaryResponse)
+    fun `Given driver summary api returns success, when getLicenceDetails is called, then return Success with DrivingLicenceDetails`() = runTest {
+        val summaryResponse = mockk<LicenceResponse>(relaxed = true)
+        coEvery { api.getDrivingLicence() } returns Response.success(summaryResponse)
 
-        val result = repo.getDriverSummary()
+        val result = repo.getLicenceDetails()
 
         assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.getDriverSummary() }
+        coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 
     @Test
-    fun `Given driver summary api fails, when getDriverSummary is called, then return Error`() = runTest {
-        coEvery { api.getDriverSummary() } throws Exception("Exception")
+    fun `Given driver summary api fails, when getLicenceDetails is called, then return Error`() = runTest {
+        coEvery { api.getDrivingLicence() } throws Exception("Exception")
 
-        val result = repo.getDriverSummary()
+        val result = repo.getLicenceDetails()
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.getDriverSummary() }
+        coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 
     @Test

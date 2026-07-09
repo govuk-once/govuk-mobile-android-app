@@ -52,7 +52,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                             if (current is UiState.Default) current.copy(drivingView = drivingView)
                             else UiState.Default(drivingView = drivingView)
                         }
-                        fetchDriverSummary()
+                        fetchLicenceDetails()
                         fetchVehicles()
                         createListCancelCheckCode()
                     }
@@ -142,15 +142,16 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun fetchDriverSummary() {
+    private fun fetchLicenceDetails() {
         viewModelScope.launch {
             updateLicenceState(LicenceSummaryUiState.Loading)
 
-            val newState = when (val result = dvlaRepo.getDriverSummary()) {
+            val newState = when (val result = dvlaRepo.getLicenceDetails()) {
                 is Result.Success -> {
                     val licence = licenceMapper.toUiModel(result.value, dvlaUrls)
                     LicenceSummaryUiState.Success(licence)
                 }
+
                 else -> {
                     val fallbackUrl = UrlModel(dvlaUrls?.driverDetails ?: GOV_UK_URL)
                     LicenceSummaryUiState.Error(fallbackUrl)

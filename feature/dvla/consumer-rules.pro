@@ -11,8 +11,8 @@
 -keep class uk.gov.govuk.dvla.remote.model.CustomerVehicleDetailsResponse
 -keep class uk.gov.govuk.dvla.remote.model.CustomerVehicleDetails
 
-# remote/model/DriverSummaryResponse.kt
--keep class uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
+# remote/model/LicenceResponse.kt
+-keep class uk.gov.govuk.dvla.remote.model.LicenceResponse
 -keep class uk.gov.govuk.dvla.remote.model.DriverView
 -keep class uk.gov.govuk.dvla.remote.model.Driver
 -keep class uk.gov.govuk.dvla.remote.model.Address
@@ -35,8 +35,8 @@
 -keep class uk.gov.govuk.dvla.remote.model.HolderDetails
 -keep class uk.gov.govuk.dvla.remote.model.HolderMarker
 -keep class uk.gov.govuk.dvla.remote.model.TachoCard
--keep class uk.gov.govuk.dvla.remote.model.LicenceType
--keep class uk.gov.govuk.dvla.remote.model.LicenceStatus
+-keep class uk.gov.govuk.dvla.remote.model.common.LicenceType
+-keep class uk.gov.govuk.dvla.remote.model.common.LicenceStatus
 
 # remote/model/LicenceResponse.kt
 -keep class uk.gov.govuk.dvla.remote.model.LicenceResponse
