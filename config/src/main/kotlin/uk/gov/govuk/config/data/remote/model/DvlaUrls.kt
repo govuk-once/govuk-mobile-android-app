@@ -19,5 +19,6 @@ data class DvlaUrls(
     @SerializedName("historicVehicles") val historicVehicles: String,
     @SerializedName("checkMot") val checkMot: String,
     @SerializedName("driverDetails") val driverDetails: String,
-    @SerializedName("account") val account: String
+    @SerializedName("account") val account: String,
+    @SerializedName("drivingRecord") val drivingRecord: String
 )

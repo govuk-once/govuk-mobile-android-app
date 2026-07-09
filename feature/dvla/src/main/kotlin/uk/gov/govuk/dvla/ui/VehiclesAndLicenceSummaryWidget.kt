@@ -30,6 +30,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
+import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
@@ -351,6 +352,16 @@ private fun LicenceSummarySuccess(
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
             modifier = Modifier.fillMaxWidth()
         )
+
+        licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
+            MediumVerticalSpacer()
+
+            DrivingRecordSection(
+                onLinkClick = launchBrowser,
+                url = drivingRecordUrl,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
