@@ -512,8 +512,8 @@ private fun GovUkNavHost(
                             launchBrowser = { url ->
                                 externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                             },
-                            onVehicleDetailsClick = { registration ->
-                                navController.navigateToVehicleDetails(registration)
+                            onVehicleDetailsClick = { vehicleId ->
+                                navController.navigateToVehicleDetails(vehicleId)
                             }
                         )
                     }

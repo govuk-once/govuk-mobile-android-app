@@ -4,9 +4,9 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.domain.CustomerVehicle
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
+import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
@@ -28,7 +28,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         const val UPPER_RANGE_OF_MOT_EXPIRY_DAYS = 28
     }
 
-    fun getMotStatus(vehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): StatusUiModel {
+    fun getMotStatus(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): StatusUiModel {
         val expiryDate = vehicle.motExpiryDate
         return when (vehicle.motStatus) {
             MotStatus.VALID -> {
@@ -60,12 +60,12 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         }
     }
 
-    fun getTaxStatus(vehicle: CustomerVehicle, dvlaUrls: DvlaUrls?): StatusUiModel {
+    fun getTaxStatus(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): StatusUiModel {
         val expiryDate = vehicle.taxExpiryDate
         return when (vehicle.taxStatus) {
             TaxStatus.TAXED -> {
                 if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_TAX_EXPIRY_DAYS) == true) {
-                    if (vehicle.isPaymentMethodDirectDebit()) {
+                    if (vehicle.currentLicencePaymentMethod.isDirectDebit()) {
                         getTaxExpiringDirectDebit(expiryDate, dvlaUrls)
                     } else {
                         getTaxExpiring(expiryDate, dvlaUrls)
@@ -81,9 +81,6 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             TaxStatus.UNKNOWN -> getUnknown(getTaxStatusTitle())
         }
     }
-
-    private fun CustomerVehicle.isPaymentMethodDirectDebit() =
-        this.currentLicence?.paymentMethod.isDirectDebit()
 
     private fun getValid(title: AccessibleString, expiryDate: LocalDate?): StatusUiModel {
         val resources =

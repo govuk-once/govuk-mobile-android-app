@@ -19,7 +19,7 @@ const val DVLA_LINK_ROUTE = "dvla_link_route"
 const val DVLA_DEEP_LINK_PATH = "/callback/dvla/auth"
 const val VEHICLE_DETAILS_ROUTE = "vehicle_details_route"
 const val ARG_DVLA_TOKEN = "token"
-const val ARG_VEHICLE_REGISTRATION = "vehicle_registration"
+const val ARG_VEHICLE_ID = "vehicle_id"
 
 fun NavGraphBuilder.dvlaGraph(
     onBack: () -> Unit,
@@ -74,11 +74,10 @@ fun NavGraphBuilder.dvlaGraph(
         }
 
         composable(
-            route = "$VEHICLE_DETAILS_ROUTE/{$ARG_VEHICLE_REGISTRATION}",
+            route = "$VEHICLE_DETAILS_ROUTE/{$ARG_VEHICLE_ID}",
             arguments = listOf(
-                navArgument(ARG_VEHICLE_REGISTRATION) {
-                    type = NavType.StringType
-                    nullable = true
+                navArgument(ARG_VEHICLE_ID) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -99,6 +98,6 @@ fun NavController.navigateToDvlaLink() {
     navigate(DVLA_LINK_ROUTE)
 }
 
-fun NavController.navigateToVehicleDetails(registration: String) {
-    navigate("$VEHICLE_DETAILS_ROUTE/$registration")
+fun NavController.navigateToVehicleDetails(vehicleId: Int) {
+    navigate("$VEHICLE_DETAILS_ROUTE/$vehicleId")
 }

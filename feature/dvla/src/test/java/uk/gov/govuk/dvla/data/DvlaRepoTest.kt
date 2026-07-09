@@ -18,7 +18,8 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.remote.DvlaApi
-import uk.gov.govuk.dvla.remote.model.CustomerSummaryResponse
+import uk.gov.govuk.dvla.remote.model.CustomerVehicleDetailsResponse
+import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
 import uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
@@ -175,24 +176,49 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given customer summary api returns success, when getCustomerSummary is called, then return Success with CustomerSummaryDetails`() = runTest {
-        val summaryResponse = mockk<CustomerSummaryResponse>(relaxed = true)
-        coEvery { api.getCustomerSummary() } returns Response.success(summaryResponse)
+    fun `Given customer vehicles api returns success, when getCustomerVehicles is called, then return Success with vehicles`() = runTest {
+        val vehiclesResponse = mockk<CustomerVehiclesResponse>(relaxed = true) {
+            every { customerVehicles } returns emptyList()
+        }
+        coEvery { api.getCustomerVehicles() } returns Response.success(vehiclesResponse)
 
-        val result = repo.getCustomerSummary()
+        val result = repo.getCustomerVehicles()
 
         assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.getCustomerSummary() }
+        coVerify(exactly = 1) { api.getCustomerVehicles() }
     }
 
     @Test
-    fun `Given customer summary api fails, when getCustomerSummary is called, then return Error`() = runTest {
-        coEvery { api.getCustomerSummary() } throws Exception("Exception")
+    fun `Given customer vehicles api fails, when getCustomerVehicles is called, then return Error`() = runTest {
+        coEvery { api.getCustomerVehicles() } throws Exception("Exception")
 
-        val result = repo.getCustomerSummary()
+        val result = repo.getCustomerVehicles()
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.getCustomerSummary() }
+        coVerify(exactly = 1) { api.getCustomerVehicles() }
+    }
+
+    @Test
+    fun `Given vehicle details api returns success, when getVehicleDetails is called, then return Success with VehicleDetails`() = runTest {
+        val vehicleId = 156487251
+        val detailsResponse = mockk<CustomerVehicleDetailsResponse>(relaxed = true)
+        coEvery { api.getVehicleDetails(vehicleId) } returns Response.success(detailsResponse)
+
+        val result = repo.getVehicleDetails(vehicleId)
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getVehicleDetails(vehicleId) }
+    }
+
+    @Test
+    fun `Given vehicle details api fails, when getVehicleDetails is called, then return Error`() = runTest {
+        val vehicleId = 156487251
+        coEvery { api.getVehicleDetails(vehicleId) } throws Exception("Exception")
+
+        val result = repo.getVehicleDetails(vehicleId)
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getVehicleDetails(vehicleId) }
     }
 
     @Test

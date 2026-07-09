@@ -25,7 +25,7 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 internal fun VehicleSummaryCard(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     vehicleSummary: VehicleSummaryUiModel,
-    onVehicleDetailsClick: (text: String, registration: String) -> Unit,
+    onVehicleDetailsClick: (text: String, vehicleId: Int) -> Unit,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -61,7 +61,7 @@ internal fun VehicleSummaryCard(
         val title = stringResource(R.string.vehicle_details_title)
         InternalLinkListItem(
             title = AccessibleString(displayText = title),
-            onClick = { onVehicleDetailsClick(title, vehicleSummary.registration) },
+            onClick = { onVehicleDetailsClick(title, vehicleSummary.vehicleId) },
             isFirst = false,
             isLast = true
         )
@@ -145,6 +145,7 @@ private fun VehicleSummaryCardPreview() {
         VehicleSummaryCard(
             launchBrowser = { _, _ -> },
             vehicleSummary = VehicleSummaryUiModel(
+                vehicleId = 156487251,
                 registration = "FH08 PDH",
                 make = "Volkswagen",
                 model = "ID4",

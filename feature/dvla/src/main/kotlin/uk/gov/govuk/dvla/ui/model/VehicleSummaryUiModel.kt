@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
 internal data class VehicleSummaryUiModel(
+    val vehicleId: Int,
     val registration: String,
     val make: String,
     val model: String,
