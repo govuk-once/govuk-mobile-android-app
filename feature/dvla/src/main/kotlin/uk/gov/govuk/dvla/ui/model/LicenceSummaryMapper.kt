@@ -41,8 +41,17 @@ internal class LicenceSummaryMapper @Inject constructor(
             menuItems = buildMenuItems(
                 licenceNumber = driverSummary.licenceNumber,
                 dvlaUrls = dvlaUrls
+            ),
+            drivingRecordUrl = getDrivingRecordUrl(
+                status = driverSummary.status,
+                dvlaUrls = dvlaUrls
             )
         )
+    }
+
+    private fun getDrivingRecordUrl(status: LicenceStatus, dvlaUrls: DvlaUrls?): String? {
+        if (status != LicenceStatus.VALID) return null
+        return dvlaUrls?.drivingRecord?.takeIf { it.isNotBlank() }
     }
 
     private fun getLicenceStatusUiModel(
