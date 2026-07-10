@@ -10,8 +10,10 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
 import javax.inject.Inject
@@ -19,7 +21,7 @@ import javax.inject.Inject
 internal sealed interface VehicleDetailsUiState {
     data object Loading : VehicleDetailsUiState
     data class Success(val details: VehicleDetailsUiModel) : VehicleDetailsUiState
-    data object Error : VehicleDetailsUiState
+    data class Error(val fallbackUrl: UrlModel) : VehicleDetailsUiState
 }
 
 @HiltViewModel
@@ -47,7 +49,7 @@ internal class VehicleDetailsViewModel @Inject constructor(
     fun onPageView(title: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
-            screenName = SCREEN_CLASS,
+            screenName = title,
             title = title
         )
     }
@@ -71,7 +73,10 @@ internal class VehicleDetailsViewModel @Inject constructor(
                     _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
                 }
 
-                else -> _uiState.value = VehicleDetailsUiState.Error
+                else -> {
+                    val fallbackUrl = UrlModel(dvlaUrls?.account ?: GOV_UK_URL)
+                    _uiState.value = VehicleDetailsUiState.Error(fallbackUrl)
+                }
             }
         }
     }

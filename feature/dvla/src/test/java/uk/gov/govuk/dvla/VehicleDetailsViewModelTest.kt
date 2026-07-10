@@ -23,6 +23,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
@@ -57,7 +58,7 @@ class VehicleDetailsViewModelTest {
             verify {
                 analyticsClient.screenView(
                     screenClass = "VehicleDetailsScreen",
-                    screenName = "VehicleDetailsScreen",
+                    screenName = "title",
                     title = "title"
                 )
             }
@@ -93,14 +94,27 @@ class VehicleDetailsViewModelTest {
         }
 
     @Test
-    fun `Given vehicle details api returns error, when viewModel initialised, then state becomes Error`() =
+    fun `Given vehicle details api returns error, when dvla urls is null and viewModel initialised, then state becomes Error`() =
         runTest(dispatcher) {
             coEvery { dvlaRepo.getVehicleDetails(156487251) } returns Result.Error()
+            every { configRepo.dvlaUrls?.account } returns null
 
             val initialisedViewModel = viewModel
             advanceUntilIdle()
 
-            assertEquals(VehicleDetailsUiState.Error, initialisedViewModel.uiState.value)
+            assertEquals(VehicleDetailsUiState.Error(UrlModel("https://www.gov.uk")), initialisedViewModel.uiState.value)
+        }
+
+    @Test
+    fun `Given vehicle details api returns error, when dvla urls has account and viewModel initialised, then state becomes Error`() =
+        runTest(dispatcher) {
+            coEvery { dvlaRepo.getVehicleDetails(156487251) } returns Result.Error()
+            every { configRepo.dvlaUrls?.account } returns "https://www.test.com"
+
+            val initialisedViewModel = viewModel
+            advanceUntilIdle()
+
+            assertEquals(VehicleDetailsUiState.Error(UrlModel("https://www.test.com")), initialisedViewModel.uiState.value)
         }
 
     @Test
