@@ -96,6 +96,10 @@
     <string name="menu_change_licence_name_gender_alt_text">Change name or gender on licence</string>
     <string name="menu_replace_licence">Replace licence</string>
 
+    <string name="driving_record_title">Driving record</string>
+    <string name="driving_record_description">Vehicles you can drive, offences and penalty points</string>
+    <string name="driving_record_link_text">Your driving record</string>
+
 
     <!-- Vehicle Details start -->
     <string name="diesel_summary">Diesel</string>

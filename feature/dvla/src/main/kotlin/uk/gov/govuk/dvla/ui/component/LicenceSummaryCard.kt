@@ -63,7 +63,8 @@ internal fun LicenceSummaryCard(
 
         StatusUiItem(
             launchBrowser = launchBrowser,
-            licenceSummary.statusUi
+            licenceSummary.statusUi,
+            isLast = true
         )
     }
 }
