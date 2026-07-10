@@ -20,6 +20,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String", "DVLA_AUTH_URL", "\"https://architecture-link-account-service-ui-ext.dvla.gov.uk/\"")
+        buildConfigField("String", "LINKING_BASE_URL", "\"https://4y369hyvja.execute-api.eu-west-2.amazonaws.com/staging/linking/\"")
     }
 
     buildTypes {
