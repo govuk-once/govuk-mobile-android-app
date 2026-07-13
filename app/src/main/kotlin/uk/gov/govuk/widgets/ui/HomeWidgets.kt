@@ -3,9 +3,9 @@ package uk.gov.govuk.widgets.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import uk.gov.govuk.chat.navigation.navigateToChat
-import uk.gov.govuk.chat.ui.widget.ChatBanner
 import uk.gov.govuk.config.data.local.model.HomeWidget
+import uk.gov.govuk.config.data.remote.model.Link
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
@@ -45,17 +45,28 @@ internal fun homeWidgets(
 
             is HomeWidget.Chat -> {
                 widgets.add { modifier ->
-                    val banner = it.chatBanner
-                    ChatBanner(
-                        title = banner.title,
-                        body = banner.body,
-                        linkText = banner.link.title,
-                        onClick = { text ->
+                    val promoBanner = PromoBanner(
+                        id = it.chatBanner.id,
+                        title = it.chatBanner.title,
+                        body = it.chatBanner.body,
+                        link = Link(
+                            title = it.chatBanner.link.title,
+                            url = "govuk://gov.uk/chat" // hard code for now
+                        ),
+                        image = "background_chat_banner", // hard code for now
+                        type = PromoBannerType.INTERNAL
+                    )
+
+                    PromoBanner(
+                        promoBanner = promoBanner,
+                        onClick = { text, url ->
                             onInternalClick(text)
-                            navController.navigateToChat()
+                            if (url != null) {
+                                launchBrowser(url)
+                            }
                         },
                         onDismiss = { text ->
-                            onSuppressClick(banner.id, text)
+                            onSuppressClick(promoBanner.id, text)
                         },
                         modifier = modifier
                     )
