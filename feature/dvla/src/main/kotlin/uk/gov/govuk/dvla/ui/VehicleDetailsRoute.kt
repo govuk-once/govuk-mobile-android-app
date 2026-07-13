@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,6 +48,7 @@ import uk.gov.govuk.dvla.VehicleDetailsUiState
 import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.RegistrationPlate
 import uk.gov.govuk.dvla.ui.component.StatusUiItem
+import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
@@ -76,7 +78,17 @@ internal fun VehicleDetailsRoute(
             }
         }
 
-        is VehicleDetailsUiState.Error -> { /* TODO: no designs yet */ }
+        is VehicleDetailsUiState.Error -> {
+            val section = stringResource(R.string.driving_title)
+            ErrorScreen(
+                onBack = onBack,
+                onPageView = { title -> viewModel.onPageView(title) },
+                onClick = { text ->
+                    launchBrowser(state.fallbackUrl.urlToOpen)
+                    viewModel.onExternalButtonClicked(text, state.fallbackUrl.originalUrl, section)
+                }
+            )
+        }
 
         is VehicleDetailsUiState.Success -> {
             val section = stringResource(R.string.vehicle_details_success_title)
@@ -233,6 +245,42 @@ private fun SuccessScreen(
     }
 }
 
+@Composable
+private fun ErrorScreen(
+    onBack: () -> Unit,
+    onPageView: (title: String) -> Unit,
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val linkText = stringResource(R.string.vehicles_summary_loading_error_link_text)
+    val errorText = stringResource(R.string.vehicles_summary_loading_error_text)
+
+    RunOnceLaunchedEffect {
+        onPageView(errorText)
+    }
+
+    Column(
+        modifier = modifier
+            .safeDrawingPadding()
+            .fillMaxWidth()
+    ) {
+        FullScreenHeader(
+            dismissStyle = HeaderDismissStyle.Back(onBack)
+        )
+        SummaryErrorCard(
+            text = AccessibleString(errorText),
+            subIntroText = stringResource(R.string.vehicles_summary_loading_error_sub_text),
+            subOutroText = "",
+            subLinkText = linkText,
+            onClick = {
+                onClick(linkText)
+            },
+            modifier = Modifier.padding(all = GovUkTheme.spacing.medium)
+        )
+    }
+}
+
+
 @Preview
 @Composable
 private fun SuccessScreenPreview() {
@@ -282,5 +330,13 @@ private fun SuccessScreenPreview() {
     )
     GovUkTheme {
         SuccessScreen({ _, _ -> },{}, {}, details)
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ErrorScreenPreview() {
+    GovUkTheme {
+        ErrorScreen({}, {},  {})
     }
 }

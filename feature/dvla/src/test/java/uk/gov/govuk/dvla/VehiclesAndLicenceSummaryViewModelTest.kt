@@ -109,7 +109,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
             coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
-            coEvery { configRepo.dvlaUrls?.account } returns "https:www.test.com"
+            every { configRepo.dvlaUrls?.account } returns "https:www.test.com"
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -133,7 +133,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
             coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
-            coEvery { configRepo.dvlaUrls?.account } returns null
+            every { configRepo.dvlaUrls?.account } returns null
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -292,7 +292,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
-            coEvery { configRepo.dvlaUrls?.driverDetails } returns "https://www.test.com"
+            every { configRepo.dvlaUrls?.driverDetails } returns "https://www.test.com"
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -314,7 +314,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
-            coEvery { configRepo.dvlaUrls?.driverDetails } returns null
+            every { configRepo.dvlaUrls?.driverDetails } returns null
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
