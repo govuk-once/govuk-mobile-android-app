@@ -320,7 +320,8 @@ private fun VehiclesSummaryEmpty(
 
 @Composable
 private fun VehicleSummaryError(
-    onClick: (text: String) -> Unit
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val vehicles = stringResource(R.string.vehicles)
     val linkText = stringResource(R.string.vehicles_summary_loading_error_link_text)
@@ -331,7 +332,8 @@ private fun VehicleSummaryError(
         subLinkText = linkText,
         onClick = {
             onClick("$vehicles $linkText")
-        }
+        },
+        modifier = modifier
     )
 }
 
@@ -368,7 +370,8 @@ private fun LicenceSummarySuccess(
 
 @Composable
 private fun LicenceSummaryError(
-    onClick: (text: String) -> Unit
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val licence = stringResource(R.string.licence)
     val linkText = stringResource(R.string.licence_summary_loading_error_link_text)
@@ -379,6 +382,7 @@ private fun LicenceSummaryError(
         subLinkText = linkText,
         onClick = {
             onClick("$licence $linkText")
-        }
+        },
+        modifier = modifier
     )
 }
