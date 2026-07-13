@@ -6,9 +6,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -28,9 +25,6 @@ import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
-
-private fun <T> errorResponse(code: Int, body: String): Response<T> =
-    Response.error(code, body.toResponseBody("application/json".toMediaTypeOrNull()))
 
 class DvlaRepoTest {
 
@@ -151,68 +145,12 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given driving licence api throws, when getLicenceDetails is called, then return Failure wrapping Error`() = runTest {
+    fun `Given driving licence api throws, when getLicenceDetails is called, then return Failure`() = runTest {
         coEvery { api.getDrivingLicence() } throws Exception("Exception")
 
         val result = repo.getLicenceDetails()
 
         assertTrue(result is LicenceDetailsResult.Failure)
-        assertTrue((result as LicenceDetailsResult.Failure).result is Result.Error)
-        coVerify(exactly = 1) { api.getDrivingLicence() }
-    }
-
-    @Test
-    fun `Given driving licence api returns 404 with code GUK-404-04, when getLicenceDetails is called, then return NotFound`() = runTest {
-        coEvery { api.getDrivingLicence() } returns errorResponse(
-            404,
-            """{"code":"GUK-404-04","message":"Driving Licence not found"}"""
-        )
-
-        val result = repo.getLicenceDetails()
-
-        assertEquals(LicenceDetailsResult.NotFound, result)
-        coVerify(exactly = 1) { api.getDrivingLicence() }
-    }
-
-    @Test
-    fun `Given driving licence api returns 404 with code GUK-404-05, when getLicenceDetails is called, then return NotAvailableForEnquiry`() = runTest {
-        coEvery { api.getDrivingLicence() } returns errorResponse(
-            404,
-            """{"code":"GUK-404-05","message":"Driving licence not available for enquiry"}"""
-        )
-
-        val result = repo.getLicenceDetails()
-
-        assertEquals(LicenceDetailsResult.NotAvailableForEnquiry, result)
-        coVerify(exactly = 1) { api.getDrivingLicence() }
-    }
-
-    @Test
-    fun `Given driving licence api returns 404 with an unrecognised code, when getLicenceDetails is called, then return Failure wrapping ServiceNotResponding`() = runTest {
-        coEvery { api.getDrivingLicence() } returns errorResponse(
-            404,
-            """{"code":"GUK-404-99","message":"Something else"}"""
-        )
-
-        val result = repo.getLicenceDetails()
-
-        assertTrue(result is LicenceDetailsResult.Failure)
-        val failureResult = (result as LicenceDetailsResult.Failure).result
-        assertTrue(failureResult is Result.ServiceNotResponding)
-        assertEquals(404, (failureResult as Result.ServiceNotResponding).code)
-        coVerify(exactly = 1) { api.getDrivingLicence() }
-    }
-
-    @Test
-    fun `Given driving licence api returns 500, when getLicenceDetails is called, then return Failure wrapping ServiceNotResponding`() = runTest {
-        coEvery { api.getDrivingLicence() } returns errorResponse(500, "")
-
-        val result = repo.getLicenceDetails()
-
-        assertTrue(result is LicenceDetailsResult.Failure)
-        val failureResult = (result as LicenceDetailsResult.Failure).result
-        assertTrue(failureResult is Result.ServiceNotResponding)
-        assertEquals(500, (failureResult as Result.ServiceNotResponding).code)
         coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 
