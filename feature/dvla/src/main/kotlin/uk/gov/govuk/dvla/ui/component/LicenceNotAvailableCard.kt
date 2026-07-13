@@ -11,13 +11,14 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
+import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @Composable
-internal fun NotAvailableCard(
+internal fun LicenceNotAvailableCard(
     onClick: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -29,7 +30,7 @@ internal fun NotAvailableCard(
         )
     ) {
         CardListItem(isFirst = true, isLast = false) {
-            Title3BoldLabel(
+            Title1BoldLabel(
                 text = stringResource(R.string.licence_not_available_title),
                 modifier = Modifier.padding(GovUkTheme.spacing.medium)
             )
@@ -55,8 +56,8 @@ internal fun NotAvailableCard(
 
 @PreviewLightDark
 @Composable
-private fun NotAvailableCardPreview() {
+private fun LicenceNotAvailableCardPreview() {
     GovUkTheme {
-        NotAvailableCard(onClick = {})
+        LicenceNotAvailableCard(onClick = {})
     }
 }
