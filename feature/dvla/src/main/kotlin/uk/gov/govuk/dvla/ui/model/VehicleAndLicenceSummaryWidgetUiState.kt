@@ -22,5 +22,6 @@ internal sealed interface VehiclesSummaryUiState {
 internal sealed interface LicenceSummaryUiState {
     data object Loading : LicenceSummaryUiState
     data class Success(val licence: LicenceSummaryUiModel) : LicenceSummaryUiState
+    data class NotAvailable(val url: UrlModel) : LicenceSummaryUiState
     data class Error(val fallbackUrl: UrlModel) : LicenceSummaryUiState
 }

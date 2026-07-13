@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.ui.model
 
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
+import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
@@ -25,27 +26,36 @@ internal class LicenceSummaryMapper @Inject constructor(
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
     }
 
-    fun toUiModel(details: LicenceDetails, dvlaUrls: DvlaUrls?): LicenceSummaryUiModel {
-        return LicenceSummaryUiModel(
-            licenceType = getLicenceTypeString(details.licenceType),
-            licenceNumber = details.drivingLicenceNumber,
-            name = details.fullName.toTitleCase(),
-            addressLines = details.driverFullAddress.asAddressLines(),
-            statusUi = getLicenceStatusUiModel(
-                status = details.licenceStatus,
-                expiryDate = details.tokenValidToDate,
-                dvlaUrls = dvlaUrls
-            ),
-            menuItems = buildMenuItems(
+    fun toUiModel(details: LicenceDetails, dvlaUrls: DvlaUrls?): LicenceSummaryUiState {
+        if (details.licenceStatus != LicenceStatus.VALID && details.licenceStatus != LicenceStatus.EXPIRED) {
+            return LicenceSummaryUiState.NotAvailable(notAvailableUrl(dvlaUrls))
+        }
+
+        return LicenceSummaryUiState.Success(
+            LicenceSummaryUiModel(
+                licenceType = getLicenceTypeString(details.licenceType),
                 licenceNumber = details.drivingLicenceNumber,
-                dvlaUrls = dvlaUrls
-            ),
-            drivingRecordUrl = getDrivingRecordUrl(
-                status = details.licenceStatus,
-                dvlaUrls = dvlaUrls
+                name = details.fullName.toTitleCase(),
+                addressLines = details.driverFullAddress.asAddressLines(),
+                statusUi = getLicenceStatusUiModel(
+                    status = details.licenceStatus,
+                    expiryDate = details.tokenValidToDate,
+                    dvlaUrls = dvlaUrls
+                ),
+                menuItems = buildMenuItems(
+                    licenceNumber = details.drivingLicenceNumber,
+                    dvlaUrls = dvlaUrls
+                ),
+                drivingRecordUrl = getDrivingRecordUrl(
+                    status = details.licenceStatus,
+                    dvlaUrls = dvlaUrls
+                )
             )
         )
     }
+
+    internal fun notAvailableUrl(dvlaUrls: DvlaUrls?) =
+        UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: GOV_UK_URL)
 
     private fun getDrivingRecordUrl(status: LicenceStatus, dvlaUrls: DvlaUrls?): String? {
         if (status != LicenceStatus.VALID) return null
@@ -57,21 +67,20 @@ internal class LicenceSummaryMapper @Inject constructor(
         ?.filter { it.isNotBlank() }
         ?: emptyList()
 
+    // Only reached for VALID/EXPIRED - toUiModel() short-circuits every other status to NotAvailable
     private fun getLicenceStatusUiModel(
         status: LicenceStatus,
         expiryDate: LocalDate?,
         dvlaUrls: DvlaUrls?
     ) = when (status) {
         LicenceStatus.EXPIRED -> getExpired(expiryDate, dvlaUrls)
-        LicenceStatus.VALID -> {
+        else -> {
             if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_EXPIRY_DAYS) == true) {
                 getExpiring(expiryDate, dvlaUrls)
             } else {
                 getValid(expiryDate)
             }
         }
-        // TODO: temporary, other states to be added on future tickets
-        else -> getValid(expiryDate)
     }
 
     private fun getValid(expiryDate: LocalDate?): StatusUiModel {

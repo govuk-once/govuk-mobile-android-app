@@ -33,6 +33,7 @@ import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
+import uk.gov.govuk.dvla.ui.component.NotAvailableCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -222,6 +223,11 @@ private fun LicenceViewContent(
         is LicenceSummaryUiState.Error -> LicenceSummaryError(onClick = { text ->
             launchBrowser(text, licenceState.fallbackUrl)
         })
+
+        is LicenceSummaryUiState.NotAvailable -> NotAvailableCard(
+            onClick = { text -> launchBrowser(text, licenceState.url) },
+            modifier = modifier
+        )
 
         is LicenceSummaryUiState.Success -> {
             LicenceSummarySuccess(

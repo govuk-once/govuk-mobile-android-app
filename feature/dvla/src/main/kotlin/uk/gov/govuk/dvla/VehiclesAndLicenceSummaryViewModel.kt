@@ -13,6 +13,7 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
@@ -147,12 +148,13 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             updateLicenceState(LicenceSummaryUiState.Loading)
 
             val newState = when (val result = dvlaRepo.getLicenceDetails()) {
-                is Result.Success -> {
-                    val licence = licenceMapper.toUiModel(result.value, dvlaUrls)
-                    LicenceSummaryUiState.Success(licence)
-                }
+                is LicenceDetailsResult.Success -> licenceMapper.toUiModel(result.details, dvlaUrls)
 
-                else -> {
+                is LicenceDetailsResult.NotFound,
+                is LicenceDetailsResult.NotAvailableForEnquiry ->
+                    LicenceSummaryUiState.NotAvailable(licenceMapper.notAvailableUrl(dvlaUrls))
+
+                is LicenceDetailsResult.Failure -> {
                     val fallbackUrl = UrlModel(dvlaUrls?.driverDetails ?: GOV_UK_URL)
                     LicenceSummaryUiState.Error(fallbackUrl)
                 }

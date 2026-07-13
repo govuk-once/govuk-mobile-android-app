@@ -4,9 +4,11 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
+import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
@@ -59,49 +61,66 @@ class LicenceSummaryMapperTest {
         licenceStatus = status
     )
 
+    private fun successLicence(status: LicenceStatus, expiryDate: LocalDate? = LocalDate.now().plusYears(1)) =
+        (mapper.toUiModel(makeLicenceDetails(status, expiryDate), dvlaUrls) as LicenceSummaryUiState.Success).licence
+
     @Test
-    fun `Given licence status is valid, then drivingRecordUrl is populated from dvlaUrls`() {
-        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), dvlaUrls)
-        assertEquals(dvlaUrls.drivingRecord, result.drivingRecordUrl)
+    fun `Given licence status is valid, then result is Success and drivingRecordUrl is populated from dvlaUrls`() {
+        val licence = successLicence(status = LicenceStatus.VALID)
+        assertEquals(dvlaUrls.drivingRecord, licence.drivingRecordUrl)
     }
 
     @Test
-    fun `Given licence status is valid and expiring soon, then drivingRecordUrl is still populated`() {
-        val result = mapper.toUiModel(
-            makeLicenceDetails(status = LicenceStatus.VALID, expiryDate = LocalDate.now().plusDays(10)),
-            dvlaUrls
-        )
-        assertEquals(dvlaUrls.drivingRecord, result.drivingRecordUrl)
+    fun `Given licence status is valid and expiring soon, then result is Success and drivingRecordUrl is still populated`() {
+        val licence = successLicence(status = LicenceStatus.VALID, expiryDate = LocalDate.now().plusDays(10))
+        assertEquals(dvlaUrls.drivingRecord, licence.drivingRecordUrl)
     }
 
     @Test
-    fun `Given licence status is expired, then drivingRecordUrl is null`() {
-        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXPIRED), dvlaUrls)
-        assertNull(result.drivingRecordUrl)
+    fun `Given licence status is expired, then result is Success and drivingRecordUrl is null`() {
+        val licence = successLicence(status = LicenceStatus.EXPIRED)
+        assertNull(licence.drivingRecordUrl)
     }
 
     @Test
-    fun `Given licence status is unknown, then drivingRecordUrl is null`() {
-        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.UNKNOWN), dvlaUrls)
-        assertNull(result.drivingRecordUrl)
-    }
-
-    @Test
-    fun `Given licence status is revoked, then drivingRecordUrl is null`() {
-        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED), dvlaUrls)
-        assertNull(result.drivingRecordUrl)
-    }
-
-    @Test
-    fun `Given dvlaUrls is null, then drivingRecordUrl is null even when licence is valid`() {
+    fun `Given dvlaUrls is null, then result is Success and drivingRecordUrl is null even when licence is valid`() {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), dvlaUrls = null)
-        assertNull(result.drivingRecordUrl)
+        assertTrue(result is LicenceSummaryUiState.Success)
+        assertNull((result as LicenceSummaryUiState.Success).licence.drivingRecordUrl)
     }
 
     @Test
-    fun `Given dvlaUrls drivingRecord is blank, then drivingRecordUrl is null even when licence is valid`() {
+    fun `Given dvlaUrls drivingRecord is blank, then result is Success and drivingRecordUrl is null even when licence is valid`() {
         val blankUrls = dvlaUrls.copy(drivingRecord = "")
-        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), blankUrls)
-        assertNull(result.drivingRecordUrl)
+        val licence = (mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), blankUrls) as LicenceSummaryUiState.Success).licence
+        assertNull(licence.drivingRecordUrl)
+    }
+
+    @Test
+    fun `Given licence status is unknown, then result is NotAvailable with the driver details url`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.UNKNOWN), dvlaUrls)
+        assertTrue(result is LicenceSummaryUiState.NotAvailable)
+        assertEquals(dvlaUrls.driverDetails, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
+    }
+
+    @Test
+    fun `Given licence status is revoked, then result is NotAvailable with the driver details url`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED), dvlaUrls)
+        assertTrue(result is LicenceSummaryUiState.NotAvailable)
+        assertEquals(dvlaUrls.driverDetails, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
+    }
+
+    @Test
+    fun `Given licence status is exchanged, then result is NotAvailable with the driver details url`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXCHANGED), dvlaUrls)
+        assertTrue(result is LicenceSummaryUiState.NotAvailable)
+        assertEquals(dvlaUrls.driverDetails, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
+    }
+
+    @Test
+    fun `Given licence status is not available and dvlaUrls is null, then NotAvailable falls back to the GOV_UK url`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXCHANGED), dvlaUrls = null)
+        assertTrue(result is LicenceSummaryUiState.NotAvailable)
+        assertEquals(GOV_UK_URL, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
     }
 }

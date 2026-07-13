@@ -23,6 +23,7 @@ import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
@@ -80,7 +81,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             val vehicleSummaryUiModel = mockk<VehicleSummaryUiModel>()
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Success(listOf(vehicle))
-            coEvery { dvlaRepo.getLicenceDetails() } returns Result.Success(mockk())
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
 
             every { vehicleMapper.toUiModel(vehicle, any()) } returns vehicleSummaryUiModel
 
@@ -108,7 +109,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
-            coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Failure(Result.Error())
             every { configRepo.dvlaUrls?.account } returns "https:www.test.com"
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
@@ -132,7 +133,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
-            coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Failure(Result.Error())
             every { configRepo.dvlaUrls?.account } returns null
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
@@ -240,9 +241,9 @@ class VehiclesAndLicenceSummaryViewModelTest {
         runTest(dispatcher) {
             val licenceUiModel = mockk<LicenceSummaryUiModel>()
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
-            coEvery { dvlaRepo.getLicenceDetails() } returns Result.Success(mockk())
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Success(emptyList())
-            every { licenceMapper.toUiModel(any(), any()) } returns licenceUiModel
+            every { licenceMapper.toUiModel(any(), any()) } returns LicenceSummaryUiState.Success(licenceUiModel)
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -290,7 +291,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     fun `Given getLicenceDetails returns error and dvla urls has driver details, when viewModel initialised, then licence state becomes Error`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
-            coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Failure(Result.Error())
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
             every { configRepo.dvlaUrls?.driverDetails } returns "https://www.test.com"
 
@@ -312,7 +313,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     fun `Given getLicenceDetails returns error and dvla urls is null, when viewModel initialised, then licence state becomes Error`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
-            coEvery { dvlaRepo.getLicenceDetails() } returns Result.Error()
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Failure(Result.Error())
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
             every { configRepo.dvlaUrls?.driverDetails } returns null
 
@@ -328,6 +329,52 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val currentState = viewModel.uiState.value as UiState.Default
             assertEquals(LicenceSummaryUiState.Error(UrlModel("https://www.gov.uk")), currentState.licenceState)
+        }
+
+    @Test
+    fun `Given getLicenceDetails returns NotFound, when viewModel initialised, then licence state becomes NotAvailable`() =
+        runTest(dispatcher) {
+            val notAvailableUrl = UrlModel("https://driver-and-vehicles-account.service.gov.uk/driver_details")
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.NotFound
+            coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
+            every { licenceMapper.notAvailableUrl(any()) } returns notAvailableUrl
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+
+            advanceUntilIdle()
+
+            val currentState = viewModel.uiState.value as UiState.Default
+            assertEquals(LicenceSummaryUiState.NotAvailable(notAvailableUrl), currentState.licenceState)
+        }
+
+    @Test
+    fun `Given getLicenceDetails returns NotAvailableForEnquiry, when viewModel initialised, then licence state becomes NotAvailable`() =
+        runTest(dispatcher) {
+            val notAvailableUrl = UrlModel("https://driver-and-vehicles-account.service.gov.uk/driver_details")
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.NotAvailableForEnquiry
+            coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
+            every { licenceMapper.notAvailableUrl(any()) } returns notAvailableUrl
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+
+            advanceUntilIdle()
+
+            val currentState = viewModel.uiState.value as UiState.Default
+            assertEquals(LicenceSummaryUiState.NotAvailable(notAvailableUrl), currentState.licenceState)
         }
 
     @Test
