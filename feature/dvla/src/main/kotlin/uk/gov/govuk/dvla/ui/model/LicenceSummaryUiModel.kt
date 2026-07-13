@@ -7,27 +7,20 @@ internal data class LicenceSummaryUiModel(
     val licenceType: String,
     val licenceNumber: String,
     val name: String,
-    val addressLine1: String,
-    val city: String,
-    val postcode: String,
     val statusUi: StatusUiModel,
+    private val addressLines: List<String>,
     val menuItems: List<OverflowMenuItem> = emptyList(),
     val drivingRecordUrl: String? = null
 ) {
     val formattedAddressLines: List<String>
-        get() = asAddressList(
-            formattedAddressLine1 = addressLine1,
-            formattedPostcode = postcode
-        )
+        get() = addressLines
 
     val accessibleAddressLines: List<String>
-        get() = asAddressList(
-            formattedAddressLine1 = addressLine1.toAccessibleStreetName(),
-            formattedPostcode = postcode.toSpacedString()
-        )
-
-    private fun asAddressList(
-        formattedAddressLine1: String,
-        formattedPostcode: String): List<String> =
-        listOf(formattedAddressLine1, city, formattedPostcode).filter { it.isNotBlank() }
+        get() = addressLines.mapIndexed { index, line ->
+            when (index) {
+                0 -> line.toAccessibleStreetName()
+                addressLines.lastIndex -> line.toSpacedString()
+                else -> line
+            }
+        }
 }

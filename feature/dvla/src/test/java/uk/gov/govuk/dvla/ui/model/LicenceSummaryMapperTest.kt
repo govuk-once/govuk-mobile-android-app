@@ -7,7 +7,7 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
-import uk.gov.govuk.dvla.domain.DriverSummary
+import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
@@ -45,32 +45,30 @@ class LicenceSummaryMapperTest {
         every { stringProvider.getQuantityString(any(), any(), *anyVararg()) } returns ""
     }
 
-    private fun makeDriverSummary(
+    private fun makeLicenceDetails(
         status: LicenceStatus,
         expiryDate: LocalDate? = LocalDate.now().plusYears(1)
-    ) = DriverSummary(
+    ) = LicenceDetails(
         licenceType = LicenceType.FULL,
-        licenceNumber = "ARENO803236AA170",
-        title = "Ms",
-        firstNames = "Anna Ornella",
-        lastName = "Areno",
-        addressLine1 = "29 Orchard Drive",
-        addressLine5 = "Milton Keynes",
-        postcode = "PA98 J83",
-        status = status,
-        expiryDate = expiryDate
+        drivingLicenceNumber = "ARENO803236AA170",
+        driverTitle = "Ms",
+        driverFirstNames = "Anna Ornella",
+        driverLastName = "Areno",
+        driverFullAddress = "29 Orchard Drive\nMilton Keynes\nPA98 J83",
+        tokenValidToDate = expiryDate,
+        licenceStatus = status
     )
 
     @Test
     fun `Given licence status is valid, then drivingRecordUrl is populated from dvlaUrls`() {
-        val result = mapper.toUiModel(makeDriverSummary(status = LicenceStatus.VALID), dvlaUrls)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), dvlaUrls)
         assertEquals(dvlaUrls.drivingRecord, result.drivingRecordUrl)
     }
 
     @Test
     fun `Given licence status is valid and expiring soon, then drivingRecordUrl is still populated`() {
         val result = mapper.toUiModel(
-            makeDriverSummary(status = LicenceStatus.VALID, expiryDate = LocalDate.now().plusDays(10)),
+            makeLicenceDetails(status = LicenceStatus.VALID, expiryDate = LocalDate.now().plusDays(10)),
             dvlaUrls
         )
         assertEquals(dvlaUrls.drivingRecord, result.drivingRecordUrl)
@@ -78,32 +76,32 @@ class LicenceSummaryMapperTest {
 
     @Test
     fun `Given licence status is expired, then drivingRecordUrl is null`() {
-        val result = mapper.toUiModel(makeDriverSummary(status = LicenceStatus.EXPIRED), dvlaUrls)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXPIRED), dvlaUrls)
         assertNull(result.drivingRecordUrl)
     }
 
     @Test
     fun `Given licence status is unknown, then drivingRecordUrl is null`() {
-        val result = mapper.toUiModel(makeDriverSummary(status = LicenceStatus.UNKNOWN), dvlaUrls)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.UNKNOWN), dvlaUrls)
         assertNull(result.drivingRecordUrl)
     }
 
     @Test
     fun `Given licence status is revoked, then drivingRecordUrl is null`() {
-        val result = mapper.toUiModel(makeDriverSummary(status = LicenceStatus.REVOKED), dvlaUrls)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED), dvlaUrls)
         assertNull(result.drivingRecordUrl)
     }
 
     @Test
     fun `Given dvlaUrls is null, then drivingRecordUrl is null even when licence is valid`() {
-        val result = mapper.toUiModel(makeDriverSummary(status = LicenceStatus.VALID), dvlaUrls = null)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), dvlaUrls = null)
         assertNull(result.drivingRecordUrl)
     }
 
     @Test
     fun `Given dvlaUrls drivingRecord is blank, then drivingRecordUrl is null even when licence is valid`() {
         val blankUrls = dvlaUrls.copy(drivingRecord = "")
-        val result = mapper.toUiModel(makeDriverSummary(status = LicenceStatus.VALID), blankUrls)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), blankUrls)
         assertNull(result.drivingRecordUrl)
     }
 }

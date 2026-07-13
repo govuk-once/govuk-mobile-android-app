@@ -11,38 +11,11 @@
 -keep class uk.gov.govuk.dvla.remote.model.CustomerVehicleDetailsResponse
 -keep class uk.gov.govuk.dvla.remote.model.CustomerVehicleDetails
 
-# remote/model/DriverSummaryResponse.kt
--keep class uk.gov.govuk.dvla.remote.model.DriverSummaryResponse
--keep class uk.gov.govuk.dvla.remote.model.DriverView
--keep class uk.gov.govuk.dvla.remote.model.Driver
--keep class uk.gov.govuk.dvla.remote.model.Address
--keep class uk.gov.govuk.dvla.remote.model.UnstructuredAddress
--keep class uk.gov.govuk.dvla.remote.model.PreviousDrivingLicence
--keep class uk.gov.govuk.dvla.remote.model.Licence
--keep class uk.gov.govuk.dvla.remote.model.Entitlement
--keep class uk.gov.govuk.dvla.remote.model.Restriction
--keep class uk.gov.govuk.dvla.remote.model.TestPass
--keep class uk.gov.govuk.dvla.remote.model.Token
--keep class uk.gov.govuk.dvla.remote.model.TokenEntitlement
--keep class uk.gov.govuk.dvla.remote.model.TokenRestriction
--keep class uk.gov.govuk.dvla.remote.model.Sdl
--keep class uk.gov.govuk.dvla.remote.model.ImageUtility
--keep class uk.gov.govuk.dvla.remote.model.Endorsement
--keep class uk.gov.govuk.dvla.remote.model.Disqualification
--keep class uk.gov.govuk.dvla.remote.model.Intoxicant
--keep class uk.gov.govuk.dvla.remote.model.EndorsementMarker
--keep class uk.gov.govuk.dvla.remote.model.SdlToken
--keep class uk.gov.govuk.dvla.remote.model.HolderDetails
--keep class uk.gov.govuk.dvla.remote.model.HolderMarker
--keep class uk.gov.govuk.dvla.remote.model.TachoCard
--keep class uk.gov.govuk.dvla.remote.model.LicenceType
--keep class uk.gov.govuk.dvla.remote.model.LicenceStatus
-
 # remote/model/LicenceResponse.kt
 -keep class uk.gov.govuk.dvla.remote.model.LicenceResponse
--keep class uk.gov.govuk.dvla.remote.model.LicenceResponse$Driver
--keep class uk.gov.govuk.dvla.remote.model.LicenceResponse$Licence
--keep class uk.gov.govuk.dvla.remote.model.LicenceResponse$Token
+-keep class uk.gov.govuk.dvla.remote.model.DrivingLicence
+-keep class uk.gov.govuk.dvla.remote.model.common.LicenceType
+-keep class uk.gov.govuk.dvla.remote.model.common.LicenceStatus
 
 # remote/model/LinkStatusResponse.kt
 -keep class uk.gov.govuk.dvla.remote.model.LinkStatusResponse

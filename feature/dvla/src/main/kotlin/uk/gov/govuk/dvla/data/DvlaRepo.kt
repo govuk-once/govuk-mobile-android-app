@@ -11,7 +11,6 @@ import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
-import uk.gov.govuk.dvla.domain.DriverSummary
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.VehicleDetails
@@ -69,10 +68,6 @@ class DvlaRepo @Inject constructor(
 
     internal suspend fun getLicenceDetails(): Result<LicenceDetails> =
         safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
-            .map { it.toDomainModel() }
-
-    internal suspend fun getDriverSummary(): Result<DriverSummary> =
-        safeAuthApiCall({ api.getDriverSummary() }, authRepo)
             .map { it.toDomainModel() }
 
     internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> =

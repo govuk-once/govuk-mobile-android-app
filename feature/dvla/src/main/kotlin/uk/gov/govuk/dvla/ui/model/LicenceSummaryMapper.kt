@@ -4,7 +4,7 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.domain.DriverSummary
+import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
@@ -25,25 +25,23 @@ internal class LicenceSummaryMapper @Inject constructor(
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
     }
 
-    fun toUiModel(driverSummary: DriverSummary, dvlaUrls: DvlaUrls?): LicenceSummaryUiModel {
+    fun toUiModel(details: LicenceDetails, dvlaUrls: DvlaUrls?): LicenceSummaryUiModel {
         return LicenceSummaryUiModel(
-            licenceType = getLicenceTypeString(driverSummary.licenceType),
-            licenceNumber = driverSummary.licenceNumber,
-            name = driverSummary.fullName.toTitleCase(),
-            addressLine1 = driverSummary.addressLine1.toTitleCase(),
-            city = driverSummary.addressLine5.toTitleCase(),
-            postcode = driverSummary.postcode.uppercase(),
+            licenceType = getLicenceTypeString(details.licenceType),
+            licenceNumber = details.drivingLicenceNumber,
+            name = details.fullName.toTitleCase(),
+            addressLines = details.driverFullAddress.asAddressLines(),
             statusUi = getLicenceStatusUiModel(
-                status = driverSummary.status,
-                expiryDate = driverSummary.expiryDate,
+                status = details.licenceStatus,
+                expiryDate = details.tokenValidToDate,
                 dvlaUrls = dvlaUrls
             ),
             menuItems = buildMenuItems(
-                licenceNumber = driverSummary.licenceNumber,
+                licenceNumber = details.drivingLicenceNumber,
                 dvlaUrls = dvlaUrls
             ),
             drivingRecordUrl = getDrivingRecordUrl(
-                status = driverSummary.status,
+                status = details.licenceStatus,
                 dvlaUrls = dvlaUrls
             )
         )
@@ -53,6 +51,11 @@ internal class LicenceSummaryMapper @Inject constructor(
         if (status != LicenceStatus.VALID) return null
         return dvlaUrls?.drivingRecord?.takeIf { it.isNotBlank() }
     }
+
+    private fun String?.asAddressLines() = this
+        ?.split("\n")
+        ?.filter { it.isNotBlank() }
+        ?: emptyList()
 
     private fun getLicenceStatusUiModel(
         status: LicenceStatus,
