@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.ui.component
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -8,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
+import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
@@ -29,6 +34,8 @@ internal fun LicenceNotAvailableCard(
             containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
         )
     ) {
+        Spacer(Modifier.height(64.dp))
+
         CardListItem(isFirst = true, isLast = false) {
             Title1BoldLabel(
                 text = stringResource(R.string.licence_not_available_title),
