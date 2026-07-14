@@ -12,7 +12,6 @@ import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.PromoBannerType
-import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 
 class HomeViewModelTest {
 
@@ -95,7 +94,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `Given a page view, and there are screen banners, then log analytics`() {
+    fun `Given a page view, and there are promo banners, then log analytics`() {
         val viewModel = HomeViewModel(analyticsClient)
 
         val homeWidgets = listOf(
@@ -115,12 +114,6 @@ class HomeViewModelTest {
                     title = "chatItemTitle",
                     body = "chatItemBody",
                     link = Link("chatLinkTitle", "chatLinkUrl")
-                )
-            ),
-            HomeWidget.UserFeedback(
-                userFeedbackBanner = UserFeedbackBanner(
-                    body = "userFeedbackItemBody",
-                    link = Link("userFeedbackLinkTitle", "userFeedbackLinkUrl")
                 )
             )
         )
@@ -152,15 +145,33 @@ class HomeViewModelTest {
                             itemName = "chatItemTitle",
                             itemCategory = "ChatBanner",
                             locationId = "chatLinkUrl"
-                        ),
-                        EcommerceEvent.Item(
-                            itemName = "userFeedbackLinkTitle",
-                            itemCategory = "UserFeedbackBanner",
-                            locationId = "userFeedbackLinkUrl"
                         )
                     ),
-                    totalItemCount = 3
+                    totalItemCount = 2
                 )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a page view, and there are no promo banners, then do not log analytics`() {
+        val viewModel = HomeViewModel(analyticsClient)
+
+        val homeWidgets = emptyList<HomeWidget>()
+
+        viewModel.onPageView(homeWidgets)
+
+        verify {
+            analyticsClient.screenView(
+                screenClass = "HomeScreen",
+                screenName = "Homepage",
+                title = "Homepage"
+            )
+        }
+
+        verify(exactly = 0) {
+            analyticsClient.viewItemListEvent(
+                ecommerceEvent = any()
             )
         }
     }

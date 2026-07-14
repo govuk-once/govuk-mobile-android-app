@@ -313,18 +313,20 @@ internal class AppViewModel @Inject constructor(
     }
 
     fun onBannerClick(url: String? = null) {
-        if (url != null) {
+        if (!url.isNullOrBlank()) {
             val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
 
-            analyticsClient.selectItemEvent(
-                ecommerceEvent = EcommerceEvent(
-                    itemListId = HOME_BANNERS,
-                    itemListName = HOME_BANNERS,
-                    items = items,
-                    totalItemCount = items.size
-                ),
-                selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
-            )
+            if (items.isNotEmpty()) {
+                analyticsClient.selectItemEvent(
+                    ecommerceEvent = EcommerceEvent(
+                        itemListId = HOME_BANNERS,
+                        itemListName = HOME_BANNERS,
+                        items = items,
+                        totalItemCount = items.size
+                    ),
+                    selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
+                )
+            }
         }
     }
 

@@ -29,6 +29,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.AppViewModel.TimeoutEvent
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
@@ -987,5 +988,116 @@ class AppViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { identityRepo.getLinkedServices() }
+    }
+
+    @Test
+    fun `Given a promo banner click, then log analytics`() {
+        val banner1 = PromoBanner(
+            id = "id1",
+            title = "Title 1",
+            body = "Body 1",
+            link = Link("Link Title", "http://url1"),
+            type = PromoBannerType.EXTERNAL
+        )
+
+        val banner2 = PromoBanner(
+            id = "id2",
+            title = "Title 2",
+            body = "Body 2",
+            link = Link("Link Title", "http://url2"),
+            type = PromoBannerType.INTERNAL
+        )
+
+        coEvery { flagRepo.isChatEnabled() } returns false
+        coEvery { flagRepo.isLocalServicesEnabled() } returns false
+        every { configRepo.userFeedbackBanner } returns null
+        every { configRepo.promoBanners } returns listOf(banner1, banner2)
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        viewModel.onBannerClick("http://url2")
+
+        verify {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListName = "home_banners",
+                    itemListId = "home_banners",
+                    items = listOf(
+                        EcommerceEvent.Item(
+                            itemId = "id1",
+                            itemName = "Title 1",
+                            itemCategory = "PromoBanner",
+                            locationId = "http://url1"
+                        ),
+                        EcommerceEvent.Item(
+                            itemId = "id2",
+                            itemName = "Title 2",
+                            itemCategory = "PromoBanner",
+                            locationId = "http://url2"
+                        )
+                    ),
+                    totalItemCount = 2
+                ),
+                selectedItemIndex = 1
+            )
+        }
+    }
+
+    @Test
+    fun `Given a promo banner click, and a null or empty url onBannerClick, then do not log analytics`() {
+        val banner = PromoBanner(
+            id = "id1",
+            title = "Title 1",
+            body = "Body 1",
+            link = Link("Link Title", "http://url1"),
+            type = PromoBannerType.EXTERNAL
+        )
+
+        coEvery { flagRepo.isChatEnabled() } returns false
+        coEvery { flagRepo.isLocalServicesEnabled() } returns false
+        every { configRepo.userFeedbackBanner } returns null
+        every { configRepo.promoBanners } returns listOf(banner)
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        viewModel.onBannerClick(null)
+
+        verify(exactly = 0) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = any(),
+                selectedItemIndex = any()
+            )
+        }
+
+        viewModel.onBannerClick("")
+
+        verify(exactly = 0) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = any(),
+                selectedItemIndex = any()
+            )
+        }
+    }
+
+    @Test
+    fun `Given a no promo banners to click, and a valid url onBannerClick, then do not log analytics`() {
+        coEvery { flagRepo.isChatEnabled() } returns false
+        coEvery { flagRepo.isLocalServicesEnabled() } returns false
+        every { configRepo.userFeedbackBanner } returns null
+        every { configRepo.promoBanners } returns emptyList()
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        viewModel.onBannerClick("http://url1")
+
+        verify(exactly = 0) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = any(),
+                selectedItemIndex = any()
+            )
+        }
     }
 }

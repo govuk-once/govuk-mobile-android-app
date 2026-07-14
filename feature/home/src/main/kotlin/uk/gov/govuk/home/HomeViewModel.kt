@@ -8,7 +8,6 @@ import uk.gov.govuk.config.data.local.model.HOME_BANNERS
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.local.model.toAnalyticsItems
 import javax.inject.Inject
-import kotlin.collections.emptyList
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
@@ -38,13 +37,15 @@ internal class HomeViewModel @Inject constructor(
     ) {
         val items = homeWidgets?.toAnalyticsItems() ?: emptyList()
 
-        analyticsClient.viewItemListEvent(
-            ecommerceEvent = EcommerceEvent(
-                itemListName = HOME_BANNERS,
-                itemListId = HOME_BANNERS,
-                items = items,
-                totalItemCount = items.size
+        if (items.isNotEmpty()) {
+            analyticsClient.viewItemListEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListName = HOME_BANNERS,
+                    itemListId = HOME_BANNERS,
+                    items = items,
+                    totalItemCount = items.size
+                )
             )
-        )
+        }
     }
 }
