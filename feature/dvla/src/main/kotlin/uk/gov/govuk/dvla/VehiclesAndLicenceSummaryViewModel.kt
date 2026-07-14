@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.data.DvlaRepo
@@ -55,7 +55,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                         }
                         fetchLicenceDetails()
                         fetchVehicles()
-                        createListCancelCheckCode()
                     }
 
                     ServiceLinkStatus.UNLINKED,
@@ -192,29 +191,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
     private fun updateLicenceState(newState: LicenceSummaryUiState) {
         _uiState.update { state ->
             if (state is UiState.Default) state.copy(licenceState = newState) else state
-        }
-    }
-
-    private fun createListCancelCheckCode() {
-        // TODO: call unused endpoints for pen testing, to be removed
-
-        // launch calls in parallel
-        viewModelScope.launch {
-            dvlaRepo.getCheckCodes()
-        }
-
-        viewModelScope.launch {
-            val createResult = dvlaRepo.createCheckCode()
-
-            val tokenIdToCancel = if (createResult is Result.Success) {
-                createResult.value.tokenId
-            } else {
-                // if creation fails call the cancel endpoint with a dummy token
-                // call will fail but can still be captured for pen testing
-                "dummy-token"
-            }
-
-            dvlaRepo.cancelCheckCode(tokenIdToCancel)
         }
     }
 }
