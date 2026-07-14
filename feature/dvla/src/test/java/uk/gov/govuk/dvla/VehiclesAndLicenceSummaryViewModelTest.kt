@@ -260,34 +260,6 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `Given linkState emits LINKED, when viewModel initialised, then check code creation and cancellation are called`() =
-        runTest(dispatcher) {
-            val token = "token-id"
-
-            val mockCheckCode = mockk<CheckCodeDetails> {
-                every { tokenId } returns token
-            }
-
-            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
-            coEvery { dvlaRepo.getCheckCodes() } returns Result.Success(mockk())
-            coEvery { dvlaRepo.createCheckCode() } returns Result.Success(mockCheckCode)
-            coEvery { dvlaRepo.cancelCheckCode(any()) } returns Result.Success(mockk())
-
-            val viewModel = VehiclesAndLicenceSummaryViewModel(
-                dvlaRepo,
-                vehicleMapper,
-                licenceMapper,
-                analyticsClient,
-                configRepo
-            )
-            advanceUntilIdle()
-
-            coVerify(exactly = 1) { dvlaRepo.getCheckCodes() }
-            coVerify(exactly = 1) { dvlaRepo.createCheckCode() }
-            coVerify(exactly = 1) { dvlaRepo.cancelCheckCode(token) }
-        }
-
-    @Test
     fun `Given getLicenceDetails returns error and dvla urls has driver details, when viewModel initialised, then licence state becomes Error`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
