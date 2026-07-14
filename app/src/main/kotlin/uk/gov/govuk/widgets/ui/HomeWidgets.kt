@@ -21,7 +21,7 @@ internal fun List<HomeWidget>?.contains(widget: HomeWidget) = this?.contains(wid
 internal fun homeWidgets(
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
-    onInternalClick: (text: String) -> Unit,
+    onInternalClick: (text: String, url: String?) -> Unit,
     onExternalClick: (text: String, url: String?) -> Unit,
     onSuppressClick: (id: String, text: String) -> Unit,
     launchBrowser: (url: String) -> Unit
@@ -60,7 +60,7 @@ internal fun homeWidgets(
                     PromoBanner(
                         promoBanner = promoBanner,
                         onClick = { text, url ->
-                            onInternalClick(text)
+                            onInternalClick(text, url)
                             if (url != null) {
                                 launchBrowser(url)
                             }
@@ -81,7 +81,7 @@ internal fun homeWidgets(
                             if (it.promoBanner.type == PromoBannerType.EXTERNAL) {
                                 onExternalClick(text, url)
                             } else {
-                                onInternalClick(text)
+                                onInternalClick(text, url)
                             }
                             if (url != null) {
                                 launchBrowser(url)
@@ -99,7 +99,7 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     VisitedWidget(
                         onSeeAllClick = { text ->
-                            onInternalClick(text)
+                            onInternalClick(text, null)
                             navController.navigate(VISITED_GRAPH_ROUTE)
                         },
                         launchBrowser = launchBrowser,
@@ -112,11 +112,11 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     TopicsWidget(
                         onTopicClick = { ref, title ->
-                            onInternalClick(title)
+                            onInternalClick(title, null)
                             navController.navigateToTopic(ref)
                         },
                         onEditClick = { text ->
-                            onInternalClick(text)
+                            onInternalClick(text, null)
                             navController.navigateToTopicsEdit()
                         },
                         modifier = modifier
@@ -128,14 +128,14 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     LocalWidget(
                         onLookupClick = { text ->
-                            onInternalClick(text)
+                            onInternalClick(text, null)
                             navController.navigate(LOCAL_GRAPH_ROUTE)
                         },
                         onLocalAuthorityClick = { text, url ->
                             onExternalClick(text, url)
                         },
                         onEditClick = { text ->
-                            onInternalClick(text)
+                            onInternalClick(text, null)
                             navController.navigate(LOCAL_LOOKUP_ROUTE)
                         },
                         launchBrowser = launchBrowser,

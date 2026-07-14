@@ -60,6 +60,7 @@ sonar {
 
 dependencies {
     implementation(projects.data)
+    implementation(projects.analytics)
 
     implementation(libs.hilt.android)
     implementation(libs.retrofit)

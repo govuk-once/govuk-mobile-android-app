@@ -244,12 +244,14 @@ private fun BottomNavScaffold(
                     appNavigation = appNavigation,
                     navController = navController,
                     homeWidgets = homeWidgets,
-                    onInternalWidgetClick = { text ->
+                    onInternalWidgetClick = { text, url ->
                         viewModel.onWidgetClick(
                             text = text,
                             external = false,
                             section = section
                         )
+
+                        viewModel.onBannerClick(url)
                     },
                     onExternalWidgetClick = { text, url ->
                         viewModel.onWidgetClick(
@@ -258,6 +260,8 @@ private fun BottomNavScaffold(
                             external = true,
                             section = section
                         )
+
+                        viewModel.onBannerClick(url)
                     },
                     onSuppressWidgetClick = { id, text ->
                         viewModel.onSuppressWidgetClick(id, text, section)
@@ -383,7 +387,7 @@ private fun GovUkNavHost(
     appNavigation: AppNavigation,
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
-    onInternalWidgetClick: (text: String) -> Unit,
+    onInternalWidgetClick: (text: String, url: String?) -> Unit,
     onExternalWidgetClick: (text: String, url: String?) -> Unit,
     onSuppressWidgetClick: (id: String, text: String) -> Unit,
     shouldShowExternalBrowser: Boolean,
@@ -560,7 +564,7 @@ private fun GovUkNavHost(
                 { modifier ->
                     SearchWidget(
                         onClick = { text ->
-                            onInternalWidgetClick(text)
+                            onInternalWidgetClick(text, null)
                             navController.navigate(SEARCH_GRAPH_ROUTE)
                         },
                         modifier = modifier

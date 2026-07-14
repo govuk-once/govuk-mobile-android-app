@@ -14,10 +14,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.local.model.HOME_BANNERS
 import uk.gov.govuk.config.data.local.model.HomeWidget
+import uk.gov.govuk.config.data.local.model.toAnalyticsItems
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
@@ -307,6 +310,22 @@ internal class AppViewModel @Inject constructor(
             hasDeepLink,
             url
         )
+    }
+
+    fun onBannerClick(url: String? = null) {
+        if (url != null) {
+            val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
+
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = HOME_BANNERS,
+                    itemListName = HOME_BANNERS,
+                    items = items,
+                    totalItemCount = items.size
+                ),
+                selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
+            )
+        }
     }
 
     fun onNext() {
