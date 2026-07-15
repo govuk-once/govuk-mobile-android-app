@@ -8,7 +8,7 @@ import uk.gov.govuk.data.remote.AuthenticationException
 import uk.gov.govuk.data.remote.withAuthRetry
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.toDomainModel
-import uk.gov.govuk.dvla.remote.model.DvlaErrorBody
+import uk.gov.govuk.dvla.remote.model.DvlaErrorResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 
 private const val ERROR_CODE_LICENCE_NOT_FOUND = "GUK-404-04"
@@ -51,5 +51,5 @@ internal suspend fun safeLicenceApiCall(
 
 private fun parseDvlaErrorCode(response: Response<LicenceResponse>): String? {
     val errorBody = response.errorBody() ?: return null
-    return runCatching { gson.fromJson(errorBody.charStream(), DvlaErrorBody::class.java)?.code }.getOrNull()
+    return runCatching { gson.fromJson(errorBody.charStream(), DvlaErrorResponse::class.java)?.error?.code }.getOrNull()
 }
