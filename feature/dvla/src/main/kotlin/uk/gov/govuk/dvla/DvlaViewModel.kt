@@ -13,6 +13,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.linking.data.LinkingRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import javax.inject.Inject
 import javax.inject.Named
@@ -22,7 +23,8 @@ internal class DvlaViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient,
-    @param:Named("dvla_auth_url") private val dvlaAuthUrl: String
+    @param:Named("dvla_auth_url") private val dvlaAuthUrl: String,
+    private val linkingRepo: LinkingRepo
 ) : ViewModel() {
 
     companion object {
@@ -85,7 +87,17 @@ internal class DvlaViewModel @Inject constructor(
     }
 
     private fun startAuthFlow() {
-        _authUrlToLaunch.value = dvlaAuthUrl
+        viewModelScope.launch {
+            when (val result = linkingRepo.getVerification()) {
+                is Result.Success -> launchAuthUrl(result.value.verificationHash)
+
+                else -> _uiState.value = UiState.Error.Other
+            }
+        }
+    }
+
+    private fun launchAuthUrl(verificationHash: String) {
+        _authUrlToLaunch.value = "$dvlaAuthUrl?verification=$verificationHash"
     }
 
     fun onIntroPageView(screenTitle: String) {

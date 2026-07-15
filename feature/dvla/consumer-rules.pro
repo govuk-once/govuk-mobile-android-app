@@ -41,3 +41,7 @@
 -keep class uk.gov.govuk.dvla.remote.model.common.PossibleTransaction
 -keep class uk.gov.govuk.dvla.remote.model.common.TaxStatus
 -keep class uk.gov.govuk.dvla.remote.model.common.VehicleColour
+
+# linking/remote/model
+-keep class uk.gov.govuk.dvla.linking.remote.model.VerificationRequest
+-keep class uk.gov.govuk.dvla.linking.remote.model.VerificationResponse
