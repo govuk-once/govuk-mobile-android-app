@@ -82,7 +82,7 @@ class ApiCallKtTest {
         every { response.body() } returns null
         every { response.code() } returns 404
         every { response.errorBody() } returns errorBodyOf(
-            """{"code":"GUK-404-04","message":"Driving Licence not found"}"""
+            """{"error":{"code":"GUK-404-04","message":"Driving Licence not found"}}"""
         )
 
         val result = safeLicenceApiCall(apiCall, authRepo)
@@ -97,7 +97,7 @@ class ApiCallKtTest {
         every { response.body() } returns null
         every { response.code() } returns 404
         every { response.errorBody() } returns errorBodyOf(
-            """{"code":"GUK-404-05","message":"Driving licence not available for enquiry"}"""
+            """{"error":{"code":"GUK-404-05","message":"Driving licence not available for enquiry"}}"""
         )
 
         val result = safeLicenceApiCall(apiCall, authRepo)
@@ -112,7 +112,7 @@ class ApiCallKtTest {
         every { response.body() } returns null
         every { response.code() } returns 404
         every { response.errorBody() } returns errorBodyOf(
-            """{"code":"GUK-404-99","message":"Something else"}"""
+            """{"error":{"code":"GUK-404-99","message":"Something else"}}"""
         )
 
         val result = safeLicenceApiCall(apiCall, authRepo)
