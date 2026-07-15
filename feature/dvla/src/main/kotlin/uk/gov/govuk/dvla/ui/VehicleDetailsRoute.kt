@@ -122,13 +122,9 @@ private fun SuccessScreen(
             .safeDrawingPadding()
             .fillMaxWidth()
     ) {
+        // Todo - re-add overflow menu button
         FullScreenHeader(
-            dismissStyle = HeaderDismissStyle.Back(onBack),
-            actionStyle = HeaderActionStyle.OverflowActionButton(
-                {
-                    // TODO in future ticket
-                }
-            )
+            dismissStyle = HeaderDismissStyle.Back(onBack)
         )
 
         Column(
