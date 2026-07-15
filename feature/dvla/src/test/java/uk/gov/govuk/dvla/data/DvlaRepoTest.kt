@@ -15,6 +15,7 @@ import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.remote.DvlaApi
@@ -139,38 +140,17 @@ class DvlaRepoTest {
 
         val result = repo.getLicenceDetails()
 
-        assertTrue(result is Result.Success)
+        assertTrue(result is LicenceDetailsResult.Success)
         coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 
     @Test
-    fun `Given driving licence api fails, when getLicenceDetails is called, then return Error`() = runTest {
+    fun `Given driving licence api throws, when getLicenceDetails is called, then return Failure`() = runTest {
         coEvery { api.getDrivingLicence() } throws Exception("Exception")
 
         val result = repo.getLicenceDetails()
 
-        assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.getDrivingLicence() }
-    }
-
-    @Test
-    fun `Given driver summary api returns success, when getLicenceDetails is called, then return Success with DrivingLicenceDetails`() = runTest {
-        val summaryResponse = mockk<LicenceResponse>(relaxed = true)
-        coEvery { api.getDrivingLicence() } returns Response.success(summaryResponse)
-
-        val result = repo.getLicenceDetails()
-
-        assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.getDrivingLicence() }
-    }
-
-    @Test
-    fun `Given driver summary api fails, when getLicenceDetails is called, then return Error`() = runTest {
-        coEvery { api.getDrivingLicence() } throws Exception("Exception")
-
-        val result = repo.getLicenceDetails()
-
-        assertTrue(result is Result.Error)
+        assertTrue(result is LicenceDetailsResult.Failure)
         coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 

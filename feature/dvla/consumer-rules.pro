@@ -17,6 +17,9 @@
 -keep class uk.gov.govuk.dvla.remote.model.common.LicenceType
 -keep class uk.gov.govuk.dvla.remote.model.common.LicenceStatus
 
+# remote/model/DvlaErrorBody.kt
+-keep class uk.gov.govuk.dvla.remote.model.DvlaErrorBody
+
 # remote/model/LinkStatusResponse.kt
 -keep class uk.gov.govuk.dvla.remote.model.LinkStatusResponse
 

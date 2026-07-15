@@ -5,18 +5,19 @@ import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
-import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
-import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
-import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
+import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.remote.safeLicenceApiCall
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +28,6 @@ class DvlaRepo @Inject constructor(
     private val dvlaDataStore: DvlaDataStore,
     private val identityRepo: IdentityRepo
 ) {
-
     val linkState: Flow<ServiceLinkStatus> = identityRepo.linkStatusOf(LinkedService.DVLA)
 
     val currentLinkState: ServiceLinkStatus
@@ -66,9 +66,8 @@ class DvlaRepo @Inject constructor(
         return result
     }
 
-    internal suspend fun getLicenceDetails(): Result<LicenceDetails> =
-        safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
-            .map { it.toDomainModel() }
+    internal suspend fun getLicenceDetails(): LicenceDetailsResult =
+        safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
 
     internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> =
         safeAuthApiCall({ api.getCustomerVehicles() }, authRepo)

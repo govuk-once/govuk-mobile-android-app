@@ -78,6 +78,9 @@
     <string name="licence_summary_loading_error_text">We could not get your licence details</string>
     <string name="licence_summary_loading_error_sub_text">Try again later, or</string>
     <string name="licence_summary_loading_error_link_text">go to your account on the website</string>
+    <string name="licence_not_available_title">Not available</string>
+    <string name="licence_not_available_description">Check your account to see your licence status and restrictions that apply to you</string>
+    <string name="licence_not_available_link_text">Your driver and vehicles account</string>
 
     <string name="menu_sorn_rules">SORN rules</string>
     <string name="menu_report_as_sold">Report as sold</string>
