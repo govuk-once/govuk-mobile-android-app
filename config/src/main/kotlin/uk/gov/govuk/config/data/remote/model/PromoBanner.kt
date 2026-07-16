@@ -7,14 +7,5 @@ data class PromoBanner(
     @SerializedName("title") val title: String,
     @SerializedName("body") val body: String,
     @SerializedName("link") val link: Link,
-    @SerializedName("image") val image: String? = null,
-    @SerializedName("type") val type: PromoBannerType? = PromoBannerType.EXTERNAL
+    @SerializedName("image") val image: String? = null
 )
-
-enum class PromoBannerType {
-    @SerializedName("internal")
-    INTERNAL,
-
-    @SerializedName("external")
-    EXTERNAL
-}

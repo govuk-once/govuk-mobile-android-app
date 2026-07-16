@@ -11,7 +11,6 @@ import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
-import uk.gov.govuk.config.data.remote.model.PromoBannerType
 
 class HomeViewModelTest {
 
@@ -58,8 +57,7 @@ class HomeViewModelTest {
                     title = "itemTitle",
                     body = "itemBody",
                     link = Link("linkTitle", "linkUrl"),
-                    image = "itemImage",
-                    type = PromoBannerType.EXTERNAL
+                    image = "itemImage"
                 )
             )
         )

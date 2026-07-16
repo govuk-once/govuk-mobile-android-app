@@ -7,9 +7,7 @@ import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
-import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
-import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource

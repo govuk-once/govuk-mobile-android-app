@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
-import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
 import uk.gov.govuk.topics.ui.widget.TopicsWidget
@@ -53,8 +52,7 @@ internal fun homeWidgets(
                             title = it.chatBanner.link.title,
                             url = "govuk://gov.uk/chat" // hard code for now
                         ),
-                        image = "background_chat_banner", // hard code for now
-                        type = PromoBannerType.INTERNAL
+                        image = "background_chat_banner" // hard code for now
                     )
 
                     PromoBanner(
@@ -78,12 +76,12 @@ internal fun homeWidgets(
                     PromoBanner(
                         promoBanner = it.promoBanner,
                         onClick = { text, url ->
-                            if (it.promoBanner.type == PromoBannerType.EXTERNAL) {
-                                onExternalClick(text, url)
-                            } else {
-                                onInternalClick(text, url)
-                            }
                             if (url != null) {
+                                if (url.contains("web?url=")) {
+                                    onExternalClick(text, url)
+                                } else {
+                                    onInternalClick(text, url)
+                                }
                                 launchBrowser(url)
                             }
                         },

@@ -33,12 +33,12 @@ import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
-import uk.gov.govuk.config.data.remote.model.PromoBannerType
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
@@ -55,7 +55,6 @@ import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
-import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -792,16 +791,14 @@ class AppViewModelTest {
             id = "id1",
             title = "Title 1",
             body = "Body 1",
-            link = Link("Link Title", "http://url1"),
-            type = PromoBannerType.EXTERNAL
+            link = Link("Link Title", "http://url1")
         )
 
         val banner2 = PromoBanner(
             id = "id2",
             title = "Title 2",
             body = "Body 2",
-            link = Link("Link Title", "http://url2"),
-            type = PromoBannerType.INTERNAL
+            link = Link("Link Title", "http://url2")
         )
 
         coEvery { flagRepo.isLocalServicesEnabled() } returns true
@@ -996,16 +993,14 @@ class AppViewModelTest {
             id = "id1",
             title = "Title 1",
             body = "Body 1",
-            link = Link("Link Title", "http://url1"),
-            type = PromoBannerType.EXTERNAL
+            link = Link("Link Title", "http://url1")
         )
 
         val banner2 = PromoBanner(
             id = "id2",
             title = "Title 2",
             body = "Body 2",
-            link = Link("Link Title", "http://url2"),
-            type = PromoBannerType.INTERNAL
+            link = Link("Link Title", "http://url2")
         )
 
         coEvery { flagRepo.isChatEnabled() } returns false
@@ -1050,8 +1045,7 @@ class AppViewModelTest {
             id = "id1",
             title = "Title 1",
             body = "Body 1",
-            link = Link("Link Title", "http://url1"),
-            type = PromoBannerType.EXTERNAL
+            link = Link("Link Title", "http://url1")
         )
 
         coEvery { flagRepo.isChatEnabled() } returns false
