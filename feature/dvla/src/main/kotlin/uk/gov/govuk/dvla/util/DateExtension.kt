@@ -31,3 +31,10 @@ internal fun LocalDate.isToday() =
  */
 internal fun LocalDate?.isInTheFuture() =
     this?.let { getNumberOfDaysFromNow() > 0 } ?: run { false }
+
+/**
+ * Returns true if the date is in the past.
+ * Returns false if the date is now, in the future or null.
+ */
+internal fun LocalDate?.isInThePast() =
+    this?.let { getNumberOfDaysFromNow() < 0 } ?: run { false }
