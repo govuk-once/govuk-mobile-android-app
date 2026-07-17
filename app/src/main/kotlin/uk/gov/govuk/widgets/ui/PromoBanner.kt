@@ -69,7 +69,9 @@ fun PromoBanner(
                     }
 
                     Box {
-                        DisplayImage(promoBanner)
+                        if (promoBanner.image != null) {
+                            DisplayImage(promoBanner.image!!)
+                        }
 
                         Box(
                             modifier = Modifier
@@ -124,23 +126,20 @@ fun PromoBanner(
 }
 
 @Composable
-private fun DisplayImage(promoBanner: PromoBanner) {
-    if (promoBanner.image != null) {
-        val context = LocalContext.current
-        val imageName = promoBanner.image
-        val imageResId = remember(imageName) {
-            context.resources.getIdentifier(
-                imageName,
-                "drawable",
-                context.packageName
-            )
-        }
+private fun DisplayImage(image: String) {
+    val context = LocalContext.current
+    val imageResId = remember(image) {
+        context.resources.getIdentifier(
+            image,
+            "drawable",
+            context.packageName
+        )
+    }
 
-        if (imageResId != 0) {
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = null,
-            )
-        }
+    if (imageResId != 0) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = null,
+        )
     }
 }
