@@ -17,7 +17,6 @@ plugins {
 
 val majorVersion = "1"
 val minorVersion = "3"
-val patchVersion = ""
 
 val privacyPolicyUrl: String by project
 
@@ -33,7 +32,7 @@ android {
         minSdk = Version.MIN_SDK
         targetSdk = Version.TARGET_SDK
         versionCode = buildNumber
-        versionName = "$majorVersion.$minorVersion.$patchVersion"
+        versionName = "$majorVersion.$minorVersion"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
