@@ -276,9 +276,15 @@ internal class AppViewModel @Inject constructor(
     fun onWidgetClick(
         text: String,
         url: String? = null,
-        external: Boolean,
         section: String
     ) {
+        var external = false
+        if (url != null) {
+            if (url.startsWith("http") || url.contains("web?url=")) {
+                external = true
+            }
+        }
+
         analyticsClient.widgetClick(
             text,
             url,
@@ -312,21 +318,19 @@ internal class AppViewModel @Inject constructor(
         )
     }
 
-    fun onBannerClick(url: String? = null) {
-        if (!url.isNullOrBlank()) {
-            val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
+    fun onBannerClick(url: String) {
+        val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
 
-            if (items.isNotEmpty()) {
-                analyticsClient.selectItemEvent(
-                    ecommerceEvent = EcommerceEvent(
-                        itemListId = HOME_BANNERS,
-                        itemListName = HOME_BANNERS,
-                        items = items,
-                        totalItemCount = items.size
-                    ),
-                    selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
-                )
-            }
+        if (items.isNotEmpty()) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = HOME_BANNERS,
+                    itemListName = HOME_BANNERS,
+                    items = items,
+                    totalItemCount = items.size
+                ),
+                selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
+            )
         }
     }
 

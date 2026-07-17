@@ -244,24 +244,15 @@ private fun BottomNavScaffold(
                     appNavigation = appNavigation,
                     navController = navController,
                     homeWidgets = homeWidgets,
-                    onInternalWidgetClick = { text, url ->
+                    onWidgetClick = { text, url ->
                         viewModel.onWidgetClick(
                             text = text,
-                            external = false,
                             section = section
                         )
 
-                        viewModel.onBannerClick(url)
-                    },
-                    onExternalWidgetClick = { text, url ->
-                        viewModel.onWidgetClick(
-                            text = text,
-                            url = url,
-                            external = true,
-                            section = section
-                        )
-
-                        viewModel.onBannerClick(url)
+                        if (url != null) {
+                            viewModel.onBannerClick(url)
+                        }
                     },
                     onSuppressWidgetClick = { id, text ->
                         viewModel.onSuppressWidgetClick(id, text, section)
@@ -387,8 +378,7 @@ private fun GovUkNavHost(
     appNavigation: AppNavigation,
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
-    onInternalWidgetClick: (text: String, url: String?) -> Unit,
-    onExternalWidgetClick: (text: String, url: String?) -> Unit,
+    onWidgetClick: (text: String, url: String?) -> Unit,
     onSuppressWidgetClick: (id: String, text: String) -> Unit,
     shouldShowExternalBrowser: Boolean,
     paddingValues: PaddingValues
@@ -549,8 +539,7 @@ private fun GovUkNavHost(
             widgets = homeWidgets(
                 navController = navController,
                 homeWidgets = homeWidgets,
-                onInternalClick = onInternalWidgetClick,
-                onExternalClick = onExternalWidgetClick,
+                onWidgetClick = onWidgetClick,
                 onSuppressClick = onSuppressWidgetClick,
                 launchBrowser = { url ->
                     browserLauncher.launch(url) {
@@ -564,7 +553,7 @@ private fun GovUkNavHost(
                 { modifier ->
                     SearchWidget(
                         onClick = { text ->
-                            onInternalWidgetClick(text, null)
+                            onWidgetClick(text, null)
                             navController.navigate(SEARCH_GRAPH_ROUTE)
                         },
                         modifier = modifier

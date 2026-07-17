@@ -353,10 +353,32 @@ class AppViewModelTest {
     @Test
     fun `When an external widget is clicked, then log analytics`() {
         runTest {
-            viewModel.onWidgetClick("text", "url", true, "section")
+            viewModel.onWidgetClick("text", "govuk://gov.uk/web?url=https://www.example.com",  "section")
 
             coVerify {
-                analyticsClient.widgetClick("text", "url", true, "section")
+                analyticsClient.widgetClick("text", "govuk://gov.uk/web?url=https://www.example.com", true, "section")
+            }
+        }
+    }
+
+    @Test
+    fun `When an external widget is clicked with an HTTP URL, then log analytics`() {
+        runTest {
+            viewModel.onWidgetClick("text", "http://www.example.com",  "section")
+
+            coVerify {
+                analyticsClient.widgetClick("text", "http://www.example.com", true, "section")
+            }
+        }
+    }
+
+    @Test
+    fun `When an external widget is clicked with an HTTPS URL, then log analytics`() {
+        runTest {
+            viewModel.onWidgetClick("text", "https://www.example.com",  "section")
+
+            coVerify {
+                analyticsClient.widgetClick("text", "https://www.example.com", true, "section")
             }
         }
     }
@@ -364,10 +386,10 @@ class AppViewModelTest {
     @Test
     fun `When an internal widget is clicked, then log analytics`() {
         runTest {
-            viewModel.onWidgetClick("text", "url", false, "section")
+            viewModel.onWidgetClick("text", "govuk://gov.uk/internal", "section")
 
             coVerify(exactly = 1) {
-                analyticsClient.widgetClick("text", "url", false, "section")
+                analyticsClient.widgetClick("text", "govuk://gov.uk/internal", false, "section")
             }
         }
     }
@@ -1035,42 +1057,6 @@ class AppViewModelTest {
                     totalItemCount = 2
                 ),
                 selectedItemIndex = 1
-            )
-        }
-    }
-
-    @Test
-    fun `Given a promo banner click, and a null or empty url onBannerClick, then do not log analytics`() {
-        val banner = PromoBanner(
-            id = "id1",
-            title = "Title 1",
-            body = "Body 1",
-            link = Link("Link Title", "http://url1")
-        )
-
-        coEvery { flagRepo.isChatEnabled() } returns false
-        coEvery { flagRepo.isLocalServicesEnabled() } returns false
-        every { configRepo.userFeedbackBanner } returns null
-        every { configRepo.promoBanners } returns listOf(banner)
-
-        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
-
-        viewModel.onBannerClick(null)
-
-        verify(exactly = 0) {
-            analyticsClient.selectItemEvent(
-                ecommerceEvent = any(),
-                selectedItemIndex = any()
-            )
-        }
-
-        viewModel.onBannerClick("")
-
-        verify(exactly = 0) {
-            analyticsClient.selectItemEvent(
-                ecommerceEvent = any(),
-                selectedItemIndex = any()
             )
         }
     }

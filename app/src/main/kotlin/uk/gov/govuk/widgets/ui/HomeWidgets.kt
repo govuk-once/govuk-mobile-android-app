@@ -20,8 +20,7 @@ internal fun List<HomeWidget>?.contains(widget: HomeWidget) = this?.contains(wid
 internal fun homeWidgets(
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
-    onInternalClick: (text: String, url: String?) -> Unit,
-    onExternalClick: (text: String, url: String?) -> Unit,
+    onWidgetClick: (text: String, url: String?) -> Unit,
     onSuppressClick: (id: String, text: String) -> Unit,
     launchBrowser: (url: String) -> Unit
 ): List<@Composable (Modifier) -> Unit> {
@@ -33,7 +32,7 @@ internal fun homeWidgets(
                     EmergencyBanner(
                         emergencyBanner = it.emergencyBanner,
                         onClick = { text, url ->
-                            onExternalClick(text, url)
+                            onWidgetClick(text, url)
                         },
                         launchBrowser = launchBrowser,
                         onSuppressClick = onSuppressClick,
@@ -58,7 +57,7 @@ internal fun homeWidgets(
                     PromoBanner(
                         promoBanner = promoBanner,
                         onClick = { text, url ->
-                            onInternalClick(text, url)
+                            onWidgetClick(text, url)
                             if (url != null) {
                                 launchBrowser(url)
                             }
@@ -76,12 +75,8 @@ internal fun homeWidgets(
                     PromoBanner(
                         promoBanner = it.promoBanner,
                         onClick = { text, url ->
+                            onWidgetClick(text, url)
                             if (url != null) {
-                                if (url.contains("web?url=")) {
-                                    onExternalClick(text, url)
-                                } else {
-                                    onInternalClick(text, url)
-                                }
                                 launchBrowser(url)
                             }
                         },
@@ -97,7 +92,7 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     VisitedWidget(
                         onSeeAllClick = { text ->
-                            onInternalClick(text, null)
+                            onWidgetClick(text, null)
                             navController.navigate(VISITED_GRAPH_ROUTE)
                         },
                         launchBrowser = launchBrowser,
@@ -110,11 +105,11 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     TopicsWidget(
                         onTopicClick = { ref, title ->
-                            onInternalClick(title, null)
+                            onWidgetClick(title, null)
                             navController.navigateToTopic(ref)
                         },
                         onEditClick = { text ->
-                            onInternalClick(text, null)
+                            onWidgetClick(text, null)
                             navController.navigateToTopicsEdit()
                         },
                         modifier = modifier
@@ -126,14 +121,14 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     LocalWidget(
                         onLookupClick = { text ->
-                            onInternalClick(text, null)
+                            onWidgetClick(text, null)
                             navController.navigate(LOCAL_GRAPH_ROUTE)
                         },
                         onLocalAuthorityClick = { text, url ->
-                            onExternalClick(text, url)
+                            onWidgetClick(text, url)
                         },
                         onEditClick = { text ->
-                            onInternalClick(text, null)
+                            onWidgetClick(text, null)
                             navController.navigate(LOCAL_LOOKUP_ROUTE)
                         },
                         launchBrowser = launchBrowser,
@@ -149,7 +144,7 @@ internal fun homeWidgets(
                         userFeedbackBanner = userFeedbackBanner,
                         onClick = {
                             launchBrowser(userFeedbackBanner.link.url)
-                            onExternalClick(
+                            onWidgetClick(
                                 userFeedbackBanner.link.title,
                                 userFeedbackBanner.link.url
                             )
