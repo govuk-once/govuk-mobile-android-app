@@ -69,8 +69,8 @@ fun PromoBanner(
                     }
 
                     Box {
-                        if (promoBanner.image != null) {
-                            DisplayImage(promoBanner.image!!)
+                        promoBanner.image?.let { image ->
+                            DisplayImage(image)
                         }
 
                         Box(
