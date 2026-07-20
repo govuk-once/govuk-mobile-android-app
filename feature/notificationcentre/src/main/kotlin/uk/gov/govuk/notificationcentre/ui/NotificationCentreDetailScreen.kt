@@ -313,11 +313,12 @@ private fun NotificationCentreDetailScreenLoaded(
 @Composable
 private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
     AlertDialog(
+        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
         title = {
-            Text(text = stringResource(R.string.delete_notification_sheet_title))
+            BodyBoldLabel(text = stringResource(R.string.delete_notification_sheet_title))
         },
         text = {
-            Text(text = stringResource(R.string.delete_notification_sheet_body))
+            BodyRegularLabel(text = stringResource(R.string.delete_notification_sheet_body))
         },
         onDismissRequest = {
             onCancel()
@@ -328,9 +329,10 @@ private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
                     onConfirm()
                 }
             ) {
-                Text(
+                BodyRegularLabel(
                     stringResource(R.string.delete_notification_sheet_confirm),
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive)
+                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+                )
             }
         },
         dismissButton = {
@@ -339,9 +341,12 @@ private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
                     onCancel()
                 }
             ) {
-                Text(stringResource(R.string.delete_notification_sheet_cancel))
+                BodyRegularLabel(
+                    stringResource(R.string.delete_notification_sheet_cancel),
+                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary)
             }
-        }
+        },
+        containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
 
