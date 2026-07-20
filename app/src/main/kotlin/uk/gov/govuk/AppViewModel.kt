@@ -278,12 +278,9 @@ internal class AppViewModel @Inject constructor(
         url: String? = null,
         section: String
     ) {
-        var external = false
-        if (url != null) {
-            if (url.startsWith("http") || url.contains("web?url=")) {
-                external = true
-            }
-        }
+        val external = url?.let { url ->
+            url.startsWith("http") || url.contains("web?url=")
+        } ?: false
 
         analyticsClient.widgetClick(
             text,
