@@ -7,6 +7,7 @@ import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.config.data.remote.model.Config
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
@@ -114,4 +115,7 @@ class ConfigRepoImpl @Inject constructor(
 
     override val dvlaUrls: DvlaUrls?
         get() = safeConfig.dvlaUrls
+
+    override val promoBanners: List<PromoBanner>?
+        get() = safeConfig.promoBanners
 }

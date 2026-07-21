@@ -77,7 +77,8 @@ class GovUkConfigDataSourceTest {
             emergencyBanners = null,
             chatBanner = null,
             termsAndConditions = termsAndConditions,
-            dvlaUrls = dvlaUrls
+            dvlaUrls = dvlaUrls,
+            promoBanners = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success(configResponse.toString())
@@ -170,7 +171,8 @@ class GovUkConfigDataSourceTest {
             emergencyBanners = null,
             chatBanner = null,
             termsAndConditions = termsAndConditions,
-            dvlaUrls = null
+            dvlaUrls = null,
+            promoBanners = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -204,7 +206,8 @@ class GovUkConfigDataSourceTest {
             emergencyBanners = null,
             chatBanner = null,
             termsAndConditions = termsAndConditions,
-            dvlaUrls = null
+            dvlaUrls = null,
+            promoBanners = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -235,7 +238,8 @@ class GovUkConfigDataSourceTest {
             emergencyBanners = null,
             chatBanner = null,
             termsAndConditions = termsAndConditions,
-            dvlaUrls = null
+            dvlaUrls = null,
+            promoBanners = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")
@@ -270,7 +274,8 @@ class GovUkConfigDataSourceTest {
             emergencyBanners = null,
             chatBanner = null,
             termsAndConditions = termsAndConditions,
-            dvlaUrls = null
+            dvlaUrls = null,
+            promoBanners = null
         )
 
         coEvery { configApi.getConfig() } returns Response.success("{}")

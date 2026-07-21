@@ -33,9 +33,10 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.home.HomeViewModel
 import uk.gov.govuk.home.R
@@ -44,6 +45,7 @@ import uk.gov.govuk.home.ui.animation.AnimateIcon
 @Composable
 internal fun HomeRoute(
     widgets: List<@Composable (Modifier) -> Unit>,
+    homeWidgets: List<HomeWidget>?,
     modifier: Modifier = Modifier,
     headerWidget: (@Composable (Modifier) -> Unit)? = null,
 ) {
@@ -51,7 +53,7 @@ internal fun HomeRoute(
 
     HomeScreen(
         widgets = widgets,
-        onPageView = { viewModel.onPageView() },
+        onPageView = { viewModel.onPageView(homeWidgets) },
         modifier = modifier,
         headerWidget = headerWidget
     )

@@ -1,4 +1,4 @@
-package uk.gov.govuk.chat.ui.widget
+package uk.gov.govuk.widgets.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,15 +15,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.chat.R
+import uk.gov.govuk.R
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
@@ -31,11 +33,9 @@ import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun ChatBanner(
-    title: String,
-    body: String,
-    linkText: String,
-    onClick: (String) -> Unit,
+fun PromoBanner(
+    promoBanner: PromoBanner,
+    onClick: (text: String, url: String?) -> Unit,
     onDismiss: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -60,34 +60,33 @@ fun ChatBanner(
                     ) {
                         MediumVerticalSpacer()
                         Title2BoldLabel(
-                            title,
+                            promoBanner.title,
                             modifier = Modifier
                                 .semantics { heading() },
                         )
                         SmallVerticalSpacer()
-                        BodyRegularLabel(body)
+                        BodyRegularLabel(promoBanner.body)
                     }
 
                     Box {
-                        Image(
-                            painter = painterResource(id = R.drawable.background_chat_banner),
-                            contentDescription = null,
-                        )
+                        promoBanner.image?.let { image ->
+                            DisplayImage(image)
+                        }
+
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
                                 .align(Alignment.TopEnd)
-                                .clickable { onDismiss(title) },
+                                .clickable { onDismiss(promoBanner.id) },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painterResource(uk.gov.govuk.design.R.drawable.ic_cancel),
-                                contentDescription = stringResource(R.string.chat_banner_dismiss_content_desc),
+                                contentDescription = stringResource(R.string.promo_banner_dismiss_content_desc),
                                 tint = GovUkTheme.colourScheme.textAndIcons.primary
                             )
                         }
                     }
-
                 }
 
                 MediumVerticalSpacer()
@@ -98,7 +97,9 @@ fun ChatBanner(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onClick(title) }
+                        .clickable {
+                            onClick(promoBanner.link.title, promoBanner.link.url)
+                        }
                 ) {
                     MediumVerticalSpacer()
                     Row(
@@ -106,7 +107,7 @@ fun ChatBanner(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         BodyRegularLabel(
-                            text = linkText,
+                            text = promoBanner.link.title,
                             modifier = Modifier
                                 .weight(1f),
                             color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
@@ -124,16 +125,21 @@ fun ChatBanner(
     }
 }
 
-@PreviewLightDark
 @Composable
-private fun ChatBannerPreview() {
-    GovUkTheme {
-        ChatBanner(
-            "Introduction GOV.UK Chat",
-            "An experimental AI tool for finding quick answers",
-            "Ask a question",
-            { },
-            { }
+private fun DisplayImage(image: String) {
+    val context = LocalContext.current
+    val imageResId = remember(image) {
+        context.resources.getIdentifier(
+            image,
+            "drawable",
+            context.packageName
+        )
+    }
+
+    if (imageResId != 0) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = null,
         )
     }
 }

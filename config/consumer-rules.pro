@@ -21,3 +21,4 @@
 -keep class uk.gov.govuk.config.data.remote.model.TermsAndConditions
 -keep class uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
 -keep class uk.gov.govuk.config.data.remote.model.DvlaUrls
+-keep class uk.gov.govuk.config.data.remote.model.PromoBanner

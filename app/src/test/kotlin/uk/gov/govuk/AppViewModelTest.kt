@@ -29,13 +29,16 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.AppViewModel.TimeoutEvent
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
@@ -52,7 +55,6 @@ import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
-import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -351,10 +353,32 @@ class AppViewModelTest {
     @Test
     fun `When an external widget is clicked, then log analytics`() {
         runTest {
-            viewModel.onWidgetClick("text", "url", true, "section")
+            viewModel.onWidgetClick("text", "govuk://gov.uk/web?url=https://www.example.com",  "section")
 
             coVerify {
-                analyticsClient.widgetClick("text", "url", true, "section")
+                analyticsClient.widgetClick("text", "govuk://gov.uk/web?url=https://www.example.com", true, "section")
+            }
+        }
+    }
+
+    @Test
+    fun `When an external widget is clicked with an HTTP URL, then log analytics`() {
+        runTest {
+            viewModel.onWidgetClick("text", "http://www.example.com",  "section")
+
+            coVerify {
+                analyticsClient.widgetClick("text", "http://www.example.com", true, "section")
+            }
+        }
+    }
+
+    @Test
+    fun `When an external widget is clicked with an HTTPS URL, then log analytics`() {
+        runTest {
+            viewModel.onWidgetClick("text", "https://www.example.com",  "section")
+
+            coVerify {
+                analyticsClient.widgetClick("text", "https://www.example.com", true, "section")
             }
         }
     }
@@ -362,10 +386,10 @@ class AppViewModelTest {
     @Test
     fun `When an internal widget is clicked, then log analytics`() {
         runTest {
-            viewModel.onWidgetClick("text", "url", false, "section")
+            viewModel.onWidgetClick("text", "govuk://gov.uk/internal", "section")
 
             coVerify(exactly = 1) {
-                analyticsClient.widgetClick("text", "url", false, "section")
+                analyticsClient.widgetClick("text", "govuk://gov.uk/internal", false, "section")
             }
         }
     }
@@ -783,6 +807,38 @@ class AppViewModelTest {
         }
     }
 
+    @Test
+    fun `Given multiple promo banners where one is suppressed, When init, then show only unsuppressed banners`() {
+        val banner1 = PromoBanner(
+            id = "id1",
+            title = "Title 1",
+            body = "Body 1",
+            link = Link("Link Title", "http://url1")
+        )
+
+        val banner2 = PromoBanner(
+            id = "id2",
+            title = "Title 2",
+            body = "Body 2",
+            link = Link("Link Title", "http://url2")
+        )
+
+        coEvery { flagRepo.isLocalServicesEnabled() } returns true
+        every { configRepo.promoBanners } returns listOf(banner1, banner2)
+        every { appRepo.suppressedHomeWidgets } returns flowOf(setOf("id1"))
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.first { it != null }!!
+            val bannerWidget1 = HomeWidget.Promo(banner1)
+            val bannerWidget2 = HomeWidget.Promo(banner2)
+            assertFalse("Suppressed banner (id1) should NOT be shown", homeWidgets.contains(bannerWidget1))
+            assertTrue("Unsuppressed banner (id2) SHOULD be shown", homeWidgets.contains(bannerWidget2))
+        }
+    }
+
     // --- onNext() routing tests ---
 
     @Test
@@ -951,5 +1007,77 @@ class AppViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { identityRepo.getLinkedServices() }
+    }
+
+    @Test
+    fun `Given a promo banner click, then log analytics`() {
+        val banner1 = PromoBanner(
+            id = "id1",
+            title = "Title 1",
+            body = "Body 1",
+            link = Link("Link Title", "http://url1")
+        )
+
+        val banner2 = PromoBanner(
+            id = "id2",
+            title = "Title 2",
+            body = "Body 2",
+            link = Link("Link Title", "http://url2")
+        )
+
+        coEvery { flagRepo.isChatEnabled() } returns false
+        coEvery { flagRepo.isLocalServicesEnabled() } returns false
+        every { configRepo.userFeedbackBanner } returns null
+        every { configRepo.promoBanners } returns listOf(banner1, banner2)
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        viewModel.onBannerClick("http://url2")
+
+        verify {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListName = "home_banners",
+                    itemListId = "home_banners",
+                    items = listOf(
+                        EcommerceEvent.Item(
+                            itemId = "id1",
+                            itemName = "Title 1",
+                            itemCategory = "PromoBanner",
+                            locationId = "http://url1"
+                        ),
+                        EcommerceEvent.Item(
+                            itemId = "id2",
+                            itemName = "Title 2",
+                            itemCategory = "PromoBanner",
+                            locationId = "http://url2"
+                        )
+                    ),
+                    totalItemCount = 2
+                ),
+                selectedItemIndex = 1
+            )
+        }
+    }
+
+    @Test
+    fun `Given a no promo banners to click, and a valid url onBannerClick, then do not log analytics`() {
+        coEvery { flagRepo.isChatEnabled() } returns false
+        coEvery { flagRepo.isLocalServicesEnabled() } returns false
+        every { configRepo.userFeedbackBanner } returns null
+        every { configRepo.promoBanners } returns emptyList()
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        viewModel.onBannerClick("http://url1")
+
+        verify(exactly = 0) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = any(),
+                selectedItemIndex = any()
+            )
+        }
     }
 }

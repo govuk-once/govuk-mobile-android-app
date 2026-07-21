@@ -55,6 +55,7 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
+import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoadingScreen
@@ -88,7 +89,6 @@ import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.visited.navigation.visitedGraph
-import uk.gov.govuk.widgets.model.HomeWidget
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
 import uk.govuk.app.local.navigation.localGraph
@@ -244,20 +244,15 @@ private fun BottomNavScaffold(
                     appNavigation = appNavigation,
                     navController = navController,
                     homeWidgets = homeWidgets,
-                    onInternalWidgetClick = { text ->
+                    onWidgetClick = { text, url ->
                         viewModel.onWidgetClick(
                             text = text,
-                            external = false,
                             section = section
                         )
-                    },
-                    onExternalWidgetClick = { text, url ->
-                        viewModel.onWidgetClick(
-                            text = text,
-                            url = url,
-                            external = true,
-                            section = section
-                        )
+
+                        if (url != null) {
+                            viewModel.onBannerClick(url)
+                        }
                     },
                     onSuppressWidgetClick = { id, text ->
                         viewModel.onSuppressWidgetClick(id, text, section)
@@ -383,8 +378,7 @@ private fun GovUkNavHost(
     appNavigation: AppNavigation,
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
-    onInternalWidgetClick: (text: String) -> Unit,
-    onExternalWidgetClick: (text: String, url: String?) -> Unit,
+    onWidgetClick: (text: String, url: String?) -> Unit,
     onSuppressWidgetClick: (id: String, text: String) -> Unit,
     shouldShowExternalBrowser: Boolean,
     paddingValues: PaddingValues
@@ -545,8 +539,7 @@ private fun GovUkNavHost(
             widgets = homeWidgets(
                 navController = navController,
                 homeWidgets = homeWidgets,
-                onInternalClick = onInternalWidgetClick,
-                onExternalClick = onExternalWidgetClick,
+                onWidgetClick = onWidgetClick,
                 onSuppressClick = onSuppressWidgetClick,
                 launchBrowser = { url ->
                     browserLauncher.launch(url) {
@@ -554,12 +547,13 @@ private fun GovUkNavHost(
                     }
                 }
             ),
+            homeWidgets = homeWidgets,
             modifier = Modifier.padding(paddingValues),
             headerWidget = if (homeWidgets.contains(HomeWidget.Search)) {
                 { modifier ->
                     SearchWidget(
                         onClick = { text ->
-                            onInternalWidgetClick(text)
+                            onWidgetClick(text, null)
                             navController.navigate(SEARCH_GRAPH_ROUTE)
                         },
                         modifier = modifier

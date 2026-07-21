@@ -14,9 +14,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.local.model.HOME_BANNERS
+import uk.gov.govuk.config.data.local.model.HomeWidget
+import uk.gov.govuk.config.data.local.model.toAnalyticsItems
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
@@ -32,7 +36,6 @@ import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
-import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
 import javax.inject.Inject
 
@@ -247,6 +250,12 @@ internal class AppViewModel @Inject constructor(
                     }
                 }
 
+                configRepo.promoBanners?.forEach { promoBanner ->
+                    if (!suppressedWidgets.contains(promoBanner.id)) {
+                        widgets.add(HomeWidget.Promo(promoBanner = promoBanner))
+                    }
+                }
+
                 if (isTopicsEnabled()) {
                     widgets.add(HomeWidget.Topics)
                 }
@@ -267,9 +276,12 @@ internal class AppViewModel @Inject constructor(
     fun onWidgetClick(
         text: String,
         url: String? = null,
-        external: Boolean,
         section: String
     ) {
+        val external = url?.let { url ->
+            url.startsWith("http") || url.contains("web?url=")
+        } ?: false
+
         analyticsClient.widgetClick(
             text,
             url,
@@ -301,6 +313,22 @@ internal class AppViewModel @Inject constructor(
             hasDeepLink,
             url
         )
+    }
+
+    fun onBannerClick(url: String) {
+        val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
+
+        if (items.isNotEmpty()) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = HOME_BANNERS,
+                    itemListName = HOME_BANNERS,
+                    items = items,
+                    totalItemCount = items.size
+                ),
+                selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
+            )
+        }
     }
 
     fun onNext() {
