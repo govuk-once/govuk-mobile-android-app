@@ -77,6 +77,12 @@ class LicenceSummaryMapperTest {
     }
 
     @Test
+    fun `Given licence status is valid and expiry date is in the past, then result is Success and drivingRecordUrl is still populated`() {
+        val licence = successLicence(status = LicenceStatus.VALID, expiryDate = LocalDate.now().minusDays(10))
+        assertEquals(dvlaUrls.drivingRecord, licence.drivingRecordUrl)
+    }
+
+    @Test
     fun `Given licence status is expired, then result is Success and drivingRecordUrl is null`() {
         val licence = successLicence(status = LicenceStatus.EXPIRED)
         assertNull(licence.drivingRecordUrl)

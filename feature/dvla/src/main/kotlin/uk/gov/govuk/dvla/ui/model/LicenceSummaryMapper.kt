@@ -12,6 +12,7 @@ import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
+import uk.gov.govuk.dvla.util.isInThePast
 import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
@@ -75,7 +76,9 @@ internal class LicenceSummaryMapper @Inject constructor(
     ) = when (status) {
         LicenceStatus.EXPIRED -> getExpired(expiryDate, dvlaUrls)
         else -> {
-            if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_EXPIRY_DAYS) == true) {
+            if (expiryDate.isInThePast()) {
+                getExpired(expiryDate, dvlaUrls)
+            } else if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_EXPIRY_DAYS) == true) {
                 getExpiring(expiryDate, dvlaUrls)
             } else {
                 getValid(expiryDate)

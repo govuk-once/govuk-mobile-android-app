@@ -83,4 +83,21 @@ class DateExtensionTest {
     fun `Given isInTheFuture is called, when the date is null, then return false`() {
         assertFalse(null.isInTheFuture())
     }
+
+    @Test
+    fun `Given isInThePast is called, when the date is today, then return false`() {
+        val today = LocalDate.now()
+        assertFalse(today.isInThePast())
+    }
+
+    @Test
+    fun `Given isInThePast is called, when the date is yesterday, then return true`() {
+        val yesterday = LocalDate.now().minusDays(1)
+        assertTrue(yesterday.isInThePast())
+    }
+
+    @Test
+    fun `Given isInThePast is called, when the date is null, then return false`() {
+        assertFalse(null.isInThePast())
+    }
 }
