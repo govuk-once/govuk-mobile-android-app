@@ -41,5 +41,7 @@ internal fun DvlaLinkCard(
                 altText = stringResource(R.string.link_dvla_loading)
             )
         }
+
+        ServiceLinkStatus.ERROR -> Unit // draw nothing (Account Error will be shown)
     }
 }

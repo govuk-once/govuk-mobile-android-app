@@ -62,6 +62,13 @@ fun VehiclesAndLicenceSummaryWidget(
             return // draw nothing if not linked
         }
 
+        is UiState.Error -> AccountError(
+            onClick = { text ->
+                launchBrowser(currentState.fallbackUrl.urlToOpen)
+                viewModel.onExternalButtonClicked(text, currentState.fallbackUrl.originalUrl)
+            }
+        )
+
         is UiState.Default -> {
             val activeButtonState = when (currentState.drivingView) {
                 DrivingView.VEHICLES -> VehiclesButton
@@ -261,6 +268,24 @@ private fun VehiclesAndLicenceSummaryLoading(
         LoaderCard(modifier = Modifier.fillMaxWidth())
         SmallVerticalSpacer()
     }
+}
+
+@Composable
+private fun AccountError(
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val linkText = stringResource(R.string.account_error_link_text)
+    SummaryErrorCard(
+        text = AccessibleString(stringResource(R.string.account_error_text)),
+        subIntroText = stringResource(R.string.account_error_sub_text),
+        subOutroText = "",
+        subLinkText = linkText,
+        onClick = {
+            onClick(linkText)
+        },
+        modifier = modifier
+    )
 }
 
 @Composable

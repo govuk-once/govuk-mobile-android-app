@@ -50,7 +50,7 @@ class IdentityRepo @Inject constructor(
                     if (state.services.contains(service)) ServiceLinkStatus.LINKED
                     else ServiceLinkStatus.UNLINKED
                 }
-                is IdentityState.Error -> ServiceLinkStatus.UNLINKED
+                is IdentityState.Error -> ServiceLinkStatus.ERROR
             }
         }
     }

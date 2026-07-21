@@ -69,13 +69,13 @@ class IdentityRepoTest {
     }
 
     @Test
-    fun `Given api throws exception, when getLinkedServices is called, then state is Error and status is UNLINKED`() = runTest {
+    fun `Given api throws exception, when getLinkedServices is called, then state is Error and status is ERROR`() = runTest {
         coEvery { api.getLinkedServices() } throws Exception("Exception")
 
         repo.getLinkedServices()
 
         assertEquals(IdentityState.Error, repo.state.value)
         assertEquals(ServiceLinkStatus.UNLINKED, repo.currentStatusOf(LinkedService.DVLA))
-        assertEquals(ServiceLinkStatus.UNLINKED, repo.linkStatusOf(LinkedService.DVLA).first())
+        assertEquals(ServiceLinkStatus.ERROR, repo.linkStatusOf(LinkedService.DVLA).first())
     }
 }
