@@ -4,12 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
@@ -97,31 +95,32 @@ internal class NotificationCentreDetailViewModel @Inject constructor(
                 _uiState.value = NotificationCentreDetailUiState.Loading
                 val result = notificationCentreRepo.getSingleNotification(id)
 
-                withContext(Dispatchers.Main) {
-                    _uiState.value = when(result) {
-                        is Result.Success -> {
-                            val notification = result.value
-                            if (notification != null) {
-                                if (notification.isUnread) {
-                                    viewModelScope.launch {
-                                        notificationCentreRepo.updateNotification(notification.id,
-                                            UpdateNotificationRequestBody.Status.READ)
-                                    }
-                                }
-                                NotificationCentreDetailUiState.Loaded(notification, false)
-                            } else {
-                                NotificationCentreDetailUiState.Error
-                            }
+                _uiState.value = when(result) {
+                    is Result.Success -> {
+                        val notification = result.value
+                        if (notification != null) {
+                            markUnreadIfNecessary(notification)
+                            NotificationCentreDetailUiState.Loaded(notification, false)
+                        } else {
+                            NotificationCentreDetailUiState.Error
                         }
-
-                        is Result.DeviceOffline -> NotificationCentreDetailUiState.NoInternet
-                        else -> NotificationCentreDetailUiState.Error
                     }
+                    is Result.DeviceOffline -> NotificationCentreDetailUiState.NoInternet
+                    else -> NotificationCentreDetailUiState.Error
                 }
             }
         }
 
     }
 
-
+    private fun markUnreadIfNecessary(notification: Notification) {
+        if (notification.isUnread) {
+            viewModelScope.launch {
+                notificationCentreRepo.updateNotification(
+                    notification.id,
+                    UpdateNotificationRequestBody.Status.READ
+                )
+            }
+        }
+    }
 }

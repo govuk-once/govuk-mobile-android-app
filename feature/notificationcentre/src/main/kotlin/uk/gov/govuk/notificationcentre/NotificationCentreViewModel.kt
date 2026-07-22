@@ -3,11 +3,9 @@ package uk.gov.govuk.notificationcentre
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
@@ -37,7 +35,8 @@ internal class NotificationCentreViewModel @Inject constructor(
         private const val TITLE = "NotificationCentreScreen"
     }
 
-    private val _uiState: MutableStateFlow<NotificationCentreUiState> = MutableStateFlow(NotificationCentreUiState.Default)
+    private val _uiState: MutableStateFlow<NotificationCentreUiState> =
+        MutableStateFlow(NotificationCentreUiState.Default)
     val uiState = _uiState.asStateFlow()
 
     fun onPageView() {
@@ -55,26 +54,24 @@ internal class NotificationCentreViewModel @Inject constructor(
             _uiState.value = NotificationCentreUiState.Loading
 
             val notifications = notificationCentreRepo.getNotifications()
-            withContext(Dispatchers.Main) {
-                _uiState.value = when (notifications) {
-                    is Result.Success -> {
-                        if (notifications.value.isEmpty()) {
-                            NotificationCentreUiState.Empty
-                        } else {
-                            val sorted = notifications.value.sortedBy { it.date }
-                            val sevenDaysBack = Instant.now().minus(7, ChronoUnit.DAYS)
-                            val groups = NotificationGroups(
-                                sorted.filter { it.date >= sevenDaysBack },
-                                sorted.filter { it.date < sevenDaysBack }
-                            )
-                            NotificationCentreUiState.Loaded(groups)
-                        }
+            _uiState.value = when (notifications) {
+                is Result.Success -> {
+                    if (notifications.value.isEmpty()) {
+                        NotificationCentreUiState.Empty
+                    } else {
+                        val sorted = notifications.value.sortedBy { it.date }
+                        val sevenDaysBack = Instant.now().minus(7, ChronoUnit.DAYS)
+                        val groups = NotificationGroups(
+                            sorted.filter { it.date >= sevenDaysBack },
+                            sorted.filter { it.date < sevenDaysBack }
+                        )
+                        NotificationCentreUiState.Loaded(groups)
                     }
-                    is Result.DeviceOffline -> NotificationCentreUiState.NoInternet
-                    else -> NotificationCentreUiState.Error
                 }
+
+                is Result.DeviceOffline -> NotificationCentreUiState.NoInternet
+                else -> NotificationCentreUiState.Error
             }
         }
     }
-
 }

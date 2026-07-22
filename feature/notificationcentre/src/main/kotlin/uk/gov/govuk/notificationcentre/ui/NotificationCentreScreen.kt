@@ -48,6 +48,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notificationcentre.NotificationCentreUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreViewModel
 import uk.gov.govuk.notificationcentre.R
+import uk.gov.govuk.notificationcentre.data.model.NotificationFixtures.Companion.mockNotifications
 
 @Composable
 internal fun NotificationCentreRoute(
@@ -281,7 +282,7 @@ private fun NotificationCentreLoadedPreview() {
     GovUkTheme {
         NotificationCentreScreen(
             {},
-            NotificationCentreUiState.Loaded(Notification.mockNotifications),
+            NotificationCentreUiState.Loaded(mockNotifications),
             { }
         ) { }
 
@@ -292,7 +293,7 @@ private fun NotificationCentreLoadedPreview() {
 @Composable
 private fun NotificationRowReadPreview() {
     GovUkTheme {
-        NotificationRow(Notification.mockNotifications.recent[2]) { }
+        NotificationRow(mockNotifications.recent[2]) { }
     }
 }
 
@@ -300,6 +301,6 @@ private fun NotificationRowReadPreview() {
 @Composable
 private fun NotificationRowUnreadPreview() {
     GovUkTheme {
-        NotificationRow(Notification.mockNotifications.recent[3]) { }
+        NotificationRow(mockNotifications.recent[3]) { }
     }
 }

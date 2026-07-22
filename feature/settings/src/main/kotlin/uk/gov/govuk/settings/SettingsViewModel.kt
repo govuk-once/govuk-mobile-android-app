@@ -20,6 +20,7 @@ import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
+import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
 import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
@@ -209,5 +210,10 @@ internal class SettingsViewModel @Inject constructor(
 
     fun onButtonClick(text: String) {
         analyticsClient.buttonClick(text)
+    }
+
+    fun onMessagesClick() {
+        analyticsClient.settingsItemClick(MESSAGES_EVENT)
+
     }
 }

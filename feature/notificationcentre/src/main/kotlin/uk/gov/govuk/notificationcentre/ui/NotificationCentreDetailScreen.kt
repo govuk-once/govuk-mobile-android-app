@@ -21,10 +21,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
@@ -48,8 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import uk.gov.govuk.notificationcentre.ui.component.Markdown
-import uk.gov.govuk.notificationcentre.data.model.Notification
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
@@ -57,6 +52,9 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailUiState
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailViewModel
 import uk.gov.govuk.notificationcentre.R
+import uk.gov.govuk.notificationcentre.data.model.Notification
+import uk.gov.govuk.notificationcentre.data.model.NotificationFixtures.Companion.mockNotifications
+import uk.gov.govuk.notificationcentre.ui.component.Markdown
 
 @Composable
 internal fun NotificationCentreDetailRoute(
@@ -77,44 +75,49 @@ internal fun NotificationCentreDetailRoute(
                 viewModel.onPageView()
             },
             uiState,
-            onBack = onBack,
-            onUnread = {
-                viewModel.onTapMarkUnread()
-                onBack()
-            },
-            onTapDelete = {
-                viewModel.onTapDelete()
-            },
-            onCancelDelete = {
-                viewModel.onCancelDelete()
-            },
-            onConfirmDelete = {
-                viewModel.onConfirmDelete()
-                onBack()
-            },
-            launchBrowser = {
-                launchBrowser(it)
-                viewModel.onLinkTap(it)
-            },
+            actions = NotificationCentreDetailActions(
+                onBack = onBack,
+                onUnread = {
+                    viewModel.onTapMarkUnread()
+                    onBack()
+                },
+                onTapDelete = {
+                    viewModel.onTapDelete()
+                },
+                onCancelDelete = {
+                    viewModel.onCancelDelete()
+                },
+                onConfirmDelete = {
+                    viewModel.onConfirmDelete()
+                    onBack()
+                },
+                launchBrowser = {
+                    launchBrowser(it)
+                    viewModel.onLinkTap(it)
+                }
+            ),
             showDeleteConfirmation = (uiState as? NotificationCentreDetailUiState.Loaded)?.showDeleteConfirmation ?: false
         )
     }
 }
+
+private class NotificationCentreDetailActions(
+    val onBack: () -> Unit,
+    val onUnread: () -> Unit,
+    val onTapDelete: () -> Unit,
+    val onCancelDelete: () -> Unit,
+    val onConfirmDelete: () -> Unit,
+    val launchBrowser: (url: String) -> Unit,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NotificationCentreDetailScreen(
     onPageView: () -> Unit,
     state: NotificationCentreDetailUiState,
-    onBack: () -> Unit,
-    onUnread: () -> Unit,
-    onTapDelete: () -> Unit,
-    onCancelDelete: () -> Unit,
-    onConfirmDelete: () -> Unit,
-    launchBrowser: (url: String) -> Unit,
+    actions: NotificationCentreDetailActions,
     showDeleteConfirmation: Boolean
 ) {
-    val deleteBottomSheetState = rememberModalBottomSheetState()
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(showDeleteConfirmation) {
@@ -128,10 +131,10 @@ private fun NotificationCentreDetailScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(
-            onBack = onBack,
-            onUnread = onUnread,
+            onBack = actions.onBack,
+            onUnread = actions.onUnread,
             onDelete = {
-                onTapDelete()
+                actions.onTapDelete()
             }
         )
 
@@ -145,7 +148,7 @@ private fun NotificationCentreDetailScreen(
                 is NotificationCentreDetailUiState.Error -> NotificationCentreScreenError()
                 is NotificationCentreDetailUiState.Loaded -> NotificationCentreDetailScreenLoaded(
                     state.notification,
-                    launchBrowser
+                    actions.launchBrowser
                 )
                 else -> {}
             }
@@ -154,8 +157,8 @@ private fun NotificationCentreDetailScreen(
         if (showDeleteConfirmationDialog) {
 
             ConfirmationDialog(
-                onConfirm = onConfirmDelete,
-                onCancel = onCancelDelete
+                onConfirm = actions.onConfirmDelete,
+                onCancel = actions.onCancelDelete
             )
         }
 
@@ -347,12 +350,7 @@ private fun NotificationCentreDetailLoadingPreview() {
         NotificationCentreDetailScreen(
             {},
             NotificationCentreDetailUiState.Loading,
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
+            NotificationCentreDetailActions({},{},{},{},{},{}),
             false
         )
 
@@ -366,12 +364,7 @@ private fun NotificationCentreDetailErrorPreview() {
         NotificationCentreDetailScreen(
             {},
             NotificationCentreDetailUiState.Error,
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
+            NotificationCentreDetailActions({},{},{},{},{},{}),
             false
         )
 
@@ -384,13 +377,8 @@ private fun NotificationCentreDetailLoadedPreview() {
     GovUkTheme {
         NotificationCentreDetailScreen(
             {},
-            NotificationCentreDetailUiState.Loaded(Notification.mockNotifications.recent.first(), false),
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
+            NotificationCentreDetailUiState.Loaded(mockNotifications.recent.first(), false),
+            NotificationCentreDetailActions({},{},{},{},{},{}),
             false
         )
     }

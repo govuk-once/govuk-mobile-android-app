@@ -37,7 +37,10 @@ class NotificationCentreViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher)
 
-        viewModel = NotificationCentreViewModel(notificationCentreRepo, analyticsClient)
+        viewModel = NotificationCentreViewModel(
+            notificationCentreRepo,
+            analyticsClient
+        )
     }
 
     @After

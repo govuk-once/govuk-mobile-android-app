@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.text
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -85,7 +84,10 @@ internal fun SettingsRoute(
                     viewModel.onYourAccountsClick(text)
                     actions.onYourAccountsClick()
                 },
-                onMessagesClick = actions.onMessagesClick, // TODO Probably need to send an analytic or something
+                onMessagesClick = {
+                    viewModel.onMessagesClick()
+                    actions.onMessagesClick
+                },
                 onSignOutClick = {
                     viewModel.onSignOut()
                     actions.onSignOutClick()
@@ -179,21 +181,9 @@ private fun SettingsScreen(
                 MediumVerticalSpacer()
 
                 CountListItem(
-                    modifier = Modifier.semantics(true) {
-
-                    },
+                    modifier = Modifier.semantics(true) { },
                     title = stringResource(R.string.messages_title),
-                    state =  when (uiState.messageRowState) {
-                        is MessageRowState.Loaded -> CountListState.Idle(
-                            uiState.messageRowState.unreadCount,
-                            if (uiState.messageRowState.unreadCount > 0) {
-                                CountListState.IndicatorState.FULL
-                            } else {
-                                CountListState.IndicatorState.DIM
-                            }
-                        )
-                        else -> { CountListState.Loading }
-                    },
+                    state = mapMessageToCountRowState(uiState.messageRowState),
                     onClick = actions.onMessagesClick
                 )
             }
@@ -223,6 +213,21 @@ private fun SettingsScreen(
 
             SignOut(actions.onSignOutClick)
         }
+    }
+}
+
+@Composable
+private fun mapMessageToCountRowState(messageRowState: MessageRowState): CountListState = when (messageRowState) {
+    is MessageRowState.Loaded -> CountListState.Idle(
+        messageRowState.unreadCount,
+        if (messageRowState.unreadCount > 0) {
+            CountListState.IndicatorState.FULL
+        } else {
+            CountListState.IndicatorState.DIM
+        }
+    )
+    else -> {
+        CountListState.Loading
     }
 }
 

@@ -25,6 +25,8 @@ android {
 
         buildConfigField("String", "SIGN_OUT_EVENT", "\"SignOut\"")
 
+        buildConfigField("String", "MESSAGES_EVENT", "\"Messages\"")
+
         buildConfigField("String", "ACCESSIBILITY_STATEMENT_EVENT", "\"AccessibilityStatement\"")
         buildConfigField("String", "ACCESSIBILITY_STATEMENT_URL", "\"https://www.gov.uk/government/publications/accessibility-statement-for-the-govuk-app\"")
 

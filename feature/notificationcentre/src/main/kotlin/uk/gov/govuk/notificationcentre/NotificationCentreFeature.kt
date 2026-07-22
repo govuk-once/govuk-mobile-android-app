@@ -1,6 +1,6 @@
 package uk.gov.govuk.notificationcentre
 
-interface NotificationCentreFeature {
+fun interface NotificationCentreFeature {
 
     /**
      * Returns the number of unread notifications, or null if the count
