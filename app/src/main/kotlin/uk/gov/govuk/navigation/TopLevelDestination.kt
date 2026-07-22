@@ -45,8 +45,7 @@ internal sealed class TopLevelDestination(
         stringResId = R.string.settings,
         icon = ic_settings,
         associatedRoutes = listOf(
-            NOTIFICATION_CENTRE_GRAPH_START_DESTINATION,
-            NOTIFICATION_CENTRE_DETAIL_ROUTE
+            NOTIFICATION_CENTRE_GRAPH_START_DESTINATION
         )
     )
 
