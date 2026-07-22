@@ -47,6 +47,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notificationcentre.NotificationCentreDetailUiState
@@ -162,7 +163,7 @@ private fun NotificationCentreDetailScreen(
             )
         }
 
-        LaunchedEffect(Unit) {
+        RunOnceLaunchedEffect {
             onPageView()
         }
     }
