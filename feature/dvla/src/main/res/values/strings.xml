@@ -103,7 +103,9 @@
     <string name="driving_record_title">Driving record</string>
     <string name="driving_record_description">Vehicles you can drive, offences and penalty points</string>
     <string name="driving_record_link_text">Your driving record</string>
-
+    <string name="account_error_text">Driver and vehicles account information is not working</string>
+    <string name="account_error_sub_text">Try again later, or</string>
+    <string name="account_error_link_text">go to the GOV.UK website.</string>
 
     <!-- Vehicle Details start -->
     <string name="diesel_summary">Diesel</string>

@@ -59,6 +59,10 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
 
                     ServiceLinkStatus.UNLINKED,
                     ServiceLinkStatus.CHECKING -> _uiState.value = UiState.Hidden
+                    ServiceLinkStatus.ERROR -> {
+                        val fallbackUrl = UrlModel(dvlaUrls?.account ?: GOV_UK_URL)
+                        _uiState.value = UiState.Error(fallbackUrl)
+                    }
                 }
             }
         }

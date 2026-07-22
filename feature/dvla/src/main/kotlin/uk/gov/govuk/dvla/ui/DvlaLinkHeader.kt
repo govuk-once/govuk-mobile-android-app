@@ -34,5 +34,6 @@ fun DvlaLinkHeader(
             }
         }
         ServiceLinkStatus.LINKED -> { /* Show nothing */ }
+        ServiceLinkStatus.ERROR -> { /* Show nothing */ }
     }
 }

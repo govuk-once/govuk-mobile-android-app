@@ -22,7 +22,6 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -150,6 +149,46 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             val currentState = viewModel.uiState.value as UiState.Default
             assertEquals(VehiclesSummaryUiState.Error(UrlModel("https://www.gov.uk")), currentState.vehiclesState)
+        }
+
+    @Test
+    fun `Given linkState emits ERROR, when viewModel initialised and dvla urls has account, then state is Error and no calls are made`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.ERROR)
+            every { configRepo.dvlaUrls?.account } returns "https://www.test.com"
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+            advanceUntilIdle()
+
+            assertEquals(UiState.Error(UrlModel("https://www.test.com")), viewModel.uiState.value)
+            coVerify(exactly = 0) { dvlaRepo.getCustomerVehicles() }
+            coVerify(exactly = 0) { dvlaRepo.getLicenceDetails() }
+        }
+
+    @Test
+    fun `Given linkState emits ERROR, when viewModel initialised and dvla urls doesn't have account, then state is Error and no calls are made`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.ERROR)
+            every { configRepo.dvlaUrls?.account } returns null
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+            advanceUntilIdle()
+
+            assertEquals(UiState.Error(UrlModel("https://www.gov.uk")), viewModel.uiState.value)
+            coVerify(exactly = 0) { dvlaRepo.getCustomerVehicles() }
+            coVerify(exactly = 0) { dvlaRepo.getLicenceDetails() }
         }
 
     @Test

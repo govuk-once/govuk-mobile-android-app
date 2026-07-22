@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.ui.model
 
 internal sealed interface UiState {
     data object Hidden : UiState
+    data class Error(val fallbackUrl: UrlModel) : UiState
     data class Default(
         val drivingView: DrivingView = DrivingView.VEHICLES,
         val vehiclesState: VehiclesSummaryUiState = VehiclesSummaryUiState.Loading,
