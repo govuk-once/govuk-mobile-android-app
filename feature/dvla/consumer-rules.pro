@@ -31,11 +31,6 @@
 -keep class uk.gov.govuk.dvla.remote.model.ShareCodeValidity
 -keep class uk.gov.govuk.dvla.remote.model.ShareCodeActivationStatus
 
-# remote/model/VehicleEnquiryResponse.kt
--keep class uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
--keep class uk.gov.govuk.dvla.remote.model.ErrorResponse
--keep class uk.gov.govuk.dvla.remote.model.ErrorDetail
-
 # remote/model/common
 -keep class uk.gov.govuk.dvla.remote.model.common.Application
 -keep class uk.gov.govuk.dvla.remote.model.common.AvailableAction

@@ -24,7 +24,6 @@ import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
-import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 class DvlaRepoTest {
 
@@ -198,31 +197,6 @@ class DvlaRepoTest {
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.getVehicleDetails(vehicleId) }
-    }
-
-    @Test
-    fun `Given vehicle enquiry returns success, when getVehicleDetails is called, then return Success with VehicleDetails`() = runTest {
-        val reg = "AA19AAA"
-        val vehicleResponse = mockk<VehicleEnquiryResponse>(relaxed = true)
-
-        coEvery { api.lookupVehicle(reg) } returns Response.success(vehicleResponse)
-
-        val result = repo.lookupVehicle(reg)
-
-        assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.lookupVehicle(reg) }
-    }
-
-    @Test
-    fun `Given vehicle enquiry fails, when getVehicleDetails is called, then return Error`() = runTest {
-        val reg = "AA19AAA"
-
-        coEvery { api.lookupVehicle(reg) } throws Exception("Exception")
-
-        val result = repo.lookupVehicle(reg)
-
-        assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.lookupVehicle(reg) }
     }
 
     @Test

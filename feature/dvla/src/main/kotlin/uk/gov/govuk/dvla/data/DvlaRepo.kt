@@ -13,7 +13,6 @@ import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.VehicleSummary
-import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.domain.toDomainModel
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.safeLicenceApiCall
@@ -76,10 +75,6 @@ class DvlaRepo @Inject constructor(
     internal suspend fun getVehicleDetails(vehicleId: Int): Result<VehicleDetails> =
         safeAuthApiCall({ api.getVehicleDetails(vehicleId) }, authRepo)
             .map { it.customerVehicleDetails.toDomainModel() }
-
-    internal suspend fun lookupVehicle(registrationNumber: String): Result<VesVehicle> =
-        safeAuthApiCall({ api.lookupVehicle(registrationNumber) }, authRepo)
-            .map { it.toDomainModel() }
 
     internal suspend fun createCheckCode(): Result<CheckCodeDetails> =
         safeAuthApiCall({ api.createShareCode() }, authRepo)

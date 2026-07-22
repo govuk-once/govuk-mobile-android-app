@@ -25,7 +25,6 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dvla.domain.VesVehicle
 import uk.gov.govuk.dvla.linking.data.LinkingRepo
 import uk.gov.govuk.dvla.linking.remote.model.VerificationResponse
 
@@ -303,38 +302,6 @@ class DvlaViewModelTest {
 
         // verify retried
         coVerify(exactly = 2) { repo.linkAccount(token) }
-    }
-
-    @Test
-    fun `Given ViewModel initialised, then getVehicleDetails is called with sanitised registration number`() = runTest(dispatcher) {
-        val vesVehicle = mockk<VesVehicle>(relaxed = true)
-
-        every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
-        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vesVehicle)
-
-        DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl, linkingRepo)
-
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { repo.lookupVehicle("AA19AAA") }
-    }
-
-    @Test
-    fun `Given registration input with spaces, when search is submitted, then repo is called with sanitised registration number`() = runTest(dispatcher) {
-        val vesVehicle = mockk<VesVehicle>(relaxed = true)
-
-        every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
-        coEvery { repo.lookupVehicle(any()) } returns Result.Success(vesVehicle)
-
-        val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl, linkingRepo)
-
-        advanceUntilIdle()
-
-        val input = "a  B 12 C d  E"
-        viewModel.onVehicleSearchSubmitted(input)
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { repo.lookupVehicle("AB12CDE") }
     }
 
     @Test
