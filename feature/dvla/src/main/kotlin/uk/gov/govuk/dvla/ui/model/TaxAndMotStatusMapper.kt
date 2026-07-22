@@ -64,16 +64,18 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         val expiryDate = vehicle.taxExpiryDate
         return when (vehicle.taxStatus) {
             TaxStatus.TAXED -> {
-                if (vehicle.sornStart?.isInTheFuture() == true) {
-                    getSorn(vehicle.sornStart)
-                } else if (expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_TAX_EXPIRY_DAYS) == true) {
-                    if (vehicle.currentLicencePaymentMethod.isDirectDebit()) {
-                        getTaxExpiringDirectDebit(expiryDate, dvlaUrls)
-                    } else {
-                        getTaxExpiring(expiryDate, dvlaUrls)
+                when {
+                    vehicle.sornStart.isInTheFuture() -> getSorn(vehicle.sornStart)
+
+                    expiryDate?.isDateWithinDayRange(UPPER_RANGE_OF_TAX_EXPIRY_DAYS) == true -> {
+                        if (vehicle.currentLicencePaymentMethod.isDirectDebit()) {
+                            getTaxExpiringDirectDebit(expiryDate, dvlaUrls)
+                        } else {
+                            getTaxExpiring(expiryDate, dvlaUrls)
+                        }
                     }
-                } else {
-                    getValid(getTaxStatusTitle(), expiryDate)
+
+                    else -> getValid(getTaxStatusTitle(), expiryDate)
                 }
             }
 
