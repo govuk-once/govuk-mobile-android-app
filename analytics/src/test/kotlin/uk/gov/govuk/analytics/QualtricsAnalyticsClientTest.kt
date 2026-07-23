@@ -6,11 +6,14 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.qualtrics.digital.IQualtricsProjectEvaluationCallback
 import com.qualtrics.digital.Properties
 import com.qualtrics.digital.Qualtrics
+import com.qualtrics.digital.QualtricsPopOverActivity
+import com.qualtrics.digital.QualtricsSurveyActivity
 import com.qualtrics.digital.TargetingResult
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import io.mockk.verifyOrder
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Before
@@ -23,6 +26,7 @@ class QualtricsAnalyticsClientTest {
     private val activity = mockk<Activity>(relaxed = true)
     private val qualtrics = mockk<Qualtrics>(relaxed = true)
     private val qualtricsProperties = mockk<Properties>(relaxed = true)
+    private val firebaseIdentifiers = mockk<FirebaseIdentifiers>(relaxed = true)
     private val activityProvider = mockk<ActivityProviderInterface>(relaxed = true)
 
     private lateinit var qualtricsAnalyticsClient: QualtricsAnalyticsClient
@@ -31,7 +35,7 @@ class QualtricsAnalyticsClientTest {
     fun setUp() {
         qualtrics.properties = qualtricsProperties
 
-        qualtricsAnalyticsClient = QualtricsAnalyticsClient(context, qualtrics, activityProvider)
+        qualtricsAnalyticsClient = QualtricsAnalyticsClient(context, qualtrics, firebaseIdentifiers, activityProvider)
     }
 
     @After
@@ -63,6 +67,143 @@ class QualtricsAnalyticsClientTest {
 
         verify(exactly = 0) {
             qualtrics.initializeProject(any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `Given an initialization call, then a destroyed listener is registered`() {
+        qualtricsAnalyticsClient.initialize()
+
+        verify(exactly = 1) {
+            activityProvider.addOnActivityDestroyedListener(any())
+        }
+    }
+
+    @Test
+    fun `Given a survey was shown, when the popover activity is destroyed, then notify the survey closed listener with the targeting ids`() {
+        val passedResult = mockk<TargetingResult> {
+            every { passed() } returns true
+        }
+        val failedResult = mockk<TargetingResult> {
+            every { passed() } returns false
+        }
+        val mockResults = mapOf("passed_survey" to passedResult, "failed_survey" to failedResult)
+        val evaluationCallbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+        val destroyedListenerSlot = slot<(Activity) -> Unit>()
+        val onSurveyClosed = mockk<(List<String>) -> Unit>(relaxed = true)
+        val popOverActivity = mockk<QualtricsPopOverActivity>(relaxed = true)
+
+        every { activityProvider.currentActivity } returns activity
+        every { qualtrics.evaluateProject(capture(evaluationCallbackSlot)) } returns Unit
+        every { activityProvider.addOnActivityDestroyedListener(capture(destroyedListenerSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.initialize()
+        qualtricsAnalyticsClient.setOnSurveyClosedListener { onSurveyClosed(it) }
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("screen_name" to "Chat"))
+
+        evaluationCallbackSlot.captured.run(mockResults)
+        destroyedListenerSlot.captured.invoke(popOverActivity)
+
+        verify(exactly = 1) {
+            onSurveyClosed(listOf("passed_survey"))
+        }
+    }
+
+    @Test
+    fun `Given a survey was shown, when the survey activity is destroyed, then notify the survey closed listener with the targeting ids`() {
+        val passedResult = mockk<TargetingResult> {
+            every { passed() } returns true
+        }
+        val mockResults = mapOf("passed_survey" to passedResult)
+        val evaluationCallbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+        val destroyedListenerSlot = slot<(Activity) -> Unit>()
+        val onSurveyClosed = mockk<(List<String>) -> Unit>(relaxed = true)
+        val surveyActivity = mockk<QualtricsSurveyActivity>(relaxed = true)
+
+        every { activityProvider.currentActivity } returns activity
+        every { qualtrics.evaluateProject(capture(evaluationCallbackSlot)) } returns Unit
+        every { activityProvider.addOnActivityDestroyedListener(capture(destroyedListenerSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.initialize()
+        qualtricsAnalyticsClient.setOnSurveyClosedListener { onSurveyClosed(it) }
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("screen_name" to "Chat"))
+
+        evaluationCallbackSlot.captured.run(mockResults)
+        destroyedListenerSlot.captured.invoke(surveyActivity)
+
+        verify(exactly = 1) {
+            onSurveyClosed(listOf("passed_survey"))
+        }
+    }
+
+    @Test
+    fun `Given no survey was shown, when a Qualtrics activity is destroyed, then notify the survey closed listener with no targeting ids`() {
+        val destroyedListenerSlot = slot<(Activity) -> Unit>()
+        val onSurveyClosed = mockk<(List<String>) -> Unit>(relaxed = true)
+        val popOverActivity = mockk<QualtricsPopOverActivity>(relaxed = true)
+
+        every { activityProvider.addOnActivityDestroyedListener(capture(destroyedListenerSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.initialize()
+        qualtricsAnalyticsClient.setOnSurveyClosedListener { onSurveyClosed(it) }
+
+        destroyedListenerSlot.captured.invoke(popOverActivity)
+
+        verify(exactly = 1) {
+            onSurveyClosed(emptyList())
+        }
+    }
+
+    @Test
+    fun `Given an unrelated activity is destroyed, then do not notify the survey closed listener`() {
+        val destroyedListenerSlot = slot<(Activity) -> Unit>()
+        val onSurveyClosed = mockk<(List<String>) -> Unit>(relaxed = true)
+
+        every { activityProvider.addOnActivityDestroyedListener(capture(destroyedListenerSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.initialize()
+        qualtricsAnalyticsClient.setOnSurveyClosedListener { onSurveyClosed(it) }
+
+        destroyedListenerSlot.captured.invoke(activity)
+
+        verify(exactly = 0) {
+            onSurveyClosed(any())
+        }
+    }
+
+    @Test
+    fun `Given the Firebase identifiers are cached, when an event is logged, then set them before registering the view visit`() {
+        every { firebaseIdentifiers.userPseudoId } returns "user_pseudo_id"
+        every { firebaseIdentifiers.sessionId } returns "session_id"
+
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("key" to "value"))
+
+        verifyOrder {
+            qualtricsProperties.setString("fb_user_pseudo_id", "user_pseudo_id")
+            qualtricsProperties.setString("fb_session_id", "session_id")
+            qualtrics.registerViewVisit("event_name")
+        }
+    }
+
+    @Test
+    fun `Given the Firebase identifiers are not yet available, when an event is logged, then do not set them`() {
+        every { firebaseIdentifiers.userPseudoId } returns null
+        every { firebaseIdentifiers.sessionId } returns null
+
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("key" to "value"))
+
+        verify(exactly = 0) {
+            qualtricsProperties.setString("fb_user_pseudo_id", any())
+            qualtricsProperties.setString("fb_session_id", any())
+        }
+    }
+
+    @Test
+    fun `Given an event, then refresh the Firebase identifiers`() {
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("key" to "value"))
+
+        verify(exactly = 1) {
+            firebaseIdentifiers.refresh()
         }
     }
 

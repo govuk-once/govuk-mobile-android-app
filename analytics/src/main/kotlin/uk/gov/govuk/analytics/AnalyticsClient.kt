@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class AnalyticsClient @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
     private val firebaseAnalyticsClient: FirebaseAnalyticsClient,
-    private val analyticsCoordinator: AnalyticsCoordinator
+    private val analyticsCoordinator: AnalyticsCoordinatorInterface
 ) {
 
     lateinit var isUserSessionActive: () -> Boolean
@@ -29,6 +29,7 @@ class AnalyticsClient @Inject constructor(
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
         firebaseAnalyticsClient.enable()
+        analyticsCoordinator.initialize()
     }
 
     suspend fun disable() {

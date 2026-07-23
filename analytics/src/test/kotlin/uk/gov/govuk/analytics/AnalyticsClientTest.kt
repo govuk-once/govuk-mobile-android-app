@@ -22,7 +22,7 @@ class AnalyticsClientTest {
 
     private val analyticsRepo = mockk<AnalyticsRepo>(relaxed = true)
     private val firebaseAnalyticClient = mockk<FirebaseAnalyticsClient>(relaxed = true)
-    private val analyticsCoordinator = mockk<AnalyticsCoordinator>(relaxed = true)
+    private val analyticsCoordinator = mockk<AnalyticsCoordinatorInterface>(relaxed = true)
 
     private lateinit var analyticsClient: AnalyticsClient
 
@@ -781,6 +781,7 @@ class AnalyticsClientTest {
             coVerify {
                 analyticsRepo.analyticsEnabled()
                 firebaseAnalyticClient.enable()
+                analyticsCoordinator.initialize()
             }
         }
     }

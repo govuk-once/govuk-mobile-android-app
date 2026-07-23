@@ -3,7 +3,10 @@ package uk.gov.govuk.analytics
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.qualtrics.digital.Qualtrics
+import com.qualtrics.digital.QualtricsPopOverActivity
+import com.qualtrics.digital.QualtricsSurveyActivity
 import com.qualtrics.digital.QualtricsTheme
+import com.qualtrics.digital.TargetingResult
 import com.qualtrics.digital.theming.embedded.EmbeddedAppFeedbackTheme
 import com.qualtrics.digital.theming.embedded.FollowupQuestionTheme
 import com.qualtrics.digital.theming.embedded.InitialQuestionTheme
@@ -26,10 +29,14 @@ import javax.inject.Inject
 class QualtricsAnalyticsClient @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val qualtrics: Qualtrics,
+    private val firebaseIdentifiers: FirebaseIdentifiers,
     private val activityProvider: ActivityProviderInterface
 ) {
 
     internal var isInitialized = false
+
+    private var onSurveyClosedListener: ((targetingIds: List<String>) -> Unit)? = null
+    private var lastShownTargetingIds: List<String> = emptyList()
 
     fun initialize() {
         if (isInitialized) return
@@ -42,16 +49,34 @@ class QualtricsAnalyticsClient @Inject constructor(
 
         qualtrics.creativeTheme = qualtricsTheme()
 
+        activityProvider.addOnActivityDestroyedListener { activity ->
+            if (activity is QualtricsPopOverActivity || activity is QualtricsSurveyActivity) {
+                onSurveyClosedListener?.invoke(lastShownTargetingIds)
+            }
+        }
+
         isInitialized = true
     }
 
-    fun logEvent(eventName: String, parameters: Map<String, Any>) {
-        setParameters(parameters)
-
-        registerVisitAndEvaluateForTriggers(eventName)
+    fun setOnSurveyClosedListener(listener: (targetingIds: List<String>) -> Unit) {
+        onSurveyClosedListener = listener
     }
 
-    fun logEcommerceEvent(eventName: String, ecommerceEvent: EcommerceEvent) {
+    fun logEvent(
+        eventName: String,
+        parameters: Map<String, Any>,
+        onSurveyShown: ((results: Map<String, TargetingResult>) -> Unit)? = null
+    ) {
+        setParameters(parameters)
+
+        registerVisitAndEvaluateForTriggers(eventName, onSurveyShown)
+    }
+
+    fun logEcommerceEvent(
+        eventName: String,
+        ecommerceEvent: EcommerceEvent,
+        onSurveyShown: ((results: Map<String, TargetingResult>) -> Unit)? = null
+    ) {
         setParameters(
             mapOf(
                 FirebaseAnalytics.Param.ITEM_LIST_ID to ecommerceEvent.itemListId,
@@ -59,16 +84,25 @@ class QualtricsAnalyticsClient @Inject constructor(
             )
         )
 
-        registerVisitAndEvaluateForTriggers(eventName)
+        registerVisitAndEvaluateForTriggers(eventName, onSurveyShown)
     }
 
-    private fun registerVisitAndEvaluateForTriggers(eventName: String) {
+    private fun registerVisitAndEvaluateForTriggers(
+        eventName: String,
+        onSurveyShown: ((results: Map<String, TargetingResult>) -> Unit)? = null
+    ) {
         qualtrics.registerViewVisit(eventName)
 
         qualtrics.evaluateProject { results ->
-            if (results.values.any { it.passed() }) {
+            val passedTargetingIds = results.filterValues {
+                it.passed()
+            }.keys.toList()
+
+            if (passedTargetingIds.isNotEmpty()) {
                 activityProvider.currentActivity?.let { activity ->
+                    lastShownTargetingIds = passedTargetingIds
                     qualtrics.display(activity)
+                    onSurveyShown?.invoke(results)
                 }
             }
         }
@@ -99,9 +133,19 @@ class QualtricsAnalyticsClient @Inject constructor(
     )
 
     private fun setParameters(parameters: Map<String, Any>) {
+        firebaseIdentifiers.userPseudoId?.let {
+            qualtrics.properties.setString("fb_user_pseudo_id", it)
+        }
+
+        firebaseIdentifiers.sessionId?.let {
+            qualtrics.properties.setString("fb_session_id", it)
+        }
+
         analyticsParameterKeys.forEach { key ->
             qualtrics.properties.setString(key, parameters[key]?.toString() ?: "")
         }
+
+        firebaseIdentifiers.refresh()
     }
 
     private fun qualtricsTheme(): QualtricsTheme {

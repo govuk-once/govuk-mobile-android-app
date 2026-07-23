@@ -10,9 +10,14 @@ import javax.inject.Singleton
 @Singleton
 class ActivityProvider @Inject constructor() : ActivityProviderInterface, Application.ActivityLifecycleCallbacks {
     private var activityReference = WeakReference<Activity>(null)
+    private val onActivityDestroyedListeners = mutableListOf<(Activity) -> Unit>()
 
     override val currentActivity: Activity?
         get() = activityReference.get()
+
+    override fun addOnActivityDestroyedListener(listener: (activity: Activity) -> Unit) {
+        onActivityDestroyedListeners.add(listener)
+    }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         activityReference = WeakReference(activity)
@@ -41,6 +46,10 @@ class ActivityProvider @Inject constructor() : ActivityProviderInterface, Applic
     override fun onActivityDestroyed(activity: Activity) {
         if (activityReference.get() == activity) {
             activityReference.clear()
+        }
+
+        if (!activity.isChangingConfigurations) {
+            onActivityDestroyedListeners.forEach { it(activity) }
         }
     }
 }
