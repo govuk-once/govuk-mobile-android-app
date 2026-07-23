@@ -51,6 +51,16 @@
           android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
           android:theme="@style/LicensesTheme" />
 
+        <activity
+          android:name="com.qualtrics.digital.QualtricsSurveyActivity"
+          android:configChanges="orientation|screenSize"
+          android:exported="false" />
+
+        <activity
+          android:name="com.qualtrics.digital.QualtricsPopOverActivity"
+          android:theme="@style/Qualtrics.Theme.Transparent"
+          android:exported="false" />
+
         <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
         <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />

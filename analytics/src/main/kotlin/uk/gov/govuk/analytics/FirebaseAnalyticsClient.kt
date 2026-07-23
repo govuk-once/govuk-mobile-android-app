@@ -9,12 +9,13 @@ import java.io.Serializable
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class FirebaseAnalyticsClient @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val firebaseCrashlytics: FirebaseCrashlytics
+    private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val firebaseIdentifiers: FirebaseIdentifiers
 ) {
-
     fun enable() {
         firebaseAnalytics.setAnalyticsCollectionEnabled(true)
         firebaseCrashlytics.isCrashlyticsCollectionEnabled = true
@@ -26,7 +27,12 @@ class FirebaseAnalyticsClient @Inject constructor(
     }
 
     fun logEvent(name: String, parameters: Map<String, Any>) {
-        firebaseAnalytics.logEvent(name, mapToBundle(parameters))
+        val updatedParameters = mutableMapOf<String, Any>()
+        updatedParameters.putAll(parameters)
+        updatedParameters.putAll(identifierParameters())
+
+        firebaseAnalytics.logEvent(name, mapToBundle(updatedParameters))
+        firebaseIdentifiers.refresh()
     }
 
     fun logEcommerceEvent(
@@ -35,6 +41,10 @@ class FirebaseAnalyticsClient @Inject constructor(
         selectedItemIndex: Int? = null
     ) {
         val bundle = Bundle()
+
+        identifierParameters().forEach { (key, value) ->
+            bundle.putString(key, value)
+        }
 
         bundle.putString(FirebaseAnalytics.Param.ITEM_LIST_ID, ecommerceEvent.itemListId)
         bundle.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, ecommerceEvent.itemListName)
@@ -62,6 +72,14 @@ class FirebaseAnalyticsClient @Inject constructor(
         bundle.putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, itemsArrayList)
 
         firebaseAnalytics.logEvent(event, bundle)
+        firebaseIdentifiers.refresh()
+    }
+
+    private fun identifierParameters(): Map<String, String> {
+        val parameters = mutableMapOf<String, String>()
+        firebaseIdentifiers.userPseudoId?.let { parameters["fb_user_pseudo_id"] = it }
+        firebaseIdentifiers.sessionId?.let { parameters["fb_session_id"] = it }
+        return parameters
     }
 
     fun setUserProperty(name: String, value: String) {

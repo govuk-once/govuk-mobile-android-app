@@ -12,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class AnalyticsClient @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
-    private val firebaseAnalyticsClient: FirebaseAnalyticsClient
+    private val firebaseAnalyticsClient: FirebaseAnalyticsClient,
+    private val analyticsCoordinator: AnalyticsCoordinatorInterface
 ) {
 
     lateinit var isUserSessionActive: () -> Boolean
@@ -28,6 +29,7 @@ class AnalyticsClient @Inject constructor(
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
         firebaseAnalyticsClient.enable()
+        analyticsCoordinator.initialize()
     }
 
     suspend fun disable() {
@@ -300,7 +302,8 @@ class AnalyticsClient @Inject constructor(
     fun viewItemListEvent(ecommerceEvent: EcommerceEvent) {
         logEcommerceEvent(
             event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-            ecommerceEvent = ecommerceEvent
+            ecommerceEvent = ecommerceEvent,
+            selectedItemIndex = null
         )
     }
 
@@ -368,15 +371,15 @@ class AnalyticsClient @Inject constructor(
         return parameters + Pair("language", Locale.getDefault().language)
     }
 
-    private fun logEvent(name: String, parameters: Map<String, Any>) {
+    fun logEvent(name: String, parameters: Map<String, Any>) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
-            firebaseAnalyticsClient.logEvent(name, parameters)
+            analyticsCoordinator.logEvent(name, parameters)
         }
     }
 
-    private fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
+    fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
-            firebaseAnalyticsClient.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
+            analyticsCoordinator.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
         }
     }
 }
