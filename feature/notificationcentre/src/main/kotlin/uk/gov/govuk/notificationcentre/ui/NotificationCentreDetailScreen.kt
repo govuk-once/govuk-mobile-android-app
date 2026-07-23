@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -70,6 +73,7 @@ internal fun NotificationCentreDetailRoute(
         modifier
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.fullScreen)
+            .windowInsetsPadding(WindowInsets.statusBars)
     ) {
         NotificationCentreDetailScreen(
             {
@@ -172,15 +176,12 @@ private fun NotificationCentreDetailScreen(
 @Composable
 private fun Header(
     modifier: Modifier = Modifier,
-    actionColour: Color = GovUkTheme.colourScheme.textAndIcons.linkHeader,
+    actionColour: Color = GovUkTheme.colourScheme.textAndIcons.iconSecondary,
     onBack: () -> Unit,
     onUnread: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Column(
-        modifier
-            .background(GovUkTheme.colourScheme.surfaces.homeHeader)
-    ) {
+    Column {
         Row(
             modifier = Modifier
                 .height(64.dp)
@@ -312,11 +313,12 @@ private fun NotificationCentreDetailScreenLoaded(
 @Composable
 private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
     AlertDialog(
+        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
         title = {
-            Text(text = stringResource(R.string.delete_notification_sheet_title))
+            BodyBoldLabel(text = stringResource(R.string.delete_notification_sheet_title))
         },
         text = {
-            Text(text = stringResource(R.string.delete_notification_sheet_body))
+            BodyRegularLabel(text = stringResource(R.string.delete_notification_sheet_body))
         },
         onDismissRequest = {
             onCancel()
@@ -327,9 +329,10 @@ private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
                     onConfirm()
                 }
             ) {
-                Text(
+                BodyRegularLabel(
                     stringResource(R.string.delete_notification_sheet_confirm),
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive)
+                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+                )
             }
         },
         dismissButton = {
@@ -338,9 +341,12 @@ private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
                     onCancel()
                 }
             ) {
-                Text(stringResource(R.string.delete_notification_sheet_cancel))
+                BodyRegularLabel(
+                    stringResource(R.string.delete_notification_sheet_cancel),
+                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary)
             }
-        }
+        },
+        containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
 
