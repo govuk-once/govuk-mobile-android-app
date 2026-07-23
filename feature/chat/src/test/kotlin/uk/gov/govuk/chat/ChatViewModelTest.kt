@@ -719,4 +719,89 @@ class ChatViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `onResume loads conversation if chat intro seen`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+
+        viewModel.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 2) { chatRepo.getConversation() }
+    }
+
+    @Test
+    fun `onResume does not load conversation if chat intro not seen`()
+        = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(false)
+        coEvery { chatRepo.getConversation() } returns null
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+
+        viewModel.onResume()
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { chatRepo.getConversation() }
+    }
+
+    @Test
+    fun `onPause cancels loadJob`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } coAnswers {
+            delay(1000)
+            ChatResult.Success(conversation)
+        }
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onPause()
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        assertFalse(uiState.isLoading)
+        assertTrue(uiState.chatEntries.isEmpty())
+    }
+
+    @Test
+    fun `onPause cancels askQuestionJob`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        viewModel.setChatIntroSeen()
+        advanceUntilIdle()
+
+        viewModel.onSubmit("Test Question")
+        viewModel.onPause()
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Test Question") }
+        coVerify(exactly = 0) { chatRepo.getAnswer(any(), any(), any()) }
+    }
+
+    @Test
+    fun `loadConversation does not run concurrently if already loading`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } coAnswers {
+            delay(1000)
+            null
+        }
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.loadConversation()
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.getConversation() }
+    }
 }

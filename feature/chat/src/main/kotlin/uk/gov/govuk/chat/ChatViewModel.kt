@@ -3,6 +3,7 @@ package uk.gov.govuk.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -68,11 +69,42 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    fun loadConversation() {
+    fun onResume() {
         viewModelScope.launch {
+            if (chatRepo.isChatIntroSeen.first()) {
+                loadConversation()
+            }
+        }
+    }
+
+    fun onPause() {
+        loadConversationJob?.cancel()
+        askQuestionJob?.cancel()
+        val currentState = _uiState.value
+        if (currentState is Default) {
+            _uiState.value = currentState.copy(isLoading = false)
+        }
+    }
+
+    private var loadConversationJob: Job? = null
+    private var askQuestionJob: Job? = null
+
+    fun loadConversation() {
+        if (loadConversationJob?.isActive == true) return
+
+        val currentState = _uiState.value
+        if (currentState is Default) {
+            _uiState.value = currentState.copy(isLoading = true)
+        } else {
+            _uiState.value = Default(isLoading = true)
+        }
+
+        loadConversationJob = viewModelScope.launch {
             chatRepo.getConversation()?.let { result ->
                 handleChatResult(result) { conversation ->
+                    val currentQuestion = (_uiState.value as? Default)?.question ?: ""
                     _uiState.value = Default(
+                        question = currentQuestion,
                         chatEntries = conversation.answeredQuestions.mapNotNull { question ->
                             question.answer?.let { answer ->
                                 question.id to ChatEntry(
@@ -101,7 +133,8 @@ internal class ChatViewModel @Inject constructor(
                     }
                 }
             } ?: run {
-                _uiState.value = Default()
+                val currentQuestion = (_uiState.value as? Default)?.question ?: ""
+                _uiState.value = Default(question = currentQuestion)
             }
         }
     }
@@ -126,7 +159,7 @@ internal class ChatViewModel @Inject constructor(
         _uiState.updateDefault { it.copy(isPiiError = isPiiError) }
 
         if (!isPiiError) {
-            viewModelScope.launch {
+            askQuestionJob = viewModelScope.launch {
                 _uiState.updateDefault { it.copy(isLoading = true) }
 
                 handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
@@ -280,7 +313,9 @@ internal class ChatViewModel @Inject constructor(
     private inline fun MutableStateFlow<ChatUiState?>.updateDefault(
         transform: (Default) -> Default
     ) {
-        update { state -> transform(state as Default) }
+        update { state ->
+            if (state is Default) transform(state) else state
+        }
     }
 
 }
