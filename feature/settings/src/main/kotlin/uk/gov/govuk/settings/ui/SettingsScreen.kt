@@ -28,6 +28,8 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CaptionRegularLabel
 import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CardListItem
+import uk.gov.govuk.design.ui.component.CountListItem
+import uk.gov.govuk.design.ui.component.CountListState
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -41,6 +43,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.settings.MessageRowState
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SettingsUiState
 import uk.gov.govuk.settings.SettingsViewModel
@@ -49,6 +52,7 @@ internal class SettingsRouteActions(
     val onAccountClick: () -> Unit,
     val onSignOutClick: () -> Unit,
     val onYourAccountsClick: () -> Unit,
+    val onMessagesClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: () -> Unit,
     val onPrivacyPolicyClick: () -> Unit,
@@ -79,6 +83,10 @@ internal fun SettingsRoute(
                 onYourAccountsClick = { text ->
                     viewModel.onYourAccountsClick(text)
                     actions.onYourAccountsClick()
+                },
+                onMessagesClick = {
+                    viewModel.onMessagesClick()
+                    actions.onMessagesClick
                 },
                 onSignOutClick = {
                     viewModel.onSignOut()
@@ -123,6 +131,7 @@ private class SettingsActions(
     val onPageView: () -> Unit,
     val onAccountClick: () -> Unit,
     val onYourAccountsClick: (String) -> Unit,
+    val onMessagesClick: () -> Unit,
     val onSignOutClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: (String) -> Unit,
@@ -168,6 +177,17 @@ private fun SettingsScreen(
                 YourAccounts(title, { actions.onYourAccountsClick(title) })
             }
 
+            if (uiState.messageRowState != MessageRowState.Gone) {
+                MediumVerticalSpacer()
+
+                CountListItem(
+                    modifier = Modifier.semantics(true) { },
+                    title = stringResource(R.string.messages_title),
+                    state = mapMessageToCountRowState(uiState.messageRowState),
+                    onClick = actions.onMessagesClick
+                )
+            }
+
             MediumVerticalSpacer()
 
             NotificationsAndPrivacy(
@@ -193,6 +213,21 @@ private fun SettingsScreen(
 
             SignOut(actions.onSignOutClick)
         }
+    }
+}
+
+@Composable
+private fun mapMessageToCountRowState(messageRowState: MessageRowState): CountListState = when (messageRowState) {
+    is MessageRowState.Loaded -> CountListState.Idle(
+        messageRowState.unreadCount,
+        if (messageRowState.unreadCount > 0) {
+            CountListState.IndicatorState.FULL
+        } else {
+            CountListState.IndicatorState.DIM
+        }
+    )
+    else -> {
+        CountListState.Loading
     }
 }
 

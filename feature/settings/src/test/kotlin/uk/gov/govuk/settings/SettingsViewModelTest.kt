@@ -7,8 +7,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -22,6 +26,9 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
+import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.notificationcentre.NotificationCentreFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
@@ -44,6 +51,8 @@ class SettingsViewModelTest {
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
+    private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
+    private val notificationCentreFeature = mockk<NotificationCentreFeature>(relaxed = true)
 
     private lateinit var viewModel: SettingsViewModel
 
@@ -57,7 +66,7 @@ class SettingsViewModelTest {
         coEvery { flagRepo.isNotificationsEnabled() } returns true
         every { flagRepo.isDvlaLinkEnabled() } returns true
 
-        viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo, dvlaRepo, notificationCentreFeature)
     }
 
     @After
@@ -77,7 +86,7 @@ class SettingsViewModelTest {
     fun `Given analytics are disabled, When init, then return analytics disabled`() {
         coEvery { analyticsClient.isAnalyticsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo, dvlaRepo, notificationCentreFeature)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -97,7 +106,7 @@ class SettingsViewModelTest {
     fun `Given notifications are disabled, When init, then return notifications disabled`() {
         coEvery { flagRepo.isNotificationsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo, dvlaRepo, notificationCentreFeature)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -117,7 +126,7 @@ class SettingsViewModelTest {
     fun `Given authentication is disabled, When init, then return authentication disabled`() {
         every { authRepo.isAuthenticationEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo, dvlaRepo, notificationCentreFeature)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -297,6 +306,97 @@ class SettingsViewModelTest {
                 external = false,
                 section = "Settings"
             )
+        }
+    }
+
+    // Notifications
+
+    @Test
+    fun `Given view appears, messages begin loading`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.CHECKING)
+
+            viewModel.onPageView()
+
+            advanceUntilIdle()
+
+            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Loading)
+        }
+    }
+
+    // Notifications
+    @Test
+    fun `Given DVLA account not linked, messages changes to Gone`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.UNLINKED)
+
+            viewModel.onPageView()
+
+            advanceUntilIdle()
+
+            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
+        }
+    }
+
+    @Test
+    fun `Given error loading link status, messages changes to Gone`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.ERROR)
+
+            viewModel.onPageView()
+
+            advanceUntilIdle()
+
+            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
+        }
+    }
+
+    // Notifications
+    @Test
+    fun `Given DVLA account linked, and error loading, messages changes to Gone`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
+            coEvery { notificationCentreFeature.getUnreadCount() } returns null
+
+            viewModel.onPageView()
+
+            advanceUntilIdle()
+
+            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
+        }
+    }
+
+    @Test
+    fun `Given DVLA account linked, and notifications loaded, messages changes to Loaded`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
+            coEvery { notificationCentreFeature.getUnreadCount() } returns 1
+
+            viewModel.onPageView()
+
+            advanceUntilIdle()
+
+            assertEquals(MessageRowState.Loaded(1), viewModel.uiState.value?.messageRowState, )
+        }
+    }
+
+    @Test
+    fun `Given the DVLA link check is still resolving, messages stays loading until it resolves`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flow {
+                emit(ServiceLinkStatus.CHECKING)
+                delay(100)
+                emit(ServiceLinkStatus.LINKED)
+            }
+            coEvery { notificationCentreFeature.getUnreadCount() } returns 3
+
+            viewModel.onPageView()
+
+            assertEquals(MessageRowState.Loading, viewModel.uiState.value?.messageRowState)
+
+            advanceUntilIdle()
+
+            assertEquals(MessageRowState.Loaded(3), viewModel.uiState.value?.messageRowState)
         }
     }
 }

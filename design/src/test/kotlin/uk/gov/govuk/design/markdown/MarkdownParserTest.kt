@@ -1,4 +1,4 @@
-package uk.gov.govuk.chat.parser
+package uk.gov.govuk.design.markdown
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -6,8 +6,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
-import uk.gov.govuk.chat.parser.model.InlineContent
-import uk.gov.govuk.chat.parser.model.MarkdownElement
+import uk.gov.govuk.design.markdown.model.InlineContent
+import uk.gov.govuk.design.markdown.model.MarkdownElement
 
 @RunWith(Enclosed::class)
 class MarkdownParserTest {

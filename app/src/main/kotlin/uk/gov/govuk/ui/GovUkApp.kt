@@ -77,6 +77,8 @@ import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.loginGraph
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.navigation.TopLevelDestination
+import uk.gov.govuk.notificationcentre.navigation.navigateToNotificationCentre
+import uk.gov.govuk.notificationcentre.navigation.notificationCentreGraph
 import uk.gov.govuk.notifications.navigation.notificationsGraph
 import uk.gov.govuk.search.navigation.SEARCH_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.searchGraph
@@ -562,9 +564,14 @@ private fun GovUkNavHost(
             } else null,
             transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
         )
+        notificationCentreGraph(
+            navController,
+            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+            modifier = Modifier.padding(paddingValues))
         settingsGraph(
             navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
+            onMessagesClick = { navController.navigateToNotificationCentre() },
             appVersion = BuildConfig.VERSION_NAME_USER_FACING,
             launchBrowser = { url ->
                 browserLauncher.launchPartial(

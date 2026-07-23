@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_icon_content_description">Error</string>
+    <string name="error_title">Messages are not working</string>
+    <string name="error_body">Try again later</string>
+    <string name="loading_content_description">Loading</string>
+    <string name="unread_content_description">Unread</string>
+    <string name="empty_body">Your messages will appear here</string>
+    <string name="notification_centre_title">Messages</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="delete_notification">Delete</string>
+    <string name="delete_notification_sheet_title">Delete this message?</string>
+    <string name="delete_notification_sheet_body">You won’t be able to recover it once deleted.</string>
+    <string name="delete_notification_sheet_confirm">Delete</string>
+    <string name="delete_notification_sheet_cancel">Cancel</string>
+    <string name="footer">Messages are deleted after 30 days.</string>
+    <string name="section_recent">Recent</string>
+    <string name="section_older">Last 30 days</string>
+    <string name="notification_detail_header_content_description">%1$s Sender: %2$s</string>
+    <string name="notification_markdown_link_opens_in_browser">opens in web browser</string>
+</resources>

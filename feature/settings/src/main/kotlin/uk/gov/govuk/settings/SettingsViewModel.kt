@@ -11,12 +11,16 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
+import uk.gov.govuk.notificationcentre.NotificationCentreFeature
+import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
+import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
 import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
@@ -31,15 +35,25 @@ internal data class SettingsUiState(
     val isNotificationsEnabled: Boolean,
     val isAuthenticationEnabled: Boolean,
     val isAnalyticsEnabled: Boolean,
-    val isYourAccountsEnabled: Boolean
+    val isYourAccountsEnabled: Boolean,
+    val messageRowState: MessageRowState
 )
+
+internal sealed class MessageRowState {
+    internal data object Unknown: MessageRowState()
+    internal data object Gone: MessageRowState()
+    internal data object Loading: MessageRowState()
+    internal data class Loaded(val unreadCount: Int): MessageRowState()
+}
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     authRepo: AuthRepo,
     flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
-    private val configRepo: ConfigRepo
+    private val configRepo: ConfigRepo,
+    private val dvlaRepo: DvlaRepo,
+    private val notificationCentreFeature: NotificationCentreFeature
 ): ViewModel() {
 
     companion object {
@@ -58,8 +72,42 @@ internal class SettingsViewModel @Inject constructor(
             isNotificationsEnabled = flagRepo.isNotificationsEnabled(),
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
             isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
-            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled()
+            isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled(),
+            messageRowState = MessageRowState.Unknown
         )
+    }
+
+    private fun loadMessages() {
+        viewModelScope.launch {
+            dvlaRepo.linkState.collect { state ->
+                when (state) {
+                    ServiceLinkStatus.CHECKING -> {
+                        _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
+                    }
+                    ServiceLinkStatus.UNLINKED -> {
+                        loadMessageCount(false)
+                    }
+                    ServiceLinkStatus.LINKED -> {
+                        loadMessageCount(true)
+                    }
+                    ServiceLinkStatus.ERROR -> {
+                        loadMessageCount(false)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun loadMessageCount(isLinked: Boolean) {
+        if (!isLinked) {
+            _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
+            return
+        }
+
+        when (val unreadCount = notificationCentreFeature.getUnreadCount()) {
+            null -> _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
+            else -> _uiState.update { it?.copy(messageRowState = MessageRowState.Loaded(unreadCount)) }
+        }
     }
 
     fun onPageView() {
@@ -68,6 +116,8 @@ internal class SettingsViewModel @Inject constructor(
             screenName = SCREEN_NAME,
             title = TITLE
         )
+
+        loadMessages()
     }
 
     fun onAccount() {
@@ -160,5 +210,10 @@ internal class SettingsViewModel @Inject constructor(
 
     fun onButtonClick(text: String) {
         analyticsClient.buttonClick(text)
+    }
+
+    fun onMessagesClick() {
+        analyticsClient.settingsItemClick(MESSAGES_EVENT)
+
     }
 }

@@ -169,6 +169,37 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun notificationCentreUrlLaunched(url: String) {
+        logEvent(
+            "NotificationCentreUrlLaunched",
+            mapOf(
+                "url" to url
+            )
+        )
+    }
+
+    fun notificationCentreMarkUnread() {
+        logEvent("NotificationCentreMarkUnread",  mapOf())
+    }
+
+    fun notificationCentreDelete()  {
+        logEvent("NotificationCentreDelete",   mapOf(
+            "action" to "tap"
+        ))
+    }
+
+    fun notificationCentreConfirmDelete() {
+        logEvent("NotificationCentreDelete", mapOf(
+            "action" to "confirm"
+        ))
+    }
+
+    fun notificationCentreCancelDelete() {
+        logEvent("NotificationCentreDelete", mapOf(
+            "action" to "cancel"
+        ))
+    }
+
     fun search(searchTerm: String) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm)
     }

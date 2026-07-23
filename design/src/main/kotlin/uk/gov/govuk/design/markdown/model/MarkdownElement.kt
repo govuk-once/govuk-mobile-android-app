@@ -1,4 +1,4 @@
-package uk.gov.govuk.chat.parser.model
+package uk.gov.govuk.design.markdown.model
 
 /**
  * Represents a single renderable markdown element.

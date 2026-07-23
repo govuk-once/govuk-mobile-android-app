@@ -39,6 +39,7 @@ val settingsDeepLinks = mapOf("/settings" to listOf(SETTINGS_ROUTE))
 fun NavGraphBuilder.settingsGraph(
     navController: NavController,
     onBiometricsClick: () -> Unit,
+    onMessagesClick: () -> Unit,
     appVersion: String,
     launchBrowser: (url: String) -> Unit,
     modifier: Modifier = Modifier
@@ -58,6 +59,7 @@ fun NavGraphBuilder.settingsGraph(
                     onYourAccountsClick = {
                         navController.navigate(YOUR_ACCOUNTS_ROUTE)
                     },
+                    onMessagesClick = onMessagesClick,
                     onSignOutClick = {
                         navController.navigate(SIGN_OUT_GRAPH_ROUTE)
                     },

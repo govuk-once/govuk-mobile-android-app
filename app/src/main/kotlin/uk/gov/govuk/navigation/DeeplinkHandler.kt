@@ -12,6 +12,7 @@ import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.extension.getUrlParam
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.homeDeepLinks
+import uk.gov.govuk.notificationcentre.navigation.notificationCentreDeepLinks
 import uk.gov.govuk.search.navigation.searchDeepLinks
 import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
@@ -19,6 +20,7 @@ import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
 import javax.inject.Inject
+import kotlin.collections.get
 
 internal class DeeplinkHandler @Inject constructor(
     private val flagRepo: FlagRepo,
@@ -41,6 +43,7 @@ internal class DeeplinkHandler @Inject constructor(
         buildMap {
             putAll(homeDeepLinks)
             putAll(settingsDeepLinks)
+            putAll(notificationCentreDeepLinks)
 
             if (flagRepo.isChatEnabled()) {
                 putAll(chatDeepLinks)
@@ -66,9 +69,13 @@ internal class DeeplinkHandler @Inject constructor(
     fun handleDeeplink(navController: NavController) {
         deepLink?.let {
 
-            // check for intercepted route first
+            // check for intercepted routes first
             if (interceptLinkedServiceCallback(it, navController)) {
                 deepLink = null
+                return
+            }
+
+            if (interceptNotificationDetailDeeplink(it, navController)) {
                 return
             }
 
@@ -154,5 +161,33 @@ internal class DeeplinkHandler @Inject constructor(
     private fun Uri.getQueryParameterIgnoreCase(name: String): String? {
         val actualKey = queryParameterNames.firstOrNull { it.equals(name, ignoreCase = true) }
         return actualKey?.let { getQueryParameter(it) }
+    }
+
+    private fun interceptNotificationDetailDeeplink(uri: Uri, navController: NavController): Boolean {
+        if (uri.path != "/notificationcentre/detail") return false
+
+        var handled = false
+        deepLinks[uri.path]?.let { routes ->
+            navController.navigate(HOME_GRAPH_ROUTE) {
+                popUpTo(0) { inclusive = true }
+            }
+
+            for (route in routes) {
+                var fullRoute = route
+                uri.getQueryParameter("id")?.apply {
+                    fullRoute = "$fullRoute/$this"
+                }
+
+                navController.navigate(fullRoute) {
+                    launchSingleTop = true
+                }
+
+                handled = true
+                analyticsClient.deepLinkEvent(true, uri.toString())
+
+                break
+            }
+        }
+        return handled
     }
 }
