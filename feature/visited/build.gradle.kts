@@ -34,15 +34,19 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/VisitedRealmProvider.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/VisitedDatabase.*,**/RealmVisitedReader.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/VisitedRealmProvider.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/VisitedDatabase.*,**/RealmVisitedReader.*"
         )
     }
 }
@@ -64,8 +68,13 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.realm.base)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.sqlite)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

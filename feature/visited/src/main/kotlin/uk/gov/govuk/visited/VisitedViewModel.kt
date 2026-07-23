@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.visited.data.VisitedRepo
-import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
 import uk.gov.govuk.visited.data.transformVisitedItems
 import uk.gov.govuk.visited.ui.model.VisitedUi
 import java.time.LocalDate
@@ -23,7 +22,6 @@ internal data class VisitedUiState(
 @HiltViewModel
 internal class VisitedViewModel @Inject constructor(
     private val visitedRepo: VisitedRepo,
-    private val visitedLocalDataSource: VisitedLocalDataSource,
     private val visited: Visited,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
@@ -95,7 +93,7 @@ internal class VisitedViewModel @Inject constructor(
 
     fun onVisitedItemRemoveClicked(title: String, url: String) {
         viewModelScope.launch {
-            visitedLocalDataSource.remove(title, url)
+            visitedRepo.remove(title, url)
             onRemoveVisitedItem(title)
         }
     }
@@ -104,7 +102,7 @@ internal class VisitedViewModel @Inject constructor(
         _uiState.value?.visited?.forEach { (_, visitedItems) ->
             visitedItems.forEach { visitedItem ->
                 viewModelScope.launch {
-                    visitedLocalDataSource.remove(visitedItem.title, visitedItem.url)
+                    visitedRepo.remove(visitedItem.title, visitedItem.url)
                     onRemoveVisitedItem(visitedItem.title)
                 }
             }
