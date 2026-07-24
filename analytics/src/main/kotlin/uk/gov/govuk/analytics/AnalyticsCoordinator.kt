@@ -12,7 +12,12 @@ class AnalyticsCoordinator @Inject constructor(
     private val qualtricsAnalyticsClient: QualtricsAnalyticsClient
 ) : AnalyticsCoordinatorInterface {
 
+    private val qualtricsTargetingId = "qualtrics_targeting_id"
+    private val qualtricsSurveyShown = "qualtrics_survey_shown"
+    private val qualtricsSurveyClosed = "qualtrics_survey_closed"
+
     override fun initialize() {
+        // Respect the user's privacy preference
         if (analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED) {
             qualtricsAnalyticsClient.initialize()
             qualtricsAnalyticsClient.setOnSurveyClosedListener { targetingIds ->
@@ -57,9 +62,9 @@ class AnalyticsCoordinator @Inject constructor(
         results.forEach { (targetingId, result) ->
             if (result.passed()) {
                 firebaseAnalyticsClient.logEvent(
-                    "qualtrics_survey_shown",
+                    qualtricsSurveyShown,
                     mapOf<String, Any>(
-                        "qualtrics_targeting_id" to targetingId
+                        qualtricsTargetingId to targetingId
                     )
                 )
             }
@@ -69,9 +74,9 @@ class AnalyticsCoordinator @Inject constructor(
     private fun onSurveyClosed(targetingIds: List<String>) {
         targetingIds.forEach { targetingId ->
             firebaseAnalyticsClient.logEvent(
-                "qualtrics_survey_closed",
+                qualtricsSurveyClosed,
                 mapOf<String, Any>(
-                    "qualtrics_targeting_id" to targetingId
+                    qualtricsTargetingId to targetingId
                 )
             )
         }

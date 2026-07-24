@@ -30,6 +30,7 @@ class QualtricsAnalyticsClient @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val qualtrics: Qualtrics,
     private val firebaseIdentifiers: FirebaseIdentifiers,
+    // Dagger will read the wrong object unless the interface - not instance - is specified here
     private val activityProvider: ActivityProviderInterface
 ) {
 
@@ -110,21 +111,16 @@ class QualtricsAnalyticsClient @Inject constructor(
 
     /**
      * The Qualtrics SDK data storage mechanism is implemented as a single (flat) map
-     * that is cached across events. So, it does not handle objects for sending
-     * data - specifically maps, arrays of maps and nested arrays. It also means we
-     * need to flat-map all the keys and values we would ever want to send - making
-     * the keys unique in some way - for example, e-commerce events that have 'items'.
+     * that is cached across events. It does not handle objects for sending
+     * data - specifically maps, arrays of maps and nested arrays.
+     *
+     * This means we need to flat-map all the keys and values we would ever want to
+     * send - making the keys unique in some way - for example, e-commerce events
+     * that have 'items'  might need the index in the key.
      *
      * As a consequence of the above - if a key is not overwritten in newer events
-     * - it will be resent in subsequent events, causing incorrect event data to
-     * be 'leaked' across events.
-     *
-     * This seems to be a deliberate 'feature'.
-     *
-     * To date, the only solution to this seems to be creating a unique, defined and
-     * distinct set of keys that are set to the new events value or an empty string
-     * before being sent. It seems this is the only way to ensure that only valid
-     * data is sent.
+     * - old stale values will be resent in subsequent events, causing incorrect
+     * event data to be 'leaked' across events.
      */
     private val analyticsParameterKeys = listOf(
         "action", "external", "item_list_id", "item_list_name",
@@ -134,11 +130,11 @@ class QualtricsAnalyticsClient @Inject constructor(
 
     private fun setParameters(parameters: Map<String, Any>) {
         firebaseIdentifiers.userPseudoId?.let {
-            qualtrics.properties.setString("fb_user_pseudo_id", it)
+            qualtrics.properties.setString(FIREBASE_USER_PSEUDO_ID, it)
         }
 
         firebaseIdentifiers.sessionId?.let {
-            qualtrics.properties.setString("fb_session_id", it)
+            qualtrics.properties.setString(FIREBASE_SESSION_ID, it)
         }
 
         analyticsParameterKeys.forEach { key ->
@@ -151,8 +147,8 @@ class QualtricsAnalyticsClient @Inject constructor(
     private fun qualtricsTheme(): QualtricsTheme {
         // TODO: Qualtrics SDK v3 - Remove XML color bridge and use .toArgb() directly
         // TODO: Example: GovUkTheme.colourScheme.surfaces.background.toArgb()
+        // TODO: Similar for fonts too
 
-        // TODO: Similar for fonts...
         val bodyRegular = R.font.transport_light
         val bodyBold = R.font.transport_bold
         val regularSize = 17

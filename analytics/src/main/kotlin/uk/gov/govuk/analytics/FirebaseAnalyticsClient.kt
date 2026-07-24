@@ -9,7 +9,6 @@ import java.io.Serializable
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class FirebaseAnalyticsClient @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
@@ -77,8 +76,8 @@ class FirebaseAnalyticsClient @Inject constructor(
 
     private fun identifierParameters(): Map<String, String> {
         val parameters = mutableMapOf<String, String>()
-        firebaseIdentifiers.userPseudoId?.let { parameters["fb_user_pseudo_id"] = it }
-        firebaseIdentifiers.sessionId?.let { parameters["fb_session_id"] = it }
+        firebaseIdentifiers.userPseudoId?.let { parameters[FIREBASE_USER_PSEUDO_ID] = it }
+        firebaseIdentifiers.sessionId?.let { parameters[FIREBASE_SESSION_ID] = it }
         return parameters
     }
 
