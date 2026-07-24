@@ -11,7 +11,7 @@
             <certificates src="user" />
         </trust-anchors>
     </debug-overrides>
-    <base-config cleartextTrafficPermitted="true">
+  <base-config cleartextTrafficPermitted="true">
     <trust-anchors>
       <certificates src="system" />
       <certificates src="user" />
