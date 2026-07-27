@@ -4,7 +4,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -25,8 +28,11 @@ import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DvlaRepoTest {
 
+    private val testScope = TestScope()
+    private val dispatcher = UnconfinedTestDispatcher()
     private val api = mockk<DvlaApi>()
     private val authRepo = mockk<AuthRepo>()
     private val dvlaDataStore = mockk<DvlaDataStore>()
@@ -39,7 +45,7 @@ class DvlaRepoTest {
         every { identityRepo.linkStatusOf(LinkedService.DVLA) } returns flowOf(ServiceLinkStatus.UNLINKED)
         every { identityRepo.currentStatusOf(LinkedService.DVLA) } returns ServiceLinkStatus.UNLINKED
 
-        repo = DvlaRepo(api, authRepo, dvlaDataStore, identityRepo)
+        repo = DvlaRepo(testScope, api, authRepo, dvlaDataStore, identityRepo)
     }
 
     @Test
@@ -102,7 +108,7 @@ class DvlaRepoTest {
         coEvery { dvlaDataStore.clear() } returns Unit
         coEvery { identityRepo.getLinkedServices() } returns Unit
 
-        val result = repo.unlinkAccount()
+        val result = repo.unlinkAccount(dispatcher)
 
         assertTrue(result is Result.Success)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }
@@ -114,7 +120,7 @@ class DvlaRepoTest {
     fun `Given unlinking api throws exception, when unlinkAccount is called, then return error`() = runTest {
         coEvery { api.deleteDvlaIdentity() } throws Exception("Exception")
 
-        val result = repo.unlinkAccount()
+        val result = repo.unlinkAccount(dispatcher)
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }

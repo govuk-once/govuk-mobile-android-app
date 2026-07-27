@@ -1,8 +1,10 @@
 package uk.gov.govuk.dvla.data
 
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.LinkedService
@@ -24,6 +26,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DvlaRepo @Inject constructor(
+    private val externalScope: CoroutineScope,
     private val api: DvlaApi,
     private val authRepo: AuthRepo,
     private val dvlaDataStore: DvlaDataStore,
@@ -58,15 +61,18 @@ class DvlaRepo @Inject constructor(
         return result
     }
 
-    suspend fun unlinkAccount(): Result<Unit> =
-        withContext(NonCancellable) {
-            val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-            if (result is Result.Success) {
-                clear()
-                identityRepo.getLinkedServices() // sync linked services state
+    suspend fun unlinkAccount(dispatcher: CoroutineDispatcher = Dispatchers.IO): Result<Unit> {
+        val deferredResult = externalScope.async(dispatcher) {
+                val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
+                if (result is Result.Success) {
+                    clear()
+                    identityRepo.getLinkedServices() // sync linked services state
+                }
+                result
             }
-            result
-        }
+        return deferredResult.await()
+    }
+
 
     internal suspend fun getLicenceDetails(): LicenceDetailsResult =
         safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
