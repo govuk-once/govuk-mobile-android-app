@@ -1,6 +1,8 @@
 package uk.gov.govuk.dvla.data
 
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.LinkedService
@@ -56,14 +58,15 @@ class DvlaRepo @Inject constructor(
         return result
     }
 
-    suspend fun unlinkAccount(): Result<Unit> {
-        val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-        if (result is Result.Success) {
-            clear()
-            identityRepo.getLinkedServices() // sync linked services state
+    suspend fun unlinkAccount(): Result<Unit> =
+        withContext(NonCancellable) {
+            val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
+            if (result is Result.Success) {
+                clear()
+                identityRepo.getLinkedServices() // sync linked services state
+            }
+            result
         }
-        return result
-    }
 
     internal suspend fun getLicenceDetails(): LicenceDetailsResult =
         safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
