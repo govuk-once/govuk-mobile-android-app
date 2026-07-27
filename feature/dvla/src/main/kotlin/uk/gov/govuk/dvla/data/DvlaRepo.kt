@@ -1,8 +1,6 @@
 package uk.gov.govuk.dvla.data
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import uk.gov.govuk.data.auth.AuthRepo
@@ -61,8 +59,8 @@ class DvlaRepo @Inject constructor(
         return result
     }
 
-    suspend fun unlinkAccount(dispatcher: CoroutineDispatcher = Dispatchers.IO): Result<Unit> {
-        val deferredResult = externalScope.async(dispatcher) {
+    suspend fun unlinkAccount(): Result<Unit> {
+        val deferredResult = externalScope.async {
                 val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
                 if (result is Result.Success) {
                     clear()
