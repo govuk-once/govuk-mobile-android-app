@@ -4,10 +4,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -20,10 +18,7 @@ import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LinkedAccountsRepoImplTest {
-
-    private val dispatcher = UnconfinedTestDispatcher()
 
     private val identityRepo = mockk<IdentityRepo>(relaxed = true)
     private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
@@ -76,7 +71,7 @@ class LinkedAccountsRepoImplTest {
         val expectedResult = Result.Success(Unit)
         coEvery { dvlaRepo.unlinkAccount() } returns expectedResult
 
-        val result = repo.unlinkAccount("dvla", dispatcher)
+        val result = repo.unlinkAccount("dvla")
 
         assertEquals(expectedResult, result)
         coVerify(exactly = 1) { dvlaRepo.unlinkAccount() }
@@ -88,7 +83,7 @@ class LinkedAccountsRepoImplTest {
 
         coEvery { dvlaRepo.unlinkAccount() } returns expectedResult
 
-        val result = repo.unlinkAccount("dvla", dispatcher)
+        val result = repo.unlinkAccount("dvla")
 
         assertEquals(expectedResult, result)
         coVerify(exactly = 1) { dvlaRepo.unlinkAccount() }

@@ -1,6 +1,5 @@
 package uk.gov.govuk.settings.data
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -43,10 +42,9 @@ class LinkedAccountsRepoImpl @Inject constructor(
     }
 
     override suspend fun unlinkAccount(
-        serviceName: String,
-        dispatcher: CoroutineDispatcher
+        serviceName: String
     ): Result<Unit> =
-        withContext(dispatcher + NonCancellable) {
+        withContext(NonCancellable) {
             when (serviceName) {
                 LinkedService.DVLA.serviceName -> dvlaRepo.unlinkAccount()
                 else -> Result.Success(Unit)
