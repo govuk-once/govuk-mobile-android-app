@@ -86,6 +86,7 @@ import uk.gov.govuk.search.ui.widget.SearchWidget
 import uk.gov.govuk.settings.navigation.settingsGraph
 import uk.gov.govuk.settings.navigation.signOutGraph
 import uk.gov.govuk.settings.navigation.unlinkAccountErrorGraph
+import uk.gov.govuk.settings.navigation.yourAccountsGraph
 import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
@@ -580,6 +581,9 @@ private fun GovUkNavHost(
                 ) { showBrowserNotFoundAlert = true }
             },
             modifier = Modifier.padding(paddingValues)
+        )
+        yourAccountsGraph(
+            navController = navController
         )
         signOutGraph(
             navController = navController,

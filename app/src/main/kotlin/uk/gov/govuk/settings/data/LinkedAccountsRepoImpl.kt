@@ -1,7 +1,10 @@
 package uk.gov.govuk.settings.data
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.IdentityState
@@ -16,7 +19,7 @@ class LinkedAccountsRepoImpl @Inject constructor(
     private val identityRepo: IdentityRepo,
     private val dvlaRepo: DvlaRepo,
     private val flagRepo: FlagRepo
-): LinkedAccountsRepo {
+) : LinkedAccountsRepo {
 
 
     override fun getLinkedAccounts(): Flow<List<LinkedAccountUiModel>> {
@@ -39,10 +42,14 @@ class LinkedAccountsRepoImpl @Inject constructor(
         }
     }
 
-    override suspend fun unlinkAccount(serviceName: String): Result<Unit> {
-        return when (serviceName) {
-            LinkedService.DVLA.serviceName -> dvlaRepo.unlinkAccount()
-            else -> Result.Success(Unit)
+    override suspend fun unlinkAccount(
+        serviceName: String,
+        dispatcher: CoroutineDispatcher
+    ): Result<Unit> =
+        withContext(dispatcher + NonCancellable) {
+            when (serviceName) {
+                LinkedService.DVLA.serviceName -> dvlaRepo.unlinkAccount()
+                else -> Result.Success(Unit)
+            }
         }
-    }
 }
