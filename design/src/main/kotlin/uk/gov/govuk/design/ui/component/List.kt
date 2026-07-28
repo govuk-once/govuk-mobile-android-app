@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -394,7 +395,9 @@ fun StatusListItem(
                     title?.let {
                         Title3BoldLabel(
                             text = it.displayText,
-                            modifier = Modifier.withAltText(it.altText)
+                            modifier = Modifier
+                                .withAltText(it.altText)
+                                .semantics { heading() }
                         )
 
                         SmallVerticalSpacer()
