@@ -28,37 +28,35 @@ import uk.gov.govuk.notificationcentre.R
 @Composable
 internal fun NotificationCentreScreenNoInternet() {
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             Icons.Filled.ErrorOutline,
-            modifier = Modifier
+            stringResource(R.string.error_icon_content_description),
+            Modifier
                 .padding(bottom = 16.dp, top = 32.dp)
                 .size(32.dp)
                 .semantics { hideFromAccessibility() },
-            contentDescription = stringResource(R.string.error_icon_content_description),
             colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.iconTertiary)
         )
 
-        Column(modifier = Modifier.semantics(true) {}) {
+        Column(Modifier.semantics(true) {}) {
             BodySemiboldLabel(
                 stringResource(uk.gov.govuk.design.R.string.no_internet_title),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
+                Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                color = GovUkTheme.colourScheme.textAndIcons.primary
-
+                GovUkTheme.colourScheme.textAndIcons.primary,
+                TextAlign.Center
             )
 
             BodyRegularLabel(
                 stringResource(uk.gov.govuk.design.R.string.no_internet_description_short),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                color = GovUkTheme.colourScheme.textAndIcons.primary
+                Modifier.fillMaxWidth(),
+                GovUkTheme.colourScheme.textAndIcons.primary,
+                TextAlign.Center
             )
         }
     }
@@ -67,37 +65,36 @@ internal fun NotificationCentreScreenNoInternet() {
 @Composable
 internal fun NotificationCentreScreenError() {
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
             .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             Icons.Filled.ErrorOutline,
-            modifier = Modifier
+            stringResource(R.string.error_icon_content_description),
+            Modifier
                 .padding(bottom = 16.dp, top = 32.dp)
                 .size(32.dp)
                 .semantics { hideFromAccessibility() },
-            contentDescription = stringResource(R.string.error_icon_content_description),
             colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.iconTertiary)
         )
 
-        Column(modifier = Modifier.semantics(true) {}) {
+        Column(Modifier.semantics(true) {}) {
             BodySemiboldLabel(
                 stringResource(R.string.error_title),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
+                Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                color = GovUkTheme.colourScheme.textAndIcons.primary
-
+                GovUkTheme.colourScheme.textAndIcons.primary,
+                TextAlign.Center
             )
 
             BodyRegularLabel(
                 stringResource(R.string.error_body),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                color = GovUkTheme.colourScheme.textAndIcons.primary
+                Modifier.fillMaxWidth(),
+                GovUkTheme.colourScheme.textAndIcons.primary,
+                TextAlign.Center
             )
         }
     }
@@ -106,16 +103,16 @@ internal fun NotificationCentreScreenError() {
 @Composable
 internal fun Footer() {
     Box(
-        modifier = Modifier
+        Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp)
     ) {
         CalloutRegularLabel(
             stringResource(R.string.footer),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
+            Modifier
                 .fillMaxWidth(),
-            color = GovUkTheme.colourScheme.textAndIcons.secondary
+            GovUkTheme.colourScheme.textAndIcons.secondary,
+            TextAlign.Center
         )
     }
 }
