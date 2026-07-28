@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,9 +59,7 @@ import uk.gov.govuk.notificationcentre.ui.component.Markdown
 
 @Composable
 internal fun NotificationCentreDetailRoute(
-    modifier: Modifier = Modifier,
-    onBack: () -> Unit,
-    launchBrowser: (url: String) -> Unit
+    modifier: Modifier = Modifier, onBack: () -> Unit, launchBrowser: (url: String) -> Unit
 ) {
     val viewModel: NotificationCentreDetailViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,11 +68,12 @@ internal fun NotificationCentreDetailRoute(
         modifier
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.fullScreen)
+            .safeDrawingPadding()
     ) {
         NotificationCentreDetailScreen(
             {
-                viewModel.onPageView()
-            },
+            viewModel.onPageView()
+        },
             uiState,
             actions = NotificationCentreDetailActions(
                 onBack = onBack,
@@ -97,8 +96,8 @@ internal fun NotificationCentreDetailRoute(
                     viewModel.onLinkTap(it)
                 }
             ),
-            showDeleteConfirmation = (uiState as? NotificationCentreDetailUiState.Loaded)?.showDeleteConfirmation ?: false
-        )
+            showDeleteConfirmation = (uiState as? NotificationCentreDetailUiState.Loaded)?.showDeleteConfirmation
+                ?: false)
     }
 }
 
@@ -126,10 +125,9 @@ private fun NotificationCentreDetailScreen(
     }
 
     Column(
-        Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        Modifier.fillMaxWidth(),
+        Arrangement.Center,
+        Alignment.CenterHorizontally
     ) {
         Header(
             onBack = actions.onBack,
@@ -140,26 +138,23 @@ private fun NotificationCentreDetailScreen(
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            Modifier.fillMaxWidth()
         ) {
             when (state) {
                 is NotificationCentreDetailUiState.Loading -> NotificationCentreDetailScreenLoading()
                 is NotificationCentreDetailUiState.NoInternet -> NotificationCentreScreenNoInternet()
                 is NotificationCentreDetailUiState.Error -> NotificationCentreScreenError()
                 is NotificationCentreDetailUiState.Loaded -> NotificationCentreDetailScreenLoaded(
-                    state.notification,
-                    actions.launchBrowser
+                    state.notification, actions.launchBrowser
                 )
                 else -> {}
             }
         }
 
         if (showDeleteConfirmationDialog) {
-
             ConfirmationDialog(
-                onConfirm = actions.onConfirmDelete,
-                onCancel = actions.onCancelDelete
+                actions.onConfirmDelete,
+                actions.onCancelDelete
             )
         }
 
@@ -171,18 +166,14 @@ private fun NotificationCentreDetailScreen(
 
 @Composable
 private fun Header(
-    modifier: Modifier = Modifier,
-    actionColour: Color = GovUkTheme.colourScheme.textAndIcons.linkHeader,
+    actionColour: Color = GovUkTheme.colourScheme.textAndIcons.iconSecondary,
     onBack: () -> Unit,
     onUnread: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Column(
-        modifier
-            .background(GovUkTheme.colourScheme.surfaces.homeHeader)
-    ) {
+    Column {
         Row(
-            modifier = Modifier
+            Modifier
                 .height(64.dp)
                 .padding(end = GovUkTheme.spacing.medium)
                 .fillMaxWidth(),
@@ -192,8 +183,8 @@ private fun Header(
                 onClick = onBack
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(uk.gov.govuk.design.R.string.content_desc_back),
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    stringResource(uk.gov.govuk.design.R.string.content_desc_back),
                     tint = actionColour
                 )
             }
@@ -201,28 +192,24 @@ private fun Header(
             Spacer(Modifier.weight(1f))
 
             IconButton(
-                onClick = onUnread,
-                modifier = Modifier
-                    .size(48.dp)
-
+                onUnread,
+                Modifier.size(48.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_mark_unread),
+                    painterResource(id = R.drawable.ic_mark_unread),
+                    stringResource(R.string.mark_as_unread),
                     tint = actionColour,
-                    contentDescription = stringResource(R.string.mark_as_unread),
                 )
             }
 
             IconButton(
-                onClick = onDelete,
-                modifier = Modifier
-                    .size(48.dp)
+                onDelete, Modifier.size(48.dp)
 
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_delete_notification),
+                    painterResource(id = R.drawable.ic_delete_notification),
+                    stringResource(R.string.delete_notification),
                     tint = actionColour,
-                    contentDescription = stringResource(R.string.delete_notification),
                 )
             }
         }
@@ -232,8 +219,8 @@ private fun Header(
 @Composable
 private fun NotificationCentreDetailScreenLoading() {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        Modifier.fillMaxSize(),
+        Alignment.Center
     ) {
         val loadingContentDescription = stringResource(R.string.loading_content_description)
         CircularProgressIndicator(
@@ -249,62 +236,60 @@ private fun NotificationCentreDetailScreenLoading() {
 
 @Composable
 private fun NotificationCentreDetailScreenLoaded(
-    notification: Notification,
-    launchBrowser: (url: String) -> Unit
+    notification: Notification, launchBrowser: (url: String) -> Unit
 ) {
-        val headerContentDescription = stringResource(
-            R.string.notification_detail_header_content_description,
-            notification.detailFormattedDate,
-            notification.metadata.sender.displayName)
+    val headerContentDescription = stringResource(
+        R.string.notification_detail_header_content_description,
+        notification.detailFormattedDate,
+        notification.metadata.sender.displayName
+    )
 
+    Column(
+        modifier = Modifier
+            .padding(
+                horizontal = GovUkTheme.spacing.medium, vertical = GovUkTheme.spacing.medium
+            )
+            .verticalScroll(
+                rememberScrollState()
+            )
+    ) {
         Column(
-            modifier = Modifier
-                .padding(
-                    horizontal = GovUkTheme.spacing.medium,
-                    vertical = GovUkTheme.spacing.medium
-                )
-                .verticalScroll(
-                    rememberScrollState()
-                )
-        ) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(GovUkTheme.colourScheme.surfaces.cardMsgHeader)
-                    .padding(16.dp)
-                    .clearAndSetSemantics {
-                        heading()
-                        contentDescription = headerContentDescription
-                    }
-            ) {
-                BodyRegularLabel(
-                    notification.detailFormattedDate,
-                    color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(GovUkTheme.colourScheme.surfaces.cardMsgHeader)
+                .padding(16.dp)
+                .clearAndSetSemantics {
+                    heading()
+                    contentDescription = headerContentDescription
+                }) {
+            BodyRegularLabel(
+                notification.detailFormattedDate,
+                Modifier.padding(bottom = 4.dp),
+                GovUkTheme.colourScheme.textAndIcons.secondary
+            )
 
-                BodyBoldLabel(
-                    notification.metadata.sender.displayName,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary,
-                )
-            }
+            BodyBoldLabel(
+                notification.metadata.sender.displayName,
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+            )
+        }
 
-            Column(modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)) {
+        Column(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)) {
 
-                Title1BoldLabel(
-                    notification.messageTitle ?: notification.title,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary,
-                    modifier = Modifier.padding(top = 24.dp, bottom = 24.dp)
-                )
-                
-                Markdown(
-                    notification.messageBody ?: notification.body,
-                    onLinkClick = { url ->
-                        launchBrowser(url)
-                    }
-                )
-            }
+            Title1BoldLabel(
+                notification.messageTitle ?: notification.title,
+                Modifier.padding(top = 24.dp, bottom = 24.dp),
+                GovUkTheme.colourScheme.textAndIcons.primary
+            )
+
+            Markdown(
+                notification.messageBody ?: notification.body, onLinkClick = { url ->
+                    launchBrowser(url)
+                })
+        }
     }
 }
 
@@ -312,35 +297,33 @@ private fun NotificationCentreDetailScreenLoaded(
 @Composable
 private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
     AlertDialog(
-        title = {
-            Text(text = stringResource(R.string.delete_notification_sheet_title))
-        },
-        text = {
-            Text(text = stringResource(R.string.delete_notification_sheet_body))
-        },
-        onDismissRequest = {
-            onCancel()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
-                }
-            ) {
-                Text(
-                    stringResource(R.string.delete_notification_sheet_confirm),
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onCancel()
-                }
-            ) {
-                Text(stringResource(R.string.delete_notification_sheet_cancel))
-            }
+        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList), title = {
+        BodyBoldLabel(stringResource(R.string.delete_notification_sheet_title))
+    }, text = {
+        BodyRegularLabel(stringResource(R.string.delete_notification_sheet_body))
+    }, onDismissRequest = {
+        onCancel()
+    }, confirmButton = {
+        TextButton(
+            onClick = {
+                onConfirm()
+            }) {
+            BodyRegularLabel(
+                stringResource(R.string.delete_notification_sheet_confirm),
+                color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+            )
         }
+    }, dismissButton = {
+        TextButton(
+            onClick = {
+                onCancel()
+            }) {
+            BodyRegularLabel(
+                stringResource(R.string.delete_notification_sheet_cancel),
+                color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
+        }
+    }, containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
 
@@ -351,7 +334,7 @@ private fun NotificationCentreDetailLoadingPreview() {
         NotificationCentreDetailScreen(
             {},
             NotificationCentreDetailUiState.Loading,
-            NotificationCentreDetailActions({},{},{},{},{},{}),
+            NotificationCentreDetailActions({}, {}, {}, {}, {}, {}),
             false
         )
 
@@ -365,7 +348,7 @@ private fun NotificationCentreDetailErrorPreview() {
         NotificationCentreDetailScreen(
             {},
             NotificationCentreDetailUiState.Error,
-            NotificationCentreDetailActions({},{},{},{},{},{}),
+            NotificationCentreDetailActions({}, {}, {}, {}, {}, {}),
             false
         )
 
@@ -379,7 +362,7 @@ private fun NotificationCentreDetailLoadedPreview() {
         NotificationCentreDetailScreen(
             {},
             NotificationCentreDetailUiState.Loaded(mockNotifications.recent.first(), false),
-            NotificationCentreDetailActions({},{},{},{},{},{}),
+            NotificationCentreDetailActions({}, {}, {}, {}, {}, {}),
             false
         )
     }
@@ -389,6 +372,6 @@ private fun NotificationCentreDetailLoadedPreview() {
 @Composable
 private fun ConfirmationDialogPreview() {
     GovUkTheme {
-        ConfirmationDialog(onConfirm = {}, onCancel = {})
+        ConfirmationDialog({}, {})
     }
 }

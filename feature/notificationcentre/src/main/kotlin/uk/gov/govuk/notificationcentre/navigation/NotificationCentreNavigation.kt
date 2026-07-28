@@ -12,7 +12,7 @@ import uk.gov.govuk.notificationcentre.ui.NotificationCentreDetailRoute
 import uk.gov.govuk.notificationcentre.ui.NotificationCentreRoute
 
 const val NOTIFICATION_CENTRE_GRAPH_ROUTE = "notification_centre_graph_route"
-private const val NOTIFICATION_CENTRE_ROUTE = "notification_centre_route"
+const val NOTIFICATION_CENTRE_ROUTE = "notification_centre_route"
 const val NOTIFICATION_CENTRE_DETAIL_ROUTE = "notification_centre_detail_route"
 
 const val NOTIFICATION_CENTRE_DETAIL_ID_ARG = "notificationID"

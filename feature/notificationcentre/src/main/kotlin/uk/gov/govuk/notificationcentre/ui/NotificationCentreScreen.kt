@@ -66,9 +66,10 @@ internal fun NotificationCentreRoute(
         NotificationCentreScreen(
             {
                 viewModel.onPageView()
-            }, uiState,
-            onBack = onBack,
-            onTapNotification = onTapNotification
+            },
+            uiState,
+            onBack,
+            onTapNotification
         )
     }
 }
@@ -84,15 +85,15 @@ private fun NotificationCentreScreen(
         Modifier
             .fillMaxWidth()
             .background(GovUkTheme.colourScheme.surfaces.chatBackground),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        Arrangement.Center,
+        Alignment.CenterHorizontally
     ) {
         ChildPageHeader(
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
 
         Title(
-            title = stringResource(R.string.notification_centre_title)
+            stringResource(R.string.notification_centre_title)
         )
 
         when (state) {
@@ -120,10 +121,12 @@ private fun NotificationCentreScreenLoading() {
     ) {
         val loadingContentDescription = stringResource(R.string.loading_content_description)
         CircularProgressIndicator(
-            modifier = Modifier.size(36.dp).semantics {
-                text = AnnotatedString(loadingContentDescription)
-            },
-            color = GovUkTheme.colourScheme.surfaces.primary,
+            Modifier
+                .size(36.dp)
+                .semantics {
+                    text = AnnotatedString(loadingContentDescription)
+                },
+            GovUkTheme.colourScheme.surfaces.primary
         )
     }
 }
@@ -131,23 +134,23 @@ private fun NotificationCentreScreenLoading() {
 @Composable
 private fun NotificationCentreScreenEmpty() {
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
-            modifier = Modifier
+            Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .background(GovUkTheme.colourScheme.surfaces.cardNonTappable)
         ) {
             BodyRegularLabel(
                 stringResource(R.string.empty_body),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
+                Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
+                GovUkTheme.colourScheme.textAndIcons.secondary,
+                TextAlign.Center
             )
         }
 
@@ -163,7 +166,7 @@ private fun NotificationCentreScreenLoaded(
     onTapNotification: (Notification) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier
+        Modifier
             .padding(horizontal = GovUkTheme.spacing.medium)
     ) {
         item {
@@ -181,13 +184,16 @@ private fun NotificationCentreScreenLoaded(
         }
 
         if (notifications.older.isNotEmpty()) {
-
             item {
                 NotificationSectionHeader(stringResource(R.string.section_older))
             }
 
             items(notifications.older) { not ->
-                NotificationRow(not, onTapRow = { onTapNotification(it) })
+                NotificationRow(
+                    not
+                ) {
+                    onTapNotification(it)
+                }
             }
         }
 
@@ -199,7 +205,10 @@ private fun NotificationCentreScreenLoaded(
 
 @Composable
 private fun NotificationSectionHeader(title: String) {
-    Title3SemiBoldLabel(title, modifier = Modifier.padding(top = 28.dp, bottom = 16.dp))
+    Title3SemiBoldLabel(
+        title,
+        Modifier.padding(top = 28.dp, bottom = 16.dp)
+    )
 }
 
 @Composable
@@ -232,7 +241,7 @@ private fun NotificationRow(
                 }
         )
         Column(
-            modifier = Modifier
+            Modifier
                 .padding(vertical = 16.dp)
                 .padding(end = 16.dp)
                 .semantics(mergeDescendants = true) {
@@ -243,10 +252,10 @@ private fun NotificationRow(
                 }
         ) {
             Text(
-                text = notification.title,
-                modifier = Modifier.padding(bottom = 4.dp),
+                notification.title,
+                Modifier.padding(bottom = 4.dp),
+                GovUkTheme.colourScheme.textAndIcons.primary,
                 style = GovUkTheme.typography.headlineSemibold,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
