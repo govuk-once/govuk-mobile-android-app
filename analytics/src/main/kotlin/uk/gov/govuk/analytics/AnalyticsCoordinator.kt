@@ -61,11 +61,16 @@ class AnalyticsCoordinator @Inject constructor(
     private fun onSurveyShown(results: Map<String, TargetingResult>) {
         results.forEach { (targetingId, result) ->
             if (result.passed()) {
+                val parameters = mapOf<String, Any>(
+                    qualtricsTargetingId to targetingId
+                )
                 firebaseAnalyticsClient.logEvent(
                     qualtricsSurveyShown,
-                    mapOf<String, Any>(
-                        qualtricsTargetingId to targetingId
-                    )
+                    parameters
+                )
+                qualtricsAnalyticsClient.logEvent(
+                    qualtricsSurveyShown,
+                    parameters
                 )
             }
         }
@@ -73,11 +78,16 @@ class AnalyticsCoordinator @Inject constructor(
 
     private fun onSurveyClosed(targetingIds: List<String>) {
         targetingIds.forEach { targetingId ->
+            val parameters = mapOf<String, Any>(
+                qualtricsTargetingId to targetingId
+            )
             firebaseAnalyticsClient.logEvent(
                 qualtricsSurveyClosed,
-                mapOf<String, Any>(
-                    qualtricsTargetingId to targetingId
-                )
+                parameters
+            )
+            qualtricsAnalyticsClient.logEvent(
+                qualtricsSurveyClosed,
+                parameters
             )
         }
     }

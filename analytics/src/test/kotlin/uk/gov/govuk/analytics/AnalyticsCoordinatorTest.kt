@@ -1,5 +1,6 @@
 package uk.gov.govuk.analytics
 
+import com.qualtrics.digital.TargetingResult
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -90,10 +91,55 @@ class AnalyticsCoordinatorTest {
                 mapOf<String, Any>("qualtrics_targeting_id" to "survey_one")
 
             )
+            qualtricsAnalyticsClient.logEvent(
+                "qualtrics_survey_closed",
+                mapOf<String, Any>("qualtrics_targeting_id" to "survey_one")
+            )
             firebaseAnalyticClient.logEvent(
                 "qualtrics_survey_closed",
                 mapOf<String, Any>("qualtrics_targeting_id" to "survey_two")
+            )
+            qualtricsAnalyticsClient.logEvent(
+                "qualtrics_survey_closed",
+                mapOf<String, Any>("qualtrics_targeting_id" to "survey_two")
+            )
+        }
+    }
 
+    @Test
+    fun `Given a survey was shown, when the survey show callback fires, then log a qualtrics_survey_shown event for each passed targeting id`() {
+        val passedResult = mockk<TargetingResult> {
+            every { passed() } returns true
+        }
+        val failedResult = mockk<TargetingResult> {
+            every { passed() } returns false
+        }
+        val onSurveyShownSlot = slot<(Map<String, TargetingResult>) -> Unit>()
+
+        every {
+            qualtricsAnalyticsClient.logEvent(any(), any(), capture(onSurveyShownSlot))
+        } returns Unit
+
+        analyticsCoordinator.logEvent("event", mapOf("screen_name" to "Settings"))
+        onSurveyShownSlot.captured.invoke(
+            mapOf("passed_survey" to passedResult, "failed_survey" to failedResult)
+        )
+
+        verify {
+            firebaseAnalyticClient.logEvent(
+                "qualtrics_survey_shown",
+                mapOf<String, Any>("qualtrics_targeting_id" to "passed_survey")
+            )
+            qualtricsAnalyticsClient.logEvent(
+                "qualtrics_survey_shown",
+                mapOf<String, Any>("qualtrics_targeting_id" to "passed_survey")
+            )
+        }
+
+        verify(exactly = 0) {
+            firebaseAnalyticClient.logEvent(
+                "qualtrics_survey_shown",
+                mapOf<String, Any>("qualtrics_targeting_id" to "failed_survey")
             )
         }
     }
