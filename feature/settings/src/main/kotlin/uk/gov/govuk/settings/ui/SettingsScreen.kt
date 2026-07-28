@@ -86,7 +86,7 @@ internal fun SettingsRoute(
                 },
                 onMessagesClick = {
                     viewModel.onMessagesClick()
-                    actions.onMessagesClick
+                    actions.onMessagesClick()
                 },
                 onSignOutClick = {
                     viewModel.onSignOut()
