@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object DvlaModule {
+internal object DvlaModule {
 
     @Provides
     @Singleton
@@ -64,7 +64,8 @@ object DvlaModule {
 
     @Singleton
     @Provides
-    fun providesCoroutineScope(): CoroutineScope {
+    @Named("coroutine_scope_io")
+    fun providesCoroutineScopeIo(): CoroutineScope {
         return CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 }

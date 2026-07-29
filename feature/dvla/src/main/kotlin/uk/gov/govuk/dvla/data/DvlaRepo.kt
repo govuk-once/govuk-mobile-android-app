@@ -20,11 +20,12 @@ import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.safeLicenceApiCall
 import uk.gov.govuk.dvla.ui.model.DrivingView
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class DvlaRepo @Inject constructor(
-    private val externalScope: CoroutineScope,
+    @param:Named("coroutine_scope_io") private val externalScope: CoroutineScope,
     private val api: DvlaApi,
     private val authRepo: AuthRepo,
     private val dvlaDataStore: DvlaDataStore,
