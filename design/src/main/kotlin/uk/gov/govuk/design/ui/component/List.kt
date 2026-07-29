@@ -396,8 +396,8 @@ fun StatusListItem(
                         Title3BoldLabel(
                             text = it.displayText,
                             modifier = Modifier
-                                .withAltText(it.altText)
                                 .semantics { heading() }
+                                .withAltText(it.altText)
                         )
 
                         SmallVerticalSpacer()
@@ -546,7 +546,9 @@ fun CountdownBarListItem(
             title?.let { title ->
                 Title3BoldLabel(
                     text = title.displayText,
-                    modifier = Modifier.withAltText(title.altText)
+                    modifier = Modifier
+                        .semantics { heading() }
+                        .withAltText(title.altText)
                 )
 
                 SmallVerticalSpacer()
