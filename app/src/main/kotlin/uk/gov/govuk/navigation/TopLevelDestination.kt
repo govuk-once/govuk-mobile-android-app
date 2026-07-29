@@ -7,9 +7,9 @@ import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.design.R.drawable.ic_chat
 import uk.gov.govuk.design.R.drawable.ic_home
 import uk.gov.govuk.design.R.drawable.ic_settings
+import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
-import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_DETAIL_ROUTE
-import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_ROUTE
+import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_START_DESTINATION
 import uk.gov.govuk.settings.navigation.SETTINGS_GRAPH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPICS_ALL_STEP_BY_STEPS_ROUTE
@@ -24,10 +24,12 @@ internal sealed class TopLevelDestination(
     val associatedRoutes: List<String> = emptyList()
 ) {
     internal data object Home : TopLevelDestination(
-        route =  HOME_GRAPH_ROUTE,
+        route =  HOME_CONTAINER_ROUTE,
         stringResId = R.string.home,
         icon = ic_home,
         associatedRoutes = listOf(
+            HOME_GRAPH_ROUTE,
+            HOME_GRAPH_START_DESTINATION,
             VISITED_ROUTE,
             TOPIC_ROUTE,
             TOPICS_ALL_STEP_BY_STEPS_ROUTE
