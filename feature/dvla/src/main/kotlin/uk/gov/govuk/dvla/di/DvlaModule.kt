@@ -22,7 +22,12 @@ import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.StringProviderImpl
 
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+internal annotation class CoroutineScopeIo
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -64,7 +69,7 @@ internal object DvlaModule {
 
     @Singleton
     @Provides
-    @Named("coroutine_scope_io")
+    @CoroutineScopeIo
     fun providesCoroutineScopeIo(): CoroutineScope {
         return CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
