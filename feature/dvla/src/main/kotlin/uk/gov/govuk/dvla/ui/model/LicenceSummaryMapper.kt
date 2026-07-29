@@ -16,7 +16,6 @@ import uk.gov.govuk.dvla.util.isInThePast
 import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
-import uk.gov.govuk.dvla.util.toTitleCase
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -36,7 +35,7 @@ internal class LicenceSummaryMapper @Inject constructor(
             LicenceSummaryUiModel(
                 licenceType = getLicenceTypeString(details.licenceType),
                 licenceNumber = details.drivingLicenceNumber,
-                name = details.fullName.toTitleCase(),
+                name = details.fullName,
                 addressLines = details.driverFullAddress.asAddressLines(),
                 statusUi = getLicenceStatusUiModel(
                     status = details.licenceStatus,
