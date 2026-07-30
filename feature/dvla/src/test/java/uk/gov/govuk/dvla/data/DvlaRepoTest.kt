@@ -4,8 +4,15 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -25,8 +32,10 @@ import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DvlaRepoTest {
-
+    private val dispatcher = UnconfinedTestDispatcher()
+    private val testScope = TestScope(dispatcher)
     private val api = mockk<DvlaApi>()
     private val authRepo = mockk<AuthRepo>()
     private val dvlaDataStore = mockk<DvlaDataStore>()
@@ -36,10 +45,16 @@ class DvlaRepoTest {
 
     @Before
     fun setup() {
+        Dispatchers.setMain(dispatcher)
         every { identityRepo.linkStatusOf(LinkedService.DVLA) } returns flowOf(ServiceLinkStatus.UNLINKED)
         every { identityRepo.currentStatusOf(LinkedService.DVLA) } returns ServiceLinkStatus.UNLINKED
 
-        repo = DvlaRepo(api, authRepo, dvlaDataStore, identityRepo)
+        repo = DvlaRepo(testScope, api, authRepo, dvlaDataStore, identityRepo)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

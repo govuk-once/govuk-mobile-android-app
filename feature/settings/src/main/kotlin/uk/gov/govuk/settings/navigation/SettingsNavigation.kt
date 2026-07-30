@@ -88,14 +88,19 @@ fun NavGraphBuilder.settingsGraph(
                 modifier = modifier
             )
         }
+    }
+}
 
-        composable(YOUR_ACCOUNTS_ROUTE) {
-            YourAccountsRoute(
-                onBack = { navController.popBackStack() },
-                onNavigateToError = { navController.navigate(UNLINK_ACCOUNT_ERROR_ROUTE) },
-                modifier = modifier
-            )
-        }
+fun NavGraphBuilder.yourAccountsGraph(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    composable(YOUR_ACCOUNTS_ROUTE) {
+        YourAccountsRoute(
+            onBack = { navController.popBackStack() },
+            onNavigateToError = { navController.navigate(UNLINK_ACCOUNT_ERROR_ROUTE) },
+            modifier = modifier
+        )
     }
 }
 
