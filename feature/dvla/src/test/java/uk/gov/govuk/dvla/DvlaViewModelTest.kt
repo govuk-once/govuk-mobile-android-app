@@ -1,10 +1,14 @@
 package uk.gov.govuk.dvla
 
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,12 +48,14 @@ class DvlaViewModelTest {
 
     @Before
     fun setup() {
+        mockkStatic(Uri::class)
         Dispatchers.setMain(dispatcher)
         every { savedStateHandle.get<String>("token") } returns token
     }
 
     @After
     fun tearDown() {
+        unmockkAll()
         Dispatchers.resetMain()
     }
 
@@ -106,6 +112,14 @@ class DvlaViewModelTest {
         every { savedStateHandle.get<String>("token") } returns null
         coEvery { authRepo.refreshTokens() } returns true
         coEvery { linkingRepo.getVerification() } returns Result.Success(VerificationResponse("1234", "4321"))
+        every {
+            dvlaAuthUrl.toUri().buildUpon()
+                .appendQueryParameter("verification", "1234")
+                .appendQueryParameter("session", "4321")
+                .build()
+                .toString()
+        } returns "$dvlaAuthUrl?verification=1234&session=4321"
+
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl, linkingRepo, authRepo)
 
@@ -116,6 +130,7 @@ class DvlaViewModelTest {
         assertEquals(expected, viewModel.authUrlToLaunch.value)
         coVerify(exactly = 1) { authRepo.refreshTokens() }
         coVerify(exactly = 0) { repo.linkAccount(any()) }
+        assertEquals(DvlaViewModel.UiState.Loading.Auth, viewModel.uiState.value)
     }
 
     @Test
