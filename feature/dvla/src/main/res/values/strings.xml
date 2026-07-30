@@ -151,7 +151,6 @@
     <string name="fuel_type_alt_text">Fuel type %1$s</string>
     <string name="colour_alt_text">Colour %1$s</string>
     <string name="emissions_alt_text">%1$s grams per kilometre</string>
-    <string name="litres_alt_text">Litres</string>
 
     <string name="brown">Brown</string>
     <string name="bronze">Bronze</string>
