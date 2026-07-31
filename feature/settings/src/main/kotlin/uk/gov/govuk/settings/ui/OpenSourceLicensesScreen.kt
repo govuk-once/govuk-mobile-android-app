@@ -25,7 +25,7 @@ internal fun OpenSourceLicensesScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(GovUkTheme.colourScheme.surfaces.screenBackground)
+            .background(GovUkTheme.colourScheme.surfaces.background)
     ) {
         ChildPageHeader(
             dismissStyle = HeaderDismissStyle.Back(onBack)
