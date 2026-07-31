@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+    alias(libs.plugins.about.libraries)
 }
 
 val privacyPolicyUrl: String by project
@@ -77,8 +78,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.adaptive.android)
     implementation(libs.hilt.android)
-    implementation(libs.play.services.oss.licenses)
     implementation(libs.play.services.measurement.api)
+    implementation(libs.about.libraries.compose)
 
     ksp(libs.hilt.compiler)
 

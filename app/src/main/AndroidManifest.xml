@@ -44,13 +44,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-          android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-          android:theme="@style/LicensesTheme" />
-        <activity
-          android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-          android:theme="@style/LicensesTheme" />
-
         <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
         <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
