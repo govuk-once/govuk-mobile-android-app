@@ -26,6 +26,7 @@ crashlytics = "3.0.6"
 
 oneSignal = "5.4.1"
 ossLicenses = "0.10.10"
+aboutLibraries = "12.2.4"
 retrofit = "3.0.0"
 
 firebaseBom = "34.6.0"
@@ -38,7 +39,6 @@ firebaseAppDistribution = "5.2.0"
 kover = "0.9.3"
 sonarqube = "7.1.0.6387"
 playServicesMeasurementApi = "23.0.0"
-playServicesOssLicenses = "17.1.0"
 googleAccompanist = "0.37.3"
 browser = "1.9.0"
 googleTagManager = "18.3.0"
@@ -88,7 +88,6 @@ retrofit-scalars = { module = "com.squareup.retrofit2:converter-scalars", versio
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 realm-base = { group = "io.realm.kotlin", name = "library-base", version.ref = "realm"}
 play-services-measurement-api = { group = "com.google.android.gms", name = "play-services-measurement-api", version.ref = "playServicesMeasurementApi" }
-play-services-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 oss-licenses = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "ossLicenses" }
 google-tag-manager = { group = "com.google.android.gms", name = "play-services-tagmanager", version.ref = "googleTagManager" }
 
@@ -105,6 +104,7 @@ google-crypto-tink = { group = "com.google.crypto.tink", name = "tink-android", 
 commonmark = { group = "org.commonmark", name = "commonmark", version.ref = "commonmark" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "uiToolingPreview" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+about-libraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -120,4 +120,5 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 firebaseAppDistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
-oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicenses" }
+about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
+
