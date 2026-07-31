@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.navigation.NavController
 import uk.gov.govuk.analytics.navigation.ANALYTICS_GRAPH_ROUTE
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
+import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
@@ -55,7 +55,7 @@ internal class AppNavigation @Inject constructor(
     }
 
     fun navigateToHome(navController: NavController) {
-        navigate(navController, HOME_GRAPH_ROUTE)
+        navigate(navController, HOME_CONTAINER_ROUTE)
         deeplinkHandler.handleDeeplink(navController)
     }
 

@@ -46,6 +46,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import uk.gov.govuk.AppUiState
@@ -70,6 +71,8 @@ import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
+import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
@@ -77,7 +80,6 @@ import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.loginGraph
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.navigation.TopLevelDestination
-import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_DETAIL_ROUTE
 import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_ROUTE
 import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_ROUTE
 import uk.gov.govuk.notificationcentre.navigation.navigateToNotificationCentre
@@ -353,7 +355,12 @@ private fun BottomNav(
                                 // Pop up to the start destination of the graph to
                                 // avoid building up a large stack of destinations
                                 // on the back stack as users select items
-                                popUpTo(destination.route)
+                                popUpTo(TopLevelDestination.Home.route) {
+                                    saveState = true
+                                }
+
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         },
                         icon = {
@@ -489,42 +496,7 @@ private fun GovUkNavHost(
                 viewModel.topicSelectionCompleted()
             }
         )
-        topicsGraph(
-            navController = navController,
-            launchBrowser = { url ->
-                browserLauncher.launch(url) {
-                    showBrowserNotFoundAlert = true
-                }
-            },
-            topicHeader = { topicRef ->
-                val isDrivingTopic = topicRef.isDrivingTopic()
-                val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
 
-                if (isDrivingTopic && isFeatureEnabled) {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = GovUkTheme.spacing.medium),
-                        verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
-                    ) {
-                        // drop in the self-managed public header from the DVLA module
-                        DvlaLinkHeader(
-                            onActionClick = { navController.navigateToDvlaLinkIntro() }
-                        )
-
-                        // and licence summary widget from DVLA module
-                        VehiclesAndLicenceSummaryWidget(
-                            launchBrowser = { url ->
-                                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
-                            },
-                            onVehicleDetailsClick = { vehicleId ->
-                                navController.navigateToVehicleDetails(vehicleId)
-                            }
-                        )
-                    }
-                }
-            },
-            modifier = Modifier.padding(paddingValues)
-        )
         notificationsGraph(
             notificationsOnboardingCompleted = {
                 viewModel.onNotificationsOnboardingCompleted()
@@ -545,33 +517,115 @@ private fun GovUkNavHost(
                 ) { showBrowserNotFoundAlert = true }
             }
         )
-        homeGraph(
-            widgets = homeWidgets(
-                navController = navController,
+
+        navigation(route = HOME_CONTAINER_ROUTE, startDestination = HOME_GRAPH_ROUTE) {
+            homeGraph(
+                widgets = homeWidgets(
+                    navController = navController,
+                    homeWidgets = homeWidgets,
+                    onWidgetClick = onWidgetClick,
+                    onSuppressClick = onSuppressWidgetClick,
+                    launchBrowser = { url ->
+                        browserLauncher.launch(url) {
+                            showBrowserNotFoundAlert = true
+                        }
+                    }
+                ),
                 homeWidgets = homeWidgets,
-                onWidgetClick = onWidgetClick,
-                onSuppressClick = onSuppressWidgetClick,
+                modifier = Modifier.padding(paddingValues),
+                headerWidget = if (homeWidgets.contains(HomeWidget.Search)) {
+                    { modifier ->
+                        SearchWidget(
+                            onClick = { text ->
+                                onWidgetClick(text, null)
+                                navController.navigate(SEARCH_GRAPH_ROUTE)
+                            },
+                            modifier = modifier
+                        )
+                    }
+                } else null,
+                transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
+            )
+            topicsGraph(
+                navController = navController,
                 launchBrowser = { url ->
                     browserLauncher.launch(url) {
                         showBrowserNotFoundAlert = true
                     }
+                },
+                topicHeader = { topicRef ->
+                    val isDrivingTopic = topicRef.isDrivingTopic()
+                    val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
+
+                    if (isDrivingTopic && isFeatureEnabled) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = GovUkTheme.spacing.medium),
+                            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                        ) {
+                            // drop in the self-managed public header from the DVLA module
+                            DvlaLinkHeader(
+                                onActionClick = { navController.navigateToDvlaLinkIntro() }
+                            )
+
+                            // and licence summary widget from DVLA module
+                            VehiclesAndLicenceSummaryWidget(
+                                launchBrowser = { url ->
+                                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                                },
+                                onVehicleDetailsClick = { vehicleId ->
+                                    navController.navigateToVehicleDetails(vehicleId)
+                                }
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier.padding(paddingValues)
+            )
+            searchGraph(
+                navController,
+                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } })
+            visitedGraph(
+                navController = navController,
+                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+                modifier = Modifier.padding(paddingValues)
+            )
+
+            val exitLocal: () -> Unit =
+                { navController.popBackStack(HOME_GRAPH_START_DESTINATION, false) }
+
+            localGraph(
+                navController = navController,
+                onLocalAuthoritySelected = exitLocal,
+                onCancel = exitLocal,
+                modifier = Modifier.padding(paddingValues)
+            )
+
+            dvlaGraph(
+                onBack = {
+                    navController.popBackStack()
+                },
+                onContinueToLink = {
+                    navController.navigateToDvlaLink()
+                },
+                launchBrowser = { url ->
+                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                },
+                onLinkComplete = {
+                    navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
+                },
+                onUnlinkComplete = {
+                    navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
+                },
+                onIntroClose = {
+                    navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
+                },
+                onWebFlowClosed = {
+                    navController.popBackStack()
                 }
-            ),
-            homeWidgets = homeWidgets,
-            modifier = Modifier.padding(paddingValues),
-            headerWidget = if (homeWidgets.contains(HomeWidget.Search)) {
-                { modifier ->
-                    SearchWidget(
-                        onClick = { text ->
-                            onWidgetClick(text, null)
-                            navController.navigate(SEARCH_GRAPH_ROUTE)
-                        },
-                        modifier = modifier
-                    )
-                }
-            } else null,
-            transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
-        )
+            )
+        }
+
         notificationCentreGraph(
             navController,
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
@@ -601,24 +655,6 @@ private fun GovUkNavHost(
         unlinkAccountErrorGraph(
             navController = navController
         )
-        searchGraph(
-            navController,
-            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } })
-        visitedGraph(
-            navController = navController,
-            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-            modifier = Modifier.padding(paddingValues)
-        )
-
-        val exitLocal: () -> Unit =
-            { navController.popBackStack(HOME_GRAPH_START_DESTINATION, false) }
-
-        localGraph(
-            navController = navController,
-            onLocalAuthoritySelected = exitLocal,
-            onCancel = exitLocal,
-            modifier = Modifier.padding(paddingValues)
-        )
 
         chatGraph(
             navController = navController,
@@ -630,30 +666,6 @@ private fun GovUkNavHost(
                 bottom = imeBottomPadding,
                 end = paddingValues.calculateEndPadding(layoutDirection)
             )
-        )
-
-        dvlaGraph(
-            onBack = {
-                navController.popBackStack()
-            },
-            onContinueToLink = {
-                navController.navigateToDvlaLink()
-            },
-            launchBrowser = { url ->
-                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
-            },
-            onLinkComplete = {
-                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-            },
-            onUnlinkComplete = {
-                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-            },
-            onIntroClose = {
-                navController.popBackStack(DVLA_GRAPH_ROUTE, inclusive = true)
-            },
-            onWebFlowClosed = {
-                navController.popBackStack()
-            }
         )
     }
 
