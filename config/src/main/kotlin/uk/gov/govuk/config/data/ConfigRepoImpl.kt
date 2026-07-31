@@ -109,13 +109,16 @@ class ConfigRepoImpl @Inject constructor(
     override val isFlexEnabled: Boolean
         get() = safeConfig.releaseFlags.flex
 
-    override suspend fun clearRemoteConfigValues() {
-        firebaseDataSource.clearRemoteValues()
-    }
+    override val isDvlaLinkEnabled: Boolean
+        get() = safeConfig.releaseFlags.dvla
 
     override val dvlaUrls: DvlaUrls?
         get() = safeConfig.dvlaUrls
 
     override val promoBanners: List<PromoBanner>?
         get() = safeConfig.promoBanners
+
+    override suspend fun clearRemoteConfigValues() {
+        firebaseDataSource.clearRemoteValues()
+    }
 }

@@ -2,7 +2,6 @@ package uk.gov.govuk.config.data.flags
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -381,6 +380,46 @@ class FlagRepoTest {
 
     @Test
     fun `Given a release build, When DVLA link is enabled, then return false`() {
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isDvlaLinkEnabled())
+    }
+
+    @Test
+    fun `Given DVLA link is enabled and Flex is enabled, When is DVLA link enabled, then return true`() {
+        every { configRepo.isDvlaLinkEnabled } returns true
+        every { configRepo.isFlexEnabled } returns true
+
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertTrue(flagRepo.isDvlaLinkEnabled())
+    }
+
+    @Test
+    fun `Given DVLA link is enabled and Flex is disabled, When is DVLA link enabled, then return false`() {
+        every { configRepo.isDvlaLinkEnabled } returns true
+        every { configRepo.isFlexEnabled } returns false
+
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isDvlaLinkEnabled())
+    }
+
+    @Test
+    fun `Given DVLA link is disabled and Flex is enabled, When is DVLA link enabled, then return false`() {
+        every { configRepo.isDvlaLinkEnabled } returns false
+        every { configRepo.isFlexEnabled } returns true
+
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isDvlaLinkEnabled())
+    }
+
+    @Test
+    fun `Given DVLA link is disabled and Flex is disabled, When is DVLA link enabled, then return false`() {
+        every { configRepo.isDvlaLinkEnabled } returns false
+        every { configRepo.isFlexEnabled } returns false
+
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
         assertFalse(flagRepo.isDvlaLinkEnabled())
