@@ -1,10 +1,8 @@
-import com.google.android.gms.oss.licenses.plugin.LicensesTask
 import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.oss.licenses)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
@@ -166,11 +164,12 @@ dependencies {
     implementation(libs.google.accompanist)
 
     implementation(libs.lottie.compose)
-    implementation(libs.play.services.oss.licenses)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.scalars)
+
+    implementation(libs.about.libraries.compose)
 
     ksp(libs.hilt.compiler)
 
@@ -189,22 +188,4 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
-}
-
-// fixes for OSS Licenses plugin (v0.10.10) causing intermittent build crashes
-// and blank license screens on recent agp versions
-androidComponents.onVariants { variant ->
-    val taskName = "${variant.name}OssLicensesTask"
-    if (!tasks.names.contains(taskName)) return@onVariants
-    val ossTask = tasks.named<LicensesTask>(taskName)
-
-    variant.sources.res?.addGeneratedSourceDirectory(ossTask, LicensesTask::getGeneratedDirectory)
-
-    tasks.matching { it.name.contains(variant.name, ignoreCase = true) }.configureEach {
-        if (name.contains("OssLicensesCleanUp")) {
-            enabled = false
-        } else if (name.contains("Bundle") || name.contains("Package") || name.contains("Merge")) {
-            mustRunAfter(ossTask)
-        }
-    }
 }
