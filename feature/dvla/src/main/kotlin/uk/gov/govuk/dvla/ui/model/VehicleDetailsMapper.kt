@@ -42,7 +42,6 @@ import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
-import uk.gov.govuk.dvla.util.getFormattedEngineCapacityAltText
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
 import javax.inject.Inject
 
@@ -51,8 +50,6 @@ internal class VehicleDetailsMapper @Inject constructor(
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper
 ) {
     fun toUiModel(vesVehicle: VehicleDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
-        val engineCapacity =
-            vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) } ?: "Unknown"
         val yearOfFirstRegistration =
             vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
@@ -102,11 +99,8 @@ internal class VehicleDetailsMapper @Inject constructor(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
                     info = AccessibleString(
-                        displayText = engineCapacity,
-                        altText = getFormattedEngineCapacityAltText(
-                            engineCapacity,
-                            replacementText = stringProvider.getString(R.string.litres_alt_text)
-                        )
+                        displayText = vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) }
+                            ?: "Unknown"
                     )
                 ),
                 InternalLinkListItemModel.Info(
