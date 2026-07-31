@@ -29,7 +29,7 @@ class LinkingRepoTest {
     fun `Given getVerification is called, when response is successful, then returns success`() =
         runTest {
             coEvery { api.getVerification(VerificationRequest("1234")) } returns Response.success(
-                VerificationResponse("4321")
+                VerificationResponse("1111", "2222")
             )
             coEvery { authRepo.getAccessToken() } returns "1234"
 
