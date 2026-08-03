@@ -108,6 +108,7 @@ internal class ChatViewModel @Inject constructor(
                         chatEntries = conversation.answeredQuestions.mapNotNull { question ->
                             question.answer?.let { answer ->
                                 question.id to ChatEntry(
+                                    id = question.id,
                                     question = question.message,
                                     answer = answer.message,
                                     sources = answer.sources?.map { source ->
@@ -289,6 +290,7 @@ internal class ChatViewModel @Inject constructor(
                     put(
                         questionId,
                         ChatEntry(
+                            id = questionId,
                             question = question,
                             answer = "",
                             sources = emptyList()
