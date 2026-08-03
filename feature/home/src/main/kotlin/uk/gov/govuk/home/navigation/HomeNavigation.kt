@@ -4,15 +4,14 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.home.ui.HomeRoute
 
-const val HOME_GRAPH_ROUTE = "home_graph_route"
+const val HOME_CONTAINER_ROUTE = "home_container_route" // wrapper for the Home tab to enable backstack state saving
+const val HOME_GRAPH_ROUTE = "home_graph_route" // nested graph that handles the main home section
 private const val HOME_ROUTE = "home_route"
 const val HOME_GRAPH_START_DESTINATION = HOME_ROUTE
 

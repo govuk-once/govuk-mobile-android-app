@@ -15,7 +15,6 @@ import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.IdentityState
 import uk.gov.govuk.data.identity.model.LinkedService
-import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 

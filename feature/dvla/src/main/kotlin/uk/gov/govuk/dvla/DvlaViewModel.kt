@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
@@ -17,6 +18,7 @@ import uk.gov.govuk.dvla.linking.data.LinkingRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import javax.inject.Inject
 import javax.inject.Named
+import androidx.core.net.toUri
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(
@@ -24,7 +26,8 @@ internal class DvlaViewModel @Inject constructor(
     private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient,
     @param:Named("dvla_auth_url") private val dvlaAuthUrl: String,
-    private val linkingRepo: LinkingRepo
+    private val linkingRepo: LinkingRepo,
+    private val authRepo: AuthRepo
 ) : ViewModel() {
 
     companion object {
@@ -47,7 +50,10 @@ internal class DvlaViewModel @Inject constructor(
 
     sealed interface UiState {
         data object Default : UiState
-        data object Loading : UiState
+        sealed interface Loading : UiState {
+            data object Auth : Loading
+            data object Linking : Loading
+        }
         data object Success : UiState
         sealed interface Error : UiState {
             data object Offline : Error
@@ -78,22 +84,39 @@ internal class DvlaViewModel @Inject constructor(
         when {
             dvlaRepo.currentLinkState == ServiceLinkStatus.LINKED -> unlinkDvlaAccount()
             token != null -> handleAuthRedirect(token)
-            else -> startAuthFlow()
+            else -> refreshTokens()
         }
     }
 
-    private fun startAuthFlow() {
+    private fun refreshTokens() {
+        _uiState.value = UiState.Loading.Auth
         viewModelScope.launch {
-            when (val result = linkingRepo.getVerification()) {
-                is Result.Success -> launchAuthUrl(result.value.verificationHash)
-
-                else -> _uiState.value = UiState.Error.Other
+            if (authRepo.refreshTokens()) {
+                startAuthFlow()
+            } else {
+                _uiState.value = UiState.Error.Other
             }
         }
     }
 
-    private fun launchAuthUrl(verificationHash: String) {
-        _authUrlToLaunch.value = "$dvlaAuthUrl?verification=$verificationHash"
+    private suspend fun startAuthFlow() {
+        when (val result = linkingRepo.getVerification()) {
+            is Result.Success -> {
+                launchAuthUrl(
+                    result.value.verificationHash,
+                    result.value.sessionHash
+                )
+            }
+            else -> _uiState.value = UiState.Error.Other
+        }
+    }
+
+    private fun launchAuthUrl(verificationHash: String, sessionHash: String) {
+        val authUrl = dvlaAuthUrl.toUri().buildUpon()
+            .appendQueryParameter("verification", verificationHash)
+            .appendQueryParameter("session", sessionHash)
+            .build()
+        _authUrlToLaunch.value = authUrl.toString()
     }
 
     fun onIntroPageView(screenTitle: String) {
@@ -184,7 +207,7 @@ internal class DvlaViewModel @Inject constructor(
 
     fun handleAuthRedirect(token: String) {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
+            _uiState.value = UiState.Loading.Linking
             linkDvlaAccount(token)
         }
     }
@@ -199,7 +222,7 @@ internal class DvlaViewModel @Inject constructor(
 
     private fun unlinkDvlaAccount() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
+            _uiState.value = UiState.Loading.Linking
             when (dvlaRepo.unlinkAccount()) {
                 is Result.Success -> _linkingEvent.emit(LinkingEvent.UnlinkComplete)
                 is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline

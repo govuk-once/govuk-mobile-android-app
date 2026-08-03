@@ -385,7 +385,10 @@ fun OverflowButton(
             .size(36.dp)
             .clip(CircleShape)
             .background(background)
-            .clickable(onClick = onClick),
+            .clickable(
+                onClick = onClick,
+                role = Role.Button
+            ),
         contentAlignment = Alignment.Center
     ) {
         Icon(

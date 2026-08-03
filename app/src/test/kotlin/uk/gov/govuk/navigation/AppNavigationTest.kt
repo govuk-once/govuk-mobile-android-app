@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.navigation.ANALYTICS_GRAPH_ROUTE
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
@@ -137,7 +138,7 @@ class AppNavigationTest {
         appLaunchNav.navigateToHome(navController)
         verify {
             navController.popBackStack()
-            navController.navigate(HOME_GRAPH_ROUTE)
+            navController.navigate(HOME_CONTAINER_ROUTE)
             deeplinkHandler.handleDeeplink(navController)
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import uk.gov.govuk.design.R
@@ -52,6 +53,7 @@ internal fun LinkStatusItem(
             Title3BoldLabel(
                 text = title.displayText,
                 modifier = Modifier
+                    .semantics { heading() }
                     .withAltText(title.altText)
             )
 

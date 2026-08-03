@@ -89,11 +89,15 @@ internal fun DvlaLinkingRoute(
             )
         }
 
-        is DvlaViewModel.UiState.Loading -> {
-            DvlaLinkLoadingScreen(
-                modifier = modifier
-            )
-        }
+        is DvlaViewModel.UiState.Loading.Auth -> DvlaLoadingScreen(
+            title = "",
+            modifier = modifier
+        )
+
+        is DvlaViewModel.UiState.Loading.Linking -> DvlaLoadingScreen(
+            title = stringResource(R.string.link_dvla_connecting_title),
+            modifier = modifier
+        )
 
         is DvlaViewModel.UiState.Error.Offline -> {
             DvlaOfflineScreen(
@@ -127,11 +131,12 @@ internal fun DvlaLinkingRoute(
 }
 
 @Composable
-private fun DvlaLinkLoadingScreen(
+private fun DvlaLoadingScreen(
+    title: String,
     modifier: Modifier = Modifier
 ) {
     BookendConnectingScreen(
-        title = stringResource(R.string.link_dvla_connecting_title),
+        title = title,
         modifier = modifier
     )
 }

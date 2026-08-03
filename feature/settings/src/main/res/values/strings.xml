@@ -52,4 +52,7 @@
   <string name="remove_account_error_page_button_text">Go back to your accounts</string>
   <string name="remove_account_unlinking_alt_text">Removing account</string>
 
+  <string name="open_source_licenses_title">Open source licenses</string>
+  <string name="dvla_vrm_font_license_title">DVLA - VRM</string>
+
 </resources>
