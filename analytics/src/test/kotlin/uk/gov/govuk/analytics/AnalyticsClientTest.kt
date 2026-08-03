@@ -22,19 +22,24 @@ class AnalyticsClientTest {
 
     private val analyticsRepo = mockk<AnalyticsRepo>(relaxed = true)
     private val firebaseAnalyticClient = mockk<FirebaseAnalyticsClient>(relaxed = true)
+    private val analyticsCoordinator = mockk<AnalyticsCoordinatorInterface>(relaxed = true)
 
     private lateinit var analyticsClient: AnalyticsClient
 
     @Before
     fun setup() {
-        analyticsClient = AnalyticsClient(analyticsRepo, firebaseAnalyticClient)
+        analyticsClient = AnalyticsClient(
+            analyticsRepo,
+            firebaseAnalyticClient,
+            analyticsCoordinator
+        )
 
         every { analyticsRepo.analyticsEnabledState } returns ENABLED
         analyticsClient.isUserSessionActive = { true }
     }
 
     @Test
-    fun `Given analytics are disabled, when an event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are disabled, when an event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns DISABLED
 
         analyticsClient.screenView(
@@ -44,12 +49,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given analytics are not set, when an event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are not set, when an event is logged, then do not log event`() = runTest {
         analyticsClient.isUserSessionActive = { false }
 
         analyticsClient.screenView(
@@ -59,12 +64,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given user session is not active, when an event is logged, then do not log to firebase`() = runTest {
+    fun `Given user session is not active, when an event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns NOT_SET
 
         analyticsClient.screenView(
@@ -74,12 +79,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEvent(any(), any())
+            analyticsCoordinator.logEvent(any(), any())
         }
     }
 
     @Test
-    fun `Given analytics are disabled, when a select item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are disabled, when a select item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns DISABLED
 
         analyticsClient.selectItemEvent(
@@ -93,12 +98,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
     @Test
-    fun `Given analytics are not set, when a select item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are not set, when a select item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns NOT_SET
 
         analyticsClient.selectItemEvent(
@@ -112,12 +117,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), 42)
         }
     }
 
     @Test
-    fun `Given analytics are disabled, when a view list item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are disabled, when a view list item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns DISABLED
 
         analyticsClient.viewItemListEvent(
@@ -130,12 +135,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
     @Test
-    fun `Given analytics are not set, when a view list item ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given analytics are not set, when a view list item ecommerce event is logged, then do not log event`() = runTest {
         coEvery { analyticsRepo.analyticsEnabledState } returns NOT_SET
 
         analyticsClient.viewItemListEvent(
@@ -148,12 +153,12 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
     @Test
-    fun `Given a user session is not active, when an ecommerce event is logged, then do not log to firebase`() = runTest {
+    fun `Given a user session is not active, when an ecommerce event is logged, then do not log event`() = runTest {
         analyticsClient.isUserSessionActive = { false }
 
         analyticsClient.selectItemEvent(
@@ -167,7 +172,7 @@ class AnalyticsClientTest {
         )
 
         verify(exactly = 0) {
-            firebaseAnalyticClient.logEcommerceEvent(any(), any())
+            analyticsCoordinator.logEcommerceEvent(any(), any(), null)
         }
     }
 
@@ -180,7 +185,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW,
                 mapOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to "screenClass",
@@ -202,7 +207,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 FirebaseAnalytics.Event.SCREEN_VIEW,
                 mapOf(
                     FirebaseAnalytics.Param.SCREEN_CLASS to "screenClass",
@@ -220,7 +225,7 @@ class AnalyticsClientTest {
         analyticsClient.buttonClick("text")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Button",
@@ -242,7 +247,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Button",
@@ -261,7 +266,7 @@ class AnalyticsClientTest {
         analyticsClient.chat()
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Chat",
                 mapOf(
                     "action" to "Ask Question",
@@ -277,7 +282,7 @@ class AnalyticsClientTest {
         analyticsClient.notificationCentreUrlLaunched(testUrl)
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "NotificationCentreUrlLaunched",
                 mapOf(
                     "url" to testUrl
@@ -291,7 +296,7 @@ class AnalyticsClientTest {
         analyticsClient.notificationCentreMarkUnread()
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "NotificationCentreMarkUnread",
                 mapOf()
             )
@@ -303,7 +308,7 @@ class AnalyticsClientTest {
         analyticsClient.notificationCentreDelete()
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "NotificationCentreDelete",
                 mapOf(
                     "action" to "tap"
@@ -317,7 +322,7 @@ class AnalyticsClientTest {
         analyticsClient.notificationCentreConfirmDelete()
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "NotificationCentreDelete",
                 mapOf(
                     "action" to "confirm"
@@ -331,7 +336,7 @@ class AnalyticsClientTest {
         analyticsClient.notificationCentreCancelDelete()
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "NotificationCentreDelete",
                 mapOf(
                     "action" to "cancel"
@@ -345,7 +350,7 @@ class AnalyticsClientTest {
         analyticsClient.search("search term")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "typed",
@@ -360,7 +365,7 @@ class AnalyticsClientTest {
         analyticsClient.search("search term A1 1AA")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "typed",
@@ -375,7 +380,7 @@ class AnalyticsClientTest {
         analyticsClient.search("search term test@email.com")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "typed",
@@ -390,7 +395,7 @@ class AnalyticsClientTest {
         analyticsClient.search("search term AA 00 00 00 A")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "typed",
@@ -405,7 +410,7 @@ class AnalyticsClientTest {
         analyticsClient.autocomplete("input")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "autocomplete",
@@ -420,7 +425,7 @@ class AnalyticsClientTest {
         analyticsClient.autocomplete("input A1 1AA")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "autocomplete",
@@ -435,7 +440,7 @@ class AnalyticsClientTest {
         analyticsClient.autocomplete("input test@email.com")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "autocomplete",
@@ -450,7 +455,7 @@ class AnalyticsClientTest {
         analyticsClient.autocomplete("input AA 00 00 00 A")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "autocomplete",
@@ -465,7 +470,7 @@ class AnalyticsClientTest {
         analyticsClient.history("input")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "history",
@@ -480,7 +485,7 @@ class AnalyticsClientTest {
         analyticsClient.history("input A1 1AA")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "history",
@@ -495,7 +500,7 @@ class AnalyticsClientTest {
         analyticsClient.history("input test@email.com")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "history",
@@ -510,7 +515,7 @@ class AnalyticsClientTest {
         analyticsClient.history("input AA 00 00 00 A")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Search",
                 mapOf(
                     "type" to "history",
@@ -525,7 +530,7 @@ class AnalyticsClientTest {
         analyticsClient.searchResultClick("search result title", "search result link")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "SearchResult",
@@ -543,7 +548,7 @@ class AnalyticsClientTest {
         analyticsClient.chatQuestionAnswerReturnedEvent()
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "ChatQuestionAnswerReturned",
@@ -560,7 +565,7 @@ class AnalyticsClientTest {
         analyticsClient.chatMarkdownLinkClick("chat title", "chat link")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "ChatMarkdownLink",
@@ -578,7 +583,7 @@ class AnalyticsClientTest {
         analyticsClient.visitedItemClick("visited item title", "visited item link")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "VisitedItem",
@@ -596,7 +601,7 @@ class AnalyticsClientTest {
         analyticsClient.settingsItemClick("settings item title", "settings item link")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "SettingsItem",
@@ -614,7 +619,7 @@ class AnalyticsClientTest {
         analyticsClient.settingsItemClick("settings item title", external = false)
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "SettingsItem",
@@ -631,7 +636,7 @@ class AnalyticsClientTest {
         analyticsClient.tabClick("text")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Tab",
@@ -652,7 +657,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Widget",
@@ -675,7 +680,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Widget",
@@ -694,7 +699,7 @@ class AnalyticsClientTest {
         analyticsClient.suppressWidgetClick("id", "section")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Function",
                 mapOf(
                     "type" to "Widget",
@@ -712,7 +717,7 @@ class AnalyticsClientTest {
         analyticsClient.deepLinkEvent(true, "url")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "DeepLink",
@@ -730,7 +735,7 @@ class AnalyticsClientTest {
         analyticsClient.deepLinkEvent(false, "url")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "DeepLink",
@@ -752,7 +757,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Function",
                 mapOf(
                     "type" to "Toggle",
@@ -774,7 +779,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Function",
                 mapOf(
                     "type" to "Button",
@@ -849,6 +854,7 @@ class AnalyticsClientTest {
             coVerify {
                 analyticsRepo.analyticsEnabled()
                 firebaseAnalyticClient.enable()
+                analyticsCoordinator.initialize()
             }
         }
     }
@@ -902,15 +908,13 @@ class AnalyticsClientTest {
             totalItemCount = 5
         )
 
-        println(ecommerceEvent)
-
         analyticsClient.selectItemEvent(
             ecommerceEvent = ecommerceEvent,
             selectedItemIndex = 42
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.SELECT_ITEM,
                 ecommerceEvent = ecommerceEvent,
                 selectedItemIndex = 42
@@ -950,9 +954,10 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
+                ecommerceEvent = ecommerceEvent,
+                null
             )
         }
     }
@@ -973,9 +978,10 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEcommerceEvent(
+            analyticsCoordinator.logEcommerceEvent(
                 event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-                ecommerceEvent = ecommerceEvent
+                ecommerceEvent = ecommerceEvent,
+                null
             )
         }
     }
@@ -996,7 +1002,7 @@ class AnalyticsClientTest {
         analyticsClient.cardClick("text")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "trigger card",
@@ -1018,7 +1024,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "trigger card",
@@ -1040,7 +1046,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Icon type",
@@ -1057,7 +1063,7 @@ class AnalyticsClientTest {
         analyticsClient.accountCardClick("text")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "Account card",
@@ -1074,7 +1080,7 @@ class AnalyticsClientTest {
         analyticsClient.menuItemClick("text")
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Navigation",
                 mapOf(
                     "type" to "menu",
@@ -1095,7 +1101,7 @@ class AnalyticsClientTest {
         )
 
         verify {
-            firebaseAnalyticClient.logEvent(
+            analyticsCoordinator.logEvent(
                 "Function",
                 mapOf(
                     "type" to "Menu",
