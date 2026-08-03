@@ -59,6 +59,9 @@ internal class ChatViewModel @Inject constructor(
 
     val chatUrls = configRepo.chatUrls
 
+    private var loadConversationJob: Job? = null
+    private var askQuestionJob: Job? = null
+
     init {
         viewModelScope.launch {
             if (chatRepo.isChatIntroSeen.first()) {
@@ -86,17 +89,12 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private var loadConversationJob: Job? = null
-    private var askQuestionJob: Job? = null
-
     fun loadConversation() {
         if (loadConversationJob?.isActive == true) return
 
-        val currentState = _uiState.value
-        if (currentState is Default) {
-            _uiState.value = currentState.copy(isLoading = true)
-        } else {
-            _uiState.value = Default(isLoading = true)
+        _uiState.value = when (val currentState = _uiState.value) {
+            is Default -> currentState.copy(isLoading = true)
+            else -> Default(isLoading = true)
         }
 
         loadConversationJob = viewModelScope.launch {
