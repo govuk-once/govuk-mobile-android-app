@@ -27,13 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.OverflowButton
+import uk.gov.govuk.design.ui.extension.withAltText
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
@@ -124,8 +124,7 @@ private fun CardOverflowMenu(
         ) {
             menuItems.forEach { item ->
                 OverflowMenuItemRow(
-                    text = item.text.displayText,
-                    altText = item.text.altText,
+                    title = AccessibleString(item.text.displayText, item.text.altText),
                     onClick = {
                         onMenuItemClick(item)
                         expanded = false
@@ -136,8 +135,7 @@ private fun CardOverflowMenu(
             if (isTalkBackOn) {
                 HorizontalDivider()
                 OverflowMenuItemRow(
-                    text = stringResource(R.string.menu_close_menu),
-                    altText = null,
+                    title = AccessibleString(stringResource(R.string.menu_close_menu)),
                     onClick = { expanded = false }
                 )
             }
@@ -147,20 +145,15 @@ private fun CardOverflowMenu(
 
 @Composable
 private fun OverflowMenuItemRow(
-    text: String,
-    altText: String? = null,
+    title: AccessibleString,
     onClick: () -> Unit
 ) {
     DropdownMenuItem(
         text = {
             BodyRegularLabel(
-                text = text,
+                text = title.displayText,
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = if (altText != null) {
-                    Modifier.semantics { contentDescription = altText }
-                } else {
-                    Modifier
-                }
+                modifier = Modifier.withAltText(title.altText)
             )
         },
         onClick = onClick,
