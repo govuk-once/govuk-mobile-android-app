@@ -614,8 +614,10 @@ class AppViewModelTest {
             viewModel.onLogin()
             advanceUntilIdle()
 
-            coVerify {
+            coVerify(exactly = 0) {
                 authRepo.clear()
+            }
+            coVerify(exactly = 1) {
                 appRepo.clear()
                 loginRepo.clear()
                 topicsFeature.clear()

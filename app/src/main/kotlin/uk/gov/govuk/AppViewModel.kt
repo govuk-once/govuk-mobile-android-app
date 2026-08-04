@@ -181,7 +181,6 @@ internal class AppViewModel @Inject constructor(
     fun onLogin() {
         viewModelScope.launch {
             if (authRepo.isDifferentUser()) {
-                authRepo.clear()
                 appRepo.clear()
                 loginRepo.clear()
                 termsRepo.clear()
