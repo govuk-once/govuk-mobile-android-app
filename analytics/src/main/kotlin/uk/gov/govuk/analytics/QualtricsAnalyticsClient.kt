@@ -159,91 +159,91 @@ class QualtricsAnalyticsClient @Inject constructor(
         return QualtricsTheme.Builder()
             .setMobileAppPromptTheme(
                 MobileAppPromptTheme(
-                    backgroundColor = R.color.background,
-                    headlineTextColor = R.color.text,
+                    backgroundColor = R.color.surface_list,
+                    headlineTextColor = R.color.text_primary,
                     headlineFont = FontTheme(bodyBold, largeSize),
-                    descriptionTextColor = R.color.text,
+                    descriptionTextColor = R.color.text_primary,
                     descriptionFont = FontTheme(bodyRegular, regularSize),
-                    closeButtonColor = R.color.background,
-                    closeButtonBackgroundColor = R.color.primary,
+                    closeButtonColor = R.color.white,
+                    closeButtonBackgroundColor = R.color.accent,
                     buttonOneTheme = ButtonTheme(
-                        labelColor = R.color.primary,
+                        labelColor = R.color.white,
                         font = FontTheme(bodyRegular, mediumSize),
-                        backgroundColor = R.color.background,
-                        borderColor = R.color.primary,
-                        linkColor = R.color.link
+                        backgroundColor = R.color.accent,
+                        borderColor = R.color.accent,
+                        linkColor = R.color.accent
                     ),
                     buttonTwoTheme = ButtonTheme(
-                        labelColor = R.color.background,
+                        labelColor = R.color.accent,
                         font = FontTheme(bodyRegular, mediumSize),
-                        backgroundColor = R.color.primary,
-                        borderColor = R.color.primary,
-                        linkColor = R.color.link
+                        backgroundColor = R.color.surface_list,
+                        borderColor = R.color.accent,
+                        linkColor = R.color.accent
                     )
                 )
             )
             .setEmbeddedAppFeedbackTheme(
                 EmbeddedAppFeedbackTheme(
-                    dialogBackgroundColor = R.color.background,
-                    closeButtonColor = R.color.background,
-                    closeButtonBackgroundColor = R.color.primary,
+                    dialogBackgroundColor = R.color.surface_list,
+                    closeButtonColor = R.color.white,
+                    closeButtonBackgroundColor = R.color.accent,
                     initialQuestionTheme = InitialQuestionTheme(
-                        color = R.color.text,
+                        color = R.color.text_primary,
                         initialQuestion = FontTheme(bodyBold, largeSize)
                     ),
                     followupQuestionTheme = FollowupQuestionTheme(
-                        color = R.color.text,
+                        color = R.color.text_primary,
                         followupQuestionFont = FontTheme(bodyBold, largeSize),
                         followupQuestionTextInputFont = FontTheme(bodyRegular, regularSize)
                     ),
                     thankYouTheme = ThankYouTheme(
-                        color = R.color.text,
+                        color = R.color.text_primary,
                         thankYouTextFont = FontTheme(bodyBold, largeSize),
                     ),
                     yesNoButtonsTheme = YesNoButtonsTheme(
-                        yesButtonTextColor = R.color.background,
-                        yesButtonBorderColor = R.color.primary,
-                        yesButtonFillColor = R.color.primary,
+                        yesButtonTextColor = R.color.accent,
+                        yesButtonBorderColor = R.color.white,
+                        yesButtonFillColor = R.color.accent,
                         yesButtonFont = FontTheme(bodyRegular, mediumSize),
-                        noButtonTextColor = R.color.primary,
-                        noButtonBorderColor = R.color.primary,
-                        noButtonFillColor = R.color.background,
+                        noButtonTextColor = R.color.accent,
+                        noButtonBorderColor = R.color.accent,
+                        noButtonFillColor = R.color.surface_list,
                         noButtonFont = FontTheme(bodyRegular, mediumSize),
                     ),
                     thumbsButtonsTheme = ThumbsButtonsTheme(
-                        thumbUpBorderColor = R.color.text,
-                        thumbUpFillColor = R.color.secondary,
-                        thumbDownBorderColor = R.color.text,
-                        thumbDownFillColor = R.color.secondary
+                        thumbUpBorderColor = R.color.accent,
+                        thumbUpFillColor = R.color.surface_list,
+                        thumbDownBorderColor = R.color.accent,
+                        thumbDownFillColor = R.color.accent
                     ),
                     emojiTheme = EmojiTheme(
-                        borderColor = R.color.primary,
-                        fillColor = R.color.primary,
-                        tintColor = R.color.background
+                        borderColor = R.color.accent,
+                        fillColor = R.color.accent,
+                        tintColor = R.color.white
                     ),
                     starTheme = StarTheme(
-                        borderColor = R.color.primary
+                        borderColor = R.color.accent
                     ),
                     multipleChoiceTheme = MultipleChoiceTheme(
                         questionTextFont = FontTheme(bodyRegular, regularSize),
-                        otherAnswerTextColor = R.color.background,
+                        otherAnswerTextColor = R.color.text_primary,
                         otherAnswerTextFont = FontTheme(bodyRegular, regularSize),
-                        otherAnswerBackgroundColor = R.color.secondary,
+                        otherAnswerBackgroundColor = R.color.surface_background,
                         radioButtonsTheme = RadioButtonsTheme(
                             textFont = FontTheme(bodyRegular, regularSize),
-                            selectedCircleColor = R.color.background,
-                            selectedBackgroundColor = R.color.secondary,
-                            unselectedCircleColor = R.color.secondary,
+                            selectedCircleColor = R.color.accent_light,
+                            selectedBackgroundColor = R.color.surface_list,
+                            unselectedCircleColor = R.color.list_divider,
                         )
                     ),
                     submitButtonTheme = SubmitButtonTheme(
-                        textColor = R.color.background,
-                        fillColor = R.color.primary,
+                        textColor = R.color.white,
+                        fillColor = R.color.accent,
                         font = FontTheme(bodyRegular, mediumSize)
                     ),
                     textInputTheme = TextInputTheme(
-                        multilineTextInputColor = R.color.background,
-                        multilineTextInputBackgroundColor = R.color.secondary,
+                        multilineTextInputColor = R.color.text_primary,
+                        multilineTextInputBackgroundColor = R.color.surface_background,
                     )
                 )
             )
