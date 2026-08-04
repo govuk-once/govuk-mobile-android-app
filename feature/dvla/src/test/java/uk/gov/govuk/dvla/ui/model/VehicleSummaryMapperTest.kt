@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.ui.model
 
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -46,13 +47,14 @@ class VehicleSummaryMapperTest {
     }
 
     private fun makeVehicle(
+        model: String? = null,
         sornStart: LocalDate? = null,
         taxStatus: TaxStatus = TaxStatus.UNKNOWN
     ) = VehicleSummary(
         vehicleId = 156487251,
         registration = "AA19 AAA",
         make = "FORD",
-        model = "FIESTA",
+        model = model,
         taxStatus = taxStatus,
         taxExpiryDate = null,
         motStatus = MotStatus.UNKNOWN,
@@ -60,6 +62,12 @@ class VehicleSummaryMapperTest {
         sornStart = sornStart,
         currentLicencePaymentMethod = null
     )
+
+    @Test
+    fun `Given vehicle model is null, then mapped model is an empty string`() {
+        val result = mapper.toUiModel(makeVehicle(model = null), dvlaUrls = null)
+        assertEquals("", result.model)
+    }
 
     @Test
     fun `Given dvlaUrls is null, then menu items is empty`() {
