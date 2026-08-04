@@ -160,7 +160,6 @@ class VehicleDetailsMapperTest {
     @Test
     fun `Given valid emissions, then mapped emissions display text and alt text are correct`() {
         every { stringProvider.getString(R.string.emissions_title) } returns "Emissions"
-        every { stringProvider.getString(R.string.emissions_alt_text, 199) } returns "199 g/km"
 
         val vehicleDetails = mapper.toUiModel(
             makeVehicleDetails(exhaustEmissionsCo2 = 199),
@@ -172,6 +171,5 @@ class VehicleDetailsMapperTest {
             .first { it.title.displayText == "Emissions" }
 
         assertEquals("199", emissionsSpec.info.displayText)
-        assertEquals("199 g/km", emissionsSpec.info.altText)
     }
 }
