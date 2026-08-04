@@ -1,10 +1,13 @@
 package uk.gov.govuk.notificationcentre.data
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.remote.safeAuthApiCall
+import uk.gov.govuk.notificationcentre.data.di.NotificationCentreScope
 import uk.gov.govuk.notificationcentre.data.model.Notification
 import uk.gov.govuk.notificationcentre.data.model.UpdateNotificationRequestBody
 import uk.gov.govuk.notificationcentre.data.remote.NotificationCentreApi
@@ -22,7 +25,8 @@ class DateProviderImpl: DateProvider {
 internal class NotificationCentreRepoImpl @Inject constructor(
     private val notificationCentreApi: NotificationCentreApi,
     private val authRepo: AuthRepo,
-    private val dateProvider: DateProvider
+    private val dateProvider: DateProvider,
+    @param:NotificationCentreScope private val scope: CoroutineScope
 ) : NotificationCentreRepo {
 
     data class CacheEntry<T>(val value: T, val lastUpdated: Instant = Instant.now()) {
@@ -44,7 +48,18 @@ internal class NotificationCentreRepoImpl @Inject constructor(
         }, authRepo = authRepo)
 
         if (res is Success) {
-            notifications = CacheEntry(res.value)
+            val curr = notifications
+
+            // Discard the fetch value if a mutation extended the expiry of the cached value
+            // while this call was in flight
+            val entry = if (curr == null || curr.hasExpired(dateProvider.date)) {
+                CacheEntry(res.value)
+            } else {
+                curr
+            }
+            notifications = entry
+
+            return Success(entry.value)
         }
 
         return res
@@ -69,40 +84,42 @@ internal class NotificationCentreRepoImpl @Inject constructor(
     }
 
     override suspend fun updateNotification(notificationId: String, status: UpdateNotificationRequestBody.Status): Result<Unit> {
-        notifications?.let { nots ->
-            val updatedNotifications = nots.value.map {
-                if (it.id == notificationId) {
-                    val statusString = when (status) {
-                        UpdateNotificationRequestBody.Status.READ -> "READ"
-                        UpdateNotificationRequestBody.Status.UNREAD -> "DELIVERED"
-                    }
-
-                    it.copy(status = statusString)
-                } else {
-                    it
-                }
+        notifications = notifications?.let { nots ->
+            val statusString = when (status) {
+                UpdateNotificationRequestBody.Status.READ -> "READ"
+                UpdateNotificationRequestBody.Status.UNREAD -> "DELIVERED"
             }
-            notifications = notifications?.copy(value = updatedNotifications)
+
+            CacheEntry(nots.value.map {
+                if (it.id == notificationId) it.copy(status = statusString) else it
+            })
         }
 
-        return safeAuthApiCall(apiCall = {
-            notificationCentreApi.updateNotification(
-                notificationId,
-                UpdateNotificationRequestBody(status)
-            )
-        }, authRepo = authRepo)
+        scope.launch {
+            safeAuthApiCall(apiCall = {
+                notificationCentreApi.updateNotification(
+                    notificationId,
+                    UpdateNotificationRequestBody(status)
+                )
+            }, authRepo = authRepo)
+        }
+
+        return Success(Unit)
     }
 
     override suspend fun deleteNotification(notificationId: String): Result<Unit> {
-        notifications?.let { nots ->
-            val updatedNotifications = nots.value.filter { it.id != notificationId }
-            notifications = nots.copy(value = updatedNotifications)
+        notifications = notifications?.let { nots ->
+            CacheEntry(nots.value.filter { it.id != notificationId })
         }
 
-        return safeAuthApiCall(apiCall = {
-            notificationCentreApi.deleteNotification(
-                notificationId
-            )
-        }, authRepo = authRepo)
+        scope.launch {
+            safeAuthApiCall(apiCall = {
+                notificationCentreApi.deleteNotification(
+                    notificationId
+                )
+            }, authRepo = authRepo)
+        }
+
+        return Success(Unit)
     }
 }

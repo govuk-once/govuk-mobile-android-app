@@ -4,6 +4,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import retrofit2.Retrofit
 import uk.gov.govuk.notificationcentre.DefaultNotificationCentreFeature
 import uk.gov.govuk.notificationcentre.NotificationCentreFeature
@@ -13,7 +16,12 @@ import uk.gov.govuk.notificationcentre.data.NotificationCentreRepo
 import uk.gov.govuk.notificationcentre.data.NotificationCentreRepoImpl
 import uk.gov.govuk.notificationcentre.data.remote.NotificationCentreApi
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+internal annotation class NotificationCentreScope
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -40,6 +48,12 @@ internal object NotificationCentreModule {
     fun provideDateProvider(): DateProvider {
         return DateProviderImpl()
     }
+
+    @Provides
+    @Singleton
+    @NotificationCentreScope
+    fun provideCoroutineScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
 }
 

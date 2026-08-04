@@ -3,6 +3,7 @@ package uk.gov.govuk.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -77,8 +78,11 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
-    private fun loadMessages() {
-        viewModelScope.launch {
+    private var loadMessagesJob: Job? = null
+
+    fun loadMessages() {
+        loadMessagesJob?.cancel()
+        loadMessagesJob = viewModelScope.launch {
             dvlaRepo.linkState.collect { state ->
                 when (state) {
                     ServiceLinkStatus.CHECKING -> {
@@ -116,8 +120,6 @@ internal class SettingsViewModel @Inject constructor(
             screenName = SCREEN_NAME,
             title = TITLE
         )
-
-        loadMessages()
     }
 
     fun onAccount() {
