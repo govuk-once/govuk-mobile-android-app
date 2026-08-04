@@ -5,6 +5,8 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
+import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.FuelType
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
@@ -29,7 +31,9 @@ class VehicleDetailsMapperTest {
         keeperTitle: String? = "MR",
         keeperFirstNames: String? = "DAWN",
         keeperLastName: String? = "WILLIAMS",
-        keeperFullAddress: String? = "Long View Rd\nMorriston\nSwansea\nSA6 7JL"
+        keeperFullAddress: String? = "Long View Rd\nMorriston\nSwansea\nSA6 7JL",
+        colour: VehicleColour = VehicleColour.RED,
+        secondaryColour: VehicleColour? = null
     ) = VehicleDetails(
         summary = VehicleSummary(
             vehicleId = 156487251,
@@ -45,8 +49,8 @@ class VehicleDetailsMapperTest {
         ),
         dateOfFirstRegistration = LocalDate.of(2020, 6, 1),
         fuelType = FuelType.PETROL,
-        colour = VehicleColour.RED,
-        secondaryColour = null,
+        colour = colour,
+        secondaryColour = secondaryColour,
         engineCapacity = 2000,
         exhaustEmissionsCo2 = 199,
         keeperTitle = keeperTitle,
@@ -97,5 +101,58 @@ class VehicleDetailsMapperTest {
         assertEquals("FORD", result.make)
         assertEquals("FIESTA", result.model)
         assertEquals("AA19 AAA", result.registration)
+    }
+
+    @Test
+    fun `Given there is secondary colour, when mapped, colour contains both`() {
+        every { stringProvider.getString(R.string.colour_title) } returns "Colour"
+        every { stringProvider.getString(R.string.red) } returns "Red"
+        every { stringProvider.getString(R.string.blue) } returns "Blue"
+        every { stringProvider.getString(R.string.concatenated_vehicle_colours, "Red", "blue") } returns "Red and blue"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(colour = VehicleColour.RED, secondaryColour = VehicleColour.BLUE),
+            dvlaUrls = null
+        )
+
+        val colourSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Colour" }
+
+        assertEquals("Red and blue", colourSpec.info.displayText)
+    }
+
+    @Test
+    fun `Given secondary colour unknown, when mapped, colour contains only primary colour`() {
+        every { stringProvider.getString(R.string.colour_title) } returns "Colour"
+        every { stringProvider.getString(R.string.red) } returns "Red"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(colour = VehicleColour.RED, secondaryColour = VehicleColour.UNKNOWN),
+            dvlaUrls = null
+        )
+
+        val colourSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Colour" }
+
+        assertEquals("Red", colourSpec.info.displayText)
+    }
+
+    @Test
+    fun `Given secondary colour not stated, when mapped, colour contains only primary colour`() {
+        every { stringProvider.getString(R.string.colour_title) } returns "Colour"
+        every { stringProvider.getString(R.string.red) } returns "Red"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(colour = VehicleColour.RED, secondaryColour = VehicleColour.NOT_STATED),
+            dvlaUrls = null
+        )
+
+        val colourSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Colour" }
+
+        assertEquals("Red", colourSpec.info.displayText)
     }
 }
