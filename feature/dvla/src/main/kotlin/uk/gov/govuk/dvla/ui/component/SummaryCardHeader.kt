@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -133,6 +134,7 @@ private fun CardOverflowMenu(
             }
 
             if (isTalkBackOn) {
+                HorizontalDivider()
                 OverflowMenuItemRow(
                     text = stringResource(R.string.menu_close_menu),
                     altText = null,
