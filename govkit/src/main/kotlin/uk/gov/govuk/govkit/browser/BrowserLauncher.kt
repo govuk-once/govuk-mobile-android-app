@@ -1,4 +1,4 @@
-package uk.gov.govuk.ui
+package uk.gov.govuk.govkit.browser
 
 import android.content.ActivityNotFoundException
 import android.content.Context
