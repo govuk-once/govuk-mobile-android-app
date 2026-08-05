@@ -107,12 +107,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
                     info = AccessibleString(
-                        displayText = vesVehicle.exhaustEmissionsCo2?.let {
-                            stringProvider.getString(R.string.emissions_info, it)
-                        } ?: "Unknown",
-                        altText = vesVehicle.exhaustEmissionsCo2?.let {
-                            stringProvider.getString(R.string.emissions_alt_text, it)
-                        } ?: "Unknown")
+                        displayText = vesVehicle.exhaustEmissionsCo2?.toString() ?: "Unknown")
                 )
             )
         )
