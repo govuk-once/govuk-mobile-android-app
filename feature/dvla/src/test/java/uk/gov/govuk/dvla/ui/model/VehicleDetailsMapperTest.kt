@@ -34,6 +34,7 @@ class VehicleDetailsMapperTest {
         keeperFullAddress: String? = "Long View Rd\nMorriston\nSwansea\nSA6 7JL",
         colour: VehicleColour = VehicleColour.RED,
         secondaryColour: VehicleColour? = null,
+        dateOfFirstRegistration: LocalDate? = LocalDate.of(2020, 6, 1),
         exhaustEmissionsCo2: Int? = 199
     ) = VehicleDetails(
         summary = VehicleSummary(
@@ -48,7 +49,7 @@ class VehicleDetailsMapperTest {
             sornStart = null,
             currentLicencePaymentMethod = null
         ),
-        dateOfFirstRegistration = LocalDate.of(2020, 6, 1),
+        dateOfFirstRegistration = dateOfFirstRegistration,
         fuelType = FuelType.PETROL,
         colour = colour,
         secondaryColour = secondaryColour,
@@ -155,6 +156,25 @@ class VehicleDetailsMapperTest {
             .first { it.title.displayText == "Colour" }
 
         assertEquals("Red", colourSpec.info.displayText)
+    }
+
+    @Test
+    fun `Given a valid registration date, then mapped date displays as Month Year`() {
+        every { stringProvider.getString(R.string.first_registered_title) } returns "First registered"
+        every { stringProvider.getString(R.string.first_registered_alt_text, "June 2020") } returns "First registered June 2020"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(dateOfFirstRegistration = LocalDate.of(2020, 6, 1)),
+            dvlaUrls = null
+        )
+
+        val dateSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "First registered" }
+
+        assertEquals("June 2020", dateSpec.info.displayText)
+        assertEquals("", dateSpec.info.altText)
+        assertEquals("First registered June 2020", dateSpec.title.altText)
     }
 
     @Test

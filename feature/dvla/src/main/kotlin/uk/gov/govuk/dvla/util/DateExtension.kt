@@ -4,12 +4,16 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-private val dayMonthYearFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
-private val yearFormat = DateTimeFormatter.ofPattern("yyyy")
+private val dayMonthYearFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+private val yearFormatter = DateTimeFormatter.ofPattern("yyyy")
+private val monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
 
-internal fun LocalDate.toSummaryDisplayFormat(): String = this.format(dayMonthYearFormat)
+internal fun LocalDate.toSummaryDisplayFormat(): String = this.format(dayMonthYearFormatter)
 
-internal fun LocalDate.toYearDisplayFormat(): String = this.format(yearFormat)
+internal fun LocalDate.toYearDisplayFormat(): String = this.format(yearFormatter)
+
+internal fun LocalDate.toMonthYearDisplayFormat(): String =  this.format(monthYearFormatter)
+
 
 internal fun LocalDate.getNumberOfDaysWithinDayRangeAsPercentage(dayRange: Int): Float {
     val daysLeft = this.getNumberOfDaysFromNow().toFloat()
