@@ -87,6 +87,7 @@ internal class SettingsViewModel @Inject constructor(
                 when (state) {
                     ServiceLinkStatus.CHECKING -> {
                         _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
+                        dvlaRepo.refreshLinkStatus()
                     }
                     ServiceLinkStatus.UNLINKED -> {
                         loadMessageCount(false)
