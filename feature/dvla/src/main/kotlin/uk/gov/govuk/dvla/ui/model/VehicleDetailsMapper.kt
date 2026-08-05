@@ -56,7 +56,7 @@ internal class VehicleDetailsMapper @Inject constructor(
             vesVehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
             make = vesVehicle.summary.make,
-            model = vesVehicle.summary.model ?: "Unknown", // TODO: no requirement for null model yet
+            model = vesVehicle.summary.model ?: "",
             registration = vesVehicle.summary.registration,
             keeper = vesVehicle.getKeeper(),
             specificationsIcons = listOf(

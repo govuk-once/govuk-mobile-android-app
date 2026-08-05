@@ -35,13 +35,14 @@ class VehicleDetailsMapperTest {
         colour: VehicleColour = VehicleColour.RED,
         secondaryColour: VehicleColour? = null,
         dateOfFirstRegistration: LocalDate? = LocalDate.of(2020, 6, 1),
-        exhaustEmissionsCo2: Int? = 199
+        exhaustEmissionsCo2: Int? = 199,
+        model: String? = null
     ) = VehicleDetails(
         summary = VehicleSummary(
             vehicleId = 156487251,
             registration = "AA19 AAA",
             make = "FORD",
-            model = "FIESTA",
+            model = model,
             taxStatus = TaxStatus.TAXED,
             taxExpiryDate = null,
             motStatus = MotStatus.VALID,
@@ -98,11 +99,18 @@ class VehicleDetailsMapperTest {
 
     @Test
     fun `Given a vehicle, when mapped, make, model and registration are taken from the summary`() {
-        val result = mapper.toUiModel(makeVehicleDetails(), dvlaUrls = null)
+        val result = mapper.toUiModel(makeVehicleDetails(model = "FIESTA"), dvlaUrls = null)
 
         assertEquals("FORD", result.make)
         assertEquals("FIESTA", result.model)
         assertEquals("AA19 AAA", result.registration)
+    }
+
+    @Test
+    fun `Given a vehicle with no value for model, when mapped, model is empty`() {
+        val result = mapper.toUiModel(makeVehicleDetails(), dvlaUrls = null)
+
+        assertEquals("", result.model)
     }
 
     @Test
