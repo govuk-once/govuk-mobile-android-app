@@ -167,16 +167,16 @@ class QualtricsAnalyticsClient @Inject constructor(
                     closeButtonColor = R.color.white,
                     closeButtonBackgroundColor = R.color.accent,
                     buttonOneTheme = ButtonTheme(
-                        labelColor = R.color.white,
+                        labelColor = R.color.accent,
                         font = FontTheme(bodyRegular, mediumSize),
-                        backgroundColor = R.color.accent,
+                        backgroundColor = R.color.surface_list,
                         borderColor = R.color.accent,
                         linkColor = R.color.accent
                     ),
                     buttonTwoTheme = ButtonTheme(
-                        labelColor = R.color.accent,
+                        labelColor = R.color.white,
                         font = FontTheme(bodyRegular, mediumSize),
-                        backgroundColor = R.color.surface_list,
+                        backgroundColor = R.color.accent,
                         borderColor = R.color.accent,
                         linkColor = R.color.accent
                     )
@@ -214,7 +214,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                         thumbUpBorderColor = R.color.accent,
                         thumbUpFillColor = R.color.surface_list,
                         thumbDownBorderColor = R.color.accent,
-                        thumbDownFillColor = R.color.accent
+                        thumbDownFillColor = R.color.surface_list
                     ),
                     emojiTheme = EmojiTheme(
                         borderColor = R.color.accent,
