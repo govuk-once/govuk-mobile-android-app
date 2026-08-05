@@ -34,7 +34,8 @@ class VehicleDetailsMapperTest {
         keeperFullAddress: String? = "Long View Rd\nMorriston\nSwansea\nSA6 7JL",
         colour: VehicleColour = VehicleColour.RED,
         secondaryColour: VehicleColour? = null,
-        dateOfFirstRegistration: LocalDate? = LocalDate.of(2020, 6, 1)
+        dateOfFirstRegistration: LocalDate? = LocalDate.of(2020, 6, 1),
+        exhaustEmissionsCo2: Int? = 199
     ) = VehicleDetails(
         summary = VehicleSummary(
             vehicleId = 156487251,
@@ -53,7 +54,7 @@ class VehicleDetailsMapperTest {
         colour = colour,
         secondaryColour = secondaryColour,
         engineCapacity = 2000,
-        exhaustEmissionsCo2 = 199,
+        exhaustEmissionsCo2 = exhaustEmissionsCo2,
         keeperTitle = keeperTitle,
         keeperFirstNames = keeperFirstNames,
         keeperLastName = keeperLastName,
@@ -174,5 +175,21 @@ class VehicleDetailsMapperTest {
         assertEquals("June 2020", dateSpec.info.displayText)
         assertEquals("", dateSpec.info.altText)
         assertEquals("First registered June 2020", dateSpec.title.altText)
+    }
+
+    @Test
+    fun `Given valid emissions, then mapped emissions display text and alt text are correct`() {
+        every { stringProvider.getString(R.string.emissions_title) } returns "Emissions"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(exhaustEmissionsCo2 = 199),
+            dvlaUrls = null
+        )
+
+        val emissionsSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Emissions" }
+
+        assertEquals("199", emissionsSpec.info.displayText)
     }
 }
