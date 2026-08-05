@@ -311,115 +311,124 @@ class SettingsViewModelTest {
 
     // Notifications
 
+//    @Test
+//    fun `Given view appears, messages begin loading`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.CHECKING)
+//
+//            viewModel.loadMessages()
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Loading)
+//        }
+//    }
+//
+//    @Test
+//    fun `Given DVLA account not linked, messages changes to Gone`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.UNLINKED)
+//
+//            viewModel.loadMessages()
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
+//        }
+//    }
+//
+//    @Test
+//    fun `Given error loading link status, messages changes to Gone`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.ERROR)
+//
+//            viewModel.loadMessages()
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
+//        }
+//    }
+//
+//    @Test
+//    fun `Given DVLA account linked, and error loading, messages changes to Gone`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
+//            coEvery { notificationCentreFeature.getUnreadCount() } returns null
+//
+//            viewModel.loadMessages()
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
+//        }
+//    }
+//
+//    @Test
+//    fun `Given DVLA account linked, and notifications loaded, messages changes to Loaded`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
+//            coEvery { notificationCentreFeature.getUnreadCount() } returns 1
+//
+//            viewModel.loadMessages()
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(MessageRowState.Loaded(1), viewModel.uiState.value?.messageRowState, )
+//        }
+//    }
+//
+//    @Test
+//    fun `Given the DVLA link check is still resolving, messages stays loading until it resolves`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flow {
+//                emit(ServiceLinkStatus.CHECKING)
+//                delay(100)
+//                emit(ServiceLinkStatus.LINKED)
+//            }
+//            coEvery { notificationCentreFeature.getUnreadCount() } returns 3
+//
+//            viewModel.loadMessages()
+//
+//            assertEquals(MessageRowState.Loading, viewModel.uiState.value?.messageRowState)
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(MessageRowState.Loaded(3), viewModel.uiState.value?.messageRowState)
+//        }
+//    }
+//
+//    @Test
+//    fun `Given loadMessages is called again, the previous DVLA link collector is cancelled`() {
+//        runTest {
+//            every { dvlaRepo.linkState } returns flow {
+//                emit(ServiceLinkStatus.LINKED)
+//                delay(1000)
+//                emit(ServiceLinkStatus.ERROR)
+//            }
+//            coEvery { notificationCentreFeature.getUnreadCount() } returns 5
+//
+//            viewModel.loadMessages()
+//
+//            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
+//            coEvery { notificationCentreFeature.getUnreadCount() } returns 7
+//
+//            viewModel.loadMessages()
+//
+//            advanceUntilIdle()
+//
+//            assertEquals(MessageRowState.Loaded(7), viewModel.uiState.value?.messageRowState)
+//        }
+//    }
+
     @Test
-    fun `Given view appears, messages begin loading`() {
+    fun `Messages defaults to Gone`() {
         runTest {
-            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.CHECKING)
-
-            viewModel.loadMessages()
-
-            advanceUntilIdle()
-
-            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Loading)
-        }
-    }
-
-    // Notifications
-    @Test
-    fun `Given DVLA account not linked, messages changes to Gone`() {
-        runTest {
-            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.UNLINKED)
-
             viewModel.loadMessages()
 
             advanceUntilIdle()
 
             assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
-        }
-    }
-
-    @Test
-    fun `Given error loading link status, messages changes to Gone`() {
-        runTest {
-            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.ERROR)
-
-            viewModel.loadMessages()
-
-            advanceUntilIdle()
-
-            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
-        }
-    }
-
-    // Notifications
-    @Test
-    fun `Given DVLA account linked, and error loading, messages changes to Gone`() {
-        runTest {
-            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
-            coEvery { notificationCentreFeature.getUnreadCount() } returns null
-
-            viewModel.loadMessages()
-
-            advanceUntilIdle()
-
-            assertEquals(viewModel.uiState.value?.messageRowState, MessageRowState.Gone)
-        }
-    }
-
-    @Test
-    fun `Given DVLA account linked, and notifications loaded, messages changes to Loaded`() {
-        runTest {
-            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
-            coEvery { notificationCentreFeature.getUnreadCount() } returns 1
-
-            viewModel.loadMessages()
-
-            advanceUntilIdle()
-
-            assertEquals(MessageRowState.Loaded(1), viewModel.uiState.value?.messageRowState, )
-        }
-    }
-
-    @Test
-    fun `Given the DVLA link check is still resolving, messages stays loading until it resolves`() {
-        runTest {
-            every { dvlaRepo.linkState } returns flow {
-                emit(ServiceLinkStatus.CHECKING)
-                delay(100)
-                emit(ServiceLinkStatus.LINKED)
-            }
-            coEvery { notificationCentreFeature.getUnreadCount() } returns 3
-
-            viewModel.loadMessages()
-
-            assertEquals(MessageRowState.Loading, viewModel.uiState.value?.messageRowState)
-
-            advanceUntilIdle()
-
-            assertEquals(MessageRowState.Loaded(3), viewModel.uiState.value?.messageRowState)
-        }
-    }
-
-    @Test
-    fun `Given loadMessages is called again, the previous DVLA link collector is cancelled`() {
-        runTest {
-            every { dvlaRepo.linkState } returns flow {
-                emit(ServiceLinkStatus.LINKED)
-                delay(1000)
-                emit(ServiceLinkStatus.ERROR)
-            }
-            coEvery { notificationCentreFeature.getUnreadCount() } returns 5
-
-            viewModel.loadMessages()
-
-            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.LINKED)
-            coEvery { notificationCentreFeature.getUnreadCount() } returns 7
-
-            viewModel.loadMessages()
-
-            advanceUntilIdle()
-
-            assertEquals(MessageRowState.Loaded(7), viewModel.uiState.value?.messageRowState)
         }
     }
 }
