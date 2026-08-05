@@ -119,6 +119,7 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
     val homeWidgets by viewModel.homeWidgets.collectAsState()
     var isSplashDone by rememberSaveable { mutableStateOf(false) }
     var isRecommendUpdateSkipped by rememberSaveable { mutableStateOf(false) }
+    val playStoreLauncher = rememberPlayStoreLauncher()
 
     if (isSplashDone && uiState != null) {
         uiState?.let {
@@ -131,10 +132,13 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
                     )
                 }
 
-                is AppUiState.ForcedUpdate -> ForcedUpdateScreen()
+                is AppUiState.ForcedUpdate -> ForcedUpdateScreen(
+                    onUpdateClick = playStoreLauncher
+                )
                 is AppUiState.Default -> {
                     if (it.shouldDisplayRecommendUpdate && !isRecommendUpdateSkipped) {
                         RecommendUpdateScreen(
+                            onUpdateClick = playStoreLauncher,
                             recommendUpdateSkipped = { isRecommendUpdateSkipped = true }
                         )
                     } else {

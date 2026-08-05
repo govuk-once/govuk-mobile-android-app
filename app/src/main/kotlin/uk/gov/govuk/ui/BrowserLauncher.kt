@@ -12,6 +12,7 @@ import androidx.browser.customtabs.CustomTabsIntent.ACTIVITY_HEIGHT_FIXED
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.core.net.toUri
+import uk.gov.govuk.BuildConfig.PLAY_STORE_URL
 
 @Composable
 internal fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivityLauncher {
@@ -70,9 +71,19 @@ internal sealed class BrowserActivityLauncher(
                     intent.data = url.toUri()
                     launcher.launch(this.intent)
                 }
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 onError()
             }
+        }
+    }
+}
+
+@Composable
+internal fun rememberPlayStoreLauncher(): () -> Unit {
+    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
+    return remember(browserLauncher) {
+        {
+            browserLauncher.launch(url = PLAY_STORE_URL) { }
         }
     }
 }
