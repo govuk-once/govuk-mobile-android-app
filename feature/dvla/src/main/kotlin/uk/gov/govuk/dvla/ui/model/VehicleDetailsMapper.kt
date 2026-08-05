@@ -43,6 +43,7 @@ import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
+import uk.gov.govuk.dvla.util.toMonthYearDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
 import javax.inject.Inject
 
@@ -51,8 +52,8 @@ internal class VehicleDetailsMapper @Inject constructor(
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper
 ) {
     fun toUiModel(vesVehicle: VehicleDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
-        val yearOfFirstRegistration =
-            vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
+        val dateOfFirstRegistration =
+            vesVehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
             make = vesVehicle.summary.make,
             model = vesVehicle.summary.model ?: "",
@@ -79,11 +80,11 @@ internal class VehicleDetailsMapper @Inject constructor(
                         displayText = stringProvider.getString(R.string.first_registered_title),
                         altText = stringProvider.getString(
                             R.string.first_registered_alt_text,
-                            yearOfFirstRegistration
+                            dateOfFirstRegistration
                         )
                     ),
                     info = AccessibleString(
-                        displayText = yearOfFirstRegistration,
+                        displayText = dateOfFirstRegistration,
                         altText = "" // Set as empty string so nothing read as alt text handled in the title
                     )
                 ),
@@ -107,12 +108,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
                     info = AccessibleString(
-                        displayText = vesVehicle.exhaustEmissionsCo2?.let {
-                            stringProvider.getString(R.string.emissions_info, it)
-                        } ?: "Unknown",
-                        altText = vesVehicle.exhaustEmissionsCo2?.let {
-                            stringProvider.getString(R.string.emissions_alt_text, it)
-                        } ?: "Unknown")
+                        displayText = vesVehicle.exhaustEmissionsCo2?.toString() ?: "Unknown")
                 )
             )
         )

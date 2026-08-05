@@ -69,7 +69,7 @@ internal class VehicleDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = dvlaRepo.getVehicleDetails(vehicleId)) {
                 is Result.Success -> {
-                    val vehicleDetails = mapper.toUiModel(result.value, dvlaUrls)
+                    val vehicleDetails = mapper.toUiModel(result.value.copy(summary = result.value.summary.copy(model = null)), dvlaUrls)
                     _uiState.value = VehicleDetailsUiState.Success(vehicleDetails)
                 }
 
