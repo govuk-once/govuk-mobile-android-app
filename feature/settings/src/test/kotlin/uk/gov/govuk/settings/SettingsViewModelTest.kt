@@ -324,7 +324,6 @@ class SettingsViewModelTest {
         }
     }
 
-    // Notifications
     @Test
     fun `Given DVLA account not linked, messages changes to Gone`() {
         runTest {
@@ -351,7 +350,6 @@ class SettingsViewModelTest {
         }
     }
 
-    // Notifications
     @Test
     fun `Given DVLA account linked, and error loading, messages changes to Gone`() {
         runTest {
@@ -420,6 +418,18 @@ class SettingsViewModelTest {
             advanceUntilIdle()
 
             assertEquals(MessageRowState.Loaded(7), viewModel.uiState.value?.messageRowState)
+        }
+    }
+
+    @Test
+    fun `Given link state is CHECKING, then request a refresh`() {
+        runTest {
+            every { dvlaRepo.linkState } returns flowOf(ServiceLinkStatus.CHECKING)
+
+            viewModel.loadMessages()
+            advanceUntilIdle()
+
+            coVerify { dvlaRepo.refreshLinkStatus() }
         }
     }
 }
