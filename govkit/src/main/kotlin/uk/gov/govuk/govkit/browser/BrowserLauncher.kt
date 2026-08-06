@@ -1,4 +1,4 @@
-package uk.gov.govuk.ui
+package uk.gov.govuk.govkit.browser
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -14,7 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.core.net.toUri
 
 @Composable
-internal fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivityLauncher {
+fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivityLauncher {
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     return remember(launcher) {
@@ -26,7 +26,7 @@ internal fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): Browse
     }
 }
 
-internal sealed class BrowserActivityLauncher(
+sealed class BrowserActivityLauncher(
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
     abstract fun launch(url: String, onError: () -> Unit)
@@ -70,9 +70,29 @@ internal sealed class BrowserActivityLauncher(
                     intent.data = url.toUri()
                     launcher.launch(this.intent)
                 }
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 onError()
             }
+        }
+    }
+}
+
+@Composable
+fun rememberPlayStoreLauncher(): () -> Unit {
+    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
+    return remember(browserLauncher) {
+        {
+            browserLauncher.launch(url = Urls.PLAY_STORE) { }
+        }
+    }
+}
+
+@Composable
+fun rememberGovUkLauncher(): () -> Unit {
+    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
+    return remember(browserLauncher) {
+        {
+            browserLauncher.launch(url = Urls.GOV_UK_HOME) { }
         }
     }
 }

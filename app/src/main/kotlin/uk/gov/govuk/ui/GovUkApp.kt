@@ -71,6 +71,9 @@ import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
+import uk.gov.govuk.govkit.browser.rememberGovUkLauncher
+import uk.gov.govuk.govkit.browser.rememberPlayStoreLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
@@ -119,22 +122,28 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
     val homeWidgets by viewModel.homeWidgets.collectAsState()
     var isSplashDone by rememberSaveable { mutableStateOf(false) }
     var isRecommendUpdateSkipped by rememberSaveable { mutableStateOf(false) }
+    val playStoreLauncher = rememberPlayStoreLauncher()
 
     if (isSplashDone && uiState != null) {
         uiState?.let {
             when (it) {
                 is AppUiState.Loading -> LoadingScreen()
-                is AppUiState.AppUnavailable -> AppUnavailableScreen()
+                is AppUiState.AppUnavailable -> AppUnavailableScreen(
+                    onGoToGovUkClick = rememberGovUkLauncher()
+                )
                 is AppUiState.DeviceOffline -> FullScreenWrapper {
                     DeviceOfflineScreen(
                         onTryAgain = { viewModel.onTryAgain() }
                     )
                 }
 
-                is AppUiState.ForcedUpdate -> ForcedUpdateScreen()
+                is AppUiState.ForcedUpdate -> ForcedUpdateScreen(
+                    onUpdateClick = playStoreLauncher
+                )
                 is AppUiState.Default -> {
                     if (it.shouldDisplayRecommendUpdate && !isRecommendUpdateSkipped) {
                         RecommendUpdateScreen(
+                            onUpdateClick = playStoreLauncher,
                             recommendUpdateSkipped = { isRecommendUpdateSkipped = true }
                         )
                     } else {

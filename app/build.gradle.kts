@@ -137,6 +137,7 @@ dependencies {
     implementation(projects.config)
     implementation(projects.design)
     implementation(projects.data)
+    implementation(projects.govkit)
     implementation(projects.feature.chat)
     implementation(projects.feature.home)
     implementation(projects.feature.local)
