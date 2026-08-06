@@ -44,7 +44,14 @@ android {
     }
 }
 
-
+sonar {
+    properties {
+        property(
+            "sonar.coverage.exclusions",
+            properties["sonar.coverage.exclusions"].toString() + ",**/BrowserLauncher.*"
+        )
+    }
+}
 
 dependencies {
     implementation(libs.androidx.browser)
