@@ -3,6 +3,7 @@ package uk.gov.govuk.chat.data.remote
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -19,6 +20,7 @@ import uk.gov.govuk.chat.data.remote.model.Answer
 import uk.gov.govuk.data.auth.AuthRepo
 import java.net.UnknownHostException
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ApiCallKtTest {
     private val apiCall = mockk<suspend () -> Response<Answer>>(relaxed = true)
@@ -161,5 +163,14 @@ class ApiCallKtTest {
         val result = safeChatApiCall(apiCall, authRepo)
 
         assertTrue(result is DeviceOffline)
+    }
+
+    @Test
+    fun `Throws CancellationException when cancellation occurs`() = runTest {
+        coEvery { apiCall.invoke() } throws CancellationException()
+
+        assertFailsWith<CancellationException> {
+            safeChatApiCall(apiCall, authRepo)
+        }
     }
 }
