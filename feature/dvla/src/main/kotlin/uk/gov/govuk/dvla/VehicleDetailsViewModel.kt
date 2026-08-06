@@ -10,12 +10,12 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
+import uk.gov.govuk.govkit.browser.Urls
 import javax.inject.Inject
 
 internal sealed interface VehicleDetailsUiState {
@@ -74,7 +74,7 @@ internal class VehicleDetailsViewModel @Inject constructor(
                 }
 
                 else -> {
-                    val fallbackUrl = UrlModel(dvlaUrls?.account ?: GOV_UK_URL)
+                    val fallbackUrl = UrlModel(dvlaUrls?.account ?: Urls.GOV_UK_HOME)
                     _uiState.value = VehicleDetailsUiState.Error(fallbackUrl)
                 }
             }

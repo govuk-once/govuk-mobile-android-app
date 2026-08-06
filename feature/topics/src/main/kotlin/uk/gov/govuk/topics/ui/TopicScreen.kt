@@ -48,6 +48,7 @@ import uk.gov.govuk.design.ui.model.FocusableCardColours
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.govkit.browser.rememberGovUkLauncher
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicUiState
 import uk.gov.govuk.topics.TopicViewModel
@@ -68,6 +69,7 @@ internal fun TopicRoute(
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
+    val onGovUkClick = rememberGovUkLauncher()
 
     Box(modifier
         .fillMaxSize()
@@ -133,14 +135,14 @@ internal fun TopicRoute(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
-                    content = { ProblemMessage() }
+                    content = { ProblemMessage(onGoToGovUkClick = onGovUkClick) }
                 )
 
                 is TopicUiState.Error.NoReference -> ErrorScreen(
                     topicReference = "",
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
-                    content = { ProblemMessage() }
+                    content = { ProblemMessage(onGoToGovUkClick = onGovUkClick) }
                 )
 
                 is TopicUiState.Loading -> {
@@ -514,7 +516,7 @@ private fun ErrorScreenProblemPreview() {
             topicReference = "benefits",
             onPageView = {},
             onBack = {},
-            content = { ProblemMessage() }
+            content = { ProblemMessage({ }) }
         )
     }
 }

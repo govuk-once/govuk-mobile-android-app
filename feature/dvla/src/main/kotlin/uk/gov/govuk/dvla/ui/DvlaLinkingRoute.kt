@@ -22,12 +22,12 @@ import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
-import uk.gov.govuk.design.ui.component.error.ErrorConstants
 import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.govkit.browser.Urls
 
 @Composable
 internal fun DvlaLinkingRoute(
@@ -219,7 +219,7 @@ private fun DvlaLinkErrorScreen(
                 secondaryButton = Button(
                     text = secondaryText,
                     onClick = {
-                        onVisitGovUkClicked(secondaryText, ErrorConstants.GOV_UK_URL)
+                        onVisitGovUkClicked(secondaryText, Urls.GOV_UK_HOME)
                     },
                     isExternal = true
                 )

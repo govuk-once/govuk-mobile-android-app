@@ -12,10 +12,9 @@ import androidx.browser.customtabs.CustomTabsIntent.ACTIVITY_HEIGHT_FIXED
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.core.net.toUri
-import uk.gov.govuk.BuildConfig.PLAY_STORE_URL
 
 @Composable
-internal fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivityLauncher {
+fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivityLauncher {
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     return remember(launcher) {
@@ -27,7 +26,7 @@ internal fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): Browse
     }
 }
 
-internal sealed class BrowserActivityLauncher(
+sealed class BrowserActivityLauncher(
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
     abstract fun launch(url: String, onError: () -> Unit)
@@ -79,11 +78,21 @@ internal sealed class BrowserActivityLauncher(
 }
 
 @Composable
-internal fun rememberPlayStoreLauncher(): () -> Unit {
+fun rememberPlayStoreLauncher(): () -> Unit {
     val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
     return remember(browserLauncher) {
         {
-            browserLauncher.launch(url = PLAY_STORE_URL) { }
+            browserLauncher.launch(url = Urls.PLAY_STORE) { }
+        }
+    }
+}
+
+@Composable
+fun rememberGovUkLauncher(): () -> Unit {
+    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
+    return remember(browserLauncher) {
+        {
+            browserLauncher.launch(url = Urls.GOV_UK_HOME) { }
         }
     }
 }

@@ -1,7 +1,6 @@
 package uk.gov.govuk.dvla.ui.model
 
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
-import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.dvla.R
@@ -16,6 +15,7 @@ import uk.gov.govuk.dvla.util.isInThePast
 import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
+import uk.gov.govuk.govkit.browser.Urls
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -55,7 +55,7 @@ internal class LicenceSummaryMapper @Inject constructor(
     }
 
     internal fun notAvailableUrl(dvlaUrls: DvlaUrls?) =
-        UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: GOV_UK_URL)
+        UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
     private fun getDrivingRecordUrl(status: LicenceStatus, dvlaUrls: DvlaUrls?): String? {
         if (status != LicenceStatus.VALID) return null

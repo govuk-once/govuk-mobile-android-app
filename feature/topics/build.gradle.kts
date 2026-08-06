@@ -65,6 +65,7 @@ dependencies {
     implementation(projects.feature.visited)
     implementation(projects.data)
     implementation(projects.config)
+    implementation(projects.govkit)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
