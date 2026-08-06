@@ -3,7 +3,6 @@ package uk.gov.govuk.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,9 +11,8 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.identity.model.ServiceLinkStatus
-import uk.gov.govuk.notificationcentre.NotificationCentreFeature
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.notificationcentre.NotificationCentreFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
@@ -74,33 +72,12 @@ internal class SettingsViewModel @Inject constructor(
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
             isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
             isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled(),
-            messageRowState = MessageRowState.Unknown
+            messageRowState = MessageRowState.Gone
         )
     }
 
-    private var loadMessagesJob: Job? = null
-
     fun loadMessages() {
-        loadMessagesJob?.cancel()
-        loadMessagesJob = viewModelScope.launch {
-            dvlaRepo.linkState.collect { state ->
-                when (state) {
-                    ServiceLinkStatus.CHECKING -> {
-                        _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
-                        dvlaRepo.refreshLinkStatus()
-                    }
-                    ServiceLinkStatus.UNLINKED -> {
-                        loadMessageCount(false)
-                    }
-                    ServiceLinkStatus.LINKED -> {
-                        loadMessageCount(true)
-                    }
-                    ServiceLinkStatus.ERROR -> {
-                        loadMessageCount(false)
-                    }
-                }
-            }
-        }
+        // Remove messages row in Prod for now
     }
 
     private suspend fun loadMessageCount(isLinked: Boolean) {
