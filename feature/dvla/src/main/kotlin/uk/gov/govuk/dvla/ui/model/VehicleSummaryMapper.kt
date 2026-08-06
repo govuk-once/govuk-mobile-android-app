@@ -17,8 +17,7 @@ internal class VehicleSummaryMapper @Inject constructor(
             vehicleId = vehicle.vehicleId,
             registration = vehicle.registration,
             make = vehicle.make,
-            model = vehicle.model
-                ?: "Unknown", // TODO return unknown for now, other states in future tickets
+            model = vehicle.model ?: "",
             taxStatus = taxAndMotStatusMapper.getTaxStatus(vehicle = vehicle, dvlaUrls = dvlaUrls),
             motStatus = taxAndMotStatusMapper.getMotStatus(vehicle = vehicle, dvlaUrls = dvlaUrls),
             menuItems = buildMenuItems(

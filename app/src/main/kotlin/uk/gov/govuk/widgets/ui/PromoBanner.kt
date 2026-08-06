@@ -68,7 +68,9 @@ fun PromoBanner(
                         BodyRegularLabel(promoBanner.body)
                     }
 
-                    Box {
+                    Box(
+                        modifier = Modifier.padding(start = GovUkTheme.spacing.medium)
+                    ) {
                         promoBanner.image?.let { image ->
                             DisplayImage(image)
                         }
