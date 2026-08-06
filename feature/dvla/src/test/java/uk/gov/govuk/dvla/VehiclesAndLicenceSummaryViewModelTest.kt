@@ -74,6 +74,19 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
+    fun `Given linkState emits CHECKING, when viewModel initialised, then state is Hidden`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.CHECKING)
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo, vehicleMapper, licenceMapper, analyticsClient, configRepo
+            )
+            advanceUntilIdle()
+
+            assertEquals(UiState.Hidden, viewModel.uiState.value)
+        }
+
+    @Test
     fun `Given linkState emits LINKED and getCustomerVehicles returns success, when viewModel initialised, then state becomes Success`() =
         runTest(dispatcher) {
             val vehicle = mockk<VehicleSummary>()
@@ -585,4 +598,20 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `Given state is Hidden, when onVehiclesSelected is called, then state remains Hidden`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo, vehicleMapper, licenceMapper, analyticsClient, configRepo
+            )
+            advanceUntilIdle()
+
+            viewModel.onVehiclesSelected()
+            advanceUntilIdle()
+
+            assertEquals(UiState.Hidden, viewModel.uiState.value)
+        }
 }
