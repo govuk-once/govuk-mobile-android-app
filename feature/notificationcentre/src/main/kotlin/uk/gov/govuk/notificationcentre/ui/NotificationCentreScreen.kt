@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.hideFromAccessibility
@@ -29,6 +30,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -217,6 +219,21 @@ private fun NotificationRow(
     onTapRow: (Notification) -> Unit
 ) {
     val unreadContentDescription = stringResource(R.string.unread_content_description)
+    val titleStyle: TextStyle
+    val subtitleStyle: TextStyle
+    val indicatorColor: Color
+
+    if (notification.isUnread) {
+        titleStyle = GovUkTheme.typography.bodyBold
+        subtitleStyle = GovUkTheme.typography.subheadlineBold
+        indicatorColor = GovUkTheme.colourScheme.surfaces.msgUnread
+    } else {
+        titleStyle = GovUkTheme.typography.bodyRegular
+        subtitleStyle = GovUkTheme.typography.subheadlineRegular
+        indicatorColor = GovUkTheme.colourScheme.surfaces.msgRead
+
+    }
+
     Row(
         Modifier
             .padding(bottom = 8.dp)
@@ -231,10 +248,7 @@ private fun NotificationRow(
             Modifier
                 .padding(horizontal = 16.dp)
                 .clip(CircleShape)
-                .background(if(notification.isUnread)
-                    GovUkTheme.colourScheme.surfaces.msgUnread
-                else
-                    GovUkTheme.colourScheme.surfaces.msgRead)
+                .background(indicatorColor)
                 .size(10.dp)
                 .semantics {
                     hideFromAccessibility()
@@ -255,15 +269,17 @@ private fun NotificationRow(
                 notification.title,
                 Modifier.padding(bottom = 4.dp),
                 GovUkTheme.colourScheme.textAndIcons.primary,
-                style = GovUkTheme.typography.headlineSemibold,
+                style = titleStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
-            FootnoteRegularLabel(
+            Text(
                 notification.formattedDate,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
-            )
+                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                style = subtitleStyle ,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
         }
     }
 }
