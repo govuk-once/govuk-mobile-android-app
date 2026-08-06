@@ -123,28 +123,6 @@ class ConfigRepoTest {
     }
 
     @Test
-    fun `Given clearRemoteConfigValues() is called, then the correct Firebase function is called `() = runTest {
-        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
-
-        repo.clearRemoteConfigValues()
-
-        coVerify(exactly = 1) {
-            firebaseDataSource.clearRemoteValues()
-        }
-    }
-
-    @Test
-    fun `Given refreshRemoteConfig() is called, then the correct Firebase function is called `() = runTest {
-        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
-
-        repo.refreshRemoteConfig()
-
-        coVerify(exactly = 1) {
-            firebaseDataSource.fetchAndActivate()
-        }
-    }
-
-    @Test
     fun `Given successful init, when accessing remaining properties, then return correct config values`() = runTest {
         val mockBanners = listOf(mockk<EmergencyBanner>())
         val mockFeedback = mockk<UserFeedbackBanner>()
@@ -160,6 +138,7 @@ class ConfigRepoTest {
         every { config.releaseFlags.localServices } returns true
         every { config.releaseFlags.externalBrowser } returns true
         every { config.releaseFlags.flex } returns true
+        every { config.releaseFlags.chat } returns true
         every { config.releaseFlags.dvla } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
@@ -181,6 +160,7 @@ class ConfigRepoTest {
         assertEquals(true, repo.isLocalServicesEnabled)
         assertEquals(true, repo.isExternalBrowserEnabled)
         assertEquals(true, repo.isFlexEnabled)
+        assertEquals(true, repo.isChatEnabled)
         assertEquals(true, repo.isDvlaLinkEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
@@ -189,5 +169,25 @@ class ConfigRepoTest {
         assertSame(mockTerms, repo.termsAndConditions)
         assertSame(mockDvlaUrls, repo.dvlaUrls)
         assertSame(mockPromoBanners, repo.promoBanners)
+    }
+
+    @Test
+    fun `When refreshRemoteConfig is called, then fetch and activate firebase data source`() = runTest {
+        coEvery { firebaseDataSource.fetchAndActivate() } returns true
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+
+        repo.refreshRemoteConfig()
+
+        coVerify { firebaseDataSource.fetchAndActivate() }
+    }
+
+    @Test
+    fun `When clearRemoteConfigValues is called, then clear remote values in firebase data source`() = runTest {
+        coEvery { firebaseDataSource.clearRemoteValues() } returns Unit
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+
+        repo.clearRemoteConfigValues()
+
+        coVerify { firebaseDataSource.clearRemoteValues() }
     }
 }

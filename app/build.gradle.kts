@@ -169,6 +169,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.scalars)
 
+    implementation(libs.qualtrics.digital.sdk)
     implementation(libs.about.libraries.compose)
 
     ksp(libs.hilt.compiler)

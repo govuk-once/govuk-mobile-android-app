@@ -32,6 +32,7 @@ import uk.gov.govuk.dvla.domain.VehicleColour.GREY
 import uk.gov.govuk.dvla.domain.VehicleColour.MAROON
 import uk.gov.govuk.dvla.domain.VehicleColour.MULTI_COLOUR
 import uk.gov.govuk.dvla.domain.VehicleColour.NOT_STATED
+import uk.gov.govuk.dvla.domain.VehicleColour.UNKNOWN
 import uk.gov.govuk.dvla.domain.VehicleColour.ORANGE
 import uk.gov.govuk.dvla.domain.VehicleColour.PINK
 import uk.gov.govuk.dvla.domain.VehicleColour.PURPLE
@@ -42,6 +43,7 @@ import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
 import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
+import uk.gov.govuk.dvla.util.toMonthYearDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
 import javax.inject.Inject
 
@@ -50,11 +52,11 @@ internal class VehicleDetailsMapper @Inject constructor(
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper
 ) {
     fun toUiModel(vesVehicle: VehicleDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
-        val yearOfFirstRegistration =
-            vesVehicle.dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
+        val dateOfFirstRegistration =
+            vesVehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
         return VehicleDetailsUiModel(
             make = vesVehicle.summary.make,
-            model = vesVehicle.summary.model ?: "Unknown", // TODO: no requirement for null model yet
+            model = vesVehicle.summary.model ?: "",
             registration = vesVehicle.summary.registration,
             keeper = vesVehicle.getKeeper(),
             specificationsIcons = listOf(
@@ -78,11 +80,11 @@ internal class VehicleDetailsMapper @Inject constructor(
                         displayText = stringProvider.getString(R.string.first_registered_title),
                         altText = stringProvider.getString(
                             R.string.first_registered_alt_text,
-                            yearOfFirstRegistration
+                            dateOfFirstRegistration
                         )
                     ),
                     info = AccessibleString(
-                        displayText = yearOfFirstRegistration,
+                        displayText = dateOfFirstRegistration,
                         altText = "" // Set as empty string so nothing read as alt text handled in the title
                     )
                 ),
@@ -106,12 +108,7 @@ internal class VehicleDetailsMapper @Inject constructor(
                 InternalLinkListItemModel.Info(
                     title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
                     info = AccessibleString(
-                        displayText = vesVehicle.exhaustEmissionsCo2?.let {
-                            stringProvider.getString(R.string.emissions_info, it)
-                        } ?: "Unknown",
-                        altText = vesVehicle.exhaustEmissionsCo2?.let {
-                            stringProvider.getString(R.string.emissions_alt_text, it)
-                        } ?: "Unknown")
+                        displayText = vesVehicle.exhaustEmissionsCo2?.toString() ?: "Unknown")
                 )
             )
         )
@@ -156,13 +153,18 @@ internal class VehicleDetailsMapper @Inject constructor(
 
     private fun VehicleDetails.getVehicleColour(): String {
         val colourRes = stringProvider.getString(this.colour.getResource())
-        return this.secondaryColour?.let { secondaryColour ->
-            val secondaryColourRes = stringProvider.getString(secondaryColour.getResource())
-            stringProvider.getString(
-                R.string.concatenated_vehicle_colours,
-                colourRes, secondaryColourRes.lowercase()
-            )
-        } ?: run { colourRes }
+
+        return when (this.secondaryColour) {
+            null, NOT_STATED, UNKNOWN -> colourRes
+            else -> {
+                val secondaryColourRes = stringProvider.getString(this.secondaryColour.getResource())
+                stringProvider.getString(
+                    R.string.concatenated_vehicle_colours,
+                    colourRes,
+                    secondaryColourRes.lowercase()
+                )
+            }
+        }
     }
 
     private fun VehicleDetails.getKeeper(): KeeperUiModel {

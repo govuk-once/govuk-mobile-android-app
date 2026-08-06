@@ -82,7 +82,6 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.realm.base)
     implementation(libs.openid)
-    implementation(libs.logging.interceptor)
 
     implementation(libs.gov.securestore) {
         artifact {

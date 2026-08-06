@@ -5,6 +5,8 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
+import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.FuelType
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
@@ -29,13 +31,18 @@ class VehicleDetailsMapperTest {
         keeperTitle: String? = "MR",
         keeperFirstNames: String? = "DAWN",
         keeperLastName: String? = "WILLIAMS",
-        keeperFullAddress: String? = "Long View Rd\nMorriston\nSwansea\nSA6 7JL"
+        keeperFullAddress: String? = "Long View Rd\nMorriston\nSwansea\nSA6 7JL",
+        colour: VehicleColour = VehicleColour.RED,
+        secondaryColour: VehicleColour? = null,
+        dateOfFirstRegistration: LocalDate? = LocalDate.of(2020, 6, 1),
+        exhaustEmissionsCo2: Int? = 199,
+        model: String? = null
     ) = VehicleDetails(
         summary = VehicleSummary(
             vehicleId = 156487251,
             registration = "AA19 AAA",
             make = "FORD",
-            model = "FIESTA",
+            model = model,
             taxStatus = TaxStatus.TAXED,
             taxExpiryDate = null,
             motStatus = MotStatus.VALID,
@@ -43,12 +50,12 @@ class VehicleDetailsMapperTest {
             sornStart = null,
             currentLicencePaymentMethod = null
         ),
-        dateOfFirstRegistration = LocalDate.of(2020, 6, 1),
+        dateOfFirstRegistration = dateOfFirstRegistration,
         fuelType = FuelType.PETROL,
-        colour = VehicleColour.RED,
-        secondaryColour = null,
+        colour = colour,
+        secondaryColour = secondaryColour,
         engineCapacity = 2000,
-        exhaustEmissionsCo2 = 199,
+        exhaustEmissionsCo2 = exhaustEmissionsCo2,
         keeperTitle = keeperTitle,
         keeperFirstNames = keeperFirstNames,
         keeperLastName = keeperLastName,
@@ -92,10 +99,105 @@ class VehicleDetailsMapperTest {
 
     @Test
     fun `Given a vehicle, when mapped, make, model and registration are taken from the summary`() {
-        val result = mapper.toUiModel(makeVehicleDetails(), dvlaUrls = null)
+        val result = mapper.toUiModel(makeVehicleDetails(model = "FIESTA"), dvlaUrls = null)
 
         assertEquals("FORD", result.make)
         assertEquals("FIESTA", result.model)
         assertEquals("AA19 AAA", result.registration)
+    }
+
+    @Test
+    fun `Given a vehicle with no value for model, when mapped, model is empty`() {
+        val result = mapper.toUiModel(makeVehicleDetails(), dvlaUrls = null)
+
+        assertEquals("", result.model)
+    }
+
+    @Test
+    fun `Given there is secondary colour, when mapped, colour contains both`() {
+        every { stringProvider.getString(R.string.colour_title) } returns "Colour"
+        every { stringProvider.getString(R.string.red) } returns "Red"
+        every { stringProvider.getString(R.string.blue) } returns "Blue"
+        every { stringProvider.getString(R.string.concatenated_vehicle_colours, "Red", "blue") } returns "Red and blue"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(colour = VehicleColour.RED, secondaryColour = VehicleColour.BLUE),
+            dvlaUrls = null
+        )
+
+        val colourSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Colour" }
+
+        assertEquals("Red and blue", colourSpec.info.displayText)
+    }
+
+    @Test
+    fun `Given secondary colour unknown, when mapped, colour contains only primary colour`() {
+        every { stringProvider.getString(R.string.colour_title) } returns "Colour"
+        every { stringProvider.getString(R.string.red) } returns "Red"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(colour = VehicleColour.RED, secondaryColour = VehicleColour.UNKNOWN),
+            dvlaUrls = null
+        )
+
+        val colourSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Colour" }
+
+        assertEquals("Red", colourSpec.info.displayText)
+    }
+
+    @Test
+    fun `Given secondary colour not stated, when mapped, colour contains only primary colour`() {
+        every { stringProvider.getString(R.string.colour_title) } returns "Colour"
+        every { stringProvider.getString(R.string.red) } returns "Red"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(colour = VehicleColour.RED, secondaryColour = VehicleColour.NOT_STATED),
+            dvlaUrls = null
+        )
+
+        val colourSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Colour" }
+
+        assertEquals("Red", colourSpec.info.displayText)
+    }
+
+    @Test
+    fun `Given a valid registration date, then mapped date displays as Month Year`() {
+        every { stringProvider.getString(R.string.first_registered_title) } returns "First registered"
+        every { stringProvider.getString(R.string.first_registered_alt_text, "June 2020") } returns "First registered June 2020"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(dateOfFirstRegistration = LocalDate.of(2020, 6, 1)),
+            dvlaUrls = null
+        )
+
+        val dateSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "First registered" }
+
+        assertEquals("June 2020", dateSpec.info.displayText)
+        assertEquals("", dateSpec.info.altText)
+        assertEquals("First registered June 2020", dateSpec.title.altText)
+    }
+
+    @Test
+    fun `Given valid emissions, then mapped emissions display text and alt text are correct`() {
+        every { stringProvider.getString(R.string.emissions_title) } returns "Emissions"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(exhaustEmissionsCo2 = 199),
+            dvlaUrls = null
+        )
+
+        val emissionsSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "Emissions" }
+
+        assertEquals("199", emissionsSpec.info.displayText)
     }
 }

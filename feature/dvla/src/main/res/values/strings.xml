@@ -91,6 +91,7 @@
     <string name="menu_change_log_book_address">Change log book address</string>
     <string name="menu_cancel_tax">Cancel tax</string>
     <string name="menu_cancel_tax_alt_text">Cancel vehicle tax</string>
+    <string name="menu_close_menu">Close menu</string>
 
     <string name="menu_copy_licence_number">Copy licence number</string>
     <string name="menu_change_licence_address">Change address</string>
@@ -144,13 +145,11 @@
     <string name="registered_to_title">Registered to</string>
     <string name="vehicle_details_success_title">Vehicle Details Screen</string>
     <string name="concatenated_vehicle_colours">%1$s and %2$s</string>
-    <string name="emissions_info">%1$s g/km</string>
 
     <string name="first_registered_alt_text">First registered %1$s</string>
     <string name="first_registered_in_alt_text">First registered in %1$s</string>
     <string name="fuel_type_alt_text">Fuel type %1$s</string>
     <string name="colour_alt_text">Colour %1$s</string>
-    <string name="emissions_alt_text">%1$s grams per kilometre</string>
 
     <string name="brown">Brown</string>
     <string name="bronze">Bronze</string>
