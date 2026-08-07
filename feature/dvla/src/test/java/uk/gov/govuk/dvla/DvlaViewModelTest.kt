@@ -111,21 +111,20 @@ class DvlaViewModelTest {
         every { repo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
         every { savedStateHandle.get<String>("token") } returns null
         coEvery { authRepo.refreshTokens() } returns true
-        coEvery { linkingRepo.getVerification() } returns Result.Success(VerificationResponse("1234", "4321"))
+        coEvery { linkingRepo.getVerification() } returns Result.Success(VerificationResponse("1234"))
         every {
             dvlaAuthUrl.toUri().buildUpon()
-                .appendQueryParameter("verification", "1234")
-                .appendQueryParameter("session", "4321")
+                .appendQueryParameter("token", "1234")
                 .build()
                 .toString()
-        } returns "$dvlaAuthUrl?verification=1234&session=4321"
+        } returns "$dvlaAuthUrl?token=1234"
 
 
         val viewModel = DvlaViewModel(savedStateHandle, repo, analyticsClient, dvlaAuthUrl, linkingRepo, authRepo)
 
         advanceUntilIdle()
 
-        val expected = "$dvlaAuthUrl?verification=1234&session=4321"
+        val expected = "$dvlaAuthUrl?token=1234"
 
         assertEquals(expected, viewModel.authUrlToLaunch.value)
         coVerify(exactly = 1) { authRepo.refreshTokens() }

@@ -103,18 +103,16 @@ internal class DvlaViewModel @Inject constructor(
         when (val result = linkingRepo.getVerification()) {
             is Result.Success -> {
                 launchAuthUrl(
-                    result.value.verificationHash,
-                    result.value.sessionHash
+                    result.value.token
                 )
             }
             else -> _uiState.value = UiState.Error.Other
         }
     }
 
-    private fun launchAuthUrl(verificationHash: String, sessionHash: String) {
+    private fun launchAuthUrl(token: String) {
         val authUrl = dvlaAuthUrl.toUri().buildUpon()
-            .appendQueryParameter("verification", verificationHash)
-            .appendQueryParameter("session", sessionHash)
+            .appendQueryParameter("token", token)
             .build()
         _authUrlToLaunch.value = authUrl.toString()
     }
