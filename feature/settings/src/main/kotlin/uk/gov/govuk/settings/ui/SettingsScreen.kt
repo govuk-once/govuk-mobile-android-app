@@ -188,10 +188,10 @@ private fun SettingsScreen(
                 YourAccounts(title, { actions.onYourAccountsClick(title) })
             }
 
+            MediumVerticalSpacer()
+
             if (uiState.messageRowState != MessageRowState.Gone) {
                 val accessibilityText = mapMessageToAccessibilityText(uiState.messageRowState)
-
-                MediumVerticalSpacer()
 
                 CountListItem(
                     modifier = Modifier.clearAndSetSemantics {
