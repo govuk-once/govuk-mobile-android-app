@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.notificationcentre.data.model.Notification
@@ -241,29 +242,35 @@ private fun NotificationRow(
             .clip(RoundedCornerShape(10.dp))
             .background(GovUkTheme.colourScheme.surfaces.list)
             .clickable {  onTapRow(notification) }
-            .semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+            }, verticalAlignment = Alignment.CenterVertically
     ) {
 
+        // zIndex modifier is used to set the order the views are
+        // ready by the screen-reader.
+        // Feels like a hack, but it's in the docs
+        // https://developer.android.com/develop/ui/compose/accessibility/traversal#api-considerations
         Box(
             Modifier
                 .padding(horizontal = 16.dp)
                 .clip(CircleShape)
                 .background(indicatorColor)
                 .size(10.dp)
+                .zIndex(1F)
                 .semantics {
-                    hideFromAccessibility()
+                    if (notification.isUnread) {
+                        text = AnnotatedString(unreadContentDescription)
+                    } else {
+                        hideFromAccessibility()
+                    }
                 }
         )
         Column(
             Modifier
                 .padding(vertical = 16.dp)
                 .padding(end = 16.dp)
-                .semantics(mergeDescendants = true) {
-                    if (notification.isUnread) {
-                        text = AnnotatedString(unreadContentDescription)
-                    }
-                    role = Role.Button
-                }
+                .zIndex(0F)
         ) {
             Text(
                 notification.title,
