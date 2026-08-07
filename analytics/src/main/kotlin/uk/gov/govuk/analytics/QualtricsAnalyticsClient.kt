@@ -1,6 +1,7 @@
 package uk.gov.govuk.analytics
 
 import android.content.Context
+import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.qualtrics.digital.Qualtrics
 import com.qualtrics.digital.QualtricsPopOverActivity
@@ -95,6 +96,14 @@ class QualtricsAnalyticsClient @Inject constructor(
         qualtrics.registerViewVisit(eventName)
 
         qualtrics.evaluateProject { results ->
+            val targetResult = results.values.filterNotNull().lastOrNull {
+                !it.surveyUrl.isNullOrEmpty()
+            }
+            val surveyUrl = targetResult?.surveyUrl.orEmpty()
+            val skipPrompt = targetResult?.surveyUrl?.let {
+                it.toUri().query?.contains("hide_prompt=true")
+            } ?: false
+
             val passedTargetingIds = results.filterValues {
                 it.passed()
             }.keys.toList()
@@ -102,7 +111,11 @@ class QualtricsAnalyticsClient @Inject constructor(
             if (passedTargetingIds.isNotEmpty()) {
                 activityProvider.currentActivity?.let { activity ->
                     lastShownTargetingIds = passedTargetingIds
-                    qualtrics.display(activity)
+                    if (skipPrompt) {
+                        qualtrics.displayTarget(context, surveyUrl)
+                    } else {
+                        qualtrics.display(activity)
+                    }
                     onSurveyShown?.invoke(results)
                 }
             }
