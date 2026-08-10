@@ -3,7 +3,6 @@ package uk.gov.govuk.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -39,6 +38,7 @@ internal data class SettingsUiState(
 )
 
 internal sealed class MessageRowState {
+    internal data object Gone: MessageRowState()
     internal data object Loading: MessageRowState()
     internal data class Loaded(val unreadCount: Int): MessageRowState()
 }
@@ -46,7 +46,7 @@ internal sealed class MessageRowState {
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     authRepo: AuthRepo,
-    flagRepo: FlagRepo,
+    private val flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
     private val configRepo: ConfigRepo,
     private val notificationCentreFeature: NotificationCentreFeature
@@ -75,19 +75,27 @@ internal class SettingsViewModel @Inject constructor(
 
 
     fun loadMessages() {
-        _uiState.update {
-            it?.copy(
-                messageRowState = MessageRowState.Loading
-            )
-        }
-
-        viewModelScope.launch {
-            val unreadCount = notificationCentreFeature.getUnreadCount() ?: 0
+        if (flagRepo.isMessagesEnabled()) {
             _uiState.update {
                 it?.copy(
-                    messageRowState = MessageRowState.Loaded(
-                        unreadCount
+                    messageRowState = MessageRowState.Loading
+                )
+            }
+
+            viewModelScope.launch {
+                val unreadCount = notificationCentreFeature.getUnreadCount() ?: 0
+                _uiState.update {
+                    it?.copy(
+                        messageRowState = MessageRowState.Loaded(
+                            unreadCount
+                        )
                     )
+                }
+            }
+        } else {
+            _uiState.update {
+                it?.copy(
+                    messageRowState = MessageRowState.Gone
                 )
             }
         }

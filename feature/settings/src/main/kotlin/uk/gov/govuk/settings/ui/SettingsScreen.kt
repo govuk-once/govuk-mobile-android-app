@@ -190,6 +190,7 @@ private fun SettingsScreen(
 
             MediumVerticalSpacer()
 
+
             if (uiState.messageRowState != MessageRowState.Gone) {
                 val accessibilityText = mapMessageToAccessibilityText(uiState.messageRowState)
 
@@ -202,9 +203,9 @@ private fun SettingsScreen(
                     state = mapMessageToCountRowState(uiState.messageRowState),
                     onClick = actions.onMessagesClick
                 )
-            }
 
-            MediumVerticalSpacer()
+                MediumVerticalSpacer()
+            }
 
             NotificationsAndPrivacy(
                 uiState = uiState,

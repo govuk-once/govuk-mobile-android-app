@@ -109,6 +109,9 @@ class ConfigRepoImpl @Inject constructor(
     override val isFlexEnabled: Boolean
         get() = safeConfig.releaseFlags.flex
 
+    override val isMessagesEnabled: Boolean
+        get() = safeConfig.releaseFlags.messages
+
     override suspend fun clearRemoteConfigValues() {
         firebaseDataSource.clearRemoteValues()
     }

@@ -311,12 +311,26 @@ class SettingsViewModelTest {
     // Notifications
 
     @Test
-    fun `Given view appears, messages begin loading`() {
+    fun `Given view appears, and messages disabled, view is hidden`() {
+        runTest {
+            coEvery { flagRepo.isMessagesEnabled() } returns false
+
+            viewModel.loadMessages()
+
+            runCurrent()
+
+            assertEquals(MessageRowState.Gone, viewModel.uiState.value?.messageRowState)
+        }
+    }
+
+    @Test
+    fun `Given view appears, messages enabled, messages begin loading`() {
         runTest {
             coEvery { notificationCentreFeature.getUnreadCount() } coAnswers {
                 delay(2000)
                 null
             }
+            coEvery { flagRepo.isMessagesEnabled() } returns true
 
             viewModel.loadMessages()
 
@@ -327,9 +341,10 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `Given notifications loaded, messages changes to Loaded with count`() {
+    fun `Given notifications loaded, messages enabled, messages changes to Loaded with count`() {
         runTest {
             coEvery { notificationCentreFeature.getUnreadCount() } returns 1
+            coEvery { flagRepo.isMessagesEnabled() } returns true
 
             viewModel.loadMessages()
 
@@ -340,9 +355,10 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `Given notifications failed, messages changes to Loaded with 0 count`() {
+    fun `Given notifications failed, messages enabled, messages changes to Loaded with 0 count`() {
         runTest {
             coEvery { notificationCentreFeature.getUnreadCount() } returns null
+            coEvery { flagRepo.isMessagesEnabled() } returns true
 
             viewModel.loadMessages()
 
