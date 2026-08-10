@@ -11,7 +11,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.notificationcentre.NotificationCentreFeature
+import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
@@ -49,7 +49,7 @@ internal class SettingsViewModel @Inject constructor(
     private val flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
     private val configRepo: ConfigRepo,
-    private val notificationCentreFeature: NotificationCentreFeature
+    private val messagesFeature: MessagesFeature
 ): ViewModel() {
 
     companion object {
@@ -83,7 +83,7 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             viewModelScope.launch {
-                val unreadCount = notificationCentreFeature.getUnreadCount() ?: 0
+                val unreadCount = messagesFeature.getUnreadCount() ?: 0
                 _uiState.update {
                     it?.copy(
                         messageRowState = MessageRowState.Loaded(
