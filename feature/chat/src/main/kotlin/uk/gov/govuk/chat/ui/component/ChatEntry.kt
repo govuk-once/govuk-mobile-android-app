@@ -94,6 +94,8 @@ private fun AnimatedChatEntry(
                 showSending = false
                 delay(animationDelay.toLong())
             }
+            showLoading = false
+            showSending = false
             showAnswer = true
         }
     }
