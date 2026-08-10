@@ -439,4 +439,41 @@ class FlagRepoTest {
 
         assertTrue(flagRepo.isMessagesEnabled())
     }
+
+
+    // Travel Alerts
+
+    @Test
+    fun `Given a release build, When Travel Alerts is enabled, return false`() {
+        // Overriding for now to keep off in Prod
+        every { configRepo.isTravelAlertsEnabled } returns true
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a release build, When Travel Alerts is disabled, return false`() {
+        // Overriding for now to keep off in Prod
+        every { configRepo.isTravelAlertsEnabled } returns false
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Travel Alerts enabled, return true`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isTravelAlertsEnabled } returns true
+
+        assertTrue(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Travel Alerts disabled, return false`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isTravelAlertsEnabled } returns false
+
+        assertFalse(flagRepo.isTravelAlertsEnabled())
+    }
 }

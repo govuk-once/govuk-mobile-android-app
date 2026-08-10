@@ -140,6 +140,7 @@ class ConfigRepoTest {
         every { config.releaseFlags.flex } returns true
         every { config.releaseFlags.chat } returns true
         every { config.releaseFlags.messages } returns true
+        every { config.releaseFlags.travelAlerts } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
         every { config.userFeedbackBanner } returns mockFeedback
@@ -162,6 +163,7 @@ class ConfigRepoTest {
         assertEquals(true, repo.isFlexEnabled)
         assertEquals(true, repo.isChatEnabled)
         assertEquals(true, repo.isMessagesEnabled)
+        assertEquals(true, repo.isTravelAlertsEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
         assertSame(mockFeedback, repo.userFeedbackBanner)
