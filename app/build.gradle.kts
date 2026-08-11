@@ -144,6 +144,7 @@ dependencies {
     implementation(projects.feature.settings)
     implementation(projects.feature.search)
     implementation(projects.feature.topics)
+    implementation(projects.feature.travelalerts)
     implementation(projects.feature.visited)
     implementation(projects.feature.dvla)
     implementation(projects.notifications)
