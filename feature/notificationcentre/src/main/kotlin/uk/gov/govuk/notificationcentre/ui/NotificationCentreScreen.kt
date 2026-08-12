@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.hideFromAccessibility
@@ -29,10 +30,12 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.notificationcentre.data.model.Notification
@@ -217,6 +220,21 @@ private fun NotificationRow(
     onTapRow: (Notification) -> Unit
 ) {
     val unreadContentDescription = stringResource(R.string.unread_content_description)
+    val titleStyle: TextStyle
+    val subtitleStyle: TextStyle
+    val indicatorColor: Color
+
+    if (notification.isUnread) {
+        titleStyle = GovUkTheme.typography.bodyBold
+        subtitleStyle = GovUkTheme.typography.subheadlineBold
+        indicatorColor = GovUkTheme.colourScheme.surfaces.msgUnread
+    } else {
+        titleStyle = GovUkTheme.typography.bodyRegular
+        subtitleStyle = GovUkTheme.typography.subheadlineRegular
+        indicatorColor = GovUkTheme.colourScheme.surfaces.msgRead
+
+    }
+
     Row(
         Modifier
             .padding(bottom = 8.dp)
@@ -224,46 +242,51 @@ private fun NotificationRow(
             .clip(RoundedCornerShape(10.dp))
             .background(GovUkTheme.colourScheme.surfaces.list)
             .clickable {  onTapRow(notification) }
-            .semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+            }, verticalAlignment = Alignment.CenterVertically
     ) {
 
+        // zIndex modifier is used to set the order the views are
+        // ready by the screen-reader.
+        // Feels like a hack, but it's in the docs
+        // https://developer.android.com/develop/ui/compose/accessibility/traversal#api-considerations
         Box(
             Modifier
                 .padding(horizontal = 16.dp)
                 .clip(CircleShape)
-                .background(if(notification.isUnread)
-                    GovUkTheme.colourScheme.surfaces.msgUnread
-                else
-                    GovUkTheme.colourScheme.surfaces.msgRead)
+                .background(indicatorColor)
                 .size(10.dp)
+                .zIndex(1F)
                 .semantics {
-                    hideFromAccessibility()
+                    if (notification.isUnread) {
+                        text = AnnotatedString(unreadContentDescription)
+                    } else {
+                        hideFromAccessibility()
+                    }
                 }
         )
         Column(
             Modifier
                 .padding(vertical = 16.dp)
                 .padding(end = 16.dp)
-                .semantics(mergeDescendants = true) {
-                    if (notification.isUnread) {
-                        text = AnnotatedString(unreadContentDescription)
-                    }
-                    role = Role.Button
-                }
+                .zIndex(0F)
         ) {
             Text(
                 notification.title,
                 Modifier.padding(bottom = 4.dp),
                 GovUkTheme.colourScheme.textAndIcons.primary,
-                style = GovUkTheme.typography.headlineSemibold,
+                style = titleStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
-            FootnoteRegularLabel(
+            Text(
                 notification.formattedDate,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary
-            )
+                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                style = subtitleStyle ,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
         }
     }
 }
