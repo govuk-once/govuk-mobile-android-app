@@ -2,7 +2,6 @@ package uk.gov.govuk.config.data.flags
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -412,5 +411,32 @@ class FlagRepoTest {
 
         // THEN: It should return true
         assertTrue(result)
+    }
+
+    // Messages
+
+    @Test
+    fun `Given a release build, When Messages is enabled, return false`() {
+        // Overriding for now to keep off in Prod
+        every { configRepo.isMessagesEnabled } returns true
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isDvlaLinkEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Messages disabled, return false`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isMessagesEnabled } returns false
+
+        assertFalse(flagRepo.isMessagesEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Messages enabled, return true`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isMessagesEnabled } returns true
+
+        assertTrue(flagRepo.isMessagesEnabled())
     }
 }

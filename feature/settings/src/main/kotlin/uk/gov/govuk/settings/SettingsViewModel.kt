@@ -11,7 +11,6 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.notificationcentre.NotificationCentreFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
@@ -39,7 +38,6 @@ internal data class SettingsUiState(
 )
 
 internal sealed class MessageRowState {
-    internal data object Unknown: MessageRowState()
     internal data object Gone: MessageRowState()
     internal data object Loading: MessageRowState()
     internal data class Loaded(val unreadCount: Int): MessageRowState()
@@ -48,10 +46,9 @@ internal sealed class MessageRowState {
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     authRepo: AuthRepo,
-    flagRepo: FlagRepo,
+    private val flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
     private val configRepo: ConfigRepo,
-    private val dvlaRepo: DvlaRepo,
     private val notificationCentreFeature: NotificationCentreFeature
 ): ViewModel() {
 
@@ -72,23 +69,35 @@ internal class SettingsViewModel @Inject constructor(
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
             isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
             isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled(),
-            messageRowState = MessageRowState.Gone
+            messageRowState = MessageRowState.Loading
         )
     }
 
+
     fun loadMessages() {
-        // Remove messages row in Prod for now
-    }
+        if (flagRepo.isMessagesEnabled()) {
+            _uiState.update {
+                it?.copy(
+                    messageRowState = MessageRowState.Loading
+                )
+            }
 
-    private suspend fun loadMessageCount(isLinked: Boolean) {
-        if (!isLinked) {
-            _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
-            return
-        }
-
-        when (val unreadCount = notificationCentreFeature.getUnreadCount()) {
-            null -> _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
-            else -> _uiState.update { it?.copy(messageRowState = MessageRowState.Loaded(unreadCount)) }
+            viewModelScope.launch {
+                val unreadCount = notificationCentreFeature.getUnreadCount() ?: 0
+                _uiState.update {
+                    it?.copy(
+                        messageRowState = MessageRowState.Loaded(
+                            unreadCount
+                        )
+                    )
+                }
+            }
+        } else {
+            _uiState.update {
+                it?.copy(
+                    messageRowState = MessageRowState.Gone
+                )
+            }
         }
     }
 

@@ -111,6 +111,15 @@ class FlagRepo @Inject constructor(
         )
     }
 
+    fun isMessagesEnabled(): Boolean {
+        return isEnabled(
+            debugEnabled = debugEnabled,
+            debugFlag = debugFlags.isMessagesEnabled,
+//             remoteFlag = configRepo.isMessagesEnabled
+            remoteFlag = false //  Always off for prod builds!!!
+        )
+    }
+
 }
 
 internal fun isEnabled(
