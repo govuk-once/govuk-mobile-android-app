@@ -180,6 +180,7 @@ data class GovUkColourScheme(
         val buttonDestructiveStrokeFocussed: Color,
         val connectedButtonGroupActive: Color,
         val connectedButtonGroupInactive: Color,
+        val connectedButtonGroupFocused: Color,
         val search: Color,
         val switchOn: Color,
         val switchOff: Color,
@@ -353,6 +354,7 @@ internal val LightColorScheme = GovUkColourScheme(
 
         connectedButtonGroupActive = BluePrimary,
         connectedButtonGroupInactive = BlueLighter90,
+        connectedButtonGroupFocused = YellowPrimary,
         search = White,
         switchOn = GreenPrimary,
         switchOff = BlackLighter50,
@@ -525,6 +527,7 @@ internal val DarkColorScheme = GovUkColourScheme(
 
         connectedButtonGroupActive = BlueDarkMode,
         connectedButtonGroupInactive = BlueDarker80,
+        connectedButtonGroupFocused = YellowPrimary,
         search = Black,
         switchOn = GreenPrimary,
         switchOff = BlackLighter50,
@@ -692,6 +695,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             buttonDestructiveStrokeFocussed = Color.Unspecified,
             connectedButtonGroupActive = Color.Unspecified,
             connectedButtonGroupInactive = Color.Unspecified,
+            connectedButtonGroupFocused = Color.Unspecified,
             search = Color.Unspecified,
             switchOn = Color.Unspecified,
             switchOff = Color.Unspecified,
