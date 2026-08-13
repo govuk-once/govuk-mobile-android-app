@@ -110,7 +110,6 @@ class FlagRepo @Inject constructor(
             remoteFlag = configRepo.isDvlaLinkEnabled
         )
     }
-
 }
 
 internal fun isEnabled(
