@@ -112,6 +112,8 @@ class ConfigRepoImpl @Inject constructor(
     override val isMessagesEnabled: Boolean
         get() = safeConfig.releaseFlags.messages
 
+    override val isTravelAlertsEnabled: Boolean
+        get() = safeConfig.releaseFlags.travelAlerts
     override suspend fun clearRemoteConfigValues() {
         firebaseDataSource.clearRemoteValues()
     }

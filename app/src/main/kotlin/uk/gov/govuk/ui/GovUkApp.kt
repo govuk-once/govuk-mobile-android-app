@@ -96,6 +96,7 @@ import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
+import uk.gov.govuk.topics.ui.model.isTravelTopic
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
@@ -554,10 +555,7 @@ private fun GovUkNavHost(
                     }
                 },
                 topicHeader = { topicRef ->
-                    val isDrivingTopic = topicRef.isDrivingTopic()
-                    val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
-
-                    if (isDrivingTopic && isFeatureEnabled) {
+                    if (topicRef.isDrivingTopic() && viewModel.isDvlaLinkEnabled()) {
                         Column(
                             modifier = Modifier
                                 .padding(horizontal = GovUkTheme.spacing.medium),
@@ -577,6 +575,14 @@ private fun GovUkNavHost(
                                     navController.navigateToVehicleDetails(vehicleId)
                                 }
                             )
+                        }
+                    } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = GovUkTheme.spacing.medium),
+                            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                        ) {
+                            Text("Placeholder: Travel Alerts")
                         }
                     }
                 },

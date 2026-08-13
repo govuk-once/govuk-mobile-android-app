@@ -19,6 +19,7 @@ class DebugFlags @Inject constructor() {
     internal val isChatEnabled: Boolean? = true
     internal val isFlexEnabled: Boolean? = true
     internal val isMessagesEnabled: Boolean? = true
+    internal val isTravelAlertsEnabled: Boolean? = true
 
     /** If isFlexEnabled is false it will be ignored */
     internal val isDvlaLinkEnabled: Boolean? = true

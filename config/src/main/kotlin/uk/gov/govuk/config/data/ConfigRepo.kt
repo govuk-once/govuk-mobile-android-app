@@ -29,6 +29,7 @@ interface ConfigRepo {
     val termsAndConditions: TermsAndConditions?
     val isFlexEnabled: Boolean
     val isMessagesEnabled: Boolean
+    val isTravelAlertsEnabled: Boolean
     val dvlaUrls: DvlaUrls?
     val promoBanners: List<PromoBanner>?
 
