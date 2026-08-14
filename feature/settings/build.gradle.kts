@@ -69,7 +69,7 @@ dependencies {
     implementation(projects.notifications)
     implementation(projects.data)
     implementation(projects.feature.dvla)
-    implementation(projects.feature.notificationcentre)
+    implementation(projects.feature.messages)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
