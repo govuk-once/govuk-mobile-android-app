@@ -12,7 +12,6 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.notificationcentre.NotificationCentreFeature
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
@@ -41,7 +40,6 @@ internal data class SettingsUiState(
 )
 
 internal sealed class MessageRowState {
-    internal data object Unknown: MessageRowState()
     internal data object Gone: MessageRowState()
     internal data object Loading: MessageRowState()
     internal data class Loaded(val unreadCount: Int): MessageRowState()
@@ -50,10 +48,9 @@ internal sealed class MessageRowState {
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     authRepo: AuthRepo,
-    flagRepo: FlagRepo,
+    private val flagRepo: FlagRepo,
     private val analyticsClient: AnalyticsClient,
     private val configRepo: ConfigRepo,
-    private val dvlaRepo: DvlaRepo,
     private val notificationCentreFeature: NotificationCentreFeature
 ): ViewModel() {
 
@@ -74,44 +71,27 @@ internal class SettingsViewModel @Inject constructor(
             isAuthenticationEnabled = authRepo.isAuthenticationEnabled(),
             isAnalyticsEnabled = analyticsClient.isAnalyticsEnabled(),
             isYourAccountsEnabled = flagRepo.isDvlaLinkEnabled(),
-            messageRowState = MessageRowState.Unknown
+            messageRowState = MessageRowState.Loading
         )
     }
 
-    private var loadMessagesJob: Job? = null
 
     fun loadMessages() {
-        loadMessagesJob?.cancel()
-        loadMessagesJob = viewModelScope.launch {
-            dvlaRepo.linkState.collect { state ->
-                when (state) {
-                    ServiceLinkStatus.CHECKING -> {
-                        _uiState.update { it?.copy(messageRowState = MessageRowState.Loading) }
-                        dvlaRepo.refreshLinkStatus()
-                    }
-                    ServiceLinkStatus.UNLINKED -> {
-                        loadMessageCount(false)
-                    }
-                    ServiceLinkStatus.LINKED -> {
-                        loadMessageCount(true)
-                    }
-                    ServiceLinkStatus.ERROR -> {
-                        loadMessageCount(false)
-                    }
-                }
+        _uiState.update {
+            it?.copy(
+                messageRowState = MessageRowState.Loading
+            )
+        }
+
+        viewModelScope.launch {
+            val unreadCount = notificationCentreFeature.getUnreadCount() ?: 0
+            _uiState.update {
+                it?.copy(
+                    messageRowState = MessageRowState.Loaded(
+                        unreadCount
+                    )
+                )
             }
-        }
-    }
-
-    private suspend fun loadMessageCount(isLinked: Boolean) {
-        if (!isLinked) {
-            _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
-            return
-        }
-
-        when (val unreadCount = notificationCentreFeature.getUnreadCount()) {
-            null -> _uiState.update { it?.copy(messageRowState = MessageRowState.Gone) }
-            else -> _uiState.update { it?.copy(messageRowState = MessageRowState.Loaded(unreadCount)) }
         }
     }
 
