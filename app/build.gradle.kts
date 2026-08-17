@@ -38,7 +38,6 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "PLAY_STORE_URL", "\"https://play.google.com/store/apps/details?id=$applicationId\"")
         buildConfigField("String", "VERSION_NAME_USER_FACING", "\"$versionName ($versionCode)\"")
         buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
     }

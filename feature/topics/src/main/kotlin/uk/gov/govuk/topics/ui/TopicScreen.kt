@@ -48,7 +48,8 @@ import uk.gov.govuk.design.ui.model.FocusableCardColours
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.govkit.browser.rememberGovUkLauncher
+import uk.gov.govuk.govkit.browser.Urls
+import uk.gov.govuk.govkit.browser.rememberUrlLauncher
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicUiState
 import uk.gov.govuk.topics.TopicViewModel
@@ -69,7 +70,7 @@ internal fun TopicRoute(
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
-    val onGovUkClick = rememberGovUkLauncher()
+    val onGovUkClick = rememberUrlLauncher(Urls.GOV_UK_HOME)
 
     Box(modifier
         .fillMaxSize()

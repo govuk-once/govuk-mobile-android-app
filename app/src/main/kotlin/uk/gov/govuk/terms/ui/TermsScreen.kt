@@ -33,7 +33,8 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.govkit.browser.rememberGovUkLauncher
+import uk.gov.govuk.govkit.browser.Urls
+import uk.gov.govuk.govkit.browser.rememberUrlLauncher
 import uk.gov.govuk.terms.TermsUiState
 import uk.gov.govuk.terms.TermsViewModel
 
@@ -46,7 +47,7 @@ internal fun TermsRoute(
 ) {
     val viewModel: TermsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val onGovUkClick = rememberGovUkLauncher()
+    val onGovUkClick = rememberUrlLauncher(Urls.GOV_UK_HOME)
 
     uiState?.let {
         when (it) {

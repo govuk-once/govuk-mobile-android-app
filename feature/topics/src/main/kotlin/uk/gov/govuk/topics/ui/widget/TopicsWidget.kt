@@ -28,7 +28,8 @@ import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.govkit.browser.rememberGovUkLauncher
+import uk.gov.govuk.govkit.browser.Urls.GOV_UK_HOME
+import uk.gov.govuk.govkit.browser.rememberUrlLauncher
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicsCategory
 import uk.gov.govuk.topics.TopicsWidgetUiState
@@ -43,7 +44,7 @@ fun TopicsWidget(
 ) {
     val viewModel: TopicsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val onGovUkClick = rememberGovUkLauncher()
+    val onGovUkClick = rememberUrlLauncher(GOV_UK_HOME)
 
     uiState?.let { state ->
         TopicsWidgetContent(

@@ -78,21 +78,15 @@ sealed class BrowserActivityLauncher(
 }
 
 @Composable
-fun rememberPlayStoreLauncher(): () -> Unit {
-    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
-    return remember(browserLauncher) {
+fun rememberUrlLauncher(
+    url: String,
+    shouldShowExternalBrowser: Boolean = true,
+    onError: () -> Unit = {}
+): () -> Unit {
+    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser)
+    return remember(browserLauncher, url) {
         {
-            browserLauncher.launch(url = Urls.PLAY_STORE) { }
-        }
-    }
-}
-
-@Composable
-fun rememberGovUkLauncher(): () -> Unit {
-    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
-    return remember(browserLauncher) {
-        {
-            browserLauncher.launch(url = Urls.GOV_UK_HOME) { }
+            browserLauncher.launch(url = url, onError = onError)
         }
     }
 }

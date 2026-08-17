@@ -55,6 +55,7 @@ sonar {
 
 dependencies {
     implementation(libs.androidx.browser)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
 
     testImplementation(libs.junit)
