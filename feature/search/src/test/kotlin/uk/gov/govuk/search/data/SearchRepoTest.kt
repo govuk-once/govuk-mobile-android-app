@@ -20,7 +20,7 @@ import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.search.data.local.SearchLocalDataSource
-import uk.gov.govuk.search.data.local.model.LocalSearchItem
+import uk.gov.govuk.search.data.local.model.LocalSearchItemEntity
 import uk.gov.govuk.search.data.remote.AutocompleteApi
 import uk.gov.govuk.search.data.remote.SearchApi
 import uk.gov.govuk.search.data.remote.model.AutocompleteResponse
@@ -60,9 +60,9 @@ class SearchRepoTest {
         fun `Previous searches returns previous searches`() {
             every { localDataSource.previousSearches } returns flowOf(
                 listOf(
-                    LocalSearchItem().apply { searchTerm = "dog" },
-                    LocalSearchItem().apply { searchTerm = "cat" },
-                    LocalSearchItem().apply { searchTerm = "tax" }
+                    LocalSearchItemEntity("dog", 0),
+                    LocalSearchItemEntity("cat", 0 ),
+                    LocalSearchItemEntity("tax", 0 )
                 )
             )
 

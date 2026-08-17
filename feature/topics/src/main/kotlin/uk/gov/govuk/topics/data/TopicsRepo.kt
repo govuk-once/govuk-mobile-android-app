@@ -1,9 +1,12 @@
 package uk.gov.govuk.topics.data
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.remote.safeApiCall
+import uk.gov.govuk.topics.TopicsCategory
+import uk.gov.govuk.topics.data.local.TopicsDataStore
 import uk.gov.govuk.topics.data.local.TopicsLocalDataSource
 import uk.gov.govuk.topics.data.remote.TopicsApi
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic
@@ -16,6 +19,7 @@ import javax.inject.Singleton
 internal class TopicsRepo @Inject constructor(
     private val topicsApi: TopicsApi,
     private val localDataSource: TopicsLocalDataSource,
+    private val dataStore: TopicsDataStore,
 ) {
 
     private var _stepBySteps: List<RemoteTopicContent> = emptyList()
@@ -72,6 +76,13 @@ internal class TopicsRepo @Inject constructor(
 
     internal suspend fun topicsCustomised() {
         localDataSource.topicsCustomised()
+    }
+
+    val selectedCategoryFlow: Flow<TopicsCategory>
+        get() = dataStore.selectedCategoryFlow
+
+    suspend fun setSelectedCategory(category: TopicsCategory) {
+        dataStore.setSelectedCategory(category)
     }
 
     suspend fun clear() {

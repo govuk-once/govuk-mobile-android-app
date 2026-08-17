@@ -161,7 +161,7 @@ private fun ShowVisitedItems(
                 }
                 itemsIndexed(
                     items = visitedItems,
-                    key = { _, item -> item.id }
+                    key = { _, item -> item.url }
                 ) { index, item ->
                     val title = item.title
                     val url = item.url
