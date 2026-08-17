@@ -96,29 +96,23 @@ class QualtricsAnalyticsClient @Inject constructor(
         qualtrics.registerViewVisit(eventName)
 
         qualtrics.evaluateProject { results ->
-            val targetResult = results.values.filterNotNull().lastOrNull {
-                !it.surveyUrl.isNullOrEmpty()
-            }
+            val passedResults = results.filterValues { it.passed() }
+
+            if (passedResults.isEmpty()) return@evaluateProject
+            val activity = activityProvider.currentActivity ?: return@evaluateProject
+
+            lastShownTargetingIds = passedResults.keys.toList()
+
+            val targetResult = passedResults.values.filterNotNull().firstOrNull()
             val surveyUrl = targetResult?.surveyUrl.orEmpty()
-            val skipPrompt = targetResult?.surveyUrl?.let {
-                it.toUri().query?.contains("hide_prompt=true")
-            } ?: false
+            val skipPrompt = targetResult?.surveyUrl?.toUri()?.query?.contains("hide_prompt=true") == true
 
-            val passedTargetingIds = results.filterValues {
-                it.passed()
-            }.keys.toList()
-
-            if (passedTargetingIds.isNotEmpty()) {
-                activityProvider.currentActivity?.let { activity ->
-                    lastShownTargetingIds = passedTargetingIds
-                    if (skipPrompt) {
-                        qualtrics.displayTarget(context, surveyUrl)
-                    } else {
-                        qualtrics.display(activity)
-                    }
-                    onSurveyShown?.invoke(results)
-                }
+            if (skipPrompt) {
+                qualtrics.displayTarget(context, surveyUrl)
+            } else {
+                qualtrics.display(activity)
             }
+            onSurveyShown?.invoke(results)
         }
     }
 

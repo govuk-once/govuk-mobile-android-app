@@ -397,7 +397,7 @@ class QualtricsAnalyticsClientTest {
         mockkStatic(Uri::class)
         try {
             val params = mapOf("screen_name" to "Settings")
-            val expectedSurveyUrl = "https://example.qualtrics.com/jfe/form/SV_123?hide_prompt=true"
+            val expectedSurveyUrl = "https://example.com/survey?hide_prompt=true"
             val mockUri = mockk<Uri> {
                 every { query } returns "hide_prompt=true"
             }
@@ -424,6 +424,64 @@ class QualtricsAnalyticsClientTest {
             }
         } finally {
             unmockkStatic(Uri::class)
+        }
+    }
+
+    @Test
+    fun `Given a passed result with no survey url and a failed result with a hide_prompt survey url, when evaluated, then display the prompt without skipping it`() {
+        val params = mapOf("screen_name" to "Settings")
+        val passedResult = mockk<TargetingResult> {
+            every { passed() } returns true
+            every { surveyUrl } returns null
+        }
+        val failedResult = mockk<TargetingResult> {
+            every { passed() } returns false
+            every { surveyUrl } returns "https://example.com/survey?hide_prompt=true"
+        }
+        val mockResults = mapOf("passed_survey" to passedResult, "failed_survey" to failedResult)
+        val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+
+        every { activityProvider.currentActivity } returns activity
+        every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.logEvent("event_name", params)
+
+        callbackSlot.captured.run(mockResults)
+
+        verify(exactly = 1) {
+            qualtrics.display(activity)
+        }
+        verify(exactly = 0) {
+            qualtrics.displayTarget(any(), any())
+        }
+    }
+
+    @Test
+    fun `Given a passed result with a survey url and a failed result with a hide_prompt survey url, when evaluated, then display the prompt without skipping it`() {
+        val params = mapOf("screen_name" to "Settings")
+        val passedResult = mockk<TargetingResult> {
+            every { passed() } returns true
+            every { surveyUrl } returns "https://example.com/survey"
+        }
+        val failedResult = mockk<TargetingResult> {
+            every { passed() } returns false
+            every { surveyUrl } returns "https://example.com/survey?hide_prompt=true"
+        }
+        val mockResults = mapOf("passed_survey" to passedResult, "failed_survey" to failedResult)
+        val callbackSlot = slot<IQualtricsProjectEvaluationCallback>()
+
+        every { activityProvider.currentActivity } returns activity
+        every { qualtrics.evaluateProject(capture(callbackSlot)) } returns Unit
+
+        qualtricsAnalyticsClient.logEvent("event_name", params)
+
+        callbackSlot.captured.run(mockResults)
+
+        verify(exactly = 1) {
+            qualtrics.display(activity)
+        }
+        verify(exactly = 0) {
+            qualtrics.displayTarget(any(), any())
         }
     }
 }
