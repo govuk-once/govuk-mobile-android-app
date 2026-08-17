@@ -3,6 +3,7 @@ package uk.gov.govuk.design.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,47 +11,57 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.talkBackText
+import uk.gov.govuk.design.ui.extension.withAltText
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 fun InternalLinkListItem(
-    title: String,
-    onClick: () -> Unit,
+    title: AccessibleString,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     style: InternalLinkListItemStyle = InternalLinkListItemStyle.Default
 ) {
     CardListItem(
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) { },
         onClick = onClick,
         isFirst = isFirst,
-        isLast = isLast
+        isLast = isLast,
+        background = background
     ) {
         Row(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
@@ -62,8 +73,9 @@ fun InternalLinkListItem(
                     .weight(1f)
             ) {
                 BodyRegularLabel(
-                    text = title,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
+                    text = title.displayText,
+                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    modifier = Modifier.withAltText(title.altText)
                 )
                 description?.let { description ->
                     ExtraSmallVerticalSpacer()
@@ -79,9 +91,41 @@ fun InternalLinkListItem(
             when (style) {
                 is InternalLinkListItemStyle.Status -> {
                     BodyRegularLabel(
-                        text = style.title,
+                        text = style.status,
                         color = GovUkTheme.colourScheme.textAndIcons.iconTertiary
                     )
+                }
+
+                is InternalLinkListItemStyle.Info -> {
+                    BodyRegularLabel(
+                        text = style.info.displayText,
+                        modifier = Modifier
+                            .clearAndSetSemantics {
+                                /* Override semantics so we can set alt text to
+                                an empty string without the text then being read */
+                                style.info.altText?.let { altText ->
+                                    contentDescription = altText
+                                } ?: run {
+                                    contentDescription = style.info.displayText
+                                }
+                            }
+                    )
+                }
+
+                is InternalLinkListItemStyle.Button -> {
+                    TextButton(
+                        onClick = style.onClick,
+                        modifier = Modifier
+                            .semantics { contentDescription = style.altText }
+                            .align(Alignment.CenterVertically),
+                        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
+                    ) {
+                        Icon(
+                            painter = painterResource(style.icon),
+                            contentDescription = null,
+                            tint = GovUkTheme.colourScheme.textAndIcons.secondary
+                        )
+                    }
                 }
 
                 else -> {
@@ -317,12 +361,135 @@ fun IconListItem(
 }
 
 @Composable
+fun StatusListItem(
+    modifier: Modifier = Modifier,
+    title: AccessibleString? = null,
+    description: AccessibleString,
+    iconStyle: StatusListItemIconStyle?,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+    drawDivider: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
+    footerContent: @Composable (() -> Unit)? = null
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = drawDivider,
+        background = background
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                )
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    title?.let {
+                        Title3BoldLabel(
+                            text = it.displayText,
+                            modifier = Modifier
+                                .semantics { heading() }
+                                .withAltText(it.altText)
+                        )
+
+                        SmallVerticalSpacer()
+                    }
+
+                    BodyRegularLabel(
+                        text = description.displayText,
+                        modifier = Modifier.withAltText(description.altText)
+                    )
+                }
+
+                MediumHorizontalSpacer()
+
+                iconStyle?.let {
+                    val (icon, tint) = when (it) {
+                        StatusListItemIconStyle.Success -> Pair(
+                            painterResource(R.drawable.ic_check_round),
+                            GovUkTheme.colourScheme.surfaces.buttonPrimary
+                        )
+
+                        StatusListItemIconStyle.Warning -> Pair(
+                            rememberVectorPainter(Icons.Filled.Warning),
+                            GovUkTheme.colourScheme.textAndIcons.primary
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.size(36.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = icon,
+                            contentDescription = null,  // decorative icon
+                            tint = tint
+                        )
+                    }
+                }
+            }
+            footerContent?.invoke()
+        }
+    }
+}
+
+@Composable
+fun AddressListItem(
+    name: AccessibleString,
+    address: AccessibleString,
+    modifier: Modifier = Modifier,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+    background: Color = GovUkTheme.colourScheme.surfaces.list
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true,
+        background = background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                )
+        ) {
+            BodyBoldLabel(
+                text = name.displayText,
+                modifier = Modifier.withAltText(name.altText),
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+
+            SmallVerticalSpacer()
+
+            BodyRegularLabel(
+                text = address.displayText,
+                modifier = Modifier.withAltText(address.altText),
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+        }
+    }
+}
+
+@Composable
 fun CardListItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
     drawDivider: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     content: @Composable () -> Unit,
 ) {
     val cornerRadius = 12.dp
@@ -336,7 +503,7 @@ fun CardListItem(
                     bottomEnd = if (isLast) cornerRadius else 0.dp
                 )
             )
-            .background(GovUkTheme.colourScheme.surfaces.list)
+            .background(background)
             .then(
                 onClick?.let {
                     Modifier.clickable { it() }
@@ -351,11 +518,134 @@ fun CardListItem(
     }
 }
 
+@Composable
+fun CountdownBarListItem(
+    topText: AccessibleString,
+    percentage: Float,
+    bottomText: AccessibleString,
+    modifier: Modifier = Modifier,
+    title: AccessibleString? = null,
+    isFirst: Boolean = false,
+    isLast: Boolean = false,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
+    footerContent: @Composable (() -> Unit)? = null
+) {
+    CardListItem(
+        modifier = modifier,
+        isFirst = isFirst,
+        isLast = isLast,
+        drawDivider = true,
+        background = background
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = GovUkTheme.spacing.medium)
+        ) {
+            MediumVerticalSpacer()
+
+            title?.let { title ->
+                Title3BoldLabel(
+                    text = title.displayText,
+                    modifier = Modifier
+                        .semantics { heading() }
+                        .withAltText(title.altText)
+                )
+
+                SmallVerticalSpacer()
+            }
+
+            BodyRegularLabel(
+                text = topText.displayText,
+                modifier = Modifier.withAltText(topText.altText)
+            )
+
+            SmallVerticalSpacer()
+
+            CountdownBar(percentage = percentage)
+
+            SmallVerticalSpacer()
+
+            CalloutRegularLabel(
+                text = bottomText.displayText,
+                modifier = Modifier.withAltText(bottomText.altText)
+            )
+            footerContent?.invoke()
+
+            MediumVerticalSpacer()
+        }
+    }
+}
+
+sealed class CountListState {
+    enum class IndicatorState {
+        DIM, FULL
+    }
+    data object Loading: CountListState()
+    data class Idle(val count: Int, val indicatorState: IndicatorState): CountListState()
+}
+
+@Composable
+fun CountListItem(modifier: Modifier = Modifier, title: String, state: CountListState, onClick: (() -> Unit)? = null,
+) {
+    CardListItem(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(
+                    onClick?.let {
+                        return@let if (state != CountListState.Loading) {
+                            Modifier.clickable { it() }
+                        } else {
+                            Modifier
+                        }
+                    } ?: Modifier
+                )
+                .padding(horizontal = 16.dp)
+        ) {
+            BodyRegularLabel(
+                text = title,
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                modifier = Modifier
+                    .padding(0.dp, 16.dp, 8.dp, 16.dp)
+                    .weight(1f)
+            )
+
+            when (state) {
+                is CountListState.Idle -> {
+                    Box(
+                        modifier = Modifier.size(8.dp).clip(CircleShape)
+                            .background(when (state.indicatorState) {
+                                CountListState.IndicatorState.DIM -> GovUkTheme.colourScheme.surfaces.msgRead
+                                CountListState.IndicatorState.FULL -> GovUkTheme.colourScheme.surfaces.msgUnread
+                            })
+                    )
+
+                    BodyRegularLabel(
+                        text = "${state.count}",
+                        color = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+                        modifier = Modifier.padding(start = 6.dp)
+                    )
+                }
+
+                is CountListState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(16.dp),
+                        color = GovUkTheme.colourScheme.surfaces.primary,
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 @Preview
 @Composable
 private fun InternalLinkListItemPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", {})
+        InternalLinkListItem(AccessibleString("Title"))
     }
 }
 
@@ -363,7 +653,7 @@ private fun InternalLinkListItemPreview() {
 @Composable
 private fun InternalLinkListItemDescriptionPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", {}, description = "Description")
+        InternalLinkListItem(AccessibleString("Title"), description = "Description")
     }
 }
 
@@ -371,7 +661,31 @@ private fun InternalLinkListItemDescriptionPreview() {
 @Composable
 private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
-        InternalLinkListItem("Title", {}, style = InternalLinkListItemStyle.Status("Status"))
+        InternalLinkListItem(AccessibleString("Title"), style = InternalLinkListItemStyle.Status("Status"))
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemInfoPreview() {
+    val info = AccessibleString("Info")
+    GovUkTheme {
+        InternalLinkListItem(
+            title = AccessibleString("Title"),
+            style = InternalLinkListItemStyle.Info(
+                info
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemButtonPreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
     }
 }
 
@@ -403,5 +717,85 @@ private fun ExternalLinkListItemButtonPreview() {
         ExternalLinkListItem(
             "Title", {}, description = "Description",
             style = ExternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = AccessibleString("Tax"),
+            description = AccessibleString("Valid until 1 February 2027"),
+            iconStyle = StatusListItemIconStyle.Success,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemWarningPreview() {
+    GovUkTheme {
+        StatusListItem(
+            title = AccessibleString("Tax"),
+            description = AccessibleString("Expired 1 February 2027"),
+            iconStyle = StatusListItemIconStyle.Warning,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun StatusListItemNoTitlePreview() {
+    GovUkTheme {
+        StatusListItem(
+            description = AccessibleString("Valid until 1 February 2027"),
+            iconStyle = StatusListItemIconStyle.Success,
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AddressListItemPreview() {
+    GovUkTheme {
+        AddressListItem(
+            name = AccessibleString("Ms Anna Ornella Arenö"),
+            address = AccessibleString(
+                "29 Orchard Drive \nMilton Keynes \nPA98 J83"
+            ),
+            isFirst = false,
+            isLast = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CountListItemPreview() {
+    GovUkTheme {
+        Column {
+            CountListItem(title = "Test Idle Indicator Full Indicator", state = CountListState.Idle(42, CountListState.IndicatorState.FULL), onClick = {})
+            CountListItem(title = "Test Idle Indicator Dim Indicator", state = CountListState.Idle(0, CountListState.IndicatorState.DIM), onClick = {})
+            CountListItem(title = "Test Loading", state = CountListState.Loading, onClick = {})
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CountdownBarItemListItemPreview() {
+    GovUkTheme {
+        CountdownBarListItem(
+            AccessibleString("Top text"),
+            50f,
+            AccessibleString("Bottom text")
+        )
     }
 }

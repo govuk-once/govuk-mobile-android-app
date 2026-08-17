@@ -2,135 +2,283 @@ package uk.gov.govuk.dvla.data
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertFalse
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.IdentityRepo
+import uk.gov.govuk.data.identity.model.LinkedService
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
+import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.remote.DvlaApi
-import uk.gov.govuk.dvla.remote.model.DvlaLicenceResponse
-import uk.gov.govuk.dvla.remote.model.DvlaStatusResponse
+import uk.gov.govuk.dvla.remote.model.CustomerVehicleDetailsResponse
+import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
+import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
+import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DvlaRepoTest {
-
+    private val dispatcher = UnconfinedTestDispatcher()
+    private val testScope = TestScope(dispatcher)
     private val api = mockk<DvlaApi>()
     private val authRepo = mockk<AuthRepo>()
+    private val dvlaDataStore = mockk<DvlaDataStore>()
+    private val identityRepo = mockk<IdentityRepo>()
     private lateinit var repo: DvlaRepo
     private val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJleHAiOjM2MDAsImxpbmtpbmdfaWQiOiIxMjM0LWFiY2QifQ."
-    private val linkingId = "1234-abcd"
 
     @Before
     fun setup() {
-        repo = DvlaRepo(api, authRepo)
+        Dispatchers.setMain(dispatcher)
+        every { identityRepo.linkStatusOf(LinkedService.DVLA) } returns flowOf(ServiceLinkStatus.UNLINKED)
+        every { identityRepo.currentStatusOf(LinkedService.DVLA) } returns ServiceLinkStatus.UNLINKED
+
+        repo = DvlaRepo(testScope, api, authRepo, dvlaDataStore, identityRepo)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `Given linking api returns success, when linkAccount is called, then return Success`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
+    fun `Given getSelectedDrivingView is called, then getSelectedDrivingView is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLES
+
+            repo.getSelectedDrivingView()
+
+            coVerify(exactly = 1) { dvlaDataStore.getSelectedDrivingView() }
+        }
+
+    @Test
+    fun `Given setSelectedDrivingView is called, then setSelectedDrivingView is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) } returns Unit
+
+            repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
+
+            coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) }
+        }
+
+    @Test
+    fun `Given clear is called, then clear is called on the data store`() =
+        runTest {
+            coEvery { dvlaDataStore.clear() } returns Unit
+
+            repo.clear()
+
+            coVerify(exactly = 1) {
+                dvlaDataStore.clear()
+            }
+        }
+
+    @Test
+    fun `Given linking api returns success, when linkAccount is called, then return Success and sync Identity`() = runTest {
+        coEvery { api.linkDvlaIdentity(token) } returns Response.success(Unit)
+        coEvery { identityRepo.getLinkedServices() } returns Unit
 
         val result = repo.linkAccount(token)
 
         assertTrue(result is Result.Success)
-        assertTrue(repo.isLinked.value)
-        coVerify(exactly = 1) { api.linkDvlaIdentity(linkingId) }
+        coVerify(exactly = 1) { api.linkDvlaIdentity(token) }
+        coVerify(exactly = 1) { identityRepo.getLinkedServices() }
     }
 
     @Test
     fun `Given linking api throws exception, when linkAccount is called, then return Error`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } throws Exception("Exception")
+        coEvery { api.linkDvlaIdentity(token) } throws Exception("Exception")
 
         val result = repo.linkAccount(token)
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 1) { api.linkDvlaIdentity(linkingId) }
+        coVerify(exactly = 1) { api.linkDvlaIdentity(token) }
     }
 
     @Test
-    fun `Given unlinking api returns success, when unlinkAccount is called, then return Success and update isLinked`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
-        repo.linkAccount(token)
-        assertTrue(repo.isLinked.value)
-
+    fun `Given unlinking api returns success, when unlinkAccount is called, then return Success and and sync identity`() = runTest {
         coEvery { api.deleteDvlaIdentity() } returns Response.success(Unit)
+        coEvery { dvlaDataStore.clear() } returns Unit
+        coEvery { identityRepo.getLinkedServices() } returns Unit
+
         val result = repo.unlinkAccount()
 
         assertTrue(result is Result.Success)
-        assertFalse(repo.isLinked.value)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }
+        coVerify(exactly = 1) { dvlaDataStore.clear() }
+        coVerify(exactly = 1) { identityRepo.getLinkedServices() }
     }
 
     @Test
     fun `Given unlinking api throws exception, when unlinkAccount is called, then return error`() = runTest {
-        coEvery { api.linkDvlaIdentity(linkingId) } returns Response.success(Unit)
-        repo.linkAccount(token)
-        assertTrue(repo.isLinked.value)
-
         coEvery { api.deleteDvlaIdentity() } throws Exception("Exception")
+
         val result = repo.unlinkAccount()
 
         assertTrue(result is Result.Error)
-        assertTrue(repo.isLinked.value)
         coVerify(exactly = 1) { api.deleteDvlaIdentity() }
+        coVerify(exactly = 0) { dvlaDataStore.clear() }
+        coVerify(exactly = 0) { identityRepo.getLinkedServices() }
     }
 
     @Test
-    fun `Given check api returns account is linked, when isAccountLinked is called, then return Success and update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = true))
+    fun `Given refreshLinkStatus is called, then call getLinkedServices on identityRepo`() = runTest {
+        coEvery { identityRepo.getLinkedServices() } returns Unit
 
-        val result = repo.isAccountLinked()
+        repo.refreshLinkStatus()
 
-        assertTrue(result is Result.Success)
-        assertTrue((result as Result.Success).value)
-        assertTrue(repo.isLinked.value)
-        coVerify(exactly = 1) { api.checkDvlaLinked() }
-    }
-
-    @Test
-    fun `Given check api returns linked false, when isAccountLinked is called, then return Success(false) and update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } returns Response.success(DvlaStatusResponse(linked = false))
-
-        val result = repo.isAccountLinked()
-
-        assertTrue(result is Result.Success)
-        assertFalse((result as Result.Success).value)
-        assertFalse(repo.isLinked.value)
-        coVerify(exactly = 1) { api.checkDvlaLinked() }
-    }
-
-    @Test
-    fun `Given check api throws exception, when isAccountLinked is called, then return Error and do not update isLinked`() = runTest {
-        coEvery { api.checkDvlaLinked() } throws Exception("Exception")
-
-        val result = repo.isAccountLinked()
-
-        assertTrue(result is Result.Error)
-        assertFalse(repo.isLinked.value)
-        coVerify(exactly = 1) { api.checkDvlaLinked() }
+        coVerify(exactly = 1) { identityRepo.getLinkedServices() }
     }
 
     @Test
     fun `Given driving licence api returns success, when getLicenceDetails is called, then return Success with LicenceDetails`() = runTest {
-        val licenceResponse = mockk<DvlaLicenceResponse>(relaxed = true)
+        val licenceResponse = mockk<LicenceResponse>(relaxed = true)
 
         coEvery { api.getDrivingLicence() } returns Response.success(licenceResponse)
 
         val result = repo.getLicenceDetails()
 
-        assertTrue(result is Result.Success)
+        assertTrue(result is LicenceDetailsResult.Success)
         coVerify(exactly = 1) { api.getDrivingLicence() }
     }
 
     @Test
-    fun `Given driving licence api fails, when getLicenceDetails is called, then return Error`() = runTest {
+    fun `Given driving licence api throws, when getLicenceDetails is called, then return Failure`() = runTest {
         coEvery { api.getDrivingLicence() } throws Exception("Exception")
 
         val result = repo.getLicenceDetails()
 
-        assertTrue(result is Result.Error)
+        assertTrue(result is LicenceDetailsResult.Failure)
         coVerify(exactly = 1) { api.getDrivingLicence() }
+    }
+
+    @Test
+    fun `Given customer vehicles api returns success, when getCustomerVehicles is called, then return Success with vehicles`() = runTest {
+        val vehiclesResponse = mockk<CustomerVehiclesResponse>(relaxed = true) {
+            every { customerVehicles } returns emptyList()
+        }
+        coEvery { api.getCustomerVehicles() } returns Response.success(vehiclesResponse)
+
+        val result = repo.getCustomerVehicles()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getCustomerVehicles() }
+    }
+
+    @Test
+    fun `Given customer vehicles api fails, when getCustomerVehicles is called, then return Error`() = runTest {
+        coEvery { api.getCustomerVehicles() } throws Exception("Exception")
+
+        val result = repo.getCustomerVehicles()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getCustomerVehicles() }
+    }
+
+    @Test
+    fun `Given vehicle details api returns success, when getVehicleDetails is called, then return Success with VehicleDetails`() = runTest {
+        val vehicleId = 156487251
+        val detailsResponse = mockk<CustomerVehicleDetailsResponse>(relaxed = true)
+        coEvery { api.getVehicleDetails(vehicleId) } returns Response.success(detailsResponse)
+
+        val result = repo.getVehicleDetails(vehicleId)
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getVehicleDetails(vehicleId) }
+    }
+
+    @Test
+    fun `Given vehicle details api fails, when getVehicleDetails is called, then return Error`() = runTest {
+        val vehicleId = 156487251
+        coEvery { api.getVehicleDetails(vehicleId) } throws Exception("Exception")
+
+        val result = repo.getVehicleDetails(vehicleId)
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getVehicleDetails(vehicleId) }
+    }
+
+    @Test
+    fun `Given create share code api returns success, when createShareCode is called, then return Success with ShareCodeDetails`() = runTest {
+        val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
+
+        coEvery { api.createShareCode() } returns Response.success(shareCodeResponse)
+
+        val result = repo.createCheckCode()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.createShareCode() }
+    }
+
+    @Test
+    fun `Given create share code api fails, when createShareCode is called, then return Error`() = runTest {
+        coEvery { api.createShareCode() } throws Exception("Exception")
+
+        val result = repo.createCheckCode()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.createShareCode() }
+    }
+
+    @Test
+    fun `Given get share codes api returns success, when getShareCodes is called, then return Success with list of ShareCodeDetails`() = runTest {
+        val shareCodesResponse = mockk<MultiShareCodeResponse>(relaxed = true)
+
+        coEvery { api.getShareCodes() } returns Response.success(shareCodesResponse)
+
+        val result = repo.getCheckCodes()
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.getShareCodes() }
+    }
+
+    @Test
+    fun `Given get share codes api fails, when getShareCodes is called, then return Error`() = runTest {
+        coEvery { api.getShareCodes() } throws Exception("Exception")
+
+        val result = repo.getCheckCodes()
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.getShareCodes() }
+    }
+
+    @Test
+    fun `Given cancel share code api returns success, when cancelShareCode is called, then return Success with ShareCodeDetails`() = runTest {
+        val tokenId = "token_id"
+        val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
+
+        coEvery { api.cancelShareCode(tokenId) } returns Response.success(shareCodeResponse)
+
+        val result = repo.cancelCheckCode(tokenId)
+
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
+    }
+
+    @Test
+    fun `Given cancel share code api fails, when cancelShareCode is called, then return Error`() = runTest {
+        val tokenId = "token_id"
+        coEvery { api.cancelShareCode(tokenId) } throws Exception("Exception")
+
+        val result = repo.cancelCheckCode(tokenId)
+
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
     }
 }

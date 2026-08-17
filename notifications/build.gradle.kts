@@ -17,6 +17,14 @@ android {
         minSdk = Version.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "ONE_SIGNAL_APP_ID", "\"4c235189-5c5f-4a71-8385-2549fc36419f\"")
+    }
+
+    buildTypes {
+        release {
+            buildConfigField("String", "ONE_SIGNAL_APP_ID", "\"bbea84fc-28cc-4712-a6c5-88f5d08b0d0d\"")
+        }
     }
 
     compileOptions {
@@ -31,6 +39,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }

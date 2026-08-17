@@ -6,6 +6,8 @@ import uk.gov.govuk.design.ui.theme.GovUkColourScheme.Strokes
 import uk.gov.govuk.design.ui.theme.GovUkColourScheme.Surfaces
 import uk.gov.govuk.design.ui.theme.GovUkColourScheme.TextAndIcons
 
+private val AccentPurple = Color(0xFFBA4AFF)
+
 private val BluePrimary = Color(0xFF1D70B8)
 private val BlueAccent = Color(0xFF11E0F1)
 private val Blue99 = Color(0xFF092237)
@@ -26,6 +28,7 @@ private val TealAccent = Color(0xFF00FFE0)
 
 private val YellowPrimary = Color(0xFFFFDD00)
 private val YellowDarker50 = Color(0xFF806F0D)
+private val YellowRegPlate = Color(0xFFFFC800)
 
 private val RedPrimary = Color(0xFFCA3535)
 private val RedAccent = Color(0xFFFF5E5E)
@@ -52,7 +55,9 @@ private val Grey100 = Color(0xFFE5E5E5)
 private val Grey60 = Color(0xFFF0F0F0)
 
 private val Black = Color(0xFF000000)
+private val BlackLighter25 = Color(0xFF484949)
 private val BlackLighter50 = Color(0xFF858686)
+private val BlackLighter80 = Color(0xFFCECECE)
 private val BlackAlpha30 = Color(0x4D000000)
 private val BlackAlpha75 = Color(0x4B000000)
 private val BlackLighter95 = Color(0xFFF3F3F3)
@@ -84,6 +89,8 @@ data class GovUkColourScheme(
         val buttonPrimaryHighlight: Color,
         val buttonPrimaryDisabled: Color,
         val buttonPrimaryFocused: Color,
+        val buttonLinkAccount: Color,
+        val buttonLinkAccountHighlight: Color,
         val buttonSecondary: Color,
         val buttonSecondaryHighlight: Color,
         val buttonSecondaryDisabled: Color,
@@ -122,6 +129,8 @@ data class GovUkColourScheme(
         val cardCarouselFocused: Color,
         val cardInformationEmergencyBannerPrimary: Color,
         val cardInformationEmergencyBannerLink: Color,
+        val registrationPlateText: Color,
+        val cardOverflowIcon: Color
     )
 
     data class Surfaces(
@@ -140,6 +149,7 @@ data class GovUkColourScheme(
         val cardCarouselFocused: Color,
         val cardLinkAccount: Color,
         val list: Color,
+        val listAlt: Color,
         val listHeadingBlue: Color,
         val listSelected: Color,
         val listUnselected: Color,
@@ -152,6 +162,9 @@ data class GovUkColourScheme(
         val buttonPrimaryStroke: Color,
         val buttonPrimaryStrokeHighlight: Color,
         val buttonPrimaryStrokeFocussed: Color,
+        val buttonLinkAccount: Color,
+        val buttonLinkAccountStroke: Color,
+        val buttonLinkAccountHighlight: Color,
         val buttonSecondary: Color,
         val buttonSecondaryHighlight: Color,
         val buttonSecondaryDisabled: Color,
@@ -185,7 +198,16 @@ data class GovUkColourScheme(
         val chatUserMessageBackground: Color,
         val chatBotMessageBackground: Color,
         val chatIntroCardBackground: Color,
-        val screenBackground: Color
+        val screenBackground: Color,
+        val fullScreenLinkAccount: Color,
+        val registrationPlate: Color,
+        val cardOverflowButton: Color,
+        val countdownBar: Color,
+        val actionMenu: Color,
+        val msgRead: Color,
+        val msgUnread: Color,
+        val cardMsgHeader: Color,
+        val fullScreen: Color
     )
 
     data class Strokes(
@@ -213,7 +235,8 @@ data class GovUkColourScheme(
         val chatDivider: Color,
         val chatIntroCardBorder: Color,
         val cardCarousel: Color,
-        val iconSeparator: Color
+        val iconSeparator: Color,
+        val registrationPlate: Color
     )
 }
 
@@ -234,6 +257,8 @@ internal val LightColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = White,
         buttonPrimaryDisabled = Grey600,
         buttonPrimaryFocused = Black,
+        buttonLinkAccount = White,
+        buttonLinkAccountHighlight = BlackLighter80,
         buttonSecondary = BluePrimary,
         buttonSecondaryHighlight = BlueDarker25,
         buttonSecondaryDisabled = Grey700,
@@ -272,6 +297,8 @@ internal val LightColorScheme = GovUkColourScheme(
         cardCarouselFocused = Black,
         cardInformationEmergencyBannerPrimary = Black,
         cardInformationEmergencyBannerLink = BluePrimary,
+        registrationPlateText = Black,
+        cardOverflowIcon = White
     ),
     surfaces = Surfaces(
         background = White,
@@ -289,20 +316,24 @@ internal val LightColorScheme = GovUkColourScheme(
         cardCarouselFocused = YellowPrimary,
         cardLinkAccount = GreenPrimary,
         list = White,
+        listAlt = BlueLighter95,
         listHeadingBlue = BlueLighter95,
         listSelected = BluePrimary,
         listUnselected = BlueLighter90,
         fixedContainer = WhiteAlpha75,
-        alert = Grey100,
+        alert = White,
         buttonPrimary = GreenPrimary,
         buttonPrimaryHighlight = GreenDarker25,
         buttonPrimaryDisabled = Grey100,
         buttonPrimaryFocused = YellowPrimary,
+        buttonLinkAccount = Black,
+        buttonLinkAccountHighlight = Black,
 
         // Todo - move these into strokes???
         buttonPrimaryStroke = GreenDarker50,
         buttonPrimaryStrokeHighlight = GreenDarker80,
         buttonPrimaryStrokeFocussed = Black,
+        buttonLinkAccountStroke = Black,
 
         buttonSecondary = Color.Transparent,
         buttonSecondaryHighlight = Color.Transparent,
@@ -340,7 +371,16 @@ internal val LightColorScheme = GovUkColourScheme(
         chatUserMessageBackground = BlueDarker50,
         chatBotMessageBackground = White,
         chatIntroCardBackground = BlueLighter95,
-        screenBackground = BlueLighter90
+        screenBackground = BlueLighter90,
+        fullScreenLinkAccount = GreenPrimary,
+        registrationPlate = YellowRegPlate,
+        cardOverflowButton = BluePrimary,
+        countdownBar = AccentPurple,
+        actionMenu = White,
+        msgRead = BlackLighter80,
+        msgUnread = RedAccent,
+        cardMsgHeader = BlackLighter95,
+        fullScreen = White
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -367,7 +407,8 @@ internal val LightColorScheme = GovUkColourScheme(
         chatDivider = BlueLighter80,
         chatIntroCardBorder = BlueLighter80,
         cardCarousel = BlueDarker50,
-        iconSeparator = BluePrimary
+        iconSeparator = BluePrimary,
+        registrationPlate = Black
     )
 )
 
@@ -388,6 +429,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = Black,
         buttonPrimaryDisabled = Black,
         buttonPrimaryFocused = Black,
+        buttonLinkAccount = White,
+        buttonLinkAccountHighlight = BlackLighter80,
         buttonSecondary = BlueAccent,
         buttonSecondaryHighlight = BlueLighter25,
         buttonSecondaryDisabled = Grey300,
@@ -426,6 +469,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardCarouselFocused = Black,
         cardInformationEmergencyBannerPrimary = White,
         cardInformationEmergencyBannerLink = BlueAccent,
+        registrationPlateText = Black,
+        cardOverflowIcon = BlueDarker65
     ),
     surfaces = Surfaces(
         background = BlueDarker80,
@@ -443,6 +488,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardCarouselFocused = YellowPrimary,
         cardLinkAccount = GreenPrimary,
         list = BlueDarker65,
+        listAlt = BlueDarker65,
         listHeadingBlue = BlueDarker50,
         listSelected = BlueDarker25,
         listUnselected = BlueDarker65,
@@ -452,11 +498,14 @@ internal val DarkColorScheme = GovUkColourScheme(
         buttonPrimaryHighlight = GreenLighter25,
         buttonPrimaryDisabled = Grey400,
         buttonPrimaryFocused = YellowPrimary,
+        buttonLinkAccount = Black,
+        buttonLinkAccountHighlight = Black,
 
         // Todo - move these into strokes???
         buttonPrimaryStroke = GreenPrimary,
         buttonPrimaryStrokeHighlight = GreenDarker50,
         buttonPrimaryStrokeFocussed = YellowDarker50,
+        buttonLinkAccountStroke = Black,
 
         buttonSecondary = Color.Transparent,
         buttonSecondaryHighlight = Color.Transparent,
@@ -494,7 +543,16 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatUserMessageBackground = BluePrimary,
         chatBotMessageBackground = Blue99,
         chatIntroCardBackground = Blue99,
-        screenBackground = BlueDarker80
+        screenBackground = BlueDarker80,
+        fullScreenLinkAccount = GreenPrimary,
+        registrationPlate = YellowRegPlate,
+        cardOverflowButton = White,
+        countdownBar = AccentPurple,
+        actionMenu = BlueDarker80,
+        msgRead = BlackLighter25,
+        msgUnread = RedAccent,
+        cardMsgHeader = BlueDarker65,
+        fullScreen = BlueDarker80
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -521,7 +579,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatDivider = BlueDarker25,
         chatIntroCardBorder = BlueDarker50,
         cardCarousel = BlueDarker50,
-        iconSeparator = BlueAccent
+        iconSeparator = BlueAccent,
+        registrationPlate = Black
     )
 )
 
@@ -543,6 +602,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             buttonPrimaryHighlight = Color.Unspecified,
             buttonPrimaryDisabled = Color.Unspecified,
             buttonPrimaryFocused = Color.Unspecified,
+            buttonLinkAccount = Color.Unspecified,
+            buttonLinkAccountHighlight = Color.Unspecified,
             buttonSecondary = Color.Unspecified,
             buttonSecondaryHighlight = Color.Unspecified,
             buttonSecondaryDisabled = Color.Unspecified,
@@ -581,6 +642,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardCarouselFocused = Color.Unspecified,
             cardInformationEmergencyBannerPrimary = Color.Unspecified,
             cardInformationEmergencyBannerLink = Color.Unspecified,
+            registrationPlateText = Color.Unspecified,
+            cardOverflowIcon = Color.Unspecified
         ),
         surfaces = Surfaces(
             background = Color.Unspecified,
@@ -598,6 +661,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardCarouselFocused = Color.Unspecified,
             cardLinkAccount = Color.Unspecified,
             list = Color.Unspecified,
+            listAlt = Color.Unspecified,
             listHeadingBlue = Color.Unspecified,
             listSelected = Color.Unspecified,
             listUnselected = Color.Unspecified,
@@ -610,6 +674,9 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             buttonPrimaryStroke = Color.Unspecified,
             buttonPrimaryStrokeHighlight = Color.Unspecified,
             buttonPrimaryStrokeFocussed = Color.Unspecified,
+            buttonLinkAccount = Color.Unspecified,
+            buttonLinkAccountStroke = Color.Unspecified,
+            buttonLinkAccountHighlight = Color.Unspecified,
             buttonSecondary = Color.Unspecified,
             buttonSecondaryHighlight = Color.Unspecified,
             buttonSecondaryDisabled = Color.Unspecified,
@@ -643,7 +710,16 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatUserMessageBackground = Color.Unspecified,
             chatBotMessageBackground = Color.Unspecified,
             chatIntroCardBackground = Color.Unspecified,
-            screenBackground = Color.Unspecified
+            screenBackground = Color.Unspecified,
+            fullScreenLinkAccount = Color.Unspecified,
+            registrationPlate = Color.Unspecified,
+            cardOverflowButton = Color.Unspecified,
+            countdownBar = Color.Unspecified,
+            actionMenu = Color.Unspecified,
+            msgRead = Color.Unspecified,
+            msgUnread = Color.Unspecified,
+            cardMsgHeader = Color.Unspecified,
+            fullScreen = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
@@ -670,7 +746,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatDivider = Color.Unspecified,
             chatIntroCardBorder = Color.Unspecified,
             cardCarousel = Color.Unspecified,
-            iconSeparator = Color.Unspecified
+            iconSeparator = Color.Unspecified,
+            registrationPlate = Color.Unspecified
         )
     )
 }

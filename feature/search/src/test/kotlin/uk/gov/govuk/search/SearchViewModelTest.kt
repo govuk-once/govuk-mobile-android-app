@@ -384,7 +384,7 @@ class SearchViewModelTest {
 
         @Test
         fun `Given a search when the Search API is unavailable, then emit service error state`() {
-            coEvery { repository.performSearch(searchTerm) } returns ServiceNotResponding()
+            coEvery { repository.performSearch(searchTerm) } returns ServiceNotResponding(404)
 
             val viewModel = SearchViewModel(analyticsClient, visited, repository)
             viewModel.onSearch(searchTerm)

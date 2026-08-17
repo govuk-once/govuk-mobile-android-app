@@ -3,11 +3,10 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.dvla.data.DvlaRepo
 import javax.inject.Inject
 
@@ -18,23 +17,18 @@ internal class DvlaLinkWidgetViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val SECTION = "Account link"
+        private const val SECTION = "account link"
     }
 
-    private val _dvlaState = MutableStateFlow(DvlaLinkState.CHECKING)
-    val dvlaState = _dvlaState.asStateFlow()
+    val dvlaState: Flow<ServiceLinkStatus> = dvlaRepo.linkState
 
     fun checkStatus() {
         viewModelScope.launch {
-            _dvlaState.value = DvlaLinkState.CHECKING
+            // if linked don't check again
+            if (dvlaRepo.currentLinkState == ServiceLinkStatus.LINKED) return@launch
 
-            val result = dvlaRepo.isAccountLinked()
-
-            _dvlaState.value = if (result is Result.Success && result.value) {
-                DvlaLinkState.LINKED
-            } else {
-                DvlaLinkState.UNLINKED
-            }
+            // link state is checked/updated by the repo and observed in DvlaLinkHeader, ui is updated accordingly
+            dvlaRepo.refreshLinkStatus()
         }
     }
 

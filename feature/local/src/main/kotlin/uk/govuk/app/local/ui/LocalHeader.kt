@@ -18,7 +18,7 @@ internal fun LocalFullScreenHeader(
     onCancel: (() -> Unit)? = null
 ) {
     val style = onCancel?.let {
-        HeaderActionStyle.ActionButton(
+        HeaderActionStyle.TextActionButton(
             title = stringResource(R.string.local_cancel_button),
             onClick = onCancel
         )

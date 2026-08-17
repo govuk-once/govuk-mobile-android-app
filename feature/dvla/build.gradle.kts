@@ -19,7 +19,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String", "DVLA_AUTH_URL", "\"https://architecture-link-account-service-ui-ext.dvla.gov.uk/\"")
+        buildConfigField("String", "DVLA_AUTH_URL", "\"https://customer-account-external-ui-ext.dvla.gov.uk/govuk-app\"")
+        buildConfigField("String", "LINKING_BASE_URL", "\"https://4y369hyvja.execute-api.eu-west-2.amazonaws.com/staging/linking/\"")
     }
 
     buildTypes {
@@ -29,6 +30,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            
+            buildConfigField("String", "DVLA_AUTH_URL", "\"https://driver-and-vehicles-account.service.gov.uk/govuk-app\"")
+            buildConfigField("String", "LINKING_BASE_URL", "\"https://em5hkfc46k.execute-api.eu-west-2.amazonaws.com/production/linking/\"")
         }
     }
     compileOptions {
@@ -51,8 +55,10 @@ dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
     implementation(projects.data)
+    implementation(projects.config)
 
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.adaptive.android)

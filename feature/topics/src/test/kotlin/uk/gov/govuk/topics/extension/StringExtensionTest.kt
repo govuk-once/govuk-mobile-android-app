@@ -16,7 +16,7 @@ class StringExtensionTest {
         every { context.getString(R.string.benefits) } returns "Benefits"
         every { context.getString(R.string.business) } returns "Business"
         every { context.getString(R.string.care) } returns "Care"
-        every { context.getString(R.string.driving_and_transport) } returns "Driving and transport"
+        every { context.getString(R.string.driving) } returns "Driving"
         every { context.getString(R.string.employment) } returns "Employment"
         every { context.getString(R.string.health_and_disability) } returns "Health and disability"
         every { context.getString(R.string.money_and_tax) } returns "Money and tax"
@@ -29,7 +29,7 @@ class StringExtensionTest {
             Pair("benefits", "Benefits"),
             Pair("business", "Business"),
             Pair("care", "Care"),
-            Pair("driving-transport", "Driving and transport"),
+            Pair("driving-transport", "Driving"),
             Pair("employment", "Employment"),
             Pair("health-disability", "Health and disability"),
             Pair("money-tax", "Money and tax"),

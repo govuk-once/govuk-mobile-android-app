@@ -6,8 +6,8 @@ import androidx.core.app.NotificationManagerCompat
 interface NotificationsProvider {
     val context: Context
 
-    fun initialise(appId: String)
-    fun login(notificationId: String)
+    fun initialise()
+    fun login(pushId: String)
     fun logout()
     fun giveConsent()
     fun removeConsent()

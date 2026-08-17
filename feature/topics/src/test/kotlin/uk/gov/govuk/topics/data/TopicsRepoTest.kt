@@ -230,7 +230,7 @@ class TopicsRepoTest{
 
         runTest {
             val result = repo.getTopic("ref")
-            assertTrue(result is Error)
+            assertTrue(result is ServiceNotResponding)
         }
     }
 

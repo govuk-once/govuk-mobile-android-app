@@ -11,7 +11,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.ChatBanner
 import uk.gov.govuk.config.data.remote.model.Config
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
@@ -126,6 +128,8 @@ class ConfigRepoTest {
         val mockFeedback = mockk<UserFeedbackBanner>()
         val mockChatBanner = mockk<ChatBanner>()
         val mockTerms = mockk<TermsAndConditions>()
+        val mockDvlaUrls = mockk<DvlaUrls>()
+        val mockPromoBanners = listOf(mockk<PromoBanner>())
 
         every { config.recommendedVersion } returns "2.0.0"
         every { config.releaseFlags.recentActivity } returns true
@@ -133,11 +137,17 @@ class ConfigRepoTest {
         every { config.releaseFlags.notifications } returns true
         every { config.releaseFlags.localServices } returns true
         every { config.releaseFlags.externalBrowser } returns true
+        every { config.releaseFlags.flex } returns true
+        every { config.releaseFlags.chat } returns true
+        every { config.releaseFlags.messages } returns true
+        every { config.releaseFlags.travelAlerts } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
         every { config.userFeedbackBanner } returns mockFeedback
         every { config.chatBanner } returns mockChatBanner
         every { config.termsAndConditions } returns mockTerms
+        every { config.dvlaUrls } returns mockDvlaUrls
+        every { config.promoBanners } returns mockPromoBanners
         coEvery { govUkDataSource.fetchConfig() } returns Success(config)
         coEvery { firebaseDataSource.fetch() } returns true
 
@@ -150,10 +160,36 @@ class ConfigRepoTest {
         assertEquals(true, repo.isNotificationsEnabled)
         assertEquals(true, repo.isLocalServicesEnabled)
         assertEquals(true, repo.isExternalBrowserEnabled)
+        assertEquals(true, repo.isFlexEnabled)
+        assertEquals(true, repo.isChatEnabled)
+        assertEquals(true, repo.isMessagesEnabled)
+        assertEquals(true, repo.isTravelAlertsEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
         assertSame(mockFeedback, repo.userFeedbackBanner)
         assertSame(mockChatBanner, repo.chatBanner)
         assertSame(mockTerms, repo.termsAndConditions)
+        assertSame(mockDvlaUrls, repo.dvlaUrls)
+        assertSame(mockPromoBanners, repo.promoBanners)
+    }
+
+    @Test
+    fun `When refreshRemoteConfig is called, then fetch and activate firebase data source`() = runTest {
+        coEvery { firebaseDataSource.fetchAndActivate() } returns true
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+
+        repo.refreshRemoteConfig()
+
+        coVerify { firebaseDataSource.fetchAndActivate() }
+    }
+
+    @Test
+    fun `When clearRemoteConfigValues is called, then clear remote values in firebase data source`() = runTest {
+        coEvery { firebaseDataSource.clearRemoteValues() } returns Unit
+        val repo = ConfigRepoImpl(govUkDataSource, firebaseDataSource)
+
+        repo.clearRemoteConfigValues()
+
+        coVerify { firebaseDataSource.clearRemoteValues() }
     }
 }

@@ -43,6 +43,11 @@ dependencyResolutionManagement {
             }
         }
         maven("https://jitpack.io")
+
+        maven {
+            /* Qualtrics S3 bucket to download the SDK from */
+             url = uri("https://s3-us-west-2.amazonaws.com/si-mobile-sdks/android/")
+        }
     }
 }
 
@@ -56,6 +61,7 @@ include(":design")
 include(":feature:chat")
 include(":feature:home")
 include(":feature:local")
+include(":feature:messages")
 include(":feature:search")
 include(":feature:settings")
 include(":feature:topics")

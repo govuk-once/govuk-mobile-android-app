@@ -25,7 +25,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -182,12 +182,9 @@ private fun WelcomeText(
     )
 }
 
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO
-)
+@PreviewLightDark
 @Composable
-private fun LightModePreview() {
+private fun LoginScreenPreview() {
     GovUkTheme {
         LoginScreen(
             onContinueClick = { },
@@ -196,16 +193,3 @@ private fun LightModePreview() {
     }
 }
 
-@Preview(
-    showBackground = false,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun DarkModePreview() {
-    GovUkTheme {
-        LoginScreen(
-            onContinueClick = { },
-            termsUrl = "https://terms.gov.uk"
-        )
-    }
-}

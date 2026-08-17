@@ -34,7 +34,7 @@ class NotificationsRepoTest {
     @Test
     fun `Given login, when notifications onboarding not completed, then verify correct functions called`() {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns false
-        coEvery { userRepo.notifications?.notificationId } returns "12345"
+        coEvery { userRepo.notifications?.pushId } returns "12345"
 
         runTest {
             notificationsRepo.login()
@@ -49,13 +49,14 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
         every { notificationsProvider.consentGiven() } returns true
         coEvery { userRepo.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
-        coEvery { userRepo.notifications?.notificationId } returns "12345"
+        coEvery { userRepo.notifications?.pushId } returns "12345"
 
         runTest {
             notificationsRepo.login()
 
             verify(exactly = 1) { notificationsProvider.login("12345") }
-            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.ACCEPTED) }
         }
     }
 
@@ -64,13 +65,14 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
         every { notificationsProvider.consentGiven() } returns false
         coEvery { userRepo.notifications?.consentStatus } returns ConsentStatus.UNKNOWN
-        coEvery { userRepo.notifications?.notificationId } returns "12345"
+        coEvery { userRepo.notifications?.pushId } returns "12345"
 
         runTest {
             notificationsRepo.login()
 
             verify(exactly = 1) { notificationsProvider.login("12345") }
-            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.DENIED) }
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//            coVerify(exactly = 1) { userRepo.updateNotifications(ConsentStatus.DENIED) }
         }
     }
 
@@ -79,7 +81,7 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isNotificationsOnboardingCompleted() } returns true
         every { notificationsProvider.consentGiven() } returns false
         coEvery { userRepo.notifications?.consentStatus } returns ConsentStatus.ACCEPTED
-        coEvery { userRepo.notifications?.notificationId } returns "12345"
+        coEvery { userRepo.notifications?.pushId } returns "12345"
 
         runTest {
             notificationsRepo.login()

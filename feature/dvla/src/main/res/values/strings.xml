@@ -1,11 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="link_dvla_account_title">Add your driver and vehicles account</string>
-    <string name="link_dvla_account_description">Your tax, MOT, penalty points</string>
+    <string name="link_dvla_account_title">Add driver and vehicles account</string>
+    <string name="link_dvla_account_description">Your tax, MOT, licence details</string>
+    <string name="link_dvla_loading">Loading driver and vehicles account information</string>
+
+    <string name="link_dvla_intro_title">Add your driver and vehicles account</string>
+    <string name="link_dvla_intro_description">Keep track of your licence details, tax and MOT dates.</string>
+    <string name="link_dvla_intro_action_message">We’ll take you to your web browser to sign in.</string>
+    <string name="link_dvla_intro_button">Continue</string>
+
+    <string name="link_dvla_connecting_title">Adding driver and vehicles account…</string>
+    <string name="link_dvla_success_title">Driver and vehicles account added</string>
+    <string name="link_dvla_success_button">Continue</string>
+    <string name="link_dvla_problem_title">There’s a problem</string>
+    <string name="link_dvla_problem_description">We could not add your driver and vehicles account. Try again later, or go to the GOV.UK website.</string>
+    <string name="link_dvla_problem_primary_button">Go back to the driving topic</string>
+    <string name="link_dvla_problem_secondary_button">Go to the GOV.UK website</string>
+
+    <string name="dvla_account_title">driver and vehicles account</string>
+
+    <string name="acronym_mot">MOT</string>
+    <string name="acronym_mot_alt_text">M.O.T.</string>
+    <string name="no_details_held_link_text">See status on the website</string>
+    <string name="check_mot_link_text">Check if it needs an MOT</string>
+    <string name="check_mot_link_alt_text">Check if it needs an M.O.T.</string>
+
+    <string name="manage_payment_button">Manage payment</string>
+    <string name="manage_payment_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="status_not_needed">Not needed</string>
+    <string name="tax_status_title">Tax</string>
+    <string name="renew_tax_button">Renew tax</string>
+    <string name="renew_tax_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
+    <string name="expiring_mot_caption">It can take a couple of days after your MOT for your status to update</string>
+    <string name="expiring_mot_caption_alt_text">It can take a couple of days after your M.O.T for your status to update</string>
+    <string name="valid_until">Valid until %1$s</string>
+    <string name="valid">Valid</string>
+    <string name="expired_on">Expired %s</string>
+    <string name="expired">Expired</string>
+    <string name="sorn_from">From %s</string>
+    <string name="off_the_road_sorn_message">Off the road (SORN)</string>
+    <string name="renew_licence_button">Renew licence</string>
+    <string name="renew_licence_caption">Your licence status may not update immediately when you renew it</string>
+    <string name="vehicle_details_title">Details</string>
+    <string name="registration_plate_alt_text">Number plate %1$s</string>
+    <string name="more_options_alt_text">More options</string>
+    <string name="licence_type_full">Full licence</string>
+    <string name="licence_type_provisional">Provisional licence</string>
+    <string name="licence_type_alt_text">Licence type %1$s</string>
+    <string name="licence_number_alt_text">Licence number %1$s</string>
+    <string name="licence_name_alt_text">Name on licence %1$s</string>
+    <string name="licence_address_alt_text">Address on licence %1$s</string>
+    <string name="licence_expiration_alt_text">Licence %1$s</string>
+    <string name="clipboard_data_label_licence_number">copy licence number</string>
+    <string name="expiring_status_date">Expiring %1$s</string>
+    <string name="expiring_direct_debit_status_date">Renews %1$s</string>
+    <string name="expiring_licence_date_alt_text">Licence expiring %1$s</string>
+    <string name="expiring_tax_date_alt_text">Tax expiring %1$s</string>
+    <string name="today">Today</string>
+    <plurals name="expiring_status_days_left">
+        <item quantity="one">1 day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
+    <string name="paying_by_direct_debit">Paying by Direct Debit</string>
 
     <string name="error_dialog_title">There’s a problem</string>
     <string name="error_dialog_message">We couldn’t link your account right now.</string>
     <string name="try_again">Try again</string>
 
-    <string name="dvla_loading_accessibility_text">Linking your account</string>
+    <string name="vehicles">Vehicles</string>
+    <string name="licence">Licence</string>
+    <string name="add_your_vehicles">Add your vehicles</string>
+    <string name="add_vehicle">Add vehicle</string>
+    <string name="vehicles_summary_loading_error_text">We could not get your vehicle details</string>
+    <string name="vehicles_summary_loading_error_sub_text">Try again later, or</string>
+    <string name="vehicles_summary_loading_error_link_text">go to your account on the website</string>
+    <string name="licence_summary_loading_error_text">We could not get your licence details</string>
+    <string name="licence_summary_loading_error_sub_text">Try again later, or</string>
+    <string name="licence_summary_loading_error_link_text">go to your account on the website</string>
+    <string name="licence_not_available_title">Not available</string>
+    <string name="licence_not_available_description">Check your account to see your licence status and restrictions that apply to you</string>
+    <string name="licence_not_available_link_text">Your driver and vehicles account</string>
+
+    <string name="menu_sorn_rules">SORN rules</string>
+    <string name="menu_report_as_sold">Report as sold</string>
+    <string name="menu_report_as_sold_alt_text">Report vehicle as sold</string>
+    <string name="menu_register_off_road">Register as off road (SORN)</string>
+    <string name="menu_register_off_road_alt_text">Register vehicle as off road (SORN)</string>
+    <string name="menu_get_log_book">Get a log book (V5C)</string>
+    <string name="menu_change_log_book_address">Change log book address</string>
+    <string name="menu_cancel_tax">Cancel tax</string>
+    <string name="menu_cancel_tax_alt_text">Cancel vehicle tax</string>
+    <string name="menu_close_menu">Close menu</string>
+
+    <string name="menu_copy_licence_number">Copy licence number</string>
+    <string name="menu_change_licence_address">Change address</string>
+    <string name="menu_change_licence_address_alt_text">Change licence address</string>
+    <string name="menu_change_licence_name_gender">Change name or gender</string>
+    <string name="menu_change_licence_name_gender_alt_text">Change name or gender on licence</string>
+    <string name="menu_replace_licence">Replace licence</string>
+
+    <string name="driving_title">Driving</string>
+    <string name="driving_record_title">Driving record</string>
+    <string name="driving_record_description">Vehicles you can drive, offences and penalty points</string>
+    <string name="driving_record_link_text">Your driving record</string>
+    <string name="account_error_text">Driver and vehicles account information is not working</string>
+    <string name="account_error_sub_text">Try again later, or</string>
+    <string name="account_error_link_text">go to the GOV.UK website.</string>
+
+    <!-- Vehicle Details start -->
+    <string name="diesel_summary">Diesel</string>
+    <string name="diesel_specification">Diesel</string>
+    <string name="petrol_summary">Petrol</string>
+    <string name="petrol_specification">Petrol</string>
+    <string name="hybrid_electric_summary">Hybrid</string>
+    <string name="hybrid_electric_specification">Hybrid electric</string>
+    <string name="electric_summary">Electric</string>
+    <string name="electric_specification">Electric</string>
+    <string name="gas_summary">Gas</string>
+    <string name="gas_specification">Gas</string>
+    <string name="steam_summary">Steam</string>
+    <string name="steam_specification">Steam</string>
+    <string name="petrol_gas_summary">Bi-fuel</string>
+    <string name="petrol_gas_specification">Petrol and gas</string>
+    <string name="gas_bi_fuel_summary">Bi-fuel</string>
+    <string name="gas_bi_fuel_specification">Gas bi-fuel</string>
+    <string name="gas_diesel_summary">Bi-fuel</string>
+    <string name="gas_diesel_specification">Gas and diesel</string>
+    <string name="fuel_cells_summary">Hydrogen</string>
+    <string name="fuel_cells_specification">Hydrogen</string>
+    <string name="electric_diesel_summary">Hybrid</string>
+    <string name="electric_diesel_specification">Electric diesel</string>
+    <string name="other">Other</string>
+
+    <string name="status_title">Status</string>
+    <string name="make_title">Make</string>
+    <string name="model_title">Model</string>
+    <string name="first_registered_title">First registered</string>
+    <string name="fuel_type_title">Fuel type</string>
+    <string name="colour_title">Colour</string>
+    <string name="engine_size_title">Engine size</string>
+    <string name="emissions_title">CO2 emissions</string>
+    <string name="specification_title">Specification</string>
+    <string name="registered_to_title">Registered to</string>
+    <string name="vehicle_details_success_title">Vehicle Details Screen</string>
+    <string name="concatenated_vehicle_colours">%1$s and %2$s</string>
+
+    <string name="first_registered_alt_text">First registered %1$s</string>
+    <string name="first_registered_in_alt_text">First registered in %1$s</string>
+    <string name="fuel_type_alt_text">Fuel type %1$s</string>
+    <string name="colour_alt_text">Colour %1$s</string>
+
+    <string name="brown">Brown</string>
+    <string name="bronze">Bronze</string>
+    <string name="red">Red</string>
+    <string name="pink">Pink</string>
+    <string name="orange">Orange</string>
+    <string name="yellow">Yellow</string>
+    <string name="gold">Gold</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="purple">Purple</string>
+    <string name="grey">Grey</string>
+    <string name="silver">Silver</string>
+    <string name="white">White</string>
+    <string name="black">Black</string>
+    <string name="multi_colour">Multi-colour</string>
+    <string name="beige">Beige</string>
+    <string name="maroon">Maroon</string>
+    <string name="turquoise">Turquoise</string>
+    <string name="cream">Cream</string>
+    <string name="not_stated">Not stated</string>
+    <!-- Vehicle Details end -->
 </resources>

@@ -1,10 +1,8 @@
-import com.google.android.gms.oss.licenses.plugin.LicensesTask
 import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.oss.licenses)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
@@ -16,8 +14,7 @@ plugins {
 }
 
 val majorVersion = "1"
-val minorVersion = "1"
-val patchVersion = "4"
+val minorVersion = "6"
 
 val privacyPolicyUrl: String by project
 
@@ -33,16 +30,15 @@ android {
         minSdk = Version.MIN_SDK
         targetSdk = Version.TARGET_SDK
         versionCode = buildNumber
-        versionName = "$majorVersion.$minorVersion.$patchVersion"
+        versionName = "$majorVersion.$minorVersion"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
             useSupportLibrary = true
         }
-        
+
         buildConfigField("String", "PLAY_STORE_URL", "\"https://play.google.com/store/apps/details?id=$applicationId\"")
-        buildConfigField("String", "ONE_SIGNAL_APP_ID", "\"4c235189-5c5f-4a71-8385-2549fc36419f\"")
         buildConfigField("String", "VERSION_NAME_USER_FACING", "\"$versionName ($versionCode)\"")
         buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
     }
@@ -108,8 +104,6 @@ android {
             ndk {
                 debugSymbolLevel = "FULL"
             }
-
-            buildConfigField("String", "ONE_SIGNAL_APP_ID", "\"bbea84fc-28cc-4712-a6c5-88f5d08b0d0d\"")
         }
     }
 
@@ -146,6 +140,7 @@ dependencies {
     implementation(projects.feature.chat)
     implementation(projects.feature.home)
     implementation(projects.feature.local)
+    implementation(projects.feature.messages)
     implementation(projects.feature.settings)
     implementation(projects.feature.search)
     implementation(projects.feature.topics)
@@ -169,11 +164,13 @@ dependencies {
     implementation(libs.google.accompanist)
 
     implementation(libs.lottie.compose)
-    implementation(libs.play.services.oss.licenses)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.scalars)
+
+    implementation(libs.qualtrics.digital.sdk)
+    implementation(libs.about.libraries.compose)
 
     ksp(libs.hilt.compiler)
 
@@ -192,22 +189,4 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
-}
-
-// fixes for OSS Licenses plugin (v0.10.10) causing intermittent build crashes
-// and blank license screens on recent agp versions
-androidComponents.onVariants { variant ->
-    val taskName = "${variant.name}OssLicensesTask"
-    if (!tasks.names.contains(taskName)) return@onVariants
-    val ossTask = tasks.named<LicensesTask>(taskName)
-
-    variant.sources.res?.addGeneratedSourceDirectory(ossTask, LicensesTask::getGeneratedDirectory)
-
-    tasks.matching { it.name.contains(variant.name, ignoreCase = true) }.configureEach {
-        if (name.contains("OssLicensesCleanUp")) {
-            enabled = false
-        } else if (name.contains("Bundle") || name.contains("Package") || name.contains("Merge")) {
-            mustRunAfter(ossTask)
-        }
-    }
 }

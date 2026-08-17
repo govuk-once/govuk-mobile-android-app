@@ -20,7 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -28,18 +34,22 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CaptionRegularLabel
 import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.CardListItem
+import uk.gov.govuk.design.ui.component.CountListItem
+import uk.gov.govuk.design.ui.component.CountListState
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
-import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.component.TabHeader
 import uk.gov.govuk.design.ui.component.ToggleListItem
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.settings.MessageRowState
 import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SettingsUiState
 import uk.gov.govuk.settings.SettingsViewModel
@@ -47,6 +57,8 @@ import uk.gov.govuk.settings.SettingsViewModel
 internal class SettingsRouteActions(
     val onAccountClick: () -> Unit,
     val onSignOutClick: () -> Unit,
+    val onYourAccountsClick: () -> Unit,
+    val onMessagesClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: () -> Unit,
     val onPrivacyPolicyClick: () -> Unit,
@@ -64,6 +76,11 @@ internal fun SettingsRoute(
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadMessages()
+    }
+
     uiState?.let {
         SettingsScreen(
             uiState = it,
@@ -73,6 +90,14 @@ internal fun SettingsRoute(
                 onAccountClick = {
                     viewModel.onAccount()
                     actions.onAccountClick()
+                },
+                onYourAccountsClick = { text ->
+                    viewModel.onYourAccountsClick(text)
+                    actions.onYourAccountsClick()
+                },
+                onMessagesClick = {
+                    viewModel.onMessagesClick()
+                    actions.onMessagesClick()
                 },
                 onSignOutClick = {
                     viewModel.onSignOut()
@@ -116,6 +141,8 @@ internal fun SettingsRoute(
 private class SettingsActions(
     val onPageView: () -> Unit,
     val onAccountClick: () -> Unit,
+    val onYourAccountsClick: (String) -> Unit,
+    val onMessagesClick: () -> Unit,
     val onSignOutClick: () -> Unit,
     val onNotificationsClick: () -> Unit,
     val onBiometricsClick: (String) -> Unit,
@@ -134,7 +161,7 @@ private fun SettingsScreen(
     actions: SettingsActions,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         actions.onPageView()
     }
 
@@ -152,11 +179,33 @@ private fun SettingsScreen(
 
             ManageLogin(
                 userEmail = uiState.userEmail,
-                onAccountClick = actions.onAccountClick,
-                onSignOutClick = actions.onSignOutClick
+                onAccountClick = actions.onAccountClick
             )
 
-            LargeVerticalSpacer()
+            if (uiState.isYourAccountsEnabled) {
+                val title = stringResource(R.string.your_accounts_title)
+                MediumVerticalSpacer()
+                YourAccounts(title, { actions.onYourAccountsClick(title) })
+            }
+
+            MediumVerticalSpacer()
+
+
+            if (uiState.messageRowState != MessageRowState.Gone) {
+                val accessibilityText = mapMessageToAccessibilityText(uiState.messageRowState)
+
+                CountListItem(
+                    modifier = Modifier.clearAndSetSemantics {
+                        role = Role.Button
+                        text = accessibilityText
+                    },
+                    title = stringResource(R.string.messages_title),
+                    state = mapMessageToCountRowState(uiState.messageRowState),
+                    onClick = actions.onMessagesClick
+                )
+
+                MediumVerticalSpacer()
+            }
 
             NotificationsAndPrivacy(
                 uiState = uiState,
@@ -176,15 +225,50 @@ private fun SettingsScreen(
             AccessibilityStatement(actions.onAccessibilityStatementClick)
             OpenSourceLicenses(actions.onLicenseClick)
             TermsAndConditions(actions.onTermsAndConditionsClick)
+
+            MediumVerticalSpacer()
+
+            SignOut(actions.onSignOutClick)
         }
     }
+}
+
+@Composable
+private fun mapMessageToCountRowState(messageRowState: MessageRowState): CountListState = when (messageRowState) {
+    is MessageRowState.Loaded -> CountListState.Idle(
+        messageRowState.unreadCount,
+        if (messageRowState.unreadCount > 0) {
+            CountListState.IndicatorState.FULL
+        } else {
+            CountListState.IndicatorState.DIM
+        }
+    )
+    else -> {
+        CountListState.Loading
+    }
+}
+
+@Composable
+private fun mapMessageToAccessibilityText(messageRowState: MessageRowState): AnnotatedString {
+    val base = stringResource(R.string.messages_title)
+    var text = base
+
+    if (messageRowState is MessageRowState.Loaded
+        && messageRowState.unreadCount > 0) {
+        text = stringResource(
+            R.string.messages_a11y_label_unread_suffix,
+            base,
+            messageRowState.unreadCount
+        )
+    }
+
+    return AnnotatedString(text)
 }
 
 @Composable
 private fun ManageLogin(
     userEmail: String,
     onAccountClick: () -> Unit,
-    onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -226,21 +310,23 @@ private fun ManageLogin(
             text = stringResource(R.string.manage_login_description),
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)
         )
-
-        MediumVerticalSpacer()
-
-        CardListItem(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onSignOutClick
-        ) {
-            BodyRegularLabel(
-                text = stringResource(R.string.manage_login_sign_out),
-                modifier = Modifier
-                    .padding(GovUkTheme.spacing.medium),
-                color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-            )
-        }
     }
+}
+
+@Composable
+private fun YourAccounts(
+    title: String,
+    onYourAccountsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    InternalLinkListItem(
+        title = AccessibleString(displayText = title),
+        onClick = onYourAccountsClick,
+        modifier = modifier,
+        isFirst = true,
+        isLast = true,
+    )
+
 }
 
 @Composable
@@ -261,7 +347,7 @@ private fun NotificationsAndPrivacy(
         if (uiState.isAuthenticationEnabled) {
             val biometricTitle = stringResource(R.string.biometric_title)
             InternalLinkListItem(
-                title = biometricTitle,
+                title = AccessibleString(displayText = biometricTitle),
                 onClick = { actions.onBiometricsClick(biometricTitle) },
                 isFirst = !uiState.isNotificationsEnabled,
                 isLast = false
@@ -311,7 +397,7 @@ private fun Notifications(
     }
 
     InternalLinkListItem(
-        title = stringResource(R.string.notifications_title),
+        title = AccessibleString(displayText = stringResource(R.string.notifications_title)),
         onClick = onNotificationsClick,
         modifier = modifier,
         isFirst = true,
@@ -392,7 +478,7 @@ private fun OpenSourceLicenses(
     modifier: Modifier = Modifier
 ) {
     InternalLinkListItem(
-        title = stringResource(R.string.oss_licenses_title),
+        title = AccessibleString(displayText = stringResource(R.string.oss_licenses_title)),
         onClick = onLicenseClick,
         modifier = modifier,
         isFirst = false,
@@ -412,4 +498,33 @@ private fun TermsAndConditions(
         isFirst = false,
         isLast = true,
     )
+}
+
+@Composable
+private fun SignOut(
+    onSignOutClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CardListItem(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onSignOutClick
+    ) {
+        BodyRegularLabel(
+            text = stringResource(R.string.manage_login_sign_out),
+            modifier = Modifier
+                .padding(GovUkTheme.spacing.medium),
+            color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ManageLoginPreview() {
+    GovUkTheme {
+        ManageLogin(
+            userEmail = "user@example.com",
+            onAccountClick = {}
+        )
+    }
 }

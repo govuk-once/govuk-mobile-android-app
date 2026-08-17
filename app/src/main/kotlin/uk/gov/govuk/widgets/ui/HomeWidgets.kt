@@ -3,14 +3,14 @@ package uk.gov.govuk.widgets.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import uk.gov.govuk.chat.navigation.navigateToChat
-import uk.gov.govuk.chat.ui.widget.ChatBanner
+import uk.gov.govuk.config.data.local.model.HomeWidget
+import uk.gov.govuk.config.data.remote.model.Link
+import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
 import uk.gov.govuk.topics.ui.widget.TopicsWidget
 import uk.gov.govuk.visited.navigation.VISITED_GRAPH_ROUTE
 import uk.gov.govuk.visited.ui.widget.VisitedWidget
-import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.navigation.LOCAL_GRAPH_ROUTE
 import uk.govuk.app.local.navigation.LOCAL_LOOKUP_ROUTE
 import uk.govuk.app.local.ui.LocalWidget
@@ -20,8 +20,7 @@ internal fun List<HomeWidget>?.contains(widget: HomeWidget) = this?.contains(wid
 internal fun homeWidgets(
     navController: NavHostController,
     homeWidgets: List<HomeWidget>?,
-    onInternalClick: (text: String) -> Unit,
-    onExternalClick: (text: String, url: String?) -> Unit,
+    onWidgetClick: (text: String, url: String?) -> Unit,
     onSuppressClick: (id: String, text: String) -> Unit,
     launchBrowser: (url: String) -> Unit
 ): List<@Composable (Modifier) -> Unit> {
@@ -33,7 +32,7 @@ internal fun homeWidgets(
                     EmergencyBanner(
                         emergencyBanner = it.emergencyBanner,
                         onClick = { text, url ->
-                            onExternalClick(text, url)
+                            onWidgetClick(text, url)
                         },
                         launchBrowser = launchBrowser,
                         onSuppressClick = onSuppressClick,
@@ -44,17 +43,45 @@ internal fun homeWidgets(
 
             is HomeWidget.Chat -> {
                 widgets.add { modifier ->
-                    val banner = it.chatBanner
-                    ChatBanner(
-                        title = banner.title,
-                        body = banner.body,
-                        linkText = banner.link.title,
-                        onClick = { text ->
-                            onInternalClick(text)
-                            navController.navigateToChat()
+                    val promoBanner = PromoBanner(
+                        id = it.chatBanner.id,
+                        title = it.chatBanner.title,
+                        body = it.chatBanner.body,
+                        link = Link(
+                            title = it.chatBanner.link.title,
+                            url = "govuk://gov.uk/chat" // hard code for now
+                        ),
+                        image = "background_chat_banner" // hard code for now
+                    )
+
+                    PromoBanner(
+                        promoBanner = promoBanner,
+                        onClick = { text, url ->
+                            onWidgetClick(text, url)
+                            if (url != null) {
+                                launchBrowser(url)
+                            }
                         },
                         onDismiss = { text ->
-                            onSuppressClick(banner.id, text)
+                            onSuppressClick(promoBanner.id, text)
+                        },
+                        modifier = modifier
+                    )
+                }
+            }
+
+            is HomeWidget.Promo -> {
+                widgets.add { modifier ->
+                    PromoBanner(
+                        promoBanner = it.promoBanner,
+                        onClick = { text, url ->
+                            onWidgetClick(text, url)
+                            if (url != null) {
+                                launchBrowser(url)
+                            }
+                        },
+                        onDismiss = { text ->
+                            onSuppressClick(it.promoBanner.id, text)
                         },
                         modifier = modifier
                     )
@@ -65,7 +92,7 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     VisitedWidget(
                         onSeeAllClick = { text ->
-                            onInternalClick(text)
+                            onWidgetClick(text, null)
                             navController.navigate(VISITED_GRAPH_ROUTE)
                         },
                         launchBrowser = launchBrowser,
@@ -78,11 +105,11 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     TopicsWidget(
                         onTopicClick = { ref, title ->
-                            onInternalClick(title)
+                            onWidgetClick(title, null)
                             navController.navigateToTopic(ref)
                         },
                         onEditClick = { text ->
-                            onInternalClick(text)
+                            onWidgetClick(text, null)
                             navController.navigateToTopicsEdit()
                         },
                         modifier = modifier
@@ -94,14 +121,14 @@ internal fun homeWidgets(
                 widgets.add { modifier ->
                     LocalWidget(
                         onLookupClick = { text ->
-                            onInternalClick(text)
+                            onWidgetClick(text, null)
                             navController.navigate(LOCAL_GRAPH_ROUTE)
                         },
                         onLocalAuthorityClick = { text, url ->
-                            onExternalClick(text, url)
+                            onWidgetClick(text, url)
                         },
                         onEditClick = { text ->
-                            onInternalClick(text)
+                            onWidgetClick(text, null)
                             navController.navigate(LOCAL_LOOKUP_ROUTE)
                         },
                         launchBrowser = launchBrowser,
@@ -117,7 +144,7 @@ internal fun homeWidgets(
                         userFeedbackBanner = userFeedbackBanner,
                         onClick = {
                             launchBrowser(userFeedbackBanner.link.url)
-                            onExternalClick(
+                            onWidgetClick(
                                 userFeedbackBanner.link.title,
                                 userFeedbackBanner.link.url
                             )

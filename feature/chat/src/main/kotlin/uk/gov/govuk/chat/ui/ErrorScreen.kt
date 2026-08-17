@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.chat.ui.component.ChatErrorPageNoRetry
 import uk.gov.govuk.chat.ui.component.ChatErrorPageWithRetry
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 
 @Composable
 internal fun ErrorScreen(
@@ -33,11 +33,11 @@ private fun ErrorScreenNoRetry(
     onPageView: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView(
             Analytics.CHAT_ERROR_SCREEN_CLASS,
             Analytics.CHAT_ERROR_SCREEN_NAME,
-            Analytics.CHAT_ERROR_SCREEN_TITLE,
+            Analytics.CHAT_ERROR_SCREEN_TITLE
         )
     }
 
@@ -53,11 +53,11 @@ private fun ErrorScreenWithRetry(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView(
             Analytics.CHAT_ERROR_SCREEN_CLASS,
             Analytics.CHAT_ERROR_RETRY_SCREEN_NAME,
-            Analytics.CHAT_ERROR_RETRY_SCREEN_TITLE,
+            Analytics.CHAT_ERROR_RETRY_SCREEN_TITLE
         )
     }
 

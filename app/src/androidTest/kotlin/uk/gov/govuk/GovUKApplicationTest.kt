@@ -21,7 +21,7 @@ class GovUKApplicationTest {
         govUkApplication.onCreate()
 
         verify(exactly = 1) {
-            notificationsProvider.initialise(BuildConfig.ONE_SIGNAL_APP_ID)
+            notificationsProvider.initialise()
             notificationsProvider.addClickListener()
         }
     }

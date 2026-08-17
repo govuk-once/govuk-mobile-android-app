@@ -7,10 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
@@ -41,11 +44,13 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.extension.talkBackText
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.CardListItem
 import uk.gov.govuk.design.ui.model.EmergencyBannerUiType
 import uk.gov.govuk.design.ui.model.FocusableCardColours
@@ -56,7 +61,6 @@ import uk.gov.govuk.design.ui.model.hasDecoratedLink
 import uk.gov.govuk.design.ui.model.linkTitleColour
 import uk.gov.govuk.design.ui.model.textColour
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 
 @Composable
 fun GovUkOutlinedCard(
@@ -240,6 +244,7 @@ fun HomeBannerCard(
         }
     }
 }
+
 @Composable
 fun SearchResultCard(
     title: String,
@@ -331,24 +336,30 @@ fun CentredCardWithIcon(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     title: String? = null,
-    description: String? = null
+    description: String? = null,
+    drawBottomStroke: Boolean = true,
+    paddingValues: PaddingValues = PaddingValues(vertical = GovUkTheme.spacing.extraLarge)
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
-            .drawBottomStroke(
-                colour = GovUkTheme.colourScheme.strokes.cardDefault,
-                cornerRadius = GovUkTheme.numbers.cornerAndroidList
+            .then(
+                if (drawBottomStroke) {
+                    Modifier.drawBottomStroke(
+                        colour = GovUkTheme.colourScheme.strokes.cardDefault,
+                        cornerRadius = GovUkTheme.numbers.cornerAndroidList
+                    )
+                } else Modifier
             ),
         colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list)
     ) {
         CentredContentWithIcon(
             icon = icon,
-            modifier = Modifier
-                .clickable(onClick = onClick),
+            modifier = Modifier.clickable(onClick = onClick),
             title = title,
-            description = description
+            description = description,
+            paddingValues = paddingValues
         )
     }
 }
@@ -358,21 +369,23 @@ fun CentredContentWithIcon(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     title: String? = null,
-    description: String? = null
+    description: String? = null,
+    paddingValues: PaddingValues = PaddingValues(
+        vertical = GovUkTheme.spacing.extraLarge,
+        horizontal = GovUkTheme.spacing.extraLarge
+    )
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .talkBackText(title, description)
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ExtraLargeVerticalSpacer()
-
         Icon(
             painterResource(icon),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(32.dp),
+            modifier = Modifier.size(32.dp),
             tint = GovUkTheme.colourScheme.textAndIcons.icon
         )
 
@@ -382,10 +395,7 @@ fun CentredContentWithIcon(
             BodyBoldLabel(
                 text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clearAndSetSemantics { }
-                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
@@ -396,15 +406,10 @@ fun CentredContentWithIcon(
             BodyRegularLabel(
                 text = description,
                 color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clearAndSetSemantics { }
-                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
-
-        ExtraLargeVerticalSpacer()
     }
 }
 
@@ -563,7 +568,8 @@ fun AccountConnectionCard(
     title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    description: String? = null
+    description: String? = null,
+    descriptionAltText: String? = null
 ) {
     val fontScale = LocalDensity.current.fontScale
     val showLeadingIcon = fontScale <= 1.25f
@@ -603,7 +609,8 @@ fun AccountConnectionCard(
                     SmallVerticalSpacer()
                     BodyRegularLabel(
                         text = description,
-                        color = GovUkTheme.colourScheme.textAndIcons.primaryInverse
+                        color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
+                        modifier = modifier.withAltText(descriptionAltText)
                     )
                 }
             }
@@ -623,7 +630,49 @@ fun AccountConnectionCard(
     }
 }
 
-@ThemePreviews
+@Composable
+fun CentredCardWithIcon(
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = GovUkTheme.colourScheme.surfaces.list
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 96.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            icon()
+        }
+    }
+}
+
+@Composable
+fun LoaderCard(
+    modifier: Modifier = Modifier,
+    altText: String? = null
+) {
+    CentredCardWithIcon(
+        icon = {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(30.dp)
+                    .then(if (altText != null) Modifier.clearAndSetSemantics {
+                        contentDescription = altText
+                    } else Modifier),
+                color = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+            )
+        },
+        modifier = modifier
+    )
+}
+
+@PreviewLightDark
 @Composable
 private fun HomeNotableDeathBannerCardPreview() {
     GovUkTheme {
@@ -638,7 +687,7 @@ private fun HomeNotableDeathBannerCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeNationalEmergencyBannerCardPreview() {
     GovUkTheme {
@@ -653,7 +702,7 @@ private fun HomeNationalEmergencyBannerCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeLocalEmergencyBannerCardPreview() {
     GovUkTheme {
@@ -668,7 +717,7 @@ private fun HomeLocalEmergencyBannerCardPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun HomeInformationEmergencyBannerCardPreview() {
     GovUkTheme {
@@ -806,16 +855,22 @@ private fun DrillInCardDescriptionPreview() {
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun AccountConnectionCardPreview() {
     GovUkTheme {
         AccountConnectionCard(
-            title = "Add your driver and vehicles account",
+            title = "Add driver and vehicles account",
             onClick = {},
             description = "Your tax, MOT, penalty points"
         )
     }
 }
 
-
+@PreviewLightDark
+@Composable
+private fun LoaderCardPreview() {
+    GovUkTheme {
+        LoaderCard()
+    }
+}

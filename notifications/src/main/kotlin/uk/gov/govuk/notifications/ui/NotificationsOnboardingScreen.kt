@@ -11,6 +11,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.notifications.NotificationsViewModel
 import uk.gov.govuk.notifications.R
 
@@ -40,13 +41,19 @@ internal fun NotificationsOnboardingRoute(
                 val secondaryText = stringResource(R.string.turn_off_notifications_button)
                 var showNotificationsSettingsAlert by remember { mutableStateOf(false) }
                 FixedDoubleButtonGroup(
-                    primaryText = primaryText,
-                    onPrimary = { notificationsViewModel.onGiveConsentClick(primaryText) { notificationsOnboardingCompleted() } },
-                    secondaryText = secondaryText,
-                    onSecondary = {
-                        notificationsViewModel.onTurnOffNotificationsClick(secondaryText)
-                        showNotificationsSettingsAlert = true
-                    }
+                    primaryButton = Button(
+                        text = primaryText,
+                        onClick = {
+                            notificationsViewModel.onGiveConsentClick(primaryText) { notificationsOnboardingCompleted() }
+                        },
+                    ),
+                    secondaryButton = Button(
+                        text = secondaryText,
+                        onClick = {
+                            notificationsViewModel.onTurnOffNotificationsClick(secondaryText)
+                            showNotificationsSettingsAlert = true
+                        }
+                    )
                 )
                 if (showNotificationsSettingsAlert) {
                     NotificationsSettingsAlert(
@@ -61,16 +68,20 @@ internal fun NotificationsOnboardingRoute(
             } else {
                 val secondaryText = stringResource(R.string.not_now_button)
                 FixedDoubleButtonGroup(
-                    primaryText = primaryText,
-                    onPrimary = {
-                        notificationsViewModel.onAllowNotificationsClick(primaryText)
-                        { notificationsOnboardingCompleted() }
-                    },
-                    secondaryText = secondaryText,
-                    onSecondary = {
-                        notificationsViewModel.onNotNowClick(secondaryText)
-                        notificationsOnboardingCompleted()
-                    }
+                    primaryButton = Button(
+                        text = primaryText,
+                        onClick = {
+                            notificationsViewModel.onAllowNotificationsClick(primaryText)
+                            { notificationsOnboardingCompleted() }
+                        }
+                    ),
+                    secondaryButton = Button(
+                        text = secondaryText,
+                        onClick = {
+                            notificationsViewModel.onNotNowClick(secondaryText)
+                            notificationsOnboardingCompleted()
+                        }
+                    )
                 )
             }
         }

@@ -43,6 +43,7 @@ jobs:
           base_url: https://vault.bitwarden.eu
           secrets: |
             5a3468ee-c962-4535-9c8e-b32b00fadfe0 > FIREBASE_TOKEN
+            cbf3007d-ada7-4ea0-b15c-b32b00faef23 > SONAR_TOKEN
             235aa3fe-7605-4337-ab29-b32c0085d539 > CI_ACCESS_USERNAME
             16eca8c9-cccf-448b-a731-b32c0085e7ed > CI_ACCESS_TOKEN
             e2b38f74-0d53-4d3a-a33d-b32c008ddcbd > ALPHA_KEY_PASSWORD
@@ -52,6 +53,15 @@ jobs:
       - name: Decode keystore
         run: |
           echo $ALPHA_KEYSTORE | base64 -di > alpha.jks
+
+      - name: Lint
+        run: ./gradlew lint
+
+      - name: Unit Test with Code Coverage
+        run: ./gradlew koverXmlReportDebug
+
+      - name: Analyze
+        run: ./gradlew sonar --info
 
       - name: Build APK and distribute to firebase
         run: ./gradlew assembleAlpha appDistributionAlpha

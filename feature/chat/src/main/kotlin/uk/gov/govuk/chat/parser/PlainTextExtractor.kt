@@ -1,7 +1,7 @@
 package uk.gov.govuk.chat.parser
 
-import uk.gov.govuk.chat.parser.model.InlineContent
-import uk.gov.govuk.chat.parser.model.MarkdownElement
+import uk.gov.govuk.design.markdown.model.InlineContent
+import uk.gov.govuk.design.markdown.model.MarkdownElement
 
 /**
  * Extracts all plain text from a list of markdown elements.

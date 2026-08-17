@@ -11,14 +11,8 @@ plugins {
     alias(libs.plugins.realm) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.firebaseAppDistribution) apply false
-    alias(libs.plugins.oss.licenses) apply false
+    alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.sonarqube)
-}
-
-buildscript {
-    dependencies {
-        classpath(libs.oss.licenses)
-    }
 }
 
 subprojects {
@@ -27,9 +21,8 @@ subprojects {
         sonar {
             properties {
                 property("sonar.sources", "src/main")
-                if (!projectDir.endsWith("design")) {
-                    property("sonar.tests", "src/test,src/androidTest")
-                }
+                property("sonar.tests", "src/test,src/androidTest")
+
                 property(
                     "sonar.coverage.jacoco.xmlReportPaths",
                     "${projectDir}/build/reports/kover/reportDebug.xml"

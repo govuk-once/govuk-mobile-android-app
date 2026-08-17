@@ -12,16 +12,26 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import retrofit2.Retrofit
 import uk.gov.govuk.dvla.BuildConfig
 import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.util.StringProvider
+import uk.gov.govuk.dvla.util.StringProviderImpl
 
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+internal annotation class CoroutineScopeIo
 
 @InstallIn(SingletonComponent::class)
 @Module
-object DvlaModule {
+internal object DvlaModule {
 
     @Provides
     @Singleton
@@ -49,4 +59,18 @@ object DvlaModule {
     @Named("dvla_auth_url")
     fun provideDvlaAuthUrl(): String = BuildConfig.DVLA_AUTH_URL
 
+    @Provides
+    @Singleton
+    fun provideStringProvider(
+        @ApplicationContext context: Context
+    ): StringProvider {
+        return StringProviderImpl(context)
+    }
+
+    @Singleton
+    @Provides
+    @CoroutineScopeIo
+    fun providesCoroutineScopeIo(): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    }
 }

@@ -27,12 +27,13 @@
     <string name="select_alt_text">Select</string>
     <string name="deselect_alt_text">Deselect</string>
     <string name="empty_topics">Add your topics</string>
+    <string name="loading_topic_pages">Loading %1$s pages</string>
 
     <!-- Topic names -->
     <string name="benefits">Benefits</string>
     <string name="business">Business</string>
     <string name="care">Care</string>
-    <string name="driving_and_transport">Driving and Transport</string>
+    <string name="driving">Driving</string>
     <string name="employment">Employment</string>
     <string name="health_and_disability">Health and disability</string>
     <string name="money_and_tax">Money and tax</string>

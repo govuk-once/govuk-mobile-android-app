@@ -128,9 +128,9 @@ class AuthenticatedApiCallTest {
         every { response.code() } returns 402
         every { response.isSuccessful } returns false
 
-        val result = safeAuthApiCall(apiCall, authRepo)
+        val result = safeAuthApiCall(apiCall, authRepo) as Result.ServiceNotResponding
 
-        assertTrue(result is Result.Error)
+        assertEquals(402, result.code)
     }
 
     @Test

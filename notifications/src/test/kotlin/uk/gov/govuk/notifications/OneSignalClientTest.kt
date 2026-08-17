@@ -55,11 +55,11 @@ class OneSignalClientTest {
 
     @Test
     fun `Given we have a notifications client, when initialise is called, then One Signal initialise function is called`() {
-        val oneSignalAppId = "1234"
+        val oneSignalAppId = "4c235189-5c5f-4a71-8385-2549fc36419f"
         every { OneSignal.initWithContext(context, oneSignalAppId) } returns Unit
 
         runTest {
-            notificationsProvider.initialise(oneSignalAppId)
+            notificationsProvider.initialise()
 
             verify(exactly = 1) {
                 OneSignal.initWithContext(context, oneSignalAppId)

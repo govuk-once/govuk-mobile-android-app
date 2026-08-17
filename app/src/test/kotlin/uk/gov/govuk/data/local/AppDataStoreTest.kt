@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -150,7 +151,7 @@ class AppDataStoreTest {
     @Test
     fun `Given the data store is empty, when collecting suppressed home widgets, then flow is empty`() {
         val appDatastore = AppDataStore(dataStore)
-        
+
         runTest {
             assertTrue(appDatastore.suppressedHomeWidgets.first().isEmpty())
         }
@@ -202,6 +203,47 @@ class AppDataStoreTest {
             appDatastore.clear()
 
             assertTrue(dataStore.data.first().asMap().isEmpty())
+        }
+    }
+
+    @Test
+    fun `Given the user completes topic selection, when selection is complete, then update the prefs`() {
+        val appDatastore = AppDataStore(dataStore)
+
+        runTest {
+            assertFalse(appDatastore.isTopicSelectionCompleted())
+
+            appDatastore.topicSelectionCompleted()
+
+            assertTrue(dataStore.data.first()[booleanPreferencesKey(TOPIC_SELECTION_COMPLETED_KEY)] == true)
+        }
+    }
+
+    @Test
+    fun `Given the data store is empty, when suppressedHomeWidget, then update the prefs`() {
+        val appDatastore = AppDataStore(dataStore)
+
+        runTest {
+            appDatastore.suppressHomeWidget("Widget")
+
+            val suppressedWidgets = dataStore.data.first()[stringSetPreferencesKey(SUPPRESSED_HOME_WIDGETS)]
+            assertEquals(setOf("Widget"), suppressedWidgets)
+        }
+    }
+
+    @Test
+    fun `Given some widgets are already suppressed, when suppressedHomeWidget, then update the prefs with additional widget`() {
+        val appDatastore = AppDataStore(dataStore)
+
+        runTest {
+            dataStore.edit { prefs ->
+                prefs[stringSetPreferencesKey(SUPPRESSED_HOME_WIDGETS)] = setOf("Widget")
+            }
+
+            appDatastore.suppressHomeWidget("Another Widget")
+
+            val suppressedWidgets = dataStore.data.first()[stringSetPreferencesKey(SUPPRESSED_HOME_WIDGETS)]
+            assertEquals(setOf("Widget", "Another Widget"), suppressedWidgets)
         }
     }
 }

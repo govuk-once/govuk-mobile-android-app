@@ -1,0 +1,50 @@
+package uk.gov.govuk.dvla.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import uk.gov.govuk.design.ui.component.BookendToWebScreen
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.R
+
+@Composable
+internal fun DvlaLinkIntroScreen(
+    onClose: () -> Unit,
+    onContinue: (String) -> Unit,
+    onPageView: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val screenTitle = stringResource(R.string.link_dvla_intro_title)
+    val continueButtonText = stringResource(R.string.link_dvla_intro_button)
+    val description = stringResource(R.string.link_dvla_intro_description)
+
+    RunOnceLaunchedEffect {
+        onPageView(screenTitle)
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
+            .safeDrawingPadding()
+    ) {
+
+        BookendToWebScreen(
+            title = screenTitle,
+            description = description,
+            descriptionAltText = description.replace(
+                stringResource(R.string.acronym_mot),
+                stringResource(R.string.acronym_mot_alt_text)
+            ),
+            actionMessage = stringResource(R.string.link_dvla_intro_action_message),
+            buttonText = continueButtonText,
+            onClose = onClose,
+            onContinue = { onContinue(continueButtonText) },
+        )
+    }
+}

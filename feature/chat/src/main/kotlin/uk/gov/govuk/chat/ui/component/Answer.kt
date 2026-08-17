@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
-import uk.gov.govuk.chat.parser.MarkdownParser
 import uk.gov.govuk.chat.parser.PlainTextExtractor
+import uk.gov.govuk.design.markdown.MarkdownParser
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import kotlin.math.roundToInt

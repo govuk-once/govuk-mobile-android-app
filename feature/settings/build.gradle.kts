@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+    alias(libs.plugins.about.libraries)
 }
 
 val privacyPolicyUrl: String by project
@@ -24,6 +25,8 @@ android {
         buildConfigField("String", "ACCOUNT_URL", "\"https://home.account.gov.uk/\"")
 
         buildConfigField("String", "SIGN_OUT_EVENT", "\"SignOut\"")
+
+        buildConfigField("String", "MESSAGES_EVENT", "\"Messages\"")
 
         buildConfigField("String", "ACCESSIBILITY_STATEMENT_EVENT", "\"AccessibilityStatement\"")
         buildConfigField("String", "ACCESSIBILITY_STATEMENT_URL", "\"https://www.gov.uk/government/publications/accessibility-statement-for-the-govuk-app\"")
@@ -65,6 +68,8 @@ dependencies {
     implementation(projects.config)
     implementation(projects.notifications)
     implementation(projects.data)
+    implementation(projects.feature.dvla)
+    implementation(projects.feature.messages)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -73,8 +78,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.adaptive.android)
     implementation(libs.hilt.android)
-    implementation(libs.play.services.oss.licenses)
     implementation(libs.play.services.measurement.api)
+    implementation(libs.about.libraries.compose)
 
     ksp(libs.hilt.compiler)
 

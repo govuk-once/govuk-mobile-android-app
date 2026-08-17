@@ -7,9 +7,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -22,6 +25,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
@@ -44,6 +48,7 @@ class SettingsViewModelTest {
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val flagRepo = mockk<FlagRepo>(relaxed = true)
     private val configRepo = mockk<ConfigRepo>(relaxed = true)
+    private val messagesFeature = mockk<MessagesFeature>(relaxed = true)
 
     private lateinit var viewModel: SettingsViewModel
 
@@ -55,8 +60,9 @@ class SettingsViewModelTest {
         coEvery { authRepo.isAuthenticationEnabled() } returns true
         coEvery { analyticsClient.isAnalyticsEnabled() } returns true
         coEvery { flagRepo.isNotificationsEnabled() } returns true
+        every { flagRepo.isDvlaLinkEnabled() } returns true
 
-        viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo, messagesFeature)
     }
 
     @After
@@ -76,7 +82,8 @@ class SettingsViewModelTest {
     fun `Given analytics are disabled, When init, then return analytics disabled`() {
         coEvery { analyticsClient.isAnalyticsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo,
+            messagesFeature)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -96,7 +103,8 @@ class SettingsViewModelTest {
     fun `Given notifications are disabled, When init, then return notifications disabled`() {
         coEvery { flagRepo.isNotificationsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo,
+            messagesFeature)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -116,7 +124,8 @@ class SettingsViewModelTest {
     fun `Given authentication is disabled, When init, then return authentication disabled`() {
         every { authRepo.isAuthenticationEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo)
+        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo,
+            messagesFeature)
 
         runTest {
             val result = viewModel.uiState.first()
@@ -281,6 +290,81 @@ class SettingsViewModelTest {
                 text = SIGN_OUT_EVENT,
                 external = false
             )
+        }
+    }
+
+    @Test
+    fun `Given your accounts click, then log analytics`() {
+        val text = "Driver and vehicles account"
+
+        viewModel.onYourAccountsClick(text)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = text,
+                external = false,
+                section = "Settings"
+            )
+        }
+    }
+
+    // Notifications
+
+    @Test
+    fun `Given view appears, and messages disabled, view is hidden`() {
+        runTest {
+            coEvery { flagRepo.isMessagesEnabled() } returns false
+
+            viewModel.loadMessages()
+
+            runCurrent()
+
+            assertEquals(MessageRowState.Gone, viewModel.uiState.value?.messageRowState)
+        }
+    }
+
+    @Test
+    fun `Given view appears, messages enabled, messages begin loading`() {
+        runTest {
+            coEvery { messagesFeature.getUnreadCount() } coAnswers {
+                delay(2000)
+                null
+            }
+            coEvery { flagRepo.isMessagesEnabled() } returns true
+
+            viewModel.loadMessages()
+
+            runCurrent()
+
+            assertEquals(MessageRowState.Loading, viewModel.uiState.value?.messageRowState)
+        }
+    }
+
+    @Test
+    fun `Given notifications loaded, messages enabled, messages changes to Loaded with count`() {
+        runTest {
+            coEvery { messagesFeature.getUnreadCount() } returns 1
+            coEvery { flagRepo.isMessagesEnabled() } returns true
+
+            viewModel.loadMessages()
+
+            advanceUntilIdle()
+
+            assertEquals(MessageRowState.Loaded(1), viewModel.uiState.value?.messageRowState, )
+        }
+    }
+
+    @Test
+    fun `Given notifications failed, messages enabled, messages changes to Loaded with 0 count`() {
+        runTest {
+            coEvery { messagesFeature.getUnreadCount() } returns null
+            coEvery { flagRepo.isMessagesEnabled() } returns true
+
+            viewModel.loadMessages()
+
+            advanceUntilIdle()
+
+            assertEquals(MessageRowState.Loaded(0), viewModel.uiState.value?.messageRowState, )
         }
     }
 }

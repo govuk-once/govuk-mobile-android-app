@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.R
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
@@ -30,8 +31,8 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.design.ui.theme.ThemePreviews
 import uk.gov.govuk.terms.TermsUiState
 import uk.gov.govuk.terms.TermsViewModel
 
@@ -119,11 +120,17 @@ private fun TermsScreen(
             )
         },
         footerContent = {
+            val primaryText = stringResource(R.string.terms_accept)
+            val secondaryText = stringResource(R.string.terms_do_not_accept)
             FixedDoubleButtonGroup(
-                primaryText = stringResource(R.string.terms_accept),
-                onPrimary = onAccept,
-                secondaryText = stringResource(R.string.terms_do_not_accept),
-                onSecondary = { showDialog = true }
+                primaryButton = Button(
+                    text = primaryText,
+                    onClick = onAccept
+                ),
+                secondaryButton = Button(
+                    text = secondaryText,
+                    onClick = { showDialog = true }
+                )
             )
         }
     )
@@ -184,21 +191,21 @@ private fun DenialDialog(
     )
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun TermsNewUserPreview() {
     GovUkTheme {
-        TermsScreen(
-            isUpdated = false,
-            onAccept = { },
-            onTerms = { },
-            onPrivacyPolicy = { },
-            onSignOut = { }
-        )
+            TermsScreen(
+                isUpdated = false,
+                onAccept = { },
+                onTerms = { },
+                onPrivacyPolicy = { },
+                onSignOut = { }
+            )
     }
 }
 
-@ThemePreviews
+@PreviewLightDark
 @Composable
 private fun TermsUpdatedPreview() {
     GovUkTheme {

@@ -67,9 +67,12 @@ class NotificationsViewModelTest {
         viewModel.onGiveConsentClick("Title") {}
 
         runTest {
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+            /*
             coVerify(exactly = 1) {
                 notificationsRepo.sendConsent()
             }
+             */
             verify(exactly = 1) {
                 notificationsRepo.giveConsent()
                 analyticsClient.buttonClick("Title")
@@ -166,9 +169,12 @@ class NotificationsViewModelTest {
         viewModel.onContinueButtonClick("Text")
 
         runTest {
+            // Todo - will be re-added for phase 2 or 3 of Hello UDP
+            /*
             coVerify(exactly = 1) {
                 notificationsRepo.sendRemoveConsent()
             }
+             */
             verify(exactly = 1) {
                 notificationsRepo.removeConsent()
                 analyticsClient.buttonClick(

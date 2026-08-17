@@ -12,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class AnalyticsClient @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
-    private val firebaseAnalyticsClient: FirebaseAnalyticsClient
+    private val firebaseAnalyticsClient: FirebaseAnalyticsClient,
+    private val analyticsCoordinator: AnalyticsCoordinatorInterface
 ) {
 
     lateinit var isUserSessionActive: () -> Boolean
@@ -28,6 +29,7 @@ class AnalyticsClient @Inject constructor(
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
         firebaseAnalyticsClient.enable()
+        analyticsCoordinator.initialize()
     }
 
     suspend fun disable() {
@@ -39,15 +41,16 @@ class AnalyticsClient @Inject constructor(
         analyticsRepo.clear()
     }
 
-    fun screenView(screenClass: String, screenName: String, title: String) {
+    fun screenView(screenClass: String, screenName: String, title: String, format: String? = null) {
         logEvent(
             FirebaseAnalytics.Event.SCREEN_VIEW,
             parametersWithLanguage(
-                mapOf(
+                listOfNotNull(
                     FirebaseAnalytics.Param.SCREEN_CLASS to screenClass,
                     FirebaseAnalytics.Param.SCREEN_NAME to screenName,
                     "screen_title" to title,
-                )
+                    format?.let { "format" to it }
+                ).toMap()
             )
         )
     }
@@ -94,10 +97,21 @@ class AnalyticsClient @Inject constructor(
     ) {
         navigation(
             text = text,
-            type = "Trigger card",
+            type = "trigger card",
             url = url,
             external = external,
             section = section
+        )
+    }
+
+    fun iconClick(
+        type: String,
+        external: Boolean = false
+    ) {
+        navigation(
+            text = "N/A",
+            type = type,
+            external = external
         )
     }
 
@@ -132,6 +146,21 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun menuItemClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
+        navigation(
+            text = text,
+            type = "menu",
+            url = url,
+            external = external,
+            section = section
+        )
+    }
+
     fun chat() {
         logEvent(
             "Chat",
@@ -140,6 +169,37 @@ class AnalyticsClient @Inject constructor(
                 "type" to "typed"
             )
         )
+    }
+
+    fun messagesUrlLaunched(url: String) {
+        logEvent(
+            "MessagesUrlLaunched",
+            mapOf(
+                "url" to url
+            )
+        )
+    }
+
+    fun messagesMarkUnread() {
+        logEvent("MessagesMarkUnread",  mapOf())
+    }
+
+    fun messagesDelete()  {
+        logEvent("MessagesDelete",   mapOf(
+            "action" to "tap"
+        ))
+    }
+
+    fun messagesConfirmDelete() {
+        logEvent("MessagesDelete", mapOf(
+            "action" to "confirm"
+        ))
+    }
+
+    fun messagesCancelDelete() {
+        logEvent("MessagesDelete", mapOf(
+            "action" to "cancel"
+        ))
     }
 
     fun search(searchTerm: String) {
@@ -177,6 +237,21 @@ class AnalyticsClient @Inject constructor(
         navigation(text = text, type = "SettingsItem", url = url, external = external)
     }
 
+    fun accountCardClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
+        navigation(
+            text = text,
+            type = "Account card",
+            url = url,
+            external = external,
+            section = section
+        )
+    }
+
     fun toggleFunction(text: String, section: String, action: String) {
         function(
             text = text,
@@ -199,6 +274,19 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun menuItemFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
+        function(
+            text = text,
+            type = "Menu",
+            section = section,
+            action = action
+        )
+    }
+
     fun topicsCustomised() {
         firebaseAnalyticsClient.setUserProperty("topics_customised", "true")
     }
@@ -214,7 +302,8 @@ class AnalyticsClient @Inject constructor(
     fun viewItemListEvent(ecommerceEvent: EcommerceEvent) {
         logEcommerceEvent(
             event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
-            ecommerceEvent = ecommerceEvent
+            ecommerceEvent = ecommerceEvent,
+            selectedItemIndex = null
         )
     }
 
@@ -284,13 +373,13 @@ class AnalyticsClient @Inject constructor(
 
     private fun logEvent(name: String, parameters: Map<String, Any>) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
-            firebaseAnalyticsClient.logEvent(name, parameters)
+            analyticsCoordinator.logEvent(name, parameters)
         }
     }
 
-    private fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
+    private fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
-            firebaseAnalyticsClient.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
+            analyticsCoordinator.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
         }
     }
 }

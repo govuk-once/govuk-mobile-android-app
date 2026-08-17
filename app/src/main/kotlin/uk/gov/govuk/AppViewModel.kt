@@ -4,21 +4,30 @@ import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.config.data.local.model.HOME_BANNERS
+import uk.gov.govuk.config.data.local.model.HomeWidget
+import uk.gov.govuk.config.data.local.model.toAnalyticsItems
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
+import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
@@ -27,7 +36,6 @@ import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
-import uk.gov.govuk.widgets.model.HomeWidget
 import uk.govuk.app.local.LocalFeature
 import javax.inject.Inject
 
@@ -46,7 +54,9 @@ internal class AppViewModel @Inject constructor(
     private val visitedFeature: Visited,
     private val chatFeature: ChatFeature,
     private val analyticsClient: AnalyticsClient,
-    private val notificationsRepo: NotificationsRepo
+    private val notificationsRepo: NotificationsRepo,
+    private val dvlaRepo: DvlaRepo,
+    private val identityRepo: IdentityRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -99,7 +109,26 @@ internal class AppViewModel @Inject constructor(
                 } else if (flagRepo.isForcedUpdate(BuildConfig.VERSION_NAME)) {
                     _uiState.value = AppUiState.ForcedUpdate
                 } else {
-                    topicsFeature.init()
+                    coroutineScope {
+                        // init topics and check DVLA link status in parallel
+                        val initTopics = async {
+                            runCatching {
+                                topicsFeature.init()
+                            }
+                        }
+
+                        val checkDvlaLinkStatus =
+                            if (authRepo.isUserSessionActive() && flagRepo.isDvlaLinkEnabled()) {
+                                async {
+                                    runCatching {
+                                        identityRepo.getLinkedServices()
+                                    }
+                                }
+                            } else null
+
+                        initTopics.await()
+                        checkDvlaLinkStatus?.await()
+                    }
 
                     _uiState.value = AppUiState.Default(
                         shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
@@ -111,10 +140,8 @@ internal class AppViewModel @Inject constructor(
                         appRepo.suppressedHomeWidgets,
                         chatFeature.shouldDisplayChatBanner
                     ) { suppressedWidgets, shouldDisplayChatBanner ->
-                        Pair(suppressedWidgets, shouldDisplayChatBanner)
-                    }.collect { (suppressedWidgets, shouldDisplayChatBanner) ->
                         updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
-                    }
+                    }.collect()
                 }
             }
             is InvalidSignature -> _uiState.value = AppUiState.ForcedUpdate
@@ -154,7 +181,6 @@ internal class AppViewModel @Inject constructor(
     fun onLogin() {
         viewModelScope.launch {
             if (authRepo.isDifferentUser()) {
-                authRepo.clear()
                 appRepo.clear()
                 loginRepo.clear()
                 termsRepo.clear()
@@ -165,7 +191,19 @@ internal class AppViewModel @Inject constructor(
                 chatFeature.clear()
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
+                dvlaRepo.clear()
             }
+
+            // check dvla link state after login
+            if (flagRepo.isDvlaLinkEnabled()) {
+                // check in background
+                launch {
+                    runCatching {
+                        identityRepo.getLinkedServices()
+                    }
+                }
+            }
+
             onNext()
         }
     }
@@ -211,6 +249,12 @@ internal class AppViewModel @Inject constructor(
                     }
                 }
 
+                configRepo.promoBanners?.forEach { promoBanner ->
+                    if (!suppressedWidgets.contains(promoBanner.id)) {
+                        widgets.add(HomeWidget.Promo(promoBanner = promoBanner))
+                    }
+                }
+
                 if (isTopicsEnabled()) {
                     widgets.add(HomeWidget.Topics)
                 }
@@ -231,9 +275,12 @@ internal class AppViewModel @Inject constructor(
     fun onWidgetClick(
         text: String,
         url: String? = null,
-        external: Boolean,
         section: String
     ) {
+        val external = url?.let { url ->
+            url.startsWith("http") || url.contains("web?url=")
+        } ?: false
+
         analyticsClient.widgetClick(
             text,
             url,
@@ -265,6 +312,22 @@ internal class AppViewModel @Inject constructor(
             hasDeepLink,
             url
         )
+    }
+
+    fun onBannerClick(url: String) {
+        val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
+
+        if (items.isNotEmpty()) {
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = HOME_BANNERS,
+                    itemListName = HOME_BANNERS,
+                    items = items,
+                    totalItemCount = items.size
+                ),
+                selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
+            )
+        }
     }
 
     fun onNext() {
@@ -333,6 +396,7 @@ internal class AppViewModel @Inject constructor(
     }
 
     fun isDvlaLinkEnabled() = flagRepo.isDvlaLinkEnabled()
+    fun isTravelAlertsEnabled() = flagRepo.isTravelAlertsEnabled()
 
     fun onSignOut() {
         notificationsRepo.logout()
@@ -342,7 +406,8 @@ internal class AppViewModel @Inject constructor(
         if (!notificationsRepo.permissionGranted()) {
             if (flagRepo.isFlexEnabled()) {
                 // TODO: awaiting failure requirements for sendRemoveConsent()
-                notificationsRepo.sendRemoveConsent()
+                // Todo - will be re-added for phase 2 or 3 of Hello UDP
+//                notificationsRepo.sendRemoveConsent()
             }
             notificationsRepo.removeConsent()
             if (currentRoute == NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE) {

@@ -1,85 +1,98 @@
 package uk.gov.govuk.dvla.data
 
-import com.google.gson.JsonParser
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.data.identity.IdentityRepo
+import uk.gov.govuk.data.identity.model.LinkedService
+import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.model.map
 import uk.gov.govuk.data.remote.safeAuthApiCall
-import uk.gov.govuk.dvla.domain.LicenceDetails
+import uk.gov.govuk.dvla.data.local.DvlaDataStore
+import uk.gov.govuk.dvla.di.CoroutineScopeIo
+import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
+import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.domain.toDomainModel
+import uk.gov.govuk.dvla.remote.DvlaApi
+import uk.gov.govuk.dvla.remote.safeLicenceApiCall
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Singleton
-internal class DvlaRepo @Inject constructor(
+class DvlaRepo @Inject constructor(
+    @param:CoroutineScopeIo private val externalScope: CoroutineScope,
     private val api: DvlaApi,
-    private val authRepo: AuthRepo
+    private val authRepo: AuthRepo,
+    private val dvlaDataStore: DvlaDataStore,
+    private val identityRepo: IdentityRepo
 ) {
-    private val _isLinked = MutableStateFlow(false)
-    val isLinked = _isLinked.asStateFlow()
+    val linkState: Flow<ServiceLinkStatus> = identityRepo.linkStatusOf(LinkedService.DVLA)
 
-    suspend fun isAccountLinked(): Result<Boolean> {
-        val result = safeAuthApiCall({ api.checkDvlaLinked() }, authRepo)
+    val currentLinkState: ServiceLinkStatus
+        get() = identityRepo.currentStatusOf(LinkedService.DVLA)
 
-        return if (result is Result.Success) {
-            val linked = result.value.linked
-            _isLinked.value = linked
-            Result.Success(linked)
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            result as Result<Boolean>
-        }
+    suspend fun refreshLinkStatus() = identityRepo.getLinkedServices()
+
+    internal suspend fun getSelectedDrivingView(): DrivingView? = dvlaDataStore.getSelectedDrivingView()
+
+    internal suspend fun setSelectedDrivingView(drivingView: DrivingView) = dvlaDataStore.setSelectedDrivingView(drivingView)
+
+    suspend fun clear() {
+        dvlaDataStore.clear()
     }
 
-    suspend fun linkAccount(token: String): Result<Unit> {
+    internal suspend fun linkAccount(token: String): Result<Unit> {
         val result = try {
-            val linkingId = extractLinkingIdFromJwt(token)
-            safeAuthApiCall({ api.linkDvlaIdentity(linkingId) }, authRepo)
+            safeAuthApiCall({ api.linkDvlaIdentity(token) }, authRepo)
         } catch (_: Exception) {
             Result.Error()
         }
 
-        _isLinked.value = result is Result.Success
+        if (result is Result.Success) {
+            // sync linked services state
+            identityRepo.getLinkedServices()
+        }
         return result
     }
 
     suspend fun unlinkAccount(): Result<Unit> {
-        val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-        _isLinked.value = result !is Result.Success
-        return result
+        val deferredResult = externalScope.async {
+                val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
+                if (result is Result.Success) {
+                    clear()
+                    identityRepo.getLinkedServices() // sync linked services state
+                }
+                result
+            }
+        return deferredResult.await()
     }
 
-    suspend fun getLicenceDetails(): Result<LicenceDetails> {
-        val result = safeAuthApiCall({ api.getDrivingLicence() }, authRepo)
 
-        return if (result is Result.Success) {
-            Result.Success(result.value.toDomainModel())
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            result as Result<LicenceDetails>
-        }
-    }
+    internal suspend fun getLicenceDetails(): LicenceDetailsResult =
+        safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
 
-    @OptIn(ExperimentalEncodingApi::class)
-    private fun extractLinkingIdFromJwt(jwtToken: String): String {
-        return try {
-            val parts = jwtToken.split(".")
-            require(parts.size >= 2) { "Invalid JWT" }
+    internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> =
+        safeAuthApiCall({ api.getCustomerVehicles() }, authRepo)
+            .map { it.customerVehicles.map { vehicle -> vehicle.toDomainModel() } }
 
-            val payloadBase64 = parts[1]
-            val decodedBytes = Base64.UrlSafe
-                .withPadding(Base64.PaddingOption.ABSENT_OPTIONAL)
-                .decode(payloadBase64)
-            val decodedString = String(decodedBytes, Charsets.UTF_8)
-            val jsonObject = JsonParser.parseString(decodedString).asJsonObject
-            jsonObject["linking_id"].asString
+    internal suspend fun getVehicleDetails(vehicleId: Int): Result<VehicleDetails> =
+        safeAuthApiCall({ api.getVehicleDetails(vehicleId) }, authRepo)
+            .map { it.customerVehicleDetails.toDomainModel() }
 
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Failed to extract linking id", e)
-        }
-    }
+    internal suspend fun createCheckCode(): Result<CheckCodeDetails> =
+        safeAuthApiCall({ api.createShareCode() }, authRepo)
+            .map { it.toDomainModel() }
+
+    internal suspend fun getCheckCodes(): Result<List<CheckCodeDetails>> =
+        safeAuthApiCall({ api.getShareCodes() }, authRepo)
+            .map { it.toDomainModel() }
+
+    internal suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
+        safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
+            .map { it.toDomainModel() }
 }

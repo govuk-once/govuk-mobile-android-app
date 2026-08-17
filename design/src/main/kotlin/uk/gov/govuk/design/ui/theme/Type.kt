@@ -1,12 +1,15 @@
 package uk.gov.govuk.design.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.gov.govuk.design.R
 
@@ -18,9 +21,12 @@ data class GovUkTypography(
     val title2Bold: TextStyle,
     val title2Regular: TextStyle,
     val title3Bold: TextStyle,
+    val title3SemiBold: TextStyle,
     val title3Regular: TextStyle,
+    val headlineSemibold: TextStyle,
     val bodyBold: TextStyle,
     val bodyRegular: TextStyle,
+    val bodySemibold: TextStyle,
     val calloutBold: TextStyle,
     val calloutRegular: TextStyle,
     val subheadlineBold: TextStyle,
@@ -28,12 +34,18 @@ data class GovUkTypography(
     val footnoteBold: TextStyle,
     val footnoteRegular: TextStyle,
     val captionBold: TextStyle,
-    val captionRegular: TextStyle
+    val captionRegular: TextStyle,
+    val registrationPlateRegular: TextStyle,
+    val registrationPlateLarge: TextStyle
 )
 
 private val transport = FontFamily(
     Font(R.font.transport_bold, FontWeight.Bold),
     Font(R.font.transport_light, FontWeight.Light),
+)
+
+private val dvlaVrm = FontFamily(
+    Font(R.font.dvla_vrm, FontWeight.Bold)
 )
 
 private val letterSpacing = TextUnit(0.05f, TextUnitType.Sp)
@@ -88,11 +100,25 @@ internal val Typography = GovUkTypography(
         lineHeight = 24.sp,
         letterSpacing = letterSpacing
     ),
+    title3SemiBold = TextStyle(
+        fontFamily = transport,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = letterSpacing
+    ),
     title3Regular = TextStyle(
         fontFamily = transport,
         fontWeight = FontWeight.Light,
         fontSize = 20.sp,
         lineHeight = 24.sp,
+        letterSpacing = letterSpacing
+    ),
+    headlineSemibold = TextStyle(
+        fontFamily = transport,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
         letterSpacing = letterSpacing
     ),
     bodyBold = TextStyle(
@@ -105,6 +131,13 @@ internal val Typography = GovUkTypography(
     bodyRegular = TextStyle(
         fontFamily = transport,
         fontWeight = FontWeight.Light,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
+        letterSpacing = letterSpacing
+    ),
+    bodySemibold = TextStyle(
+        fontFamily = transport,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 17.sp,
         lineHeight = 22.sp,
         letterSpacing = letterSpacing
@@ -164,6 +197,16 @@ internal val Typography = GovUkTypography(
         fontSize = 12.sp,
         lineHeight = 17.sp,
         letterSpacing = letterSpacing
+    ),
+    registrationPlateRegular = TextStyle(
+        fontFamily = dvlaVrm,
+        fontWeight = FontWeight.Bold,
+        fontSize = 17.sp
+    ),
+    registrationPlateLarge = TextStyle(
+        fontFamily = dvlaVrm,
+        fontWeight = FontWeight.Bold,
+        fontSize = 56.sp
     )
 )
 
@@ -176,8 +219,11 @@ internal val LocalTypography = staticCompositionLocalOf {
         title2Bold = TextStyle.Default,
         title2Regular = TextStyle.Default,
         title3Bold = TextStyle.Default,
+        title3SemiBold = TextStyle.Default,
         title3Regular = TextStyle.Default,
+        headlineSemibold = TextStyle.Default,
         bodyBold = TextStyle.Default,
+        bodySemibold = TextStyle.Default,
         bodyRegular = TextStyle.Default,
         calloutBold = TextStyle.Default,
         calloutRegular = TextStyle.Default,
@@ -186,6 +232,8 @@ internal val LocalTypography = staticCompositionLocalOf {
         footnoteBold = TextStyle.Default,
         footnoteRegular = TextStyle.Default,
         captionBold = TextStyle.Default,
-        captionRegular = TextStyle.Default
+        captionRegular = TextStyle.Default,
+        registrationPlateRegular = TextStyle.Default,
+        registrationPlateLarge = TextStyle.Default
     )
 }

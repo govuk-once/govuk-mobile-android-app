@@ -59,15 +59,15 @@ class SafeApiCallTest {
     }
 
     @Test
-    fun `Given an unsuccessful response, then return Error`() = runTest {
+    fun `Given an unsuccessful response, then return ServiceNotResponding`() = runTest {
         val response = mockk<Response<String>> {
             every { isSuccessful } returns false
             every { code() } returns 401
+            every { body() } returns null
         }
 
-        val result = safeApiCall { response }
-
-        assertTrue(result is Result.Error)
+        val result = safeApiCall { response } as ServiceNotResponding
+        assertEquals(401, result.code)
     }
 
     @Test
@@ -91,9 +91,8 @@ class SafeApiCallTest {
             every { message() } returns "Bad Gateway"
         }
 
-        val result = safeApiCall<String> { throw HttpException(errorResponse) }
-
-        assertTrue(result is ServiceNotResponding)
+        val result = safeApiCall<String> { throw HttpException(errorResponse) } as ServiceNotResponding
+        assertEquals(502, result.code)
     }
 
     @Test

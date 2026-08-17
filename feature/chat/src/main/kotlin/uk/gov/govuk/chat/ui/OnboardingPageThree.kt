@@ -1,15 +1,24 @@
 package uk.gov.govuk.chat.ui
 
 import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices.PHONE
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatViewModel
@@ -20,6 +29,7 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -81,7 +91,7 @@ private fun OnboardingPageThreeScreen(
     onPrivacyNoticeClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView()
     }
 
@@ -121,37 +131,89 @@ private fun OnboardingPageThreeScreen(
             )
         },
         buttonContent = {
-            PrimaryButton(
-                text = stringResource(id = R.string.onboarding_page_three_button),
-                onClick = onClick,
-                modifier = Modifier
-                    .padding(horizontal = GovUkTheme.spacing.medium)
-                    .background(GovUkTheme.colourScheme.surfaces.fixedContainer),
-                enabled = true,
-                externalLink = false
-            )
-            SecondaryButton(
-                text = stringResource(id = R.string.onboarding_page_three_decline_button),
-                onClick = onCancel,
-                modifier = Modifier
-                    .padding(
-                        start = GovUkTheme.spacing.medium,
-                        end = GovUkTheme.spacing.medium,
-                        top = GovUkTheme.spacing.medium
+            val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Buttons(
+                        onClick = onClick,
+                        onCancel = onCancel,
+                        modifier = Modifier.weight(1f)
                     )
-            )
+                }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                ) {
+                    Buttons(
+                        onClick = onClick,
+                        onCancel = onCancel,
+                        modifier = Modifier
+                    )
+                }
+            }
         },
         modifier = modifier,
         animationRes = R.raw.chat_onboarding_three
     )
 }
 
+@Composable
+private fun Buttons(
+    onClick: () -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier
+) {
+    PrimaryButton(
+        text = stringResource(id = R.string.onboarding_page_three_button),
+        onClick = onClick,
+        modifier = modifier
+            .padding(horizontal = GovUkTheme.spacing.medium)
+            .background(GovUkTheme.colourScheme.surfaces.fixedContainer),
+        enabled = true,
+        externalLink = false
+    )
+
+    SecondaryButton(
+        text = stringResource(id = R.string.onboarding_page_three_decline_button),
+        onClick = onCancel,
+        modifier = modifier
+            .padding(
+                start = GovUkTheme.spacing.medium,
+                end = GovUkTheme.spacing.medium,
+                top = GovUkTheme.spacing.medium
+            )
+    )
+}
+
+@PreviewLightDark
+@Composable
+private fun OnboardingPageThreePreview() {
+    GovUkTheme {
+        OnboardingPageThreeScreen(
+            onPageView = {},
+            onClick = {},
+            onCancel = {},
+            onBack = {},
+            onPrivacyNoticeClick = { _, _ -> }
+        )
+    }
+}
+
+// Looks like @PreviewLightDark can't handle landscape light/dark mode yet
+
 @Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO
+    device = "$PHONE, orientation=landscape",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Composable
-private fun LightModePreview() {
+private fun OnboardingPageThreePreviewLandscapeLight() {
     GovUkTheme {
         OnboardingPageThreeScreen(
             onPageView = {},
@@ -164,11 +226,11 @@ private fun LightModePreview() {
 }
 
 @Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    device = "$PHONE, orientation=landscape",
+    uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-private fun DarkModePreview() {
+private fun OnboardingPageThreePreviewLandscapeDark() {
     GovUkTheme {
         OnboardingPageThreeScreen(
             onPageView = {},

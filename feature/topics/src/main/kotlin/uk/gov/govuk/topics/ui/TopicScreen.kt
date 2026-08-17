@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,6 +34,8 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -120,7 +121,7 @@ internal fun TopicRoute(
                     )
                 }
 
-                is TopicUiState.Offline -> ErrorScreen(
+                is TopicUiState.Error.Offline -> ErrorScreen(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
@@ -128,12 +129,26 @@ internal fun TopicRoute(
                 )
 
 
-                is TopicUiState.ServiceError -> ErrorScreen(
+                is TopicUiState.Error.Service -> ErrorScreen(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
                     content = { ProblemMessage() }
                 )
+
+                is TopicUiState.Error.NoReference -> ErrorScreen(
+                    topicReference = "",
+                    onPageView = { title -> viewModel.onPageView(title = title) },
+                    onBack = onBack,
+                    content = { ProblemMessage() }
+                )
+
+                is TopicUiState.Loading -> {
+                    TopicLoadingScreen(
+                        topicReference = it.topicReference,
+                        onBack = onBack,
+                    )
+                }
             }
         }
     }
@@ -166,8 +181,7 @@ private fun TopicScreen(
             section, text, url, selectedItemIndex ->
         onExternalLink(section, text, url, selectedItemIndex, totalItemCount)
     }
-
-    LaunchedEffect(Unit) {
+    RunOnceLaunchedEffect {
         onPageView(topic.title)
     }
 
@@ -442,17 +456,40 @@ private fun ErrorScreen(
 ) {
     val topicName = topicReference.toTopicName(LocalContext.current)
 
-    Column(modifier.verticalScroll(rememberScrollState())) {
-        LaunchedEffect(Unit) {
-            onPageView(topicName)
-        }
+    RunOnceLaunchedEffect {
+        onPageView(topicName)
+    }
 
+    Column(modifier.verticalScroll(rememberScrollState())) {
         ChildPageHeader(
             text = topicName,
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
 
         content()
+    }
+}
+
+@Composable
+private fun TopicLoadingScreen(
+    topicReference: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val topicName = topicReference.toTopicName(LocalContext.current)
+    val altText = stringResource(R.string.loading_topic_pages, topicName)
+
+    Column(modifier.verticalScroll(rememberScrollState())) {
+        ChildPageHeader(
+            text = topicName,
+            dismissStyle = HeaderDismissStyle.Back(onBack)
+        )
+
+        LoaderCard(
+            modifier = Modifier
+                .padding(GovUkTheme.spacing.medium),
+            altText = altText
+        )
     }
 }
 
@@ -478,6 +515,17 @@ private fun ErrorScreenProblemPreview() {
             onPageView = {},
             onBack = {},
             content = { ProblemMessage() }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TopicLoadingScreenPreview() {
+    GovUkTheme {
+        TopicLoadingScreen(
+            topicReference = "benefits",
+            onBack = {}
         )
     }
 }

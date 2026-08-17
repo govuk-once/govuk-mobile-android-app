@@ -48,7 +48,7 @@ class UserRepoTest {
 
             coVerify(exactly = 1) { userApi.getUserInfo() }
 
-            assertEquals("12345", userRepo.notifications?.notificationId)
+            assertEquals("12345", userRepo.notifications?.pushId)
             assertEquals(ConsentStatus.ACCEPTED, userRepo.notifications?.consentStatus)
         }
 
@@ -64,7 +64,7 @@ class UserRepoTest {
 
             coVerify(exactly = 1) { userApi.getUserInfo() }
 
-            assertNull(userRepo.notifications?.notificationId)
+            assertNull(userRepo.notifications?.pushId)
             assertNull(userRepo.notifications?.consentStatus)
         }
 

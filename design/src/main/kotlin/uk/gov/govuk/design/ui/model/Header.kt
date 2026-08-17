@@ -8,11 +8,16 @@ import uk.gov.govuk.design.R
 
 sealed interface HeaderActionStyle {
     data object None : HeaderActionStyle
-    data class ActionButton(
+    data class TextActionButton(
         val title: String,
         val onClick: () -> Unit,
         val altText: String? = null
     ) : HeaderActionStyle
+    data class OverflowActionButton(
+        val onClick: () -> Unit,
+        val altText: String? = null
+    ) : HeaderActionStyle
+
 }
 
 sealed class HeaderDismissStyle {
