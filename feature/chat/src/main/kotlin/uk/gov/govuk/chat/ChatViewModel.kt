@@ -163,6 +163,14 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
+    fun onPositiveFeedback() {
+        analyticsClient.iconClick(type = "chat_positive_rating")
+    }
+
+    fun onNegativeFeedback() {
+        analyticsClient.iconClick(type = "chat_negative_rating")
+    }
+
     fun onPageView(screenClass: String, screenName: String, title: String) {
         analyticsClient.screenView(
             screenClass = screenClass,
