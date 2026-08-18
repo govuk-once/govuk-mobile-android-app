@@ -10,6 +10,7 @@ import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
 import uk.gov.govuk.dvla.navigation.DVLA_DEEP_LINK_PATH
 import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.extension.getUrlParam
+import uk.gov.govuk.extension.isInAllowedList
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.homeDeepLinks
 import uk.gov.govuk.messages.navigation.messagesDeepLinks
@@ -96,8 +97,13 @@ internal class DeeplinkHandler @Inject constructor(
                 it.getUrlParam(DeepLink.allowedGovUkUrls)?.let { uri ->
                     onLaunchBrowser?.invoke(uri.toString())
                 } ?: run {
-                    validDeeplink = false
-                    onDeeplinkNotFound?.invoke()
+                    // check if the intent Uri is allowed (for example from shortcut)
+                    if (it.isInAllowedList(DeepLink.allowedGovUkUrls)) {
+                        onLaunchBrowser?.invoke(it.toString())
+                    } else {
+                        validDeeplink = false
+                        onDeeplinkNotFound?.invoke()
+                    }
                 }
             }
 

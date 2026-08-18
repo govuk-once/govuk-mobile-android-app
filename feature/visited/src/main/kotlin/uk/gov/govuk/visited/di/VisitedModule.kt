@@ -13,6 +13,7 @@ import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.data.local.RoomEncryptionHelper
 import uk.gov.govuk.visited.Visited
 import uk.gov.govuk.visited.VisitedClient
+import uk.gov.govuk.visited.data.VisitedShortcutPublisher
 import uk.gov.govuk.visited.data.store.VisitedDao
 import uk.gov.govuk.visited.data.store.VisitedDatabase
 import uk.gov.govuk.visited.data.store.DefaultRealmVisitedReader
@@ -47,4 +48,10 @@ internal class VisitedModule {
     @Provides
     @Singleton
     fun provideVisited(visitedClient: VisitedClient): Visited = visitedClient
+
+    @Provides
+    @Singleton
+    fun providesVisitedShortcutPublisher(
+        @ApplicationContext context: Context
+    ): VisitedShortcutPublisher = VisitedShortcutPublisher(context)
 }

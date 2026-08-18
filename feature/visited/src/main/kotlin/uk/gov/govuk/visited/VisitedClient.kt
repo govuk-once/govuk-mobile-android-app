@@ -9,14 +9,13 @@ import javax.inject.Singleton
 @Singleton
 internal class VisitedClient @Inject constructor(
     private val visitedRepo: VisitedRepo,
-    private val visitedLocalDataSource: VisitedLocalDataSource
 ): Visited {
     override suspend fun visitableItemClick(title: String, url: String) {
         upsertVisitedItem(title, url)
     }
 
     private suspend fun upsertVisitedItem(title: String, url: String) {
-        visitedLocalDataSource.insertOrUpdate(title, url, LocalDateTime.now())
+        visitedRepo.insertOrUpdate(title, url, LocalDateTime.now())
     }
 
     override suspend fun clear() {
