@@ -384,7 +384,8 @@ private fun HorizontalConnectedButtonGroupPreview()
             activeButton = FIRST,
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
+                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
             )
         )
     }
@@ -402,7 +403,8 @@ private fun VerticalConnectedButtonGroupPreview()
             activeButton = FIRST,
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
+                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
             )
         )
     }
