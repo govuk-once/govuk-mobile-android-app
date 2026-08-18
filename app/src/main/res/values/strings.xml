@@ -74,4 +74,7 @@
 
     <string name="promo_banner_dismiss_content_desc">Dismiss</string>
 
+    <string name="shortcut_chat_label_short">Chat</string>
+    <string name="shortcut_chat_label_long">GOV.UK Chat</string>
+
 </resources>
