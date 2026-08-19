@@ -48,13 +48,6 @@ internal class FakeConfigInterceptor : Interceptor {
       "about": "https://www.gov.uk/guidance/about-govuk-chat",
       "feedback": "https://www.gov.uk/contact/govuk-app/leave-feedback-about-govuk-chat"
     },
-    "userFeedbackBanner": {
-      "body": "Oi! How about some feedback?",
-      "link": {
-        "title": "Yeah, alright",
-        "url": "https://www.gov.uk/contact/govuk-app"
-      }
-    },
     "termsAndConditions": {
       "lastUpdated": "2025-03-18T00:00:00Z",
       "url": "https://www.gov.uk/guidance/govuk-app-terms-and-conditions",
