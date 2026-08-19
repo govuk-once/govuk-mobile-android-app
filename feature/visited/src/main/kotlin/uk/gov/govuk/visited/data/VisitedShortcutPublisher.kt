@@ -23,7 +23,7 @@ internal class VisitedShortcutPublisher @Inject constructor(
         val shortcut = ShortcutInfoCompat.Builder(context, url)
             .setShortLabel(title.take(15))
             .setLongLabel(title.take(30))
-            .setIcon(IconCompat.createWithResource(context, uk.gov.govuk.design.R.drawable.ic_link))
+            .setIcon(IconCompat.createWithResource(context, uk.gov.govuk.design.R.drawable.ic_external_link))
             .setIntent(intent)
             .build()
 
