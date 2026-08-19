@@ -567,7 +567,24 @@ class AppViewModelTest {
         runTest {
             val homeWidgets = viewModel.homeWidgets.value!!
             val userFeedbackWidget = HomeWidget.UserFeedback(userFeedbackBanner)
+            assertTrue(homeWidgets.contains(userFeedbackWidget))
             assertEquals(userFeedbackWidget, homeWidgets.last())
+        }
+    }
+
+    @Test
+    fun `Given the config does not have a user feedback banner, When init, then user feedback is not in the home widget list`() {
+        val userFeedbackBanner = UserFeedbackBanner("body", Link("title", "url"))
+        coEvery { flagRepo.isLocalServicesEnabled() } returns true
+        every { configRepo.userFeedbackBanner } returns null
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
+            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            val homeWidgets = viewModel.homeWidgets.value!!
+            val userFeedbackWidget = HomeWidget.UserFeedback(userFeedbackBanner)
+            assertFalse(homeWidgets.contains(userFeedbackWidget))
         }
     }
 
