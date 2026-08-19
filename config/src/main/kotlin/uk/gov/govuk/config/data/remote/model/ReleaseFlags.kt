@@ -12,5 +12,6 @@ data class ReleaseFlags(
     @SerializedName("chat") val chat: Boolean,
     @SerializedName("profile_v2") val flex: Boolean,
     @SerializedName("messages") val messages: Boolean,
-    @SerializedName("travelalerts") val travelAlerts: Boolean
+    @SerializedName("travelalerts") val travelAlerts: Boolean,
+    @SerializedName("quarterlySurvey") val quarterlySurvey: Boolean
 )

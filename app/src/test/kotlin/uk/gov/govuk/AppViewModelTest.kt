@@ -39,7 +39,6 @@ import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
-import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
@@ -556,39 +555,6 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given the config has a user feedback banner, When init, then user feedback is the last home widget`() {
-        val userFeedbackBanner = UserFeedbackBanner("body", Link("title", "url"))
-        coEvery { flagRepo.isLocalServicesEnabled() } returns true
-        every { configRepo.userFeedbackBanner } returns userFeedbackBanner
-
-        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
-
-        runTest {
-            val homeWidgets = viewModel.homeWidgets.value!!
-            val userFeedbackWidget = HomeWidget.UserFeedback(userFeedbackBanner)
-            assertTrue(homeWidgets.contains(userFeedbackWidget))
-            assertEquals(userFeedbackWidget, homeWidgets.last())
-        }
-    }
-
-    @Test
-    fun `Given the config does not have a user feedback banner, When init, then user feedback is not in the home widget list`() {
-        val userFeedbackBanner = UserFeedbackBanner("body", Link("title", "url"))
-        coEvery { flagRepo.isLocalServicesEnabled() } returns true
-        every { configRepo.userFeedbackBanner } returns null
-
-        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
-
-        runTest {
-            val homeWidgets = viewModel.homeWidgets.value!!
-            val userFeedbackWidget = HomeWidget.UserFeedback(userFeedbackBanner)
-            assertFalse(homeWidgets.contains(userFeedbackWidget))
-        }
-    }
-
-    @Test
     fun `Given a new user or the same user has logged in, When on login, then navigate to next nav destination`() =
         runTest(dispatcher) {
             val navEvent =
@@ -1046,7 +1012,6 @@ class AppViewModelTest {
 
         coEvery { flagRepo.isChatEnabled() } returns false
         coEvery { flagRepo.isLocalServicesEnabled() } returns false
-        every { configRepo.userFeedbackBanner } returns null
         every { configRepo.promoBanners } returns listOf(banner1, banner2)
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
@@ -1084,7 +1049,6 @@ class AppViewModelTest {
     fun `Given a no promo banners to click, and a valid url onBannerClick, then do not log analytics`() {
         coEvery { flagRepo.isChatEnabled() } returns false
         coEvery { flagRepo.isLocalServicesEnabled() } returns false
-        every { configRepo.userFeedbackBanner } returns null
         every { configRepo.promoBanners } returns emptyList()
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,

@@ -137,17 +137,11 @@ internal fun homeWidgets(
                 }
             }
 
-            is HomeWidget.UserFeedback -> {
+            is HomeWidget.QuarterlyFeedback -> {
                 widgets.add { modifier ->
-                    val userFeedbackBanner = it.userFeedbackBanner
-                    UserFeedbackBanner(
-                        userFeedbackBanner = userFeedbackBanner,
-                        onClick = {
-                            launchBrowser(userFeedbackBanner.link.url)
-                            onWidgetClick(
-                                userFeedbackBanner.link.title,
-                                userFeedbackBanner.link.url
-                            )
+                    QuarterlyFeedbackBanner(
+                        onClick = { text ->
+                            onWidgetClick(text, null)
                         },
                         modifier = modifier
                     )
