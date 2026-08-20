@@ -293,25 +293,17 @@ fun QuarterlyFeedbackCard(
     modifier: Modifier = Modifier
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//        TODO: Replace this with the new button...
-
         BodyRegularLabel(
             text = body,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = modifier.padding(bottom = GovUkTheme.spacing.small)
         )
 
-        BodyRegularLabel(
+        CompactPrimaryButtonWithIcon(
             text = title,
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = GovUkTheme.spacing.medium)
-                .clickable(onClick = onClick)
-                .semantics {
-                    contentDescription = title
-                },
-            color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
-            textAlign = TextAlign.Center
+            onClick = onClick,
+            icon = R.drawable.outline_thumbs_up_down_24
         )
     }
 }
@@ -762,7 +754,11 @@ private fun SearchResultWithoutDescriptionPreview() {
 @Composable
 private fun QuarterlyFeedbackCardPreview() {
     GovUkTheme {
-        QuarterlyFeedbackCard("Card body", "A link description", {})
+        QuarterlyFeedbackCard(
+            "Card body",
+            "A link description",
+            {}
+        )
     }
 }
 
