@@ -71,6 +71,8 @@ import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.govkit.browser.Urls
+import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
@@ -120,22 +122,33 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
     val homeWidgets by viewModel.homeWidgets.collectAsState()
     var isSplashDone by rememberSaveable { mutableStateOf(false) }
     var isRecommendUpdateSkipped by rememberSaveable { mutableStateOf(false) }
+    val externalLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
+    var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
+
+    fun launchUrl(url: String) {
+        externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+    }
 
     if (isSplashDone && uiState != null) {
         uiState?.let {
             when (it) {
                 is AppUiState.Loading -> LoadingScreen()
-                is AppUiState.AppUnavailable -> AppUnavailableScreen()
+                is AppUiState.AppUnavailable -> AppUnavailableScreen(
+                    onGoToGovUkClick = { launchUrl(Urls.GOV_UK_HOME) }
+                )
                 is AppUiState.DeviceOffline -> FullScreenWrapper {
                     DeviceOfflineScreen(
                         onTryAgain = { viewModel.onTryAgain() }
                     )
                 }
 
-                is AppUiState.ForcedUpdate -> ForcedUpdateScreen()
+                is AppUiState.ForcedUpdate -> ForcedUpdateScreen(
+                    onUpdateClick = { launchUrl(Urls.PLAY_STORE) }
+                )
                 is AppUiState.Default -> {
                     if (it.shouldDisplayRecommendUpdate && !isRecommendUpdateSkipped) {
                         RecommendUpdateScreen(
+                            onUpdateClick = { launchUrl(Urls.PLAY_STORE) },
                             recommendUpdateSkipped = { isRecommendUpdateSkipped = true }
                         )
                     } else {
@@ -158,6 +171,10 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
             )
             SplashScreen { isSplashDone = true }
         }
+    }
+
+    if (showBrowserNotFoundAlert) {
+        BrowserNotFoundAlert(onDismiss = { showBrowserNotFoundAlert = false })
     }
 }
 
@@ -467,6 +484,9 @@ private fun GovUkNavHost(
             navController = navController,
             onLoginCompleted = {
                 viewModel.onLogin()
+            },
+            launchBrowser = { url ->
+                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
             }
         )
         termsGraph(
@@ -686,14 +706,20 @@ private fun GovUkNavHost(
     }
 
     if (showBrowserNotFoundAlert) {
-        InfoAlert(
-            title = R.string.browser_not_found_alert_title,
-            message = R.string.browser_not_found_alert_message,
-            buttonText = R.string.close_alert_button
-        ) {
-            showBrowserNotFoundAlert = false
-        }
+        BrowserNotFoundAlert(onDismiss = { showBrowserNotFoundAlert = false })
     }
+}
+
+@Composable
+private fun BrowserNotFoundAlert(
+    onDismiss: () -> Unit
+) {
+    InfoAlert(
+        title = R.string.browser_not_found_alert_title,
+        message = R.string.browser_not_found_alert_message,
+        buttonText = R.string.close_alert_button,
+        onDismiss = onDismiss
+    )
 }
 
 

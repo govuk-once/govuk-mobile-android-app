@@ -11,7 +11,6 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -21,6 +20,7 @@ import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
+import uk.gov.govuk.govkit.browser.Urls
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,7 +60,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     ServiceLinkStatus.UNLINKED,
                     ServiceLinkStatus.CHECKING -> _uiState.value = UiState.Hidden
                     ServiceLinkStatus.ERROR -> {
-                        val fallbackUrl = UrlModel(dvlaUrls?.account ?: GOV_UK_URL)
+                        val fallbackUrl = UrlModel(dvlaUrls?.account ?: Urls.GOV_UK_HOME)
                         _uiState.value = UiState.Error(fallbackUrl)
                     }
                 }
@@ -158,7 +158,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     LicenceSummaryUiState.NotAvailable(licenceMapper.notAvailableUrl(dvlaUrls))
 
                 is LicenceDetailsResult.Failure -> {
-                    val fallbackUrl = UrlModel(dvlaUrls?.driverDetails ?: GOV_UK_URL)
+                    val fallbackUrl = UrlModel(dvlaUrls?.driverDetails ?: Urls.GOV_UK_HOME)
                     LicenceSummaryUiState.Error(fallbackUrl)
                 }
             }
@@ -177,7 +177,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     VehiclesSummaryUiState.Success(vehicles)
                 }
                 else -> {
-                    val fallbackUrl = UrlModel(dvlaUrls?.account ?: GOV_UK_URL)
+                    val fallbackUrl = UrlModel(dvlaUrls?.account ?: Urls.GOV_UK_HOME)
                     VehiclesSummaryUiState.Error(fallbackUrl)
                 }
             }
