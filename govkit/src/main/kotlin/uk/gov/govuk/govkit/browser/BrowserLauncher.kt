@@ -77,20 +77,6 @@ sealed class BrowserActivityLauncher(
     }
 }
 
-@Composable
-fun rememberUrlLauncher(
-    url: String,
-    shouldShowExternalBrowser: Boolean = true,
-    onError: () -> Unit = {}
-): () -> Unit {
-    val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser)
-    return remember(browserLauncher, url) {
-        {
-            browserLauncher.launch(url = url, onError = onError)
-        }
-    }
-}
-
 private fun Context.getPartialCustomTabsIntent(): CustomTabsIntent {
     val displayMetrics = this.resources.displayMetrics
     val screenHeight = displayMetrics.heightPixels

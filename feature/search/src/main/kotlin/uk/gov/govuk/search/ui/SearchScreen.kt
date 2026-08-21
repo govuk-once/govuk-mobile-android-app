@@ -32,7 +32,6 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.govkit.browser.Urls
-import uk.gov.govuk.govkit.browser.rememberUrlLauncher
 import uk.gov.govuk.search.R
 import uk.gov.govuk.search.SearchUiState
 import uk.gov.govuk.search.SearchViewModel
@@ -50,7 +49,6 @@ internal fun SearchRoute(
     val uiState by viewModel.uiState.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val onGovUkClick = rememberUrlLauncher(Urls.GOV_UK_HOME)
 
     SearchScreen(
         uiState = uiState,
@@ -92,7 +90,9 @@ internal fun SearchRoute(
                 keyboardController?.hide()
                 viewModel.onAutocompleteResultClick(searchTerm)
             },
-            onGoToGovUkClick = onGovUkClick
+            onGoToGovUkClick = {
+                launchBrowser(Urls.GOV_UK_HOME)
+            }
         ),
         launchBrowser = launchBrowser,
         modifier = modifier

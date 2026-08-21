@@ -34,7 +34,6 @@ import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.govkit.browser.Urls
-import uk.gov.govuk.govkit.browser.rememberUrlLauncher
 import uk.gov.govuk.terms.TermsUiState
 import uk.gov.govuk.terms.TermsViewModel
 
@@ -47,12 +46,13 @@ internal fun TermsRoute(
 ) {
     val viewModel: TermsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val onGovUkClick = rememberUrlLauncher(Urls.GOV_UK_HOME)
 
     uiState?.let {
         when (it) {
             is TermsUiState.Error -> AppUnavailableScreen(
-                onGoToGovUkClick = onGovUkClick
+                onGoToGovUkClick = {
+                    launchBrowser(Urls.GOV_UK_HOME)
+                }
             )
             is TermsUiState.Terms -> TermsScreen(
                 isUpdated = it.isUpdated,
