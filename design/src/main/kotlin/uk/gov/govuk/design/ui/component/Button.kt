@@ -62,14 +62,8 @@ data class GovUkButtonColours(
 )
 
 @Composable
-fun PrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    externalLink: Boolean = false
-) {
-    val colours = GovUkButtonColours(
+private fun primaryColours(): GovUkButtonColours {
+    return GovUkButtonColours(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
@@ -82,11 +76,20 @@ fun PrimaryButton(
         disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
         disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
     )
+}
 
+@Composable
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
     BaseButton(
         text = text,
         onClick = onClick,
-        colours = colours,
+        colours = primaryColours(),
         textStyle = GovUkTheme.typography.bodyBold,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
@@ -201,24 +204,10 @@ fun CompactPrimaryButtonWithIcon(
     enabled: Boolean = true,
     externalLink: Boolean = false
 ) {
-    val colours = GovUkButtonColours(
-        defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
-        defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
-        defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
-        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
-        focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
-        pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryHighlight,
-        pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
-        pressedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeHighlight,
-        disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
-        disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
-    )
-
     BaseButton(
         text = text,
         onClick = onClick,
-        colours = colours,
+        colours = primaryColours(),
         textStyle = GovUkTheme.typography.bodyRegular,
         modifier = modifier,
         enabled = enabled,
