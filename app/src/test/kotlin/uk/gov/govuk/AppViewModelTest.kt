@@ -39,7 +39,6 @@ import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
-import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
@@ -300,6 +299,32 @@ class AppViewModelTest {
     }
 
     @Test
+    fun `Given the quarterly survey feature is enabled, When init, then emit quarterly survey enabled state`() {
+        coEvery { flagRepo.isQuarterlySurveyEnabled() } returns true
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            viewModel.homeWidgets.first()
+                ?.let { assertTrue(it.contains(HomeWidget.QuarterlyFeedback)) }
+        }
+    }
+
+    @Test
+    fun `Given the quarterly survey feature is disabled, When init, then emit quarterly survey disabled state`() {
+        coEvery { flagRepo.isQuarterlySurveyEnabled() } returns false
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            viewModel.homeWidgets.first()
+                ?.let { assertFalse(it.contains(HomeWidget.QuarterlyFeedback)) }
+        }
+    }
+
+    @Test
     fun `Given the topics feature is enabled, When init, then emit topics enabled state`() {
         coEvery { flagRepo.isTopicsEnabled() } returns true
 
@@ -552,22 +577,6 @@ class AppViewModelTest {
             val homeWidgets = viewModel.homeWidgets.value!!
             assertEquals(HomeWidget.Topics, homeWidgets[0])
             assertEquals(HomeWidget.Local, homeWidgets[1])
-        }
-    }
-
-    @Test
-    fun `Given the config has a user feedback banner, When init, then user feedback is the last home widget`() {
-        val userFeedbackBanner = UserFeedbackBanner("body", Link("title", "url"))
-        coEvery { flagRepo.isLocalServicesEnabled() } returns true
-        every { configRepo.userFeedbackBanner } returns userFeedbackBanner
-
-        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-            searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
-
-        runTest {
-            val homeWidgets = viewModel.homeWidgets.value!!
-            val userFeedbackWidget = HomeWidget.UserFeedback(userFeedbackBanner)
-            assertEquals(userFeedbackWidget, homeWidgets.last())
         }
     }
 
@@ -1029,7 +1038,6 @@ class AppViewModelTest {
 
         coEvery { flagRepo.isChatEnabled() } returns false
         coEvery { flagRepo.isLocalServicesEnabled() } returns false
-        every { configRepo.userFeedbackBanner } returns null
         every { configRepo.promoBanners } returns listOf(banner1, banner2)
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
@@ -1067,7 +1075,6 @@ class AppViewModelTest {
     fun `Given a no promo banners to click, and a valid url onBannerClick, then do not log analytics`() {
         coEvery { flagRepo.isChatEnabled() } returns false
         coEvery { flagRepo.isLocalServicesEnabled() } returns false
-        every { configRepo.userFeedbackBanner } returns null
         every { configRepo.promoBanners } returns emptyList()
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,

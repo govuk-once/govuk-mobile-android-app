@@ -264,9 +264,10 @@ internal class AppViewModel @Inject constructor(
                 if (isRecentActivityEnabled()) {
                     widgets.add(HomeWidget.RecentActivity)
                 }
-                configRepo.userFeedbackBanner?.let { userFeedbackBanner ->
-                    widgets.add(HomeWidget.UserFeedback(userFeedbackBanner = userFeedbackBanner))
+                if (isQuarterlySurveyEnabled()) {
+                    widgets.add(HomeWidget.QuarterlyFeedback)
                 }
+
                 _homeWidgets.value = widgets
             }
         }
