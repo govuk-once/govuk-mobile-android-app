@@ -299,6 +299,32 @@ class AppViewModelTest {
     }
 
     @Test
+    fun `Given the quarterly survey feature is enabled, When init, then emit quarterly survey enabled state`() {
+        coEvery { flagRepo.isQuarterlySurveyEnabled() } returns true
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            viewModel.homeWidgets.first()
+                ?.let { assertTrue(it.contains(HomeWidget.QuarterlyFeedback)) }
+        }
+    }
+
+    @Test
+    fun `Given the quarterly survey feature is disabled, When init, then emit quarterly survey disabled state`() {
+        coEvery { flagRepo.isQuarterlySurveyEnabled() } returns false
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo)
+
+        runTest {
+            viewModel.homeWidgets.first()
+                ?.let { assertFalse(it.contains(HomeWidget.QuarterlyFeedback)) }
+        }
+    }
+
+    @Test
     fun `Given the topics feature is enabled, When init, then emit topics enabled state`() {
         coEvery { flagRepo.isTopicsEnabled() } returns true
 
