@@ -300,7 +300,7 @@ fun QuarterlyFeedbackCard(
             text = body,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             textAlign = TextAlign.Center,
-            modifier = modifier.padding(vertical = GovUkTheme.spacing.medium)
+            modifier = Modifier.padding(vertical = GovUkTheme.spacing.medium)
         )
 
         CompactPrimaryButtonWithIcon(
