@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
 import uk.gov.govuk.topics.ui.widget.TopicsWidget
@@ -111,6 +112,9 @@ internal fun homeWidgets(
                         onEditClick = { text ->
                             onWidgetClick(text, null)
                             navController.navigateToTopicsEdit()
+                        },
+                        onGovUkClick = {
+                            launchBrowser(Urls.GOV_UK_HOME)
                         },
                         modifier = modifier
                     )

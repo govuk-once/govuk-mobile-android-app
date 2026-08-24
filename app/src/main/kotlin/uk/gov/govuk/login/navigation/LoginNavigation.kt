@@ -23,6 +23,7 @@ private const val USER_API_ERROR_ROUTE = "user_api_error_route"
 fun NavGraphBuilder.loginGraph(
     navController: NavController,
     onLoginCompleted: () -> Unit,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -73,7 +74,9 @@ fun NavGraphBuilder.loginGraph(
         }
 
         composable(route = USER_API_ERROR_ROUTE) {
-            AppUnavailableRoute()
+            AppUnavailableRoute(
+                launchBrowser = launchBrowser
+            )
         }
     }
 }

@@ -20,7 +20,7 @@ adaptiveAndroid = "1.2.0"
 hilt = "2.57.2"
 ksp = "2.0.21-1.0.28"
 
-datastorePreferences = "1.2.0"
+datastorePreferences = "1.2.1"
 googlePlayServices = "4.4.4"
 crashlytics = "3.0.6"
 
