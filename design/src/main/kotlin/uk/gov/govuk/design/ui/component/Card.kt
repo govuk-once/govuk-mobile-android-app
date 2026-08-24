@@ -292,12 +292,15 @@ fun QuarterlyFeedbackCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.padding(bottom = GovUkTheme.spacing.large)
+    ) {
         BodyRegularLabel(
             text = body,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             textAlign = TextAlign.Center,
-            modifier = modifier.padding(bottom = GovUkTheme.spacing.small)
+            modifier = modifier.padding(vertical = GovUkTheme.spacing.medium)
         )
 
         CompactPrimaryButtonWithIcon(
