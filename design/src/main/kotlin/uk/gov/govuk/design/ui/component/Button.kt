@@ -238,7 +238,7 @@ fun ConnectedButton(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val (containerColour, contentColour) = when {
-        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.buttonConnectedFocused
+        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.buttonConnectedGroupFocused
         active -> colours.containerActive to GovUkTheme.colourScheme.textAndIcons.header
         else -> colours.containerInactive to GovUkTheme.colourScheme.textAndIcons.secondary
     }
