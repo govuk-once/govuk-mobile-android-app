@@ -38,6 +38,7 @@ import uk.gov.govuk.topics.ui.model.TopicItemUi
 fun TopicsWidget(
     onTopicClick: (String, String) -> Unit,
     onEditClick: (String) -> Unit,
+    onGovUkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: TopicsWidgetViewModel = hiltViewModel()
@@ -59,6 +60,7 @@ fun TopicsWidget(
                 onTopicClick(ref, title)
             },
             onEditClick = onEditClick,
+            onGovUkClick = onGovUkClick,
             modifier = modifier
         )
     }
@@ -71,6 +73,7 @@ private fun TopicsWidgetContent(
     onView: (TopicsCategory, List<TopicItemUi>) -> Unit,
     onTopicClick: (TopicsCategory, String, String, Int, Int) -> Unit,
     onEditClick: (String) -> Unit,
+    onGovUkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -87,7 +90,7 @@ private fun TopicsWidgetContent(
                 onTopicClick = onTopicClick
             )
         } else {
-            ErrorCard()
+            ErrorCard(onGovUkClick = onGovUkClick)
         }
     }
 }
@@ -208,13 +211,19 @@ private fun ColumnScope.TopicsList(
 }
 
 @Composable
-private fun ErrorCard(modifier: Modifier = Modifier) {
+private fun ErrorCard(
+    onGovUkClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     OutlinedCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list),
         border = BorderStroke(width = 0.dp, color = Color.Unspecified)
     ) {
-        ProblemMessage(description = stringResource(R.string.topics_error_message))
+        ProblemMessage(
+            onGoToGovUkClick = onGovUkClick,
+            description = stringResource(R.string.topics_error_message)
+        )
     }
 }
 
@@ -254,7 +263,8 @@ private fun TopicsWidgetPreview() {
             onCategoryChange = {},
             onView = { _, _ -> },
             onTopicClick = { _, _, _, _, _ -> },
-            onEditClick = { }
+            onEditClick = { },
+            onGovUkClick = { }
         )
     }
 }
@@ -271,7 +281,8 @@ private fun TopicsWidgetEmptyTopicsPreview() {
             onCategoryChange = {},
             onView = { _, _ -> },
             onTopicClick = { _, _, _, _, _ -> },
-            onEditClick = { }
+            onEditClick = { },
+            onGovUkClick = { }
         )
     }
 }

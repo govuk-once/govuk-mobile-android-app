@@ -33,6 +33,7 @@ import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
+import uk.gov.govuk.govkit.browser.Urls
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class VehiclesAndLicenceSummaryViewModelTest {
@@ -71,6 +72,19 @@ class VehiclesAndLicenceSummaryViewModelTest {
             assertEquals(UiState.Hidden, viewModel.uiState.value)
             coVerify(exactly = 0) { dvlaRepo.getCustomerVehicles() }
             coVerify(exactly = 0) { dvlaRepo.getLicenceDetails() }
+        }
+
+    @Test
+    fun `Given linkState emits CHECKING, when viewModel initialised, then state is Hidden`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.CHECKING)
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo, vehicleMapper, licenceMapper, analyticsClient, configRepo
+            )
+            advanceUntilIdle()
+
+            assertEquals(UiState.Hidden, viewModel.uiState.value)
         }
 
     @Test
@@ -133,7 +147,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
             coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Failure(Result.Error())
-            every { configRepo.dvlaUrls?.account } returns null
+            every { configRepo.dvlaUrls } returns null
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -148,7 +162,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             coVerify(exactly = 1) { dvlaRepo.getLicenceDetails() }
 
             val currentState = viewModel.uiState.value as UiState.Default
-            assertEquals(VehiclesSummaryUiState.Error(UrlModel("https://www.gov.uk")), currentState.vehiclesState)
+            assertEquals(LicenceSummaryUiState.Error(UrlModel(Urls.GOV_UK_HOME)), currentState.licenceState)
         }
 
     @Test
@@ -175,7 +189,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     fun `Given linkState emits ERROR, when viewModel initialised and dvla urls doesn't have account, then state is Error and no calls are made`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.ERROR)
-            every { configRepo.dvlaUrls?.account } returns null
+            every { configRepo.dvlaUrls } returns null
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -186,7 +200,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
             advanceUntilIdle()
 
-            assertEquals(UiState.Error(UrlModel("https://www.gov.uk")), viewModel.uiState.value)
+            assertEquals(UiState.Error(UrlModel(Urls.GOV_UK_HOME)), viewModel.uiState.value)
             coVerify(exactly = 0) { dvlaRepo.getCustomerVehicles() }
             coVerify(exactly = 0) { dvlaRepo.getLicenceDetails() }
         }
@@ -585,4 +599,20 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `Given state is Hidden, when onVehiclesSelected is called, then state remains Hidden`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo, vehicleMapper, licenceMapper, analyticsClient, configRepo
+            )
+            advanceUntilIdle()
+
+            viewModel.onVehiclesSelected()
+            advanceUntilIdle()
+
+            assertEquals(UiState.Hidden, viewModel.uiState.value)
+        }
 }

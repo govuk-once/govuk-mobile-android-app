@@ -31,6 +31,7 @@ import kotlinx.coroutines.delay
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.search.R
 import uk.gov.govuk.search.SearchUiState
 import uk.gov.govuk.search.SearchViewModel
@@ -88,6 +89,9 @@ internal fun SearchRoute(
             onAutocompleteResultClick = { searchTerm ->
                 keyboardController?.hide()
                 viewModel.onAutocompleteResultClick(searchTerm)
+            },
+            onGoToGovUkClick = {
+                launchBrowser(Urls.GOV_UK_HOME)
             }
         ),
         launchBrowser = launchBrowser,
@@ -107,6 +111,7 @@ private class SearchScreenActions(
     val onAutocomplete: (String) -> Unit,
     val onPreviousSearchClick: (String) -> Unit,
     val onAutocompleteResultClick: (String) -> Unit,
+    val onGoToGovUkClick: () -> Unit
 )
 
 @Composable
@@ -211,7 +216,11 @@ private fun SearchContent(
 
     when {
         uiState.error != null ->
-            SearchError(uiState.error, actions.onRetry)
+            SearchError(
+                error = uiState.error,
+                onRetry = actions.onRetry,
+                onGoToGovUkClick = actions.onGoToGovUkClick
+            )
         uiState.searchResults != null ->
             SearchResults(
                 searchTerm = uiState.searchResults.searchTerm,

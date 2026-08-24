@@ -48,6 +48,7 @@ import uk.gov.govuk.design.ui.model.FocusableCardColours
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.TopicUiState
 import uk.gov.govuk.topics.TopicViewModel
@@ -57,6 +58,7 @@ import uk.gov.govuk.topics.ui.model.TopicUi
 @Composable
 internal fun TopicRoute(
     onBack: () -> Unit,
+    launchBrowser: (String) -> Unit,
     onExternalLink: (url: String, onExternalLink: Int) -> Unit,
     onStepByStepSeeAll: () -> Unit,
     onPopularPagesSeeAll: () -> Unit,
@@ -133,14 +135,20 @@ internal fun TopicRoute(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
-                    content = { ProblemMessage() }
+                    content = {
+                        ProblemMessage(
+                            onGoToGovUkClick = { launchBrowser(Urls.GOV_UK_HOME) })
+                    }
                 )
 
                 is TopicUiState.Error.NoReference -> ErrorScreen(
                     topicReference = "",
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
-                    content = { ProblemMessage() }
+                    content = {
+                        ProblemMessage(
+                            onGoToGovUkClick = { launchBrowser(Urls.GOV_UK_HOME) })
+                    }
                 )
 
                 is TopicUiState.Loading -> {
@@ -514,7 +522,7 @@ private fun ErrorScreenProblemPreview() {
             topicReference = "benefits",
             onPageView = {},
             onBack = {},
-            content = { ProblemMessage() }
+            content = { ProblemMessage({ }) }
         )
     }
 }

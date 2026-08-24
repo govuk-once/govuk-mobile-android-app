@@ -26,6 +26,7 @@ import uk.gov.govuk.search.SearchUiState
 internal fun SearchError(
     error: SearchUiState.Error,
     onRetry: (String) -> Unit,
+    onGoToGovUkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -44,6 +45,7 @@ internal fun SearchError(
                 )
             is SearchUiState.Error.ServiceError ->
                 ProblemMessage(
+                    onGoToGovUkClick = onGoToGovUkClick,
                     focusRequester = focusRequester
                 )
             else -> { } // Do nothing
