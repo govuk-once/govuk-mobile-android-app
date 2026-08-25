@@ -476,4 +476,20 @@ class FlagRepoTest {
 
         assertFalse(flagRepo.isTravelAlertsEnabled())
     }
+
+    @Test
+    fun `Given a debug build and Quarterly Survey is enabled, return true`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isQuarterlySurveyEnabled } returns true
+
+        assertTrue(flagRepo.isQuarterlySurveyEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Quarterly Survey is disabled, return false`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isQuarterlySurveyEnabled } returns false
+
+        assertFalse(flagRepo.isQuarterlySurveyEnabled())
+    }
 }

@@ -1,5 +1,6 @@
 package uk.gov.govuk.design.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,14 +62,8 @@ data class GovUkButtonColours(
 )
 
 @Composable
-fun PrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    externalLink: Boolean = false
-) {
-    val colours = GovUkButtonColours(
+private fun primaryColours(): GovUkButtonColours {
+    return GovUkButtonColours(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
@@ -81,11 +76,20 @@ fun PrimaryButton(
         disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
         disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
     )
+}
 
+@Composable
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
     BaseButton(
         text = text,
         onClick = onClick,
-        colours = colours,
+        colours = primaryColours(),
         textStyle = GovUkTheme.typography.bodyBold,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
@@ -192,6 +196,27 @@ fun CompactButton(
 }
 
 @Composable
+fun CompactPrimaryButtonWithIcon(
+    text: String,
+    onClick: () -> Unit,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        colours = primaryColours(),
+        textStyle = GovUkTheme.typography.bodyRegular,
+        modifier = modifier,
+        enabled = enabled,
+        externalLink = externalLink,
+        icon = icon
+    )
+}
+
+@Composable
 fun DestructiveButton(
     text: String,
     onClick: () -> Unit,
@@ -283,6 +308,7 @@ private fun BaseButton(
     modifier: Modifier = Modifier,
     externalLink: Boolean = false,
     enabled: Boolean = true,
+    @DrawableRes icon: Int? = null,
     shape: RoundedCornerShape = RoundedCornerShape(15.dp),
 ) {
     val altText = text.replace(
@@ -347,6 +373,7 @@ private fun BaseButton(
         border = borderColour?.let { BorderStroke(1.dp, it) },
         interactionSource = interactionSource
     ) {
+        if (icon != null) ButtonIcon(icon)
         Text(
             text = text,
             style = textStyle,
@@ -360,6 +387,17 @@ private fun BaseButton(
         )
         if (externalLink) ExternalLinkIcon()
     }
+}
+
+@Composable
+private fun ButtonIcon(
+    @DrawableRes icon: Int
+) {
+    Icon(
+        painter = painterResource(icon),
+        contentDescription = null,
+        modifier = Modifier.padding(end = GovUkTheme.spacing.small)
+    )
 }
 
 @Composable
@@ -521,6 +559,18 @@ private fun CompactDisabled()
             text = "Compact button",
             onClick = { },
             enabled = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun CompactPrimaryWithIcon() {
+    GovUkTheme {
+        CompactPrimaryButtonWithIcon(
+            text = "Compact button with icon",
+            onClick = { },
+            icon = R.drawable.outline_thumbs_up_down_24
         )
     }
 }
