@@ -171,7 +171,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                     headlineFont = FontTheme(bodyBold, largeSize),
                     descriptionTextColor = R.color.text_primary,
                     descriptionFont = FontTheme(bodyRegular, regularSize),
-                    closeButtonColor = R.color.white,
+                    closeButtonColor = R.color.button_text,
                     closeButtonBackgroundColor = R.color.accent,
                     buttonOneTheme = ButtonTheme(
                         labelColor = R.color.accent,
@@ -181,7 +181,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                         linkColor = R.color.accent
                     ),
                     buttonTwoTheme = ButtonTheme(
-                        labelColor = R.color.white,
+                        labelColor = R.color.button_text,
                         font = FontTheme(bodyRegular, mediumSize),
                         backgroundColor = R.color.accent,
                         borderColor = R.color.accent,
@@ -192,7 +192,7 @@ class QualtricsAnalyticsClient @Inject constructor(
             .setEmbeddedAppFeedbackTheme(
                 EmbeddedAppFeedbackTheme(
                     dialogBackgroundColor = R.color.surface_list,
-                    closeButtonColor = R.color.white,
+                    closeButtonColor = R.color.button_text,
                     closeButtonBackgroundColor = R.color.accent,
                     initialQuestionTheme = InitialQuestionTheme(
                         color = R.color.text_primary,
@@ -208,8 +208,8 @@ class QualtricsAnalyticsClient @Inject constructor(
                         thankYouTextFont = FontTheme(bodyBold, largeSize),
                     ),
                     yesNoButtonsTheme = YesNoButtonsTheme(
-                        yesButtonTextColor = R.color.accent,
-                        yesButtonBorderColor = R.color.white,
+                        yesButtonTextColor = R.color.button_text,
+                        yesButtonBorderColor = R.color.accent,
                         yesButtonFillColor = R.color.accent,
                         yesButtonFont = FontTheme(bodyRegular, mediumSize),
                         noButtonTextColor = R.color.accent,
@@ -226,7 +226,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                     emojiTheme = EmojiTheme(
                         borderColor = R.color.accent,
                         fillColor = R.color.accent,
-                        tintColor = R.color.white
+                        tintColor = R.color.button_text
                     ),
                     starTheme = StarTheme(
                         borderColor = R.color.accent
@@ -244,8 +244,8 @@ class QualtricsAnalyticsClient @Inject constructor(
                         )
                     ),
                     submitButtonTheme = SubmitButtonTheme(
-                        textColor = R.color.white,
-                        fillColor = R.color.accent,
+                        textColor = R.color.button_text,
+                        fillColor = R.color.button,
                         font = FontTheme(bodyRegular, mediumSize)
                     ),
                     textInputTheme = TextInputTheme(

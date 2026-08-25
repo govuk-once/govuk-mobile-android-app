@@ -4,9 +4,8 @@
   <color name="surface_list">#0A2740</color>
   <color name="list_divider">#263D54</color>
   <color name="surface_background">#061625</color>
-
-  <!-- common to light and dark -->
-  <color name="accent">#A736EC</color>
+  <color name="accent">#11E0F1</color>
+  <color name="button">#66F39E</color>
+  <color name="button_text">#000000</color>
   <color name="accent_light">#0A7AFF</color>
-  <color name="white">#FFFFFF</color>
 </resources>
