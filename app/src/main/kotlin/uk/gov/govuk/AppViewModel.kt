@@ -1,9 +1,11 @@
 package uk.gov.govuk
 
+import android.content.Context
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -21,6 +23,7 @@ import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.config.data.local.model.HOME_BANNERS
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.local.model.toAnalyticsItems
+import uk.gov.govuk.config.data.remote.model.QuarterlySurvey
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
@@ -39,6 +42,7 @@ import uk.gov.govuk.visited.Visited
 import uk.govuk.app.local.LocalFeature
 import javax.inject.Inject
 
+
 @HiltViewModel
 internal class AppViewModel @Inject constructor(
     private val timeoutManager: TimeoutManager,
@@ -56,7 +60,8 @@ internal class AppViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val notificationsRepo: NotificationsRepo,
     private val dvlaRepo: DvlaRepo,
-    private val identityRepo: IdentityRepo
+    private val identityRepo: IdentityRepo,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -264,9 +269,17 @@ internal class AppViewModel @Inject constructor(
                 if (isRecentActivityEnabled()) {
                     widgets.add(HomeWidget.RecentActivity)
                 }
-                configRepo.userFeedbackBanner?.let { userFeedbackBanner ->
-                    widgets.add(HomeWidget.UserFeedback(userFeedbackBanner = userFeedbackBanner))
+                if (isQuarterlySurveyEnabled()) {
+                    widgets.add(
+                        HomeWidget.QuarterlyFeedback(
+                            quarterlySurvey = QuarterlySurvey(
+                                id = context.getString(R.string.quarterly_feedback_id),
+                                title = context.getString(R.string.quarterly_feedback_title)
+                            )
+                        )
+                    )
                 }
+
                 _homeWidgets.value = widgets
             }
         }
@@ -396,6 +409,7 @@ internal class AppViewModel @Inject constructor(
     }
 
     fun isDvlaLinkEnabled() = flagRepo.isDvlaLinkEnabled()
+    fun isTravelAlertsEnabled() = flagRepo.isTravelAlertsEnabled()
 
     fun onSignOut() {
         notificationsRepo.logout()

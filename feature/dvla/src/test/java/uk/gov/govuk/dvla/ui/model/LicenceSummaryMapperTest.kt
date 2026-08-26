@@ -8,11 +8,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
-import uk.gov.govuk.design.ui.component.error.ErrorConstants.GOV_UK_URL
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
 import uk.gov.govuk.dvla.util.StringProvider
+import uk.gov.govuk.govkit.browser.Urls
 import java.time.LocalDate
 
 class LicenceSummaryMapperTest {
@@ -127,6 +127,6 @@ class LicenceSummaryMapperTest {
     fun `Given licence status is not available and dvlaUrls is null, then NotAvailable falls back to the GOV_UK url`() {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXCHANGED), dvlaUrls = null)
         assertTrue(result is LicenceSummaryUiState.NotAvailable)
-        assertEquals(GOV_UK_URL, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
+        assertEquals(Urls.GOV_UK_HOME, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
     }
 }

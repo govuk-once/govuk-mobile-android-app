@@ -9,7 +9,6 @@ data class Config(
     @SerializedName("releaseFlags") val releaseFlags: ReleaseFlags,
     @SerializedName("version") val version: String,
     @SerializedName("chatPollIntervalSeconds") val chatPollIntervalSeconds: Double?,
-    @SerializedName("userFeedbackBanner") val userFeedbackBanner: UserFeedbackBanner?,
     @SerializedName("chatUrls") val chatUrls: ChatUrls,
     @SerializedName("refreshTokenExpirySeconds") val refreshTokenExpirySeconds: Long?,
     @SerializedName("emergencyBanners") var emergencyBanners: List<EmergencyBanner>?,

@@ -171,33 +171,33 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun notificationCentreUrlLaunched(url: String) {
+    fun messagesUrlLaunched(url: String) {
         logEvent(
-            "NotificationCentreUrlLaunched",
+            "MessagesUrlLaunched",
             mapOf(
                 "url" to url
             )
         )
     }
 
-    fun notificationCentreMarkUnread() {
-        logEvent("NotificationCentreMarkUnread",  mapOf())
+    fun messagesMarkUnread() {
+        logEvent("MessagesMarkUnread",  mapOf())
     }
 
-    fun notificationCentreDelete()  {
-        logEvent("NotificationCentreDelete",   mapOf(
+    fun messagesDelete()  {
+        logEvent("MessagesDelete",   mapOf(
             "action" to "tap"
         ))
     }
 
-    fun notificationCentreConfirmDelete() {
-        logEvent("NotificationCentreDelete", mapOf(
+    fun messagesConfirmDelete() {
+        logEvent("MessagesDelete", mapOf(
             "action" to "confirm"
         ))
     }
 
-    fun notificationCentreCancelDelete() {
-        logEvent("NotificationCentreDelete", mapOf(
+    fun messagesCancelDelete() {
+        logEvent("MessagesDelete", mapOf(
             "action" to "cancel"
         ))
     }

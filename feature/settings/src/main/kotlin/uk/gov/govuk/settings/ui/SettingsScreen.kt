@@ -20,7 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -187,8 +192,13 @@ private fun SettingsScreen(
 
 
             if (uiState.messageRowState != MessageRowState.Gone) {
+                val accessibilityText = mapMessageToAccessibilityText(uiState.messageRowState)
+
                 CountListItem(
-                    modifier = Modifier.semantics(true) { },
+                    modifier = Modifier.clearAndSetSemantics {
+                        role = Role.Button
+                        text = accessibilityText
+                    },
                     title = stringResource(R.string.messages_title),
                     state = mapMessageToCountRowState(uiState.messageRowState),
                     onClick = actions.onMessagesClick
@@ -236,6 +246,23 @@ private fun mapMessageToCountRowState(messageRowState: MessageRowState): CountLi
     else -> {
         CountListState.Loading
     }
+}
+
+@Composable
+private fun mapMessageToAccessibilityText(messageRowState: MessageRowState): AnnotatedString {
+    val base = stringResource(R.string.messages_title)
+    var text = base
+
+    if (messageRowState is MessageRowState.Loaded
+        && messageRowState.unreadCount > 0) {
+        text = stringResource(
+            R.string.messages_a11y_label_unread_suffix,
+            base,
+            messageRowState.unreadCount
+        )
+    }
+
+    return AnnotatedString(text)
 }
 
 @Composable

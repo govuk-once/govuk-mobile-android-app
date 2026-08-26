@@ -68,6 +68,7 @@ fun NavGraphBuilder.topicsGraph(
 
             TopicRoute(
                 onBack = { navController.popBackStack() },
+                launchBrowser = launchBrowser,
                 onExternalLink = { url, _ ->
                     launchBrowser(url)
                 },

@@ -452,4 +452,84 @@ class FlagRepoTest {
         // THEN: It should return true
         assertTrue(result)
     }
+
+    // Messages
+
+    @Test
+    fun `Given a release build, When Messages is enabled, return false`() {
+        // Overriding for now to keep off in Prod
+        every { configRepo.isMessagesEnabled } returns true
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isDvlaLinkEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Messages disabled, return false`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isMessagesEnabled } returns false
+
+        assertFalse(flagRepo.isMessagesEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Messages enabled, return true`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isMessagesEnabled } returns true
+
+        assertTrue(flagRepo.isMessagesEnabled())
+    }
+
+
+    // Travel Alerts
+
+    @Test
+    fun `Given a release build, When Travel Alerts is enabled, return false`() {
+        // Overriding for now to keep off in Prod
+        every { configRepo.isTravelAlertsEnabled } returns true
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a release build, When Travel Alerts is disabled, return false`() {
+        // Overriding for now to keep off in Prod
+        every { configRepo.isTravelAlertsEnabled } returns false
+        flagRepo = FlagRepo(false, debugFlags, configRepo)
+
+        assertFalse(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Travel Alerts enabled, return true`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isTravelAlertsEnabled } returns true
+
+        assertTrue(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Travel Alerts disabled, return false`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isTravelAlertsEnabled } returns false
+
+        assertFalse(flagRepo.isTravelAlertsEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Quarterly Survey is enabled, return true`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isQuarterlySurveyEnabled } returns true
+
+        assertTrue(flagRepo.isQuarterlySurveyEnabled())
+    }
+
+    @Test
+    fun `Given a debug build and Quarterly Survey is disabled, return false`() {
+        flagRepo = FlagRepo(true, debugFlags, configRepo)
+        every { debugFlags.isQuarterlySurveyEnabled } returns false
+
+        assertFalse(flagRepo.isQuarterlySurveyEnabled())
+    }
 }

@@ -15,7 +15,6 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
-import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
 import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
 import uk.gov.govuk.data.model.Result
@@ -125,7 +124,6 @@ class ConfigRepoTest {
     @Test
     fun `Given successful init, when accessing remaining properties, then return correct config values`() = runTest {
         val mockBanners = listOf(mockk<EmergencyBanner>())
-        val mockFeedback = mockk<UserFeedbackBanner>()
         val mockChatBanner = mockk<ChatBanner>()
         val mockTerms = mockk<TermsAndConditions>()
         val mockDvlaUrls = mockk<DvlaUrls>()
@@ -140,9 +138,11 @@ class ConfigRepoTest {
         every { config.releaseFlags.flex } returns true
         every { config.releaseFlags.chat } returns true
         every { config.releaseFlags.dvla } returns true
+        every { config.releaseFlags.messages } returns true
+        every { config.releaseFlags.travelAlerts } returns true
+        every { config.releaseFlags.quarterlySurvey } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
-        every { config.userFeedbackBanner } returns mockFeedback
         every { config.chatBanner } returns mockChatBanner
         every { config.termsAndConditions } returns mockTerms
         every { config.dvlaUrls } returns mockDvlaUrls
@@ -162,9 +162,11 @@ class ConfigRepoTest {
         assertEquals(true, repo.isFlexEnabled)
         assertEquals(true, repo.isChatEnabled)
         assertEquals(true, repo.isDvlaLinkEnabled)
+        assertEquals(true, repo.isMessagesEnabled)
+        assertEquals(true, repo.isTravelAlertsEnabled)
+        assertEquals(true, repo.isQuarterlySurveyEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
-        assertSame(mockFeedback, repo.userFeedbackBanner)
         assertSame(mockChatBanner, repo.chatBanner)
         assertSame(mockTerms, repo.termsAndConditions)
         assertSame(mockDvlaUrls, repo.dvlaUrls)

@@ -71,6 +71,8 @@ import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.govkit.browser.Urls
+import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
@@ -80,10 +82,10 @@ import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.loginGraph
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.navigation.TopLevelDestination
-import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_GRAPH_ROUTE
-import uk.gov.govuk.notificationcentre.navigation.NOTIFICATION_CENTRE_ROUTE
-import uk.gov.govuk.notificationcentre.navigation.navigateToNotificationCentre
-import uk.gov.govuk.notificationcentre.navigation.notificationCentreGraph
+import uk.gov.govuk.messages.navigation.MESSAGES_GRAPH_ROUTE
+import uk.gov.govuk.messages.navigation.MESSAGES_ROUTE
+import uk.gov.govuk.messages.navigation.navigateToMessages
+import uk.gov.govuk.messages.navigation.messagesGraph
 import uk.gov.govuk.notifications.navigation.notificationsGraph
 import uk.gov.govuk.search.navigation.SEARCH_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.searchGraph
@@ -96,6 +98,7 @@ import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
+import uk.gov.govuk.topics.ui.model.isTravelTopic
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
@@ -119,22 +122,33 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
     val homeWidgets by viewModel.homeWidgets.collectAsState()
     var isSplashDone by rememberSaveable { mutableStateOf(false) }
     var isRecommendUpdateSkipped by rememberSaveable { mutableStateOf(false) }
+    val externalLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
+    var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
+
+    fun launchUrl(url: String) {
+        externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+    }
 
     if (isSplashDone && uiState != null) {
         uiState?.let {
             when (it) {
                 is AppUiState.Loading -> LoadingScreen()
-                is AppUiState.AppUnavailable -> AppUnavailableScreen()
+                is AppUiState.AppUnavailable -> AppUnavailableScreen(
+                    onGoToGovUkClick = { launchUrl(Urls.GOV_UK_HOME) }
+                )
                 is AppUiState.DeviceOffline -> FullScreenWrapper {
                     DeviceOfflineScreen(
                         onTryAgain = { viewModel.onTryAgain() }
                     )
                 }
 
-                is AppUiState.ForcedUpdate -> ForcedUpdateScreen()
+                is AppUiState.ForcedUpdate -> ForcedUpdateScreen(
+                    onUpdateClick = { launchUrl(Urls.PLAY_STORE) }
+                )
                 is AppUiState.Default -> {
                     if (it.shouldDisplayRecommendUpdate && !isRecommendUpdateSkipped) {
                         RecommendUpdateScreen(
+                            onUpdateClick = { launchUrl(Urls.PLAY_STORE) },
                             recommendUpdateSkipped = { isRecommendUpdateSkipped = true }
                         )
                     } else {
@@ -158,6 +172,10 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
             SplashScreen { isSplashDone = true }
         }
     }
+
+    if (showBrowserNotFoundAlert) {
+        BrowserNotFoundAlert(onDismiss = { showBrowserNotFoundAlert = false })
+    }
 }
 
 @Composable
@@ -179,16 +197,16 @@ private fun BottomNavScaffold(
     val currentRoute = navBackStackEntry?.destination?.route
 
     // status & system nav bars flags
-    val isNotificationCentreDetailRoute = currentNavParentRoute == NOTIFICATION_CENTRE_GRAPH_ROUTE
-            && currentRoute != NOTIFICATION_CENTRE_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
+    val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE
+            && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
-            isNotificationCentreDetailRoute
+            isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
             currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
-    val useDarkIcons = (isChatRoute || isNotificationCentreDetailRoute) && !isSystemInDarkTheme()
+    val useDarkIcons = (isChatRoute || isMessagesDetailRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -466,6 +484,9 @@ private fun GovUkNavHost(
             navController = navController,
             onLoginCompleted = {
                 viewModel.onLogin()
+            },
+            launchBrowser = { url ->
+                browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
             }
         )
         termsGraph(
@@ -554,10 +575,7 @@ private fun GovUkNavHost(
                     }
                 },
                 topicHeader = { topicRef ->
-                    val isDrivingTopic = topicRef.isDrivingTopic()
-                    val isFeatureEnabled = viewModel.isDvlaLinkEnabled()
-
-                    if (isDrivingTopic && isFeatureEnabled) {
+                    if (topicRef.isDrivingTopic() && viewModel.isDvlaLinkEnabled()) {
                         Column(
                             modifier = Modifier
                                 .padding(horizontal = GovUkTheme.spacing.medium),
@@ -577,6 +595,14 @@ private fun GovUkNavHost(
                                     navController.navigateToVehicleDetails(vehicleId)
                                 }
                             )
+                        }
+                    } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = GovUkTheme.spacing.medium),
+                            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                        ) {
+                            Text("Placeholder: Travel Alerts")
                         }
                     }
                 },
@@ -626,14 +652,14 @@ private fun GovUkNavHost(
             )
         }
 
-        notificationCentreGraph(
+        messagesGraph(
             navController,
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
             modifier = Modifier.padding(paddingValues))
         settingsGraph(
             navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
-            onMessagesClick = { navController.navigateToNotificationCentre() },
+            onMessagesClick = { navController.navigateToMessages() },
             appVersion = BuildConfig.VERSION_NAME_USER_FACING,
             launchBrowser = { url ->
                 browserLauncher.launchPartial(
@@ -680,14 +706,20 @@ private fun GovUkNavHost(
     }
 
     if (showBrowserNotFoundAlert) {
-        InfoAlert(
-            title = R.string.browser_not_found_alert_title,
-            message = R.string.browser_not_found_alert_message,
-            buttonText = R.string.close_alert_button
-        ) {
-            showBrowserNotFoundAlert = false
-        }
+        BrowserNotFoundAlert(onDismiss = { showBrowserNotFoundAlert = false })
     }
+}
+
+@Composable
+private fun BrowserNotFoundAlert(
+    onDismiss: () -> Unit
+) {
+    InfoAlert(
+        title = R.string.browser_not_found_alert_title,
+        message = R.string.browser_not_found_alert_message,
+        buttonText = R.string.close_alert_button,
+        onDismiss = onDismiss
+    )
 }
 
 

@@ -1,8 +1,10 @@
 package uk.gov.govuk.design.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -61,14 +63,8 @@ data class GovUkButtonColours(
 )
 
 @Composable
-fun PrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    externalLink: Boolean = false
-) {
-    val colours = GovUkButtonColours(
+private fun primaryColours(): GovUkButtonColours {
+    return GovUkButtonColours(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
@@ -81,11 +77,20 @@ fun PrimaryButton(
         disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
         disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
     )
+}
 
+@Composable
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
     BaseButton(
         text = text,
         onClick = onClick,
-        colours = colours,
+        colours = primaryColours(),
         textStyle = GovUkTheme.typography.bodyBold,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
@@ -192,6 +197,27 @@ fun CompactButton(
 }
 
 @Composable
+fun CompactPrimaryButtonWithIcon(
+    text: String,
+    onClick: () -> Unit,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        colours = primaryColours(),
+        textStyle = GovUkTheme.typography.bodyRegular,
+        modifier = modifier,
+        enabled = enabled,
+        externalLink = externalLink,
+        icon = icon
+    )
+}
+
+@Composable
 fun DestructiveButton(
     text: String,
     onClick: () -> Unit,
@@ -233,29 +259,27 @@ fun ConnectedButton(
     modifier: Modifier = Modifier,
     colours: ButtonColours
 ) {
-    val containerColour =
-        if (active) {
-            colours.containerActive
-        } else {
-            colours.containerInactive
-        }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val contentColour =
-        if (active) {
-            GovUkTheme.colourScheme.textAndIcons.header
-        } else {
-            GovUkTheme.colourScheme.textAndIcons.secondary
-        }
+    val (containerColour, contentColour) = when {
+        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.buttonConnectedGroupFocused
+        active -> colours.containerActive to GovUkTheme.colourScheme.textAndIcons.header
+        else -> colours.containerInactive to GovUkTheme.colourScheme.textAndIcons.secondary
+    }
 
     val altText = if (active) {
-        "$text + ${stringResource(R.string.selected_alt_text)}"
+        "$text, ${stringResource(R.string.selected_alt_text)}"
     } else {
         text
     }
 
     Button(
         onClick = onClick,
-        modifier = modifier.clearAndSetSemantics {
+        interactionSource = interactionSource,
+        modifier = modifier
+            .focusable(interactionSource = interactionSource)
+            .clearAndSetSemantics {
             role = Role.Button
             contentDescription = altText
         },
@@ -283,6 +307,7 @@ private fun BaseButton(
     modifier: Modifier = Modifier,
     externalLink: Boolean = false,
     enabled: Boolean = true,
+    @DrawableRes icon: Int? = null,
     shape: RoundedCornerShape = RoundedCornerShape(15.dp),
 ) {
     val altText = text.replace(
@@ -347,6 +372,7 @@ private fun BaseButton(
         border = borderColour?.let { BorderStroke(1.dp, it) },
         interactionSource = interactionSource
     ) {
+        if (icon != null) ButtonIcon(icon)
         Text(
             text = text,
             style = textStyle,
@@ -360,6 +386,17 @@ private fun BaseButton(
         )
         if (externalLink) ExternalLinkIcon()
     }
+}
+
+@Composable
+private fun ButtonIcon(
+    @DrawableRes icon: Int
+) {
+    Icon(
+        painter = painterResource(icon),
+        contentDescription = null,
+        modifier = Modifier.padding(end = GovUkTheme.spacing.small)
+    )
 }
 
 @Composable
@@ -525,6 +562,18 @@ private fun CompactDisabled()
     }
 }
 
+@PreviewLightDark
+@Composable
+private fun CompactPrimaryWithIcon() {
+    GovUkTheme {
+        CompactPrimaryButtonWithIcon(
+            text = "Compact button with icon",
+            onClick = { },
+            icon = R.drawable.outline_thumbs_up_down_24
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun Destructive()
@@ -574,7 +623,8 @@ private fun ConnectedActive()
             active = true,
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
+                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
             )
         )
     }
@@ -591,7 +641,8 @@ private fun ConnectedInactive()
             active = false,
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
+                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
             )
         )
     }

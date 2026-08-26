@@ -12,7 +12,7 @@ import uk.gov.govuk.dvla.navigation.DVLA_LINK_ROUTE
 import uk.gov.govuk.extension.getUrlParam
 import uk.gov.govuk.home.navigation.HOME_GRAPH_ROUTE
 import uk.gov.govuk.home.navigation.homeDeepLinks
-import uk.gov.govuk.notificationcentre.navigation.notificationCentreDeepLinks
+import uk.gov.govuk.messages.navigation.messagesDeepLinks
 import uk.gov.govuk.search.navigation.searchDeepLinks
 import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
@@ -43,7 +43,7 @@ internal class DeeplinkHandler @Inject constructor(
         buildMap {
             putAll(homeDeepLinks)
             putAll(settingsDeepLinks)
-            putAll(notificationCentreDeepLinks)
+            putAll(messagesDeepLinks)
 
             if (flagRepo.isChatEnabled()) {
                 putAll(chatDeepLinks)
@@ -75,7 +75,7 @@ internal class DeeplinkHandler @Inject constructor(
                 return
             }
 
-            if (interceptNotificationDetailDeeplink(it, navController)) {
+            if (interceptMessagesDetailDeeplink(it, navController)) {
                 return
             }
 
@@ -163,7 +163,7 @@ internal class DeeplinkHandler @Inject constructor(
         return actualKey?.let { getQueryParameter(it) }
     }
 
-    private fun interceptNotificationDetailDeeplink(uri: Uri, navController: NavController): Boolean {
+    private fun interceptMessagesDetailDeeplink(uri: Uri, navController: NavController): Boolean {
         if (uri.path != "/notificationcentre/detail") return false
 
         var handled = false

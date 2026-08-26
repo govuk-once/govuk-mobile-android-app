@@ -33,6 +33,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.terms.TermsUiState
 import uk.gov.govuk.terms.TermsViewModel
 
@@ -48,7 +49,11 @@ internal fun TermsRoute(
 
     uiState?.let {
         when (it) {
-            is TermsUiState.Error -> AppUnavailableScreen()
+            is TermsUiState.Error -> AppUnavailableScreen(
+                onGoToGovUkClick = {
+                    launchBrowser(Urls.GOV_UK_HOME)
+                }
+            )
             is TermsUiState.Terms -> TermsScreen(
                 isUpdated = it.isUpdated,
                 onTerms = { launchBrowser(it.termsUrl) },
