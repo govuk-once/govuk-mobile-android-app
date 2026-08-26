@@ -1,8 +1,11 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +22,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +47,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.IconListItemStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
+import uk.gov.govuk.design.ui.model.ListItemColours
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -56,12 +62,18 @@ fun InternalLinkListItem(
     background: Color = GovUkTheme.colourScheme.surfaces.list,
     style: InternalLinkListItemStyle = InternalLinkListItemStyle.Default
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val colours = resolveListItemColours(isFocused = isFocused, isClickable = onClick != null)
+
     CardListItem(
         modifier = modifier.semantics(mergeDescendants = true) { },
         onClick = onClick,
+        interactionSource = interactionSource,
         isFirst = isFirst,
         isLast = isLast,
-        background = background
+        background = if (isFocused && onClick != null) colours.background else background
     ) {
         Row(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
@@ -74,14 +86,14 @@ fun InternalLinkListItem(
             ) {
                 BodyRegularLabel(
                     text = title.displayText,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary,
+                    color = colours.content,
                     modifier = Modifier.withAltText(title.altText)
                 )
                 description?.let { description ->
                     ExtraSmallVerticalSpacer()
                     SubheadlineRegularLabel(
                         text = description,
-                        color = GovUkTheme.colourScheme.textAndIcons.secondary
+                        color = colours.contentSecondary
                     )
                 }
             }
@@ -92,7 +104,7 @@ fun InternalLinkListItem(
                 is InternalLinkListItemStyle.Status -> {
                     BodyRegularLabel(
                         text = style.status,
-                        color = GovUkTheme.colourScheme.textAndIcons.iconTertiary
+                        color = colours.contentTertiary
                     )
                 }
 
@@ -123,7 +135,7 @@ fun InternalLinkListItem(
                         Icon(
                             painter = painterResource(style.icon),
                             contentDescription = null,
-                            tint = GovUkTheme.colourScheme.textAndIcons.secondary
+                            tint = colours.contentSecondary
                         )
                     }
                 }
@@ -132,7 +144,7 @@ fun InternalLinkListItem(
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow),
                         contentDescription = null,
-                        tint = GovUkTheme.colourScheme.textAndIcons.iconTertiary
+                        tint = colours.contentTertiary
                     )
                 }
             }
@@ -150,6 +162,11 @@ fun ExternalLinkListItem(
     isLast: Boolean = true,
     style: ExternalLinkListItemStyle = ExternalLinkListItemStyle.Default
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val colours = resolveListItemColours(isFocused = isFocused, isClickable = true)
+
     CardListItem(
         modifier = modifier,
         onClick = onClick,
@@ -166,7 +183,7 @@ fun ExternalLinkListItem(
             Column(modifier = Modifier.weight(1f)) {
                 BodyRegularLabel(
                     text = title,
-                    color = GovUkTheme.colourScheme.textAndIcons.link
+                    color = colours.link
                 )
 
                 description?.let { description ->
@@ -174,7 +191,7 @@ fun ExternalLinkListItem(
 
                     SubheadlineRegularLabel(
                         text = description,
-                        color = GovUkTheme.colourScheme.textAndIcons.secondary
+                        color = colours.contentSecondary
                     )
                 }
             }
@@ -184,7 +201,7 @@ fun ExternalLinkListItem(
                     Icon(
                         painter = painterResource(R.drawable.ic_external_link),
                         contentDescription = null,
-                        tint = GovUkTheme.colourScheme.textAndIcons.link
+                        tint = colours.link
                     )
                 }
 
@@ -199,7 +216,7 @@ fun ExternalLinkListItem(
                         Icon(
                             painter = painterResource(style.icon),
                             contentDescription = null,
-                            tint = GovUkTheme.colourScheme.textAndIcons.secondary
+                            tint = colours.contentSecondary
                         )
                     }
                 }
@@ -222,19 +239,26 @@ fun ToggleListItem(
     val status = stringResource(if (checked) R.string.on_button else R.string.off_button)
     val altText = "$title, $status"
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val colours = resolveListItemColours(isFocused = isFocused, isClickable = true)
+
     CardListItem(
         modifier = modifier,
+        background = colours.background,
         isFirst = isFirst,
         isLast = isLast
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = GovUkTheme.spacing.medium)
-                .padding(vertical = GovUkTheme.spacing.small)
                 .clickable(
+                    interactionSource = interactionSource,
+                    indication = LocalIndication.current,
                     onClick = { onCheckedChange(!checked) },
                     onClickLabel = stringResource(R.string.action_toggle)
                 )
+                .padding(horizontal = GovUkTheme.spacing.medium)
+                .padding(vertical = GovUkTheme.spacing.small)
                 .semantics(mergeDescendants = true) {
                     contentDescription = altText
                     role = Role.Switch
@@ -243,6 +267,7 @@ fun ToggleListItem(
         ) {
             BodyRegularLabel(
                 text = title,
+                color = colours.content,
                 modifier = Modifier
                     .weight(1f)
                     .clearAndSetSemantics { }
@@ -271,9 +296,15 @@ fun IconListItem(
     isLast: Boolean = true,
     altText: String? = null
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val colours = resolveListItemColours(isFocused = isFocused, isClickable = true)
+
     CardListItem(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
+        interactionSource = interactionSource,
+        background = colours.background,
         isFirst = isFirst,
         isLast = isLast,
         drawDivider = false
@@ -333,7 +364,8 @@ fun IconListItem(
                     IconListItemStyle.Bold -> {
                         BodyBoldLabel(
                             text = title,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            color = colours.content
                         )
 
                         MediumHorizontalSpacer()
@@ -341,7 +373,7 @@ fun IconListItem(
                         Icon(
                             painter = painterResource(R.drawable.ic_arrow),
                             contentDescription = null,
-                            tint = GovUkTheme.colourScheme.textAndIcons.iconTertiary
+                            tint = colours.contentTertiary
                         )
                     }
                 }
@@ -486,6 +518,7 @@ fun AddressListItem(
 fun CardListItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     isFirst: Boolean = true,
     isLast: Boolean = true,
     drawDivider: Boolean = true,
@@ -506,7 +539,11 @@ fun CardListItem(
             .background(background)
             .then(
                 onClick?.let {
-                    Modifier.clickable { it() }
+                    Modifier.clickable(
+                        interactionSource = interactionSource,
+                        indication = LocalIndication.current,
+                        onClick = it
+                    )
                 } ?: Modifier
             )
     ) {
@@ -585,26 +622,32 @@ sealed class CountListState {
 }
 
 @Composable
-fun CountListItem(modifier: Modifier = Modifier, title: String, state: CountListState, onClick: (() -> Unit)? = null,
+fun CountListItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    state: CountListState,
+    onClick: (() -> Unit)? = null,
 ) {
-    CardListItem(modifier) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val isClickable = onClick != null && state != CountListState.Loading
+
+    val colours = resolveListItemColours(isFocused = isFocused, isClickable = isClickable)
+
+    CardListItem(
+        modifier = modifier,
+        onClick = if (isClickable) onClick else null,
+        interactionSource = interactionSource,
+        background = colours.background
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .then(
-                    onClick?.let {
-                        return@let if (state != CountListState.Loading) {
-                            Modifier.clickable { it() }
-                        } else {
-                            Modifier
-                        }
-                    } ?: Modifier
-                )
                 .padding(horizontal = 16.dp)
         ) {
             BodyRegularLabel(
                 text = title,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                color = colours.content,
                 modifier = Modifier
                     .padding(0.dp, 16.dp, 8.dp, 16.dp)
                     .weight(1f)
@@ -613,16 +656,20 @@ fun CountListItem(modifier: Modifier = Modifier, title: String, state: CountList
             when (state) {
                 is CountListState.Idle -> {
                     Box(
-                        modifier = Modifier.size(8.dp).clip(CircleShape)
-                            .background(when (state.indicatorState) {
-                                CountListState.IndicatorState.DIM -> GovUkTheme.colourScheme.surfaces.msgRead
-                                CountListState.IndicatorState.FULL -> GovUkTheme.colourScheme.surfaces.msgUnread
-                            })
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(
+                                when (state.indicatorState) {
+                                    CountListState.IndicatorState.DIM -> GovUkTheme.colourScheme.surfaces.msgRead
+                                    CountListState.IndicatorState.FULL -> GovUkTheme.colourScheme.surfaces.msgUnread
+                                }
+                            )
                     )
 
                     BodyRegularLabel(
                         text = "${state.count}",
-                        color = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+                        color = colours.contentTertiary,
                         modifier = Modifier.padding(start = 6.dp)
                     )
                 }
@@ -637,6 +684,31 @@ fun CountListItem(modifier: Modifier = Modifier, title: String, state: CountList
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): ListItemColours {
+    return if (isFocused && isClickable) {
+        val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused
+
+        ListItemColours(
+            background = GovUkTheme.colourScheme.surfaces.listFocused,
+            content = focusedTextColour,
+            contentSecondary = focusedTextColour,
+            contentTertiary = focusedTextColour,
+            link = focusedTextColour,
+            linkPrimary = focusedTextColour
+        )
+    } else {
+        ListItemColours(
+            background = GovUkTheme.colourScheme.surfaces.list,
+            content = GovUkTheme.colourScheme.textAndIcons.primary,
+            contentSecondary = GovUkTheme.colourScheme.textAndIcons.secondary,
+            contentTertiary = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+            link = GovUkTheme.colourScheme.textAndIcons.link,
+            linkPrimary = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 package uk.gov.govuk.design.ui.model
 
 import androidx.annotation.DrawableRes
+import androidx.compose.ui.graphics.Color
 
 sealed interface ExternalLinkListItemStyle {
     data object Default : ExternalLinkListItemStyle
@@ -47,3 +48,12 @@ sealed interface InternalLinkListItemModel {
         val info: AccessibleString
     ) : InternalLinkListItemModel
 }
+
+data class ListItemColours(
+    val background: Color,
+    val content: Color,
+    val contentSecondary: Color,
+    val contentTertiary: Color,
+    val link: Color,
+    val linkPrimary: Color
+)
