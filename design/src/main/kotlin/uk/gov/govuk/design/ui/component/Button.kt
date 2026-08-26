@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -258,29 +259,27 @@ fun ConnectedButton(
     modifier: Modifier = Modifier,
     colours: ButtonColours
 ) {
-    val containerColour =
-        if (active) {
-            colours.containerActive
-        } else {
-            colours.containerInactive
-        }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val contentColour =
-        if (active) {
-            GovUkTheme.colourScheme.textAndIcons.header
-        } else {
-            GovUkTheme.colourScheme.textAndIcons.secondary
-        }
+    val (containerColour, contentColour) = when {
+        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.buttonConnectedGroupFocused
+        active -> colours.containerActive to GovUkTheme.colourScheme.textAndIcons.header
+        else -> colours.containerInactive to GovUkTheme.colourScheme.textAndIcons.secondary
+    }
 
     val altText = if (active) {
-        "$text + ${stringResource(R.string.selected_alt_text)}"
+        "$text, ${stringResource(R.string.selected_alt_text)}"
     } else {
         text
     }
 
     Button(
         onClick = onClick,
-        modifier = modifier.clearAndSetSemantics {
+        interactionSource = interactionSource,
+        modifier = modifier
+            .focusable(interactionSource = interactionSource)
+            .clearAndSetSemantics {
             role = Role.Button
             contentDescription = altText
         },
@@ -624,7 +623,8 @@ private fun ConnectedActive()
             active = true,
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
+                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
             )
         )
     }
@@ -641,7 +641,8 @@ private fun ConnectedInactive()
             active = false,
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
-                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive
+                containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
+                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
             )
         )
     }

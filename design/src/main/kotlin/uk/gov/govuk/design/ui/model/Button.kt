@@ -12,5 +12,6 @@ data class Button(
 
 data class ButtonColours(
     val containerActive: Color,
-    val containerInactive: Color
+    val containerInactive: Color,
+    val containerFocused: Color
 )
