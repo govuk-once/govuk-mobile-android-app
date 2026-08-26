@@ -286,30 +286,27 @@ fun SearchResultCard(
 }
 
 @Composable
-fun UserFeedbackCard(
+fun QuarterlyFeedbackCard(
     body: String,
-    linkTitle: String,
+    title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.padding(bottom = GovUkTheme.spacing.large)
+    ) {
         BodyRegularLabel(
             text = body,
             color = GovUkTheme.colourScheme.textAndIcons.primary,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = GovUkTheme.spacing.medium)
         )
-        val opensInWebBrowser = stringResource(R.string.opens_in_web_browser)
-        BodyRegularLabel(
-            text = linkTitle,
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = GovUkTheme.spacing.medium)
-                .clickable(onClick = onClick)
-                .semantics {
-                    contentDescription = "$linkTitle $opensInWebBrowser"
-                },
-            color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
-            textAlign = TextAlign.Center
+
+        CompactPrimaryButtonWithIcon(
+            text = title,
+            onClick = onClick,
+            icon = R.drawable.outline_thumbs_up_down_24
         )
     }
 }
@@ -758,9 +755,13 @@ private fun SearchResultWithoutDescriptionPreview() {
 
 @Preview
 @Composable
-private fun UserFeedbackCardPreview() {
+private fun QuarterlyFeedbackCardPreview() {
     GovUkTheme {
-        UserFeedbackCard("Card body", "A link description", {})
+        QuarterlyFeedbackCard(
+            "Card body",
+            "A link description",
+            {}
+        )
     }
 }
 

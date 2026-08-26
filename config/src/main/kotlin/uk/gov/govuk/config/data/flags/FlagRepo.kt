@@ -111,6 +111,32 @@ class FlagRepo @Inject constructor(
         )
     }
 
+    fun isMessagesEnabled(): Boolean {
+        return isEnabled(
+            debugEnabled = debugEnabled,
+            debugFlag = debugFlags.isMessagesEnabled,
+//             remoteFlag = configRepo.isMessagesEnabled
+            remoteFlag = false //  Always off for prod builds!!!
+        )
+    }
+
+    fun isTravelAlertsEnabled(): Boolean {
+        return isEnabled(
+            debugEnabled = debugEnabled,
+            debugFlag = debugFlags.isTravelAlertsEnabled,
+//            remoteFlag = configRepo.isTravelAlertsEnabled
+            remoteFlag = false // Always off for prod builds!!!
+        )
+    }
+
+    fun isQuarterlySurveyEnabled(): Boolean {
+        return isEnabled(
+            debugEnabled = debugEnabled,
+            debugFlag = debugFlags.isQuarterlySurveyEnabled,
+//            remoteFlag = configRepo.isQuarterlySurveyEnabled
+            remoteFlag = false // Always off for prod builds!!!
+        )
+    }
 }
 
 internal fun isEnabled(

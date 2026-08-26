@@ -74,4 +74,8 @@
 
     <string name="promo_banner_dismiss_content_desc">Dismiss</string>
 
+    <string name="quarterly_feedback_body">Tell us what you think about the app</string>
+    <string name="quarterly_feedback_title">Give feedback</string>
+    <string name="quarterly_feedback_id">govuk_quarterly_survey</string>
+    <string name="quarterly_feedback_trigger">Qualtrics quarterly survey</string>
 </resources>

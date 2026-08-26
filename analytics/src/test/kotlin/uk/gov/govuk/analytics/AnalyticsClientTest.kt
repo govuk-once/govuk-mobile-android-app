@@ -279,11 +279,11 @@ class AnalyticsClientTest {
     @Test
     fun `Given a Notification Centre URL is launched, then log event`() {
         val testUrl = "Test"
-        analyticsClient.notificationCentreUrlLaunched(testUrl)
+        analyticsClient.messagesUrlLaunched(testUrl)
 
         verify {
             analyticsCoordinator.logEvent(
-                "NotificationCentreUrlLaunched",
+                "MessagesUrlLaunched",
                 mapOf(
                     "url" to testUrl
                 )
@@ -293,11 +293,11 @@ class AnalyticsClientTest {
 
     @Test
     fun `Given a Notification is marked unread, then log event`() {
-        analyticsClient.notificationCentreMarkUnread()
+        analyticsClient.messagesMarkUnread()
 
         verify {
             analyticsCoordinator.logEvent(
-                "NotificationCentreMarkUnread",
+                "MessagesMarkUnread",
                 mapOf()
             )
         }
@@ -305,11 +305,11 @@ class AnalyticsClientTest {
 
     @Test
     fun `Given a Notification is clicked for delete, then log event`() {
-        analyticsClient.notificationCentreDelete()
+        analyticsClient.messagesDelete()
 
         verify {
             analyticsCoordinator.logEvent(
-                "NotificationCentreDelete",
+                "MessagesDelete",
                 mapOf(
                     "action" to "tap"
                 )
@@ -319,11 +319,11 @@ class AnalyticsClientTest {
 
     @Test
     fun `Given a Notification is confirmed for delete, then log event`() {
-        analyticsClient.notificationCentreConfirmDelete()
+        analyticsClient.messagesConfirmDelete()
 
         verify {
             analyticsCoordinator.logEvent(
-                "NotificationCentreDelete",
+                "MessagesDelete",
                 mapOf(
                     "action" to "confirm"
                 )
@@ -333,11 +333,11 @@ class AnalyticsClientTest {
 
     @Test
     fun `Given a Notification delete is cancelled, then log event`() {
-        analyticsClient.notificationCentreCancelDelete()
+        analyticsClient.messagesCancelDelete()
 
         verify {
             analyticsCoordinator.logEvent(
-                "NotificationCentreDelete",
+                "MessagesDelete",
                 mapOf(
                     "action" to "cancel"
                 )

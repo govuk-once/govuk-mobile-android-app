@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.Link
 import uk.gov.govuk.config.data.remote.model.PromoBanner
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.navigation.navigateToTopicsEdit
 import uk.gov.govuk.topics.ui.widget.TopicsWidget
@@ -112,6 +113,9 @@ internal fun homeWidgets(
                             onWidgetClick(text, null)
                             navController.navigateToTopicsEdit()
                         },
+                        onGovUkClick = {
+                            launchBrowser(Urls.GOV_UK_HOME)
+                        },
                         modifier = modifier
                     )
                 }
@@ -137,17 +141,11 @@ internal fun homeWidgets(
                 }
             }
 
-            is HomeWidget.UserFeedback -> {
+            is HomeWidget.QuarterlyFeedback -> {
                 widgets.add { modifier ->
-                    val userFeedbackBanner = it.userFeedbackBanner
-                    UserFeedbackBanner(
-                        userFeedbackBanner = userFeedbackBanner,
-                        onClick = {
-                            launchBrowser(userFeedbackBanner.link.url)
-                            onWidgetClick(
-                                userFeedbackBanner.link.title,
-                                userFeedbackBanner.link.url
-                            )
+                    QuarterlyFeedbackBanner(
+                        onClick = { text ->
+                            onWidgetClick(text, null)
                         },
                         modifier = modifier
                     )

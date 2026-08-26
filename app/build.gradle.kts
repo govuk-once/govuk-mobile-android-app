@@ -38,7 +38,6 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "PLAY_STORE_URL", "\"https://play.google.com/store/apps/details?id=$applicationId\"")
         buildConfigField("String", "VERSION_NAME_USER_FACING", "\"$versionName ($versionCode)\"")
         buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
     }
@@ -137,10 +136,11 @@ dependencies {
     implementation(projects.config)
     implementation(projects.design)
     implementation(projects.data)
+    implementation(projects.govkit)
     implementation(projects.feature.chat)
     implementation(projects.feature.home)
     implementation(projects.feature.local)
-    implementation(projects.feature.notificationcentre)
+    implementation(projects.feature.messages)
     implementation(projects.feature.settings)
     implementation(projects.feature.search)
     implementation(projects.feature.topics)
