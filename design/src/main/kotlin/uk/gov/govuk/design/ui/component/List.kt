@@ -365,7 +365,7 @@ fun IconListItem(
                         BodyRegularLabel(
                             text = title,
                             modifier = Modifier.weight(1f),
-                            color = textAndIcons.linkPrimary
+                            color = colours.linkPrimary
                         )
                     }
                     IconListItemStyle.Bold -> {
