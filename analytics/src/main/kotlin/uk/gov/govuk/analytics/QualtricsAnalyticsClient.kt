@@ -105,13 +105,16 @@ class QualtricsAnalyticsClient @Inject constructor(
 
             val targetResult = passedResults.values.filterNotNull().firstOrNull()
             val surveyUrl = targetResult?.surveyUrl.orEmpty()
-            val skipPrompt = targetResult?.surveyUrl?.toUri()?.query?.contains("hide_prompt=true") == true
+            val uri = targetResult?.surveyUrl?.toUri()
+            val skipPrompt = uri?.getQueryParameter("hide_prompt") == "true"
+            val autoCloseAtEndOfSurvey = uri?.getQueryParameter("auto_close") == "true"
 
             if (skipPrompt) {
-                qualtrics.displayTarget(context, surveyUrl)
+                qualtrics.displayTarget(context, surveyUrl, autoCloseAtEndOfSurvey)
             } else {
-                qualtrics.display(activity)
+                qualtrics.display(activity, autoCloseAtEndOfSurvey)
             }
+
             onSurveyShown?.invoke(results)
         }
     }
