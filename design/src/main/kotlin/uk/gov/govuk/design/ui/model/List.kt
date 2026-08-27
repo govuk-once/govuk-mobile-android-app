@@ -49,7 +49,7 @@ sealed interface InternalLinkListItemModel {
     ) : InternalLinkListItemModel
 }
 
-data class ListItemColours(
+internal data class ListItemColours(
     val background: Color,
     val content: Color,
     val contentSecondary: Color,
