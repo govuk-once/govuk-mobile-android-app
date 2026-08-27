@@ -559,7 +559,7 @@ class QualtricsAnalyticsClientTest {
     }
 
     @Test
-    fun `Given a passed result with no survey url and a failed result with a auto_close survey url, when evaluated, then auto close`() {
+    fun `Given a passed result with no survey url and a failed result with a auto_close survey url, when evaluated, then do not auto close the survey`() {
         val params = mapOf("screen_name" to "Settings")
         val passedResult = mockk<TargetingResult> {
             every { passed() } returns true
@@ -588,7 +588,7 @@ class QualtricsAnalyticsClientTest {
     }
 
     @Test
-    fun `Given a passed result with a survey url and a failed result with a auto_close survey url, when evaluated, then auto close`() {
+    fun `Given a passed result with a survey url and a failed result with a auto_close survey url, when evaluated, then do not auto close the survey`() {
         val params = mapOf("screen_name" to "Settings")
         val passedResult = mockk<TargetingResult> {
             every { passed() } returns true
