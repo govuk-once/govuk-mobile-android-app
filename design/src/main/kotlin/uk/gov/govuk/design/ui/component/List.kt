@@ -700,7 +700,7 @@ private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): Li
         val focusedTextColour = textAndIcons.focused
 
         ListItemColours(
-            background = surfaces.listFocused,
+            background = surfaces.focused,
             content = focusedTextColour,
             contentSecondary = focusedTextColour,
             contentTertiary = focusedTextColour,

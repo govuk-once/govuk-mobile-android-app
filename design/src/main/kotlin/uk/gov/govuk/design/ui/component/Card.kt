@@ -573,7 +573,7 @@ private fun resolveDrillInCardColours(isFocused: Boolean): DrillInCardColours {
     return if (isFocused) {
         val focusText = GovUkTheme.colourScheme.textAndIcons.focused
         DrillInCardColours(
-            background = GovUkTheme.colourScheme.surfaces.listFocused,
+            background = GovUkTheme.colourScheme.surfaces.focused,
             title = focusText,
             description = focusText,
             icon = focusText,
