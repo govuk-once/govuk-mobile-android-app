@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
@@ -286,7 +287,9 @@ fun ToggleListItem(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 testDescription = title,
-                Modifier.clearAndSetSemantics { }
+                Modifier
+                    .clearAndSetSemantics { }
+                    .focusProperties { canFocus = false }
             )
         }
     }
