@@ -697,7 +697,7 @@ fun CountListItem(
 @Composable
 private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): ListItemColours {
     return if (isFocused && isClickable) {
-        val focusedTextColour = textAndIcons.buttonPrimaryFocused
+        val focusedTextColour = textAndIcons.focused
 
         ListItemColours(
             background = surfaces.listFocused,

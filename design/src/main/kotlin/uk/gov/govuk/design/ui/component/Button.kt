@@ -69,7 +69,7 @@ private fun primaryColours(): GovUkButtonColours {
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
         focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
@@ -112,7 +112,7 @@ fun AccountConnectionButton(
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonLinkAccount,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccountStroke,
         focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccountHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonLinkAccountHighlight,
@@ -145,7 +145,7 @@ fun SecondaryButton(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondary,
         focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryFocused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryHighlight,
         disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryDisabled,
@@ -177,7 +177,7 @@ fun CompactButton(
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonCompact,
         defaultBorderColour = GovUkTheme.colourScheme.strokes.cardBlue,
         focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonCompactFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonCompactFocused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonCompactHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonCompactHighlight,
         pressedBorderColour = GovUkTheme.colourScheme.strokes.buttonCompactHighlight,
@@ -230,7 +230,7 @@ fun DestructiveButton(
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonDestructiveStroke,
         focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonDestructiveStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonDestructiveHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
@@ -263,7 +263,7 @@ fun ConnectedButton(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val (containerColour, contentColour) = when {
-        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.buttonConnectedGroupFocused
+        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.focused
         active -> colours.containerActive to GovUkTheme.colourScheme.textAndIcons.header
         else -> colours.containerInactive to GovUkTheme.colourScheme.textAndIcons.secondary
     }

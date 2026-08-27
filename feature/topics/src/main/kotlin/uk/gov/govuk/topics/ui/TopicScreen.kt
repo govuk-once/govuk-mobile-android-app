@@ -310,7 +310,7 @@ private fun HorizontalScrollView(
     val colourMapper = @Composable { cardColour: FocusableCardColours ->
         when (cardColour) {
             FocusableCardColours.Focussed.Background -> GovUkTheme.colourScheme.surfaces.cardCarouselFocused
-            FocusableCardColours.Focussed.Content -> GovUkTheme.colourScheme.textAndIcons.cardCarouselFocused
+            FocusableCardColours.Focussed.Content -> GovUkTheme.colourScheme.textAndIcons.focused
             FocusableCardColours.UnFocussed.Background -> GovUkTheme.colourScheme.surfaces.cardCarousel
             FocusableCardColours.UnFocussed.Content -> GovUkTheme.colourScheme.textAndIcons.cardCarousel
             else -> {

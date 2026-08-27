@@ -511,7 +511,7 @@ private fun SignOut(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val (backgroundColour, textColour) = if (isFocused) {
-        GovUkTheme.colourScheme.surfaces.listFocused to GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused
+        GovUkTheme.colourScheme.surfaces.listFocused to GovUkTheme.colourScheme.textAndIcons.focused
     } else {
         GovUkTheme.colourScheme.surfaces.list to GovUkTheme.colourScheme.textAndIcons.buttonDestructive
     }
