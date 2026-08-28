@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -38,6 +39,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 internal fun IntroMessages(
+    uiState: ChatUiState.Default,
     animated: Boolean,
     onExampleQuestionClicked: (String) -> Unit,
     chatExampleQuestions: List<String>?,
@@ -73,6 +75,7 @@ internal fun IntroMessages(
                     Message()
                     MediumVerticalSpacer()
                     ExampleQuestions(
+                        uiState,
                         onExampleQuestionClicked,
                         chatExampleQuestions
                     )
@@ -83,6 +86,7 @@ internal fun IntroMessages(
                 Message()
                 MediumVerticalSpacer()
                 ExampleQuestions(
+                    uiState,
                     onExampleQuestionClicked,
                     chatExampleQuestions
                 )
@@ -119,40 +123,50 @@ private fun Message(
 
 @Composable
 private fun ExampleQuestions(
+    uiState: ChatUiState.Default,
     onClick: (String) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
     // =======================================
-    // TODO: The show/hide requirements
-    // TODO: The non-functional requirements
+    // TODO list:
+    //   ✅ Scenario 1: User first enters Chat screen with no conversation saved, example questions are displayed beneath the welcome message
+    //   ✅ Scenario 2: If a user begins to type in the Chat screen input box, the example questions are hidden after user inputs the first character
+    //   ✅ Scenario 3: If a user has started typing into the Chat screen input box, the example questions are shown again after user deletes all input character
+    //   ✅ Scenario 4: If a user clicks on any of the example questions then the question is sent to Chat to answer and example questions are hidden
+    //   ✅ Scenario 5: User enters Chat screen with a conversation saved, example questions are not displayed
+    //   ❌ Scenario 6: Logical focus order
+    //   ❌ Scenario 7: Landscape
+    //   ✅ Scenario 8: Dark mode
     // =======================================
 
     if (!chatExampleQuestions.isNullOrEmpty()) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            BodyRegularLabel(
-                text = stringResource(R.string.example_question_prompt),
-                color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                textAlign = TextAlign.End,
-                modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
-            )
-        }
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.End
-        ) {
-            Column(
-                modifier = Modifier
-                    .width(IntrinsicSize.Max)
-                    .padding(start = 60.dp)
+        if (uiState.question.isEmpty() and uiState.chatEntries.isEmpty()) {
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                chatExampleQuestions.forEach { question ->
-                    SmallVerticalSpacer()
-                    ExampleQuestion(question, onClick)
+                BodyRegularLabel(
+                    text = stringResource(R.string.example_question_prompt),
+                    color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(IntrinsicSize.Max)
+                        .padding(start = 60.dp)
+                ) {
+                    chatExampleQuestions.forEach { question ->
+                        SmallVerticalSpacer()
+                        ExampleQuestion(question, onClick)
+                    }
                 }
             }
         }

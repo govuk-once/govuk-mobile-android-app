@@ -221,6 +221,7 @@ internal fun ChatScreen(
 
                 item {
                     IntroMessages(
+                        uiState,
                         // only animate if no conversation
                         chatEntries.isEmpty(),
                         onExampleQuestionClicked = { question ->
