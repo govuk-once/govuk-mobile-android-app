@@ -53,8 +53,6 @@ import uk.gov.govuk.design.ui.model.ListItemColours
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
-private val surfaces @Composable get() = GovUkTheme.colourScheme.surfaces
-private val textAndIcons @Composable get() = GovUkTheme.colourScheme.textAndIcons
 
 @Composable
 fun InternalLinkListItem(
@@ -64,7 +62,7 @@ fun InternalLinkListItem(
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
-    background: Color = surfaces.list,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     style: InternalLinkListItemStyle = InternalLinkListItemStyle.Default
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -334,13 +332,13 @@ fun IconListItem(
                 val iconConfig = when (style) {
                     IconListItemStyle.Regular ->
                         Pair(
-                            textAndIcons.iconSurroundSecondary,
-                            textAndIcons.iconSecondary
+                            GovUkTheme.colourScheme.textAndIcons.iconSurroundSecondary,
+                            GovUkTheme.colourScheme.textAndIcons.iconSecondary
                         )
                     IconListItemStyle.Bold ->
                         Pair(
-                            textAndIcons.iconSurroundPrimary,
-                            textAndIcons.iconPrimary
+                            GovUkTheme.colourScheme.textAndIcons.iconSurroundPrimary,
+                            GovUkTheme.colourScheme.textAndIcons.iconPrimary
                         )
                 }
 
@@ -411,7 +409,7 @@ fun StatusListItem(
     isFirst: Boolean = false,
     isLast: Boolean = false,
     drawDivider: Boolean = true,
-    background: Color = surfaces.list,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     footerContent: @Composable (() -> Unit)? = null
 ) {
     CardListItem(
@@ -457,12 +455,12 @@ fun StatusListItem(
                     val (icon, tint) = when (it) {
                         StatusListItemIconStyle.Success -> Pair(
                             painterResource(R.drawable.ic_check_round),
-                            surfaces.buttonPrimary
+                            GovUkTheme.colourScheme.surfaces.buttonPrimary
                         )
 
                         StatusListItemIconStyle.Warning -> Pair(
                             rememberVectorPainter(Icons.Filled.Warning),
-                            textAndIcons.primary
+                            GovUkTheme.colourScheme.textAndIcons.primary
                         )
                     }
 
@@ -490,7 +488,7 @@ fun AddressListItem(
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    background: Color = surfaces.list
+    background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
     CardListItem(
         modifier = modifier,
@@ -510,7 +508,7 @@ fun AddressListItem(
             BodyBoldLabel(
                 text = name.displayText,
                 modifier = Modifier.withAltText(name.altText),
-                color = textAndIcons.primary
+                color = GovUkTheme.colourScheme.textAndIcons.primary
             )
 
             SmallVerticalSpacer()
@@ -518,7 +516,7 @@ fun AddressListItem(
             BodyRegularLabel(
                 text = address.displayText,
                 modifier = Modifier.withAltText(address.altText),
-                color = textAndIcons.primary
+                color = GovUkTheme.colourScheme.textAndIcons.primary
             )
         }
     }
@@ -532,7 +530,7 @@ fun CardListItem(
     isFirst: Boolean = true,
     isLast: Boolean = true,
     drawDivider: Boolean = true,
-    background: Color = surfaces.list,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     content: @Composable () -> Unit,
 ) {
     val cornerRadius = 12.dp
@@ -574,7 +572,7 @@ fun CountdownBarListItem(
     title: AccessibleString? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false,
-    background: Color = surfaces.list,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     footerContent: @Composable (() -> Unit)? = null
 ) {
     CardListItem(
@@ -671,8 +669,8 @@ fun CountListItem(
                             .clip(CircleShape)
                             .background(
                                 when (state.indicatorState) {
-                                    CountListState.IndicatorState.DIM -> surfaces.msgRead
-                                    CountListState.IndicatorState.FULL -> surfaces.msgUnread
+                                    CountListState.IndicatorState.DIM -> GovUkTheme.colourScheme.surfaces.msgRead
+                                    CountListState.IndicatorState.FULL -> GovUkTheme.colourScheme.surfaces.msgUnread
                                 }
                             )
                     )
@@ -688,7 +686,7 @@ fun CountListItem(
                     CircularProgressIndicator(
                         modifier = Modifier
                             .size(16.dp),
-                        color = surfaces.primary,
+                        color = GovUkTheme.colourScheme.surfaces.primary,
                         strokeWidth = 2.dp
                     )
                 }
@@ -700,10 +698,10 @@ fun CountListItem(
 @Composable
 private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): ListItemColours {
     return if (isFocused && isClickable) {
-        val focusedTextColour = textAndIcons.focused
+        val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
 
         ListItemColours(
-            background = surfaces.focused,
+            background = GovUkTheme.colourScheme.surfaces.focused,
             content = focusedTextColour,
             contentSecondary = focusedTextColour,
             contentTertiary = focusedTextColour,
@@ -712,12 +710,12 @@ private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): Li
         )
     } else {
         ListItemColours(
-            background = surfaces.list,
-            content = textAndIcons.primary,
-            contentSecondary = textAndIcons.secondary,
-            contentTertiary = textAndIcons.iconTertiary,
-            link = textAndIcons.link,
-            linkPrimary = textAndIcons.linkPrimary
+            background = GovUkTheme.colourScheme.surfaces.list,
+            content = GovUkTheme.colourScheme.textAndIcons.primary,
+            contentSecondary = GovUkTheme.colourScheme.textAndIcons.secondary,
+            contentTertiary = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+            link = GovUkTheme.colourScheme.textAndIcons.link,
+            linkPrimary = GovUkTheme.colourScheme.textAndIcons.linkPrimary
         )
     }
 }
