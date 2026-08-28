@@ -39,6 +39,8 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 internal fun IntroMessages(
     animated: Boolean,
+    onExampleQuestionClicked: (String) -> Unit,
+    chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -70,14 +72,20 @@ internal fun IntroMessages(
                 Column {
                     Message()
                     MediumVerticalSpacer()
-                    ExampleQuestions()
+                    ExampleQuestions(
+                        onExampleQuestionClicked,
+                        chatExampleQuestions
+                    )
                 }
             }
         } else {
             Column {
                 Message()
                 MediumVerticalSpacer()
-                ExampleQuestions()
+                ExampleQuestions(
+                    onExampleQuestionClicked,
+                    chatExampleQuestions
+                )
             }
         }
     }
@@ -111,36 +119,42 @@ private fun Message(
 
 @Composable
 private fun ExampleQuestions(
+    onClick: (String) -> Unit,
+    chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        BodyRegularLabel(
-            text = stringResource(R.string.example_question_prompt),
-            color = GovUkTheme.colourScheme.textAndIcons.secondary,
-            textAlign = TextAlign.End,
-            modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
-        )
-    }
+    // =======================================
+    // TODO: The show/hide requirements
+    // TODO: The non-functional requirements
+    // =======================================
 
-//    TODO: get the questions from the remote config...
-    SmallVerticalSpacer()
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.End
-    ) {
-        Column(
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .padding(start = 60.dp)
+    if (!chatExampleQuestions.isNullOrEmpty()) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            ExampleQuestion("How do I renew my driving licence?")
-            SmallVerticalSpacer()
-            ExampleQuestion("What support can I get as a carer for my partner?")
-            SmallVerticalSpacer()
-            ExampleQuestion("I want to set up a business. What are the steps?")
+            BodyRegularLabel(
+                text = stringResource(R.string.example_question_prompt),
+                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                textAlign = TextAlign.End,
+                modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
+            )
+        }
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .padding(start = 60.dp)
+            ) {
+                chatExampleQuestions.forEach { question ->
+                    SmallVerticalSpacer()
+                    ExampleQuestion(question, onClick)
+                }
+            }
         }
     }
 }
@@ -148,10 +162,11 @@ private fun ExampleQuestions(
 @Composable
 private fun ExampleQuestion(
     text: String,
+    onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
-        onClick = { /* TODO: click to send text as question to API */ },
+        onClick = { onClick(text) },
         colors = CardDefaults.cardColors(
             containerColor = GovUkTheme.colourScheme.surfaces.cardDefault,
             contentColor = GovUkTheme.colourScheme.textAndIcons.chatExampleQuestionText

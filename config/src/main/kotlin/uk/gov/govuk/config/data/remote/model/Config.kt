@@ -8,6 +8,7 @@ data class Config(
     @SerializedName("recommendedVersion") val recommendedVersion: String,
     @SerializedName("releaseFlags") val releaseFlags: ReleaseFlags,
     @SerializedName("version") val version: String,
+    @SerializedName("chatExampleQuestions") val chatExampleQuestions: List<String>?,
     @SerializedName("chatPollIntervalSeconds") val chatPollIntervalSeconds: Double?,
     @SerializedName("chatUrls") val chatUrls: ChatUrls,
     @SerializedName("refreshTokenExpirySeconds") val refreshTokenExpirySeconds: Long?,

@@ -143,6 +143,7 @@ internal fun ChatRoute(
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
+                    chatExampleQuestions = viewModel.chatExampleQuestions,
                     modifier = modifier
                 )
             }
@@ -159,11 +160,12 @@ internal fun ChatRoute(
 @Composable
 internal fun ChatScreen(
     uiState: ChatUiState.Default,
-    launchBrowser: (url: String) -> Unit,
+    launchBrowser: (String) -> Unit,
     hasConversation: Boolean,
     uiEvents: UiEvents,
     analyticsEvents: AnalyticsEvents,
     chatUrls: ChatUrls,
+    chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier,
     isTalkBackActive: Boolean = isTalkBackEnabled()
 ) {
@@ -218,7 +220,15 @@ internal fun ChatScreen(
                 }
 
                 item {
-                    IntroMessages(chatEntries.isEmpty()) // only animate if no conversation
+                    IntroMessages(
+                        // only animate if no conversation
+                        chatEntries.isEmpty(),
+                        onExampleQuestionClicked = { question ->
+                            uiEvents.onSubmit(question)
+                            analyticsEvents.onQuestionSubmit()
+                        },
+                        chatExampleQuestions
+                    )
                 }
 
                 items(chatEntries) {
@@ -357,6 +367,7 @@ private fun ChatScreenPreview() {
             launchBrowser = { _ -> },
             hasConversation = false,
             chatUrls = ChatUrls("", "", "", ""),
+            chatExampleQuestions = emptyList(),
             uiEvents = clickEvents()
         )
     }
