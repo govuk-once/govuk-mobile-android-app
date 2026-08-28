@@ -126,6 +126,7 @@ data class GovUkColourScheme(
         val chatBotLinkText: Color,
         val chatLoadingTextLight: Color,
         val chatLoadingIcon: Color,
+        val chatExampleQuestionText: Color,
         val cardCarousel: Color,
         val cardCarouselFocused: Color,
         val cardInformationEmergencyBannerPrimary: Color,
@@ -236,6 +237,7 @@ data class GovUkColourScheme(
         val chatTextFieldBorderDisabled: Color,
         val chatDivider: Color,
         val chatIntroCardBorder: Color,
+        val chatExampleQuestionCardBorder: Color,
         val cardCarousel: Color,
         val iconSeparator: Color,
         val registrationPlate: Color
@@ -296,6 +298,7 @@ internal val LightColorScheme = GovUkColourScheme(
         chatBotLinkText = BluePrimary,
         chatLoadingTextLight = Grey300,
         chatLoadingIcon = BluePrimary,
+        chatExampleQuestionText = BluePrimary,
         cardCarousel = White,
         cardCarouselFocused = Black,
         cardInformationEmergencyBannerPrimary = Black,
@@ -410,6 +413,7 @@ internal val LightColorScheme = GovUkColourScheme(
         chatTextFieldBorderDisabled = Grey300,
         chatDivider = BlueLighter80,
         chatIntroCardBorder = BlueLighter80,
+        chatExampleQuestionCardBorder = BluePrimary,
         cardCarousel = BlueDarker50,
         iconSeparator = BluePrimary,
         registrationPlate = Black
@@ -470,6 +474,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatBotLinkText = BlueAccent,
         chatLoadingTextLight = BlueLighter80,
         chatLoadingIcon = BluePrimary,
+        chatExampleQuestionText = White,
         cardCarousel = White,
         cardCarouselFocused = Black,
         cardInformationEmergencyBannerPrimary = White,
@@ -584,6 +589,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatTextFieldBorderDisabled = BlueLighter25,
         chatDivider = BlueDarker25,
         chatIntroCardBorder = BlueDarker50,
+        chatExampleQuestionCardBorder = White,
         cardCarousel = BlueDarker50,
         iconSeparator = BlueAccent,
         registrationPlate = Black
@@ -645,6 +651,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatBotLinkText = Color.Unspecified,
             chatLoadingTextLight = Color.Unspecified,
             chatLoadingIcon = Color.Unspecified,
+            chatExampleQuestionText = Color.Unspecified,
             cardCarousel = Color.Unspecified,
             cardCarouselFocused = Color.Unspecified,
             cardInformationEmergencyBannerPrimary = Color.Unspecified,
@@ -753,6 +760,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatTextFieldBorderDisabled = Color.Unspecified,
             chatDivider = Color.Unspecified,
             chatIntroCardBorder = Color.Unspecified,
+            chatExampleQuestionCardBorder = Color.Unspecified,
             cardCarousel = Color.Unspecified,
             iconSeparator = Color.Unspecified,
             registrationPlate = Color.Unspecified
