@@ -3,13 +3,19 @@ package uk.gov.govuk.chat.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -121,6 +128,7 @@ private fun Message(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExampleQuestions(
     uiState: ChatUiState.Default,
@@ -136,36 +144,51 @@ private fun ExampleQuestions(
     //   ✅ Scenario 4: If a user clicks on any of the example questions then the question is sent to Chat to answer and example questions are hidden
     //   ✅ Scenario 5: User enters Chat screen with a conversation saved, example questions are not displayed
     //   ❌ Scenario 6: Logical focus order
-    //   ❌ Scenario 7: Landscape
+    //   ✅ Scenario 7: Landscape
     //   ✅ Scenario 8: Dark mode
+    //
+    // TODO Behaviour:
+    //   ✅ 1 Initial state
+    //   ✅ 2 Keyboard open
+    //   ✅ 3 Keyboard dismissed without sending
+    //   ✅ 4 Question submitted
+    //   ✅ 5 Landscape
     // =======================================
 
-    if (!chatExampleQuestions.isNullOrEmpty()) {
-        if (uiState.question.isEmpty() and uiState.chatEntries.isEmpty()) {
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                BodyRegularLabel(
-                    text = stringResource(R.string.example_question_prompt),
-                    color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
-                )
-            }
+    if (!chatExampleQuestions.isNullOrEmpty() && uiState.chatEntries.isEmpty()) {
+        val isVisible = uiState.question.isEmpty() && !WindowInsets.isImeVisible
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
-            ) {
-                Column(
-                    modifier = Modifier
-                        .width(IntrinsicSize.Max)
-                        .padding(start = 60.dp)
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(modifier = modifier) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    chatExampleQuestions.forEach { question ->
-                        SmallVerticalSpacer()
-                        ExampleQuestion(question, onClick)
+                    BodyRegularLabel(
+                        text = stringResource(R.string.example_question_prompt),
+                        color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .width(IntrinsicSize.Max)
+                            .padding(start = 60.dp)
+                    ) {
+                        chatExampleQuestions.forEach { question ->
+                            SmallVerticalSpacer()
+                            ExampleQuestion(question, onClick)
+                        }
                     }
                 }
             }
