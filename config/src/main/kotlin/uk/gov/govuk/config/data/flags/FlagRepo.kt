@@ -133,8 +133,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isQuarterlySurveyEnabled,
-//            remoteFlag = configRepo.isQuarterlySurveyEnabled
-            remoteFlag = false // Always off for prod builds!!!
+            remoteFlag = configRepo.isQuarterlySurveyEnabled
         )
     }
 }
