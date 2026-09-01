@@ -158,7 +158,7 @@ private fun TopicsCard(
                     colours = ButtonColours(
                         containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
                         containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
-                        containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
+                        containerFocused = GovUkTheme.colourScheme.surfaces.focused
                     )
                 )
             }

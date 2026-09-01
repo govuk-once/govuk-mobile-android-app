@@ -52,6 +52,7 @@ import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.CardListItem
+import uk.gov.govuk.design.ui.model.DrillInCardColours
 import uk.gov.govuk.design.ui.model.EmergencyBannerUiType
 import uk.gov.govuk.design.ui.model.FocusableCardColours
 import uk.gov.govuk.design.ui.model.backgroundColour
@@ -521,13 +522,19 @@ fun DrillInCard(
     modifier: Modifier = Modifier,
     description: String? = null
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val colours = resolveDrillInCardColours(isFocused = isFocused)
+
     Card(
         modifier = modifier.drawBottomStroke(
             colour = GovUkTheme.colourScheme.strokes.cardDefault,
             cornerRadius = GovUkTheme.numbers.cornerAndroidList
         ),
-        colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.cardDefault),
-        onClick = onClick
+        colors = CardDefaults.cardColors(containerColor = colours.background),
+        onClick = onClick,
+        interactionSource = interactionSource
     ) {
         Row(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium),
@@ -539,13 +546,14 @@ fun DrillInCard(
                     .weight(1f)
             ) {
                 BodyBoldLabel(
-                    text = title
+                    text = title,
+                    color = colours.title
                 )
                 description?.let { description ->
                     SmallVerticalSpacer()
                     BodyRegularLabel(
                         text = description,
-                        color = GovUkTheme.colourScheme.textAndIcons.secondary
+                        color = colours.description
                     )
                 }
             }
@@ -554,9 +562,31 @@ fun DrillInCard(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow),
                 contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.iconTertiary
+                tint = colours.icon
             )
         }
+    }
+}
+
+@Composable
+private fun resolveDrillInCardColours(isFocused: Boolean): DrillInCardColours {
+    return if (isFocused) {
+        val focusText = GovUkTheme.colourScheme.textAndIcons.focused
+        DrillInCardColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            title = focusText,
+            description = focusText,
+            icon = focusText,
+            stroke = Color.Transparent
+        )
+    } else {
+        DrillInCardColours(
+            background = GovUkTheme.colourScheme.surfaces.cardDefault,
+            title = GovUkTheme.colourScheme.textAndIcons.primary,
+            description = GovUkTheme.colourScheme.textAndIcons.secondary,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+            stroke = GovUkTheme.colourScheme.strokes.cardDefault
+        )
     }
 }
 
