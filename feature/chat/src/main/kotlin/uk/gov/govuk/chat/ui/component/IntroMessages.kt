@@ -6,13 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
@@ -31,8 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -136,27 +137,10 @@ private fun ExampleQuestions(
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
-    // =======================================
-    // TODO list:
-    //   ✅ Scenario 1: User first enters Chat screen with no conversation saved, example questions are displayed beneath the welcome message
-    //   ✅ Scenario 2: If a user begins to type in the Chat screen input box, the example questions are hidden after user inputs the first character
-    //   ✅ Scenario 3: If a user has started typing into the Chat screen input box, the example questions are shown again after user deletes all input character
-    //   ✅ Scenario 4: If a user clicks on any of the example questions then the question is sent to Chat to answer and example questions are hidden
-    //   ✅ Scenario 5: User enters Chat screen with a conversation saved, example questions are not displayed
-    //   ❌ Scenario 6: Logical focus order
-    //   ✅ Scenario 7: Landscape
-    //   ✅ Scenario 8: Dark mode
-    //
-    // TODO Behaviour:
-    //   ✅ 1 Initial state
-    //   ✅ 2 Keyboard open
-    //   ✅ 3 Keyboard dismissed without sending
-    //   ✅ 4 Question submitted
-    //   ✅ 5 Landscape
-    // =======================================
-
     if (!chatExampleQuestions.isNullOrEmpty() && uiState.chatEntries.isEmpty()) {
         val isVisible = uiState.question.isEmpty() && !WindowInsets.isImeVisible
+
+        val prompt = stringResource(R.string.example_question_prompt)
 
         AnimatedVisibility(
             visible = isVisible,
@@ -165,11 +149,12 @@ private fun ExampleQuestions(
         ) {
             Column(modifier = modifier) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .clearAndSetSemantics {},
                     horizontalArrangement = Arrangement.End
                 ) {
                     BodyRegularLabel(
-                        text = stringResource(R.string.example_question_prompt),
+                        text = prompt,
                         color = GovUkTheme.colourScheme.textAndIcons.secondary,
                         textAlign = TextAlign.End,
                         modifier = Modifier.padding(end = GovUkTheme.spacing.medium)
@@ -177,18 +162,21 @@ private fun ExampleQuestions(
                 }
 
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .width(IntrinsicSize.Max)
+                        .padding(start = 60.dp)
+                        .semantics { isTraversalGroup = true },
                     horizontalAlignment = Alignment.End
+
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .width(IntrinsicSize.Max)
-                            .padding(start = 60.dp)
-                    ) {
-                        chatExampleQuestions.forEach { question ->
-                            SmallVerticalSpacer()
-                            ExampleQuestion(question, onClick)
-                        }
+                    chatExampleQuestions.forEachIndexed { index, question ->
+                        SmallVerticalSpacer()
+                        ExampleQuestion(
+                            question,
+                            prompt,
+                            onClick,
+                            modifier = Modifier.semantics { traversalIndex = index.toFloat() }
+                        )
                     }
                 }
             }
@@ -199,6 +187,7 @@ private fun ExampleQuestions(
 @Composable
 private fun ExampleQuestion(
     text: String,
+    prompt: String,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -217,7 +206,7 @@ private fun ExampleQuestion(
             color = GovUkTheme.colourScheme.textAndIcons.chatExampleQuestionText,
             modifier = Modifier
                 .padding(GovUkTheme.spacing.medium)
-                .talkBackText(text)
+                .talkBackText("$prompt $text")
         )
     }
 }
