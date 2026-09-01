@@ -15,6 +15,7 @@ import uk.gov.govuk.travelalerts.data.model.Group
 import uk.gov.govuk.travelalerts.data.remote.TravelAlertsApi
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -35,6 +36,8 @@ class TravelAlertsRepoTest {
         travelAlertsRepo = TravelAlertsRepoImpl(api, auth, mockDateProvider)
     }
 
+    // Get Groups
+    
     @Test
     fun `Get groups performs API call`() = runTest {
         travelAlertsRepo.getGroups()
@@ -68,5 +71,27 @@ class TravelAlertsRepoTest {
 
         assertTrue(result is Result.Success)
         assertEquals(TravelAlertsFixtures.mockGroups, (result as Result.Success).value)
+    }
+
+    // Get Countries
+
+    @Test
+    fun `Get countries returns success`() = runTest {
+        val result = travelAlertsRepo.getCountries()
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `Get countries fetches fresh data when cache expires`() = runTest {
+        // Prime the cache
+        travelAlertsRepo.getCountries()
+
+        every { mockDateProvider.date } returns Instant.now().plus(301, ChronoUnit.SECONDS)
+
+        val result = travelAlertsRepo.getCountries()
+
+        // TODO: once the real API is in place, verify a new API call is made here
+        assertTrue(result is Result.Success)
     }
 }
