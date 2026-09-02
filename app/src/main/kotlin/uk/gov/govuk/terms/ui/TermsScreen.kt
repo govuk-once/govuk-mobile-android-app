@@ -156,6 +156,7 @@ private fun DenialDialog(
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // TODO GOVUKAPP-3964 use DialogButton
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

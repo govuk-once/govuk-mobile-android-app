@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
@@ -213,32 +214,26 @@ private fun RemoveAllConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
-                    onDismiss()
-                }
-            ) {
-                BodyRegularLabel(
-                    text = stringResource(R.string.visited_items_remove_all_button),
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                BodyRegularLabel(
-                    text = stringResource(R.string.visited_items_cancel_button),
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                )
-            }
-        },
         modifier = modifier,
         title = {
             BodyBoldLabel(stringResource(R.string.visited_items_remove_all))
+        },
+        confirmButton = {
+            DialogButton(
+                text = stringResource(R.string.visited_items_remove_all_button),
+                onClick = {
+                    onConfirm()
+                    onDismiss()
+                },
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+            )
+        },
+        dismissButton = {
+            DialogButton(
+                text = stringResource(R.string.visited_items_cancel_button),
+                onClick = onDismiss,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
         },
         containerColor = GovUkTheme.colourScheme.surfaces.alert
     )

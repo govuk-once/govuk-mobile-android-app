@@ -40,6 +40,7 @@ internal fun NotificationsSettingsAlert(
                 R.string.notifications_alert_message_on
         )
 
+    // TODO GOVUKAPP-3964 use DialogButton
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
