@@ -2,6 +2,7 @@ package uk.gov.govuk.design.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -417,12 +418,23 @@ fun OverflowButton(
     altText: String? = null,
     background: Color = GovUkTheme.colourScheme.surfaces.cardOverflowButton
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (containerColour, iconTint) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        background to GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
+    }
+
     Box(
         modifier = modifier
             .size(36.dp)
             .clip(CircleShape)
-            .background(background)
+            .background(containerColour)
             .clickable(
+                interactionSource = interactionSource,
+                indication = LocalIndication.current,
                 onClick = onClick,
                 role = Role.Button
             ),
@@ -431,7 +443,7 @@ fun OverflowButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_more),
             contentDescription = altText,
-            tint = GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
+            tint = iconTint
         )
     }
 }
