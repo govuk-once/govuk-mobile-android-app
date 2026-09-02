@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -69,6 +70,7 @@ fun GovUkOutlinedCard(
     onClick: (() -> Unit)? = null,
     backgroundColour: Color = GovUkTheme.colourScheme.surfaces.cardBlue,
     borderColour: Color = GovUkTheme.colourScheme.strokes.cardBlue,
+    shape: Shape = CardDefaults.outlinedShape,
     padding: Dp = GovUkTheme.spacing.medium,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -86,6 +88,7 @@ fun GovUkOutlinedCard(
 
     OutlinedCard(
         modifier = modifier,
+        shape = shape,
         colors = CardDefaults.cardColors(containerColor = cardColour),
         border = BorderStroke(
             width = 1.dp,

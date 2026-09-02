@@ -8,12 +8,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -157,6 +159,7 @@ internal fun ChatRoute(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun ChatScreen(
     uiState: ChatUiState.Default,
@@ -167,7 +170,8 @@ internal fun ChatScreen(
     chatUrls: ChatUrls,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier,
-    isTalkBackActive: Boolean = isTalkBackEnabled()
+    isTalkBackActive: Boolean = isTalkBackEnabled(),
+    isImeVisible: Boolean = WindowInsets.isImeVisible
 ) {
     val listState = rememberLazyListState()
     val chatEntries = uiState.chatEntries.toList()
@@ -221,14 +225,14 @@ internal fun ChatScreen(
 
                 item {
                     IntroMessages(
-                        uiState,
-                        // only animate if no conversation
-                        chatEntries.isEmpty(),
+                        hasConversation = hasConversation,
+                        question = uiState.question,
+                        isImeVisible = isImeVisible,
                         onExampleQuestionClicked = { question ->
                             uiEvents.onSubmit(question)
                             analyticsEvents.onQuestionSubmit()
                         },
-                        chatExampleQuestions
+                        chatExampleQuestions = chatExampleQuestions
                     )
                 }
 

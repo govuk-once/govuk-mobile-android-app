@@ -112,6 +112,7 @@ class ActionMenuTest {
                     launchBrowser = { _ -> },
                     hasConversation = hasConversation,
                     chatUrls = ChatUrls("", "", "", ""),
+                    chatExampleQuestions = emptyList(),
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },
                         onSubmit = { _ -> },
