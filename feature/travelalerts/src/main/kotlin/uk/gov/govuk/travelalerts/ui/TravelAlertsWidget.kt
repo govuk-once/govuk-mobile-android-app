@@ -13,6 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -22,22 +25,29 @@ import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
+import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.ExtraSmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 
 @Composable
-fun TravelAlertsWidget () {
+fun TravelAlertsWidget (launchBrowser: (String) -> Unit) {
     val viewModel: TravelAlertsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (uiState) {
+    when (val state = uiState) {
         TravelAlertsWidgetViewModel.State.Loading -> TravelAlertsLoading()
-        TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded()
+        TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty()
+        is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(state.rows) { row ->
+            viewModel.onRowClick(row)
+            launchBrowser(row.link)
+        }
         TravelAlertsWidgetViewModel.State.Error -> TravelAlertsError()
     }
 
@@ -47,7 +57,15 @@ fun TravelAlertsWidget () {
 }
 
 @Composable
-private fun TravelAlertsLoaded() {
+private fun TravelAlertsLoading() {
+    Column {
+        LoaderCard(modifier = Modifier.fillMaxWidth())
+        SmallVerticalSpacer()
+    }
+}
+
+@Composable
+private fun TravelAlertsEmpty() {
     CentredCardWithIcon(
         onClick = { },
         icon = uk.gov.govuk.design.R.drawable.ic_add,
@@ -60,10 +78,30 @@ private fun TravelAlertsLoaded() {
 }
 
 @Composable
-private fun TravelAlertsLoading() {
+private fun TravelAlertsLoaded(
+    rows: List<TravelAlertsWidgetViewModel.LoadedRow>,
+    onRowClick: (TravelAlertsWidgetViewModel.LoadedRow) -> Unit
+) {
     Column {
-        LoaderCard(modifier = Modifier.fillMaxWidth())
-        SmallVerticalSpacer()
+        SectionHeadingLabel(
+            title3 = stringResource(R.string.loaded_heading),
+            button = SectionHeadingLabelButton(
+                title = stringResource(R.string.loaded_button_edit),
+                altText = stringResource(R.string.loaded_button_edit),
+                onClick = { /* Not implemented yet */ }
+            )
+        )
+
+        rows.forEachIndexed { index, row ->
+            ExternalLinkListItem(
+                title = row.headline,
+                onClick = { onRowClick(row) },
+                modifier = Modifier.semantics(mergeDescendants = true) { role = Role.Button },
+                description = row.subtitle,
+                isFirst = index == 0,
+                isLast = index == rows.lastIndex
+            )
+        }
     }
 }
 
@@ -109,17 +147,30 @@ private fun TravelAlertsError() {
 
 @Composable
 @PreviewLightDark
-fun TravelAlertsWidgetLoadedPreview() {
+private fun TravelAlertsLoadingPreview() {
     GovUkTheme {
-        TravelAlertsLoaded()
+        TravelAlertsLoading()
     }
 }
 
 @Composable
 @PreviewLightDark
-private fun TravelAlertsLoadingPreview() {
+fun TravelAlertsWidgetEmptyPreview() {
     GovUkTheme {
-        TravelAlertsLoading()
+        TravelAlertsEmpty()
+    }
+}
+
+@Composable
+@PreviewLightDark
+fun TravelAlertsWidgetLoadedPreview() {
+    GovUkTheme {
+        TravelAlertsLoaded(
+            listOf(
+                TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "Updated on 12th September 26", "test"),
+                TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "Updated on 13th September 26", "test")
+            )
+        ) { }
     }
 }
 

@@ -1,5 +1,6 @@
 package uk.gov.govuk.messages.ui
 
+import uk.gov.govuk.govkit.date.toRelativeDateTime
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -240,7 +241,7 @@ private fun MessagesDetailScreenLoaded(
 ) {
     val headerContentDescription = stringResource(
         R.string.notification_detail_header_content_description,
-        message.detailFormattedDate,
+        message.date.toRelativeDateTime(),
         message.metadata.sender.displayName
     )
 
@@ -264,7 +265,7 @@ private fun MessagesDetailScreenLoaded(
                     contentDescription = headerContentDescription
                 }) {
             BodyRegularLabel(
-                message.detailFormattedDate,
+                message.date.toRelativeDateTime(),
                 Modifier.padding(bottom = 4.dp),
                 GovUkTheme.colourScheme.textAndIcons.secondary
             )
