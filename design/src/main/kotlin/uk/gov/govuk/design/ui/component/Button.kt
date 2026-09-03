@@ -31,9 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -279,11 +277,7 @@ fun ConnectedButton(
         onClick = onClick,
         interactionSource = interactionSource,
         modifier = modifier
-            .focusable(interactionSource = interactionSource)
-            .clearAndSetSemantics {
-            role = Role.Button
-            contentDescription = altText
-        },
+            .focusable(interactionSource = interactionSource),
         shape = RoundedCornerShape(15.dp),
         colors = buttonColors(
             containerColor = containerColour,
@@ -294,7 +288,10 @@ fun ConnectedButton(
             text = text,
             style = if (active) GovUkTheme.typography.bodyBold else
                 GovUkTheme.typography.bodyRegular,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.semantics {
+                contentDescription = altText
+            }
         )
     }
 }
