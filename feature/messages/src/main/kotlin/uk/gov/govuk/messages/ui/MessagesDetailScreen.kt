@@ -297,7 +297,7 @@ private fun MessagesDetailScreenLoaded(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
-    // TODO GOVUKAPP-3964 use DialogButton
+    // TODO GOVUKAPP-3962 use DialogButton
     AlertDialog(
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList), title = {
         BodyBoldLabel(stringResource(R.string.delete_notification_sheet_title))

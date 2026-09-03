@@ -219,7 +219,7 @@ private fun ClearMenuItem(
         )
 
         if (openDialog.value) {
-            // TODO GOVUKAPP-3964 use DialogButton
+            // TODO GOVUKAPP-3962 use DialogButton
             AlertDialog(
                 onDismissRequest = { openDialog.value = false },
                 shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

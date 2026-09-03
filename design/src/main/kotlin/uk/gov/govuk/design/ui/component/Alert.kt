@@ -18,7 +18,7 @@ fun InfoAlert(
     @StringRes buttonText: Int,
     onDismiss: () -> Unit
 ) {
-    // TODO GOVUKAPP-3964 use DialogButton
+    // TODO GOVUKAPP-3962 use DialogButton
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
