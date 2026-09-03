@@ -6,11 +6,11 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.travelalerts.data.model.Country
-import uk.gov.govuk.travelalerts.data.remote.TravelAlertsApi
+import uk.gov.govuk.travelalerts.data.remote.GroupsApi
 import uk.gov.govuk.travelalerts.data.model.Group
+import uk.gov.govuk.travelalerts.data.remote.TravelApi
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +21,8 @@ class DateProviderImpl: DateProvider {
 
 @Singleton
 internal class TravelAlertsRepoImpl @Inject constructor(
-    private val travelAlertsApi: TravelAlertsApi,
+    private val groupsApi: GroupsApi,
+    private val travelApi: TravelApi,
     private val authRepo: AuthRepo,
     private val dateProvider: DateProvider
 ) : TravelAlertsRepo {
@@ -42,7 +43,7 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         }
 
         val res = safeAuthApiCall(apiCall = {
-            travelAlertsApi.getGroups()
+            groupsApi.getGroups()
         }, authRepo = authRepo)
 
         if (res is Success) {
@@ -63,9 +64,9 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         val res = safeAuthApiCall(apiCall = {
             Response.success(
                 listOf(
-                    Country("France", "france", Instant.now().toString()),
-                    Country("Spain", "spain", Instant.now().minus(1, ChronoUnit.DAYS).toString()),
-                    Country("Germany", "germany", Instant.now().minus(7, ChronoUnit.DAYS).toString())
+                    Country("France", "france", Instant.now().toString(), synonyms = listOf()),
+                    Country("Spain", "spain", Instant.now().minus(1, ChronoUnit.DAYS).toString(), listOf()),
+                    Country("Germany", "germany", Instant.now().minus(7, ChronoUnit.DAYS).toString(), listOf())
                 )
             )
         }, authRepo = authRepo)

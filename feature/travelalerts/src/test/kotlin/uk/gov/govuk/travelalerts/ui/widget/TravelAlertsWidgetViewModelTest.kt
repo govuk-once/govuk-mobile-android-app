@@ -1,4 +1,4 @@
-package uk.gov.govuk.travelalerts.ui
+package uk.gov.govuk.travelalerts.ui.widget
 
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -65,9 +65,9 @@ class TravelAlertsWidgetViewModelTest {
             Group(namespace = "ns3", group = "germany", subgroup = "daily"),
         )
         val unsortedCountries = listOf(
-            Country(name = "Spain", slug = "spain", rawLastUpdated = "2024-01-01T00:00:00Z"),
-            Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z"),
-            Country(name = "Germany", slug = "germany", rawLastUpdated = "2024-01-01T00:00:00Z"),
+            Country(name = "Spain", slug = "spain", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = emptyList()),
+            Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = emptyList()),
+            Country(name = "Germany", slug = "germany", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = emptyList()),
         )
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(unsortedGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(unsortedCountries)

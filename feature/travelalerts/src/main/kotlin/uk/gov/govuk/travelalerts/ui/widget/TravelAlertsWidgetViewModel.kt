@@ -1,4 +1,4 @@
-package uk.gov.govuk.travelalerts.ui
+package uk.gov.govuk.travelalerts.ui.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
