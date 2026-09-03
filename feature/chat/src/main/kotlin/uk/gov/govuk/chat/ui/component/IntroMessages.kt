@@ -174,10 +174,10 @@ private fun ExampleQuestions(
                     horizontalAlignment = Alignment.End
 
                 ) {
-                    chatExampleQuestions.forEachIndexed { index, question ->
+                    chatExampleQuestions.forEachIndexed { index, exampleQuestion ->
                         SmallVerticalSpacer()
                         ExampleQuestion(
-                            question,
+                            exampleQuestion,
                             prompt,
                             onClick,
                             modifier = Modifier
