@@ -44,6 +44,7 @@ import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -219,7 +220,6 @@ private fun ClearMenuItem(
         )
 
         if (openDialog.value) {
-            // TODO GOVUKAPP-3962 use DialogButton
             AlertDialog(
                 onDismissRequest = { openDialog.value = false },
                 shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
@@ -238,7 +238,8 @@ private fun ClearMenuItem(
                 confirmButton = {
                     val buttonText = stringResource(id = R.string.clear_dialog_positive_button)
 
-                    TextButton(
+                    DialogButton(
+                        text = buttonText,
                         onClick = {
                             onFunctionItemClicked(
                                 buttonText,
@@ -247,17 +248,16 @@ private fun ClearMenuItem(
                             )
                             onClear()
                             openDialog.value = false
-                        }
-                    ) {
-                        BodyBoldLabel(
-                            text = buttonText,
-                            color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-                        )
-                    }
+                        },
+                        isBold = true,
+                        defaultTextColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+                    )
                 },
                 dismissButton = {
                     val buttonText = stringResource(id = R.string.clear_dialog_negative_button)
-                    TextButton(
+
+                    DialogButton(
+                        text = buttonText,
                         onClick = {
                             onFunctionItemClicked(
                                 buttonText,
@@ -265,13 +265,9 @@ private fun ClearMenuItem(
                                 Analytics.ACTION_MENU_CLEAR_NO
                             )
                             openDialog.value = false
-                        }
-                    ) {
-                        BodyRegularLabel(
-                            text = buttonText,
-                            color = GovUkTheme.colourScheme.textAndIcons.link
-                        )
-                    }
+                        },
+                        defaultTextColour = GovUkTheme.colourScheme.textAndIcons.link
+                    )
                 },
                 containerColor = GovUkTheme.colourScheme.surfaces.alert
             )
