@@ -228,6 +228,7 @@ internal fun ChatScreen(
                         hasConversation = hasConversation,
                         question = uiState.question,
                         isImeVisible = isImeVisible,
+                        isLoading = uiState.isLoading,
                         onExampleQuestionClicked = { question ->
                             uiEvents.onSubmit(question)
                             analyticsEvents.onQuestionSubmit()

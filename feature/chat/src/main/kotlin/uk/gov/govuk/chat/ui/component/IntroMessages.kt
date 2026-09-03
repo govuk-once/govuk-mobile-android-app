@@ -47,6 +47,7 @@ internal fun IntroMessages(
     hasConversation: Boolean,
     question: String,
     isImeVisible: Boolean,
+    isLoading: Boolean,
     onExampleQuestionClicked: (String) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
@@ -84,6 +85,7 @@ internal fun IntroMessages(
                         hasConversation,
                         question,
                         isImeVisible,
+                        isLoading,
                         onExampleQuestionClicked,
                         chatExampleQuestions
                     )
@@ -97,6 +99,7 @@ internal fun IntroMessages(
                     hasConversation,
                     question,
                     isImeVisible,
+                    isLoading,
                     onExampleQuestionClicked,
                     chatExampleQuestions
                 )
@@ -137,12 +140,13 @@ private fun ExampleQuestions(
     hasConversation: Boolean,
     question: String,
     isImeVisible: Boolean,
+    isLoading: Boolean,
     onClick: (String) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
     if (!chatExampleQuestions.isNullOrEmpty() && !hasConversation) {
-        val isVisible = question.isEmpty() && !isImeVisible
+        val isVisible = question.isEmpty() && !isImeVisible && !isLoading
 
         val prompt = stringResource(R.string.example_question_prompt)
 
