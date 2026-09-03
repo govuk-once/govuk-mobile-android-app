@@ -26,3 +26,10 @@ internal data class DrillInCardColours(
     val icon: Color,
     val stroke: Color
 )
+
+data class CentredCardColours(
+    val background: Color,
+    val title: Color,
+    val description: Color,
+    val icon: Color
+)
