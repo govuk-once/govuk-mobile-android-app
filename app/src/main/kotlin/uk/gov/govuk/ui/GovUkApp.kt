@@ -603,7 +603,9 @@ private fun GovUkNavHost(
                                 .padding(horizontal = GovUkTheme.spacing.medium),
                             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                         ) {
-                            TravelAlertsWidget()
+                            TravelAlertsWidget { url ->
+                                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                            }
                         }
                     }
                 },

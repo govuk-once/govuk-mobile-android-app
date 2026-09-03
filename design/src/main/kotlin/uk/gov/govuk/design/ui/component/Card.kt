@@ -52,6 +52,7 @@ import uk.gov.govuk.design.ui.extension.drawBottomStroke
 import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.CardListItem
+import uk.gov.govuk.design.ui.model.CentredCardColours
 import uk.gov.govuk.design.ui.model.DrillInCardColours
 import uk.gov.govuk.design.ui.model.EmergencyBannerUiType
 import uk.gov.govuk.design.ui.model.FocusableCardColours
@@ -338,6 +339,10 @@ fun CentredCardWithIcon(
     drawBottomStroke: Boolean = true,
     paddingValues: PaddingValues = PaddingValues(vertical = GovUkTheme.spacing.extraLarge)
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val colours = resolveCentredCardColours(isFocused = isFocused)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -350,14 +355,19 @@ fun CentredCardWithIcon(
                     )
                 } else Modifier
             ),
-        colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list)
+        colors = CardDefaults.cardColors(containerColor = colours.background),
+        onClick = onClick,
+        interactionSource = interactionSource
     ) {
         CentredContentWithIcon(
             icon = icon,
-            modifier = Modifier.clickable(onClick = onClick),
+            modifier = Modifier,
             title = title,
             description = description,
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            iconColour = colours.icon,
+            titleColour = colours.title,
+            descriptionColour = colours.description
         )
     }
 }
@@ -371,7 +381,10 @@ fun CentredContentWithIcon(
     paddingValues: PaddingValues = PaddingValues(
         vertical = GovUkTheme.spacing.extraLarge,
         horizontal = GovUkTheme.spacing.extraLarge
-    )
+    ),
+    iconColour: Color = GovUkTheme.colourScheme.textAndIcons.icon,
+    titleColour: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    descriptionColour: Color = GovUkTheme.colourScheme.textAndIcons.secondary
 ) {
     Column(
         modifier = modifier
@@ -384,7 +397,7 @@ fun CentredContentWithIcon(
             painterResource(icon),
             contentDescription = null,
             modifier = Modifier.size(32.dp),
-            tint = GovUkTheme.colourScheme.textAndIcons.icon
+            tint = iconColour
         )
 
         title?.let { title ->
@@ -392,7 +405,7 @@ fun CentredContentWithIcon(
 
             BodyBoldLabel(
                 text = title,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                color = titleColour,
                 modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
@@ -403,11 +416,31 @@ fun CentredContentWithIcon(
 
             BodyRegularLabel(
                 text = description,
-                color = GovUkTheme.colourScheme.textAndIcons.secondary,
+                color = descriptionColour,
                 modifier = Modifier.clearAndSetSemantics { },
                 textAlign = TextAlign.Center,
             )
         }
+    }
+}
+
+@Composable
+private fun resolveCentredCardColours(isFocused: Boolean): CentredCardColours {
+    return if (isFocused) {
+        val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
+        CentredCardColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            title = focusedTextColour,
+            description = focusedTextColour,
+            icon = focusedTextColour
+        )
+    } else {
+        CentredCardColours(
+            background = GovUkTheme.colourScheme.surfaces.list,
+            title = GovUkTheme.colourScheme.textAndIcons.primary,
+            description = GovUkTheme.colourScheme.textAndIcons.secondary,
+            icon = GovUkTheme.colourScheme.textAndIcons.icon
+        )
     }
 }
 
