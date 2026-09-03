@@ -92,18 +92,7 @@ internal fun IntroMessages(
                 }
             }
         } else {
-            Column {
-                Message()
-                MediumVerticalSpacer()
-                ExampleQuestions(
-                    hasConversation,
-                    question,
-                    isImeVisible,
-                    isLoading,
-                    onExampleQuestionClicked,
-                    chatExampleQuestions
-                )
-            }
+            Message()
         }
     }
 }
