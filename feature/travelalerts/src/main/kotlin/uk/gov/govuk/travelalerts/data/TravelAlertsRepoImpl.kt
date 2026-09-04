@@ -1,13 +1,14 @@
 package uk.gov.govuk.travelalerts.data
 
-import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.travelalerts.data.model.Country
-import uk.gov.govuk.travelalerts.data.remote.GroupsApi
 import uk.gov.govuk.travelalerts.data.model.Group
+import uk.gov.govuk.travelalerts.data.model.Subgroup
+import uk.gov.govuk.travelalerts.data.model.SubscriptionRequest
+import uk.gov.govuk.travelalerts.data.remote.GroupsApi
 import uk.gov.govuk.travelalerts.data.remote.TravelApi
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -60,15 +61,8 @@ internal class TravelAlertsRepoImpl @Inject constructor(
             return Success(currCountries.value)
         }
 
-        // TODO Implement this real API
         val res = safeAuthApiCall(apiCall = {
-            Response.success(
-                listOf(
-                    Country("France", "france", Instant.now().toString(), synonyms = listOf()),
-                    Country("Spain", "spain", Instant.now().minus(1, ChronoUnit.DAYS).toString(), listOf()),
-                    Country("Germany", "germany", Instant.now().minus(7, ChronoUnit.DAYS).toString(), listOf())
-                )
-            )
+            travelApi.getCountries()
         }, authRepo = authRepo)
 
         if (res is Success) {
@@ -76,5 +70,23 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         }
 
         return res
+    }
+
+    override suspend fun subscribeToCountry(slug: String): Result<Unit> {
+        val result = safeAuthApiCall(apiCall = {
+            groupsApi.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = Subgroup.DAILY
+                    )
+                )
+            )
+        }, authRepo = authRepo)
+
+        if (result is Success) groups = null
+
+        return result
     }
 }

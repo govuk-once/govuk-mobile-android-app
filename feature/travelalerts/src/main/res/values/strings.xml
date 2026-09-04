@@ -6,7 +6,8 @@
     <string name="loaded_button_edit">Edit</string>
     <string name="follow_a_country_title">Follow a country</string>
     <string name="country_list_search_placeholder">Search</string>
-    <string name="error_title">There\'s a problem</string>
-    <string name="error_description">We could not load travel alerts. Try again later.</string>
-    <string name="error_retry">Try again</string>
+    <string name="country_list_no_results">No results found</string>
+    <string name="country_list_error_title">There\'s a problem</string>
+    <string name="country_list_error_description">We could not load travel alerts. Try again later.</string>
+    <string name="country_list_error_retry">Try again</string>
 </resources>
