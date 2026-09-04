@@ -202,8 +202,8 @@ class AnalyticsClient @Inject constructor(
         ))
     }
 
-    fun search(searchTerm: String) {
-        redactedEvent(name = "Search", type = "typed", inputString = searchTerm)
+    fun search(searchTerm: String, section: String? = null) {
+        redactedEvent(name = "Search", type = "typed", inputString = searchTerm, section = section)
     }
 
     fun autocomplete(searchTerm: String) {
@@ -319,14 +319,13 @@ class AnalyticsClient @Inject constructor(
         firebaseAnalyticsClient.logException(exception)
     }
 
-    private fun redactedEvent(name: String, type: String, inputString: String) {
-        logEvent(
-            name,
-            mapOf(
-                "type" to type,
-                "text" to inputString.redactPii()
-            )
+    private fun redactedEvent(name: String, type: String, inputString: String, section: String? = null) {
+        val params = mutableMapOf<String, Any>(
+            "type" to type,
+            "text" to inputString.redactPii()
         )
+        section?.let { params["section"] = it }
+        logEvent(name, params)
     }
 
     private fun navigation(

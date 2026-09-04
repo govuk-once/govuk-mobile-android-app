@@ -11,7 +11,10 @@ import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
+import uk.gov.govuk.travelalerts.data.model.Subgroup
+import uk.gov.govuk.travelalerts.data.model.SubscriptionRequest
 import uk.gov.govuk.travelalerts.data.remote.GroupsApi
 import uk.gov.govuk.travelalerts.data.remote.TravelApi
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
@@ -28,6 +31,7 @@ class TravelAlertsRepoTest {
     private var mockDateProvider = mockk<DateProvider>()
 
     private val mockGetGroupsResponse = mockk<Response<List<Group>>>(relaxed = true)
+    private val mockCountriesResponse = mockk<Response<List<Country>>>(relaxed = true)
 
     private lateinit var travelAlertsRepo: TravelAlertsRepoImpl
 
@@ -35,6 +39,9 @@ class TravelAlertsRepoTest {
     @Before
     fun setup() {
         every { mockDateProvider.date } returns Instant.now()
+        coEvery { mockCountriesResponse.isSuccessful } returns true
+        coEvery { mockCountriesResponse.body() } returns TravelAlertsFixtures.mockCountries
+        coEvery { travelApi.getCountries() } returns mockCountriesResponse
         travelAlertsRepo = TravelAlertsRepoImpl(api, travelApi, auth, mockDateProvider)
     }
 
@@ -82,18 +89,85 @@ class TravelAlertsRepoTest {
         val result = travelAlertsRepo.getCountries()
 
         assertTrue(result is Result.Success)
+        assertEquals(TravelAlertsFixtures.mockCountries, (result as Result.Success).value)
     }
 
     @Test
     fun `Get countries fetches fresh data when cache expires`() = runTest {
-        // Prime the cache
         travelAlertsRepo.getCountries()
 
         every { mockDateProvider.date } returns Instant.now().plus(301, ChronoUnit.SECONDS)
 
         val result = travelAlertsRepo.getCountries()
 
-        // TODO: once the real API is in place, verify a new API call is made here
         assertTrue(result is Result.Success)
+        coVerify(exactly = 2) { travelApi.getCountries() }
+    }
+
+    // Subscribe to Country
+
+    @Test
+    fun `Subscribe to country calls API with correct subscription request`() = runTest {
+        travelAlertsRepo.subscribeToCountry("france")
+
+        coVerify {
+            api.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.DAILY
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Subscribe to country returns success when API succeeds`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        val result = travelAlertsRepo.subscribeToCountry("france")
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `Subscribe to country clears groups cache on success`() = runTest {
+        coEvery { api.getGroups() } returns mockGetGroupsResponse
+        coEvery { mockGetGroupsResponse.isSuccessful } returns true
+        coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
+
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.getGroups()
+        travelAlertsRepo.subscribeToCountry("france")
+        travelAlertsRepo.getGroups()
+
+        coVerify(exactly = 2) { api.getGroups() }
+    }
+
+    @Test
+    fun `Subscribe to country does not clear groups cache on failure`() = runTest {
+        coEvery { api.getGroups() } returns mockGetGroupsResponse
+        coEvery { mockGetGroupsResponse.isSuccessful } returns true
+        coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
+
+        val failResponse = mockk<Response<Unit>>()
+        every { failResponse.isSuccessful } returns false
+        every { failResponse.code() } returns 500
+        coEvery { api.subscribeToGroups(any()) } returns failResponse
+
+        travelAlertsRepo.getGroups()
+        travelAlertsRepo.subscribeToCountry("france")
+        travelAlertsRepo.getGroups()
+
+        coVerify(exactly = 1) { api.getGroups() }
     }
 }

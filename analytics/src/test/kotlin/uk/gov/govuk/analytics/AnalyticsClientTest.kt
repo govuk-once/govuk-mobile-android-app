@@ -406,6 +406,22 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a search with a section, then section is included in log event`() {
+        analyticsClient.search("france", section = "country_search")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "Search",
+                mapOf(
+                    "type" to "typed",
+                    "text" to "france",
+                    "section" to "country_search"
+                )
+            )
+        }
+    }
+
+    @Test
     fun `Given an autocomplete, then log event`() {
         analyticsClient.autocomplete("input")
 

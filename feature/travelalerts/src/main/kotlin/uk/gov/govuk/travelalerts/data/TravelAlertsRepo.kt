@@ -12,4 +12,5 @@ interface DateProvider {
 interface TravelAlertsRepo {
     suspend fun getGroups(): Result<List<Group>>
     suspend fun getCountries(): Result<List<Country>>
+    suspend fun subscribeToCountry(slug: String): Result<Unit>
 }
