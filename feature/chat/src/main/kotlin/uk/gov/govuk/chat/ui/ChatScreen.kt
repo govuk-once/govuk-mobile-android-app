@@ -8,12 +8,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -143,6 +145,7 @@ internal fun ChatRoute(
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
+                    chatExampleQuestions = viewModel.chatExampleQuestions,
                     modifier = modifier
                 )
             }
@@ -156,16 +159,19 @@ internal fun ChatRoute(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun ChatScreen(
     uiState: ChatUiState.Default,
-    launchBrowser: (url: String) -> Unit,
+    launchBrowser: (String) -> Unit,
     hasConversation: Boolean,
     uiEvents: UiEvents,
     analyticsEvents: AnalyticsEvents,
     chatUrls: ChatUrls,
+    chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier,
-    isTalkBackActive: Boolean = isTalkBackEnabled()
+    isTalkBackActive: Boolean = isTalkBackEnabled(),
+    isImeVisible: Boolean = WindowInsets.isImeVisible
 ) {
     val listState = rememberLazyListState()
     val chatEntries = uiState.chatEntries.toList()
@@ -218,7 +224,17 @@ internal fun ChatScreen(
                 }
 
                 item {
-                    IntroMessages(chatEntries.isEmpty()) // only animate if no conversation
+                    IntroMessages(
+                        hasConversation = hasConversation,
+                        question = uiState.question,
+                        isImeVisible = isImeVisible,
+                        isLoading = uiState.isLoading,
+                        onExampleQuestionClicked = { question ->
+                            uiEvents.onSubmit(question)
+                            analyticsEvents.onQuestionSubmit()
+                        },
+                        chatExampleQuestions = chatExampleQuestions
+                    )
                 }
 
                 items(chatEntries) {
@@ -357,6 +373,7 @@ private fun ChatScreenPreview() {
             launchBrowser = { _ -> },
             hasConversation = false,
             chatUrls = ChatUrls("", "", "", ""),
+            chatExampleQuestions = emptyList(),
             uiEvents = clickEvents()
         )
     }

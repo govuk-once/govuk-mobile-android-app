@@ -123,4 +123,7 @@ class ConfigRepoImpl @Inject constructor(
 
     override val promoBanners: List<PromoBanner>?
         get() = safeConfig.promoBanners
+
+    override val chatExampleQuestions: List<String>?
+        get() = safeConfig.chatExampleQuestions
 }
