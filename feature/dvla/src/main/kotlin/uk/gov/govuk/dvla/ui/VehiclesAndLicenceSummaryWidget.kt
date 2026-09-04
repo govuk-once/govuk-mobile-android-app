@@ -91,7 +91,7 @@ fun VehiclesAndLicenceSummaryWidget(
                     colours = ButtonColours(
                         containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
                         containerInactive = GovUkTheme.colourScheme.surfaces.list,
-                        containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
+                        containerFocused = GovUkTheme.colourScheme.surfaces.focused
                     )
                 )
 

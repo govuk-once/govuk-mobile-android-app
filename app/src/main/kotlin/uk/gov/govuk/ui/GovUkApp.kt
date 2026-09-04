@@ -99,6 +99,7 @@ import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
+import uk.gov.govuk.travelalerts.ui.TravelAlertsWidget
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
@@ -602,7 +603,9 @@ private fun GovUkNavHost(
                                 .padding(horizontal = GovUkTheme.spacing.medium),
                             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                         ) {
-                            Text("Placeholder: Travel Alerts")
+                            TravelAlertsWidget { url ->
+                                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                            }
                         }
                     }
                 },

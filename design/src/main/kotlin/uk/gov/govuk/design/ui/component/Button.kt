@@ -2,6 +2,7 @@ package uk.gov.govuk.design.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -30,9 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -68,8 +67,8 @@ private fun primaryColours(): GovUkButtonColours {
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
-        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
@@ -111,8 +110,8 @@ fun AccountConnectionButton(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccount,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonLinkAccount,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccountStroke,
-        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonLinkAccountHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonLinkAccountHighlight,
@@ -144,8 +143,8 @@ fun SecondaryButton(
     val colours = GovUkButtonColours(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondary,
-        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryFocused,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryHighlight,
         disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryDisabled,
@@ -176,8 +175,8 @@ fun CompactButton(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonCompact,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonCompact,
         defaultBorderColour = GovUkTheme.colourScheme.strokes.cardBlue,
-        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonCompactFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonCompactFocused,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonCompactHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonCompactHighlight,
         pressedBorderColour = GovUkTheme.colourScheme.strokes.buttonCompactHighlight,
@@ -229,8 +228,8 @@ fun DestructiveButton(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonDestructive,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
         defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonDestructiveStroke,
-        focussedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryFocused,
-        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryFocused,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonDestructiveStrokeFocussed,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonDestructiveHighlight,
         pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
@@ -263,7 +262,7 @@ fun ConnectedButton(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val (containerColour, contentColour) = when {
-        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.buttonConnectedGroupFocused
+        isFocused -> colours.containerFocused to GovUkTheme.colourScheme.textAndIcons.focused
         active -> colours.containerActive to GovUkTheme.colourScheme.textAndIcons.header
         else -> colours.containerInactive to GovUkTheme.colourScheme.textAndIcons.secondary
     }
@@ -278,11 +277,7 @@ fun ConnectedButton(
         onClick = onClick,
         interactionSource = interactionSource,
         modifier = modifier
-            .focusable(interactionSource = interactionSource)
-            .clearAndSetSemantics {
-            role = Role.Button
-            contentDescription = altText
-        },
+            .focusable(interactionSource = interactionSource),
         shape = RoundedCornerShape(15.dp),
         colors = buttonColors(
             containerColor = containerColour,
@@ -293,7 +288,10 @@ fun ConnectedButton(
             text = text,
             style = if (active) GovUkTheme.typography.bodyBold else
                 GovUkTheme.typography.bodyRegular,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.semantics {
+                contentDescription = altText
+            }
         )
     }
 }
@@ -417,12 +415,23 @@ fun OverflowButton(
     altText: String? = null,
     background: Color = GovUkTheme.colourScheme.surfaces.cardOverflowButton
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (containerColour, iconTint) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        background to GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
+    }
+
     Box(
         modifier = modifier
             .size(36.dp)
             .clip(CircleShape)
-            .background(background)
+            .background(containerColour)
             .clickable(
+                interactionSource = interactionSource,
+                indication = LocalIndication.current,
                 onClick = onClick,
                 role = Role.Button
             ),
@@ -431,7 +440,7 @@ fun OverflowButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_more),
             contentDescription = altText,
-            tint = GovUkTheme.colourScheme.textAndIcons.cardOverflowIcon
+            tint = iconTint
         )
     }
 }
@@ -624,7 +633,7 @@ private fun ConnectedActive()
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
                 containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
-                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
+                containerFocused = GovUkTheme.colourScheme.surfaces.focused
             )
         )
     }
@@ -642,7 +651,7 @@ private fun ConnectedInactive()
             colours = ButtonColours(
                 containerActive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupActive,
                 containerInactive = GovUkTheme.colourScheme.surfaces.connectedButtonGroupInactive,
-                containerFocused = GovUkTheme.colourScheme.surfaces.connectedButtonGroupFocused
+                containerFocused = GovUkTheme.colourScheme.surfaces.focused
             )
         )
     }

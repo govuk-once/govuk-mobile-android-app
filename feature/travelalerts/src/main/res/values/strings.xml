@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_title">Follow countries for updates</string>
+    <string name="empty_description">Get messages and notifications when travel advice changes</string>
+    <string name="loaded_heading">Countries you follow</string>
+    <string name="loaded_button_edit">Edit</string>
+</resources>

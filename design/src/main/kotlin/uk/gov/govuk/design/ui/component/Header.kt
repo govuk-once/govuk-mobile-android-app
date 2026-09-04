@@ -197,8 +197,7 @@ fun Title(
             text = title,
             modifier = Modifier
                 .padding(horizontal = GovUkTheme.spacing.medium)
-                .semantics { heading() }
-                .focusable(),
+                .semantics { heading() },
             color = GovUkTheme.colourScheme.textAndIcons.header
         )
 

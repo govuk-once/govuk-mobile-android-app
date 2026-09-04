@@ -2,6 +2,8 @@ package uk.gov.govuk.settings.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -505,15 +507,26 @@ private fun SignOut(
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (backgroundColour, textColour) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        GovUkTheme.colourScheme.surfaces.list to GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+    }
+
     CardListItem(
         modifier = modifier.fillMaxWidth(),
-        onClick = onSignOutClick
+        onClick = onSignOutClick,
+        interactionSource = interactionSource,
+        background = backgroundColour
     ) {
         BodyRegularLabel(
             text = stringResource(R.string.manage_login_sign_out),
             modifier = Modifier
                 .padding(GovUkTheme.spacing.medium),
-            color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+            color = textColour
         )
     }
 }
