@@ -142,7 +142,7 @@ fun InternalLinkListItem(
                         )
                     }
                 }
-
+                InternalLinkListItemStyle.Simple -> { }
                 else -> {
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow),
@@ -766,6 +766,16 @@ private fun InternalLinkListItemButtonPreview() {
         InternalLinkListItem(
             AccessibleString("Title"),
             style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemSimplePreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.Simple)
     }
 }
 

@@ -15,6 +15,7 @@ sealed interface ExternalLinkListItemStyle {
 
 sealed interface InternalLinkListItemStyle {
     data object Default : InternalLinkListItemStyle
+    data object Simple: InternalLinkListItemStyle
     data class Status(
         val status: String
     ) : InternalLinkListItemStyle

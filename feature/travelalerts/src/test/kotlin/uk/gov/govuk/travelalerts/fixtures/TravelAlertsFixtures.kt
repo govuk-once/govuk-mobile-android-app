@@ -11,8 +11,8 @@ object TravelAlertsFixtures {
     )
 
     val mockCountries = listOf(
-        Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z"),
-        Country(name = "Germany", slug = "germany", rawLastUpdated = "2024-01-01T00:00:00Z"),
-        Country(name = "Spain", slug = "spain", rawLastUpdated = "2024-01-01T00:00:00Z")
+        Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = emptyList()),
+        Country(name = "Germany", slug = "germany", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = emptyList()),
+        Country(name = "Spain", slug = "spain", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = emptyList())
     )
 }
