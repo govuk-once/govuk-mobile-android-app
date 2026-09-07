@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.ExtraSmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.ListDivider
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -200,16 +201,6 @@ private fun RemoveAllConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-        confirmButton = {
-            TextButton(
-                onClick = onConfirm
-            ) {
-                BodyRegularLabel(
-                    text = stringResource(R.string.remove_confirmation_dialog_button),
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-                )
-            }
-        },
         modifier = modifier,
         title = {
             BodyBoldLabel(stringResource(R.string.remove_confirmation_dialog_title))
@@ -218,6 +209,13 @@ private fun RemoveAllConfirmationDialog(
             BodyRegularLabel(
                 text = stringResource(R.string.remove_confirmation_dialog_message),
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
+        },
+        confirmButton = {
+            DialogButton(
+                text = stringResource(R.string.remove_confirmation_dialog_button),
+                onClick = onConfirm,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
             )
         },
         containerColor = GovUkTheme.colourScheme.surfaces.alert

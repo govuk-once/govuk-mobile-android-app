@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -227,28 +227,25 @@ private fun RemoveAccountDialog(
             )
         },
         confirmButton = {
-            TextButton(
-                onClick = onConfirm
-            ) {
-                BodyBoldLabel(
-                    text = confirmButtonText,
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-                )
-            }
+            DialogButton(
+                text = confirmButtonText,
+                onClick = onConfirm,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive,
+                isBold = true
+            )
         },
         dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                BodyRegularLabel(
-                    text = cancelButtonText,
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                )
-            }
+            DialogButton(
+                text = cancelButtonText,
+                onClick = onDismiss,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
+                isBold = false
+            )
         },
         containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
+
 
 @Composable
 internal fun RemoveAccountErrorScreen(

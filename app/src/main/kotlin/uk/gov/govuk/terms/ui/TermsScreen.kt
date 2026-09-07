@@ -25,6 +25,7 @@ import uk.gov.govuk.R
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -159,30 +160,7 @@ private fun DenialDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
-                    onSignOut()
-                }
-            ) {
-                BodyRegularLabel(
-                    text = stringResource(R.string.terms_dialog_sign_out),
-                    color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
-                )
-            }
-        },
         modifier = modifier,
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                BodyBoldLabel(
-                    text = stringResource(R.string.terms_dialog_cancel),
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                )
-            }
-        },
         title = {
             BodyBoldLabel(stringResource(R.string.terms_dialog_title))
         },
@@ -192,7 +170,25 @@ private fun DenialDialog(
                 color = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         },
-        containerColor = GovUkTheme.colourScheme.surfaces.alert,
+        confirmButton = {
+            DialogButton(
+                text = stringResource(R.string.terms_dialog_sign_out),
+                onClick = {
+                    onDismiss()
+                    onSignOut()
+                },
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+            )
+        },
+        dismissButton = {
+            DialogButton(
+                text = stringResource(R.string.terms_dialog_cancel),
+                onClick = onDismiss,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
+                isBold = true
+            )
+        },
+        containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
 

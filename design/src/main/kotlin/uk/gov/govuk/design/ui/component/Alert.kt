@@ -21,26 +21,25 @@ fun InfoAlert(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
+        title = {
+            BodyBoldLabel(
+                text = stringResource(id = title),
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+        },
         text = {
-            Column {
-                BodyBoldLabel(
-                    text = stringResource(id = title),
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
-                )
-                MediumVerticalSpacer()
-                BodyRegularLabel(
-                    text = stringResource(id = message),
-                    color = GovUkTheme.colourScheme.textAndIcons.secondary
-                )
-            }
+            BodyRegularLabel(
+                text = stringResource(id = message),
+                color = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
-                BodyBoldLabel(
-                    text = stringResource(id = buttonText),
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                )
-            }
+            DialogButton(
+                text = stringResource(id = buttonText),
+                onClick = onDismiss,
+                isBold = true,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
         },
         containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
