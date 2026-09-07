@@ -28,7 +28,8 @@
     <string name="manage_payment_button">Manage payment</string>
     <string name="manage_payment_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
     <string name="status_unknown">Unknown</string>
-    <string name="status_not_needed">Not needed</string>
+    <string name="status_not_needed">No tax to pay</string>
+    <string name="tax_status_unknown"> Not found - contact DVLA</string>
     <string name="tax_status_title">Tax</string>
     <string name="renew_tax_button">Renew tax</string>
     <string name="renew_tax_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
@@ -38,6 +39,7 @@
     <string name="valid">Valid</string>
     <string name="expired_on">Expired %s</string>
     <string name="expired">Expired</string>
+    <string name="untaxed">Untaxed</string>
     <string name="sorn_from">From %s</string>
     <string name="off_the_road_sorn_message">Off the road (SORN)</string>
     <string name="renew_licence_button">Renew licence</string>

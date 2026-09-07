@@ -81,8 +81,12 @@ internal class TaxAndMotStatusMapper @Inject constructor(
 
             TaxStatus.UNTAXED -> getTaxExpired(expiryDate, dvlaUrls)
             TaxStatus.SORN -> getSorn(vehicle.sornStart)
-            TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getNotNeeded(getTaxStatusTitle())
-            TaxStatus.UNKNOWN -> getUnknown(getTaxStatusTitle())
+            TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getTaxNotNeeded()
+            TaxStatus.UNKNOWN -> dvlaUrls?.contact?.let { contactUrl ->
+                getTaxStatusUnknown(contactUrl)
+            } ?: run {
+                getUnknown(getTaxStatusTitle())
+            }
         }
     }
 
@@ -110,14 +114,6 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         statusRowUi = StatusRowUiModel(
             title = title,
             description = AccessibleString(stringProvider.getString(R.string.status_unknown)),
-            iconStyle = null
-        )
-    )
-
-    private fun getNotNeeded(title: AccessibleString) = StatusUiModel.StatusRow(
-        statusRowUi = StatusRowUiModel(
-            title = title,
-            description = AccessibleString(stringProvider.getString(R.string.status_not_needed)),
             iconStyle = null
         )
     )
@@ -217,7 +213,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
 
     private fun getTaxExpired(expiryDate: LocalDate?, dvlaUrls: DvlaUrls?): StatusUiModel {
         val resources =
-            Triple(R.string.expired_on, R.string.expired, StatusListItemIconStyle.Warning)
+            Triple(R.string.expired_on, R.string.untaxed, StatusListItemIconStyle.Warning)
         return getStatusRow(
             getTaxStatusTitle(),
             expiryDate,
@@ -248,6 +244,22 @@ internal class TaxAndMotStatusMapper @Inject constructor(
 
     private fun getTaxStatusTitle() = AccessibleString(
         displayText = stringProvider.getString(R.string.tax_status_title)
+    )
+
+    private fun getTaxNotNeeded() = StatusUiModel.StatusRow(
+        statusRowUi = StatusRowUiModel(
+            title = getTaxStatusTitle(),
+            description = AccessibleString(stringProvider.getString(R.string.status_not_needed)),
+            iconStyle = null
+        )
+    )
+
+    private fun getTaxStatusUnknown(url: String) = StatusUiModel.LinkRow(
+        linkRowUi = LinkRowUiModel(
+            title = getTaxStatusTitle(),
+            text = AccessibleString(stringProvider.getString(R.string.tax_status_unknown)),
+            url = UrlModel(url)
+        )
     )
 
     /* Tax specific functions END */
