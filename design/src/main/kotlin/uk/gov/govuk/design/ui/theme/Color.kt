@@ -21,6 +21,7 @@ private val BlueDarker25 = Color(0xFF16548A)
 private val BlueDarker50 = Color(0xFF0F385C)
 private val BlueDarker65 = Color(0xFF0A2740)
 private val BlueDarker80 = Color(0xFF061625)
+private val BlueDarker90 = Color(0xFF030B12)
 private val BlueDarker80Alpha50 = Color(0x80061625)
 private val BlueDarkMode = Color(0xFF263D54)
 private val TealPrimary = Color(0xFF158187)
@@ -201,7 +202,8 @@ data class GovUkColourScheme(
         val msgRead: Color,
         val msgUnread: Color,
         val cardMsgHeader: Color,
-        val fullScreen: Color
+        val fullScreen: Color,
+        val surfaceModal: Color
     )
 
     data class Strokes(
@@ -368,7 +370,8 @@ internal val LightColorScheme = GovUkColourScheme(
         msgRead = BlackLighter80,
         msgUnread = RedAccent,
         cardMsgHeader = BlackLighter95,
-        fullScreen = White
+        fullScreen = White,
+        surfaceModal = White
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -534,7 +537,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         msgRead = BlackLighter25,
         msgUnread = RedAccent,
         cardMsgHeader = BlueDarker65,
-        fullScreen = BlueDarker80
+        fullScreen = BlueDarker80,
+        surfaceModal = BlueDarker90
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -695,7 +699,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             msgRead = Color.Unspecified,
             msgUnread = Color.Unspecified,
             cardMsgHeader = Color.Unspecified,
-            fullScreen = Color.Unspecified
+            fullScreen = Color.Unspecified,
+            surfaceModal = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,

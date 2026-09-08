@@ -1,4 +1,4 @@
-package uk.gov.govuk.travelalerts.ui
+package uk.gov.govuk.travelalerts.ui.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,13 +37,16 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 
 @Composable
-fun TravelAlertsWidget (launchBrowser: (String) -> Unit) {
+fun TravelAlertsWidget(
+    launchBrowser: (String) -> Unit,
+    onFollowCountry: () -> Unit
+) {
     val viewModel: TravelAlertsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
         TravelAlertsWidgetViewModel.State.Loading -> TravelAlertsLoading()
-        TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty()
+        TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty(onFollowCountry)
         is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(state.rows) { row ->
             viewModel.onRowClick(row)
             launchBrowser(row.link)
@@ -65,9 +68,9 @@ private fun TravelAlertsLoading() {
 }
 
 @Composable
-private fun TravelAlertsEmpty() {
+private fun TravelAlertsEmpty(onFollowCountry: () -> Unit) {
     CentredCardWithIcon(
-        onClick = { },
+        onClick = onFollowCountry,
         icon = uk.gov.govuk.design.R.drawable.ic_add,
         title = stringResource(R.string.empty_title),
         description = stringResource(R.string.empty_description),
@@ -132,13 +135,13 @@ private fun TravelAlertsError() {
             MediumVerticalSpacer()
 
             BodyBoldLabel(
-                text = "Title",
+                text = stringResource(R.string.error_title),
                 textAlign = TextAlign.Center
             )
 
             ExtraSmallVerticalSpacer()
 
-            BodyRegularLabel("Body")
+            BodyRegularLabel(stringResource(R.string.error_description))
 
             ExtraLargeVerticalSpacer()
         }
@@ -157,7 +160,7 @@ private fun TravelAlertsLoadingPreview() {
 @PreviewLightDark
 fun TravelAlertsWidgetEmptyPreview() {
     GovUkTheme {
-        TravelAlertsEmpty()
+        TravelAlertsEmpty(onFollowCountry = {})
     }
 }
 

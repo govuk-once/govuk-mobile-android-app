@@ -1,4 +1,4 @@
-package uk.gov.govuk.travelalerts.ui
+package uk.gov.govuk.travelalerts.ui.widget
 
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -17,8 +17,6 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
-import uk.gov.govuk.travelalerts.data.model.Country
-import uk.gov.govuk.travelalerts.data.model.Group
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -59,16 +57,10 @@ class TravelAlertsWidgetViewModelTest {
 
     @Test
     fun `Given page view, when both repos succeed, then rows are sorted by country name`() = runTest {
-        val unsortedGroups = listOf(
-            Group(namespace = "ns1", group = "spain", subgroup = "daily"),
-            Group(namespace = "ns2", group = "france", subgroup = "daily"),
-            Group(namespace = "ns3", group = "germany", subgroup = "daily"),
-        )
-        val unsortedCountries = listOf(
-            Country(name = "Spain", slug = "spain", rawLastUpdated = "2024-01-01T00:00:00Z"),
-            Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z"),
-            Country(name = "Germany", slug = "germany", rawLastUpdated = "2024-01-01T00:00:00Z"),
-        )
+        // Both are alphabetical in the fixture
+        val unsortedGroups = TravelAlertsFixtures.mockGroups.reversed()
+        val unsortedCountries = TravelAlertsFixtures.mockCountries.reversed()
+
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(unsortedGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(unsortedCountries)
 
