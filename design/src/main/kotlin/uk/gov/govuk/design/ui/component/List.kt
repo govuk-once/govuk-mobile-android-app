@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ButtonDefaults.textButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
@@ -128,17 +129,30 @@ fun InternalLinkListItem(
                 }
 
                 is InternalLinkListItemStyle.Button -> {
+                    val buttonInteractionSource = remember { MutableInteractionSource() }
+                    val isButtonFocused by buttonInteractionSource.collectIsFocusedAsState()
+
+                    val (containerColor, iconColor) = if (isButtonFocused) {
+                        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+                    } else {
+                        Color.Transparent to colours.contentSecondary
+                    }
+
                     TextButton(
                         onClick = style.onClick,
+                        interactionSource = buttonInteractionSource,
                         modifier = Modifier
                             .semantics { contentDescription = style.altText }
                             .align(Alignment.CenterVertically),
+                        colors = textButtonColors(
+                            containerColor = containerColor
+                        ),
                         contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
                     ) {
                         Icon(
                             painter = painterResource(style.icon),
                             contentDescription = null,
-                            tint = colours.contentSecondary
+                            tint = iconColor
                         )
                     }
                 }
