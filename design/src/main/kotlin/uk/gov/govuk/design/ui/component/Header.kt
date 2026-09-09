@@ -142,31 +142,10 @@ private fun Header(
                     is HeaderActionStyle.TextActionButton -> {
                         Spacer(Modifier.weight(1f))
 
-                        val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-                        val isFocused by interactionSource.collectIsFocusedAsState()
-
-                        val textColour = if (isFocused) {
-                            GovUkTheme.colourScheme.textAndIcons.focused
-                        } else {
-                            actionColour
-                        }
-
-                        TextButton(
-                            onClick = actionStyle.onClick,
-                            interactionSource = interactionSource,
-                            colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
-                                containerColor = if (isFocused) GovUkTheme.colourScheme.surfaces.focused else Color.Transparent
-                            )
-                        ) {
-                            BodyRegularLabel(
-                                text = actionStyle.title,
-                                color = textColour,
-                                textAlign = TextAlign.End,
-                                modifier = Modifier.semantics {
-                                    contentDescription = actionStyle.altText ?: actionStyle.title
-                                }
-                            )
-                        }
+                        HeaderTextButton(
+                            actionStyle = actionStyle,
+                            actionColour = actionColour
+                        )
                     }
                     is HeaderActionStyle.OverflowActionButton -> {
                         Spacer(Modifier.weight(1f))
@@ -193,6 +172,38 @@ private fun Header(
                 color = titleColour
             )
         }
+    }
+}
+
+@Composable
+private fun HeaderTextButton(
+    actionStyle: HeaderActionStyle.TextActionButton,
+    actionColour: Color
+) {
+    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val textColour = if (isFocused) {
+        GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        actionColour
+    }
+
+    TextButton(
+        onClick = actionStyle.onClick,
+        interactionSource = interactionSource,
+        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+            containerColor = if (isFocused) GovUkTheme.colourScheme.surfaces.focused else Color.Transparent
+        )
+    ) {
+        BodyRegularLabel(
+            text = actionStyle.title,
+            color = textColour,
+            textAlign = TextAlign.End,
+            modifier = Modifier.semantics {
+                contentDescription = actionStyle.altText ?: actionStyle.title
+            }
+        )
     }
 }
 
