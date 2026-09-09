@@ -54,6 +54,33 @@ import uk.gov.govuk.design.ui.model.ListItemColours
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
+@Composable
+private fun LinkListItemTrailingButton(
+    @DrawableRes icon: Int,
+    altText: String,
+    onClick: () -> Unit,
+    defaultIconTint: Color,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (containerColor, iconColor) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to defaultIconTint
+    }
+
+    TextButton(
+        onClick = onClick,
+        interactionSource = interactionSource,
+        modifier = modifier.semantics { contentDescription = altText },
+        colors = textButtonColors(containerColor = containerColor),
+        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
+    ) {
+        Icon(painter = painterResource(icon), contentDescription = null, tint = iconColor)
+    }
+}
 
 @Composable
 fun InternalLinkListItem(
@@ -129,32 +156,13 @@ fun InternalLinkListItem(
                 }
 
                 is InternalLinkListItemStyle.Button -> {
-                    val buttonInteractionSource = remember { MutableInteractionSource() }
-                    val isButtonFocused by buttonInteractionSource.collectIsFocusedAsState()
-
-                    val (containerColor, iconColor) = if (isButtonFocused) {
-                        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
-                    } else {
-                        Color.Transparent to colours.contentSecondary
-                    }
-
-                    TextButton(
+                    LinkListItemTrailingButton(
+                        icon = style.icon,
+                        altText = style.altText,
                         onClick = style.onClick,
-                        interactionSource = buttonInteractionSource,
-                        modifier = Modifier
-                            .semantics { contentDescription = style.altText }
-                            .align(Alignment.CenterVertically),
-                        colors = textButtonColors(
-                            containerColor = containerColor
-                        ),
-                        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
-                    ) {
-                        Icon(
-                            painter = painterResource(style.icon),
-                            contentDescription = null,
-                            tint = iconColor
-                        )
-                    }
+                        defaultIconTint = colours.contentSecondary,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                 }
 
                 else -> {
@@ -225,32 +233,13 @@ fun ExternalLinkListItem(
                 }
 
                 is ExternalLinkListItemStyle.Button -> {
-                    val buttonInteractionSource = remember { MutableInteractionSource() }
-                    val isButtonFocused by buttonInteractionSource.collectIsFocusedAsState()
-
-                    val (containerColor, iconColor) = if (isButtonFocused) {
-                        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
-                    } else {
-                        Color.Transparent to colours.contentSecondary
-                    }
-
-                    TextButton(
+                    LinkListItemTrailingButton(
+                        icon = style.icon,
+                        altText = style.altText,
                         onClick = style.onClick,
-                        interactionSource = buttonInteractionSource,
-                        modifier = Modifier
-                            .semantics { contentDescription = style.altText }
-                            .align(Alignment.CenterVertically),
-                        colors = textButtonColors(
-                            containerColor = containerColor
-                        ),
-                        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
-                    ) {
-                        Icon(
-                            painter = painterResource(style.icon),
-                            contentDescription = null,
-                            tint = iconColor
-                        )
-                    }
+                        defaultIconTint = colours.contentSecondary,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                 }
                 else -> { /* Do nothing */ }
             }
@@ -745,7 +734,6 @@ private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): Li
         )
     }
 }
-
 
 @Preview
 @Composable
