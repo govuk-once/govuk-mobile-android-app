@@ -251,6 +251,14 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
+    fun onTermsView(text: String, url: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true
+        )
+    }
+
     private suspend fun getAnswer(conversationId: String, questionId: String) {
         handleChatResult(
             chatRepo.getAnswer(

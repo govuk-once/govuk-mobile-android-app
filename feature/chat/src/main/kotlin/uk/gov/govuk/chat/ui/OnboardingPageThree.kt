@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Devices.PHONE
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -46,7 +47,7 @@ internal fun OnboardingPageThreeRoute(
     val continueText = stringResource(R.string.onboarding_page_three_button)
 
     OnboardingPageThreeScreen(
-        {
+        onPageView = {
             viewModel.onPageView(
                 screenClass = Analytics.ONBOARDING_SCREEN_CLASS,
                 screenName = Analytics.ONBOARDING_SCREEN_THREE_NAME,
@@ -78,6 +79,10 @@ internal fun OnboardingPageThreeRoute(
         onPrivacyNoticeClick = { text, url ->
             viewModel.onPrivacyPolicyView(text = text, url = url)
         },
+        termsUrl = viewModel.chatUrls.termsAndConditions,
+        onTermsClick = { text, url ->
+            viewModel.onTermsView(text = text, url = url)
+        },
         modifier = modifier
     )
 }
@@ -89,6 +94,8 @@ private fun OnboardingPageThreeScreen(
     onCancel: () -> Unit,
     onBack: () -> Unit,
     onPrivacyNoticeClick: (String, String) -> Unit,
+    termsUrl: String,
+    onTermsClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     RunOnceLaunchedEffect {
@@ -127,7 +134,26 @@ private fun OnboardingPageThreeScreen(
                 },
                 altText = altText,
                 textColor = GovUkTheme.colourScheme.textAndIcons.primary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                textDecoration = TextDecoration.Underline
+            )
+
+            MediumVerticalSpacer()
+
+            val termsLink = stringResource(id = R.string.onboarding_page_three_terms_link)
+
+            BodyRegularLabelTrailingLink(
+                introText = "",
+                outroText = "",
+                linkText = termsLink,
+                onClick = {
+                    onTermsClick(termsLink, termsUrl)
+                    uriHandler.openUri(termsUrl)
+                },
+                altText = altText,
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+                textAlign = TextAlign.Center,
+                textDecoration = TextDecoration.Underline
             )
         },
         buttonContent = {
@@ -201,7 +227,9 @@ private fun OnboardingPageThreePreview() {
             onClick = {},
             onCancel = {},
             onBack = {},
-            onPrivacyNoticeClick = { _, _ -> }
+            onPrivacyNoticeClick = { _, _ -> },
+            termsUrl = "",
+            onTermsClick = { _, _ -> }
         )
     }
 }
@@ -220,7 +248,9 @@ private fun OnboardingPageThreePreviewLandscapeLight() {
             onClick = {},
             onCancel = {},
             onBack = {},
-            onPrivacyNoticeClick = { _, _ -> }
+            onPrivacyNoticeClick = { _, _ -> },
+            termsUrl = "",
+            onTermsClick = { _, _ -> }
         )
     }
 }
@@ -237,7 +267,9 @@ private fun OnboardingPageThreePreviewLandscapeDark() {
             onClick = {},
             onCancel = {},
             onBack = {},
-            onPrivacyNoticeClick = { _, _ -> }
+            onPrivacyNoticeClick = { _, _ -> },
+            termsUrl = "",
+            onTermsClick = { _, _ -> }
         )
     }
 }
