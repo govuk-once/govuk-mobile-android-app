@@ -2,7 +2,9 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.dvla.domain.MotStatus
@@ -52,7 +54,7 @@ class TaxAndMotStatusMapperTest {
             motExpiryDate = LocalDate.now().plusDays(1)
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.CountdownRow)
+        assertTrue(motStatus is StatusUiModel.CountdownRow)
     }
 
     @Test
@@ -62,7 +64,7 @@ class TaxAndMotStatusMapperTest {
             motExpiryDate = LocalDate.now().plusDays(29)
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.StatusRow)
+        assertTrue(motStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -71,7 +73,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.VALID
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.StatusRow)
+        assertTrue(motStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -80,7 +82,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.EXPIRED
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.StatusRow)
+        assertTrue(motStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -89,7 +91,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.NO_DETAILS_HELD
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.LinkRow)
+        assertTrue(motStatus is StatusUiModel.LinkRow)
     }
 
     @Test
@@ -98,7 +100,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.NO_DETAILS_HELD
         )
         val motStatus = mapper.getMotStatus(vehicle, null)
-        Assert.assertTrue(motStatus is StatusUiModel.StatusRow)
+        assertTrue(motStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -107,7 +109,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.NO_RESULTS_RETURNED
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.LinkRow)
+        assertTrue(motStatus is StatusUiModel.LinkRow)
     }
 
     @Test
@@ -116,7 +118,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.NO_RESULTS_RETURNED
         )
         val motStatus = mapper.getMotStatus(vehicle, null)
-        Assert.assertTrue(motStatus is StatusUiModel.StatusRow)
+        assertTrue(motStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -125,7 +127,7 @@ class TaxAndMotStatusMapperTest {
             motStatus = MotStatus.UNKNOWN
         )
         val motStatus = mapper.getMotStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(motStatus is StatusUiModel.StatusRow)
+        assertTrue(motStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -135,7 +137,7 @@ class TaxAndMotStatusMapperTest {
             sornStart = LocalDate.now().plusDays(1)
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.InfoRow)
+        assertTrue(taxStatus is StatusUiModel.InfoRow)
     }
 
     @Test
@@ -146,7 +148,7 @@ class TaxAndMotStatusMapperTest {
             currentLicencePaymentMethod = "Direct Debit"
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.CountdownRow)
+        assertTrue(taxStatus is StatusUiModel.CountdownRow)
     }
 
     @Test
@@ -156,7 +158,7 @@ class TaxAndMotStatusMapperTest {
             taxExpiryDate = LocalDate.now().plusDays(1)
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.CountdownRow)
+        assertTrue(taxStatus is StatusUiModel.CountdownRow)
     }
 
     @Test
@@ -166,7 +168,7 @@ class TaxAndMotStatusMapperTest {
             taxExpiryDate = LocalDate.now().plusDays(29)
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.StatusRow)
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -175,8 +177,8 @@ class TaxAndMotStatusMapperTest {
             taxStatus = TaxStatus.UNTAXED
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.StatusRow)
-        Assert.assertTrue((taxStatus as StatusUiModel.StatusRow).statusRowUi.style is StatusStyle.ActionButton)
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
+        assertTrue((taxStatus as StatusUiModel.StatusRow).statusRowUi.style is StatusStyle.ActionButton)
     }
 
     @Test
@@ -185,8 +187,8 @@ class TaxAndMotStatusMapperTest {
             taxStatus = TaxStatus.UNTAXED
         )
         val taxStatus = mapper.getTaxStatus(vehicle, null)
-        Assert.assertTrue(taxStatus is StatusUiModel.StatusRow)
-        Assert.assertNull((taxStatus as StatusUiModel.StatusRow).statusRowUi.style)
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
+        assertNull((taxStatus as StatusUiModel.StatusRow).statusRowUi.style)
     }
 
     @Test
@@ -196,8 +198,8 @@ class TaxAndMotStatusMapperTest {
             sornStart = LocalDate.now().plusDays(1)
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.InfoRow)
-        Assert.assertNotNull((taxStatus as StatusUiModel.InfoRow).infoRowUi.subtitle)
+        assertTrue(taxStatus is StatusUiModel.InfoRow)
+        assertNotNull((taxStatus as StatusUiModel.InfoRow).infoRowUi.subtitle)
     }
 
     @Test
@@ -207,8 +209,8 @@ class TaxAndMotStatusMapperTest {
             sornStart = LocalDate.now()
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.InfoRow)
-        Assert.assertNull((taxStatus as StatusUiModel.InfoRow).infoRowUi.subtitle)
+        assertTrue(taxStatus is StatusUiModel.InfoRow)
+        assertNull((taxStatus as StatusUiModel.InfoRow).infoRowUi.subtitle)
     }
 
     @Test
@@ -217,7 +219,7 @@ class TaxAndMotStatusMapperTest {
             taxStatus = TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.StatusRow)
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
     }
 
     @Test
@@ -226,7 +228,7 @@ class TaxAndMotStatusMapperTest {
             taxStatus = TaxStatus.UNKNOWN
         )
         val taxStatus = mapper.getTaxStatus(vehicle, dvlaUrls)
-        Assert.assertTrue(taxStatus is StatusUiModel.LinkRow)
+        assertTrue(taxStatus is StatusUiModel.LinkRow)
     }
 
     @Test
@@ -235,6 +237,6 @@ class TaxAndMotStatusMapperTest {
             taxStatus = TaxStatus.UNKNOWN
         )
         val taxStatus = mapper.getTaxStatus(vehicle, null)
-        Assert.assertTrue(taxStatus is StatusUiModel.StatusRow)
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
     }
 }
