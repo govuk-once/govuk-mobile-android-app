@@ -225,18 +225,30 @@ fun ExternalLinkListItem(
                 }
 
                 is ExternalLinkListItemStyle.Button -> {
+                    val buttonInteractionSource = remember { MutableInteractionSource() }
+                    val isButtonFocused by buttonInteractionSource.collectIsFocusedAsState()
+
+                    val (containerColor, iconColor) = if (isButtonFocused) {
+                        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+                    } else {
+                        Color.Transparent to colours.contentSecondary
+                    }
+
                     TextButton(
                         onClick = style.onClick,
+                        interactionSource = buttonInteractionSource,
                         modifier = Modifier
                             .semantics { contentDescription = style.altText }
-                            .focusable(false)
                             .align(Alignment.CenterVertically),
+                        colors = textButtonColors(
+                            containerColor = containerColor
+                        ),
                         contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
                     ) {
                         Icon(
                             painter = painterResource(style.icon),
                             contentDescription = null,
-                            tint = colours.contentSecondary
+                            tint = iconColor
                         )
                     }
                 }
