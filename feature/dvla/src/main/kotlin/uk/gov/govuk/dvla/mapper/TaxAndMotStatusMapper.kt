@@ -1,4 +1,4 @@
-package uk.gov.govuk.dvla.ui.model
+package uk.gov.govuk.dvla.mapper
 
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -7,6 +7,13 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.MotStatus
 import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.domain.VehicleSummary
+import uk.gov.govuk.dvla.ui.model.InfoRowUiModel
+import uk.gov.govuk.dvla.ui.model.LinkRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusCountdownUiModel
+import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusStyle
+import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
@@ -79,7 +86,7 @@ internal class TaxAndMotStatusMapper @Inject constructor(
                 }
             }
 
-            TaxStatus.UNTAXED -> getTaxExpired(expiryDate, dvlaUrls)
+            TaxStatus.UNTAXED -> getUntaxed(dvlaUrls)
             TaxStatus.SORN -> getSorn(vehicle.sornStart)
             TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getTaxNotNeeded()
             TaxStatus.UNKNOWN -> dvlaUrls?.contact?.let { contactUrl ->
@@ -166,12 +173,12 @@ internal class TaxAndMotStatusMapper @Inject constructor(
                 percentage = expiryDate.asPercentageOfDaysLeftForTax(),
                 bottomText = getExpiringBottomText(expiryDate),
                 title = getTaxStatusTitle(),
-                style = getTaxExpiringStyle(dvlaUrls)
+                style = getRenewTaxStyle(dvlaUrls)
             )
         )
     }
 
-    private fun getTaxExpiringStyle(dvlaUrls: DvlaUrls?) =
+    private fun getRenewTaxStyle(dvlaUrls: DvlaUrls?) =
         dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
             StatusStyle.ActionButton(
                 text = AccessibleString(stringProvider.getString(R.string.renew_tax_button)),
@@ -211,16 +218,16 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             )
         }
 
-    private fun getTaxExpired(expiryDate: LocalDate?, dvlaUrls: DvlaUrls?): StatusUiModel {
-        val resources =
-            Triple(R.string.expired_on, R.string.untaxed, StatusListItemIconStyle.Warning)
-        return getStatusRow(
-            getTaxStatusTitle(),
-            expiryDate,
-            resources,
-            getTaxExpiringStyle(dvlaUrls)
+    private fun getUntaxed(dvlaUrls: DvlaUrls?) = StatusUiModel.StatusRow(
+        statusRowUi = StatusRowUiModel(
+            title = getTaxStatusTitle(),
+            description = AccessibleString(
+                displayText = stringProvider.getString(R.string.untaxed)
+            ),
+            iconStyle = StatusListItemIconStyle.Warning,
+            style = getRenewTaxStyle(dvlaUrls)
         )
-    }
+    )
 
     private fun getSorn(sornStart: LocalDate?): StatusUiModel {
         val subtitle = if (sornStart.isInTheFuture()) {

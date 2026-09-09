@@ -1,4 +1,4 @@
-package uk.gov.govuk.dvla.ui.model
+package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
