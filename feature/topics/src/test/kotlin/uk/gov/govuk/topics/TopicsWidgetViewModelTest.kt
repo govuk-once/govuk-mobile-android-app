@@ -20,7 +20,6 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.topics.data.TopicsRepo
-import uk.gov.govuk.topics.data.local.TopicsDataStore
 import uk.gov.govuk.topics.domain.model.TopicItem
 import uk.gov.govuk.topics.ui.model.TopicItemUi
 
@@ -30,14 +29,13 @@ class TopicsWidgetViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val topicsRepo = mockk<TopicsRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
-    private val topicsDataStore = mockk<TopicsDataStore>(relaxed = true)
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
 
         every { topicsRepo.topics } returns flowOf(emptyList())
-        every { topicsDataStore.selectedCategoryFlow } returns flowOf(TopicsCategory.YOUR)
+        every { topicsRepo.selectedCategoryFlow } returns flowOf(TopicsCategory.YOUR)
     }
 
     @After
@@ -63,7 +61,7 @@ class TopicsWidgetViewModelTest {
         )
 
         every { topicsRepo.topics } returns flowOf(topics)
-        every { topicsDataStore.selectedCategoryFlow } returns flowOf(TopicsCategory.YOUR)
+        every { topicsRepo.selectedCategoryFlow } returns flowOf(TopicsCategory.YOUR)
         coEvery { topicsRepo.isTopicsCustomised() } returns false
 
         val expected =
@@ -96,14 +94,14 @@ class TopicsWidgetViewModelTest {
                 selectedCategory = TopicsCategory.YOUR
             )
 
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         assertEquals(expected, viewModel.uiState.first { it != null })  // stateIn has initial value of null
     }
 
     @Test
     fun `Given your topics are viewed, Then send a view item list event`() {
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         val topics = listOf(
             TopicItemUi(
@@ -147,7 +145,7 @@ class TopicsWidgetViewModelTest {
 
     @Test
     fun `Given all topics are viewed, Then send a view item list event`() {
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         val topics = listOf(
             TopicItemUi(
@@ -191,7 +189,7 @@ class TopicsWidgetViewModelTest {
 
     @Test
     fun `Given empty topics are viewed, Then send a view item list event`() {
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         viewModel.onView(TopicsCategory.YOUR, emptyList())
 
@@ -209,7 +207,7 @@ class TopicsWidgetViewModelTest {
 
     @Test
     fun `Given a your topics widget item is clicked, then send a select item event`() {
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         viewModel.onTopicSelectClick(
             category = TopicsCategory.YOUR,
@@ -239,7 +237,7 @@ class TopicsWidgetViewModelTest {
 
     @Test
     fun `Given an all topics widget item is clicked, then send a select item event`() {
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         viewModel.onTopicSelectClick(
             category = TopicsCategory.ALL,
@@ -269,12 +267,12 @@ class TopicsWidgetViewModelTest {
 
     @Test
     fun `Given category change, Then save to datastore`() = runTest {
-        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient, topicsDataStore)
+        val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
         viewModel.onCategoryChange(TopicsCategory.ALL)
 
         coVerify {
-            topicsDataStore.setSelectedCategory(TopicsCategory.ALL)
+            topicsRepo.setSelectedCategory(TopicsCategory.ALL)
         }
     }
 }
