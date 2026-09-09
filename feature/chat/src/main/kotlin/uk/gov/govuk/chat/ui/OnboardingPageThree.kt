@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices.PHONE
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -32,6 +36,7 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SecondaryButton
+import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -142,18 +147,20 @@ private fun OnboardingPageThreeScreen(
 
             val termsLink = stringResource(id = R.string.onboarding_page_three_terms_link)
 
-            BodyRegularLabelTrailingLink(
-                introText = "",
-                outroText = "",
-                linkText = termsLink,
-                onClick = {
-                    onTermsClick(termsLink, termsUrl)
-                    uriHandler.openUri(termsUrl)
+            BodyRegularLabel(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+                        append(termsLink)
+                    }
                 },
-                altText = altText,
-                textColor = GovUkTheme.colourScheme.textAndIcons.primary,
+                color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
                 textAlign = TextAlign.Center,
-                textDecoration = TextDecoration.Underline
+                modifier = Modifier
+                    .clickable {
+                        onTermsClick(termsLink, termsUrl)
+                        uriHandler.openUri(termsUrl)
+                    }
+                    .talkBackText(termsLink, stringResource(R.string.sources_open_in_text))
             )
         },
         buttonContent = {
