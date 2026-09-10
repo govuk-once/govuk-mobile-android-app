@@ -11,6 +11,7 @@ import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
+import uk.gov.govuk.dvla.remote.model.common.VehicleEnquiryResponse
 
 interface DvlaApi {
 
@@ -37,4 +38,8 @@ interface DvlaApi {
 
     @POST("app/dvla/v1/share-code/{id}/cancel")
     suspend fun cancelShareCode(@Path("id") tokenId: String): Response<SingleShareCodeResponse>
+
+    @GET("app/dvla/v1/vehicle-enquiry/{reg}")
+    suspend fun lookupVehicleByRegistration(@Path("reg") reg: String): Response<VehicleEnquiryResponse>
+
 }

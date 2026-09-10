@@ -95,4 +95,9 @@ class DvlaRepo @Inject constructor(
     internal suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
         safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
             .map { it.toDomainModel() }
+
+    internal suspend fun lookupVehicleByRegistration(reg: String): Result<VehicleEnquiryDetails> =
+        safeAuthApiCall({ api.lookupVehicleByRegistration(reg) }, authRepo)
+            .map { it.toDomainModel() }
+
 }
