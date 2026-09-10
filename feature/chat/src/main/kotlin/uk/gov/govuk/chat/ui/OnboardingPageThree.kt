@@ -125,7 +125,7 @@ private fun OnboardingPageThreeScreen(
 
             BodyRegularLabelTrailingLink(
                 introText = introText,
-                outroText = "",
+                outroText = ".",
                 linkText = linkText,
                 onClick = {
                     onPrivacyNoticeClick(linkText, url)

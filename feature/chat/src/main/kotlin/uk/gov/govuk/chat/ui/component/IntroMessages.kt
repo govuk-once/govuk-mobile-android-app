@@ -123,10 +123,9 @@ private fun Message(
                 .talkBackText(welcomeMessage.replace(welcomeMessageEmoji, ""))
         )
 
-
         Text(
             text = stringResource(R.string.bot_message_duration),
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
+            color = GovUkTheme.colourScheme.textAndIcons.secondary,
             style = GovUkTheme.typography.footnoteRegular,
             modifier = Modifier
                 .padding(GovUkTheme.spacing.medium)
