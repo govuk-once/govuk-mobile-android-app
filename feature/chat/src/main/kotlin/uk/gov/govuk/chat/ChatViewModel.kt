@@ -58,6 +58,7 @@ internal class ChatViewModel @Inject constructor(
     val authError: SharedFlow<Unit> = _authError
 
     val chatUrls = configRepo.chatUrls
+    val chatExampleQuestions = configRepo.chatExampleQuestions
 
     private var loadConversationJob: Job? = null
     private var askQuestionJob: Job? = null

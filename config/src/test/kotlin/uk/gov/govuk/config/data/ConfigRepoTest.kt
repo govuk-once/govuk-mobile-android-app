@@ -142,6 +142,7 @@ class ConfigRepoTest {
         every { config.releaseFlags.quarterlySurvey } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
+        every { config.chatExampleQuestions } returns emptyList()
         every { config.chatBanner } returns mockChatBanner
         every { config.termsAndConditions } returns mockTerms
         every { config.dvlaUrls } returns mockDvlaUrls
@@ -165,6 +166,7 @@ class ConfigRepoTest {
         assertEquals(true, repo.isQuarterlySurveyEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
+        assertSame(emptyList<String>(), repo.chatExampleQuestions)
         assertSame(mockChatBanner, repo.chatBanner)
         assertSame(mockTerms, repo.termsAndConditions)
         assertSame(mockDvlaUrls, repo.dvlaUrls)
