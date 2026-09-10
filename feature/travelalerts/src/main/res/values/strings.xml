@@ -8,6 +8,9 @@
     <string name="country_list_search_placeholder">Search</string>
     <string name="country_list_search_clear">Clear search</string>
     <string name="country_list_no_results">No results found</string>
+    <string name="edit_countries_title">Edit countries</string>
+    <string name="edit_countries_description">Manage the countries you follow and how you\'re updated</string>
+<string name="edit_countries_follow_another">Follow another country</string>
     <string name="country_list_error_title">There\'s a problem</string>
     <string name="country_list_error_description">We could not load travel alerts. Try again later.</string>
     <string name="country_list_error_retry">Try again</string>

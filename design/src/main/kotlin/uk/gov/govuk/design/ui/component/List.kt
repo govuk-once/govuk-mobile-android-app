@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -141,6 +142,27 @@ fun InternalLinkListItem(
                             tint = colours.contentSecondary
                         )
                     }
+                }
+                is InternalLinkListItemStyle.ShortButton -> {
+                    IconButton(
+                        onClick = style.onClick,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .semantics { contentDescription = style.altText }
+                    ) {
+                        Icon(
+                            painter = painterResource(style.icon),
+                            contentDescription = null,
+                            tint = colours.contentSecondary
+                        )
+                    }
+                }
+                is InternalLinkListItemStyle.TrailingIcon -> {
+                    Icon(
+                        painter = painterResource(style.icon),
+                        contentDescription = null,
+                        tint = colours.contentTertiary
+                    )
                 }
                 InternalLinkListItemStyle.Simple -> { /* No icon, else branch kept for compatibility */ }
                 else -> {
@@ -766,6 +788,26 @@ private fun InternalLinkListItemButtonPreview() {
         InternalLinkListItem(
             AccessibleString("Title"),
             style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemShortButtonPreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.ShortButton(R.drawable.ic_more, "Alt text") {})
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemTrailingIconPreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.TrailingIcon(R.drawable.ic_more))
     }
 }
 
