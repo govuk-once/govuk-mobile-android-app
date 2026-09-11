@@ -38,6 +38,7 @@ import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.GovUkOutlinedCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -48,7 +49,8 @@ internal fun IntroMessages(
     question: String,
     isImeVisible: Boolean,
     isLoading: Boolean,
-    onExampleQuestionClicked: (String) -> Unit,
+    onExampleQuestionsViewed: () -> Unit,
+    onExampleQuestionClicked: (String, Int) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
@@ -86,6 +88,7 @@ internal fun IntroMessages(
                         question,
                         isImeVisible,
                         isLoading,
+                        onExampleQuestionsViewed,
                         onExampleQuestionClicked,
                         chatExampleQuestions
                     )
@@ -130,11 +133,16 @@ private fun ExampleQuestions(
     question: String,
     isImeVisible: Boolean,
     isLoading: Boolean,
-    onClick: (String) -> Unit,
+    onViewed: () -> Unit,
+    onClick: (String, Int) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
     if (!chatExampleQuestions.isNullOrEmpty() && !hasConversation) {
+        RunOnceLaunchedEffect {
+            onViewed()
+        }
+
         val isVisible = question.isEmpty() && !isImeVisible && !isLoading
 
         val prompt = stringResource(R.string.example_question_prompt)
@@ -172,7 +180,7 @@ private fun ExampleQuestions(
                         ExampleQuestion(
                             exampleQuestion,
                             prompt,
-                            onClick,
+                            onClick = { onClick(exampleQuestion, index) },
                             modifier = Modifier
                                 .testTag("exampleQuestion_$index")
                                 .semantics {

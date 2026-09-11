@@ -21,6 +21,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.data.ChatRepo
 import uk.gov.govuk.chat.data.remote.ChatResult
 import uk.gov.govuk.chat.data.remote.model.Answer
@@ -649,6 +650,70 @@ class ChatViewModelTest {
 
         verify {
             analyticsClient.chat()
+        }
+    }
+
+    @Test
+    fun `Given example questions are viewed, then log ecommerce analytics`() {
+        val questions = listOf("Question one", "Question two", "Question three")
+        every { configRepo.chatExampleQuestions } returns questions
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onExampleQuestionsViewed()
+
+        verify {
+            analyticsClient.viewItemListEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = "chat suggestions",
+                    itemListName = "chat suggestions",
+                    items = questions.map { question ->
+                        EcommerceEvent.Item(
+                            itemName = question,
+                            itemCategory = "chat_suggestion",
+                            locationId = ""
+                        )
+                    },
+                    totalItemCount = questions.size
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given no example questions, when the viewed event fires, then do not log ecommerce analytics`() {
+        every { configRepo.chatExampleQuestions } returns emptyList()
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onExampleQuestionsViewed()
+
+        verify(exactly = 0) { analyticsClient.viewItemListEvent(any()) }
+    }
+
+    @Test
+    fun `When the user selects an example question, then log chat and select item analytics`() {
+        val questions = listOf("Question one", "Question two", "Question three")
+        every { configRepo.chatExampleQuestions } returns questions
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onExampleQuestionSelected("Question two", 1)
+
+        verify {
+            analyticsClient.chat(type = "suggestion", action = "Ask question", section = "chat")
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = "chat suggestions",
+                    itemListName = "chat suggestions",
+                    items = listOf(
+                        EcommerceEvent.Item(
+                            itemName = "Question two",
+                            itemCategory = "chat_suggestion",
+                            locationId = ""
+                        )
+                    ),
+                    totalItemCount = 3
+                ),
+                selectedItemIndex = 2
+            )
         }
     }
 
