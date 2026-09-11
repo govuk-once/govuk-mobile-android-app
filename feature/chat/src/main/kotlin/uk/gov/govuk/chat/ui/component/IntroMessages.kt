@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import uk.gov.govuk.chat.R
@@ -117,8 +118,17 @@ private fun Message(
             color = GovUkTheme.colourScheme.textAndIcons.primary,
             style = GovUkTheme.typography.bodyRegular,
             modifier = Modifier
-                .padding(GovUkTheme.spacing.medium)
+                .padding(top = GovUkTheme.spacing.medium)
+                .padding(horizontal = GovUkTheme.spacing.medium)
                 .talkBackText(welcomeMessage.replace(welcomeMessageEmoji, ""))
+        )
+
+        Text(
+            text = stringResource(R.string.bot_message_duration),
+            color = GovUkTheme.colourScheme.textAndIcons.secondary,
+            style = GovUkTheme.typography.footnoteRegular,
+            modifier = Modifier
+                .padding(GovUkTheme.spacing.medium)
         )
     }
 }
@@ -207,5 +217,13 @@ private fun ExampleQuestion(
             color = GovUkTheme.colourScheme.textAndIcons.chatExampleQuestionText,
             modifier = Modifier.talkBackText("$prompt $text")
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun MessagePreview() {
+    GovUkTheme {
+        Message()
     }
 }

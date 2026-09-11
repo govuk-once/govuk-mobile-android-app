@@ -205,11 +205,7 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onNavigationActionItemClicked(text: String, url: String) {
-        analyticsClient.buttonClick(
-            text = text,
-            url = url,
-            external = true
-        )
+        onExternalButtonClick(text, url)
     }
 
     fun onFunctionActionItemClicked(text: String, section: String, action: String) {
@@ -244,6 +240,14 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onPrivacyPolicyView(text: String, url: String) {
+        onExternalButtonClick(text, url)
+    }
+
+    fun onTermsView(text: String, url: String) {
+        onExternalButtonClick(text, url)
+    }
+
+    private fun onExternalButtonClick(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
