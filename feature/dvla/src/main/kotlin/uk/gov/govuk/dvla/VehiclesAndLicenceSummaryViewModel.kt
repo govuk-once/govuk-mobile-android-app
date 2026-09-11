@@ -14,11 +14,11 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.ui.model.DrivingView
-import uk.gov.govuk.dvla.ui.model.LicenceSummaryMapper
+import uk.gov.govuk.dvla.mapper.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.UrlModel
-import uk.gov.govuk.dvla.ui.model.VehicleSummaryMapper
+import uk.gov.govuk.dvla.mapper.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import uk.gov.govuk.govkit.browser.Urls
 import javax.inject.Inject
