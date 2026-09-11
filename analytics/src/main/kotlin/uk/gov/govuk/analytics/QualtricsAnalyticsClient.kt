@@ -1,6 +1,7 @@
 package uk.gov.govuk.analytics
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.qualtrics.digital.Qualtrics
@@ -146,6 +147,10 @@ class QualtricsAnalyticsClient @Inject constructor(
         firebaseIdentifiers.sessionId?.let {
             qualtrics.properties.setString(FIREBASE_SESSION_ID, it)
         }
+
+        val darkMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val theme = if (darkMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
+        qualtrics.properties.setString("app_theme", theme)
 
         analyticsParameterKeys.forEach { key ->
             qualtrics.properties.setString(key, parameters[key]?.toString() ?: "")
