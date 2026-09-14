@@ -6,7 +6,7 @@ import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
 
 
-interface TravelApi {
+fun interface TravelApi {
     companion object {
         private const val COUNTRIES_PATH = "/app/travel/v1/countries"
     }

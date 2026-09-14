@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.time.Instant
 
 data class Country(
+    @SerializedName("country")
     val name: String,
     val slug: String,
     @SerializedName("lastUpdate")

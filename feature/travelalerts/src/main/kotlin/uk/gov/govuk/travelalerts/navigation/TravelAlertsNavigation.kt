@@ -20,9 +20,6 @@ fun NavGraphBuilder.travelAlertsGraph(
         enterTransition = { slideInVertically { it } },
         popExitTransition = { slideOutVertically { it } }
     ) {
-        CountryListScreen(
-            onClose = { navController.popBackStack() },
-            modifier = modifier
-        )
+        CountryListScreen(onClose = { navController.popBackStack() })
     }
 }
