@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -442,6 +443,39 @@ fun OverflowButton(
             contentDescription = altText,
             tint = iconTint
         )
+    }
+}
+
+@Composable
+fun DialogButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    defaultTextColour: Color = GovUkTheme.colourScheme.textAndIcons.link,
+    isBold: Boolean = false
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (backgroundColour, textColour) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to defaultTextColour
+    }
+
+    TextButton(
+        onClick = onClick,
+        modifier = modifier,
+        interactionSource = interactionSource,
+        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+            containerColor = backgroundColour
+        )
+    ) {
+        if (isBold) {
+            BodyBoldLabel(text = text, color = textColour)
+        } else {
+            BodyRegularLabel(text = text, color = textColour)
+        }
     }
 }
 

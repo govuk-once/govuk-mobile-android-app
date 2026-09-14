@@ -12,7 +12,8 @@ import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.travelalerts.data.model.Group
-import uk.gov.govuk.travelalerts.data.remote.TravelAlertsApi
+import uk.gov.govuk.travelalerts.data.remote.GroupsApi
+import uk.gov.govuk.travelalerts.data.remote.TravelApi
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -21,7 +22,8 @@ import kotlin.test.assertTrue
 
 class TravelAlertsRepoTest {
 
-    private val api = mockk<TravelAlertsApi>(relaxed = true)
+    private val api = mockk<GroupsApi>(relaxed = true)
+    private val travelApi = mockk<TravelApi>(relaxed = true)
     private val auth = mockk<AuthRepo>(relaxed = true)
     private var mockDateProvider = mockk<DateProvider>()
 
@@ -33,7 +35,7 @@ class TravelAlertsRepoTest {
     @Before
     fun setup() {
         every { mockDateProvider.date } returns Instant.now()
-        travelAlertsRepo = TravelAlertsRepoImpl(api, auth, mockDateProvider)
+        travelAlertsRepo = TravelAlertsRepoImpl(api, travelApi, auth, mockDateProvider)
     }
 
     // Get Groups

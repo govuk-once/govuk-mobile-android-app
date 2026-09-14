@@ -99,7 +99,9 @@ import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
-import uk.gov.govuk.travelalerts.ui.TravelAlertsWidget
+import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
+import uk.gov.govuk.travelalerts.navigation.travelAlertsGraph
+import uk.gov.govuk.travelalerts.ui.widget.TravelAlertsWidget
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
@@ -603,9 +605,12 @@ private fun GovUkNavHost(
                                 .padding(horizontal = GovUkTheme.spacing.medium),
                             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                         ) {
-                            TravelAlertsWidget { url ->
-                                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
-                            }
+                            TravelAlertsWidget(
+                                launchBrowser = { url ->
+                                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                                },
+                                onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) }
+                            )
                         }
                     }
                 },
@@ -695,6 +700,11 @@ private fun GovUkNavHost(
                 bottom = imeBottomPadding,
                 end = paddingValues.calculateEndPadding(layoutDirection)
             )
+        )
+        travelAlertsGraph(
+            navController = navController,
+            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+            modifier = Modifier.padding(paddingValues)
         )
     }
 

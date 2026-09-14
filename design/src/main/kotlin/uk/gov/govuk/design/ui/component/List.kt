@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ButtonDefaults.textButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
@@ -53,6 +54,33 @@ import uk.gov.govuk.design.ui.model.ListItemColours
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
+@Composable
+private fun LinkListItemTrailingButton(
+    @DrawableRes icon: Int,
+    altText: String,
+    onClick: () -> Unit,
+    defaultIconTint: Color,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (containerColor, iconColor) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to defaultIconTint
+    }
+
+    TextButton(
+        onClick = onClick,
+        interactionSource = interactionSource,
+        modifier = modifier.semantics { contentDescription = altText },
+        colors = textButtonColors(containerColor = containerColor),
+        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
+    ) {
+        Icon(painter = painterResource(icon), contentDescription = null, tint = iconColor)
+    }
+}
 
 @Composable
 fun InternalLinkListItem(
@@ -128,21 +156,15 @@ fun InternalLinkListItem(
                 }
 
                 is InternalLinkListItemStyle.Button -> {
-                    TextButton(
+                    LinkListItemTrailingButton(
+                        icon = style.icon,
+                        altText = style.altText,
                         onClick = style.onClick,
-                        modifier = Modifier
-                            .semantics { contentDescription = style.altText }
-                            .align(Alignment.CenterVertically),
-                        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
-                    ) {
-                        Icon(
-                            painter = painterResource(style.icon),
-                            contentDescription = null,
-                            tint = colours.contentSecondary
-                        )
-                    }
+                        defaultIconTint = colours.contentSecondary,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                 }
-
+                InternalLinkListItemStyle.Simple -> { /* No icon, else branch kept for compatibility */ }
                 else -> {
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow),
@@ -211,20 +233,13 @@ fun ExternalLinkListItem(
                 }
 
                 is ExternalLinkListItemStyle.Button -> {
-                    TextButton(
+                    LinkListItemTrailingButton(
+                        icon = style.icon,
+                        altText = style.altText,
                         onClick = style.onClick,
-                        modifier = Modifier
-                            .semantics { contentDescription = style.altText }
-                            .focusable(false)
-                            .align(Alignment.CenterVertically),
-                        contentPadding = PaddingValues(start = GovUkTheme.spacing.extraLarge)
-                    ) {
-                        Icon(
-                            painter = painterResource(style.icon),
-                            contentDescription = null,
-                            tint = colours.contentSecondary
-                        )
-                    }
+                        defaultIconTint = colours.contentSecondary,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                 }
                 else -> { /* Do nothing */ }
             }
@@ -720,7 +735,6 @@ private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): Li
     }
 }
 
-
 @Preview
 @Composable
 private fun InternalLinkListItemPreview() {
@@ -766,6 +780,16 @@ private fun InternalLinkListItemButtonPreview() {
         InternalLinkListItem(
             AccessibleString("Title"),
             style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemSimplePreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.Simple)
     }
 }
 

@@ -4,4 +4,9 @@
     <string name="empty_description">Get messages and notifications when travel advice changes</string>
     <string name="loaded_heading">Countries you follow</string>
     <string name="loaded_button_edit">Edit</string>
+    <string name="follow_a_country_title">Follow a country</string>
+    <string name="country_list_search_placeholder">Search</string>
+    <string name="error_title">There\'s a problem</string>
+    <string name="error_description">We could not load travel alerts. Try again later.</string>
+    <string name="error_retry">Try again</string>
 </resources>

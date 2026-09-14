@@ -341,7 +341,11 @@ fun BodyRegularLabelTrailingLink(
                     color = linkColor,
                     textDecoration = textDecoration
                 ),
-                pressedStyle = SpanStyle(background = highlightColor)
+                pressedStyle = SpanStyle(background = highlightColor),
+                focusedStyle = SpanStyle(
+                    background = GovUkTheme.colourScheme.surfaces.focused,
+                    color = GovUkTheme.colourScheme.textAndIcons.focused
+                )
             ),
             linkInteractionListener = { _ -> onClick() }
         )
@@ -494,8 +498,15 @@ fun CaptionRegularLabelTrailingLink(
         val link = LinkAnnotation.Clickable(
             tag = "link",
             styles = TextLinkStyles(
-                style = SpanStyle(color = linkColor, textDecoration = TextDecoration.None),
-                pressedStyle = SpanStyle(background = highlightColor)
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = TextDecoration.None
+                ),
+                pressedStyle = SpanStyle(background = highlightColor),
+                focusedStyle = SpanStyle(
+                    background = GovUkTheme.colourScheme.surfaces.focused,
+                    color = GovUkTheme.colourScheme.textAndIcons.focused
+                )
             ),
             linkInteractionListener = { _ -> onClick() }
         )

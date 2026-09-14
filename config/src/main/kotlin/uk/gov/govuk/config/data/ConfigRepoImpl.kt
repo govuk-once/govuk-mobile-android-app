@@ -123,6 +123,9 @@ class ConfigRepoImpl @Inject constructor(
     override val promoBanners: List<PromoBanner>?
         get() = safeConfig.promoBanners
 
+    override val chatExampleQuestions: List<String>?
+        get() = safeConfig.chatExampleQuestions
+
     override suspend fun clearRemoteConfigValues() {
         firebaseDataSource.clearRemoteValues()
     }

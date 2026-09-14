@@ -32,6 +32,7 @@ interface ConfigRepo {
     val isQuarterlySurveyEnabled: Boolean
     val dvlaUrls: DvlaUrls?
     val promoBanners: List<PromoBanner>?
+    val chatExampleQuestions: List<String>?
 
     suspend fun initConfig(): Result<Unit>
     suspend fun activateRemoteConfig(): Boolean

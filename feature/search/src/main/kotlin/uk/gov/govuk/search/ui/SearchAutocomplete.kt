@@ -1,7 +1,10 @@
 package uk.gov.govuk.search.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -84,7 +88,8 @@ internal fun SearchAutocomplete(
                         .padding(
                             top = GovUkTheme.spacing.medium,
                             bottom = GovUkTheme.spacing.small
-                        ).semantics {
+                        )
+                        .semantics {
                             liveRegion = LiveRegionMode.Polite
                             contentDescription = searchesAnnouncement
                         },
@@ -100,12 +105,27 @@ internal fun SearchAutocomplete(
                 }
             }
             items(suggestions) { suggestion ->
+
+                val interactionSource = remember { MutableInteractionSource() }
+                val isFocused by interactionSource.collectIsFocusedAsState()
+
+                val (backgroundColor, contentColor) = if (isFocused) {
+                    GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+                } else {
+                    Color.Transparent to GovUkTheme.colourScheme.textAndIcons.primary
+                }
+
                 Column {
                     ListDivider()
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onSearch(suggestion) }
+                            .background(backgroundColor)
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = androidx.compose.foundation.LocalIndication.current,
+                                onClick = { onSearch(suggestion) }
+                            )
                             .padding(
                                 top = GovUkTheme.spacing.medium,
                                 bottom = GovUkTheme.spacing.medium
@@ -122,7 +142,7 @@ internal fun SearchAutocomplete(
                             tint = GovUkTheme.colourScheme.textAndIcons.secondary
                         )
                         ExtraSmallHorizontalSpacer()
-                        Text(text = highlightSearchTerms(suggestion, searchTerm))
+                        Text(text = highlightSearchTerms(suggestion, searchTerm, contentColor))
                     }
                 }
             }
@@ -134,7 +154,7 @@ internal fun SearchAutocomplete(
 }
 
 @Composable
-private fun highlightSearchTerms(suggestion: String, searchTerm: String): AnnotatedString {
+private fun highlightSearchTerms(suggestion: String, searchTerm: String, textColor: Color): AnnotatedString {
     val suggestionWords = suggestion.split(" ")
     val searchTermWords = searchTerm.split(" ")
     val marker = '|'
@@ -152,7 +172,7 @@ private fun highlightSearchTerms(suggestion: String, searchTerm: String): Annota
         }
     }
 
-    return highlightVariants(suggestionWords, mappedVariants, marker)
+    return highlightVariants(suggestionWords, mappedVariants, marker, textColor)
 }
 
 private fun mapSuggestionVariants(
@@ -230,7 +250,8 @@ private fun fixMultipleMarkers(mappedVariants: ArrayList<String>, marker: Char) 
 private fun highlightVariants(
     suggestionWords: List<String>,
     mappedVariants: Map<String, ArrayList<String>>,
-    marker: Char
+    marker: Char,
+    textColor: Color
 ): AnnotatedString {
     val transport = FontFamily(
         Font(uk.gov.govuk.design.R.font.transport_bold, FontWeight.Bold),
@@ -242,7 +263,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Bold,
-        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        color = textColor,
     )
 
     val highlightStyle = SpanStyle(
@@ -250,7 +271,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Light,
-        color = GovUkTheme.colourScheme.textAndIcons.primary,
+        color = textColor,
     )
 
     return buildAnnotatedString {
@@ -276,9 +297,11 @@ private fun highlightVariants(
 @Composable
 private fun HighlightSingleSearchTerm1Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay employers PAYE",
-                searchTerm = "pay"
+                searchTerm = "pay",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -288,9 +311,11 @@ private fun HighlightSingleSearchTerm1Preview() {
 @Composable
 private fun HighlightSingleSearchTerm2Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "payroll",
-                searchTerm = "pay"
+                searchTerm = "pay",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -300,9 +325,11 @@ private fun HighlightSingleSearchTerm2Preview() {
 @Composable
 private fun HighlightSingleSearchTerm3Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay self assessment",
-                searchTerm = "pay"
+                searchTerm = "pay",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -312,9 +339,11 @@ private fun HighlightSingleSearchTerm3Preview() {
 @Composable
 private fun HighlightSingleSearchTerm4Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "check your pay",
-                searchTerm = "pay"
+                searchTerm = "pay",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -324,9 +353,11 @@ private fun HighlightSingleSearchTerm4Preview() {
 @Composable
 private fun HighlightSingleSearchTerm5Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "understanding your pay",
-                searchTerm = "pay"
+                searchTerm = "pay",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -336,9 +367,11 @@ private fun HighlightSingleSearchTerm5Preview() {
 @Composable
 private fun HighlightDoubleSearchTerm1Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay your corporation tax bill",
-                searchTerm = "pay tax"
+                searchTerm = "pay tax",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -348,9 +381,11 @@ private fun HighlightDoubleSearchTerm1Preview() {
 @Composable
 private fun HighlightDoubleSearchTerm2Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay capital gain tax uk property",
-                searchTerm = "pay tax"
+                searchTerm = "pay tax",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -360,9 +395,11 @@ private fun HighlightDoubleSearchTerm2Preview() {
 @Composable
 private fun HighlightDoubleSearchTerm3Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay corporation tax",
-                searchTerm = "pay tax"
+                searchTerm = "pay tax",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -372,9 +409,11 @@ private fun HighlightDoubleSearchTerm3Preview() {
 @Composable
 private fun HighlightDoubleSearchTerm4Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay your corporation tax",
-                searchTerm = "pay tax"
+                searchTerm = "pay tax",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -384,9 +423,11 @@ private fun HighlightDoubleSearchTerm4Preview() {
 @Composable
 private fun HighlightDoubleSearchTerm5Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "pay tax",
-                searchTerm = "pay tax"
+                searchTerm = "pay tax",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -396,9 +437,11 @@ private fun HighlightDoubleSearchTerm5Preview() {
 @Composable
 private fun HighlightMultipleSearchTerms1Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "mouse house housey mousey",
-                searchTerm = "hou ous"
+                searchTerm = "hou ous",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -408,9 +451,11 @@ private fun HighlightMultipleSearchTerms1Preview() {
 @Composable
 private fun HighlightMultipleSearchTerms2Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "Android Android android",
-                searchTerm = "and oi"
+                searchTerm = "and oi",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -420,9 +465,11 @@ private fun HighlightMultipleSearchTerms2Preview() {
 @Composable
 private fun HighlightMultipleSearchTerms3Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "Ho! Ho! Ho! said the mouse as it moved into a new house",
-                searchTerm = "ou Ho ho"
+                searchTerm = "ou Ho ho",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
@@ -432,9 +479,11 @@ private fun HighlightMultipleSearchTerms3Preview() {
 @Composable
 private fun HighlightMultipleSearchTerms4Preview() {
     GovUkTheme {
-        Text(text = highlightSearchTerms(
+        Text(
+            text = highlightSearchTerms(
                 suggestion = "mouse house housey mousey mousehouse",
-                searchTerm = "hou ous"
+                searchTerm = "hou ous",
+                textColor = GovUkTheme.colourScheme.textAndIcons.primary
             )
         )
     }
