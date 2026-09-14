@@ -347,12 +347,12 @@ class FlagRepoTest {
     }
 
     @Test
-    fun `Given flex is enabled, When is flex enabled, then return true`() {
+    fun `Given flex is enabled, When is flex enabled, then return false`() {
         every { configRepo.isFlexEnabled } returns true
 
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
-        assertTrue(flagRepo.isFlexEnabled())
+        assertFalse(flagRepo.isFlexEnabled())
     }
 
     @Test
@@ -386,13 +386,13 @@ class FlagRepoTest {
     }
 
     @Test
-    fun `Given DVLA link is enabled and Flex is enabled, When is DVLA link enabled, then return true`() {
+    fun `Given DVLA link is enabled and Flex is enabled, When is DVLA link enabled, then return false`() {
         every { configRepo.isDvlaLinkEnabled } returns true
         every { configRepo.isFlexEnabled } returns true
 
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
-        assertTrue(flagRepo.isDvlaLinkEnabled())
+        assertFalse(flagRepo.isDvlaLinkEnabled())
     }
 
     @Test

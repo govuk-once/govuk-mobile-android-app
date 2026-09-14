@@ -99,7 +99,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isFlexEnabled,
-            remoteFlag = configRepo.isFlexEnabled
+            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
         )
     }
 
