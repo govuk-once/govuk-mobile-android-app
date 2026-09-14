@@ -11,7 +11,7 @@ import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
-import uk.gov.govuk.dvla.remote.model.common.VehicleEnquiryResponse
+import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 interface DvlaApi {
 

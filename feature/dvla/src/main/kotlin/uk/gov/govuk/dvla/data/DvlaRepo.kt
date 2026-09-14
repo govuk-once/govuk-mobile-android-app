@@ -15,6 +15,7 @@ import uk.gov.govuk.dvla.di.CoroutineScopeIo
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.VehicleEnquiryDetails
 import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.domain.toDomainModel
 import uk.gov.govuk.dvla.remote.DvlaApi
