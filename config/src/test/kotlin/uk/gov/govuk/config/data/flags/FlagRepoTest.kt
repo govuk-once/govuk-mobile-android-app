@@ -347,12 +347,12 @@ class FlagRepoTest {
     }
 
     @Test
-    fun `Given flex is enabled, When is flex enabled, then return false`() {
+    fun `Given flex is enabled, When is flex enabled, then return true`() {
         every { configRepo.isFlexEnabled } returns true
 
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
-        assertFalse(flagRepo.isFlexEnabled())
+        assertTrue(flagRepo.isFlexEnabled())
     }
 
     @Test
