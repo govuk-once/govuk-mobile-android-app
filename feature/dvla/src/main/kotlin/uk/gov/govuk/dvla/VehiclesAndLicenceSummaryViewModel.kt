@@ -66,24 +66,6 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                 }
             }
         }
-
-        // TODO GOVUKAPP-3721 test code
-        viewModelScope.launch {
-            lookupVehicle("aa19aaa")
-        }
-    }
-
-    // TODO GOVUKAPP-3721 test code
-    private suspend fun lookupVehicle(reg: String) {
-        val sanitisedInput = reg.filterNot { it.isWhitespace() }.uppercase()
-
-        try {
-            val response = dvlaRepo.lookupVehicleByRegistration(sanitisedInput)
-            println("DVLA VES success: $response")
-        } catch (e: Exception) {
-            println("DVLA VES error: ${e.message}")
-            e.printStackTrace()
-        }
     }
 
     fun onVehiclesSelected() {
