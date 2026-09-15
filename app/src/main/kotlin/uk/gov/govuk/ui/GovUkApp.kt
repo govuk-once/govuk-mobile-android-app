@@ -100,6 +100,7 @@ import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
 import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.travelalerts.navigation.travelAlertsGraph
 import uk.gov.govuk.travelalerts.ui.widget.TravelAlertsWidget
 import uk.gov.govuk.visited.navigation.visitedGraph
@@ -117,6 +118,11 @@ private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
 /** Routes that draw system nav bar, add any routes that draw system nav bar here */
 private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
     DVLA_GRAPH_ROUTE
+)
+
+/** Routes where the bottom nav bar should be hidden */
+private val HIDE_BOTTOM_NAV_ROUTES = setOf(
+    COUNTRY_LIST_ROUTE
 )
 
 @Composable
@@ -353,8 +359,8 @@ private fun BottomNav(
     }
 
     // Display the nav bar if the current destination has a tab index (is a top level destination
-    // or associated route)
-    val displayBottomNavBar = selectedIndex != -1
+    // or associated route) and is not explicitly excluded
+    val displayBottomNavBar = selectedIndex != -1 && currentRoute !in HIDE_BOTTOM_NAV_ROUTES
 
     if (displayBottomNavBar) {
         Column {
@@ -611,7 +617,8 @@ private fun GovUkNavHost(
                                 launchBrowser = { url ->
                                     externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                                 },
-                                onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) }
+                                onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
+                                onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
                             )
                         }
                     }
@@ -660,6 +667,11 @@ private fun GovUkNavHost(
                     navController.popBackStack()
                 }
             )
+            travelAlertsGraph(
+                navController = navController,
+                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+                modifier = Modifier.padding(paddingValues)
+            )
         }
 
         messagesGraph(
@@ -702,11 +714,6 @@ private fun GovUkNavHost(
                 bottom = imeBottomPadding,
                 end = paddingValues.calculateEndPadding(layoutDirection)
             )
-        )
-        travelAlertsGraph(
-            navController = navController,
-            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-            modifier = Modifier.padding(paddingValues)
         )
     }
 
