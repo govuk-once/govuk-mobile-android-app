@@ -27,6 +27,8 @@ jobs:
 
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@00854ea68c109d98c75d956347303bf7c45b0277 #v3.2.1
+        with:
+          packages: 'platform-tools'
 
       - name: Get Secrets
         uses: bitwarden/sm-action@14f92f1d294ae3c2b6a3845d389cd2c318b0dfd8 # pin@v2.2.0
