@@ -137,6 +137,7 @@ class ConfigRepoTest {
         every { config.releaseFlags.externalBrowser } returns true
         every { config.releaseFlags.flex } returns true
         every { config.releaseFlags.chat } returns true
+        every { config.releaseFlags.dvla } returns true
         every { config.releaseFlags.messages } returns true
         every { config.releaseFlags.travelAlerts } returns true
         every { config.releaseFlags.quarterlySurvey } returns true
@@ -161,6 +162,7 @@ class ConfigRepoTest {
         assertEquals(true, repo.isExternalBrowserEnabled)
         assertEquals(true, repo.isFlexEnabled)
         assertEquals(true, repo.isChatEnabled)
+        assertEquals(true, repo.isDvlaLinkEnabled)
         assertEquals(true, repo.isMessagesEnabled)
         assertEquals(true, repo.isTravelAlertsEnabled)
         assertEquals(true, repo.isQuarterlySurveyEnabled)
