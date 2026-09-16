@@ -137,11 +137,13 @@ class ConfigRepoTest {
         every { config.releaseFlags.externalBrowser } returns true
         every { config.releaseFlags.flex } returns true
         every { config.releaseFlags.chat } returns true
+        every { config.releaseFlags.dvla } returns true
         every { config.releaseFlags.messages } returns true
         every { config.releaseFlags.travelAlerts } returns true
         every { config.releaseFlags.quarterlySurvey } returns true
         every { config.refreshTokenExpirySeconds } returns 3600L
         every { config.emergencyBanners } returns mockBanners
+        every { config.chatExampleQuestions } returns emptyList()
         every { config.chatBanner } returns mockChatBanner
         every { config.termsAndConditions } returns mockTerms
         every { config.dvlaUrls } returns mockDvlaUrls
@@ -160,11 +162,13 @@ class ConfigRepoTest {
         assertEquals(true, repo.isExternalBrowserEnabled)
         assertEquals(true, repo.isFlexEnabled)
         assertEquals(true, repo.isChatEnabled)
+        assertEquals(true, repo.isDvlaLinkEnabled)
         assertEquals(true, repo.isMessagesEnabled)
         assertEquals(true, repo.isTravelAlertsEnabled)
         assertEquals(true, repo.isQuarterlySurveyEnabled)
         assertEquals(3600L, repo.refreshTokenExpirySeconds)
         assertSame(mockBanners, repo.emergencyBanners)
+        assertSame(emptyList<String>(), repo.chatExampleQuestions)
         assertSame(mockChatBanner, repo.chatBanner)
         assertSame(mockTerms, repo.termsAndConditions)
         assertSame(mockDvlaUrls, repo.dvlaUrls)

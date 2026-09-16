@@ -99,7 +99,9 @@ import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
-import uk.gov.govuk.travelalerts.ui.TravelAlertsWidget
+import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
+import uk.gov.govuk.travelalerts.navigation.travelAlertsGraph
+import uk.gov.govuk.travelalerts.ui.widget.TravelAlertsWidget
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
@@ -108,7 +110,8 @@ import uk.govuk.app.local.navigation.localGraph
 /** Routes that draw status bar, add any routes that draw status bar here */
 private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
     CHAT_GRAPH_ROUTE,
-    DVLA_GRAPH_ROUTE
+    DVLA_GRAPH_ROUTE,
+    COUNTRY_LIST_ROUTE
 )
 
 /** Routes that draw system nav bar, add any routes that draw system nav bar here */
@@ -201,13 +204,14 @@ private fun BottomNavScaffold(
     val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE
             && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
+    val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
             currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
-    val useDarkIcons = (isChatRoute || isMessagesDetailRoute) && !isSystemInDarkTheme()
+    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -603,9 +607,12 @@ private fun GovUkNavHost(
                                 .padding(horizontal = GovUkTheme.spacing.medium),
                             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                         ) {
-                            TravelAlertsWidget { url ->
-                                externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
-                            }
+                            TravelAlertsWidget(
+                                launchBrowser = { url ->
+                                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                                },
+                                onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) }
+                            )
                         }
                     }
                 },
@@ -695,6 +702,11 @@ private fun GovUkNavHost(
                 bottom = imeBottomPadding,
                 end = paddingValues.calculateEndPadding(layoutDirection)
             )
+        )
+        travelAlertsGraph(
+            navController = navController,
+            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+            modifier = Modifier.padding(paddingValues)
         )
     }
 

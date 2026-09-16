@@ -1,7 +1,11 @@
 package uk.gov.govuk.search.ui
 
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults.textButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -131,8 +138,21 @@ private fun Header(
 
         SmallHorizontalSpacer()
 
+        val interactionSource = remember { MutableInteractionSource() }
+        val isFocused by interactionSource.collectIsFocusedAsState()
+
+        val (containerColor, textColor) = if (isFocused) {
+            GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+        } else {
+            Color.Transparent to GovUkTheme.colourScheme.textAndIcons.buttonSecondary
+        }
+
         TextButton(
-            onClick = onRemoveAll
+            onClick = onRemoveAll,
+            interactionSource = interactionSource,
+            colors = textButtonColors(
+                containerColor = containerColor
+            )
         ) {
             BodyRegularLabel(
                 text = stringResource(R.string.remove_all_button),
@@ -140,7 +160,7 @@ private fun Header(
                     .semantics {
                         contentDescription = context.getString(R.string.content_desc_delete_all)
                     },
-                color = GovUkTheme.colourScheme.textAndIcons.buttonSecondary,
+                color = textColor,
             )
         }
     }
@@ -155,12 +175,26 @@ private fun PreviousSearch(
 ) {
     val context = LocalContext.current
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isRowFocused by interactionSource.collectIsFocusedAsState()
+
+    val (rowBackground, rowContentColour) = if (isRowFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to GovUkTheme.colourScheme.textAndIcons.primary
+    }
+
     Column(modifier) {
         ListDivider()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onClick(searchTerm) }
+                .background(rowBackground)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = LocalIndication.current,
+                    onClick = { onClick(searchTerm) }
+                )
                 .semantics {
                     onClick(label = context.getString(R.string.content_desc_search)) { true }
                 },
@@ -170,22 +204,40 @@ private fun PreviousSearch(
                 imageVector = Icons.Filled.Search,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
-                tint = GovUkTheme.colourScheme.textAndIcons.secondary
+                tint = if (isRowFocused) rowContentColour else GovUkTheme.colourScheme.textAndIcons.secondary
             )
             ExtraSmallHorizontalSpacer()
             BodyRegularLabel(
                 text = searchTerm,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                color = rowContentColour
             )
             ExtraSmallHorizontalSpacer()
+
+            var isClearButtonFocused by remember { mutableStateOf(false) }
+
+            val (clearContainerColour, clearIconColor) = if (isClearButtonFocused) {
+                GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+            } else {
+                Color.Transparent to GovUkTheme.colourScheme.textAndIcons.trailingIcon
+            }
+
             TextButton(
-                onClick = { onRemove(searchTerm) }
+                onClick = { onRemove(searchTerm) },
+                modifier = Modifier
+                    .onFocusChanged { state ->
+                        isClearButtonFocused = state.isFocused
+                    },
+                colors = textButtonColors(
+                    containerColor = clearContainerColour,
+                    contentColor = clearIconColor
+                )
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,
                     contentDescription = stringResource(R.string.content_desc_remove_from_search_history),
                     modifier = Modifier.size(18.dp),
-                    tint = GovUkTheme.colourScheme.textAndIcons.trailingIcon
+                    tint = clearIconColor
                 )
             }
         }

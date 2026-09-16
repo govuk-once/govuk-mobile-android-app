@@ -26,11 +26,13 @@ interface ConfigRepo {
     val chatBanner: ChatBanner?
     val termsAndConditions: TermsAndConditions?
     val isFlexEnabled: Boolean
+    val isDvlaLinkEnabled: Boolean
     val isMessagesEnabled: Boolean
     val isTravelAlertsEnabled: Boolean
     val isQuarterlySurveyEnabled: Boolean
     val dvlaUrls: DvlaUrls?
     val promoBanners: List<PromoBanner>?
+    val chatExampleQuestions: List<String>?
 
     suspend fun initConfig(): Result<Unit>
     suspend fun activateRemoteConfig(): Boolean

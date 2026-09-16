@@ -1,7 +1,7 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -140,18 +142,10 @@ private fun Header(
                     is HeaderActionStyle.TextActionButton -> {
                         Spacer(Modifier.weight(1f))
 
-                        TextButton(
-                            onClick = actionStyle.onClick
-                        ) {
-                            BodyRegularLabel(
-                                text = actionStyle.title,
-                                color = actionColour,
-                                textAlign = TextAlign.End,
-                                modifier = Modifier.semantics {
-                                    contentDescription = actionStyle.altText ?: actionStyle.title
-                                }
-                            )
-                        }
+                        HeaderTextButton(
+                            actionStyle = actionStyle,
+                            actionColour = actionColour
+                        )
                     }
                     is HeaderActionStyle.OverflowActionButton -> {
                         Spacer(Modifier.weight(1f))
@@ -174,11 +168,42 @@ private fun Header(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = GovUkTheme.spacing.medium)
-                    .focusable()
                     .semantics { heading() },
                 color = titleColour
             )
         }
+    }
+}
+
+@Composable
+private fun HeaderTextButton(
+    actionStyle: HeaderActionStyle.TextActionButton,
+    actionColour: Color
+) {
+    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val textColour = if (isFocused) {
+        GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        actionColour
+    }
+
+    TextButton(
+        onClick = actionStyle.onClick,
+        interactionSource = interactionSource,
+        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+            containerColor = if (isFocused) GovUkTheme.colourScheme.surfaces.focused else Color.Transparent
+        )
+    ) {
+        BodyRegularLabel(
+            text = actionStyle.title,
+            color = textColour,
+            textAlign = TextAlign.End,
+            modifier = Modifier.semantics {
+                contentDescription = actionStyle.altText ?: actionStyle.title
+            }
+        )
     }
 }
 

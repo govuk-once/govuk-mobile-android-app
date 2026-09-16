@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName
 import java.time.Instant
 
 data class Country(
-    @SerializedName("Name")
+    @SerializedName("country")
     val name: String,
-    @SerializedName("Slug")
     val slug: String,
-    @SerializedName("LastUpdated")
-    val rawLastUpdated: String
+    @SerializedName("lastUpdate")
+    val rawLastUpdated: String,
+    val synonyms: List<String>
 ) {
     val date: Instant
         get() = Instant.parse(rawLastUpdated)
