@@ -26,6 +26,8 @@ jobs:
 
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@00854ea68c109d98c75d956347303bf7c45b0277 #v3.2.1
+        with:
+          packages: 'platform-tools'
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@a2bbe5b1b236842c1cb7dd11e8e3b51e0a616acc # pin@v1.202.0
