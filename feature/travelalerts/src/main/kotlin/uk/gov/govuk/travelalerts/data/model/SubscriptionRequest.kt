@@ -7,5 +7,10 @@ data class SubscriptionRequest(
     @SerializedName("Group") val group: String,
     @SerializedName("Subgroup") val subgroup: Subgroup,
     @SerializedName("Type") val type: String = "NOTIFICATION",
-    @SerializedName("Action") val action: String = "JOIN"
-)
+    @SerializedName("Action") val action: Action = Action.JOIN
+) {
+    enum class Action {
+        @SerializedName("JOIN") JOIN,
+        @SerializedName("LEAVE") LEAVE
+    }
+}

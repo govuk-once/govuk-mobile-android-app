@@ -10,8 +10,13 @@
     <string name="country_list_no_results">No results found</string>
     <string name="edit_countries_title">Edit countries</string>
     <string name="edit_countries_description">Manage the countries you follow and how you\'re updated</string>
-<string name="edit_countries_follow_another">Follow another country</string>
+    <string name="edit_countries_follow_another">Follow another country</string>
+    <string name="edit_countries_notifications">Get notifications</string>
+    <string name="edit_countries_unfollow">Unfollow</string>
+    <string name="edit_countries_error_title">There was a problem</string>
+    <string name="edit_countries_error_description">This action could not be completed. Please try again.</string>
     <string name="country_list_error_title">There\'s a problem</string>
     <string name="country_list_error_description">We could not load travel alerts. Try again later.</string>
     <string name="country_list_error_retry">Try again</string>
+    <string name="edit_bottom_sheet_footer">Unfollow this country to stop receiving travel advice messages.</string>
 </resources>

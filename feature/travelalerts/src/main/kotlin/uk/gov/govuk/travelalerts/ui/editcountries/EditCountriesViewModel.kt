@@ -10,6 +10,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
+import uk.gov.govuk.travelalerts.data.model.Group
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +27,14 @@ class EditCountriesViewModel @Inject constructor(
 
     sealed class State {
         data object Loading : State()
-        data class Loaded(val countries: List<Country>) : State()
+        data class Loaded(
+            val countries: List<Country>,
+            val groups: List<Group>,
+            val isTogglingNotifications: Boolean = false,
+            val isUnfollowing: Boolean = false,
+            val toggleError: String? = null,
+            val unfollowError: String? = null
+        ) : State()
         data object Error : State()
     }
 
@@ -46,6 +54,39 @@ class EditCountriesViewModel @Inject constructor(
         fetchFollowedCountries()
     }
 
+    private fun updateLoaded(block: State.Loaded.() -> State.Loaded) {
+        (_uiState.value as? State.Loaded)?.let { _uiState.value = it.block() }
+    }
+
+    fun toggleNotifications(slug: String, enabled: Boolean) {
+        viewModelScope.launch {
+            updateLoaded { copy(isTogglingNotifications = true, toggleError = null) }
+            val result = travelAlertsRepo.toggleNotifications(slug, enabled)
+            updateLoaded {
+                copy(
+                    isTogglingNotifications = false,
+                    toggleError = if (result !is Result.Success) "Failed to update notifications" else null
+                )
+            }
+        }
+    }
+
+    fun unfollowCountry(slug: String, currentNotificationsEnabled: Boolean) {
+        viewModelScope.launch {
+            updateLoaded { copy(isUnfollowing = true, unfollowError = null) }
+            val result = travelAlertsRepo.unfollowCountry(slug, currentNotificationsEnabled)
+            if (result is Result.Success) {
+                fetchFollowedCountries()
+            } else {
+                updateLoaded { copy(isUnfollowing = false, unfollowError = "Failed to unfollow country") }
+            }
+        }
+    }
+
+    fun clearToggleError() = updateLoaded { copy(toggleError = null) }
+
+    fun clearUnfollowError() = updateLoaded { copy(unfollowError = null) }
+
     private fun fetchFollowedCountries() {
         viewModelScope.launch {
             _uiState.value = State.Loading
@@ -56,7 +97,7 @@ class EditCountriesViewModel @Inject constructor(
                 val followed = groupsResult.value
                     .mapNotNull { group -> countriesBySlug[group.group] }
                     .sortedBy { it.name }
-                _uiState.value = if (followed.isEmpty()) State.Error else State.Loaded(followed)
+                _uiState.value = State.Loaded(followed, groupsResult.value)
             } else {
                 _uiState.value = State.Error
             }

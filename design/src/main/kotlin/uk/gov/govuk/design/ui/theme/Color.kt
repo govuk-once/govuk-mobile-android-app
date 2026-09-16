@@ -60,6 +60,8 @@ private val BlackLighter25 = Color(0xFF484949)
 private val BlackLighter50 = Color(0xFF858686)
 private val BlackLighter80 = Color(0xFFCECECE)
 private val BlackAlpha30 = Color(0x4D000000)
+private val BlackAlpha40 = Color(0x66000000)
+private val BlackAlpha60 = Color(0x99000000)
 private val BlackAlpha75 = Color(0x4B000000)
 private val BlackLighter95 = Color(0xFFF3F3F3)
 
@@ -154,6 +156,7 @@ data class GovUkColourScheme(
         val listUnselected: Color,
         val fixedContainer: Color,
         val alert: Color,
+        val alertBackground: Color,
         val buttonPrimary: Color,
         val buttonPrimaryHighlight: Color,
         val buttonPrimaryDisabled: Color,
@@ -318,6 +321,7 @@ internal val LightColorScheme = GovUkColourScheme(
         listUnselected = BlueLighter90,
         fixedContainer = WhiteAlpha75,
         alert = White,
+        alertBackground = BlackAlpha40,
         buttonPrimary = GreenPrimary,
         buttonPrimaryHighlight = GreenDarker25,
         buttonPrimaryDisabled = Grey100,
@@ -487,6 +491,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         listUnselected = BlueDarker65,
         fixedContainer = BlackAlpha75,
         alert = Grey800,
+        alertBackground = BlackAlpha60,
         buttonPrimary = GreenAccent,
         buttonPrimaryHighlight = GreenLighter25,
         buttonPrimaryDisabled = Grey400,
@@ -657,6 +662,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             listUnselected = Color.Unspecified,
             fixedContainer = Color.Unspecified,
             alert = Color.Unspecified,
+            alertBackground = Color.Unspecified,
             buttonPrimary = Color.Unspecified,
             buttonPrimaryHighlight = Color.Unspecified,
             buttonPrimaryDisabled = Color.Unspecified,
