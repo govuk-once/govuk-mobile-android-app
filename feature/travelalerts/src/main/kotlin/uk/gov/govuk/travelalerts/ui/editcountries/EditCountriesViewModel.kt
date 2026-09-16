@@ -46,6 +46,19 @@ class EditCountriesViewModel @Inject constructor(
         fetchFollowedCountries()
     }
 
+    fun toggleNotifications(slug: String, enabled: Boolean) {
+        viewModelScope.launch {
+            travelAlertsRepo.toggleNotifications(slug, enabled)
+        }
+    }
+
+    fun unfollowCountry(slug: String, currentNotificationsEnabled: Boolean) {
+        viewModelScope.launch {
+            travelAlertsRepo.unfollowCountry(slug, currentNotificationsEnabled)
+            fetchFollowedCountries()
+        }
+    }
+
     private fun fetchFollowedCountries() {
         viewModelScope.launch {
             _uiState.value = State.Loading
