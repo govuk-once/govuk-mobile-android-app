@@ -721,6 +721,25 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `Given an onboarding screen terms click, then log analytics`() {
+        val text = "text"
+        val url = "url"
+
+        viewModel.onTermsView(
+            text = text,
+            url = url
+        )
+
+        verify {
+            analyticsClient.buttonClick(
+                text = text,
+                url = url,
+                external = true
+            )
+        }
+    }
+
+    @Test
     fun `onResume loads conversation if chat intro seen`() = runTest {
         every { chatRepo.isChatIntroSeen } returns flowOf(true)
         coEvery { chatRepo.getConversation() } returns null
