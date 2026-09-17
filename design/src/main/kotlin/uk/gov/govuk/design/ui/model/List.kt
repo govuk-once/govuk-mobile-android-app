@@ -29,6 +29,16 @@ sealed interface InternalLinkListItemStyle {
         val altText: String,
         val onClick: () -> Unit
     ) : InternalLinkListItemStyle
+
+    data class ShortButton(
+        @param:DrawableRes val icon: Int,
+        val altText: String,
+        val onClick: () -> Unit
+    ) : InternalLinkListItemStyle
+
+    data class TrailingIcon(
+        @param:DrawableRes val icon: Int
+    ) : InternalLinkListItemStyle
 }
 
 sealed interface IconListItemStyle {
