@@ -386,13 +386,13 @@ class FlagRepoTest {
     }
 
     @Test
-    fun `Given DVLA link is enabled and Flex is enabled, When is DVLA link enabled, then return false`() {
+    fun `Given DVLA link is enabled and Flex is enabled, When is DVLA link enabled, then return true`() {
         every { configRepo.isDvlaLinkEnabled } returns true
         every { configRepo.isFlexEnabled } returns true
 
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
-        assertFalse(flagRepo.isDvlaLinkEnabled())
+        assertTrue(flagRepo.isDvlaLinkEnabled())
     }
 
     @Test

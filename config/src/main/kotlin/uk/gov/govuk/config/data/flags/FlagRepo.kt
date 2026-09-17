@@ -107,7 +107,7 @@ class FlagRepo @Inject constructor(
         return isFlexEnabled() && isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isDvlaLinkEnabled,
-            remoteFlag = false //  Not yet wired up to remote config, always off for prod builds!!!
+            remoteFlag = configRepo.isDvlaLinkEnabled
         )
     }
 
@@ -115,8 +115,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isMessagesEnabled,
-//             remoteFlag = configRepo.isMessagesEnabled
-            remoteFlag = false //  Always off for prod builds!!!
+            remoteFlag = configRepo.isMessagesEnabled
         )
     }
 
