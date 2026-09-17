@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -25,6 +26,7 @@ internal fun RegistrationPlate(
     registration: String,
     modifier: Modifier = Modifier,
     isLarge: Boolean = false,
+    isFilled: Boolean = true
 ) {
     val accessibleNumberPlate = registration.toSpacedString()
     val altText = stringResource(id = R.string.registration_plate_alt_text, accessibleNumberPlate)
@@ -33,10 +35,14 @@ internal fun RegistrationPlate(
     val radius = if (isLarge) 16.dp else 8.dp
     val padding = if (isLarge) GovUkTheme.spacing.medium else GovUkTheme.spacing.small
 
+    val backgroundColour = if (isFilled) GovUkTheme.colourScheme.surfaces.registrationPlate else
+        Color.Transparent
+
+
     Box(
         modifier = modifier
             .background(
-                color = GovUkTheme.colourScheme.surfaces.registrationPlate,
+                color = backgroundColour,
                 shape = RoundedCornerShape(radius)
             )
             .border(
