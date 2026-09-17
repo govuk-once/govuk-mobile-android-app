@@ -61,7 +61,8 @@ class GovUkConfigDataSourceTest {
             checkMot = "https://www.check-mot.service.gov.uk/results?registration=[NUMBER PLATE]&checkRecalls=true",
             driverDetails = "https://driver-and-vehicles-account.service.gov.uk/driver_details",
             account = "https://driver-and-vehicles-account.service.gov.uk",
-            drivingRecord = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Entitlements"
+            drivingRecord = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Entitlements",
+            contact = "https://www.gov.uk/contact-the-dvla"
         )
 
         val config = Config(
