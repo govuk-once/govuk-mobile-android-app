@@ -743,5 +743,3 @@ private fun BrowserNotFoundAlert(
         onDismiss = onDismiss
     )
 }
-
-
