@@ -71,6 +71,7 @@ import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -599,6 +600,11 @@ private fun GovUkNavHost(
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
                                 }
+                            )
+
+                            // check vehicle
+                            CheckVehicleWidget(
+                                onSearchClick = { /* TODO in next ticket */ }
                             )
                         }
                     } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {

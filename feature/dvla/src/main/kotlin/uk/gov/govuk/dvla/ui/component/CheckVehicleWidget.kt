@@ -11,29 +11,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
-import uk.gov.govuk.design.ui.component.ExtraSmallVerticalSpacer
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
+import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -60,52 +61,46 @@ private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehic
     } else {
         SearchVehicleListItemColours(
             background = GovUkTheme.colourScheme.surfaces.list,
-            text = GovUkTheme.colourScheme.textAndIcons.secondary,
-            iconBackground = GovUkTheme.colourScheme.surfaces.buttonPrimary,
+            text = GovUkTheme.colourScheme.textAndIcons.primary,
+            iconBackground = GovUkTheme.colourScheme.surfaces.icon,
             icon = GovUkTheme.colourScheme.textAndIcons.buttonPrimary
         )
     }
 }
 
 @Composable
-fun CheckVehicleCard(
-    title: String,
-    description: String,
-    searchPrompt: AccessibleString,
+fun CheckVehicleWidget(
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList))
-            .background(GovUkTheme.colourScheme.surfaces.cardBlue)
-            .padding(GovUkTheme.spacing.medium)
-    ) {
+    Column(modifier) {
+        MediumVerticalSpacer()
+
         Title3BoldLabel(
-            text = title,
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
-            modifier = Modifier.semantics { heading() }
+                    text = stringResource(R.string.check_vehicle_title),
+                    modifier = Modifier.semantics { heading() }
         )
 
-        ExtraSmallVerticalSpacer()
-
-        BodyRegularLabel(
-            text = description,
-            color = GovUkTheme.colourScheme.textAndIcons.primary
+        SubheadlineRegularLabel(
+            text = stringResource(R.string.check_vehicle_description)
         )
 
         MediumVerticalSpacer()
 
-        SearchVehicleListItem(
-            prompt = searchPrompt,
+        CheckVehicleCard(
+            prompt = AccessibleString(
+                displayText = stringResource(R.string.check_vehicle_search_prompt),
+                altText = stringResource(R.string.check_vehicle_search_alt_text)
+            ),
             onClick = onSearchClick
         )
+
+        LargeVerticalSpacer()
     }
 }
 
 @Composable
-private fun SearchVehicleListItem(
+fun CheckVehicleCard(
     prompt: AccessibleString,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -147,8 +142,8 @@ private fun SearchVehicleListItem(
             SmallHorizontalSpacer()
 
             RegistrationPlate(
-                isFilled = false,
                 registration = EXAMPLE_REG,
+                style = RegistrationPlateStyle.FRONT,
                 modifier = Modifier.clearAndSetSemantics { } // decorative only
             )
 
@@ -171,15 +166,21 @@ private fun SearchVehicleListItem(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun CheckAVehicleWidgetPreview() {
+    GovUkTheme {
+        CheckVehicleWidget(onSearchClick = {})
+    }
+}
+
 @PreviewLightDark
 @Composable
-private fun CheckVehicleCardPreview() {
+private fun SearchVehicleCardPreview() {
     GovUkTheme {
         CheckVehicleCard(
-            title = "Check vehicle details",
-            description = "Tax and MOT information for any vehicle",
-            searchPrompt = AccessibleString("Search for a vehicle"),
-            onSearchClick = {}
+            prompt = AccessibleString("Search for a vehicle"),
+            onClick = {}
         )
     }
 }

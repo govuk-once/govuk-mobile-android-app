@@ -21,12 +21,17 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.util.toSpacedString
 
+enum class RegistrationPlateStyle {
+    FRONT,  // white plate
+    REAR    // yellow plate
+}
+
 @Composable
 internal fun RegistrationPlate(
     registration: String,
     modifier: Modifier = Modifier,
     isLarge: Boolean = false,
-    isFilled: Boolean = true
+    style: RegistrationPlateStyle = RegistrationPlateStyle.REAR
 ) {
     val accessibleNumberPlate = registration.toSpacedString()
     val altText = stringResource(id = R.string.registration_plate_alt_text, accessibleNumberPlate)
@@ -35,8 +40,10 @@ internal fun RegistrationPlate(
     val radius = if (isLarge) 16.dp else 8.dp
     val padding = if (isLarge) GovUkTheme.spacing.medium else GovUkTheme.spacing.small
 
-    val backgroundColour = if (isFilled) GovUkTheme.colourScheme.surfaces.registrationPlate else
-        Color.Transparent
+    val backgroundColour = when (style) {
+        RegistrationPlateStyle.REAR -> GovUkTheme.colourScheme.surfaces.registrationPlate
+        RegistrationPlateStyle.FRONT -> GovUkTheme.colourScheme.surfaces.registrationPlateFront
+    }
 
 
     Box(
