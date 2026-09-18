@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -39,6 +40,7 @@ import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.CheckVehicleWidgetViewModel
 import uk.gov.govuk.dvla.R
 
 private const val EXAMPLE_REG = "ABC"
@@ -74,6 +76,9 @@ fun CheckVehicleWidget(
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val viewModel: CheckVehicleWidgetViewModel = hiltViewModel()
+    val searchPrompt = stringResource(R.string.check_vehicle_search_prompt)
+
     Column(modifier) {
         MediumVerticalSpacer()
 
@@ -95,7 +100,10 @@ fun CheckVehicleWidget(
                 displayText = stringResource(R.string.check_vehicle_search_prompt),
                 altText = stringResource(R.string.check_vehicle_search_alt_text)
             ),
-            onClick = onSearchClick
+            onClick = {
+                viewModel.onSearchClicked(searchPrompt)
+                onSearchClick()
+            }
         )
 
         LargeVerticalSpacer()

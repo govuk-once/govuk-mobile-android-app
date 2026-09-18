@@ -592,19 +592,19 @@ private fun GovUkNavHost(
                                 onActionClick = { navController.navigateToDvlaLinkIntro() }
                             )
 
-                            // and licence summary widget from DVLA module
+                            // and vehicles/licence summary widget from DVLA module
                             VehiclesAndLicenceSummaryWidget(
                                 launchBrowser = { url ->
                                     externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                                 },
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
+                                },
+                                vehiclesFooter = {
+                                    CheckVehicleWidget(
+                                        onSearchClick = { /* TODO in next ticket */ }
+                                    )
                                 }
-                            )
-
-                            // check vehicle
-                            CheckVehicleWidget(
-                                onSearchClick = { /* TODO in next ticket */ }
                             )
                         }
                     } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {
