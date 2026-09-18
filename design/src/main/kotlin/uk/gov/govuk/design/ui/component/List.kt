@@ -276,7 +276,8 @@ fun ToggleListItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isFirst: Boolean = true,
-    isLast: Boolean = true
+    isLast: Boolean = true,
+    backgroundOverride: Color? = null
 ) {
 
     val status = stringResource(if (checked) R.string.on_button else R.string.off_button)
@@ -288,7 +289,7 @@ fun ToggleListItem(
 
     CardListItem(
         modifier = modifier,
-        background = colours.background,
+        background = backgroundOverride ?: colours.background,
         isFirst = isFirst,
         isLast = isLast
     ) {
@@ -943,5 +944,25 @@ private fun CountdownBarItemListItemPreview() {
             50f,
             AccessibleString("Bottom text")
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ToggleListItemPreview() {
+    GovUkTheme {
+        Column {
+            ToggleListItem(
+                title = "Default background",
+                checked = true,
+                onCheckedChange = {}
+            )
+            ToggleListItem(
+                title = "With listAlt background",
+                checked = false,
+                onCheckedChange = {},
+                backgroundOverride = GovUkTheme.colourScheme.surfaces.listAlt
+            )
+        }
     }
 }

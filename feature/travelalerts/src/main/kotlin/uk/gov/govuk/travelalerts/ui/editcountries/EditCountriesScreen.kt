@@ -2,30 +2,25 @@ package uk.gov.govuk.travelalerts.ui.editcountries
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Text
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,23 +28,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.CaptionRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
-import uk.gov.govuk.design.ui.component.DestructiveButton
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
-import uk.gov.govuk.design.ui.component.ToggleSwitch
 import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
@@ -57,6 +46,7 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle.TrailingIcon
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
+import uk.gov.govuk.travelalerts.data.model.Group
 
 @Composable
 fun EditCountriesScreen(
@@ -85,9 +75,16 @@ fun EditCountriesScreen(
             is EditCountriesViewModel.State.Error -> EditCountriesError(onRetry = viewModel::onRetry)
             is EditCountriesViewModel.State.Loaded -> EditCountriesLoaded(
                 countries = state.countries,
+                groups = state.groups,
                 onFollowAnotherCountry = onFollowAnotherCountry,
                 onToggleNotifications = viewModel::toggleNotifications,
-                onUnfollowCountry = viewModel::unfollowCountry
+                onUnfollowCountry = viewModel::unfollowCountry,
+                isTogglingNotifications = viewModel.isTogglingNotifications,
+                isUnfollowing = viewModel.isUnfollowing,
+                toggleError = viewModel.toggleError,
+                unfollowError = viewModel.unfollowError,
+                onClearToggleError = viewModel::clearToggleError,
+                onClearUnfollowError = viewModel::clearUnfollowError
             )
         }
     }
@@ -97,15 +94,41 @@ fun EditCountriesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun EditCountriesLoaded(
     countries: List<Country>,
+    groups: List<Group>,
     onFollowAnotherCountry: () -> Unit,
     onToggleNotifications: (slug: String, enabled: Boolean) -> Unit,
     onUnfollowCountry: (slug: String, currentNotificationsEnabled: Boolean) -> Unit,
+    isTogglingNotifications: StateFlow<Boolean>,
+    isUnfollowing: StateFlow<Boolean>,
+    toggleError: StateFlow<String?>,
+    unfollowError: StateFlow<String?>,
+    onClearToggleError: () -> Unit,
+    onClearUnfollowError: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val selectedCountry = rememberSaveable { mutableStateOf<Country?>(null) }
     val notificationsEnabled = rememberSaveable { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+    val unfollowErrorState by unfollowError.collectAsState()
+
+    val groupsBySlug = groups.associateBy { it.group }
+
+    // Update initial toggle state when country is selected
+    LaunchedEffect(selectedCountry.value) {
+        selectedCountry.value?.let { country ->
+            val group = groupsBySlug[country.slug]
+            notificationsEnabled.value = group?.subgroup == "daily"
+        }
+    }
+
+    // Dismiss sheet when unfollow error occurs
+    LaunchedEffect(unfollowErrorState) {
+        if (unfollowErrorState != null) {
+            sheetState.hide()
+            selectedCountry.value = null
+        }
+    }
 
     Column(modifier.fillMaxSize()) {
         LazyColumn(
@@ -146,9 +169,17 @@ private fun EditCountriesLoaded(
     }
 
     selectedCountry.value?.let { country ->
+        val isTogglingNotificationsState by isTogglingNotifications.collectAsState()
+        val isUnfollowingState by isUnfollowing.collectAsState()
+        val toggleErrorState by toggleError.collectAsState()
+
         CountryOptionsBottomSheet(
             country = country,
             sheetState = sheetState,
+            notificationsEnabled = notificationsEnabled.value,
+            isTogglingNotifications = isTogglingNotificationsState,
+            isUnfollowing = isUnfollowingState,
+            toggleError = toggleErrorState,
             onDismiss = {
                 scope.launch { sheetState.hide() }.invokeOnCompletion {
                     if (!sheetState.isVisible) {
@@ -162,10 +193,19 @@ private fun EditCountriesLoaded(
             },
             onUnfollow = {
                 onUnfollowCountry(country.slug, notificationsEnabled.value)
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        selectedCountry.value = null
-                    }
+            },
+            onClearToggleError = onClearToggleError
+        )
+    }
+
+    if (unfollowErrorState != null) {
+        AlertDialog(
+            onDismissRequest = onClearUnfollowError,
+            title = { Text(stringResource(R.string.edit_countries_error_title)) },
+            text = { Text(stringResource(R.string.edit_countries_error_description)) },
+            confirmButton = {
+                Button(onClick = onClearUnfollowError) {
+                    Text("OK")
                 }
             }
         )
@@ -188,114 +228,6 @@ private fun EditCountriesError(
             )
         }
     )
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun CountryOptionsBottomSheet(
-    country: Country,
-    sheetState: SheetState,
-    onDismiss: () -> Unit,
-    onNotificationsToggle: (Boolean) -> Unit,
-    onUnfollow: () -> Unit
-) {
-    val notificationsEnabled = rememberSaveable { mutableStateOf(true) }
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = GovUkTheme.colourScheme.surfaces.screenBackground,
-        contentColor = GovUkTheme.colourScheme.textAndIcons.primary
-    ) {
-        CountryOptionsBottomSheetContent(
-            country = country,
-            notificationsEnabled = notificationsEnabled.value,
-            onDismiss = onDismiss,
-            onNotificationsToggle = { isEnabled ->
-                notificationsEnabled.value = isEnabled
-                onNotificationsToggle(isEnabled)
-            },
-            onUnfollow = onUnfollow
-        )
-    }
-}
-
-@Composable
-private fun CountryOptionsBottomSheetContent(
-    country: Country,
-    notificationsEnabled: Boolean,
-    onDismiss: () -> Unit,
-    onNotificationsToggle: (Boolean) -> Unit,
-    onUnfollow: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = GovUkTheme.spacing.medium)
-            .padding(bottom = GovUkTheme.spacing.large)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier.align(Alignment.Top)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = null,
-                    tint = GovUkTheme.colourScheme.textAndIcons.primary
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-        MediumVerticalSpacer()
-
-        Text(
-            text = country.name,
-            style = GovUkTheme.typography.title2Bold,
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        MediumVerticalSpacer()
-        MediumVerticalSpacer()
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = GovUkTheme.spacing.medium),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BodyRegularLabel(
-                text = stringResource(R.string.edit_countries_notifications),
-                color = GovUkTheme.colourScheme.textAndIcons.primary
-            )
-            ToggleSwitch(
-                checked = notificationsEnabled,
-                onCheckedChange = onNotificationsToggle,
-                testDescription = "notifications"
-            )
-        }
-
-        SmallVerticalSpacer()
-
-        DestructiveButton(
-            text = stringResource(R.string.edit_countries_unfollow),
-            onClick = onUnfollow,
-            modifier = Modifier.padding(vertical = GovUkTheme.spacing.medium)
-        )
-
-        CaptionRegularLabel(
-            stringResource(R.string.edit_bottom_sheet_footer),
-            color = GovUkTheme.colourScheme.textAndIcons.secondary
-        )
-    }
 }
 
 @Composable
@@ -327,26 +259,16 @@ private fun EditCountriesLoadedPreview() {
     GovUkTheme {
         EditCountriesLoaded(
             countries = countries,
+            groups = listOf(),
             onFollowAnotherCountry = {},
             onToggleNotifications = { _, _ -> },
-            onUnfollowCountry = { _, _ -> }
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-@PreviewLightDark
-private fun CountryOptionsBottomSheetContentPreview() {
-    val country = Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf())
-
-    GovUkTheme {
-        CountryOptionsBottomSheetContent(
-            country = country,
-            notificationsEnabled = true,
-            onDismiss = {},
-            onNotificationsToggle = {},
-            onUnfollow = {}
+            onUnfollowCountry = { _, _ -> },
+            isTogglingNotifications = MutableStateFlow(false),
+            isUnfollowing = MutableStateFlow(false),
+            toggleError = MutableStateFlow(null),
+            unfollowError = MutableStateFlow(null),
+            onClearToggleError = {},
+            onClearUnfollowError = {}
         )
     }
 }

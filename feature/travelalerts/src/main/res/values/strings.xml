@@ -13,6 +13,10 @@
     <string name="edit_countries_follow_another">Follow another country</string>
     <string name="edit_countries_notifications">Get notifications</string>
     <string name="edit_countries_unfollow">Unfollow</string>
+    <string name="edit_countries_updating">Updating...</string>
+    <string name="edit_countries_unfollowing">Unfollowing...</string>
+    <string name="edit_countries_error_title">There was a problem</string>
+    <string name="edit_countries_error_description">This action could not be completed. Please try again.</string>
     <string name="country_list_error_title">There\'s a problem</string>
     <string name="country_list_error_description">We could not load travel alerts. Try again later.</string>
     <string name="country_list_error_retry">Try again</string>
