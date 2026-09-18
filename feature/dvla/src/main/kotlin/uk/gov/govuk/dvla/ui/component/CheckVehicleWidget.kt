@@ -34,6 +34,7 @@ import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
+import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -55,15 +56,15 @@ private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehic
         SearchVehicleListItemColours(
             background = GovUkTheme.colourScheme.surfaces.focused,
             text = GovUkTheme.colourScheme.textAndIcons.focused,
-            iconBackground = GovUkTheme.colourScheme.surfaces.icon,
-            icon = GovUkTheme.colourScheme.surfaces.focused
+            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
         )
     } else {
         SearchVehicleListItemColours(
             background = GovUkTheme.colourScheme.surfaces.list,
             text = GovUkTheme.colourScheme.textAndIcons.primary,
-            iconBackground = GovUkTheme.colourScheme.surfaces.icon,
-            icon = GovUkTheme.colourScheme.textAndIcons.buttonPrimary
+            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
         )
     }
 }
@@ -80,6 +81,8 @@ fun CheckVehicleWidget(
                     text = stringResource(R.string.check_vehicle_title),
                     modifier = Modifier.semantics { heading() }
         )
+
+        SmallVerticalSpacer()
 
         SubheadlineRegularLabel(
             text = stringResource(R.string.check_vehicle_description)
