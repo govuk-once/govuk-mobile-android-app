@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.adaptive.android)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.icons)
     implementation(libs.hilt.android)
     implementation(libs.retrofit)
