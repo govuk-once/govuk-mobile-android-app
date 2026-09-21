@@ -654,7 +654,8 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `Given example questions are viewed, then log ecommerce analytics`() {
+    fun `Given example questions are viewed, then log ecommerce analytics`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         val questions = listOf("Question one", "Question two", "Question three")
         every { configRepo.chatExampleQuestions } returns questions
         viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
@@ -680,7 +681,8 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `Given no example questions, when the viewed event fires, then do not log ecommerce analytics`() {
+    fun `Given no example questions, when the viewed event fires, then do not log ecommerce analytics`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         every { configRepo.chatExampleQuestions } returns emptyList()
         viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
 
@@ -690,7 +692,8 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `When the user selects an example question, then log chat and select item analytics`() {
+    fun `When the user selects an example question, then log chat and select item analytics`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
         val questions = listOf("Question one", "Question two", "Question three")
         every { configRepo.chatExampleQuestions } returns questions
         viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)

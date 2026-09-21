@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +39,6 @@ import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.GovUkOutlinedCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -141,6 +141,14 @@ private fun ExampleQuestions(
     if (!chatExampleQuestions.isNullOrEmpty() && !hasConversation) {
         val isVisible = question.isEmpty() && !isImeVisible && !isLoading
 
+        var hasBeenViewed by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(isVisible) {
+            if (isVisible && !hasBeenViewed) {
+                onViewed()
+                hasBeenViewed = true
+            }
+        }
+
         val prompt = stringResource(R.string.example_question_prompt)
 
         AnimatedVisibility(
@@ -148,10 +156,6 @@ private fun ExampleQuestions(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            RunOnceLaunchedEffect {
-                onViewed()
-            }
-
             Column(modifier = modifier) {
                 Row(
                     modifier = Modifier.fillMaxWidth()
