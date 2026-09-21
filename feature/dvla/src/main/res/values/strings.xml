@@ -176,5 +176,4 @@
     <string name="check_vehicle_title">Check vehicle details</string>
     <string name="check_vehicle_description">Tax and MOT information for any vehicle</string>
     <string name="check_vehicle_search_prompt">Search for a vehicle</string>
-    <string name="check_vehicle_search_alt_text">Search vehicles</string>
 </resources>

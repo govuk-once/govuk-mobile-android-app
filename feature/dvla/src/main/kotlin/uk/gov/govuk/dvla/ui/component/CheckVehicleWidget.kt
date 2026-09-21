@@ -109,10 +109,7 @@ fun CheckVehicleWidget(
         MediumVerticalSpacer()
 
         CheckVehicleCard(
-            prompt = AccessibleString(
-                displayText = stringResource(R.string.check_vehicle_search_prompt),
-                altText = stringResource(R.string.check_vehicle_search_alt_text)
-            ),
+            prompt = searchPrompt,
             onClick = {
                 viewModel.onSearchClicked(searchPrompt)
                 onSearchClick()
@@ -125,7 +122,7 @@ fun CheckVehicleWidget(
 
 @Composable
 fun CheckVehicleCard(
-    prompt: AccessibleString,
+    prompt: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -133,11 +130,10 @@ fun CheckVehicleCard(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val colours = resolveSearchVehicleListItemColours(isFocused = isFocused)
-    val altText = prompt.altText ?: prompt.displayText
 
     CardListItem(
         modifier = modifier.semantics(mergeDescendants = true) {
-            contentDescription = altText
+            contentDescription = prompt
             role = Role.Button
         },
         onClick = onClick,
@@ -156,7 +152,7 @@ fun CheckVehicleCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             BodyRegularLabel(
-                text = prompt.displayText,
+                text = prompt,
                 modifier = Modifier
                     .weight(1f)
                     .clearAndSetSemantics { },
@@ -203,7 +199,7 @@ private fun CheckAVehicleWidgetPreview() {
 private fun SearchVehicleCardPreview() {
     GovUkTheme {
         CheckVehicleCard(
-            prompt = AccessibleString("Search for a vehicle"),
+            prompt = "Search for a vehicle",
             onClick = {}
         )
     }
