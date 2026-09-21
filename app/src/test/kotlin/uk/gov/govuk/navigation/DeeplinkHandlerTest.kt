@@ -24,6 +24,7 @@ import uk.gov.govuk.topics.navigation.TOPICS_EDIT_ROUTE
 import uk.gov.govuk.topics.navigation.TOPIC_ROUTE
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
 import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.visited.navigation.VISITED_ROUTE
 
 class DeeplinkHandlerTest {
@@ -297,6 +298,22 @@ class DeeplinkHandlerTest {
         verify(exactly = 0) {
             navController.navigate(any(), any<NavOptionsBuilder.() -> Unit>())
             onLaunchBrowser.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle travelalerts edit deeplink`() {
+        every { deeplink.path } returns "/travelalerts/edit"
+        every { deeplink.toString() } returns "govuk://gov.uk/travelalerts/edit"
+
+        deeplinkHandler.deepLink = deeplink
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate(EDIT_COUNTRIES_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk/travelalerts/edit")
         }
     }
 
