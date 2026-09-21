@@ -139,10 +139,6 @@ private fun ExampleQuestions(
     modifier: Modifier = Modifier
 ) {
     if (!chatExampleQuestions.isNullOrEmpty() && !hasConversation) {
-        RunOnceLaunchedEffect {
-            onViewed()
-        }
-
         val isVisible = question.isEmpty() && !isImeVisible && !isLoading
 
         val prompt = stringResource(R.string.example_question_prompt)
@@ -152,6 +148,10 @@ private fun ExampleQuestions(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
+            RunOnceLaunchedEffect {
+                onViewed()
+            }
+
             Column(modifier = modifier) {
                 Row(
                     modifier = Modifier.fillMaxWidth()

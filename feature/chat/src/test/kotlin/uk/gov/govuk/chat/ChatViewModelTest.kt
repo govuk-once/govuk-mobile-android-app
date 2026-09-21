@@ -698,7 +698,7 @@ class ChatViewModelTest {
         viewModel.onExampleQuestionSelected("Question two", 1)
 
         verify {
-            analyticsClient.chat(type = "suggestion", action = "Ask question", section = "chat")
+            analyticsClient.chat(type = "suggestion", section = "chat")
             analyticsClient.selectItemEvent(
                 ecommerceEvent = EcommerceEvent(
                     itemListId = "chat suggestions",

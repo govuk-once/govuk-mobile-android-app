@@ -236,13 +236,7 @@ internal class ChatViewModel @Inject constructor(
                 ecommerceEvent = EcommerceEvent(
                     itemListId = CHAT_SUGGESTIONS_LIST_ID,
                     itemListName = CHAT_SUGGESTIONS_LIST_NAME,
-                    items = questions.map { question ->
-                        EcommerceEvent.Item(
-                            itemName = question,
-                            itemCategory = CHAT_SUGGESTION_ITEM_CATEGORY,
-                            locationId = ""
-                        )
-                    },
+                    items = questions.map { question -> chatSuggestionItem(question) },
                     totalItemCount = questions.size
                 )
             )
@@ -250,24 +244,24 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onExampleQuestionSelected(question: String, index: Int) {
-        analyticsClient.chat(type = "suggestion", action = "Ask question", section = "chat")
+        analyticsClient.chat(type = "suggestion", section = "chat")
 
         analyticsClient.selectItemEvent(
             ecommerceEvent = EcommerceEvent(
                 itemListId = CHAT_SUGGESTIONS_LIST_ID,
                 itemListName = CHAT_SUGGESTIONS_LIST_NAME,
-                items = listOf(
-                    EcommerceEvent.Item(
-                        itemName = question,
-                        itemCategory = CHAT_SUGGESTION_ITEM_CATEGORY,
-                        locationId = ""
-                    )
-                ),
+                items = listOf(chatSuggestionItem(question)),
                 totalItemCount = chatExampleQuestions?.size ?: 0
             ),
             selectedItemIndex = index + 1 // not zero indexed
         )
     }
+
+    private fun chatSuggestionItem(question: String) = EcommerceEvent.Item(
+        itemName = question,
+        itemCategory = CHAT_SUGGESTION_ITEM_CATEGORY,
+        locationId = ""
+    )
 
     fun onButtonClicked(text: String, section: String) {
         analyticsClient.buttonClick(

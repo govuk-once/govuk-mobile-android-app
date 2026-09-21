@@ -278,13 +278,13 @@ class AnalyticsClientTest {
 
     @Test
     fun `Given a chat suggestion is selected, then log event`() {
-        analyticsClient.chat(type = "suggestion", action = "Ask question", section = "chat")
+        analyticsClient.chat(type = "suggestion", section = "chat")
 
         verify {
             analyticsCoordinator.logEvent(
                 "Chat",
                 mapOf(
-                    "action" to "Ask question",
+                    "action" to "Ask Question",
                     "type" to "suggestion",
                     "section" to "chat"
                 )
