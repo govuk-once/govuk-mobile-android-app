@@ -187,7 +187,7 @@ private fun EditCountriesLoaded(
             text = { Text(stringResource(R.string.edit_countries_error_description)) },
             confirmButton = {
                 Button(onClick = onClearUnfollowError) {
-                    Text("OK")
+                    Text(stringResource(R.string.edit_countries_error_button))
                 }
             }
         )

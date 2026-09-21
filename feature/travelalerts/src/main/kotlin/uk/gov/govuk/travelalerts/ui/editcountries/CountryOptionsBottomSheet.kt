@@ -194,7 +194,7 @@ private fun CountryOptionsBottomSheetContent(
             text = { Text(stringResource(R.string.edit_countries_error_description)) },
             confirmButton = {
                 Button(onClick = onClearToggleError) {
-                    Text("OK")
+                    Text(stringResource(R.string.edit_countries_error_button))
                 }
             }
         )

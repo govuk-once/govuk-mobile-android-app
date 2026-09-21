@@ -52,7 +52,7 @@ class TravelAlertsWidgetViewModelTest {
         val state = viewModel.uiState.value as TravelAlertsWidgetViewModel.State.Loaded
         assertEquals(TravelAlertsFixtures.mockCountries.size, state.rows.size)
         assertEquals("France", state.rows[0].headline)
-        assertEquals("https://www.gov.uk/foreign-travel-advice/france", state.rows[0].link)
+        assertEquals("govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/france", state.rows[0].link)
     }
 
     @Test
@@ -132,7 +132,7 @@ class TravelAlertsWidgetViewModelTest {
         verify {
             analyticsClient.widgetClick(
                 text = "France",
-                url = "https://www.gov.uk/foreign-travel-advice/france",
+                url = "govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/france",
                 external = true,
                 section = "Travel Abroad Notifications"
             )
