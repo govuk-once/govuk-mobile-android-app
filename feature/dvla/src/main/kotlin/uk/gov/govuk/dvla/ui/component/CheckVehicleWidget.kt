@@ -38,6 +38,7 @@ import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.SubheadlineRegularLabel
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.CheckVehicleWidgetViewModel
@@ -77,20 +78,32 @@ fun CheckVehicleWidget(
     modifier: Modifier = Modifier
 ) {
     val viewModel: CheckVehicleWidgetViewModel = hiltViewModel()
+
     val searchPrompt = stringResource(R.string.check_vehicle_search_prompt)
+    val description =
+        stringResource(R.string.check_vehicle_description).let { desc ->
+            AccessibleString(
+                displayText = desc,
+                altText = desc.replace(
+                    oldValue = stringResource(R.string.acronym_mot),
+                    newValue = stringResource(R.string.acronym_mot_alt_text)
+                )
+            )
+        }
 
     Column(modifier) {
         MediumVerticalSpacer()
 
         Title3BoldLabel(
-                    text = stringResource(R.string.check_vehicle_title),
-                    modifier = Modifier.semantics { heading() }
+            text = stringResource(R.string.check_vehicle_title),
+            modifier = Modifier.semantics { heading() }
         )
 
         SmallVerticalSpacer()
 
         SubheadlineRegularLabel(
-            text = stringResource(R.string.check_vehicle_description)
+            text = stringResource(R.string.check_vehicle_description),
+            modifier = Modifier.withAltText(description.altText)
         )
 
         MediumVerticalSpacer()
