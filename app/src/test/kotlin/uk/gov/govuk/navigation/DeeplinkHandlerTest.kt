@@ -35,6 +35,7 @@ class DeeplinkHandlerTest {
     private val navController = mockk<NavController>(relaxed = true)
     private val onLaunchBrowser = mockk<((String) -> Unit)>(relaxed = true)
     private val onDeeplinkNotFound = mockk<(() -> Unit)>(relaxed = true)
+    private val onNotificationRead = mockk<((String) -> Unit)>(relaxed = true)
     private val deeplink = mockk<Uri>(relaxed = true)
     private val urlParam = mockk<Uri>(relaxed = true)
 
@@ -47,6 +48,7 @@ class DeeplinkHandlerTest {
         deeplinkHandler = DeeplinkHandler(flagRepo, analyticsClient, topicsDeepLinksProvider)
         deeplinkHandler.onLaunchBrowser = onLaunchBrowser
         deeplinkHandler.onDeeplinkNotFound = onDeeplinkNotFound
+        deeplinkHandler.onNotificationRead = onNotificationRead
         deeplinkHandler.deepLink = deeplink
     }
 
@@ -279,6 +281,36 @@ class DeeplinkHandlerTest {
         verify(exactly = 0) {
             navController.navigate(any(), any<NavOptionsBuilder.() -> Unit>())
             onDeeplinkNotFound.invoke()
+        }
+    }
+
+    @Test
+    fun `Handle web deeplink without notificationID does not invoke onNotificationRead`() {
+        every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
+        every { deeplink.getQueryParameter("notificationID") } returns null
+        every { Uri.parse("https://www.gov.uk/page") } returns urlParam
+        every { urlParam.scheme } returns "https"
+        every { urlParam.host } returns "www.gov.uk"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify(exactly = 0) {
+            onNotificationRead.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle web deeplink with notificationID invokes onNotificationRead`() {
+        every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
+        every { deeplink.getQueryParameter("notificationID") } returns "12345"
+        every { Uri.parse("https://www.gov.uk/page") } returns urlParam
+        every { urlParam.scheme } returns "https"
+        every { urlParam.host } returns "www.gov.uk"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            onNotificationRead.invoke("12345")
         }
     }
 

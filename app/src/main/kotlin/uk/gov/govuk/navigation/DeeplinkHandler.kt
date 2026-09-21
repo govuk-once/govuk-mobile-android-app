@@ -67,6 +67,7 @@ internal class DeeplinkHandler @Inject constructor(
 
     var onLaunchBrowser: ((String) -> Unit)? = null
     var onDeeplinkNotFound: (() -> Unit)? = null
+    var onNotificationRead: ((String) -> Unit)? = null
 
     fun handleDeeplink(navController: NavController) {
         deepLink?.let {
@@ -97,6 +98,9 @@ internal class DeeplinkHandler @Inject constructor(
             } ?: run {
                 it.getUrlParam(DeepLink.allowedGovUkUrls)?.let { uri ->
                     onLaunchBrowser?.invoke(uri.toString())
+                    it.getQueryParameter("notificationID")?.let { notificationId ->
+                        onNotificationRead?.invoke(notificationId)
+                    }
                 } ?: run {
                     validDeeplink = false
                     onDeeplinkNotFound?.invoke()
