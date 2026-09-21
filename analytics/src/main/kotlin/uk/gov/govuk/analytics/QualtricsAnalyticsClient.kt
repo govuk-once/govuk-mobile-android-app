@@ -148,8 +148,8 @@ class QualtricsAnalyticsClient @Inject constructor(
             qualtrics.properties.setString(FIREBASE_SESSION_ID, it)
         }
 
-        val darkMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val theme = if (darkMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
+        val currentMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val theme = if (currentMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
         qualtrics.properties.setString("app_theme", theme)
 
         analyticsParameterKeys.forEach { key ->
