@@ -1,47 +1,16 @@
-package uk.gov.govuk.dvla.ui.model
+package uk.gov.govuk.dvla.mapper
 
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
-import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.FuelType
-import uk.gov.govuk.dvla.domain.FuelType.DIESEL
-import uk.gov.govuk.dvla.domain.FuelType.ELECTRICITY
-import uk.gov.govuk.dvla.domain.FuelType.ELECTRIC_DIESEL
-import uk.gov.govuk.dvla.domain.FuelType.FUEL_CELLS
-import uk.gov.govuk.dvla.domain.FuelType.GAS
-import uk.gov.govuk.dvla.domain.FuelType.GAS_BI_FUEL
-import uk.gov.govuk.dvla.domain.FuelType.GAS_DIESEL
-import uk.gov.govuk.dvla.domain.FuelType.HYBRID_ELECTRIC
-import uk.gov.govuk.dvla.domain.FuelType.OTHER
-import uk.gov.govuk.dvla.domain.FuelType.PETROL
-import uk.gov.govuk.dvla.domain.FuelType.PETROL_GAS
-import uk.gov.govuk.dvla.domain.FuelType.STEAM
 import uk.gov.govuk.dvla.domain.VehicleColour
-import uk.gov.govuk.dvla.domain.VehicleColour.BEIGE
-import uk.gov.govuk.dvla.domain.VehicleColour.BLACK
-import uk.gov.govuk.dvla.domain.VehicleColour.BLUE
-import uk.gov.govuk.dvla.domain.VehicleColour.BRONZE
-import uk.gov.govuk.dvla.domain.VehicleColour.BROWN
-import uk.gov.govuk.dvla.domain.VehicleColour.CREAM
-import uk.gov.govuk.dvla.domain.VehicleColour.GOLD
-import uk.gov.govuk.dvla.domain.VehicleColour.GREEN
-import uk.gov.govuk.dvla.domain.VehicleColour.GREY
-import uk.gov.govuk.dvla.domain.VehicleColour.MAROON
-import uk.gov.govuk.dvla.domain.VehicleColour.MULTI_COLOUR
-import uk.gov.govuk.dvla.domain.VehicleColour.NOT_STATED
-import uk.gov.govuk.dvla.domain.VehicleColour.UNKNOWN
-import uk.gov.govuk.dvla.domain.VehicleColour.ORANGE
-import uk.gov.govuk.dvla.domain.VehicleColour.PINK
-import uk.gov.govuk.dvla.domain.VehicleColour.PURPLE
-import uk.gov.govuk.dvla.domain.VehicleColour.RED
-import uk.gov.govuk.dvla.domain.VehicleColour.SILVER
-import uk.gov.govuk.dvla.domain.VehicleColour.TURQUOISE
-import uk.gov.govuk.dvla.domain.VehicleColour.WHITE
-import uk.gov.govuk.dvla.domain.VehicleColour.YELLOW
 import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.ui.model.KeeperUiModel
+import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
+import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.toMonthYearDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
@@ -155,7 +124,7 @@ internal class VehicleDetailsMapper @Inject constructor(
         val colourRes = stringProvider.getString(this.colour.getResource())
 
         return when (this.secondaryColour) {
-            null, NOT_STATED, UNKNOWN -> colourRes
+            null, VehicleColour.NOT_STATED, VehicleColour.UNKNOWN -> colourRes
             else -> {
                 val secondaryColourRes = stringProvider.getString(this.secondaryColour.getResource())
                 stringProvider.getString(
@@ -183,73 +152,73 @@ internal class VehicleDetailsMapper @Inject constructor(
     }
 
     private fun FuelType.getResources() = when (this) {
-        PETROL -> Triple(
+        FuelType.PETROL -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.petrol_summary,
             R.string.petrol_specification
         )
 
-        DIESEL -> Triple(
+        FuelType.DIESEL -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.diesel_summary,
             R.string.diesel_specification
         )
 
-        ELECTRICITY -> Triple(
+        FuelType.ELECTRICITY -> Triple(
             R.drawable.ic_electric,
             R.string.electric_summary,
             R.string.electric_specification
         )
 
-        STEAM -> Triple(
+        FuelType.STEAM -> Triple(
             R.drawable.ic_steam,
             R.string.steam_summary,
             R.string.steam_specification
         )
 
-        GAS -> Triple(
+        FuelType.GAS -> Triple(
             R.drawable.ic_gas,
             R.string.gas_summary,
             R.string.gas_specification
         )
 
-        PETROL_GAS -> Triple(
+        FuelType.PETROL_GAS -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.petrol_gas_summary,
             R.string.petrol_gas_specification
         )
 
-        GAS_BI_FUEL -> Triple(
+        FuelType.GAS_BI_FUEL -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.gas_bi_fuel_summary,
             R.string.gas_bi_fuel_specification
         )
 
-        HYBRID_ELECTRIC -> Triple(
+        FuelType.HYBRID_ELECTRIC -> Triple(
             R.drawable.ic_hybrid,
             R.string.hybrid_electric_summary,
             R.string.hybrid_electric_specification
         )
 
-        GAS_DIESEL -> Triple(
+        FuelType.GAS_DIESEL -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.gas_diesel_summary,
             R.string.gas_diesel_specification
         )
 
-        FUEL_CELLS -> Triple(
+        FuelType.FUEL_CELLS -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.fuel_cells_summary,
             R.string.fuel_cells_specification
         )
 
-        ELECTRIC_DIESEL -> Triple(
+        FuelType.ELECTRIC_DIESEL -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.electric_diesel_summary,
             R.string.electric_diesel_specification
         )
 
-        OTHER -> Triple(
+        FuelType.OTHER -> Triple(
             R.drawable.ic_petrol_diesel,
             R.string.other,
             R.string.other
@@ -257,26 +226,26 @@ internal class VehicleDetailsMapper @Inject constructor(
     }
 
     private fun VehicleColour.getResource() = when (this) {
-        BROWN -> R.string.brown
-        BRONZE -> R.string.bronze
-        RED -> R.string.red
-        PINK -> R.string.pink
-        ORANGE -> R.string.orange
-        YELLOW -> R.string.yellow
-        GOLD -> R.string.gold
-        GREEN -> R.string.green
-        BLUE -> R.string.blue
-        PURPLE -> R.string.purple
-        GREY -> R.string.grey
-        SILVER -> R.string.silver
-        WHITE -> R.string.white
-        BLACK -> R.string.black
-        MULTI_COLOUR -> R.string.multi_colour
-        BEIGE -> R.string.beige
-        MAROON -> R.string.maroon
-        TURQUOISE -> R.string.turquoise
-        CREAM -> R.string.cream
-        NOT_STATED -> R.string.not_stated
+        VehicleColour.BROWN -> R.string.brown
+        VehicleColour.BRONZE -> R.string.bronze
+        VehicleColour.RED -> R.string.red
+        VehicleColour.PINK -> R.string.pink
+        VehicleColour.ORANGE -> R.string.orange
+        VehicleColour.YELLOW -> R.string.yellow
+        VehicleColour.GOLD -> R.string.gold
+        VehicleColour.GREEN -> R.string.green
+        VehicleColour.BLUE -> R.string.blue
+        VehicleColour.PURPLE -> R.string.purple
+        VehicleColour.GREY -> R.string.grey
+        VehicleColour.SILVER -> R.string.silver
+        VehicleColour.WHITE -> R.string.white
+        VehicleColour.BLACK -> R.string.black
+        VehicleColour.MULTI_COLOUR -> R.string.multi_colour
+        VehicleColour.BEIGE -> R.string.beige
+        VehicleColour.MAROON -> R.string.maroon
+        VehicleColour.TURQUOISE -> R.string.turquoise
+        VehicleColour.CREAM -> R.string.cream
+        VehicleColour.NOT_STATED -> R.string.not_stated
         else -> R.string.not_stated
     }
 }
