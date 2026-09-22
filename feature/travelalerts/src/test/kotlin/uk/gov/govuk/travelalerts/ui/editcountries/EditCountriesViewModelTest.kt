@@ -307,4 +307,63 @@ class EditCountriesViewModelTest {
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
         assertEquals(null, state.unfollowError)
     }
+
+    @Test
+    fun `Given toggle notifications succeeds when enabling, then groups subgroup for country is updated to daily`() = runTest {
+        val groupsWithNotificationsOff = listOf(
+            TravelAlertsFixtures.mockGroups[0].copy(subgroup = "none"), // france - notifications off
+            TravelAlertsFixtures.mockGroups[1],                           // germany - notifications on
+            TravelAlertsFixtures.mockGroups[2]                            // spain - notifications on
+        )
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(groupsWithNotificationsOff)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", true) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("daily", state.groups.find { it.group == "france" }?.subgroup)
+    }
+
+    @Test
+    fun `Given toggle notifications succeeds when disabling, then groups subgroup for country is updated to none`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("none", state.groups.find { it.group == "france" }?.subgroup)
+    }
+
+    @Test
+    fun `Given toggle notifications succeeds, then only the toggled country's group is updated`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("none", state.groups.find { it.group == "france" }?.subgroup)
+        assertEquals("daily", state.groups.find { it.group == "germany" }?.subgroup)
+        assertEquals("daily", state.groups.find { it.group == "spain" }?.subgroup)
+    }
+
+    @Test
+    fun `Given toggle notifications fails, then groups subgroup is unchanged`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Error()
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("daily", state.groups.find { it.group == "france" }?.subgroup)
+    }
 }

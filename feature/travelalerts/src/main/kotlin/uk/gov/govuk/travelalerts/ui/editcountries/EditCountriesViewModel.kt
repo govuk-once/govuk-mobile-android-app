@@ -62,11 +62,23 @@ class EditCountriesViewModel @Inject constructor(
         viewModelScope.launch {
             updateLoaded { copy(isTogglingNotifications = true, toggleError = null) }
             val result = travelAlertsRepo.toggleNotifications(slug, enabled)
-            updateLoaded {
-                copy(
-                    isTogglingNotifications = false,
-                    toggleError = if (result !is Result.Success) "Failed to update notifications" else null
-                )
+            if (result is Result.Success) {
+                val newSubgroup = if (enabled) "daily" else "none"
+                updateLoaded {
+                    copy(
+                        isTogglingNotifications = false,
+                        groups = groups.map { group ->
+                            if (group.group == slug) group.copy(subgroup = newSubgroup) else group
+                        }
+                    )
+                }
+            } else {
+                updateLoaded {
+                    copy(
+                        isTogglingNotifications = false,
+                        toggleError = "Failed to update notifications"
+                    )
+                }
             }
         }
     }
