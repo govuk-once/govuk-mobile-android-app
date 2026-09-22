@@ -1020,6 +1020,15 @@ class AppViewModelTest {
     }
 
     @Test
+    fun `When notification read, then messages feature marks it as read`() = runTest(dispatcher) {
+        viewModel.onNotificationRead("notification-id")
+
+        coVerify(exactly = 1) {
+            messagesFeature.markAsRead("notification-id")
+        }
+    }
+
+    @Test
     fun `Given user session active and dvla flag enabled, When init, then check if account is linked`() = runTest(dispatcher) {
         every { authRepo.isUserSessionActive() } returns true
         every { flagRepo.isDvlaLinkEnabled() } returns true
