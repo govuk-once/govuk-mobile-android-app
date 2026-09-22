@@ -804,4 +804,51 @@ class ChatViewModelTest {
 
         coVerify(exactly = 1) { chatRepo.getConversation() }
     }
+
+    @Test
+    fun `onSubmit does not submit a second question while one is already in flight`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("Second Question")
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }
+        coVerify(exactly = 0) { chatRepo.askQuestion("Second Question") }
+    }
+
+    @Test
+    fun `onSubmit allows a new question once the previous one has completed`() = runTest {
+        val firstQuestion = AnsweredQuestion(
+            "abc",
+            Answer("", "", "", null),
+            "",
+            "",
+            "First Question"
+        )
+        val secondQuestion = AnsweredQuestion(
+            "def",
+            Answer("", "", "", null),
+            "",
+            "",
+            "Second Question"
+        )
+
+        coEvery { chatRepo.askQuestion("First Question") } returns ChatResult.Success(firstQuestion)
+        coEvery { chatRepo.askQuestion("Second Question") } returns ChatResult.Success(secondQuestion)
+        coEvery { chatRepo.getAnswer(any(), any()) } returns ChatResult.Success(Answer("", "", "", null))
+
+        viewModel.onSubmit("First Question")
+        advanceUntilIdle()
+
+        viewModel.onSubmit("Second Question")
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }
+        coVerify(exactly = 1) { chatRepo.askQuestion("Second Question") }
+    }
 }
