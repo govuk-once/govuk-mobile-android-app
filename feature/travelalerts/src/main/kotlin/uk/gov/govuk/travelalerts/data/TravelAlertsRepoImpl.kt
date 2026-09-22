@@ -89,4 +89,52 @@ internal class TravelAlertsRepoImpl @Inject constructor(
 
         return result
     }
+
+    override suspend fun toggleNotifications(slug: String, enabled: Boolean): Result<Unit> {
+        val (leaveSubgroup, joinSubgroup) = if (enabled) Subgroup.NONE to Subgroup.DAILY
+                                            else Subgroup.DAILY to Subgroup.NONE
+        val result = safeAuthApiCall(apiCall = {
+            groupsApi.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = leaveSubgroup,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = joinSubgroup,
+                        action = SubscriptionRequest.Action.JOIN
+                    )
+                )
+            )
+        }, authRepo = authRepo)
+
+        if (result is Success) groups = null
+
+        return result
+    }
+
+    override suspend fun unfollowCountry(slug: String, currentNotificationsEnabled: Boolean): Result<Unit> {
+        val subgroupToLeave = if (currentNotificationsEnabled) Subgroup.DAILY else Subgroup.NONE
+
+        val result = safeAuthApiCall(apiCall = {
+            groupsApi.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = subgroupToLeave,
+                        action = SubscriptionRequest.Action.LEAVE
+                    )
+                )
+            )
+        }, authRepo = authRepo)
+
+        if (result is Success) groups = null
+
+        return result
+    }
 }

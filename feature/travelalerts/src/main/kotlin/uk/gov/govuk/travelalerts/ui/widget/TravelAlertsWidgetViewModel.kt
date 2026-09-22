@@ -54,7 +54,7 @@ class TravelAlertsWidgetViewModel @Inject constructor(
                             headline = country.name,
                             subtitle = country.date.toRelativeDate(),
                             // TODO Would rather this wasn't hard-coded, but not 100% if it's coming back whole off the API
-                            link = "https://www.gov.uk/foreign-travel-advice/${country.slug}"
+                            link = "govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/${country.slug}"
                         )
                     }
                 }.sortedBy { it.headline }
