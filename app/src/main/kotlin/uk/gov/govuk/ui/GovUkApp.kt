@@ -482,6 +482,10 @@ private fun GovUkNavHost(
             showDeepLinkNotFoundAlert = true
         }
 
+        appNavigation.setOnNotificationRead { id ->
+            viewModel.onNotificationRead(id)
+        }
+
         intentFlow.collectLatest { intent ->
             appNavigation.setDeeplink(navController, intent.data)
         }
