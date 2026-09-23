@@ -2,6 +2,8 @@ package uk.gov.govuk.travelalerts.ui.notificationsprompt
 
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.shouldShowRationale
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -123,5 +125,69 @@ class NotificationsRationaleViewModelTest {
         viewModel.onDismissError()
 
         assertEquals(NotificationsRationaleViewModel.State.Default, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given Agree tapped on Android less than 13, then state is Alert`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        every { permissionStatus.isGranted } returns false
+        every { permissionStatus.shouldShowRationale } returns false
+
+        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 30)
+
+        assertEquals(NotificationsRationaleViewModel.State.Alert, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given Agree tapped and first request already completed, then state is Alert`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        every { permissionStatus.isGranted } returns false
+        every { permissionStatus.shouldShowRationale } returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted() } returns true
+
+        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+
+        assertEquals(NotificationsRationaleViewModel.State.Alert, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given Agree tapped and first request completed without shouldShowRationale, then state is Alert`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        every { permissionStatus.isGranted } returns false
+        every { permissionStatus.shouldShowRationale } returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted() } returns true
+
+        viewModel.onPageView("france")
+        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+
+        assertEquals(NotificationsRationaleViewModel.State.Alert, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Given Agree tapped on Android 13+ with first request not completed, then calls requestPermission`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        every { permissionStatus.isGranted } returns false
+        every { permissionStatus.shouldShowRationale } returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted() } returns false
+        coEvery { notificationsRepo.requestPermission() } returns Unit
+
+        viewModel.onPageView("france")
+        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+
+        coEvery { notificationsRepo.requestPermission() }
+    }
+
+    @Test
+    fun `Given on resume after Alert path and permission not granted, then state returns to Alert`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        every { permissionStatus.isGranted } returns false
+        every { permissionStatus.shouldShowRationale } returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted() } returns true
+        coEvery { notificationsRepo.permissionGranted() } returns false
+
+        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onResume("france")
+
+        assertEquals(NotificationsRationaleViewModel.State.Alert, viewModel.uiState.value)
     }
 }

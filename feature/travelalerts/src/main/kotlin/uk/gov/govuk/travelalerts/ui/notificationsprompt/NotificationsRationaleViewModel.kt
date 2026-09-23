@@ -1,9 +1,13 @@
 package uk.gov.govuk.travelalerts.ui.notificationsprompt
 
+import android.os.Build
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.shouldShowRationale
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +41,7 @@ class NotificationsRationaleViewModel @Inject constructor(
     private var selectedCountrySlug: String? = null
     private var hasAgreedToContinue = false
     private var hasHandledResume = false
+    private var isAlertBranch = false
 
     fun onPageView(countrySlug: String) {
         if (_uiState.value != State.Loading) return
@@ -60,12 +65,24 @@ class NotificationsRationaleViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalPermissionsApi::class)
-    fun onAgreeToContinue(permissionStatus: PermissionStatus) {
+    fun onAgreeToContinue(
+        permissionStatus: PermissionStatus,
+        androidVersion: Int = Build.VERSION.SDK_INT
+    ) {
         hasAgreedToContinue = true
         viewModelScope.launch {
-            notificationsRepo.firstPermissionRequestCompleted()
-            notificationsRepo.giveConsent()
-            notificationsRepo.requestPermission()
+            val isDefault = androidVersion >= Build.VERSION_CODES.TIRAMISU &&
+                !permissionStatus.isGranted &&
+                (!notificationsRepo.isFirstPermissionRequestCompleted() || permissionStatus.shouldShowRationale)
+
+            if (isDefault) {
+                notificationsRepo.firstPermissionRequestCompleted()
+                notificationsRepo.giveConsent()
+                notificationsRepo.requestPermission()
+            } else {
+                isAlertBranch = true
+                _uiState.value = State.Alert
+            }
         }
     }
 
@@ -82,10 +99,6 @@ class NotificationsRationaleViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun onSettingsAlertContinue() {
-        // Continue button in the alert calls openDeviceNotificationsSettings, no action needed here
     }
 
     fun onResume(countrySlug: String) {
@@ -105,7 +118,7 @@ class NotificationsRationaleViewModel @Inject constructor(
                     }
                 }
             } else {
-                _uiState.value = State.Default
+                _uiState.value = if (isAlertBranch) State.Alert else State.Default
                 hasHandledResume = false
             }
         }

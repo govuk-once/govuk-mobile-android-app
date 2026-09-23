@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -28,6 +29,7 @@ import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notifications.ui.NotificationsSettingsAlert
 import uk.gov.govuk.notifications.ui.getNotificationsPermissionStatus
+import uk.gov.govuk.notifications.ui.openDeviceNotificationsSettings
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
 
@@ -87,13 +89,14 @@ fun NotificationsRationaleScreen(
         }
 
         is NotificationsRationaleViewModel.State.Alert -> {
+            val context = LocalContext.current
             NotificationsRationaleScreenContent(
                 onNotNow = { viewModel.onNotNow(countrySlug) },
                 onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus) },
                 launchBrowser = launchBrowser,
                 showSettingsAlert = true,
                 onSettingsAlertCancel = { viewModel.onSettingsAlertCancel(countrySlug) },
-                onSettingsAlertContinue = { viewModel.onSettingsAlertContinue() }
+                onSettingsAlertContinue = { openDeviceNotificationsSettings(context) }
             )
         }
 
