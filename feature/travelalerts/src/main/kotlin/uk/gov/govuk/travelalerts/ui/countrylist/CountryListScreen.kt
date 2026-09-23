@@ -30,6 +30,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +50,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
+import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoadingScreen
@@ -62,6 +65,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountryListScreen(
     onClose: () -> Unit,
@@ -69,6 +73,10 @@ fun CountryListScreen(
 ) {
     val viewModel: CountryListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedCountry by viewModel.selectedCountry.collectAsStateWithLifecycle()
+    val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    val followError by viewModel.followError.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         viewModel.onPageView()
     }
@@ -96,6 +104,30 @@ fun CountryListScreen(
                 onCountrySelected = viewModel::onCountrySelected
             )
         }
+    }
+
+    if (selectedCountry != null) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        NotificationsPreferenceBottomSheet(
+            country = selectedCountry!!,
+            sheetState = sheetState,
+            isSaving = isSaving,
+            onDismiss = viewModel::onDismissPreferenceSheet,
+            onNotNow = { viewModel.onNotNowNotifications(selectedCountry!!) },
+            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry!!) }
+        )
+    }
+
+    if (followError) {
+        InfoAlert(
+            title = R.string.follow_country_error_title,
+            message = R.string.follow_country_error_description,
+            buttonText = R.string.follow_country_error_button,
+            onDismiss = {
+                viewModel.onDismissFollowError()
+                onClose()
+            }
+        )
     }
 }
 

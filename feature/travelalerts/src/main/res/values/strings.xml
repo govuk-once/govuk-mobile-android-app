@@ -20,4 +20,11 @@
     <string name="country_list_error_retry">Try again</string>
     <string name="edit_bottom_sheet_footer">Unfollow this country to stop receiving travel advice messages.</string>
     <string name="edit_countries_error_button">OK</string>
+    <string name="follow_country_notification_title">Get notifications?</string>
+    <string name="follow_country_notification_body">You will receive messages when travel advice changes for %1$s.\n\nWould you also like to receive push notifications?</string>
+    <string name="follow_country_notification_get">Get notifications</string>
+    <string name="follow_country_notification_not_now">Not now</string>
+    <string name="follow_country_error_title">There was a problem</string>
+    <string name="follow_country_error_description">This action could not be completed. Please try again.</string>
+    <string name="follow_country_error_button">OK</string>
 </resources>
