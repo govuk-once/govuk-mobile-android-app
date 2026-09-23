@@ -32,11 +32,11 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedContainerDivider
-import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
-import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
@@ -136,30 +136,40 @@ private fun NotificationsPreferenceBottomSheetContent(
         }
 
 
-        if (isSaving) {
-            FixedContainerDivider()
+        FixedContainerDivider()
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = GovUkTheme.spacing.large),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = GovUkTheme.colourScheme.surfaces.primary
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                )
+        ) {
+            if (isSaving) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = GovUkTheme.colourScheme.surfaces.primary
+                    )
+                }
+            } else {
+                PrimaryButton(
+                    text = stringResource(R.string.follow_country_notification_get),
+                    onClick = onGetNotifications,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
-        } else {
-            FixedDoubleButtonGroup(
-                primaryButton = Button(
-                    text = stringResource(R.string.follow_country_notification_get),
-                    onClick = onGetNotifications
-                ),
-                secondaryButton = Button(
-                    text = stringResource(R.string.follow_country_notification_not_now),
-                    onClick = onNotNow
-                )
+
+            Spacer(modifier = Modifier.height(GovUkTheme.spacing.medium))
+
+            SecondaryButton(
+                text = stringResource(R.string.follow_country_notification_not_now),
+                onClick = onNotNow,
+                enabled = !isSaving
             )
         }
     }
