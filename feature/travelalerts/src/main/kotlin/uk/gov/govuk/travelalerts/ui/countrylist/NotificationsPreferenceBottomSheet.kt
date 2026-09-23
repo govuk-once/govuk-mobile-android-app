@@ -20,8 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,13 +31,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FixedContainerDivider
-import uk.gov.govuk.design.ui.component.FixedPrimaryButton
+import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
@@ -138,50 +135,32 @@ private fun NotificationsPreferenceBottomSheetContent(
             MediumVerticalSpacer()
         }
 
-        FixedContainerDivider()
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = GovUkTheme.spacing.medium,
-                    vertical = GovUkTheme.spacing.large
-                )
-        ) {
-            if (isSaving) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = GovUkTheme.colourScheme.surfaces.primary
-                    )
-                }
-            } else {
-                PrimaryButton(
-                    text = stringResource(R.string.follow_country_notification_get),
-                    onClick = onGetNotifications,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+        if (isSaving) {
+            FixedContainerDivider()
 
-            Spacer(modifier = Modifier.height(GovUkTheme.spacing.medium))
-
-            TextButton(
-                onClick = onNotNow,
-                enabled = !isSaving,
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .padding(vertical = GovUkTheme.spacing.large),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = stringResource(R.string.follow_country_notification_not_now),
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
-                    style = GovUkTheme.typography.bodyRegular
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = GovUkTheme.colourScheme.surfaces.primary
                 )
             }
+        } else {
+            FixedDoubleButtonGroup(
+                primaryButton = Button(
+                    text = stringResource(R.string.follow_country_notification_get),
+                    onClick = onGetNotifications
+                ),
+                secondaryButton = Button(
+                    text = stringResource(R.string.follow_country_notification_not_now),
+                    onClick = onNotNow
+                )
+            )
         }
     }
 }

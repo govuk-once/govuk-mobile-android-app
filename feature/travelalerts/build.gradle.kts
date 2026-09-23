@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.retrofit.gson)
 
     implementation(libs.androidx.compose.animation)
+    implementation(libs.google.accompanist)
 
     ksp(libs.hilt.compiler)
 

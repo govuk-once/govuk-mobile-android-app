@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.InfoAlert
@@ -64,11 +65,14 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
+import uk.gov.govuk.travelalerts.navigation.COUNTRY_SLUG_ARG
+import uk.gov.govuk.travelalerts.navigation.NOTIFICATIONS_RATIONALE_ROUTE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountryListScreen(
     onClose: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CountryListViewModel = hiltViewModel()
@@ -82,7 +86,14 @@ fun CountryListScreen(
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.navigationEvent.collect { onClose() }
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is CountryListViewModel.NavigationEvent.NavigateToTopic -> onClose()
+                is CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale -> {
+                    navController.navigate("$NOTIFICATIONS_RATIONALE_ROUTE/${event.countrySlug}")
+                }
+            }
+        }
     }
 
     Column(

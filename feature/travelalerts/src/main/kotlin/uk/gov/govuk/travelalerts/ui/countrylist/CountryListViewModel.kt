@@ -42,8 +42,13 @@ class CountryListViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<State> = MutableStateFlow(State.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<Unit>()
-    val navigationEvent: SharedFlow<Unit> = _navigationEvent
+    sealed class NavigationEvent {
+        data object NavigateToTopic : NavigationEvent()
+        data class NavigateToNotificationsRationale(val countrySlug: String) : NavigationEvent()
+    }
+
+    private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
+    val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
 
     private var allCountries: List<Country> = emptyList()
 
@@ -113,7 +118,7 @@ class CountryListViewModel @Inject constructor(
             when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = false)) {
                 is Result.Success -> {
                     _selectedCountry.value = null
-                    _navigationEvent.emit(Unit)
+                    _navigationEvent.emit(NavigationEvent.NavigateToTopic)
                 }
                 else -> {
                     _sheetSaveState.value = SheetSaveState.Idle
@@ -131,7 +136,7 @@ class CountryListViewModel @Inject constructor(
                 when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = true)) {
                     is Result.Success -> {
                         _selectedCountry.value = null
-                        _navigationEvent.emit(Unit)
+                        _navigationEvent.emit(NavigationEvent.NavigateToTopic)
                     }
                     else -> {
                         _sheetSaveState.value = SheetSaveState.Idle
@@ -141,7 +146,10 @@ class CountryListViewModel @Inject constructor(
                 }
             }
         } else {
-            onNotNowNotifications(country)
+            _selectedCountry.value = null
+            viewModelScope.launch {
+                _navigationEvent.emit(NavigationEvent.NavigateToNotificationsRationale(country.slug))
+            }
         }
     }
 

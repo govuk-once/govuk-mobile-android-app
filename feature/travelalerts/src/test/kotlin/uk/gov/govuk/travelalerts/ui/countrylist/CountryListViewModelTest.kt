@@ -230,7 +230,7 @@ class CountryListViewModelTest {
 
     @Test
     fun `Given Not now tapped, when request succeeds, then navigation event is emitted`() = runTest {
-        val events = mutableListOf<Unit>()
+        val events = mutableListOf<CountryListViewModel.NavigationEvent>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
@@ -239,6 +239,7 @@ class CountryListViewModelTest {
         viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
 
         assertEquals(1, events.size)
+        assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToTopic)
     }
 
     @Test
@@ -264,7 +265,7 @@ class CountryListViewModelTest {
     @Test
     fun `Given Get notifications tapped and permissions granted, when request succeeds, then navigation event is emitted`() = runTest {
         every { notificationsRepo.permissionGranted() } returns true
-        val events = mutableListOf<Unit>()
+        val events = mutableListOf<CountryListViewModel.NavigationEvent>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
@@ -273,6 +274,7 @@ class CountryListViewModelTest {
         viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
 
         assertEquals(1, events.size)
+        assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToTopic)
     }
 
     @Test
@@ -286,18 +288,18 @@ class CountryListViewModelTest {
     }
 
     @Test
-    fun `Given Get notifications tapped and permissions not granted, then behaves like Not now`() = runTest {
+    fun `Given Get notifications tapped and permissions not granted, then navigates to rationale`() = runTest {
         every { notificationsRepo.permissionGranted() } returns false
-        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
-        val events = mutableListOf<Unit>()
+        val events = mutableListOf<CountryListViewModel.NavigationEvent>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
 
         viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
 
-        coVerify { travelAlertsRepo.followCountry("france", notificationsEnabled = false) }
         assertEquals(1, events.size)
+        assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale)
+        assertEquals("france", (events.first() as CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale).countrySlug)
     }
 
     // onSearchQueryChange

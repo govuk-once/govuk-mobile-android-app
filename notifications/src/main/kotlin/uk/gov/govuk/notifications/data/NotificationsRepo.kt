@@ -70,9 +70,9 @@ class NotificationsRepo @Inject constructor(
     suspend fun notificationsOnboardingCompleted() =
         notificationsDataStore.notificationsOnboardingCompleted()
 
-    internal suspend fun isFirstPermissionRequestCompleted() =
+    suspend fun isFirstPermissionRequestCompleted() =
         notificationsDataStore.isFirstPermissionRequestCompleted()
 
-    internal suspend fun firstPermissionRequestCompleted() =
+    suspend fun firstPermissionRequestCompleted() =
         notificationsDataStore.firstPermissionRequestCompleted()
 }
