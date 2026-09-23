@@ -300,6 +300,27 @@ class DeeplinkHandlerTest {
     }
 
     @Test
+    fun `Handle web deeplink without notificationID launches browser and does not invoke onDeeplinkNotFound`() {
+        every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
+        every { deeplink.getQueryParameter("notificationID") } returns null
+        every { Uri.parse("https://www.gov.uk/page") } returns urlParam
+        every { urlParam.scheme } returns "https"
+        every { urlParam.host } returns "www.gov.uk"
+        every { deeplink.toString() } returns "govuk://gov.uk?url=https://www.gov.uk/page"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            onLaunchBrowser.invoke(any())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk?url=https://www.gov.uk/page")
+        }
+
+        verify(exactly = 0) {
+            onDeeplinkNotFound.invoke()
+        }
+    }
+
+    @Test
     fun `Handle web deeplink with notificationID invokes onNotificationRead`() {
         every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
         every { deeplink.getQueryParameter("notificationID") } returns "12345"

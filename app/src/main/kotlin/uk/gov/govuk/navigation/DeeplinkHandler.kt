@@ -96,12 +96,13 @@ internal class DeeplinkHandler @Inject constructor(
                     }
                 }
             } ?: run {
-                it.getUrlParam(DeepLink.allowedGovUkUrls)?.let { uri ->
+                val uri = it.getUrlParam(DeepLink.allowedGovUkUrls)
+                if (uri != null) {
                     onLaunchBrowser?.invoke(uri.toString())
                     it.getQueryParameter("notificationID")?.let { notificationId ->
                         onNotificationRead?.invoke(notificationId)
                     }
-                } ?: run {
+                } else {
                     validDeeplink = false
                     onDeeplinkNotFound?.invoke()
                 }
