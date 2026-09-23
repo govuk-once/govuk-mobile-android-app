@@ -14,6 +14,9 @@ jobs:
   build-distribute:
     name: Build and distribute
     runs-on: ubuntu-latest
+    env:
+      QUALTRICS_BRAND_ID: ${{ secrets.QUALTRICS_BRAND_ID_DEFAULT }}
+      QUALTRICS_PROJECT_ID: ${{ secrets.QUALTRICS_PROJECT_ID_DEFAULT }}
     steps:
       - name: Checkout
         uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b #v4.1.5
