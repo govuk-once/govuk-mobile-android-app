@@ -161,14 +161,17 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun chat() {
-        logEvent(
-            "Chat",
-            mapOf(
-                "action" to "Ask Question",
-                "type" to "typed"
-            )
+    fun chat(type: String = "typed", action: String = "Ask Question", section: String? = null) {
+        val parameters = mutableMapOf(
+            "action" to action,
+            "type" to type
         )
+
+        section?.let {
+            parameters["section"] = it
+        }
+
+        logEvent("Chat", parameters)
     }
 
     fun messagesUrlLaunched(url: String) {
