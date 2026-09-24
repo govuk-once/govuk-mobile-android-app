@@ -51,7 +51,8 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    vehiclesFooter: @Composable () -> Unit = {}
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
@@ -59,15 +60,23 @@ fun VehiclesAndLicenceSummaryWidget(
 
     when (val currentState = state) {
         is UiState.Hidden -> {
-            return // draw nothing if not linked
+            vehiclesFooter()    // content to be shown even if not linked (eg check vehicle)
         }
 
-        is UiState.Error -> AccountError(
-            onClick = { text ->
-                launchBrowser(currentState.fallbackUrl.urlToOpen)
-                viewModel.onExternalButtonClicked(text, currentState.fallbackUrl.originalUrl)
+        is UiState.Error -> {
+            Column(modifier = modifier) {
+                AccountError(
+                    onClick = { text ->
+                        launchBrowser(currentState.fallbackUrl.urlToOpen)
+                        viewModel.onExternalButtonClicked(
+                            text,
+                            currentState.fallbackUrl.originalUrl
+                        )
+                    }
+                )
+                vehiclesFooter()
             }
-        )
+        }
 
         is UiState.Default -> {
             val activeButtonState = when (currentState.drivingView) {
@@ -152,6 +161,8 @@ fun VehiclesAndLicenceSummaryWidget(
                             },
                             modifier = modifier
                         )
+
+                        vehiclesFooter()
                     }
 
                     DrivingView.LICENCE -> {
