@@ -4,6 +4,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
@@ -32,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -62,6 +67,7 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.chat.ui.model.ChatEntry as ChatEntryModel
 
 internal class AnalyticsEvents(
     val onPageView: (String, String, String) -> Unit,
@@ -259,7 +265,7 @@ internal fun ChatScreen(
 
                 items(
                     items = chatEntries,
-                    key = { item -> item.hashCode() }
+                    key = { item -> item.first }
                 ) { item ->
                     ChatEntry(
                         chatEntry = item.second,
@@ -284,8 +290,9 @@ internal fun ChatScreen(
 
                     // Feedback is part of the last question - it scrolls when the question scrolls
                     if (item == chatEntries.last()) {
-                        // TODO: Only show this when the question has been answered
-                        FeedbackLinks(
+                        AnimatedFeedbackLinks(
+                            chatEntry = item.second,
+                            animationDelay = animationDelay,
                             onPositiveFeedback = {
                                 uiEvents.onPositiveFeedback()
                             },
@@ -357,6 +364,50 @@ internal fun ChatScreen(
                 listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
             }
         }
+    }
+}
+
+@Composable
+private fun AnimatedFeedbackLinks(
+    chatEntry: ChatEntryModel,
+    animationDelay: Int,
+    onPositiveFeedback: () -> Unit,
+    onNegativeFeedback: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val animationDuration = 200
+
+    // Start visible if the answer is already present
+    var showFeedback by rememberSaveable(chatEntry.id) {
+        mutableStateOf(chatEntry.answer.isNotBlank())
+    }
+
+    LaunchedEffect(chatEntry.answer) {
+        if (chatEntry.answer.isBlank()) {
+            showFeedback = false
+        } else if (!showFeedback) {
+            // Add the feedback links after the question is rendered
+            if (chatEntry.shouldAnimate) delay(animationDelay.toLong() + animationDuration.toLong())
+            showFeedback = true
+        }
+    }
+
+    AnimatedVisibility(
+        visible = showFeedback,
+        enter =
+            fadeIn(
+                animationSpec = tween(durationMillis = animationDuration),
+                initialAlpha = 0f
+            ) + slideInVertically(
+                animationSpec = tween(durationMillis = animationDuration),
+                initialOffsetY = { 16 }
+            ),
+        modifier = modifier
+    ) {
+        FeedbackLinks(
+            onPositiveFeedback = onPositiveFeedback,
+            onNegativeFeedback = onNegativeFeedback
+        )
     }
 }
 

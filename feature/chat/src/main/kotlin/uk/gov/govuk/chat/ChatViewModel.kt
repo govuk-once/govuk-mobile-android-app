@@ -358,6 +358,7 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
+    // TODO: Add question id to these events. Potentially, cleaner to create a new event
     fun onPositiveFeedback() {
         analyticsClient.iconClick(type = "chat_positive_rating")
     }
