@@ -386,7 +386,7 @@ private fun AnimatedFeedbackLinks(
         if (chatEntry.answer.isBlank()) {
             showFeedback = false
         } else if (!showFeedback) {
-            // Add the feedback links after the question is rendered
+            // Add the feedback links after the answer is rendered
             if (chatEntry.shouldAnimate) delay(animationDelay.toLong() + animationDuration.toLong())
             showFeedback = true
         }
