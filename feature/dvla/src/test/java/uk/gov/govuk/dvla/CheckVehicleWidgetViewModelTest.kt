@@ -17,7 +17,7 @@ class CheckVehicleWidgetViewModelTest {
     fun `Given a search click, when onSearchClicked is called, then track button click event`() {
         val expectedText = "Check vehicle details"
 
-        viewModel.onSearchClicked(expectedText)
+        viewModel.onSearchVehicleClicked(expectedText)
 
         verify(exactly = 1) {
             analyticsClient.buttonClick(

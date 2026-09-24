@@ -601,9 +601,7 @@ private fun GovUkNavHost(
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
                                 vehiclesFooter = {
-                                    CheckVehicleWidget(
-                                        onSearchClick = { /* TODO in next ticket */ }
-                                    )
+                                    CheckVehicleWidget()
                                 }
                             )
                         }

@@ -13,8 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -74,10 +78,11 @@ private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehic
 
 @Composable
 fun CheckVehicleWidget(
-    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CheckVehicleWidgetViewModel = hiltViewModel()
+    val sheetState by viewModel.sheetState.collectAsState()
+    var showSheet by rememberSaveable { mutableStateOf(false) }
 
     val searchPrompt = stringResource(R.string.check_vehicle_search_prompt)
     val description =
@@ -111,12 +116,25 @@ fun CheckVehicleWidget(
         CheckVehicleCard(
             prompt = searchPrompt,
             onClick = {
-                viewModel.onSearchClicked(searchPrompt)
-                onSearchClick()
+                viewModel.onSearchVehicleClicked(searchPrompt)
+                showSheet = true
             }
         )
 
         LargeVerticalSpacer()
+    }
+
+    if (showSheet) {
+        CheckVehicleSheet(
+            state = sheetState,
+            onRegistrationChange = viewModel::onRegistrationChanged,
+            onClear = { viewModel.onClearClicked() },
+            onSubmit = { viewModel.onSubmitClicked() },
+            onDismiss = {
+                showSheet = false
+                viewModel.onSheetDismissed()
+            }
+        )
     }
 }
 
@@ -190,7 +208,7 @@ fun CheckVehicleCard(
 @Composable
 private fun CheckAVehicleWidgetPreview() {
     GovUkTheme {
-        CheckVehicleWidget(onSearchClick = {})
+        CheckVehicleWidget()
     }
 }
 
