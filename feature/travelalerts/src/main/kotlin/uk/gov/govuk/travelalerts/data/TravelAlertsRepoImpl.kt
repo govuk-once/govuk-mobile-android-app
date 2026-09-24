@@ -72,14 +72,23 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         return res
     }
 
-    override suspend fun subscribeToCountry(slug: String): Result<Unit> {
+    override suspend fun followCountry(slug: String, notificationsEnabled: Boolean): Result<Unit> {
+        val (leaveSubgroup, joinSubgroup) = if (notificationsEnabled) Subgroup.NONE to Subgroup.DAILY
+                                            else Subgroup.DAILY to Subgroup.NONE
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
                     SubscriptionRequest(
                         namespace = "travel",
                         group = slug,
-                        subgroup = Subgroup.DAILY
+                        subgroup = leaveSubgroup,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = joinSubgroup,
+                        action = SubscriptionRequest.Action.JOIN
                     )
                 )
             )
