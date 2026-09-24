@@ -4,11 +4,13 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -62,6 +65,7 @@ import uk.gov.govuk.chat.ui.component.ChatEntry
 import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
 import uk.gov.govuk.config.data.remote.model.ChatUrls
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
@@ -367,6 +371,8 @@ internal fun ChatScreen(
     }
 }
 
+private enum class FeedbackSelection { None, Positive, Negative, ThankYou }
+
 @Composable
 private fun AnimatedFeedbackLinks(
     chatEntry: ChatEntryModel,
@@ -380,6 +386,10 @@ private fun AnimatedFeedbackLinks(
     // Start visible if the answer is already present
     var showFeedback by rememberSaveable(chatEntry.id) {
         mutableStateOf(chatEntry.answer.isNotBlank())
+    }
+
+    var feedbackSelection by rememberSaveable(chatEntry.id) {
+        mutableStateOf(FeedbackSelection.None)
     }
 
     LaunchedEffect(chatEntry.answer) {
@@ -404,10 +414,36 @@ private fun AnimatedFeedbackLinks(
             ),
         modifier = modifier
     ) {
-        FeedbackLinks(
-            onPositiveFeedback = onPositiveFeedback,
-            onNegativeFeedback = onNegativeFeedback
-        )
+        when (feedbackSelection) {
+            FeedbackSelection.None -> FeedbackLinks(
+                onPositiveFeedback = {
+                    feedbackSelection = FeedbackSelection.Positive
+                },
+                onNegativeFeedback = {
+                    feedbackSelection = FeedbackSelection.Negative
+                }
+            )
+
+            FeedbackSelection.Positive -> SurveyLink(
+                linkText = "Say what went well", // TODO
+                icon = R.drawable.baseline_thumb_up_24,
+                onClick = {
+                    onPositiveFeedback()
+                    feedbackSelection = FeedbackSelection.ThankYou
+                }
+            )
+
+            FeedbackSelection.Negative -> SurveyLink(
+                linkText = "Say what went wrong", // TODO
+                icon = R.drawable.baseline_thumb_down_24,
+                onClick = {
+                    onNegativeFeedback()
+                    feedbackSelection = FeedbackSelection.ThankYou
+                }
+            )
+
+            FeedbackSelection.ThankYou -> FeedbackThankYou()
+        }
     }
 }
 
@@ -427,7 +463,7 @@ private fun FeedbackLinks(
         ) {
             Icon(
                 painter = painterResource(R.drawable.outline_thumb_up_24),
-                contentDescription = "Chat positive",
+                contentDescription = "Chat positive", // TODO
                 tint = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }
@@ -441,10 +477,67 @@ private fun FeedbackLinks(
         ) {
             Icon(
                 painter = painterResource(R.drawable.outline_thumb_down_24),
-                contentDescription = "Chat negative",
+                contentDescription = "Chat negative", // TODO
                 tint = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }
+    }
+}
+
+@Composable
+private fun SurveyLink(
+    linkText: String,
+    @DrawableRes icon: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+            .height(48.dp)
+            .padding(GovUkTheme.spacing.small)
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = "Chat positive", // TODO
+            tint = GovUkTheme.colourScheme.textAndIcons.secondary,
+        )
+
+        SmallHorizontalSpacer()
+
+        BodyRegularLabel(
+            text = linkText,
+            color = GovUkTheme.colourScheme.textAndIcons.link,
+            modifier = Modifier.clickable(
+                enabled = true,
+                onClick = { onClick() }
+            )
+        )
+    }
+}
+
+@Composable
+private fun FeedbackThankYou(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+            .height(48.dp)
+            .padding(GovUkTheme.spacing.small)
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.outline_check_24),
+            contentDescription = "Chat positive", // TODO
+            tint = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
+
+        SmallHorizontalSpacer()
+
+        BodyRegularLabel(
+            text = "Thanks for your feedback", // TODO
+            color = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
     }
 }
 
