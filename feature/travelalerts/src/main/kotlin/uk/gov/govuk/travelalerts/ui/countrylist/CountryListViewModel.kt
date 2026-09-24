@@ -6,10 +6,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
 import javax.inject.Inject
@@ -17,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CountryListViewModel @Inject constructor(
     private val travelAlertsRepo: TravelAlertsRepo,
+    private val notificationsRepo: NotificationsRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
@@ -41,6 +46,21 @@ class CountryListViewModel @Inject constructor(
     val navigationEvent: SharedFlow<Unit> = _navigationEvent
 
     private var allCountries: List<Country> = emptyList()
+
+    private sealed class SheetSaveState {
+        data object Idle : SheetSaveState()
+        data object Saving : SheetSaveState()
+    }
+
+    private val _selectedCountry = MutableStateFlow<Country?>(null)
+    val selectedCountry = _selectedCountry.asStateFlow()
+
+    private val _sheetSaveState = MutableStateFlow<SheetSaveState>(SheetSaveState.Idle)
+    val isSaving = _sheetSaveState.map { it is SheetSaveState.Saving }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    private val _followError = MutableStateFlow(false)
+    val followError = _followError.asStateFlow()
 
     fun onPageView() {
         analyticsClient.screenView(
@@ -80,15 +100,53 @@ class CountryListViewModel @Inject constructor(
         if (currentState is State.Loaded && currentState.searchQuery.isNotEmpty()) {
             analyticsClient.search(currentState.searchQuery, section = SEARCH_SECTION)
         }
+        _selectedCountry.value = country
+    }
+
+    fun onDismissPreferenceSheet() {
+        _selectedCountry.value = null
+    }
+
+    fun onNotNowNotifications(country: Country) {
         viewModelScope.launch {
-            _uiState.value = State.Loading
-            val result = travelAlertsRepo.subscribeToCountry(country.slug)
-            if (result is Result.Success) {
-                _navigationEvent.emit(Unit)
-            } else {
-                _uiState.value = State.Loaded(allCountries)
+            _sheetSaveState.value = SheetSaveState.Saving
+            when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = false)) {
+                is Result.Success -> {
+                    _selectedCountry.value = null
+                    _navigationEvent.emit(Unit)
+                }
+                else -> {
+                    _sheetSaveState.value = SheetSaveState.Idle
+                    _selectedCountry.value = null
+                    _followError.value = true
+                }
             }
         }
+    }
+
+    fun onGetNotificationsClick(country: Country) {
+        if (notificationsRepo.permissionGranted()) {
+            viewModelScope.launch {
+                _sheetSaveState.value = SheetSaveState.Saving
+                when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = true)) {
+                    is Result.Success -> {
+                        _selectedCountry.value = null
+                        _navigationEvent.emit(Unit)
+                    }
+                    else -> {
+                        _sheetSaveState.value = SheetSaveState.Idle
+                        _selectedCountry.value = null
+                        _followError.value = true
+                    }
+                }
+            }
+        } else {
+            onNotNowNotifications(country)
+        }
+    }
+
+    fun onDismissFollowError() {
+        _followError.value = false
     }
 
     fun onSearchSubmitted() {

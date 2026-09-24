@@ -12,6 +12,10 @@ import uk.gov.govuk.travelalerts.ui.editcountries.EditCountriesScreen
 const val COUNTRY_LIST_ROUTE = "country_list_route"
 const val EDIT_COUNTRIES_ROUTE = "edit_countries_route"
 
+val travelAlertsDeepLinks = mapOf(
+    "/travelalerts/edit" to listOf(EDIT_COUNTRIES_ROUTE)
+)
+
 fun NavGraphBuilder.travelAlertsGraph(
     navController: NavController,
     launchBrowser: (url: String) -> Unit,

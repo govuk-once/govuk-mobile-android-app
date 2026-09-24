@@ -24,6 +24,7 @@ import uk.gov.govuk.topics.navigation.TOPICS_EDIT_ROUTE
 import uk.gov.govuk.topics.navigation.TOPIC_ROUTE
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
 import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.visited.navigation.VISITED_ROUTE
 
 class DeeplinkHandlerTest {
@@ -34,6 +35,7 @@ class DeeplinkHandlerTest {
     private val navController = mockk<NavController>(relaxed = true)
     private val onLaunchBrowser = mockk<((String) -> Unit)>(relaxed = true)
     private val onDeeplinkNotFound = mockk<(() -> Unit)>(relaxed = true)
+    private val onNotificationRead = mockk<((String) -> Unit)>(relaxed = true)
     private val deeplink = mockk<Uri>(relaxed = true)
     private val urlParam = mockk<Uri>(relaxed = true)
 
@@ -46,6 +48,7 @@ class DeeplinkHandlerTest {
         deeplinkHandler = DeeplinkHandler(flagRepo, analyticsClient, topicsDeepLinksProvider)
         deeplinkHandler.onLaunchBrowser = onLaunchBrowser
         deeplinkHandler.onDeeplinkNotFound = onDeeplinkNotFound
+        deeplinkHandler.onNotificationRead = onNotificationRead
         deeplinkHandler.deepLink = deeplink
     }
 
@@ -282,6 +285,57 @@ class DeeplinkHandlerTest {
     }
 
     @Test
+    fun `Handle web deeplink without notificationID does not invoke onNotificationRead`() {
+        every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
+        every { deeplink.getQueryParameter("notificationID") } returns null
+        every { Uri.parse("https://www.gov.uk/page") } returns urlParam
+        every { urlParam.scheme } returns "https"
+        every { urlParam.host } returns "www.gov.uk"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify(exactly = 0) {
+            onNotificationRead.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle web deeplink without notificationID launches browser and does not invoke onDeeplinkNotFound`() {
+        every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
+        every { deeplink.getQueryParameter("notificationID") } returns null
+        every { Uri.parse("https://www.gov.uk/page") } returns urlParam
+        every { urlParam.scheme } returns "https"
+        every { urlParam.host } returns "www.gov.uk"
+        every { deeplink.toString() } returns "govuk://gov.uk?url=https://www.gov.uk/page"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            onLaunchBrowser.invoke(any())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk?url=https://www.gov.uk/page")
+        }
+
+        verify(exactly = 0) {
+            onDeeplinkNotFound.invoke()
+        }
+    }
+
+    @Test
+    fun `Handle web deeplink with notificationID invokes onNotificationRead`() {
+        every { deeplink.getQueryParameter("url") } returns "https://www.gov.uk/page"
+        every { deeplink.getQueryParameter("notificationID") } returns "12345"
+        every { Uri.parse("https://www.gov.uk/page") } returns urlParam
+        every { urlParam.scheme } returns "https"
+        every { urlParam.host } returns "www.gov.uk"
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            onNotificationRead.invoke("12345")
+        }
+    }
+
+    @Test
     fun `Handle broken deeplink`() {
         every { deeplink.path } returns "/blah"
         every { deeplink.toString() } returns "govuk://gov.uk/blah"
@@ -297,6 +351,22 @@ class DeeplinkHandlerTest {
         verify(exactly = 0) {
             navController.navigate(any(), any<NavOptionsBuilder.() -> Unit>())
             onLaunchBrowser.invoke(any())
+        }
+    }
+
+    @Test
+    fun `Handle travelalerts edit deeplink`() {
+        every { deeplink.path } returns "/travelalerts/edit"
+        every { deeplink.toString() } returns "govuk://gov.uk/travelalerts/edit"
+
+        deeplinkHandler.deepLink = deeplink
+
+        deeplinkHandler.handleDeeplink(navController)
+
+        verify {
+            navController.navigate(HOME_GRAPH_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            navController.navigate(EDIT_COUNTRIES_ROUTE, any<NavOptionsBuilder.() -> Unit>())
+            analyticsClient.deepLinkEvent(true, "govuk://gov.uk/travelalerts/edit")
         }
     }
 

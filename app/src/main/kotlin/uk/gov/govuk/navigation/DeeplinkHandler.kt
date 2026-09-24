@@ -18,6 +18,7 @@ import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
+import uk.gov.govuk.travelalerts.navigation.travelAlertsDeepLinks
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
 import javax.inject.Inject
 import kotlin.collections.get
@@ -44,6 +45,7 @@ internal class DeeplinkHandler @Inject constructor(
             putAll(homeDeepLinks)
             putAll(settingsDeepLinks)
             putAll(messagesDeepLinks)
+            putAll(travelAlertsDeepLinks)
 
             if (flagRepo.isChatEnabled()) {
                 putAll(chatDeepLinks)
@@ -65,6 +67,7 @@ internal class DeeplinkHandler @Inject constructor(
 
     var onLaunchBrowser: ((String) -> Unit)? = null
     var onDeeplinkNotFound: (() -> Unit)? = null
+    var onNotificationRead: ((String) -> Unit)? = null
 
     fun handleDeeplink(navController: NavController) {
         deepLink?.let {
@@ -93,9 +96,13 @@ internal class DeeplinkHandler @Inject constructor(
                     }
                 }
             } ?: run {
-                it.getUrlParam(DeepLink.allowedGovUkUrls)?.let { uri ->
+                val uri = it.getUrlParam(DeepLink.allowedGovUkUrls)
+                if (uri != null) {
                     onLaunchBrowser?.invoke(uri.toString())
-                } ?: run {
+                    it.getQueryParameter("notificationID")?.let { notificationId ->
+                        onNotificationRead?.invoke(notificationId)
+                    }
+                } else {
                     validDeeplink = false
                     onDeeplinkNotFound?.invoke()
                 }

@@ -2,6 +2,7 @@ package uk.gov.govuk.analytics
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -211,6 +212,36 @@ class QualtricsAnalyticsClientTest {
 
         verify(exactly = 1) {
             firebaseIdentifiers.refresh()
+        }
+    }
+
+    @Test
+    fun `Given the the user has light mode set, when an event is logged, then ensure light is sent as the app_theme`() {
+        val configuration = Configuration().apply {
+            uiMode = Configuration.UI_MODE_NIGHT_NO
+        }
+        every { context.resources.configuration } returns configuration
+
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("key" to "value"))
+
+        verify(exactly = 1) {
+            qualtricsProperties.setString("app_theme", "light")
+            qualtrics.registerViewVisit("event_name")
+        }
+    }
+
+    @Test
+    fun `Given the the user has dark mode set, when an event is logged, then ensure dark is sent as the app_theme`() {
+        val configuration = Configuration().apply {
+            uiMode = Configuration.UI_MODE_NIGHT_YES
+        }
+        every { context.resources.configuration } returns configuration
+
+        qualtricsAnalyticsClient.logEvent("event_name", mapOf("key" to "value"))
+
+        verify(exactly = 1) {
+            qualtricsProperties.setString("app_theme", "dark")
+            qualtrics.registerViewVisit("event_name")
         }
     }
 

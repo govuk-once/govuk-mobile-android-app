@@ -6,7 +6,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -78,13 +80,14 @@ class EditCountriesViewModelTest {
     }
 
     @Test
-    fun `Given page view, when groups is empty, then state is Error`() = runTest {
+    fun `Given page view, when groups is empty, then state is Loaded with no countries`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(emptyList())
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is EditCountriesViewModel.State.Error)
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(0, state.countries.size)
     }
 
     @Test
@@ -210,13 +213,157 @@ class EditCountriesViewModelTest {
     }
 
     @Test
-    fun `Given page view, when all countries have been removed from backend, then state is Error`() = runTest {
+    fun `Given page view, when all countries have been removed from backend, then state is Loaded with no countries`() = runTest {
         // Simulate backend removing all followed countries between widget load and edit page load
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(emptyList())
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is EditCountriesViewModel.State.Error)
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(0, state.countries.size)
+    }
+
+    @Test
+    fun `Given toggle notifications succeeds, then isTogglingNotifications is false and toggleError is null`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", true) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertTrue(!state.isTogglingNotifications)
+        assertEquals(null, state.toggleError)
+    }
+
+    @Test
+    fun `Given toggle notifications fails, then isTogglingNotifications is false and toggleError is set`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", true) } returns Result.Error()
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertTrue(!state.isTogglingNotifications)
+        assertEquals("Failed to update notifications", state.toggleError)
+    }
+
+    @Test
+    fun `Given clear toggle error, then toggleError is null`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", true) } returns Result.Error()
+        viewModel.onPageView()
+        viewModel.toggleNotifications("france", true)
+
+        viewModel.clearToggleError()
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(null, state.toggleError)
+    }
+
+    @Test
+    fun `Given unfollow country succeeds, then page reloads and isUnfollowing is false`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france", true) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.unfollowCountry("france", true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertTrue(!state.isUnfollowing)
+        assertEquals(null, state.unfollowError)
+    }
+
+    @Test
+    fun `Given unfollow country fails, then isUnfollowing is false and unfollowError is set`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france", true) } returns Result.Error()
+        viewModel.onPageView()
+
+        viewModel.unfollowCountry("france", true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertTrue(!state.isUnfollowing)
+        assertEquals("Failed to unfollow country", state.unfollowError)
+    }
+
+    @Test
+    fun `Given clear unfollow error, then unfollowError is null`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france", true) } returns Result.Error()
+        viewModel.onPageView()
+        viewModel.unfollowCountry("france", true)
+
+        viewModel.clearUnfollowError()
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(null, state.unfollowError)
+    }
+
+    @Test
+    fun `Given toggle notifications succeeds when enabling, then groups subgroup for country is updated to daily`() = runTest {
+        val groupsWithNotificationsOff = listOf(
+            TravelAlertsFixtures.mockGroups[0].copy(subgroup = "none"), // france - notifications off
+            TravelAlertsFixtures.mockGroups[1],                           // germany - notifications on
+            TravelAlertsFixtures.mockGroups[2]                            // spain - notifications on
+        )
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(groupsWithNotificationsOff)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", true) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("daily", state.groups.find { it.group == "france" }?.subgroup)
+    }
+
+    @Test
+    fun `Given toggle notifications succeeds when disabling, then groups subgroup for country is updated to none`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("none", state.groups.find { it.group == "france" }?.subgroup)
+    }
+
+    @Test
+    fun `Given toggle notifications succeeds, then only the toggled country's group is updated`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("none", state.groups.find { it.group == "france" }?.subgroup)
+        assertEquals("daily", state.groups.find { it.group == "germany" }?.subgroup)
+        assertEquals("daily", state.groups.find { it.group == "spain" }?.subgroup)
+    }
+
+    @Test
+    fun `Given toggle notifications fails, then groups subgroup is unchanged`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Error()
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals("daily", state.groups.find { it.group == "france" }?.subgroup)
     }
 }
