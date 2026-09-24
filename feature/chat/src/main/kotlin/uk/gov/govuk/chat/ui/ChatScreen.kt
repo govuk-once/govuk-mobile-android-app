@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -55,6 +59,7 @@ import uk.gov.govuk.chat.ui.component.IntroMessages
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -72,7 +77,9 @@ internal class AnalyticsEvents(
 internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
-    val onClear: () -> Unit
+    val onClear: () -> Unit,
+    val onPositiveFeedback: () -> Unit,
+    val onNegativeFeedback: () -> Unit
 )
 
 @Composable
@@ -148,6 +155,12 @@ internal fun ChatRoute(
                         },
                         onClear = {
                             viewModel.clearConversation()
+                        },
+                        onPositiveFeedback = {
+                            viewModel.onPositiveFeedback()
+                        },
+                        onNegativeFeedback = {
+                            viewModel.onNegativeFeedback()
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
@@ -244,9 +257,12 @@ internal fun ChatScreen(
                     )
                 }
 
-                items(chatEntries) {
+                items(
+                    items = chatEntries,
+                    key = { item -> item.hashCode() }
+                ) { item ->
                     ChatEntry(
-                        chatEntry = it.second,
+                        chatEntry = item.second,
                         onMarkdownLinkClicked = { text, url ->
                             launchBrowser(url)
                             analyticsEvents.onMarkdownLinkClicked(text, url)
@@ -265,6 +281,19 @@ internal fun ChatScreen(
                             clipboard.setPrimaryClip(clip)
                         }
                     )
+
+                    // Feedback is part of the last question - it scrolls when the question scrolls
+                    if (item == chatEntries.last()) {
+                        // TODO: Only show this when the question has been answered
+                        FeedbackLinks(
+                            onPositiveFeedback = {
+                                uiEvents.onPositiveFeedback()
+                            },
+                            onNegativeFeedback = {
+                                uiEvents.onNegativeFeedback()
+                            }
+                        )
+                    }
                 }
 
                 item {
@@ -273,32 +302,32 @@ internal fun ChatScreen(
             }
 
             Column {
-                    ChatInput(
-                        uiState,
-                        hasConversation = hasConversation,
-                        onNavigationActionItemClicked = { text, url ->
-                            launchBrowser(url)
-                            analyticsEvents.onNavigationActionItemClicked(text, url)
-                        },
-                        onFunctionActionItemClicked = { text, section, action ->
-                            analyticsEvents.onFunctionActionItemClicked(text, section, action)
-                        },
-                        onClear = uiEvents.onClear,
-                        onQuestionUpdated = uiEvents.onQuestionUpdated,
-                        onSubmit = { question ->
-                            uiEvents.onSubmit(question)
-                            analyticsEvents.onQuestionSubmit()
-                        },
-                        chatUrls = chatUrls,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(
-                                top = GovUkTheme.spacing.small,
-                                bottom = GovUkTheme.spacing.medium
-                            ),
-                        isTalkBackActive = isTalkBackActive
-                    )
+                ChatInput(
+                    uiState,
+                    hasConversation = hasConversation,
+                    onNavigationActionItemClicked = { text, url ->
+                        launchBrowser(url)
+                        analyticsEvents.onNavigationActionItemClicked(text, url)
+                    },
+                    onFunctionActionItemClicked = { text, section, action ->
+                        analyticsEvents.onFunctionActionItemClicked(text, section, action)
+                    },
+                    onClear = uiEvents.onClear,
+                    onQuestionUpdated = uiEvents.onQuestionUpdated,
+                    onSubmit = { question ->
+                        uiEvents.onSubmit(question)
+                        analyticsEvents.onQuestionSubmit()
+                    },
+                    chatUrls = chatUrls,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = GovUkTheme.spacing.medium)
+                        .padding(
+                            top = GovUkTheme.spacing.small,
+                            bottom = GovUkTheme.spacing.medium
+                        ),
+                    isTalkBackActive = isTalkBackActive
+                )
             }
         }
     }
@@ -327,6 +356,43 @@ internal fun ChatScreen(
                 delay(animationDelay.toLong() + 100)
                 listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
             }
+        }
+    }
+}
+
+@Composable
+private fun FeedbackLinks(
+    onPositiveFeedback: () -> Unit,
+    onNegativeFeedback: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+    ) {
+        IconButton(
+            onClick = { onPositiveFeedback() },
+            modifier = Modifier.size(48.dp)
+                .padding(GovUkTheme.spacing.small)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.outline_thumb_up_24),
+                contentDescription = "Chat positive",
+                tint = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
+        }
+
+        SmallHorizontalSpacer()
+
+        IconButton(
+            onClick = { onNegativeFeedback() },
+            modifier = Modifier.size(48.dp)
+                .padding(GovUkTheme.spacing.small)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.outline_thumb_down_24),
+                contentDescription = "Chat negative",
+                tint = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
         }
     }
 }
@@ -369,7 +435,9 @@ private fun analyticsEvents() = AnalyticsEvents(
 private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
-    onClear = { }
+    onClear = { },
+    onPositiveFeedback = { },
+    onNegativeFeedback = { }
 )
 
 @PreviewLightDark
