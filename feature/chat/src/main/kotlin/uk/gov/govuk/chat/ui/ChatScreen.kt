@@ -8,7 +8,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -292,15 +294,15 @@ internal fun ChatScreen(
                         }
                     )
 
-                    // Feedback is part of the last question - it scrolls when the question scrolls
+                    // Feedback is part of the last answer - it scrolls when the answer scrolls
                     if (item == chatEntries.last()) {
-                        AnimatedFeedbackLinks(
+                        AnimatedFeedback(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
-                            onPositiveFeedback = {
+                            onPositiveLinkClick = {
                                 uiEvents.onPositiveFeedback()
                             },
-                            onNegativeFeedback = {
+                            onNegativeLinkClick = {
                                 uiEvents.onNegativeFeedback()
                             }
                         )
@@ -371,25 +373,26 @@ internal fun ChatScreen(
     }
 }
 
-private enum class FeedbackSelection { None, Positive, Negative, ThankYou }
+private enum class FeedbackSelection { Icons, Positive, Negative, ThankYou }
 
 @Composable
-private fun AnimatedFeedbackLinks(
+private fun AnimatedFeedback(
     chatEntry: ChatEntryModel,
     animationDelay: Int,
-    onPositiveFeedback: () -> Unit,
-    onNegativeFeedback: () -> Unit,
+    onPositiveLinkClick: () -> Unit,
+    onNegativeLinkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val animationDuration = 200
 
+    // TODO: keep track of if FB is given on the last question somehow.
     // Start visible if the answer is already present
     var showFeedback by rememberSaveable(chatEntry.id) {
         mutableStateOf(chatEntry.answer.isNotBlank())
     }
 
     var feedbackSelection by rememberSaveable(chatEntry.id) {
-        mutableStateOf(FeedbackSelection.None)
+        mutableStateOf(FeedbackSelection.Icons)
     }
 
     LaunchedEffect(chatEntry.answer) {
@@ -402,6 +405,7 @@ private fun AnimatedFeedbackLinks(
         }
     }
 
+    // TODO: If FeedbackSelection.ThankYou we need a longer delay
     AnimatedVisibility(
         visible = showFeedback,
         enter =
@@ -412,32 +416,42 @@ private fun AnimatedFeedbackLinks(
                 animationSpec = tween(durationMillis = animationDuration),
                 initialOffsetY = { 16 }
             ),
+        exit =
+            fadeOut(
+                animationSpec = tween(durationMillis = animationDuration)
+            ) + slideOutVertically(
+                animationSpec = tween(durationMillis = animationDuration)
+            ),
         modifier = modifier
     ) {
         when (feedbackSelection) {
-            FeedbackSelection.None -> FeedbackLinks(
-                onPositiveFeedback = {
+            FeedbackSelection.Icons -> FeedbackIcons(
+                onPositiveIconClick = {
+                    // TODO: analytics event
                     feedbackSelection = FeedbackSelection.Positive
                 },
-                onNegativeFeedback = {
+                onNegativeIconClick = {
+                    // TODO: analytics event
                     feedbackSelection = FeedbackSelection.Negative
                 }
             )
 
-            FeedbackSelection.Positive -> SurveyLink(
-                linkText = "Say what went well", // TODO
+            // TODO: Only if analytics opt-in - else ThankYou
+            FeedbackSelection.Positive -> FeedbackLink(
+                linkText = stringResource(R.string.chat_feedback_positive_link_text),
                 icon = R.drawable.baseline_thumb_up_24,
                 onClick = {
-                    onPositiveFeedback()
+                    onPositiveLinkClick()
                     feedbackSelection = FeedbackSelection.ThankYou
                 }
             )
 
-            FeedbackSelection.Negative -> SurveyLink(
-                linkText = "Say what went wrong", // TODO
+            // TODO: Only if analytics opt-in - else ThankYou
+            FeedbackSelection.Negative -> FeedbackLink(
+                linkText = stringResource(R.string.chat_feedback_negative_link_text),
                 icon = R.drawable.baseline_thumb_down_24,
                 onClick = {
-                    onNegativeFeedback()
+                    onNegativeLinkClick()
                     feedbackSelection = FeedbackSelection.ThankYou
                 }
             )
@@ -448,22 +462,22 @@ private fun AnimatedFeedbackLinks(
 }
 
 @Composable
-private fun FeedbackLinks(
-    onPositiveFeedback: () -> Unit,
-    onNegativeFeedback: () -> Unit,
+private fun FeedbackIcons(
+    onPositiveIconClick: () -> Unit,
+    onNegativeIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.padding(start = GovUkTheme.spacing.medium)
     ) {
         IconButton(
-            onClick = { onPositiveFeedback() },
+            onClick = { onPositiveIconClick() },
             modifier = Modifier.size(48.dp)
                 .padding(GovUkTheme.spacing.small)
         ) {
             Icon(
                 painter = painterResource(R.drawable.outline_thumb_up_24),
-                contentDescription = "Chat positive", // TODO
+                contentDescription = stringResource(R.string.chat_feedback_positive_icon_text),
                 tint = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }
@@ -471,13 +485,13 @@ private fun FeedbackLinks(
         SmallHorizontalSpacer()
 
         IconButton(
-            onClick = { onNegativeFeedback() },
+            onClick = { onNegativeIconClick() },
             modifier = Modifier.size(48.dp)
                 .padding(GovUkTheme.spacing.small)
         ) {
             Icon(
                 painter = painterResource(R.drawable.outline_thumb_down_24),
-                contentDescription = "Chat negative", // TODO
+                contentDescription = stringResource(R.string.chat_feedback_negative_icon_text),
                 tint = GovUkTheme.colourScheme.textAndIcons.secondary
             )
         }
@@ -485,7 +499,7 @@ private fun FeedbackLinks(
 }
 
 @Composable
-private fun SurveyLink(
+private fun FeedbackLink(
     linkText: String,
     @DrawableRes icon: Int,
     onClick: () -> Unit,
@@ -499,7 +513,7 @@ private fun SurveyLink(
     ) {
         Icon(
             painter = painterResource(icon),
-            contentDescription = "Chat positive", // TODO
+            contentDescription = null,
             tint = GovUkTheme.colourScheme.textAndIcons.secondary,
         )
 
@@ -507,7 +521,7 @@ private fun SurveyLink(
 
         BodyRegularLabel(
             text = linkText,
-            color = GovUkTheme.colourScheme.textAndIcons.link,
+            color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
             modifier = Modifier.clickable(
                 enabled = true,
                 onClick = { onClick() }
@@ -528,14 +542,14 @@ private fun FeedbackThankYou(
     ) {
         Icon(
             painter = painterResource(R.drawable.outline_check_24),
-            contentDescription = "Chat positive", // TODO
+            contentDescription = null,
             tint = GovUkTheme.colourScheme.textAndIcons.secondary
         )
 
         SmallHorizontalSpacer()
 
         BodyRegularLabel(
-            text = "Thanks for your feedback", // TODO
+            text = stringResource(R.string.chat_feedback_thank_you_text),
             color = GovUkTheme.colourScheme.textAndIcons.secondary
         )
     }

@@ -63,4 +63,9 @@
     <string name="chat_banner_desc">An experimental AI tool for finding quick answers</string>
     <string name="chat_banner_cta">Ask a question</string>
     <string name="chat_banner_dismiss_content_desc">Dismiss chat notice</string>
+    <string name="chat_feedback_positive_link_text">Say what went well</string>
+    <string name="chat_feedback_negative_link_text">Say what went wrong</string>
+    <string name="chat_feedback_positive_icon_text">Helpful</string>
+    <string name="chat_feedback_negative_icon_text">Not helpful</string>
+    <string name="chat_feedback_thank_you_text">Thanks for your feedback</string>
 </resources>
