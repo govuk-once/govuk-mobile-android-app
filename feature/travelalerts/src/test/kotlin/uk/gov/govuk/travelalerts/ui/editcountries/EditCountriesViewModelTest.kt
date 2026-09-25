@@ -339,7 +339,7 @@ class EditCountriesViewModelTest {
     }
 
     @Test
-    fun `Given toggle notifications succeeds when enabling, then groups subgroup for country is updated to daily`() = runTest {
+    fun `Given toggle notifications succeeds when enabling, then groups subgroup for country is updated to instant`() = runTest {
         val groupsWithNotificationsOff = listOf(
             TravelAlertsFixtures.mockGroups[0].copy(subgroup = "none"), // france - notifications off
             TravelAlertsFixtures.mockGroups[1],                           // germany - notifications on
@@ -353,7 +353,7 @@ class EditCountriesViewModelTest {
         viewModel.toggleNotifications("france", true)
 
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
-        assertEquals("daily", state.groups.find { it.group == "france" }?.subgroup)
+        assertEquals("instant", state.groups.find { it.group == "france" }?.subgroup)
     }
 
     @Test
@@ -380,8 +380,8 @@ class EditCountriesViewModelTest {
 
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
         assertEquals("none", state.groups.find { it.group == "france" }?.subgroup)
-        assertEquals("daily", state.groups.find { it.group == "germany" }?.subgroup)
-        assertEquals("daily", state.groups.find { it.group == "spain" }?.subgroup)
+        assertEquals("instant", state.groups.find { it.group == "germany" }?.subgroup)
+        assertEquals("instant", state.groups.find { it.group == "spain" }?.subgroup)
     }
 
     @Test
@@ -394,6 +394,6 @@ class EditCountriesViewModelTest {
         viewModel.toggleNotifications("france", false)
 
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
-        assertEquals("daily", state.groups.find { it.group == "france" }?.subgroup)
+        assertEquals("instant", state.groups.find { it.group == "france" }?.subgroup)
     }
 }

@@ -67,7 +67,7 @@ class EditCountriesViewModel @Inject constructor(
             updateLoaded { copy(isTogglingNotifications = true, toggleError = null) }
             val result = travelAlertsRepo.toggleNotifications(slug, enabled)
             if (result is Result.Success) {
-                val newSubgroup = if (enabled) "daily" else "none"
+                val newSubgroup = if (enabled) "instant" else "none"
                 updateLoaded {
                     copy(
                         isTogglingNotifications = false,

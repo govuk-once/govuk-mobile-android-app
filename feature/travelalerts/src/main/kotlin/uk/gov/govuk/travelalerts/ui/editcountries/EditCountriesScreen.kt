@@ -104,7 +104,7 @@ private fun EditCountriesLoaded(
     LaunchedEffect(selectedCountry) {
         selectedCountry?.let { country ->
             val group = groupsBySlug[country.slug]
-            notificationsEnabled.value = group?.subgroup == "daily"
+            notificationsEnabled.value = group?.subgroup == "instant"
         }
     }
 
