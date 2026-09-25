@@ -872,4 +872,60 @@ class ChatViewModelTest {
 
         coVerify(exactly = 1) { chatRepo.getConversation() }
     }
+
+    @Test
+    fun `Given a positive feedback icon click, then log analytics`() {
+        viewModel.onPositiveFeedback()
+
+        verify {
+            analyticsClient.iconClick(type = "chat_positive_rating")
+        }
+    }
+
+    @Test
+    fun `Given a negative feedback icon click, then log analytics`() {
+        viewModel.onNegativeFeedback()
+
+        verify {
+            analyticsClient.iconClick(type = "chat_negative_rating")
+        }
+    }
+
+    @Test
+    fun `Init emits analytics enabled state`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+        every { analyticsClient.isAnalyticsEnabled() } returns true
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        assertTrue(viewModel.isAnalyticsEnabled.value)
+    }
+
+    @Test
+    fun `Init emits analytics disabled state`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+        every { analyticsClient.isAnalyticsEnabled() } returns false
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        assertFalse(viewModel.isAnalyticsEnabled.value)
+    }
+
+    @Test
+    fun `onResume refreshes the analytics state`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+        every { analyticsClient.isAnalyticsEnabled() } returns false
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+        assertFalse(viewModel.isAnalyticsEnabled.value)
+
+        every { analyticsClient.isAnalyticsEnabled() } returns true
+        viewModel.onResume()
+        advanceUntilIdle()
+        assertTrue(viewModel.isAnalyticsEnabled.value)
+    }
 }

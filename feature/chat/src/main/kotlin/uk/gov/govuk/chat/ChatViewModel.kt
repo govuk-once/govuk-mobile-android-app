@@ -59,6 +59,9 @@ internal class ChatViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<ChatUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
 
+    private val _isAnalyticsEnabled = MutableStateFlow(analyticsClient.isAnalyticsEnabled())
+    val isAnalyticsEnabled = _isAnalyticsEnabled.asStateFlow()
+
     private val _authError = MutableSharedFlow<Unit>()
     val authError: SharedFlow<Unit> = _authError
 
@@ -79,6 +82,8 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onResume() {
+        // In case the user changes their consent setting while away from Chat
+        _isAnalyticsEnabled.value = analyticsClient.isAnalyticsEnabled()
         viewModelScope.launch {
             if (chatRepo.isChatIntroSeen.first()) {
                 loadConversation()
@@ -358,4 +363,11 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
+    fun onPositiveFeedback() {
+        analyticsClient.iconClick(type = "chat_positive_rating")
+    }
+
+    fun onNegativeFeedback() {
+        analyticsClient.iconClick(type = "chat_negative_rating")
+    }
 }
