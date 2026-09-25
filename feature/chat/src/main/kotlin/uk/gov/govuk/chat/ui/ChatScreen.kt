@@ -103,6 +103,7 @@ internal fun ChatRoute(
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isAnalyticsEnabled by viewModel.isAnalyticsEnabled.collectAsStateWithLifecycle()
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -177,6 +178,7 @@ internal fun ChatRoute(
                     ),
                     chatUrls = viewModel.chatUrls,
                     chatExampleQuestions = viewModel.chatExampleQuestions,
+                    isAnalyticsEnabled = isAnalyticsEnabled,
                     modifier = modifier
                 )
             }
@@ -201,6 +203,7 @@ internal fun ChatScreen(
     chatUrls: ChatUrls,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier,
+    isAnalyticsEnabled: Boolean = false,
     isTalkBackActive: Boolean = isTalkBackEnabled(),
     isImeVisible: Boolean = WindowInsets.isImeVisible
 ) {
@@ -299,6 +302,7 @@ internal fun ChatScreen(
                         AnimatedFeedback(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
+                            isAnalyticsEnabled = isAnalyticsEnabled,
                             onPositiveLinkClick = {
                                 uiEvents.onPositiveFeedback()
                             },
@@ -379,6 +383,7 @@ private enum class FeedbackSelection { Icons, Positive, Negative, ThankYou }
 private fun AnimatedFeedback(
     chatEntry: ChatEntryModel,
     animationDelay: Int,
+    isAnalyticsEnabled: Boolean,
     onPositiveLinkClick: () -> Unit,
     onNegativeLinkClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -428,15 +433,18 @@ private fun AnimatedFeedback(
             FeedbackSelection.Icons -> FeedbackIcons(
                 onPositiveIconClick = {
                     // TODO: analytics event
-                    feedbackSelection = FeedbackSelection.Positive
+                    feedbackSelection =
+                        if (isAnalyticsEnabled) FeedbackSelection.Positive
+                        else FeedbackSelection.ThankYou
                 },
                 onNegativeIconClick = {
                     // TODO: analytics event
-                    feedbackSelection = FeedbackSelection.Negative
+                    feedbackSelection =
+                        if (isAnalyticsEnabled) FeedbackSelection.Negative
+                        else FeedbackSelection.ThankYou
                 }
             )
 
-            // TODO: Only if analytics opt-in - else ThankYou
             FeedbackSelection.Positive -> FeedbackLink(
                 linkText = stringResource(R.string.chat_feedback_positive_link_text),
                 icon = R.drawable.baseline_thumb_up_24,
@@ -446,7 +454,6 @@ private fun AnimatedFeedback(
                 }
             )
 
-            // TODO: Only if analytics opt-in - else ThankYou
             FeedbackSelection.Negative -> FeedbackLink(
                 linkText = stringResource(R.string.chat_feedback_negative_link_text),
                 icon = R.drawable.baseline_thumb_down_24,
