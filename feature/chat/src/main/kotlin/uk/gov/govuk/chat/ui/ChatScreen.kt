@@ -379,6 +379,8 @@ internal fun ChatScreen(
 
 private enum class FeedbackSelection { Icons, Positive, Negative, ThankYou }
 
+private const val THANK_YOU_DELAY_MILLIS = 500L
+
 @Composable
 private fun AnimatedFeedback(
     chatEntry: ChatEntryModel,
@@ -389,6 +391,7 @@ private fun AnimatedFeedback(
     modifier: Modifier = Modifier
 ) {
     val animationDuration = 200
+    val coroutineScope = rememberCoroutineScope()
 
     // TODO: keep track of if FB is given on the last question somehow.
     // Start visible if the answer is already present
@@ -410,7 +413,6 @@ private fun AnimatedFeedback(
         }
     }
 
-    // TODO: If FeedbackSelection.ThankYou we need a longer delay
     AnimatedVisibility(
         visible = showFeedback,
         enter =
@@ -450,7 +452,11 @@ private fun AnimatedFeedback(
                 icon = R.drawable.baseline_thumb_up_24,
                 onClick = {
                     onPositiveLinkClick()
-                    feedbackSelection = FeedbackSelection.ThankYou
+                    // Wait until the survey is shown before rendering the thank you text
+                    coroutineScope.launch {
+                        delay(THANK_YOU_DELAY_MILLIS)
+                        feedbackSelection = FeedbackSelection.ThankYou
+                    }
                 }
             )
 
@@ -459,7 +465,11 @@ private fun AnimatedFeedback(
                 icon = R.drawable.baseline_thumb_down_24,
                 onClick = {
                     onNegativeLinkClick()
-                    feedbackSelection = FeedbackSelection.ThankYou
+                    // Wait until the survey is shown before rendering the thank you text
+                    coroutineScope.launch {
+                        delay(THANK_YOU_DELAY_MILLIS)
+                        feedbackSelection = FeedbackSelection.ThankYou
+                    }
                 }
             )
 
