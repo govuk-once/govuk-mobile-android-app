@@ -1,5 +1,6 @@
 package uk.gov.govuk.travelalerts.ui.editcountries
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,12 +12,14 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
+import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
 import javax.inject.Inject
 
 @HiltViewModel
 class EditCountriesViewModel @Inject constructor(
     private val travelAlertsRepo: TravelAlertsRepo,
-    private val analyticsClient: AnalyticsClient
+    private val analyticsClient: AnalyticsClient,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     companion object {
@@ -33,7 +36,8 @@ class EditCountriesViewModel @Inject constructor(
             val isTogglingNotifications: Boolean = false,
             val isUnfollowing: Boolean = false,
             val toggleError: String? = null,
-            val unfollowError: String? = null
+            val unfollowError: String? = null,
+            val followError: Boolean = false
         ) : State()
         data object Error : State()
     }
@@ -63,7 +67,7 @@ class EditCountriesViewModel @Inject constructor(
             updateLoaded { copy(isTogglingNotifications = true, toggleError = null) }
             val result = travelAlertsRepo.toggleNotifications(slug, enabled)
             if (result is Result.Success) {
-                val newSubgroup = if (enabled) "daily" else "none"
+                val newSubgroup = if (enabled) "instant" else "none"
                 updateLoaded {
                     copy(
                         isTogglingNotifications = false,
@@ -99,6 +103,8 @@ class EditCountriesViewModel @Inject constructor(
 
     fun clearUnfollowError() = updateLoaded { copy(unfollowError = null) }
 
+    fun clearFollowError() = updateLoaded { copy(followError = false) }
+
     private fun fetchFollowedCountries() {
         viewModelScope.launch {
             _uiState.value = State.Loading
@@ -109,7 +115,9 @@ class EditCountriesViewModel @Inject constructor(
                 val followed = groupsResult.value
                     .mapNotNull { group -> countriesBySlug[group.group] }
                     .sortedBy { it.name }
-                _uiState.value = State.Loaded(followed, groupsResult.value)
+                val followError = savedStateHandle.get<Boolean>(SHOW_ERROR_ARG) == true
+                if (followError) savedStateHandle[SHOW_ERROR_ARG] = false
+                _uiState.value = State.Loaded(followed, groupsResult.value, followError = followError)
             } else {
                 _uiState.value = State.Error
             }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
@@ -18,6 +19,11 @@ class TravelAlertsWidgetViewModel @Inject constructor(
     private val travelAlertsRepo: TravelAlertsRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
+    data class UiState(
+        val content: State = State.Loading,
+        val followError: Boolean = false
+    )
+
     sealed class State {
         data object Loading: State()
         data class Loaded(val rows: List<LoadedRow>): State()
@@ -27,9 +33,16 @@ class TravelAlertsWidgetViewModel @Inject constructor(
 
     data class LoadedRow(val headline: String, val subtitle: String, val link: String)
 
-    private val _uiState: MutableStateFlow<State> =
-        MutableStateFlow(State.Loading)
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
+
+    fun onFollowError() {
+        _uiState.update { it.copy(followError = true) }
+    }
+
+    fun onDismissFollowError() {
+        _uiState.update { it.copy(followError = false) }
+    }
 
     fun onRowClick(row: LoadedRow) {
         analyticsClient.widgetClick(
@@ -42,11 +55,11 @@ class TravelAlertsWidgetViewModel @Inject constructor(
 
     fun onPageView() {
         viewModelScope.launch {
-            _uiState.value = State.Loading
+            _uiState.update { it.copy(content = State.Loading) }
             val groupsRes = travelAlertsRepo.getGroups()
             val countriesRes = travelAlertsRepo.getCountries()
 
-            if (groupsRes is Result.Success && countriesRes is Result.Success) {
+            val content = if (groupsRes is Result.Success && countriesRes is Result.Success) {
                 val countriesBySlug = countriesRes.value.associateBy(Country::slug)
                 val rows = groupsRes.value.mapNotNull { group ->
                     countriesBySlug[group.group]?.let { country ->
@@ -58,10 +71,11 @@ class TravelAlertsWidgetViewModel @Inject constructor(
                         )
                     }
                 }.sortedBy { it.headline }
-                _uiState.value = if (rows.isEmpty()) State.Empty else State.Loaded(rows)
+                if (rows.isEmpty()) State.Empty else State.Loaded(rows)
             } else {
-                _uiState.value = State.Error
+                State.Error
             }
+            _uiState.update { it.copy(content = content) }
         }
     }
 

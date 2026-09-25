@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -38,8 +39,9 @@ class TravelAlertsWidgetViewModelTest {
     }
 
     @Test
-    fun `Given view created, then state is Loading`() {
-        assertTrue(viewModel.uiState.value is TravelAlertsWidgetViewModel.State.Loading)
+    fun `Given view created, then state is Loading with no follow error`() {
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Loading)
+        assertFalse(viewModel.uiState.value.followError)
     }
 
     @Test
@@ -49,7 +51,7 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        val state = viewModel.uiState.value as TravelAlertsWidgetViewModel.State.Loaded
+        val state = viewModel.uiState.value.content as TravelAlertsWidgetViewModel.State.Loaded
         assertEquals(TravelAlertsFixtures.mockCountries.size, state.rows.size)
         assertEquals("France", state.rows[0].headline)
         assertEquals("govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/france", state.rows[0].link)
@@ -66,7 +68,7 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        val state = viewModel.uiState.value as TravelAlertsWidgetViewModel.State.Loaded
+        val state = viewModel.uiState.value.content as TravelAlertsWidgetViewModel.State.Loaded
         assertEquals(listOf("France", "Germany", "Spain"), state.rows.map { it.headline })
     }
 
@@ -77,7 +79,7 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is TravelAlertsWidgetViewModel.State.Empty)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Empty)
     }
 
     @Test
@@ -87,7 +89,7 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is TravelAlertsWidgetViewModel.State.Empty)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Empty)
     }
 
     @Test
@@ -97,7 +99,7 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is TravelAlertsWidgetViewModel.State.Error)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
     }
 
     @Test
@@ -107,7 +109,7 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is TravelAlertsWidgetViewModel.State.Error)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
     }
 
     @Test
@@ -117,7 +119,51 @@ class TravelAlertsWidgetViewModelTest {
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is TravelAlertsWidgetViewModel.State.Error)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+    }
+
+    @Test
+    fun `Given follow error reported, then followError is set`() {
+        viewModel.onFollowError()
+
+        assertTrue(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given follow error reported before page view, when page view resolves, then followError is preserved`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(emptyList())
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onFollowError()
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Empty)
+        assertTrue(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given follow error reported, when widget content fails to load, then followError is preserved`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.DeviceOffline()
+        coEvery { travelAlertsRepo.getCountries() } returns Result.DeviceOffline()
+        viewModel.onFollowError()
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+        assertTrue(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given follow error dismissed, then followError is false and content is unchanged`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        viewModel.onFollowError()
+
+        viewModel.onDismissFollowError()
+
+        assertFalse(viewModel.uiState.value.followError)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Loaded)
     }
 
     @Test
@@ -125,7 +171,7 @@ class TravelAlertsWidgetViewModelTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
         viewModel.onPageView()
-        val state = viewModel.uiState.value as TravelAlertsWidgetViewModel.State.Loaded
+        val state = viewModel.uiState.value.content as TravelAlertsWidgetViewModel.State.Loaded
 
         viewModel.onRowClick(state.rows.first { it.headline == "France" })
 

@@ -16,7 +16,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notifications.R
 
 @Composable
-internal fun NotificationsSettingsAlert(
+fun NotificationsSettingsAlert(
     onContinueButtonClick: (String) -> Unit,
     onCancelButtonClick: (String) -> Unit,
     onDismiss: () -> Unit
@@ -81,7 +81,7 @@ internal fun NotificationsSettingsAlert(
     )
 }
 
-private fun openDeviceNotificationsSettings(
+fun openDeviceNotificationsSettings(
     context: Context
 ) {
     Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {

@@ -48,9 +48,9 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
-import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoadingScreen
@@ -64,25 +64,53 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
+import uk.gov.govuk.travelalerts.navigation.NOTIFICATIONS_RATIONALE_ROUTE
+import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
+import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountryListScreen(
     onClose: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CountryListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val selectedCountry by viewModel.selectedCountry.collectAsStateWithLifecycle()
-    val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
-    val followError by viewModel.followError.collectAsStateWithLifecycle()
+    val loadedState = uiState as? CountryListViewModel.State.Loaded
+    val selectedCountry = loadedState?.selectedCountry
+    val isSaving = loadedState?.isSaving == true
 
     LaunchedEffect(Unit) {
         viewModel.onPageView()
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.navigationEvent.collect { onClose() }
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is CountryListViewModel.NavigationEvent.NavigateToTopic -> {
+                    if (event.error) {
+                        val prevRoute = navController.previousBackStackEntry?.destination?.route
+                        if (prevRoute?.startsWith(EDIT_COUNTRIES_ROUTE) == true) {
+                            navController.navigate("$EDIT_COUNTRIES_ROUTE?$SHOW_ERROR_ARG=true") {
+                                popUpTo(EDIT_COUNTRIES_ROUTE) { inclusive = true }
+                            }
+                        } else {
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(TRAVEL_ALERTS_FOLLOW_ERROR_KEY, true)
+                            onClose()
+                        }
+                    } else {
+                        onClose()
+                    }
+                }
+                is CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale -> {
+                    navController.navigate("$NOTIFICATIONS_RATIONALE_ROUTE/${event.countrySlug}")
+                }
+            }
+        }
     }
 
     Column(
@@ -109,24 +137,12 @@ fun CountryListScreen(
     if (selectedCountry != null) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         NotificationsPreferenceBottomSheet(
-            country = selectedCountry!!,
+            country = selectedCountry,
             sheetState = sheetState,
             isSaving = isSaving,
             onDismiss = viewModel::onDismissPreferenceSheet,
-            onNotNow = { viewModel.onNotNowNotifications(selectedCountry!!) },
-            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry!!) }
-        )
-    }
-
-    if (followError) {
-        InfoAlert(
-            title = R.string.follow_country_error_title,
-            message = R.string.follow_country_error_description,
-            buttonText = R.string.follow_country_error_button,
-            onDismiss = {
-                viewModel.onDismissFollowError()
-                onClose()
-            }
+            onNotNow = { viewModel.onNotNowNotifications(selectedCountry) },
+            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry) }
         )
     }
 }
