@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -55,7 +55,7 @@ fun NotificationsRationaleScreen(
                 val hasEditCountries = try {
                     navController.getBackStackEntry(EDIT_COUNTRIES_ROUTE)
                     true
-                } catch (e: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     false
                 }
                 if (hasEditCountries) {
@@ -86,7 +86,7 @@ fun NotificationsRationaleScreen(
         }
     }
 
-    when (val state = uiState.value) {
+    when (uiState.value) {
         is NotificationsRationaleViewModel.State.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -113,9 +113,8 @@ fun NotificationsRationaleScreen(
                 onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus) },
                 launchBrowser = launchBrowser,
                 showSettingsAlert = true,
-                onSettingsAlertCancel = { viewModel.onSettingsAlertCancel(countrySlug) },
-                onSettingsAlertContinue = { openDeviceNotificationsSettings(context) }
-            )
+                onSettingsAlertCancel = { viewModel.onSettingsAlertCancel(countrySlug) }
+            ) { openDeviceNotificationsSettings(context) }
         }
     }
 }
@@ -123,13 +122,13 @@ fun NotificationsRationaleScreen(
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun NotificationsRationaleScreenContent(
+    modifier: Modifier = Modifier,
     onNotNow: () -> Unit,
     onAgreeContinue: () -> Unit,
     launchBrowser: (url: String) -> Unit,
     showSettingsAlert: Boolean = false,
     onSettingsAlertCancel: () -> Unit = {},
-    onSettingsAlertContinue: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onSettingsAlertContinue: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxSize()

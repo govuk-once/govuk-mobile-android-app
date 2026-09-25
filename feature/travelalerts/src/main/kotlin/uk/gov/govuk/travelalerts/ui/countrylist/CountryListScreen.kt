@@ -137,12 +137,12 @@ fun CountryListScreen(
     if (selectedCountry != null) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         NotificationsPreferenceBottomSheet(
-            country = selectedCountry!!,
+            country = selectedCountry,
             sheetState = sheetState,
             isSaving = isSaving,
             onDismiss = viewModel::onDismissPreferenceSheet,
-            onNotNow = { viewModel.onNotNowNotifications(selectedCountry!!) },
-            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry!!) }
+            onNotNow = { viewModel.onNotNowNotifications(selectedCountry) },
+            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry) }
         )
     }
 }
