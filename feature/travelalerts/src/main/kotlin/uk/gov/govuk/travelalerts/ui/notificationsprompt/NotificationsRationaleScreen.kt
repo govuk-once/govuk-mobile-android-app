@@ -28,7 +28,6 @@ import uk.gov.govuk.notifications.ui.NotificationsSettingsAlert
 import uk.gov.govuk.notifications.ui.getNotificationsPermissionStatus
 import uk.gov.govuk.notifications.ui.openDeviceNotificationsSettings
 import uk.gov.govuk.travelalerts.R
-import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
 import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
 import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
@@ -64,12 +63,10 @@ fun NotificationsRationaleScreen(
                         popUpTo(EDIT_COUNTRIES_ROUTE) { inclusive = true }
                     }
                 } else {
-                    val backStack = navController.currentBackStack.value
-                    val idx = backStack.indexOfLast { it.destination.route == COUNTRY_LIST_ROUTE }
-                    if (idx > 0) {
-                        backStack[idx - 1].savedStateHandle[TRAVEL_ALERTS_FOLLOW_ERROR_KEY] = true
-                    }
                     onBack()
+                    navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(TRAVEL_ALERTS_FOLLOW_ERROR_KEY, true)
                 }
             } else {
                 onBack()
