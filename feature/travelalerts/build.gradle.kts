@@ -48,6 +48,7 @@ dependencies {
     implementation(projects.design)
     implementation(projects.data)
     implementation(projects.govkit)
+    implementation(projects.notifications)
 
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

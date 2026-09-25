@@ -39,7 +39,8 @@ import uk.gov.govuk.travelalerts.R
 @Composable
 fun TravelAlertsWidget(
     launchBrowser: (String) -> Unit,
-    onFollowCountry: () -> Unit
+    onFollowCountry: () -> Unit,
+    onEditCountries: () -> Unit = {}
 ) {
     val viewModel: TravelAlertsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,7 +48,10 @@ fun TravelAlertsWidget(
     when (val state = uiState) {
         TravelAlertsWidgetViewModel.State.Loading -> TravelAlertsLoading()
         TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty(onFollowCountry)
-        is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(state.rows) { row ->
+        is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(
+            rows = state.rows,
+            onEditCountries = onEditCountries
+        ) { row ->
             viewModel.onRowClick(row)
             launchBrowser(row.link)
         }
@@ -83,6 +87,7 @@ private fun TravelAlertsEmpty(onFollowCountry: () -> Unit) {
 @Composable
 private fun TravelAlertsLoaded(
     rows: List<TravelAlertsWidgetViewModel.LoadedRow>,
+    onEditCountries: () -> Unit,
     onRowClick: (TravelAlertsWidgetViewModel.LoadedRow) -> Unit
 ) {
     Column {
@@ -91,7 +96,7 @@ private fun TravelAlertsLoaded(
             button = SectionHeadingLabelButton(
                 title = stringResource(R.string.loaded_button_edit),
                 altText = stringResource(R.string.loaded_button_edit),
-                onClick = { /* Not implemented yet */ }
+                onClick = onEditCountries
             )
         )
 
@@ -169,10 +174,11 @@ fun TravelAlertsWidgetEmptyPreview() {
 fun TravelAlertsWidgetLoadedPreview() {
     GovUkTheme {
         TravelAlertsLoaded(
-            listOf(
+            rows = listOf(
                 TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "Updated on 12th September 26", "test"),
                 TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "Updated on 13th September 26", "test")
-            )
+            ),
+            onEditCountries = {}
         ) { }
     }
 }

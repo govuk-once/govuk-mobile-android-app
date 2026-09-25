@@ -14,7 +14,7 @@ import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
-import uk.gov.govuk.dvla.ui.model.VehicleDetailsMapper
+import uk.gov.govuk.dvla.mapper.VehicleDetailsMapper
 import uk.gov.govuk.govkit.browser.Urls
 import javax.inject.Inject
 

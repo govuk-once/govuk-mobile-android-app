@@ -2,6 +2,7 @@ package uk.gov.govuk.travelalerts.ui.countrylist
 
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
@@ -26,13 +28,14 @@ import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
 class CountryListViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val travelAlertsRepo = mockk<TravelAlertsRepo>(relaxed = true)
+    private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private lateinit var viewModel: CountryListViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = CountryListViewModel(travelAlertsRepo, analyticsClient)
+        viewModel = CountryListViewModel(travelAlertsRepo, notificationsRepo, analyticsClient)
     }
 
     @After
@@ -201,50 +204,100 @@ class CountryListViewModelTest {
         verify(exactly = 0) { analyticsClient.search(any(), any()) }
     }
 
-    // onCountrySelected — navigation/state
+    // onCountrySelected — state
 
     @Test
-    fun `Given country selected, when subscription succeeds, then navigation event is emitted`() = runTest {
+    fun `Given country selected, then selected country is set in state`() = runTest {
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
         viewModel.onPageView()
+        val country = TravelAlertsFixtures.mockCountries.first()
 
+        viewModel.onCountrySelected(country)
+
+        assertEquals(country, viewModel.selectedCountry.value)
+    }
+
+    // onDismissPreferenceSheet
+
+    @Test
+    fun `Given preference sheet shown, when dismissed, then selected country is null`() = runTest {
+        viewModel.onDismissPreferenceSheet()
+
+        assertEquals(null, viewModel.selectedCountry.value)
+    }
+
+    // onNotNowNotifications
+
+    @Test
+    fun `Given Not now tapped, when request succeeds, then navigation event is emitted`() = runTest {
         val events = mutableListOf<Unit>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
 
-        coEvery { travelAlertsRepo.subscribeToCountry(any()) } returns Result.Success(Unit)
-        viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
+        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
 
         assertEquals(1, events.size)
     }
 
     @Test
-    fun `Given country selected, when subscription fails, then state reverts to Loaded`() = runTest {
-        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
-        viewModel.onPageView()
+    fun `Given Not now tapped, when request succeeds, then sheet is closed`() = runTest {
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
 
-        coEvery { travelAlertsRepo.subscribeToCountry(any()) } returns Result.Error()
-        viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
 
-        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
-        assertEquals(TravelAlertsFixtures.mockCountries.size, state.countries.size)
+        assertEquals(null, viewModel.selectedCountry.value)
     }
 
     @Test
-    fun `Given country selected, then state transitions to Loading`() = runTest {
-        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
-        viewModel.onPageView()
+    fun `Given Not now tapped, when request fails, then error flag is set`() = runTest {
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
 
-        val states = mutableListOf<CountryListViewModel.State>()
+        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
+
+        assertTrue(viewModel.followError.value)
+    }
+
+    // onGetNotificationsClick
+
+    @Test
+    fun `Given Get notifications tapped and permissions granted, when request succeeds, then navigation event is emitted`() = runTest {
+        every { notificationsRepo.permissionGranted() } returns true
+        val events = mutableListOf<Unit>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.uiState.collect { states.add(it) }
+            viewModel.navigationEvent.collect { events.add(it) }
         }
 
-        coEvery { travelAlertsRepo.subscribeToCountry(any()) } returns Result.Success(Unit)
-        viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
 
-        assertTrue(states.any { it is CountryListViewModel.State.Loading })
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun `Given Get notifications tapped and permissions granted, when request fails, then error flag is set`() = runTest {
+        every { notificationsRepo.permissionGranted() } returns true
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
+
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
+
+        assertTrue(viewModel.followError.value)
+    }
+
+    @Test
+    fun `Given Get notifications tapped and permissions not granted, then behaves like Not now`() = runTest {
+        every { notificationsRepo.permissionGranted() } returns false
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
+        val events = mutableListOf<Unit>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
+
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
+
+        coVerify { travelAlertsRepo.followCountry("france", notificationsEnabled = false) }
+        assertEquals(1, events.size)
     }
 
     // onSearchQueryChange

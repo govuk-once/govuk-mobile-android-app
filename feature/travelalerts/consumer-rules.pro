@@ -3,4 +3,8 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 
-# TODO Fill these in later
+-keep class uk.gov.govuk.travelalerts.data.model.Country { <fields>; }
+-keep class uk.gov.govuk.travelalerts.data.model.Group
+-keep class uk.gov.govuk.travelalerts.data.model.SubscriptionRequest
+-keep class uk.gov.govuk.travelalerts.data.model.SubscriptionRequest$Action
+-keep class uk.gov.govuk.travelalerts.data.model.Subgroup { **[] values(); ** valueOf(java.lang.String); <fields>; }

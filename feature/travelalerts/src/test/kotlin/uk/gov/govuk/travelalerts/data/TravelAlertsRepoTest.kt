@@ -104,11 +104,16 @@ class TravelAlertsRepoTest {
         coVerify(exactly = 2) { travelApi.getCountries() }
     }
 
-    // Subscribe to Country
+    // Follow Country
 
     @Test
-    fun `Subscribe to country calls API with correct subscription request`() = runTest {
-        travelAlertsRepo.subscribeToCountry("france")
+    fun `Follow country with notifications enabled calls API with LEAVE NONE and JOIN DAILY`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.followCountry("france", notificationsEnabled = true)
 
         coVerify {
             api.subscribeToGroups(
@@ -116,7 +121,14 @@ class TravelAlertsRepoTest {
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
-                        subgroup = Subgroup.DAILY
+                        subgroup = Subgroup.NONE,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.DAILY,
+                        action = SubscriptionRequest.Action.JOIN
                     )
                 )
             )
@@ -124,19 +136,48 @@ class TravelAlertsRepoTest {
     }
 
     @Test
-    fun `Subscribe to country returns success when API succeeds`() = runTest {
+    fun `Follow country with notifications disabled calls API with LEAVE DAILY and JOIN NONE`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
         coEvery { api.subscribeToGroups(any()) } returns mockResponse
 
-        val result = travelAlertsRepo.subscribeToCountry("france")
+        travelAlertsRepo.followCountry("france", notificationsEnabled = false)
+
+        coVerify {
+            api.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.DAILY,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.NONE,
+                        action = SubscriptionRequest.Action.JOIN
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Follow country returns success when API succeeds`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        val result = travelAlertsRepo.followCountry("france", notificationsEnabled = true)
 
         assertTrue(result is Result.Success)
     }
 
     @Test
-    fun `Subscribe to country clears groups cache on success`() = runTest {
+    fun `Follow country clears groups cache on success`() = runTest {
         coEvery { api.getGroups() } returns mockGetGroupsResponse
         coEvery { mockGetGroupsResponse.isSuccessful } returns true
         coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
@@ -147,14 +188,14 @@ class TravelAlertsRepoTest {
         coEvery { api.subscribeToGroups(any()) } returns mockResponse
 
         travelAlertsRepo.getGroups()
-        travelAlertsRepo.subscribeToCountry("france")
+        travelAlertsRepo.followCountry("france", notificationsEnabled = true)
         travelAlertsRepo.getGroups()
 
         coVerify(exactly = 2) { api.getGroups() }
     }
 
     @Test
-    fun `Subscribe to country does not clear groups cache on failure`() = runTest {
+    fun `Follow country does not clear groups cache on failure`() = runTest {
         coEvery { api.getGroups() } returns mockGetGroupsResponse
         coEvery { mockGetGroupsResponse.isSuccessful } returns true
         coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
@@ -165,9 +206,183 @@ class TravelAlertsRepoTest {
         coEvery { api.subscribeToGroups(any()) } returns failResponse
 
         travelAlertsRepo.getGroups()
-        travelAlertsRepo.subscribeToCountry("france")
+        travelAlertsRepo.followCountry("france", notificationsEnabled = true)
         travelAlertsRepo.getGroups()
 
         coVerify(exactly = 1) { api.getGroups() }
+    }
+
+    // Unfollow Country
+
+    @Test
+    fun `Unfollow country with notifications on calls API with LEAVE DAILY`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+
+        coVerify {
+            api.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.DAILY,
+                        action = SubscriptionRequest.Action.LEAVE
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Unfollow country with notifications off calls API with LEAVE NONE`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = false)
+
+        coVerify {
+            api.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.NONE,
+                        action = SubscriptionRequest.Action.LEAVE
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Unfollow country returns success when API succeeds`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        val result = travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `Unfollow country clears groups cache on success`() = runTest {
+        coEvery { api.getGroups() } returns mockGetGroupsResponse
+        coEvery { mockGetGroupsResponse.isSuccessful } returns true
+        coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
+
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.getGroups()
+        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+        travelAlertsRepo.getGroups()
+
+        coVerify(exactly = 2) { api.getGroups() }
+    }
+
+    @Test
+    fun `Unfollow country does not clear groups cache on failure`() = runTest {
+        coEvery { api.getGroups() } returns mockGetGroupsResponse
+        coEvery { mockGetGroupsResponse.isSuccessful } returns true
+        coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
+
+        val failResponse = mockk<Response<Unit>>()
+        every { failResponse.isSuccessful } returns false
+        every { failResponse.code() } returns 500
+        coEvery { api.subscribeToGroups(any()) } returns failResponse
+
+        travelAlertsRepo.getGroups()
+        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+        travelAlertsRepo.getGroups()
+
+        coVerify(exactly = 1) { api.getGroups() }
+    }
+
+    // Toggle Notifications
+
+    @Test
+    fun `Toggle notifications off sends LEAVE DAILY and JOIN NONE`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.toggleNotifications("france", enabled = false)
+
+        coVerify {
+            api.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.DAILY,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.NONE,
+                        action = SubscriptionRequest.Action.JOIN
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Toggle notifications on sends LEAVE NONE and JOIN DAILY`() = runTest {
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.toggleNotifications("france", enabled = true)
+
+        coVerify {
+            api.subscribeToGroups(
+                listOf(
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.NONE,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = "france",
+                        subgroup = Subgroup.DAILY,
+                        action = SubscriptionRequest.Action.JOIN
+                    )
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Toggle notifications clears groups cache on success`() = runTest {
+        coEvery { api.getGroups() } returns mockGetGroupsResponse
+        coEvery { mockGetGroupsResponse.isSuccessful } returns true
+        coEvery { mockGetGroupsResponse.body() } returns TravelAlertsFixtures.mockGroups
+
+        val mockResponse = mockk<Response<Unit>>(relaxed = true)
+        every { mockResponse.isSuccessful } returns true
+        every { mockResponse.code() } returns 204
+        coEvery { api.subscribeToGroups(any()) } returns mockResponse
+
+        travelAlertsRepo.getGroups()
+        travelAlertsRepo.toggleNotifications("france", enabled = false)
+        travelAlertsRepo.getGroups()
+
+        coVerify(exactly = 2) { api.getGroups() }
     }
 }

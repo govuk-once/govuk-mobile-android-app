@@ -105,6 +105,9 @@ class ConfigRepoImpl @Inject constructor(
     override val isFlexEnabled: Boolean
         get() = safeConfig.releaseFlags.flex
 
+    override val isDvlaLinkEnabled: Boolean
+        get() = safeConfig.releaseFlags.dvla
+
     override val isMessagesEnabled: Boolean
         get() = safeConfig.releaseFlags.messages
 
@@ -114,10 +117,6 @@ class ConfigRepoImpl @Inject constructor(
     override val isQuarterlySurveyEnabled: Boolean
         get() = safeConfig.releaseFlags.quarterlySurvey
 
-    override suspend fun clearRemoteConfigValues() {
-        firebaseDataSource.clearRemoteValues()
-    }
-
     override val dvlaUrls: DvlaUrls?
         get() = safeConfig.dvlaUrls
 
@@ -126,4 +125,8 @@ class ConfigRepoImpl @Inject constructor(
 
     override val chatExampleQuestions: List<String>?
         get() = safeConfig.chatExampleQuestions
+
+    override suspend fun clearRemoteConfigValues() {
+        firebaseDataSource.clearRemoteValues()
+    }
 }
