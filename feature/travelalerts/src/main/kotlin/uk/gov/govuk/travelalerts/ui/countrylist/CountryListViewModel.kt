@@ -6,10 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
@@ -35,7 +32,12 @@ class CountryListViewModel @Inject constructor(
 
     sealed class State {
         data object Loading : State()
-        data class Loaded(val countries: List<Country>, val searchQuery: String = "") : State()
+        data class Loaded(
+            val countries: List<Country>,
+            val searchQuery: String = "",
+            val selectedCountry: Country? = null,
+            val isSaving: Boolean = false
+        ) : State()
         data object Error : State()
     }
 
@@ -43,7 +45,7 @@ class CountryListViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     sealed class NavigationEvent {
-        data object NavigateToTopic : NavigationEvent()
+        data class NavigateToTopic(val error: Boolean = false) : NavigationEvent()
         data class NavigateToNotificationsRationale(val countrySlug: String) : NavigationEvent()
     }
 
@@ -52,20 +54,9 @@ class CountryListViewModel @Inject constructor(
 
     private var allCountries: List<Country> = emptyList()
 
-    private sealed class SheetSaveState {
-        data object Idle : SheetSaveState()
-        data object Saving : SheetSaveState()
+    private fun updateLoaded(block: State.Loaded.() -> State.Loaded) {
+        (_uiState.value as? State.Loaded)?.let { _uiState.value = it.block() }
     }
-
-    private val _selectedCountry = MutableStateFlow<Country?>(null)
-    val selectedCountry = _selectedCountry.asStateFlow()
-
-    private val _sheetSaveState = MutableStateFlow<SheetSaveState>(SheetSaveState.Idle)
-    val isSaving = _sheetSaveState.map { it is SheetSaveState.Saving }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
-
-    private val _followError = MutableStateFlow(false)
-    val followError = _followError.asStateFlow()
 
     fun onPageView() {
         analyticsClient.screenView(
@@ -105,25 +96,24 @@ class CountryListViewModel @Inject constructor(
         if (currentState is State.Loaded && currentState.searchQuery.isNotEmpty()) {
             analyticsClient.search(currentState.searchQuery, section = SEARCH_SECTION)
         }
-        _selectedCountry.value = country
+        updateLoaded { copy(selectedCountry = country) }
     }
 
     fun onDismissPreferenceSheet() {
-        _selectedCountry.value = null
+        updateLoaded { copy(selectedCountry = null) }
     }
 
     fun onNotNowNotifications(country: Country) {
         viewModelScope.launch {
-            _sheetSaveState.value = SheetSaveState.Saving
+            updateLoaded { copy(isSaving = true) }
             when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = false)) {
                 is Result.Success -> {
-                    _selectedCountry.value = null
-                    _navigationEvent.emit(NavigationEvent.NavigateToTopic)
+                    updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                    _navigationEvent.emit(NavigationEvent.NavigateToTopic())
                 }
                 else -> {
-                    _sheetSaveState.value = SheetSaveState.Idle
-                    _selectedCountry.value = null
-                    _followError.value = true
+                    updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                    _navigationEvent.emit(NavigationEvent.NavigateToTopic(error = true))
                 }
             }
         }
@@ -132,29 +122,24 @@ class CountryListViewModel @Inject constructor(
     fun onGetNotificationsClick(country: Country) {
         if (notificationsRepo.permissionGranted()) {
             viewModelScope.launch {
-                _sheetSaveState.value = SheetSaveState.Saving
+                updateLoaded { copy(isSaving = true) }
                 when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = true)) {
                     is Result.Success -> {
-                        _selectedCountry.value = null
-                        _navigationEvent.emit(NavigationEvent.NavigateToTopic)
+                        updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                        _navigationEvent.emit(NavigationEvent.NavigateToTopic())
                     }
                     else -> {
-                        _sheetSaveState.value = SheetSaveState.Idle
-                        _selectedCountry.value = null
-                        _followError.value = true
+                        updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                        _navigationEvent.emit(NavigationEvent.NavigateToTopic(error = true))
                     }
                 }
             }
         } else {
-            _selectedCountry.value = null
+            updateLoaded { copy(selectedCountry = null) }
             viewModelScope.launch {
                 _navigationEvent.emit(NavigationEvent.NavigateToNotificationsRationale(country.slug))
             }
         }
-    }
-
-    fun onDismissFollowError() {
-        _followError.value = false
     }
 
     fun onSearchSubmitted() {
@@ -174,6 +159,6 @@ class CountryListViewModel @Inject constructor(
                     country.synonyms.any { it.lowercase().contains(q) }
             }
         }
-        _uiState.value = State.Loaded(filtered, query)
+        updateLoaded { copy(countries = filtered, searchQuery = query) }
     }
 }

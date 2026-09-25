@@ -1,6 +1,5 @@
 package uk.gov.govuk.travelalerts.ui.notificationsprompt
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +20,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
-import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.OnboardingSlide
 import uk.gov.govuk.design.ui.component.PrivacyPolicyLink
 import uk.gov.govuk.design.ui.model.Button
@@ -32,6 +29,9 @@ import uk.gov.govuk.notifications.ui.getNotificationsPermissionStatus
 import uk.gov.govuk.notifications.ui.openDeviceNotificationsSettings
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
+import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
+import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -51,8 +51,29 @@ fun NotificationsRationaleScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect {
-            navController.popBackStack(COUNTRY_LIST_ROUTE, inclusive = true)
+        viewModel.navigationEvent.collect { error ->
+            if (error) {
+                val hasEditCountries = try {
+                    navController.getBackStackEntry(EDIT_COUNTRIES_ROUTE)
+                    true
+                } catch (e: IllegalArgumentException) {
+                    false
+                }
+                if (hasEditCountries) {
+                    navController.navigate("$EDIT_COUNTRIES_ROUTE?$SHOW_ERROR_ARG=true") {
+                        popUpTo(EDIT_COUNTRIES_ROUTE) { inclusive = true }
+                    }
+                } else {
+                    val backStack = navController.currentBackStack.value
+                    val idx = backStack.indexOfLast { it.destination.route == COUNTRY_LIST_ROUTE }
+                    if (idx > 0) {
+                        backStack[idx - 1].savedStateHandle[TRAVEL_ALERTS_FOLLOW_ERROR_KEY] = true
+                    }
+                    onBack()
+                }
+            } else {
+                onBack()
+            }
         }
     }
 
@@ -97,18 +118,6 @@ fun NotificationsRationaleScreen(
                 showSettingsAlert = true,
                 onSettingsAlertCancel = { viewModel.onSettingsAlertCancel(countrySlug) },
                 onSettingsAlertContinue = { openDeviceNotificationsSettings(context) }
-            )
-        }
-
-        is NotificationsRationaleViewModel.State.Error -> {
-            InfoAlert(
-                title = R.string.follow_country_error_title,
-                message = R.string.follow_country_error_description,
-                buttonText = R.string.follow_country_error_button,
-                onDismiss = {
-                    viewModel.onDismissError()
-                    onBack()
-                }
             )
         }
     }

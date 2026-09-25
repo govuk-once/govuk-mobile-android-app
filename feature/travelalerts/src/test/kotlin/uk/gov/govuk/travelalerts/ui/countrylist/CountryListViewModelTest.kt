@@ -214,16 +214,22 @@ class CountryListViewModelTest {
 
         viewModel.onCountrySelected(country)
 
-        assertEquals(country, viewModel.selectedCountry.value)
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(country, state.selectedCountry)
     }
 
     // onDismissPreferenceSheet
 
     @Test
     fun `Given preference sheet shown, when dismissed, then selected country is null`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
+
         viewModel.onDismissPreferenceSheet()
 
-        assertEquals(null, viewModel.selectedCountry.value)
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(null, state.selectedCountry)
     }
 
     // onNotNowNotifications
@@ -244,20 +250,31 @@ class CountryListViewModelTest {
 
     @Test
     fun `Given Not now tapped, when request succeeds, then sheet is closed`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        val country = TravelAlertsFixtures.mockCountries.first()
+        viewModel.onCountrySelected(country)
         coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
 
-        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onNotNowNotifications(country)
 
-        assertEquals(null, viewModel.selectedCountry.value)
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(null, state.selectedCountry)
     }
 
     @Test
-    fun `Given Not now tapped, when request fails, then error flag is set`() = runTest {
-        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
+    fun `Given Not now tapped, when request fails, then navigation event is emitted with error flag set`() = runTest {
+        val events = mutableListOf<CountryListViewModel.NavigationEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
 
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
         viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
 
-        assertTrue(viewModel.followError.value)
+        assertEquals(1, events.size)
+        val event = events.first() as CountryListViewModel.NavigationEvent.NavigateToTopic
+        assertTrue(event.error)
     }
 
     // onGetNotificationsClick
@@ -278,13 +295,19 @@ class CountryListViewModelTest {
     }
 
     @Test
-    fun `Given Get notifications tapped and permissions granted, when request fails, then error flag is set`() = runTest {
+    fun `Given Get notifications tapped and permissions granted, when request fails, then navigation event is emitted with error flag set`() = runTest {
         every { notificationsRepo.permissionGranted() } returns true
-        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
+        val events = mutableListOf<CountryListViewModel.NavigationEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
 
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
         viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
 
-        assertTrue(viewModel.followError.value)
+        assertEquals(1, events.size)
+        val event = events.first() as CountryListViewModel.NavigationEvent.NavigateToTopic
+        assertTrue(event.error)
     }
 
     @Test

@@ -56,8 +56,8 @@ class NotificationsRationaleViewModelTest {
     }
 
     @Test
-    fun `Given Not now tapped, when request succeeds, then navigation event is emitted`() = runTest {
-        val events = mutableListOf<Unit>()
+    fun `Given Not now tapped, when request succeeds, then navigation event is emitted without error flag`() = runTest {
+        val events = mutableListOf<Boolean>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
@@ -66,14 +66,21 @@ class NotificationsRationaleViewModelTest {
         viewModel.onNotNow("france")
 
         assertEquals(1, events.size)
+        assertTrue(!events.first())
     }
 
     @Test
-    fun `Given Not now tapped, when request fails, then state is Error`() = runTest {
+    fun `Given Not now tapped, when request fails, then navigation event is emitted with error flag set`() = runTest {
+        val events = mutableListOf<Boolean>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
+
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Error()
         viewModel.onNotNow("france")
 
-        assertTrue(viewModel.uiState.value is NotificationsRationaleViewModel.State.Error)
+        assertEquals(1, events.size)
+        assertTrue(events.first())
     }
 
     @Test
@@ -90,7 +97,7 @@ class NotificationsRationaleViewModelTest {
 
     @Test
     fun `Given on resume called and permission granted, when request succeeds, then navigation event emitted`() = runTest {
-        val events = mutableListOf<Unit>()
+        val events = mutableListOf<Boolean>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
@@ -106,7 +113,7 @@ class NotificationsRationaleViewModelTest {
 
     @Test
     fun `Given settings alert cancel tapped, when request succeeds, then navigation event is emitted`() = runTest {
-        val events = mutableListOf<Unit>()
+        val events = mutableListOf<Boolean>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.navigationEvent.collect { events.add(it) }
         }
@@ -115,16 +122,30 @@ class NotificationsRationaleViewModelTest {
         viewModel.onSettingsAlertCancel("france")
 
         assertEquals(1, events.size)
+        assertTrue(!events.first())
     }
 
     @Test
-    fun `Given dismiss error, then state is Default`() = runTest {
-        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
-        viewModel.onNotNow("france")
+    fun `Given on resume called after agreeing and permission granted, when request fails, then navigation event emitted with error flag set`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        every { permissionStatus.isGranted } returns false
+        every { permissionStatus.shouldShowRationale } returns false
+        coEvery { notificationsRepo.isFirstPermissionRequestCompleted() } returns false
+        coEvery { notificationsRepo.requestPermission() } returns Unit
+        viewModel.onPageView("france")
+        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
 
-        viewModel.onDismissError()
+        val events = mutableListOf<Boolean>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
+        coEvery { notificationsRepo.permissionGranted() } returns true
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Error()
 
-        assertEquals(NotificationsRationaleViewModel.State.Default, viewModel.uiState.value)
+        viewModel.onResume("france")
+
+        assertEquals(1, events.size)
+        assertTrue(events.first())
     }
 
     @Test

@@ -16,6 +16,8 @@ const val COUNTRY_LIST_ROUTE = "country_list_route"
 const val EDIT_COUNTRIES_ROUTE = "edit_countries_route"
 const val NOTIFICATIONS_RATIONALE_ROUTE = "notifications_rationale_route"
 const val COUNTRY_SLUG_ARG = "countrySlug"
+const val TRAVEL_ALERTS_FOLLOW_ERROR_KEY = "travel_alerts_follow_error"
+const val SHOW_ERROR_ARG = "showError"
 
 val travelAlertsDeepLinks = mapOf(
     "/travelalerts/edit" to listOf(EDIT_COUNTRIES_ROUTE)
@@ -36,7 +38,15 @@ fun NavGraphBuilder.travelAlertsGraph(
             navController = navController
         )
     }
-    composable(route = EDIT_COUNTRIES_ROUTE) {
+    composable(
+        route = "$EDIT_COUNTRIES_ROUTE?$SHOW_ERROR_ARG={$SHOW_ERROR_ARG}",
+        arguments = listOf(
+            navArgument(SHOW_ERROR_ARG) {
+                type = NavType.BoolType
+                defaultValue = false
+            }
+        )
+    ) {
         EditCountriesScreen(
             onBack = { navController.popBackStack() },
             onFollowAnotherCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },

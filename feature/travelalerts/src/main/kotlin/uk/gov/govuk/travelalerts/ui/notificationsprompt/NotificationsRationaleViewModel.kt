@@ -29,14 +29,13 @@ class NotificationsRationaleViewModel @Inject constructor(
         data object Loading : State()
         data object Default : State()
         data object Alert : State()
-        data object Error : State()
     }
 
     private val _uiState = MutableStateFlow<State>(State.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<Unit>()
-    val navigationEvent: SharedFlow<Unit> = _navigationEvent
+    private val _navigationEvent = MutableSharedFlow<Boolean>()
+    val navigationEvent: SharedFlow<Boolean> = _navigationEvent
 
     private var selectedCountrySlug: String? = null
     private var hasAgreedToContinue = false
@@ -54,11 +53,11 @@ class NotificationsRationaleViewModel @Inject constructor(
             _uiState.value = State.Loading
             when (travelAlertsRepo.followCountry(countrySlug, notificationsEnabled = false)) {
                 is Result.Success -> {
-                    _navigationEvent.emit(Unit)
+                    _navigationEvent.emit(false)
                 }
 
                 else -> {
-                    _uiState.value = State.Error
+                    _navigationEvent.emit(true)
                 }
             }
         }
@@ -91,11 +90,11 @@ class NotificationsRationaleViewModel @Inject constructor(
             _uiState.value = State.Loading
             when (travelAlertsRepo.followCountry(countrySlug, notificationsEnabled = false)) {
                 is Result.Success -> {
-                    _navigationEvent.emit(Unit)
+                    _navigationEvent.emit(false)
                 }
 
                 else -> {
-                    _uiState.value = State.Error
+                    _navigationEvent.emit(true)
                 }
             }
         }
@@ -110,11 +109,11 @@ class NotificationsRationaleViewModel @Inject constructor(
                 notificationsRepo.giveConsent()
                 when (travelAlertsRepo.followCountry(countrySlug, notificationsEnabled = true)) {
                     is Result.Success -> {
-                        _navigationEvent.emit(Unit)
+                        _navigationEvent.emit(false)
                     }
 
                     else -> {
-                        _uiState.value = State.Error
+                        _navigationEvent.emit(true)
                     }
                 }
             } else {
@@ -122,9 +121,5 @@ class NotificationsRationaleViewModel @Inject constructor(
                 hasHandledResume = false
             }
         }
-    }
-
-    fun onDismissError() {
-        _uiState.value = State.Default
     }
 }

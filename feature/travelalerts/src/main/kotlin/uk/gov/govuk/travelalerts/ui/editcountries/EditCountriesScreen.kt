@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +12,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -52,6 +49,7 @@ fun EditCountriesScreen(
 ) {
     val viewModel: EditCountriesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         viewModel.onPageView()
     }
@@ -75,7 +73,8 @@ fun EditCountriesScreen(
                 onToggleNotifications = viewModel::toggleNotifications,
                 onUnfollowCountry = viewModel::unfollowCountry,
                 onClearToggleError = viewModel::clearToggleError,
-                onClearUnfollowError = viewModel::clearUnfollowError
+                onClearUnfollowError = viewModel::clearUnfollowError,
+                onClearFollowError = viewModel::clearFollowError
             )
         }
     }
@@ -90,6 +89,7 @@ private fun EditCountriesLoaded(
     onUnfollowCountry: (slug: String, currentNotificationsEnabled: Boolean) -> Unit,
     onClearToggleError: () -> Unit,
     onClearUnfollowError: () -> Unit,
+    onClearFollowError: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val selectedSlug = rememberSaveable { mutableStateOf<String?>(null) }
@@ -192,6 +192,19 @@ private fun EditCountriesLoaded(
             }
         )
     }
+
+    if (state.followError) {
+        AlertDialog(
+            onDismissRequest = onClearFollowError,
+            title = { Text(stringResource(R.string.edit_countries_error_title)) },
+            text = { Text(stringResource(R.string.edit_countries_error_description)) },
+            confirmButton = {
+                Button(onClick = onClearFollowError) {
+                    Text(stringResource(R.string.edit_countries_error_button))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -250,7 +263,8 @@ private fun EditCountriesLoadedPreview() {
             onToggleNotifications = { _, _ -> },
             onUnfollowCountry = { _, _ -> },
             onClearToggleError = {},
-            onClearUnfollowError = {}
+            onClearUnfollowError = {},
+            onClearFollowError = {}
         )
     }
 }

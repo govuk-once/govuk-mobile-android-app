@@ -1,5 +1,6 @@
 package uk.gov.govuk.travelalerts.ui.editcountries
 
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -21,6 +22,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
+import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditCountriesViewModelTest {
@@ -32,7 +34,7 @@ class EditCountriesViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        viewModel = EditCountriesViewModel(travelAlertsRepo, analyticsClient)
+        viewModel = EditCountriesViewModel(travelAlertsRepo, analyticsClient, SavedStateHandle())
     }
 
     @After
@@ -306,6 +308,34 @@ class EditCountriesViewModelTest {
 
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
         assertEquals(null, state.unfollowError)
+    }
+
+    @Test
+    fun `Given showError nav argument, when page loads, then followError is set and flag is consumed`() = runTest {
+        val savedStateHandle = SavedStateHandle(mapOf(SHOW_ERROR_ARG to true))
+        val viewModelWithError = EditCountriesViewModel(travelAlertsRepo, analyticsClient, savedStateHandle)
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+
+        viewModelWithError.onPageView()
+
+        val state = viewModelWithError.uiState.value as EditCountriesViewModel.State.Loaded
+        assertTrue(state.followError)
+        assertEquals(false, savedStateHandle.get<Boolean>(SHOW_ERROR_ARG))
+    }
+
+    @Test
+    fun `Given clear follow error, then followError is false`() = runTest {
+        val savedStateHandle = SavedStateHandle(mapOf(SHOW_ERROR_ARG to true))
+        val viewModelWithError = EditCountriesViewModel(travelAlertsRepo, analyticsClient, savedStateHandle)
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModelWithError.onPageView()
+
+        viewModelWithError.clearFollowError()
+
+        val state = viewModelWithError.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(false, state.followError)
     }
 
     @Test
