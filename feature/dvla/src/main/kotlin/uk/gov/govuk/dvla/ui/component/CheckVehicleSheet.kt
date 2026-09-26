@@ -52,6 +52,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.CheckVehicleError
 import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.canSubmit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +112,7 @@ internal fun CheckVehicleSheet(
             CheckVehicleSheetLabel(state = state)
 
             RegistrationInput(
-                registration = state.registration,
+                registration = state.regNumber,
                 enabled = !isLoading,
                 onRegistrationChange = onRegistrationChange,
                 onClear = onClear,
@@ -136,14 +137,13 @@ internal fun CheckVehicleSheet(
                         keyboardController?.hide()
                         onDismiss()
                     },
-                    enabled = !isLoading,
                     modifier = Modifier.weight(1f)
                 )
 
                 PrimaryButton(
                     text = stringResource(R.string.check_vehicle_submit),
                     onClick = onSubmit,
-                    enabled = state.registration.isNotBlank() && !isLoading,
+                    enabled = state.canSubmit,
                     modifier = Modifier.weight(1f)
                 )
             }

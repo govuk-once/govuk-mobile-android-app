@@ -9,21 +9,24 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import javax.inject.Inject
 
 internal sealed interface CheckVehicleSheetState {
-    val registration: String
+    val regNumber: String
 
     data class Input(
-        override val registration: String = ""
+        override val regNumber: String = ""
     ) : CheckVehicleSheetState
 
     data class Loading(
-        override val registration: String
+        override val regNumber: String
     ) : CheckVehicleSheetState
 
     data class Error(
-        override val registration: String,
+        override val regNumber: String,
         val error: CheckVehicleError
     ) : CheckVehicleSheetState
 }
+
+internal val CheckVehicleSheetState.canSubmit: Boolean
+    get() = this !is CheckVehicleSheetState.Loading && regNumber.isNotBlank()
 
 internal enum class CheckVehicleError {
     SEARCH_UNAVAILABLE,
@@ -37,7 +40,7 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
 
     companion object {
         private const val SECTION = "Driving"
-        private const val MAX_REGISTRATION_LENGTH = 7
+        private const val MAX_REG_NUMBER_LENGTH = 7
     }
 
     private val _sheetState = MutableStateFlow<CheckVehicleSheetState>(
@@ -54,82 +57,37 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
     }
 
     fun onRegistrationChanged(value: String) {
-        val registration = value
+        val regNumber = value
             .uppercase()
-            .filter { character ->
-                character.isLetterOrDigit() || character.isWhitespace()
-            }
-            .takeRegistrationCharacters(MAX_REGISTRATION_LENGTH)
-        _sheetState.value = CheckVehicleSheetState.Input(
-            registration = registration
-        )
-    }
+            .filter { it.isAllowedRegNumberChar() }
 
+        if (regNumber.count { it != ' ' } > MAX_REG_NUMBER_LENGTH) return
+
+        _sheetState.value = CheckVehicleSheetState.Input(regNumber = regNumber)
+    }
     fun onClearClicked() {
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
     fun onSubmitClicked() {
-        val registration = _sheetState.value.registration
-            .filterNot(Char::isWhitespace)
-        if (
-            registration.isBlank() ||
-            _sheetState.value is CheckVehicleSheetState.Loading
-        ) {
-            return
-        }
+        val state = _sheetState.value
+        if (!state.canSubmit) return
 
-        /*
-        * API submission is coming in the next ticket.
-        *
-        * Do not switch permanently to Loading yet, otherwise the sheet will
-        * remain loading with no API result to move it to another state.
-        */
+        val regNumber = state.regNumber.replace(" ", "")
+
+        // API submission is coming in the next ticket.
     }
 
     fun onSheetDismissed() {
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
-    fun showSearchUnavailableError() {
-        _sheetState.update {
-            CheckVehicleSheetState.Error(
-                registration = it.registration,
-                error = CheckVehicleError.SEARCH_UNAVAILABLE
-            )
-        }
+    private fun showError(error: CheckVehicleError) {
+        _sheetState.update { CheckVehicleSheetState.Error(it.regNumber, error) }
     }
-
-    fun showNumberPlateNotFoundError() {
-        _sheetState.update {
-            CheckVehicleSheetState.Error(
-                registration = it.registration,
-                error = CheckVehicleError.NUMBER_PLATE_NOT_FOUND
-            )
-        }
-    }
-
-
 }
 
-private fun String.takeRegistrationCharacters(maxCharacters: Int): String {
-    val result = StringBuilder()
-    var characterCount = 0
-    forEach { character ->
-        when {
-            character.isWhitespace() -> {
-                if (
-                    result.isNotEmpty() &&
-                    result.last() != ' '
-                ) {
-                    result.append(' ')
-                }
-            }
-                characterCount < maxCharacters -> {
-            result.append(character)
-            characterCount++
-        }
-        }
-    }
-    return result.toString()
-}
+private fun Char.isAllowedRegNumberChar(): Boolean =
+    this in 'A'..'Z' || this in '0'..'9' || this == ' '
+
+
