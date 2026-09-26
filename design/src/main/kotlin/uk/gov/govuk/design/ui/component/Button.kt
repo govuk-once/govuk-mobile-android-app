@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -79,22 +82,51 @@ private fun primaryColours(): GovUkButtonColours {
     )
 }
 
+sealed interface GovUkButtonState {
+    data object Enabled : GovUkButtonState
+    data object Disabled : GovUkButtonState
+    data class Loading(val altText: String) : GovUkButtonState
+}
+
+private fun Boolean.toButtonState(): GovUkButtonState =
+    if (this) GovUkButtonState.Enabled else GovUkButtonState.Disabled
+
 @Composable
 fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    externalLink: Boolean = false
+    externalLink: Boolean = false,
+    colours: GovUkButtonColours = primaryColours()
+) {
+    PrimaryButton(
+        text = text,
+        onClick = onClick,
+        state = enabled.toButtonState(),
+        modifier = modifier,
+        externalLink = externalLink,
+        colours = colours
+    )
+}
+
+@Composable
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    state: GovUkButtonState,
+    modifier: Modifier = Modifier,
+    externalLink: Boolean = false,
+    colours: GovUkButtonColours = primaryColours()
 ) {
     BaseButton(
         text = text,
         onClick = onClick,
-        colours = primaryColours(),
+        colours = colours,
         textStyle = GovUkTheme.typography.bodyBold,
         modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
         externalLink = externalLink,
+        state = state,
         shape = RoundedCornerShape(15.dp)
     )
 }
@@ -127,7 +159,7 @@ fun AccountConnectionButton(
         colours = colours,
         textStyle = GovUkTheme.typography.bodyBold,
         modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
+        state = enabled.toButtonState(),
         externalLink = externalLink,
         shape = RoundedCornerShape(15.dp)
     )
@@ -158,7 +190,7 @@ fun SecondaryButton(
         colours = colours,
         textStyle = GovUkTheme.typography.bodyRegular,
         modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
+        state = enabled.toButtonState(),
         externalLink = externalLink,
         shape = RoundedCornerShape(15.dp)
     )
@@ -191,7 +223,7 @@ fun CompactButton(
         colours = colours,
         textStyle = GovUkTheme.typography.bodyRegular,
         modifier = modifier,
-        enabled = enabled,
+        state = enabled.toButtonState(),
         externalLink = externalLink
     )
 }
@@ -211,7 +243,7 @@ fun CompactPrimaryButtonWithIcon(
         colours = primaryColours(),
         textStyle = GovUkTheme.typography.bodyRegular,
         modifier = modifier,
-        enabled = enabled,
+        state = enabled.toButtonState(),
         externalLink = externalLink,
         icon = icon
     )
@@ -245,7 +277,7 @@ fun DestructiveButton(
         colours = colours,
         textStyle = GovUkTheme.typography.bodyBold,
         modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
+        state = enabled.toButtonState(),
         externalLink = externalLink,
         shape = RoundedCornerShape(15.dp)
     )
@@ -305,10 +337,12 @@ private fun BaseButton(
     textStyle: TextStyle,
     modifier: Modifier = Modifier,
     externalLink: Boolean = false,
-    enabled: Boolean = true,
+    state: GovUkButtonState = GovUkButtonState.Enabled,
     @DrawableRes icon: Int? = null,
     shape: RoundedCornerShape = RoundedCornerShape(15.dp),
 ) {
+    val enabled = state != GovUkButtonState.Disabled
+    val loadingAltText = (state as? GovUkButtonState.Loading)?.altText
     val altText = text.replace(
         stringResource(R.string.gov_uk),
         stringResource(R.string.gov_uk_alt_text)
@@ -359,7 +393,7 @@ private fun BaseButton(
     }
 
     Button(
-        onClick = onClick,
+        onClick = { if (loadingAltText == null) onClick() },
         modifier = modifier
             .drawBottomStroke(
                 colour = strokeColour,
@@ -372,17 +406,30 @@ private fun BaseButton(
         interactionSource = interactionSource
     ) {
         if (icon != null) ButtonIcon(icon)
-        Text(
-            text = text,
-            style = textStyle,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .semantics {
-                    contentDescription = altText
-                }
-                .weight(1f, fill = false)
-        )
+
+        Box(
+            modifier = Modifier.weight(1f, fill = false),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                style = textStyle,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .alpha(if (loadingAltText != null) 0f else 1f) // NEW - hidden but keeps its size
+                    .semantics {
+                        contentDescription = loadingAltText ?: altText
+                    }
+            )
+            if (loadingAltText != null) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = LocalContentColor.current,
+                    strokeWidth = 2.dp
+                )
+            }
+        }
         if (externalLink) ExternalLinkIcon()
     }
 }
@@ -513,6 +560,18 @@ private fun PrimaryDisabled()
             text = "Primary button",
             onClick = { },
             enabled = false
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PrimaryLoading() {
+    GovUkTheme {
+        PrimaryButton(
+            text = "Primary button",
+            onClick = { },
+            state = GovUkButtonState.Loading(altText = "Loading")
         )
     }
 }
