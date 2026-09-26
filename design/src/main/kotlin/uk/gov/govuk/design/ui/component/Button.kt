@@ -342,7 +342,8 @@ private fun BaseButton(
     shape: RoundedCornerShape = RoundedCornerShape(15.dp),
 ) {
     val enabled = state != GovUkButtonState.Disabled
-    val loadingAltText = (state as? GovUkButtonState.Loading)?.altText
+    val isLoading = state is GovUkButtonState.Loading
+
     val altText = text.replace(
         stringResource(R.string.gov_uk),
         stringResource(R.string.gov_uk_alt_text)
@@ -393,7 +394,7 @@ private fun BaseButton(
     }
 
     Button(
-        onClick = { if (loadingAltText == null) onClick() },
+        onClick = { if (!isLoading) onClick() },
         modifier = modifier
             .drawBottomStroke(
                 colour = strokeColour,
@@ -417,14 +418,15 @@ private fun BaseButton(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
-                    .alpha(if (loadingAltText != null) 0f else 1f) // NEW - hidden but keeps its size
+                    .alpha(if (isLoading) 0f else 1f)
                     .semantics {
-                        contentDescription = loadingAltText ?: altText
+                        contentDescription =
+                            if (isLoading) state.altText else altText
                     }
             )
-            if (loadingAltText != null) {
+            if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(22.dp),
                     color = LocalContentColor.current,
                     strokeWidth = 2.dp
                 )
