@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.dvla.data.DvlaRepo
 import javax.inject.Inject
 
 internal sealed interface CheckVehicleSheetState {
@@ -35,6 +36,7 @@ internal enum class CheckVehicleError {
 
 @HiltViewModel
 internal class CheckVehicleWidgetViewModel @Inject constructor(
+    private val dvlaRepo: DvlaRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
@@ -73,7 +75,10 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         val state = _sheetState.value
         if (!state.canSubmit) return
 
+        _sheetState.value = CheckVehicleSheetState.Loading(regNumber = state.regNumber)
+
         val regNumber = state.regNumber.replace(" ", "")
+
 
         // API submission is coming in the next ticket.
     }

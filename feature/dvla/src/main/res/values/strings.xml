@@ -182,4 +182,5 @@
     <string name="check_vehicle_clear_registration">Clear text</string>
     <string name="check_vehicle_search_unavailable">Search not working - try again later</string>
     <string name="check_vehicle_number_plate_not_found">Number plate not found</string>
+    <string name="check_vehicle_loading_alt_text">Getting vehicle details</string>
 </resources>

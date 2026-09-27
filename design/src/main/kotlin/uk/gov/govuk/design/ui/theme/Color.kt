@@ -20,6 +20,7 @@ private val BlueLighter95 = Color(0xFFF4F8FB)
 private val BlueDarker25 = Color(0xFF16548A)
 private val BlueDarker50 = Color(0xFF0F385C)
 private val BlueDarker65 = Color(0xFF0A2740)
+private val BlueDarker70 = Color(0xFF092237)
 private val BlueDarker80 = Color(0xFF061625)
 private val BlueDarker90 = Color(0xFF030B12)
 private val BlueDarker80Alpha50 = Color(0x80061625)
@@ -30,6 +31,7 @@ private val TealAccent = Color(0xFF00FFE0)
 private val YellowPrimary = Color(0xFFFFDD00)
 private val YellowDarker50 = Color(0xFF806F0D)
 private val YellowRegPlate = Color(0xFFFFC800)
+private val YellowLighter80 = Color(0xFFFFF8CC)
 
 private val RedPrimary = Color(0xFFCA3535)
 private val RedAccent = Color(0xFFFF5E5E)
@@ -206,7 +208,11 @@ data class GovUkColourScheme(
         val msgUnread: Color,
         val cardMsgHeader: Color,
         val fullScreen: Color,
-        val surfaceModal: Color
+        val surfaceModal: Color,
+        val bottomSheet: Color,
+        val sheetButtonAction: Color,
+        val sheetButtonCancel: Color,
+        val textFieldError: Color
     )
 
     data class Strokes(
@@ -378,7 +384,11 @@ internal val LightColorScheme = GovUkColourScheme(
         msgUnread = RedAccent,
         cardMsgHeader = BlackLighter95,
         fullScreen = White,
-        surfaceModal = White
+        surfaceModal = White,
+        bottomSheet = White,
+        sheetButtonAction = BluePrimary,
+        sheetButtonCancel = Grey60,
+        textFieldError = YellowLighter80
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -549,7 +559,11 @@ internal val DarkColorScheme = GovUkColourScheme(
         msgUnread = RedAccent,
         cardMsgHeader = BlueDarker65,
         fullScreen = BlueDarker80,
-        surfaceModal = BlueDarker90
+        surfaceModal = BlueDarker90,
+        bottomSheet = BlueDarker50,
+        sheetButtonAction = BluePrimary,
+        sheetButtonCancel = BlueDarker70,
+        textFieldError = BlueDarker80
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -715,7 +729,11 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             msgUnread = Color.Unspecified,
             cardMsgHeader = Color.Unspecified,
             fullScreen = Color.Unspecified,
-            surfaceModal = Color.Unspecified
+            surfaceModal = Color.Unspecified,
+            bottomSheet = Color.Unspecified,
+            sheetButtonAction = Color.Unspecified,
+            sheetButtonCancel = Color.Unspecified,
+            textFieldError = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
