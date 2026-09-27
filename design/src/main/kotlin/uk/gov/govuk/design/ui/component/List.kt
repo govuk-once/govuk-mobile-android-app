@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults.textButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -164,6 +165,27 @@ fun InternalLinkListItem(
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
+                is InternalLinkListItemStyle.ShortButton -> {
+                    IconButton(
+                        onClick = style.onClick,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .semantics { contentDescription = style.altText }
+                    ) {
+                        Icon(
+                            painter = painterResource(style.icon),
+                            contentDescription = null,
+                            tint = colours.contentSecondary
+                        )
+                    }
+                }
+                is InternalLinkListItemStyle.TrailingIcon -> {
+                    Icon(
+                        painter = painterResource(style.icon),
+                        contentDescription = null,
+                        tint = colours.contentTertiary
+                    )
+                }
                 InternalLinkListItemStyle.Simple -> { /* No icon, else branch kept for compatibility */ }
                 else -> {
                     Icon(
@@ -254,7 +276,8 @@ fun ToggleListItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isFirst: Boolean = true,
-    isLast: Boolean = true
+    isLast: Boolean = true,
+    backgroundOverride: Color? = null
 ) {
 
     val status = stringResource(if (checked) R.string.on_button else R.string.off_button)
@@ -266,7 +289,7 @@ fun ToggleListItem(
 
     CardListItem(
         modifier = modifier,
-        background = colours.background,
+        background = backgroundOverride ?: colours.background,
         isFirst = isFirst,
         isLast = isLast
     ) {
@@ -785,6 +808,26 @@ private fun InternalLinkListItemButtonPreview() {
 
 @Preview
 @Composable
+private fun InternalLinkListItemShortButtonPreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.ShortButton(R.drawable.ic_more, "Alt text") {})
+    }
+}
+
+@Preview
+@Composable
+private fun InternalLinkListItemTrailingIconPreview() {
+    GovUkTheme {
+        InternalLinkListItem(
+            AccessibleString("Title"),
+            style = InternalLinkListItemStyle.TrailingIcon(R.drawable.ic_more))
+    }
+}
+
+@Preview
+@Composable
 private fun InternalLinkListItemSimplePreview() {
     GovUkTheme {
         InternalLinkListItem(
@@ -901,5 +944,25 @@ private fun CountdownBarItemListItemPreview() {
             50f,
             AccessibleString("Bottom text")
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun ToggleListItemPreview() {
+    GovUkTheme {
+        Column {
+            ToggleListItem(
+                title = "Default background",
+                checked = true,
+                onCheckedChange = {}
+            )
+            ToggleListItem(
+                title = "With listAlt background",
+                checked = false,
+                onCheckedChange = {},
+                backgroundOverride = GovUkTheme.colourScheme.surfaces.listAlt
+            )
+        }
     }
 }

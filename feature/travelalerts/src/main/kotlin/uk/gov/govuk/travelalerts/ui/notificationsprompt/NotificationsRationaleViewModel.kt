@@ -1,0 +1,125 @@
+package uk.gov.govuk.travelalerts.ui.notificationsprompt
+
+import android.os.Build
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.shouldShowRationale
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.notifications.data.NotificationsRepo
+import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
+import javax.inject.Inject
+
+@HiltViewModel
+class NotificationsRationaleViewModel @Inject constructor(
+    private val notificationsRepo: NotificationsRepo,
+    private val travelAlertsRepo: TravelAlertsRepo
+) : ViewModel() {
+
+    sealed class State {
+        data object Loading : State()
+        data object Default : State()
+        data object Alert : State()
+    }
+
+    private val _uiState = MutableStateFlow<State>(State.Loading)
+    val uiState = _uiState.asStateFlow()
+
+    private val _navigationEvent = MutableSharedFlow<Boolean>()
+    val navigationEvent: SharedFlow<Boolean> = _navigationEvent
+
+    private var selectedCountrySlug: String? = null
+    private var hasAgreedToContinue = false
+    private var hasHandledResume = false
+    private var isAlertBranch = false
+
+    fun onPageView(countrySlug: String) {
+        if (_uiState.value != State.Loading) return
+        selectedCountrySlug = countrySlug
+        _uiState.value = State.Default
+    }
+
+    fun onNotNow(countrySlug: String) {
+        viewModelScope.launch {
+            _uiState.value = State.Loading
+            when (travelAlertsRepo.followCountry(countrySlug, notificationsEnabled = false)) {
+                is Result.Success -> {
+                    _navigationEvent.emit(false)
+                }
+
+                else -> {
+                    _navigationEvent.emit(true)
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    fun onAgreeToContinue(
+        permissionStatus: PermissionStatus,
+        androidVersion: Int = Build.VERSION.SDK_INT
+    ) {
+        hasAgreedToContinue = true
+        viewModelScope.launch {
+            val isDefault = androidVersion >= Build.VERSION_CODES.TIRAMISU &&
+                !permissionStatus.isGranted &&
+                (!notificationsRepo.isFirstPermissionRequestCompleted() || permissionStatus.shouldShowRationale)
+
+            if (isDefault) {
+                notificationsRepo.firstPermissionRequestCompleted()
+                notificationsRepo.giveConsent()
+                notificationsRepo.requestPermission()
+            } else {
+                isAlertBranch = true
+                _uiState.value = State.Alert
+            }
+        }
+    }
+
+    fun onSettingsAlertCancel(countrySlug: String) {
+        viewModelScope.launch {
+            _uiState.value = State.Loading
+            when (travelAlertsRepo.followCountry(countrySlug, notificationsEnabled = false)) {
+                is Result.Success -> {
+                    _navigationEvent.emit(false)
+                }
+
+                else -> {
+                    _navigationEvent.emit(true)
+                }
+            }
+        }
+    }
+
+    fun onResume(countrySlug: String) {
+        if (!hasAgreedToContinue || hasHandledResume) return
+        hasHandledResume = true
+        viewModelScope.launch {
+            _uiState.value = State.Loading
+            if (notificationsRepo.permissionGranted()) {
+                notificationsRepo.giveConsent()
+                when (travelAlertsRepo.followCountry(countrySlug, notificationsEnabled = true)) {
+                    is Result.Success -> {
+                        _navigationEvent.emit(false)
+                    }
+
+                    else -> {
+                        _navigationEvent.emit(true)
+                    }
+                }
+            } else {
+                _uiState.value = if (isAlertBranch) State.Alert else State.Default
+                hasHandledResume = false
+            }
+        }
+    }
+}

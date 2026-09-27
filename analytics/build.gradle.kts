@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -7,6 +8,12 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+}
+
+val githubProperties = Properties()
+val githubPropertiesFile = rootProject.file("github.properties")
+if (githubPropertiesFile.exists()) {
+    githubPropertiesFile.reader().use { githubProperties.load(it) }
 }
 
 android {
@@ -18,9 +25,15 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // TODO: these should live in BitWarden - also they'll differ by environment
-        buildConfigField("String", "QUALTRICS_BRAND_ID", "\"\"")
-        buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"\"")
+        buildConfigField("String", "QUALTRICS_BRAND_ID", "\"${githubProperties.getProperty("QUALTRICS_BRAND_ID") ?: System.getenv("QUALTRICS_BRAND_ID_DEFAULT") ?: ""}\"")
+        buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"${githubProperties.getProperty("QUALTRICS_PROJECT_ID") ?: System.getenv("QUALTRICS_PROJECT_ID_DEFAULT") ?: ""}\"")
+    }
+
+    buildTypes {
+        release {
+            buildConfigField("String", "QUALTRICS_BRAND_ID", "\"${System.getenv("QUALTRICS_BRAND_ID_RELEASE") ?: ""}\"")
+            buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"${System.getenv("QUALTRICS_PROJECT_ID_RELEASE") ?: ""}\"")
+        }
     }
 
     compileOptions {

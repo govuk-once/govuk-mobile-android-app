@@ -15,6 +15,7 @@ import uk.gov.govuk.dvla.di.CoroutineScopeIo
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.domain.VehicleEnquiryDetails
 import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.domain.toDomainModel
 import uk.gov.govuk.dvla.remote.DvlaApi
@@ -95,4 +96,9 @@ class DvlaRepo @Inject constructor(
     internal suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
         safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
             .map { it.toDomainModel() }
+
+    internal suspend fun lookupVehicleByRegistration(reg: String): Result<VehicleEnquiryDetails> =
+        safeAuthApiCall({ api.lookupVehicleByRegistration(reg) }, authRepo)
+            .map { it.toDomainModel() }
+
 }

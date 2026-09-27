@@ -26,6 +26,7 @@ interface ConfigRepo {
     val chatBanner: ChatBanner?
     val termsAndConditions: TermsAndConditions?
     val isFlexEnabled: Boolean
+    val isDvlaLinkEnabled: Boolean
     val isMessagesEnabled: Boolean
     val isTravelAlertsEnabled: Boolean
     val isQuarterlySurveyEnabled: Boolean

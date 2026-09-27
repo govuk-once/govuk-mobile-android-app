@@ -107,7 +107,9 @@ class ActionMenuTest {
                         onFunctionActionItemClicked = { _, _, _ -> },
                         onQuestionSubmit = { },
                         onMarkdownLinkClicked = { _, _ -> },
-                        onSourcesExpanded = { }
+                        onSourcesExpanded = { },
+                        onExampleQuestionsViewed = { },
+                        onExampleQuestionSelected = { _, _ -> }
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = hasConversation,

@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +49,8 @@ internal fun IntroMessages(
     question: String,
     isImeVisible: Boolean,
     isLoading: Boolean,
-    onExampleQuestionClicked: (String) -> Unit,
+    onExampleQuestionsViewed: () -> Unit,
+    onExampleQuestionClicked: (String, Int) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
@@ -86,6 +88,7 @@ internal fun IntroMessages(
                         question,
                         isImeVisible,
                         isLoading,
+                        onExampleQuestionsViewed,
                         onExampleQuestionClicked,
                         chatExampleQuestions
                     )
@@ -130,12 +133,21 @@ private fun ExampleQuestions(
     question: String,
     isImeVisible: Boolean,
     isLoading: Boolean,
-    onClick: (String) -> Unit,
+    onViewed: () -> Unit,
+    onClick: (String, Int) -> Unit,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier
 ) {
     if (!chatExampleQuestions.isNullOrEmpty() && !hasConversation) {
         val isVisible = question.isEmpty() && !isImeVisible && !isLoading
+
+        var hasBeenViewed by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(isVisible) {
+            if (isVisible && !hasBeenViewed) {
+                onViewed()
+                hasBeenViewed = true
+            }
+        }
 
         val prompt = stringResource(R.string.example_question_prompt)
 
@@ -172,7 +184,7 @@ private fun ExampleQuestions(
                         ExampleQuestion(
                             exampleQuestion,
                             prompt,
-                            onClick,
+                            onClick = { onClick(exampleQuestion, index) },
                             modifier = Modifier
                                 .testTag("exampleQuestion_$index")
                                 .semantics {

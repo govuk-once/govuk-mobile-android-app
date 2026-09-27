@@ -20,7 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
@@ -28,6 +30,7 @@ import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.ExtraSmallVerticalSpacer
+import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
@@ -35,19 +38,37 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
+import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 
 @Composable
 fun TravelAlertsWidget(
     launchBrowser: (String) -> Unit,
-    onFollowCountry: () -> Unit
+    onFollowCountry: () -> Unit,
+    onEditCountries: () -> Unit = {}
 ) {
     val viewModel: TravelAlertsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (val state = uiState) {
+    // The result is written to the entry's own savedStateHandle, a different instance from the
+    // one Hilt injects into the ViewModel, so it has to be observed here and forwarded.
+    val backStackEntry = LocalLifecycleOwner.current as? NavBackStackEntry
+    LaunchedEffect(backStackEntry) {
+        val handle = backStackEntry?.savedStateHandle ?: return@LaunchedEffect
+        handle.getStateFlow(TRAVEL_ALERTS_FOLLOW_ERROR_KEY, false).collect { pending ->
+            if (pending) {
+                handle[TRAVEL_ALERTS_FOLLOW_ERROR_KEY] = false
+                viewModel.onFollowError()
+            }
+        }
+    }
+
+    when (val state = uiState.content) {
         TravelAlertsWidgetViewModel.State.Loading -> TravelAlertsLoading()
         TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty(onFollowCountry)
-        is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(state.rows) { row ->
+        is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(
+            rows = state.rows,
+            onEditCountries = onEditCountries
+        ) { row ->
             viewModel.onRowClick(row)
             launchBrowser(row.link)
         }
@@ -56,6 +77,15 @@ fun TravelAlertsWidget(
 
     LaunchedEffect(Unit) {
         viewModel.onPageView()
+    }
+
+    if (uiState.followError) {
+        InfoAlert(
+            title = R.string.follow_country_error_title,
+            message = R.string.follow_country_error_description,
+            buttonText = R.string.follow_country_error_button,
+            onDismiss = { viewModel.onDismissFollowError() }
+        )
     }
 }
 
@@ -83,6 +113,7 @@ private fun TravelAlertsEmpty(onFollowCountry: () -> Unit) {
 @Composable
 private fun TravelAlertsLoaded(
     rows: List<TravelAlertsWidgetViewModel.LoadedRow>,
+    onEditCountries: () -> Unit,
     onRowClick: (TravelAlertsWidgetViewModel.LoadedRow) -> Unit
 ) {
     Column {
@@ -91,7 +122,7 @@ private fun TravelAlertsLoaded(
             button = SectionHeadingLabelButton(
                 title = stringResource(R.string.loaded_button_edit),
                 altText = stringResource(R.string.loaded_button_edit),
-                onClick = { /* Not implemented yet */ }
+                onClick = onEditCountries
             )
         )
 
@@ -169,10 +200,11 @@ fun TravelAlertsWidgetEmptyPreview() {
 fun TravelAlertsWidgetLoadedPreview() {
     GovUkTheme {
         TravelAlertsLoaded(
-            listOf(
+            rows = listOf(
                 TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "Updated on 12th September 26", "test"),
                 TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "Updated on 13th September 26", "test")
-            )
+            ),
+            onEditCountries = {}
         ) { }
     }
 }

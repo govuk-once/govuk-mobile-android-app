@@ -64,7 +64,9 @@ internal class AnalyticsEvents(
     val onFunctionActionItemClicked: (String, String, String) -> Unit,
     val onQuestionSubmit: () -> Unit,
     val onMarkdownLinkClicked: (String, String) -> Unit,
-    val onSourcesExpanded: () -> Unit
+    val onSourcesExpanded: () -> Unit,
+    val onExampleQuestionsViewed: () -> Unit,
+    val onExampleQuestionSelected: (String, Int) -> Unit
 )
 
 internal class UiEvents(
@@ -129,7 +131,11 @@ internal fun ChatRoute(
                         },
                         onQuestionSubmit = { viewModel.onQuestionSubmit() },
                         onMarkdownLinkClicked = { text, url -> viewModel.onMarkdownLinkClicked(text, url) },
-                        onSourcesExpanded = { viewModel.onSourcesExpanded() }
+                        onSourcesExpanded = { viewModel.onSourcesExpanded() },
+                        onExampleQuestionsViewed = { viewModel.onExampleQuestionsViewed() },
+                        onExampleQuestionSelected = { question, index ->
+                            viewModel.onExampleQuestionSelected(question, index)
+                        }
                     ),
                     launchBrowser = launchBrowser,
                     hasConversation = it.chatEntries.isNotEmpty(),
@@ -229,9 +235,10 @@ internal fun ChatScreen(
                         question = uiState.question,
                         isImeVisible = isImeVisible,
                         isLoading = uiState.isLoading,
-                        onExampleQuestionClicked = { question ->
+                        onExampleQuestionsViewed = analyticsEvents.onExampleQuestionsViewed,
+                        onExampleQuestionClicked = { question, index ->
                             uiEvents.onSubmit(question)
-                            analyticsEvents.onQuestionSubmit()
+                            analyticsEvents.onExampleQuestionSelected(question, index)
                         },
                         chatExampleQuestions = chatExampleQuestions
                     )
@@ -354,7 +361,9 @@ private fun analyticsEvents() = AnalyticsEvents(
     onNavigationActionItemClicked = { _, _ ->  },
     onQuestionSubmit = { },
     onMarkdownLinkClicked = { _, _ -> },
-    onSourcesExpanded = { }
+    onSourcesExpanded = { },
+    onExampleQuestionsViewed = { },
+    onExampleQuestionSelected = { _, _ -> }
 )
 
 private fun clickEvents() = UiEvents(

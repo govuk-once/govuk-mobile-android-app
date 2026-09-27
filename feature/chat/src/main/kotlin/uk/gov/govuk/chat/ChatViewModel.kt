@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatUiState.Default
 import uk.gov.govuk.chat.ChatUiState.Error
 import uk.gov.govuk.chat.ChatUiState.Onboarding
@@ -28,6 +29,10 @@ import uk.gov.govuk.chat.ui.model.ChatEntry
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import javax.inject.Inject
+
+private const val CHAT_SUGGESTIONS_LIST_ID = "chat suggestions"
+private const val CHAT_SUGGESTIONS_LIST_NAME = "chat suggestions"
+private const val CHAT_SUGGESTION_ITEM_CATEGORY = "chat_suggestion"
 
 internal sealed class ChatUiState {
     data object Onboarding: ChatUiState()
@@ -223,6 +228,40 @@ internal class ChatViewModel @Inject constructor(
     fun onQuestionSubmit() {
         analyticsClient.chat()
     }
+
+    fun onExampleQuestionsViewed() {
+        val questions = chatExampleQuestions
+        if (!questions.isNullOrEmpty()) {
+            analyticsClient.viewItemListEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = CHAT_SUGGESTIONS_LIST_ID,
+                    itemListName = CHAT_SUGGESTIONS_LIST_NAME,
+                    items = questions.map { question -> chatSuggestionItem(question) },
+                    totalItemCount = questions.size
+                )
+            )
+        }
+    }
+
+    fun onExampleQuestionSelected(question: String, index: Int) {
+        analyticsClient.chat(type = "suggestion", section = "chat")
+
+        analyticsClient.selectItemEvent(
+            ecommerceEvent = EcommerceEvent(
+                itemListId = CHAT_SUGGESTIONS_LIST_ID,
+                itemListName = CHAT_SUGGESTIONS_LIST_NAME,
+                items = listOf(chatSuggestionItem(question)),
+                totalItemCount = chatExampleQuestions?.size ?: 0
+            ),
+            selectedItemIndex = index + 1 // not zero indexed
+        )
+    }
+
+    private fun chatSuggestionItem(question: String) = EcommerceEvent.Item(
+        itemName = question,
+        itemCategory = CHAT_SUGGESTION_ITEM_CATEGORY,
+        locationId = ""
+    )
 
     fun onButtonClicked(text: String, section: String) {
         analyticsClient.buttonClick(

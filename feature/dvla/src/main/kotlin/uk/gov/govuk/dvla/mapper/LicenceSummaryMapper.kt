@@ -1,4 +1,4 @@
-package uk.gov.govuk.dvla.ui.model
+package uk.gov.govuk.dvla.mapper
 
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -7,9 +7,18 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
+import uk.gov.govuk.dvla.ui.model.MenuAction
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
+import uk.gov.govuk.dvla.ui.model.StatusCountdownUiModel
+import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusStyle
+import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.util.StringProvider
-import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
+import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
 import uk.gov.govuk.dvla.util.isInThePast
 import uk.gov.govuk.dvla.util.isToday
