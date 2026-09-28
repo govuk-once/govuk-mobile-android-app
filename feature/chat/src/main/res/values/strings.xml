@@ -67,5 +67,7 @@
     <string name="chat_feedback_negative_link_text">Say what went wrong</string>
     <string name="chat_feedback_positive_icon_text">Helpful</string>
     <string name="chat_feedback_negative_icon_text">Not helpful</string>
+    <string name="chat_feedback_positive_selected_icon_text">Thumbs up, selected</string>
+    <string name="chat_feedback_negative_selected_icon_text">Thumbs down, selected</string>
     <string name="chat_feedback_thank_you_text">Thanks for your feedback</string>
 </resources>

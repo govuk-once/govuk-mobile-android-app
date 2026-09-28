@@ -449,6 +449,7 @@ private fun AnimatedFeedback(
 
             FeedbackSelection.Positive -> FeedbackLink(
                 linkText = stringResource(R.string.chat_feedback_positive_link_text),
+                contentDescription = stringResource(R.string.chat_feedback_positive_selected_icon_text),
                 icon = R.drawable.baseline_thumb_up_24,
                 onClick = {
                     onPositiveLinkClick()
@@ -462,6 +463,7 @@ private fun AnimatedFeedback(
 
             FeedbackSelection.Negative -> FeedbackLink(
                 linkText = stringResource(R.string.chat_feedback_negative_link_text),
+                contentDescription = stringResource(R.string.chat_feedback_negative_selected_icon_text),
                 icon = R.drawable.baseline_thumb_down_24,
                 onClick = {
                     onNegativeLinkClick()
@@ -518,6 +520,7 @@ private fun FeedbackIcons(
 @Composable
 private fun FeedbackLink(
     linkText: String,
+    contentDescription: String,
     @DrawableRes icon: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -530,7 +533,7 @@ private fun FeedbackLink(
     ) {
         Icon(
             painter = painterResource(icon),
-            contentDescription = null,
+            contentDescription = contentDescription,
             tint = GovUkTheme.colourScheme.textAndIcons.secondary,
         )
 
