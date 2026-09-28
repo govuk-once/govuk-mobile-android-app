@@ -69,6 +69,7 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
+import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
@@ -613,7 +614,11 @@ private fun GovUkNavHost(
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
                                 vehiclesFooter = {
-                                    CheckVehicleWidget()
+                                    CheckVehicleWidget(
+                                        onVehicleFound = { reg ->
+                                            navController.navigateToVehicleDetailsByRegistration(reg)
+                                        }
+                                    )
                                 }
                             )
                         }

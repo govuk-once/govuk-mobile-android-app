@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.CheckVehicleWidgetViewModel
 import uk.gov.govuk.dvla.R
 
@@ -78,6 +80,7 @@ private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehic
 
 @Composable
 fun CheckVehicleWidget(
+    onVehicleFound: (regNumber: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CheckVehicleWidgetViewModel = hiltViewModel()
@@ -95,6 +98,15 @@ fun CheckVehicleWidget(
                 )
             )
         }
+
+    LaunchedEffect(sheetState) {
+        val state = sheetState
+        if (state is CheckVehicleSheetState.Success) {
+            showSheet = false
+            viewModel.onSheetDismissed()
+            onVehicleFound(state.regNumber)
+        }
+    }
 
     Column(modifier) {
         Title3BoldLabel(
@@ -206,7 +218,7 @@ fun CheckVehicleCard(
 @Composable
 private fun CheckAVehicleWidgetPreview() {
     GovUkTheme {
-        CheckVehicleWidget()
+        CheckVehicleWidget({})
     }
 }
 

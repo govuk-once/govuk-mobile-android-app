@@ -212,7 +212,8 @@ private fun CheckVehicleSheetLabel(
 
     val text = when (state) {
         is CheckVehicleSheetState.Input,
-        is CheckVehicleSheetState.Loading -> {
+        is CheckVehicleSheetState.Loading,
+        is CheckVehicleSheetState.Success -> {
             stringResource(R.string.check_vehicle_sheet_prompt)
         }
 

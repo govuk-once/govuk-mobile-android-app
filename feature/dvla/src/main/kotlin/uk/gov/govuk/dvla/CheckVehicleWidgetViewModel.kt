@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,6 +28,8 @@ internal sealed interface CheckVehicleSheetState {
         override val regNumber: String,
         val error: CheckVehicleError
     ) : CheckVehicleSheetState
+
+    data class Success(override val regNumber: String) : CheckVehicleSheetState
 }
 
 internal val CheckVehicleSheetState.canSubmit: Boolean
@@ -52,6 +55,8 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
     private val _sheetState = MutableStateFlow<CheckVehicleSheetState>(
         CheckVehicleSheetState.Input()
     )
+
+    private var vehicleLookup: Job? = null
 
     val sheetState = _sheetState.asStateFlow()
 
@@ -79,6 +84,8 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         val state = _sheetState.value
         if (!state.canSubmit) return
 
+        val regNumber = state.regNumber.filterNot { it.isWhitespace() }
+
         _sheetState.value = CheckVehicleSheetState.Loading(
             regNumber = state.regNumber
         )
@@ -89,10 +96,7 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
             )
             when (result) {
                 is Result.Success -> {
-                    // TODO: handle result
-                    _sheetState.value = CheckVehicleSheetState.Input(
-                        regNumber = state.regNumber
-                    )
+                    _sheetState.value = CheckVehicleSheetState.Success(regNumber)
                 }
 
                 is Result.ServiceNotResponding -> showError(
@@ -109,6 +113,7 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
     }
 
     fun onSheetDismissed() {
+        vehicleLookup?.cancel()
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
