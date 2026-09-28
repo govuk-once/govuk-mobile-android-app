@@ -92,8 +92,6 @@ fun CheckVehicleWidget(
         }
 
     Column(modifier) {
-        MediumVerticalSpacer()
-
         Title3BoldLabel(
             text = stringResource(R.string.check_vehicle_title),
             modifier = Modifier.semantics { heading() }

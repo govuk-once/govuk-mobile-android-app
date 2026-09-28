@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
+import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -57,14 +58,14 @@ fun VehiclesAndLicenceSummaryWidget(
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
+    Column(modifier = modifier) {
+        when (val currentState = state) {
+            is UiState.Hidden -> {
+                SmallVerticalSpacer()
+                vehiclesFooter()    // content to be shown even if not linked (eg check vehicle)
+            }
 
-    when (val currentState = state) {
-        is UiState.Hidden -> {
-            vehiclesFooter()    // content to be shown even if not linked (eg check vehicle)
-        }
-
-        is UiState.Error -> {
-            Column(modifier = modifier) {
+            is UiState.Error -> {
                 AccountError(
                     onClick = { text ->
                         launchBrowser(currentState.fallbackUrl.urlToOpen)
@@ -74,17 +75,16 @@ fun VehiclesAndLicenceSummaryWidget(
                         )
                     }
                 )
+                ExtraLargeVerticalSpacer()
                 vehiclesFooter()
             }
-        }
 
-        is UiState.Default -> {
-            val activeButtonState = when (currentState.drivingView) {
-                DrivingView.VEHICLES -> VehiclesButton
-                DrivingView.LICENCE -> LicenceButton
-            }
+            is UiState.Default -> {
+                val activeButtonState = when (currentState.drivingView) {
+                    DrivingView.VEHICLES -> VehiclesButton
+                    DrivingView.LICENCE -> LicenceButton
+                }
 
-            Column(modifier = modifier) {
                 SmallVerticalSpacer()
 
                 ConnectedButtonGroup(
@@ -162,6 +162,7 @@ fun VehiclesAndLicenceSummaryWidget(
                             modifier = modifier
                         )
 
+                        ExtraLargeVerticalSpacer()
                         vehiclesFooter()
                     }
 
