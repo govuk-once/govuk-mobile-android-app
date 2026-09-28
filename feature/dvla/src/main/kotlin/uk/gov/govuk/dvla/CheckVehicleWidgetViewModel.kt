@@ -1,12 +1,15 @@
 package uk.gov.govuk.dvla
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.data.model.Result
 import javax.inject.Inject
 
 internal sealed interface CheckVehicleSheetState {
@@ -43,6 +46,7 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
     companion object {
         private const val SECTION = "Driving"
         private const val MAX_REG_NUMBER_LENGTH = 7
+        private const val HTTP_NOT_FOUND = 404
     }
 
     private val _sheetState = MutableStateFlow<CheckVehicleSheetState>(
@@ -75,12 +79,33 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         val state = _sheetState.value
         if (!state.canSubmit) return
 
-        _sheetState.value = CheckVehicleSheetState.Loading(regNumber = state.regNumber)
+        _sheetState.value = CheckVehicleSheetState.Loading(
+            regNumber = state.regNumber
+        )
 
-        val regNumber = state.regNumber.replace(" ", "")
+        viewModelScope.launch {
+            val result = dvlaRepo.lookupVehicleByRegistration(
+                state.regNumber.filterNot { it.isWhitespace() }
+            )
+            when (result) {
+                is Result.Success -> {
+                    // TODO: handle result
+                    _sheetState.value = CheckVehicleSheetState.Input(
+                        regNumber = state.regNumber
+                    )
+                }
 
+                is Result.ServiceNotResponding -> showError(
+                    if (result.code == HTTP_NOT_FOUND) {
+                        CheckVehicleError.NUMBER_PLATE_NOT_FOUND
+                    } else {
+                        CheckVehicleError.SEARCH_UNAVAILABLE
+                    }
+                )
 
-        // API submission is coming in the next ticket.
+                else -> showError(CheckVehicleError.SEARCH_UNAVAILABLE)
+            }
+        }
     }
 
     fun onSheetDismissed() {
