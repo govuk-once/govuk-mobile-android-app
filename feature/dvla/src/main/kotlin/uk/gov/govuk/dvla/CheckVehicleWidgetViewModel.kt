@@ -48,6 +48,8 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
 
     companion object {
         private const val SECTION = "Driving"
+        private const val ACTION_SEARCH = "Search number plate"
+        private const val ACTION_CANCEL_SEARCH = "Cancel search number plate"
         private const val MAX_REG_NUMBER_LENGTH = 7
         private const val HTTP_NOT_FOUND = 404
     }
@@ -80,9 +82,15 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
-    fun onSubmitClicked() {
+    fun onSubmitClicked(buttonText: String) {
         val state = _sheetState.value
         if (!state.canSubmit) return
+
+        analyticsClient.widgetFunction(
+            text = buttonText,
+            section = SECTION,
+            action = ACTION_SEARCH
+        )
 
         val regNumber = state.regNumber.filterNot { it.isWhitespace() }
 
@@ -110,6 +118,15 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
                 else -> showError(CheckVehicleError.SEARCH_UNAVAILABLE)
             }
         }
+    }
+
+    fun onCancelClicked(buttonText: String) {
+        analyticsClient.widgetFunction(
+            text = buttonText,
+            section = SECTION,
+            action = ACTION_CANCEL_SEARCH
+        )
+        onSheetDismissed()
     }
 
     fun onSheetDismissed() {

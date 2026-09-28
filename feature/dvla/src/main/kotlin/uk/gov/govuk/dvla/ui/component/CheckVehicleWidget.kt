@@ -135,14 +135,17 @@ fun CheckVehicleWidget(
     }
 
     if (showSheet) {
+        val submitLabel = stringResource(R.string.check_vehicle_submit)
+        val cancelLabel = stringResource(R.string.check_vehicle_cancel)
+
         CheckVehicleSheet(
             state = sheetState,
             onRegistrationChange = viewModel::onRegistrationChanged,
             onClear = { viewModel.onClearClicked() },
-            onSubmit = { viewModel.onSubmitClicked() },
-            onDismiss = {
+            onSubmit = { viewModel.onSubmitClicked(submitLabel) },
+            onCancel = {
                 showSheet = false
-                viewModel.onSheetDismissed()
+                viewModel.onCancelClicked(cancelLabel)
             }
         )
     }

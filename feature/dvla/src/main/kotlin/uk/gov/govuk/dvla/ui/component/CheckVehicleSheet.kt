@@ -53,7 +53,6 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.CheckVehicleError
 import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.canSubmit
 
 private val SheetShape = RoundedCornerShape(topStart = 33.dp, topEnd = 33.dp)
 
@@ -88,7 +87,7 @@ internal fun CheckVehicleSheet(
     onRegistrationChange: (String) -> Unit,
     onClear: () -> Unit,
     onSubmit: () -> Unit,
-    onDismiss: () -> Unit,
+    onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -109,7 +108,7 @@ internal fun CheckVehicleSheet(
     ModalBottomSheet(
         onDismissRequest = {
             keyboardController?.hide()
-            onDismiss()
+            onCancel()
         },
         modifier = modifier.semantics {
             paneTitle = sheetTitle
@@ -129,7 +128,7 @@ internal fun CheckVehicleSheet(
             onSubmit = onSubmit,
             onCancel = {
                 keyboardController?.hide()
-                onDismiss()
+                onCancel()
             },
             focusRequester = focusRequester
         )
