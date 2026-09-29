@@ -78,6 +78,7 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
 
         _sheetState.value = CheckVehicleSheetState.Input(regNumber = regNumber)
     }
+
     fun onClearClicked() {
         _sheetState.value = CheckVehicleSheetState.Input()
     }

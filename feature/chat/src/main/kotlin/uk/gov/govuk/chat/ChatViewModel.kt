@@ -160,6 +160,8 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onSubmit(question: String) {
+        if (askQuestionJob?.isActive == true) return
+
         val isPiiError = StringCleaner.includesPII(question)
         _uiState.updateDefault { it.copy(isPiiError = isPiiError) }
 
