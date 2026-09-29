@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
 import javax.inject.Inject
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CountryListViewModel @Inject constructor(
     private val travelAlertsRepo: TravelAlertsRepo,
+    private val notificationsRepo: NotificationsRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
@@ -30,17 +32,31 @@ class CountryListViewModel @Inject constructor(
 
     sealed class State {
         data object Loading : State()
-        data class Loaded(val countries: List<Country>, val searchQuery: String = "") : State()
+        data class Loaded(
+            val countries: List<Country>,
+            val searchQuery: String = "",
+            val selectedCountry: Country? = null,
+            val isSaving: Boolean = false
+        ) : State()
         data object Error : State()
     }
 
     private val _uiState: MutableStateFlow<State> = MutableStateFlow(State.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<Unit>()
-    val navigationEvent: SharedFlow<Unit> = _navigationEvent
+    sealed class NavigationEvent {
+        data class NavigateToTopic(val error: Boolean = false) : NavigationEvent()
+        data class NavigateToNotificationsRationale(val countrySlug: String) : NavigationEvent()
+    }
+
+    private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
+    val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
 
     private var allCountries: List<Country> = emptyList()
+
+    private fun updateLoaded(block: State.Loaded.() -> State.Loaded) {
+        (_uiState.value as? State.Loaded)?.let { _uiState.value = it.block() }
+    }
 
     fun onPageView() {
         analyticsClient.screenView(
@@ -80,13 +96,48 @@ class CountryListViewModel @Inject constructor(
         if (currentState is State.Loaded && currentState.searchQuery.isNotEmpty()) {
             analyticsClient.search(currentState.searchQuery, section = SEARCH_SECTION)
         }
+        updateLoaded { copy(selectedCountry = country) }
+    }
+
+    fun onDismissPreferenceSheet() {
+        updateLoaded { copy(selectedCountry = null) }
+    }
+
+    fun onNotNowNotifications(country: Country) {
         viewModelScope.launch {
-            _uiState.value = State.Loading
-            val result = travelAlertsRepo.subscribeToCountry(country.slug)
-            if (result is Result.Success) {
-                _navigationEvent.emit(Unit)
-            } else {
-                _uiState.value = State.Loaded(allCountries)
+            updateLoaded { copy(isSaving = true) }
+            when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = false)) {
+                is Result.Success -> {
+                    updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                    _navigationEvent.emit(NavigationEvent.NavigateToTopic())
+                }
+                else -> {
+                    updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                    _navigationEvent.emit(NavigationEvent.NavigateToTopic(error = true))
+                }
+            }
+        }
+    }
+
+    fun onGetNotificationsClick(country: Country) {
+        if (notificationsRepo.permissionGranted()) {
+            viewModelScope.launch {
+                updateLoaded { copy(isSaving = true) }
+                when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = true)) {
+                    is Result.Success -> {
+                        updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                        _navigationEvent.emit(NavigationEvent.NavigateToTopic())
+                    }
+                    else -> {
+                        updateLoaded { copy(selectedCountry = null, isSaving = false) }
+                        _navigationEvent.emit(NavigationEvent.NavigateToTopic(error = true))
+                    }
+                }
+            }
+        } else {
+            updateLoaded { copy(selectedCountry = null) }
+            viewModelScope.launch {
+                _navigationEvent.emit(NavigationEvent.NavigateToNotificationsRationale(country.slug))
             }
         }
     }
@@ -108,6 +159,6 @@ class CountryListViewModel @Inject constructor(
                     country.synonyms.any { it.lowercase().contains(q) }
             }
         }
-        _uiState.value = State.Loaded(filtered, query)
+        updateLoaded { copy(countries = filtered, searchQuery = query) }
     }
 }

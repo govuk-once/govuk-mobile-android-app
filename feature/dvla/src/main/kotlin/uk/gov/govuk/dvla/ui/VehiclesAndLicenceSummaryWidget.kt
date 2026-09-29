@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
+import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
@@ -51,31 +52,39 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    vehiclesFooter: @Composable () -> Unit = {}
 ) {
     val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
-
-    when (val currentState = state) {
-        is UiState.Hidden -> {
-            return // draw nothing if not linked
-        }
-
-        is UiState.Error -> AccountError(
-            onClick = { text ->
-                launchBrowser(currentState.fallbackUrl.urlToOpen)
-                viewModel.onExternalButtonClicked(text, currentState.fallbackUrl.originalUrl)
-            }
-        )
-
-        is UiState.Default -> {
-            val activeButtonState = when (currentState.drivingView) {
-                DrivingView.VEHICLES -> VehiclesButton
-                DrivingView.LICENCE -> LicenceButton
+    Column(modifier = modifier) {
+        when (val currentState = state) {
+            is UiState.Hidden -> {
+                SmallVerticalSpacer()
+                vehiclesFooter()    // content to be shown even if not linked (eg check vehicle)
             }
 
-            Column(modifier = modifier) {
+            is UiState.Error -> {
+                AccountError(
+                    onClick = { text ->
+                        launchBrowser(currentState.fallbackUrl.urlToOpen)
+                        viewModel.onExternalButtonClicked(
+                            text,
+                            currentState.fallbackUrl.originalUrl
+                        )
+                    }
+                )
+                ExtraLargeVerticalSpacer()
+                vehiclesFooter()
+            }
+
+            is UiState.Default -> {
+                val activeButtonState = when (currentState.drivingView) {
+                    DrivingView.VEHICLES -> VehiclesButton
+                    DrivingView.LICENCE -> LicenceButton
+                }
+
                 SmallVerticalSpacer()
 
                 ConnectedButtonGroup(
@@ -152,6 +161,9 @@ fun VehiclesAndLicenceSummaryWidget(
                             },
                             modifier = modifier
                         )
+
+                        ExtraLargeVerticalSpacer()
+                        vehiclesFooter()
                     }
 
                     DrivingView.LICENCE -> {

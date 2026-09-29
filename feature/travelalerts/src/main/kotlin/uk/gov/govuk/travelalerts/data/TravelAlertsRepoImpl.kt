@@ -72,14 +72,23 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         return res
     }
 
-    override suspend fun subscribeToCountry(slug: String): Result<Unit> {
+    override suspend fun followCountry(slug: String, notificationsEnabled: Boolean): Result<Unit> {
+        val (leaveSubgroup, joinSubgroup) = if (notificationsEnabled) Subgroup.NONE to Subgroup.INSTANT
+                                            else Subgroup.INSTANT to Subgroup.NONE
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
                     SubscriptionRequest(
                         namespace = "travel",
                         group = slug,
-                        subgroup = Subgroup.DAILY
+                        subgroup = leaveSubgroup,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = joinSubgroup,
+                        action = SubscriptionRequest.Action.JOIN
                     )
                 )
             )
@@ -91,8 +100,8 @@ internal class TravelAlertsRepoImpl @Inject constructor(
     }
 
     override suspend fun toggleNotifications(slug: String, enabled: Boolean): Result<Unit> {
-        val (leaveSubgroup, joinSubgroup) = if (enabled) Subgroup.NONE to Subgroup.DAILY
-                                            else Subgroup.DAILY to Subgroup.NONE
+        val (leaveSubgroup, joinSubgroup) = if (enabled) Subgroup.NONE to Subgroup.INSTANT
+                                            else Subgroup.INSTANT to Subgroup.NONE
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
@@ -118,7 +127,7 @@ internal class TravelAlertsRepoImpl @Inject constructor(
     }
 
     override suspend fun unfollowCountry(slug: String, currentNotificationsEnabled: Boolean): Result<Unit> {
-        val subgroupToLeave = if (currentNotificationsEnabled) Subgroup.DAILY else Subgroup.NONE
+        val subgroupToLeave = if (currentNotificationsEnabled) Subgroup.INSTANT else Subgroup.NONE
 
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
