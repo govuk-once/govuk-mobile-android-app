@@ -293,6 +293,24 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a chat feedback item is clicked, then log event`() {
+        analyticsClient.chatFeedback(text = "text", action = "action", questionId = "questionId")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "ChatFeedback",
+                mapOf(
+                    "text" to "text",
+                    "action" to "action",
+                    "questionId" to "questionId",
+                    "type" to "Feedback",
+                    "section" to "Chat"
+                )
+            )
+        }
+    }
+
+    @Test
     fun `Given a Notification Centre URL is launched, then log event`() {
         val testUrl = "Test"
         analyticsClient.messagesUrlLaunched(testUrl)

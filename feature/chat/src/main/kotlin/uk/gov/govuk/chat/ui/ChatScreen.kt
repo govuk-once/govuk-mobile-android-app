@@ -90,8 +90,7 @@ internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
     val onClear: () -> Unit,
-    val onPositiveFeedback: () -> Unit,
-    val onNegativeFeedback: () -> Unit
+    val onFeedbackClick: (String, String, String) -> Unit
 )
 
 @Composable
@@ -169,11 +168,8 @@ internal fun ChatRoute(
                         onClear = {
                             viewModel.clearConversation()
                         },
-                        onPositiveFeedback = {
-                            viewModel.onPositiveFeedback()
-                        },
-                        onNegativeFeedback = {
-                            viewModel.onNegativeFeedback()
+                        onFeedbackClick = { text, action, questionId ->
+                            viewModel.onFeedbackClick(text, action, questionId)
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
@@ -303,11 +299,8 @@ internal fun ChatScreen(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
                             isAnalyticsEnabled = isAnalyticsEnabled,
-                            onPositiveLinkClick = {
-                                uiEvents.onPositiveFeedback()
-                            },
-                            onNegativeLinkClick = {
-                                uiEvents.onNegativeFeedback()
+                            onFeedbackClick = { text, action, questionId ->
+                                uiEvents.onFeedbackClick(text, action, questionId)
                             }
                         )
                     }
@@ -386,14 +379,12 @@ private fun AnimatedFeedback(
     chatEntry: ChatEntryModel,
     animationDelay: Int,
     isAnalyticsEnabled: Boolean,
-    onPositiveLinkClick: () -> Unit,
-    onNegativeLinkClick: () -> Unit,
+    onFeedbackClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val animationDuration = 200
     val coroutineScope = rememberCoroutineScope()
 
-    // TODO: keep track of if FB is given on the last question somehow.
     // Start visible if the answer is already present
     var showFeedback by rememberSaveable(chatEntry.id) {
         mutableStateOf(chatEntry.answer.isNotBlank())
@@ -412,6 +403,12 @@ private fun AnimatedFeedback(
             showFeedback = true
         }
     }
+
+    val positiveLinkText = stringResource(R.string.chat_feedback_positive_link_text)
+    val negativeLinkText = stringResource(R.string.chat_feedback_negative_link_text)
+
+    val positiveIconText = stringResource(R.string.chat_feedback_positive_icon_analytics_text)
+    val negativeIconText = stringResource(R.string.chat_feedback_negative_icon_analytics_text)
 
     AnimatedVisibility(
         visible = showFeedback,
@@ -434,13 +431,13 @@ private fun AnimatedFeedback(
         when (feedbackSelection) {
             FeedbackSelection.Icons -> FeedbackIcons(
                 onPositiveIconClick = {
-                    // TODO: analytics event
+                    onFeedbackClick(positiveIconText, "icon", chatEntry.id)
                     feedbackSelection =
                         if (isAnalyticsEnabled) FeedbackSelection.Positive
                         else FeedbackSelection.ThankYou
                 },
                 onNegativeIconClick = {
-                    // TODO: analytics event
+                    onFeedbackClick(negativeIconText, "icon", chatEntry.id)
                     feedbackSelection =
                         if (isAnalyticsEnabled) FeedbackSelection.Negative
                         else FeedbackSelection.ThankYou
@@ -448,11 +445,11 @@ private fun AnimatedFeedback(
             )
 
             FeedbackSelection.Positive -> FeedbackLink(
-                linkText = stringResource(R.string.chat_feedback_positive_link_text),
+                linkText = positiveLinkText,
                 contentDescription = stringResource(R.string.chat_feedback_positive_selected_icon_text),
                 icon = R.drawable.baseline_thumb_up_24,
                 onClick = {
-                    onPositiveLinkClick()
+                    onFeedbackClick(positiveLinkText, "link", chatEntry.id)
                     // Wait until the survey is shown before rendering the thank you text
                     coroutineScope.launch {
                         delay(THANK_YOU_DELAY_MILLIS)
@@ -462,11 +459,11 @@ private fun AnimatedFeedback(
             )
 
             FeedbackSelection.Negative -> FeedbackLink(
-                linkText = stringResource(R.string.chat_feedback_negative_link_text),
+                linkText = negativeLinkText,
                 contentDescription = stringResource(R.string.chat_feedback_negative_selected_icon_text),
                 icon = R.drawable.baseline_thumb_down_24,
                 onClick = {
-                    onNegativeLinkClick()
+                    onFeedbackClick(negativeLinkText, "link", chatEntry.id)
                     // Wait until the survey is shown before rendering the thank you text
                     coroutineScope.launch {
                         delay(THANK_YOU_DELAY_MILLIS)
@@ -614,8 +611,7 @@ private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
     onClear = { },
-    onPositiveFeedback = { },
-    onNegativeFeedback = { }
+    onFeedbackClick = { _, _, _ -> }
 )
 
 @PreviewLightDark

@@ -874,20 +874,15 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `Given a positive feedback icon click, then log analytics`() {
-        viewModel.onPositiveFeedback()
+    fun `Given a feedback click, then log analytics`() {
+        val text = "text"
+        val action = "action"
+        val questionId = "questionId"
+
+        viewModel.onFeedbackClick(text = text, action = action, questionId = questionId)
 
         verify {
-            analyticsClient.iconClick(type = "chat_positive_rating")
-        }
-    }
-
-    @Test
-    fun `Given a negative feedback icon click, then log analytics`() {
-        viewModel.onNegativeFeedback()
-
-        verify {
-            analyticsClient.iconClick(type = "chat_negative_rating")
+            analyticsClient.chatFeedback(text = text, action = action, questionId = questionId)
         }
     }
 

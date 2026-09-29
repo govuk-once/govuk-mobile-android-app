@@ -295,6 +295,10 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
+    fun onFeedbackClick(text: String, action: String, questionId: String) {
+        analyticsClient.chatFeedback(text = text, action = action, questionId = questionId)
+    }
+
     private suspend fun getAnswer(conversationId: String, questionId: String) {
         handleChatResult(
             chatRepo.getAnswer(
@@ -361,13 +365,5 @@ internal class ChatViewModel @Inject constructor(
         update { state ->
             if (state is Default) transform(state) else state
         }
-    }
-
-    fun onPositiveFeedback() {
-        analyticsClient.iconClick(type = "chat_positive_rating")
-    }
-
-    fun onNegativeFeedback() {
-        analyticsClient.iconClick(type = "chat_negative_rating")
     }
 }
