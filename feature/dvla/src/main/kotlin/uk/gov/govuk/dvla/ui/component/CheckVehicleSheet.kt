@@ -59,11 +59,11 @@ private val SheetShape = RoundedCornerShape(topStart = 33.dp, topEnd = 33.dp)
 @Composable
 private fun submitButtonColours() = GovUkButtonColours(
     defaultContainerColour = GovUkTheme.colourScheme.surfaces.sheetButtonAction,
-    defaultContentColour = GovUkTheme.colourScheme.textAndIcons.primary,
+    defaultContentColour = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
     focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
     focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
     pressedContainerColour = GovUkTheme.colourScheme.surfaces.sheetButtonAction,
-    pressedContentColour = GovUkTheme.colourScheme.textAndIcons.primary,
+    pressedContentColour = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
     disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
     disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
 )
