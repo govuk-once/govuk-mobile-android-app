@@ -69,14 +69,14 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         )
     }
 
-    fun onRegistrationChanged(value: String) {
-        val regNumber = value
+    fun onRegistrationNumberChanged(value: String) {
+        val sanitisedRegNumber = value
             .uppercase()
             .filter { it.isAllowedRegNumberChar() }
 
-        if (regNumber.count { it != ' ' } > MAX_REG_NUMBER_LENGTH) return
+        if (sanitisedRegNumber.count { it != ' ' } > MAX_REG_NUMBER_LENGTH) return
 
-        _sheetState.value = CheckVehicleSheetState.Input(regNumber = regNumber)
+        _sheetState.value = CheckVehicleSheetState.Input(regNumber = sanitisedRegNumber)
     }
 
     fun onClearClicked() {
@@ -93,19 +93,16 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
             action = ACTION_SEARCH
         )
 
-        val regNumber = state.regNumber.filterNot { it.isWhitespace() }
+        val spaceStrippedRegNumber = state.regNumber.filterNot { it.isWhitespace() }
 
         _sheetState.value = CheckVehicleSheetState.Loading(
             regNumber = state.regNumber
         )
 
-        viewModelScope.launch {
-            val result = dvlaRepo.lookupVehicleByRegistration(
-                state.regNumber.filterNot { it.isWhitespace() }
-            )
-            when (result) {
+        vehicleLookup = viewModelScope.launch {
+            when (val result = dvlaRepo.lookupVehicleByRegistration(spaceStrippedRegNumber)) {
                 is Result.Success -> {
-                    _sheetState.value = CheckVehicleSheetState.Success(regNumber)
+                    _sheetState.value = CheckVehicleSheetState.Success(spaceStrippedRegNumber)
                 }
 
                 is Result.ServiceNotResponding -> showError(

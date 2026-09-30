@@ -140,7 +140,7 @@ fun CheckVehicleWidget(
 
         CheckVehicleSheet(
             state = sheetState,
-            onRegistrationChange = viewModel::onRegistrationChanged,
+            onRegistrationChange = viewModel::onRegistrationNumberChanged,
             onClear = { viewModel.onClearClicked() },
             onSubmit = { viewModel.onSubmitClicked(submitLabel) },
             onCancel = {

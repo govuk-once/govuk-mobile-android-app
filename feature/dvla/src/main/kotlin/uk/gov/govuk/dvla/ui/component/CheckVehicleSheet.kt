@@ -286,9 +286,7 @@ private fun RegistrationInput(
         ),
         keyboardActions = KeyboardActions(
             onDone = {
-                if (registration.isNotBlank()) {
-                    onSubmit()
-                }
+                onSubmit()
             }
         ),
         decorationBox = { innerTextField ->
