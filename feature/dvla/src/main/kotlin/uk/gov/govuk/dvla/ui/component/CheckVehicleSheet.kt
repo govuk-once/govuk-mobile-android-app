@@ -227,19 +227,23 @@ private fun CheckVehicleSheetLabel(
         }
     }
 
+    val (textColour, errorModifier) = if (isError) {
+        GovUkTheme.colourScheme.textAndIcons.bottomSheetErrorLabel to Modifier
+            .background(
+                color = GovUkTheme.colourScheme.surfaces.bottomSheetErrorLabel,
+                shape = RoundedCornerShape(6.dp)
+            )
+            .semantics { liveRegion = LiveRegionMode.Assertive }
+    } else {
+        GovUkTheme.colourScheme.textAndIcons.primary to Modifier
+    }
+
     BodyRegularLabel(
         text = text,
+        color = textColour,
         modifier = modifier
-            .then(
-                if (isError) {
-                    Modifier.background(
-                        color = GovUkTheme.colourScheme.surfaces.textFieldError,
-                        shape = RoundedCornerShape(6.dp)
-                    )
-                } else {
-                    Modifier
-                }
-            )
+            .then(errorModifier)
+            .padding(horizontal = GovUkTheme.spacing.small)
             .padding(
                 horizontal = GovUkTheme.spacing.small
             )

@@ -133,7 +133,8 @@ data class GovUkColourScheme(
         val cardInformationEmergencyBannerPrimary: Color,
         val cardInformationEmergencyBannerLink: Color,
         val registrationPlateText: Color,
-        val cardOverflowIcon: Color
+        val cardOverflowIcon: Color,
+        val bottomSheetErrorLabel: Color
     )
 
     data class Surfaces(
@@ -215,7 +216,7 @@ data class GovUkColourScheme(
         val bottomSheet: Color,
         val sheetButtonAction: Color,
         val sheetButtonCancel: Color,
-        val textFieldError: Color
+        val bottomSheetErrorLabel: Color
     )
 
     data class Strokes(
@@ -305,7 +306,8 @@ internal val LightColorScheme = GovUkColourScheme(
         cardInformationEmergencyBannerPrimary = Black,
         cardInformationEmergencyBannerLink = BluePrimary,
         registrationPlateText = Black,
-        cardOverflowIcon = White
+        cardOverflowIcon = White,
+        bottomSheetErrorLabel = Black
     ),
     surfaces = Surfaces(
         background = White,
@@ -392,7 +394,7 @@ internal val LightColorScheme = GovUkColourScheme(
         bottomSheet = White,
         sheetButtonAction = BluePrimary,
         sheetButtonCancel = Grey60,
-        textFieldError = YellowLighter80
+        bottomSheetErrorLabel = YellowLighter80
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -481,7 +483,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardInformationEmergencyBannerPrimary = White,
         cardInformationEmergencyBannerLink = BlueAccent,
         registrationPlateText = Black,
-        cardOverflowIcon = BlueDarker65
+        cardOverflowIcon = BlueDarker65,
+        bottomSheetErrorLabel = YellowPrimary
     ),
     surfaces = Surfaces(
         background = BlueDarker80,
@@ -568,7 +571,7 @@ internal val DarkColorScheme = GovUkColourScheme(
         bottomSheet = BlueDarker50,
         sheetButtonAction = BluePrimary,
         sheetButtonCancel = BlueDarker70,
-        textFieldError = BlueDarker80
+        bottomSheetErrorLabel = BlueDarker65
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -658,7 +661,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardInformationEmergencyBannerPrimary = Color.Unspecified,
             cardInformationEmergencyBannerLink = Color.Unspecified,
             registrationPlateText = Color.Unspecified,
-            cardOverflowIcon = Color.Unspecified
+            cardOverflowIcon = Color.Unspecified,
+            bottomSheetErrorLabel = Color.Unspecified
         ),
         surfaces = Surfaces(
             background = Color.Unspecified,
@@ -739,7 +743,7 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             bottomSheet = Color.Unspecified,
             sheetButtonAction = Color.Unspecified,
             sheetButtonCancel = Color.Unspecified,
-            textFieldError = Color.Unspecified
+            bottomSheetErrorLabel = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
