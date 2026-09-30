@@ -105,4 +105,25 @@ class AnalyticsDataStoreTest {
             assertEquals(NOT_SET, datastore.analyticsEnabledState)
         }
     }
+
+    @Test
+    fun `Given the user changes analytics consent, then emit the new state`() {
+        every { dataStore.data } returns flowOf(preferences)
+        every { preferences[booleanPreferencesKey(AnalyticsDataStore.ANALYTICS_ENABLED_KEY)] } returns null
+
+        val datastore = AnalyticsDataStore(dataStore)
+
+        runTest {
+            assertEquals(NOT_SET, datastore.analyticsEnabledStateFlow.value)
+
+            datastore.analyticsEnabled()
+            assertEquals(ENABLED, datastore.analyticsEnabledStateFlow.value)
+
+            datastore.analyticsDisabled()
+            assertEquals(DISABLED, datastore.analyticsEnabledStateFlow.value)
+
+            datastore.clear()
+            assertEquals(NOT_SET, datastore.analyticsEnabledStateFlow.value)
+        }
+    }
 }

@@ -145,9 +145,10 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner
-                    ) { suppressedWidgets, shouldDisplayChatBanner ->
-                        updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
+                        chatFeature.shouldDisplayChatBanner,
+                        analyticsClient.isAnalyticsEnabledFlow
+                    ) { suppressedWidgets, shouldDisplayChatBanner, isAnalyticsEnabled ->
+                        updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner, isAnalyticsEnabled)
                     }.collect()
                 }
             }
@@ -233,7 +234,8 @@ internal class AppViewModel @Inject constructor(
 
     private fun updateHomeWidgets(
         suppressedWidgets: Set<String>,
-        shouldDisplayChatBanner: Boolean
+        shouldDisplayChatBanner: Boolean,
+        isAnalyticsEnabled: Boolean
     ) {
         viewModelScope.launch {
             with(flagRepo) {
@@ -271,7 +273,8 @@ internal class AppViewModel @Inject constructor(
                 if (isRecentActivityEnabled()) {
                     widgets.add(HomeWidget.RecentActivity)
                 }
-                if (isQuarterlySurveyEnabled()) {
+                // The survey is triggered by an analytics event, so it can't be shown without consent
+                if (isQuarterlySurveyEnabled() && isAnalyticsEnabled) {
                     widgets.add(
                         HomeWidget.QuarterlyFeedback(
                             quarterlySurvey = QuarterlySurvey(
