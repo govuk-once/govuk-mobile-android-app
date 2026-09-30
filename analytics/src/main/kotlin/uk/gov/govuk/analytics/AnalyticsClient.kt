@@ -227,7 +227,7 @@ class AnalyticsClient @Inject constructor(
     }
 
     fun chatFeedback(text: String, action: String, questionId: String) {
-        val parameters = mutableMapOf(
+        val parameters = mapOf(
             "text" to text,
             "action" to action,
             "questionId" to questionId,
