@@ -47,6 +47,7 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
 import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.RegistrationPlate
+import uk.gov.govuk.dvla.ui.component.RegistrationPlateSize
 import uk.gov.govuk.dvla.ui.component.StatusUiItem
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
@@ -216,7 +217,7 @@ private fun SuccessScreen(
             ) {
                 RegistrationPlate(
                     registration = details.registration,
-                    isLarge = true
+                    size = RegistrationPlateSize.LARGE
                 )
             }
 

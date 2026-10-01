@@ -161,8 +161,10 @@ fun CheckVehicleCard(
 
             RegistrationPlate(
                 registration = EXAMPLE_REG,
+                size = RegistrationPlateSize.COMPACT,
                 style = RegistrationPlateStyle.FRONT,
-                modifier = Modifier.clearAndSetSemantics { } // decorative only
+                modifier = Modifier
+                    .clearAndSetSemantics { }  // decorative only
             )
 
             SmallHorizontalSpacer()
