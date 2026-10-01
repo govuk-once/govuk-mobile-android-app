@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -28,8 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
@@ -68,30 +71,58 @@ internal fun IntroMessages(
                 messageVisible = true
             }
 
-            AnimatedVisibility(
-                visible = messageVisible,
-                enter =
-                    fadeIn(
-                        animationSpec = tween(durationMillis = animationDuration),
-                        initialAlpha = 0f
-                    ) +
-                    slideInVertically(
-                        animationSpec = tween(durationMillis = animationDuration),
-                        initialOffsetY = { 16 }
-                    )
+            val enterTransition =
+                fadeIn(
+                    animationSpec = tween(durationMillis = animationDuration),
+                    initialAlpha = 0f
+                ) +
+                slideInVertically(
+                    animationSpec = tween(durationMillis = animationDuration),
+                    initialOffsetY = { 16 }
+                )
+
+//            TODO: Blocked on what the actual requirement is on this - Chat team to advise
+
+            Box(
+                Modifier.semantics {
+                    liveRegion = LiveRegionMode.Polite
+                }
             ) {
-                Column {
-                    Message()
-                    MediumVerticalSpacer()
-                    ExampleQuestions(
-                        hasConversation,
-                        question,
-                        isImeVisible,
-                        isLoading,
-                        onExampleQuestionsViewed,
-                        onExampleQuestionClicked,
-                        chatExampleQuestions
-                    )
+//                androidx.compose.animation.AnimatedVisibility(
+//                    visible = messageVisible,
+//                    enter = enterTransition
+//                ) {
+//                    Message()
+//                }
+//            }
+
+//                TODO: End the box here if we only want the intro message, otherwise it'll read the example questions too
+
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = messageVisible,
+                    enter = enterTransition
+                    //                    fadeIn(
+                    //                        animationSpec = tween(durationMillis = animationDuration),
+                    //                        initialAlpha = 0f
+                    //                    ) +
+                    //                    slideInVertically(
+                    //                        animationSpec = tween(durationMillis = animationDuration),
+                    //                        initialOffsetY = { 16 }
+                    //                    )
+                ) {
+                    Column {
+                        Message() // TODO: Remove this if Message() is in it's own Box
+                        MediumVerticalSpacer()
+                        ExampleQuestions(
+                            hasConversation,
+                            question,
+                            isImeVisible,
+                            isLoading,
+                            onExampleQuestionsViewed,
+                            onExampleQuestionClicked,
+                            chatExampleQuestions
+                        )
+                    }
                 }
             }
         } else {
