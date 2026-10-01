@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -185,6 +188,7 @@ internal fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val headerFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(uiState.isPiiError) {
         if (uiState.isPiiError) {
@@ -223,6 +227,8 @@ internal fun ChatScreen(
                             modifier = Modifier
                                 .padding(vertical = GovUkTheme.spacing.medium)
                                 .weight(1f)
+                                .focusRequester(headerFocusRequester)
+                                .focusable()
                                 .semantics { heading() },
                             textAlign = TextAlign.Center
                         )
@@ -301,6 +307,13 @@ internal fun ChatScreen(
                     )
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        // Move focus to the header on screen load.
+        // Header is a lazy item, to wait for it to be rendered before focusing
+        delay(100)
+        headerFocusRequester.requestFocus()
     }
 
     if (showPiiErrorDialog) {
