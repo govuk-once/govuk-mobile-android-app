@@ -373,6 +373,7 @@ internal fun ChatScreen(
 private enum class FeedbackSelection { Icons, Positive, Negative, ThankYou }
 
 private const val THANK_YOU_DELAY_MILLIS = 500L
+private const val ANIMATION_DURATION = 200
 
 @Composable
 private fun AnimatedFeedback(
@@ -382,7 +383,6 @@ private fun AnimatedFeedback(
     onFeedbackClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val animationDuration = 200
     val coroutineScope = rememberCoroutineScope()
 
     // Start visible if the answer is already present
@@ -399,7 +399,7 @@ private fun AnimatedFeedback(
             showFeedback = false
         } else if (!showFeedback) {
             // Add the feedback links after the answer is rendered
-            if (chatEntry.shouldAnimate) delay(animationDelay.toLong() + animationDuration.toLong())
+            if (chatEntry.shouldAnimate) delay(animationDelay.toLong() + ANIMATION_DURATION.toLong())
             showFeedback = true
         }
     }
@@ -414,17 +414,17 @@ private fun AnimatedFeedback(
         visible = showFeedback,
         enter =
             fadeIn(
-                animationSpec = tween(durationMillis = animationDuration),
+                animationSpec = tween(durationMillis = ANIMATION_DURATION),
                 initialAlpha = 0f
             ) + slideInVertically(
-                animationSpec = tween(durationMillis = animationDuration),
+                animationSpec = tween(durationMillis = ANIMATION_DURATION),
                 initialOffsetY = { 16 }
             ),
         exit =
             fadeOut(
-                animationSpec = tween(durationMillis = animationDuration)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION)
             ) + slideOutVertically(
-                animationSpec = tween(durationMillis = animationDuration)
+                animationSpec = tween(durationMillis = ANIMATION_DURATION)
             ),
         modifier = modifier
     ) {
