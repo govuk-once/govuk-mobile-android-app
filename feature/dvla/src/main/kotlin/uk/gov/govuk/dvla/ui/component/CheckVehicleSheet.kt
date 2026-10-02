@@ -1,15 +1,14 @@
 package uk.gov.govuk.dvla.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -102,7 +101,6 @@ internal fun CheckVehicleSheet(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-        keyboardController?.show()
     }
 
     ModalBottomSheet(
@@ -111,14 +109,11 @@ internal fun CheckVehicleSheet(
             onCancel()
         },
         modifier = modifier.semantics {
-            paneTitle = sheetTitle
-        },
+                paneTitle = sheetTitle
+            },
         sheetState = sheetState,
         shape = SheetShape,
         containerColor = GovUkTheme.colourScheme.surfaces.bottomSheet,
-        contentWindowInsets = {
-            WindowInsets.ime
-        },
         dragHandle = null
     ) {
         CheckVehicleSheetContent(
@@ -150,6 +145,11 @@ private fun CheckVehicleSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = GovUkTheme.colourScheme.strokes.bottomSheet,
+                shape = SheetShape
+            )
             .padding(
                 horizontal = GovUkTheme.spacing.medium,
                 vertical = GovUkTheme.spacing.medium
@@ -244,9 +244,6 @@ private fun CheckVehicleSheetLabel(
         modifier = modifier
             .then(errorModifier)
             .padding(horizontal = GovUkTheme.spacing.small)
-            .padding(
-                horizontal = GovUkTheme.spacing.small
-            )
             .semantics {
                 if (isError) {
                     liveRegion = LiveRegionMode.Assertive
@@ -301,7 +298,7 @@ private fun RegistrationInput(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 36.dp),
+                        .padding(start = 36.dp, top = 12.dp, bottom = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     innerTextField()
