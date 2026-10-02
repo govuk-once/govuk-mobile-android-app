@@ -4,7 +4,15 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +25,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -29,9 +40,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -53,10 +67,13 @@ import uk.gov.govuk.chat.ui.component.ChatEntry
 import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
 import uk.gov.govuk.config.data.remote.model.ChatUrls
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.chat.ui.model.ChatEntry as ChatEntryModel
 
 internal class AnalyticsEvents(
     val onPageView: (String, String, String) -> Unit,
@@ -72,7 +89,8 @@ internal class AnalyticsEvents(
 internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
-    val onClear: () -> Unit
+    val onClear: () -> Unit,
+    val onFeedbackClick: (String, String, String) -> Unit
 )
 
 @Composable
@@ -84,6 +102,7 @@ internal fun ChatRoute(
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isAnalyticsEnabled by viewModel.isAnalyticsEnabled.collectAsStateWithLifecycle()
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -148,10 +167,14 @@ internal fun ChatRoute(
                         },
                         onClear = {
                             viewModel.clearConversation()
+                        },
+                        onFeedbackClick = { text, action, questionId ->
+                            viewModel.onFeedbackClick(text, action, questionId)
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
                     chatExampleQuestions = viewModel.chatExampleQuestions,
+                    isAnalyticsEnabled = isAnalyticsEnabled,
                     modifier = modifier
                 )
             }
@@ -176,6 +199,7 @@ internal fun ChatScreen(
     chatUrls: ChatUrls,
     chatExampleQuestions: List<String>?,
     modifier: Modifier = Modifier,
+    isAnalyticsEnabled: Boolean = false,
     isTalkBackActive: Boolean = isTalkBackEnabled(),
     isImeVisible: Boolean = WindowInsets.isImeVisible
 ) {
@@ -244,9 +268,12 @@ internal fun ChatScreen(
                     )
                 }
 
-                items(chatEntries) {
+                items(
+                    items = chatEntries,
+                    key = { item -> item.first }
+                ) { item ->
                     ChatEntry(
-                        chatEntry = it.second,
+                        chatEntry = item.second,
                         onMarkdownLinkClicked = { text, url ->
                             launchBrowser(url)
                             analyticsEvents.onMarkdownLinkClicked(text, url)
@@ -265,6 +292,18 @@ internal fun ChatScreen(
                             clipboard.setPrimaryClip(clip)
                         }
                     )
+
+                    // Feedback is part of the last answer - it scrolls when the answer scrolls
+                    if (item == chatEntries.last()) {
+                        AnimatedFeedback(
+                            chatEntry = item.second,
+                            animationDelay = animationDelay,
+                            isAnalyticsEnabled = isAnalyticsEnabled,
+                            onFeedbackClick = { text, action, questionId ->
+                                uiEvents.onFeedbackClick(text, action, questionId)
+                            }
+                        )
+                    }
                 }
 
                 item {
@@ -273,32 +312,32 @@ internal fun ChatScreen(
             }
 
             Column {
-                    ChatInput(
-                        uiState,
-                        hasConversation = hasConversation,
-                        onNavigationActionItemClicked = { text, url ->
-                            launchBrowser(url)
-                            analyticsEvents.onNavigationActionItemClicked(text, url)
-                        },
-                        onFunctionActionItemClicked = { text, section, action ->
-                            analyticsEvents.onFunctionActionItemClicked(text, section, action)
-                        },
-                        onClear = uiEvents.onClear,
-                        onQuestionUpdated = uiEvents.onQuestionUpdated,
-                        onSubmit = { question ->
-                            uiEvents.onSubmit(question)
-                            analyticsEvents.onQuestionSubmit()
-                        },
-                        chatUrls = chatUrls,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = GovUkTheme.spacing.medium)
-                            .padding(
-                                top = GovUkTheme.spacing.small,
-                                bottom = GovUkTheme.spacing.medium
-                            ),
-                        isTalkBackActive = isTalkBackActive
-                    )
+                ChatInput(
+                    uiState,
+                    hasConversation = hasConversation,
+                    onNavigationActionItemClicked = { text, url ->
+                        launchBrowser(url)
+                        analyticsEvents.onNavigationActionItemClicked(text, url)
+                    },
+                    onFunctionActionItemClicked = { text, section, action ->
+                        analyticsEvents.onFunctionActionItemClicked(text, section, action)
+                    },
+                    onClear = uiEvents.onClear,
+                    onQuestionUpdated = uiEvents.onQuestionUpdated,
+                    onSubmit = { question ->
+                        uiEvents.onSubmit(question)
+                        analyticsEvents.onQuestionSubmit()
+                    },
+                    chatUrls = chatUrls,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = GovUkTheme.spacing.medium)
+                        .padding(
+                            top = GovUkTheme.spacing.small,
+                            bottom = GovUkTheme.spacing.medium
+                        ),
+                    isTalkBackActive = isTalkBackActive
+                )
             }
         }
     }
@@ -328,6 +367,228 @@ internal fun ChatScreen(
                 listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
             }
         }
+    }
+}
+
+private enum class FeedbackSelection { Icons, Positive, Negative, ThankYou }
+
+private const val THANK_YOU_DELAY_MILLIS = 500L
+private const val ANIMATION_DURATION = 200
+
+@Composable
+private fun AnimatedFeedback(
+    chatEntry: ChatEntryModel,
+    animationDelay: Int,
+    isAnalyticsEnabled: Boolean,
+    onFeedbackClick: (String, String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    // Start visible if the answer is already present
+    var showFeedback by rememberSaveable(chatEntry.id) {
+        mutableStateOf(chatEntry.answer.isNotBlank())
+    }
+
+    var feedbackSelection by rememberSaveable(chatEntry.id) {
+        mutableStateOf(FeedbackSelection.Icons)
+    }
+
+    // Stop double taps on icons - guards on clicks below
+    var iconClickProcessed by rememberSaveable(chatEntry.id) {
+        mutableStateOf(false)
+    }
+
+    // Stop double taps on links - guards on clicks below
+    var linkClickProcessed by rememberSaveable(chatEntry.id) {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(chatEntry.answer) {
+        if (chatEntry.answer.isBlank()) {
+            showFeedback = false
+        } else if (!showFeedback) {
+            // Add the feedback links after the answer is rendered
+            if (chatEntry.shouldAnimate) delay(animationDelay.toLong() + ANIMATION_DURATION.toLong())
+            showFeedback = true
+        }
+    }
+
+    val positiveLinkText = stringResource(R.string.chat_feedback_positive_link_text)
+    val negativeLinkText = stringResource(R.string.chat_feedback_negative_link_text)
+
+    val positiveIconText = stringResource(R.string.chat_feedback_positive_icon_analytics_text)
+    val negativeIconText = stringResource(R.string.chat_feedback_negative_icon_analytics_text)
+
+    AnimatedVisibility(
+        visible = showFeedback,
+        enter =
+            fadeIn(
+                animationSpec = tween(durationMillis = ANIMATION_DURATION),
+                initialAlpha = 0f
+            ) + slideInVertically(
+                animationSpec = tween(durationMillis = ANIMATION_DURATION),
+                initialOffsetY = { 16 }
+            ),
+        exit =
+            fadeOut(
+                animationSpec = tween(durationMillis = ANIMATION_DURATION)
+            ) + slideOutVertically(
+                animationSpec = tween(durationMillis = ANIMATION_DURATION)
+            ),
+        modifier = modifier
+    ) {
+        when (feedbackSelection) {
+            FeedbackSelection.Icons -> FeedbackIcons(
+                onPositiveIconClick = {
+                    if (!iconClickProcessed) {
+                        iconClickProcessed = true
+                        onFeedbackClick(positiveIconText, "icon", chatEntry.id)
+                        feedbackSelection =
+                            if (isAnalyticsEnabled) FeedbackSelection.Positive
+                            else FeedbackSelection.ThankYou
+                    }
+                },
+                onNegativeIconClick = {
+                    if (!iconClickProcessed) {
+                        iconClickProcessed = true
+                        onFeedbackClick(negativeIconText, "icon", chatEntry.id)
+                        feedbackSelection =
+                            if (isAnalyticsEnabled) FeedbackSelection.Negative
+                            else FeedbackSelection.ThankYou
+                    }
+                }
+            )
+
+            FeedbackSelection.Positive -> FeedbackLink(
+                linkText = positiveLinkText,
+                contentDescription = stringResource(R.string.chat_feedback_positive_selected_icon_text),
+                icon = R.drawable.baseline_thumb_up_24,
+                onClick = {
+                    if (!linkClickProcessed) {
+                        linkClickProcessed = true
+                        onFeedbackClick(positiveLinkText, "link", chatEntry.id)
+                        coroutineScope.launch {
+                            delay(THANK_YOU_DELAY_MILLIS)
+                            feedbackSelection = FeedbackSelection.ThankYou
+                        }
+                    }
+                }
+            )
+
+            FeedbackSelection.Negative -> FeedbackLink(
+                linkText = negativeLinkText,
+                contentDescription = stringResource(R.string.chat_feedback_negative_selected_icon_text),
+                icon = R.drawable.baseline_thumb_down_24,
+                onClick = {
+                    if (!linkClickProcessed) {
+                        linkClickProcessed = true
+                        onFeedbackClick(negativeLinkText, "link", chatEntry.id)
+                        coroutineScope.launch {
+                            delay(THANK_YOU_DELAY_MILLIS)
+                            feedbackSelection = FeedbackSelection.ThankYou
+                        }
+                    }
+                }
+            )
+
+            FeedbackSelection.ThankYou -> FeedbackThankYou()
+        }
+    }
+}
+
+@Composable
+private fun FeedbackIcons(
+    onPositiveIconClick: () -> Unit,
+    onNegativeIconClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+    ) {
+        IconButton(
+            onClick = { onPositiveIconClick() },
+            modifier = Modifier.size(48.dp)
+                .padding(GovUkTheme.spacing.small)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.outline_thumb_up_24),
+                contentDescription = stringResource(R.string.chat_feedback_positive_icon_text),
+                tint = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
+        }
+
+        SmallHorizontalSpacer()
+
+        IconButton(
+            onClick = { onNegativeIconClick() },
+            modifier = Modifier.size(48.dp)
+                .padding(GovUkTheme.spacing.small)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.outline_thumb_down_24),
+                contentDescription = stringResource(R.string.chat_feedback_negative_icon_text),
+                tint = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun FeedbackLink(
+    linkText: String,
+    contentDescription: String,
+    @DrawableRes icon: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+            .height(48.dp)
+            .padding(GovUkTheme.spacing.small)
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = contentDescription,
+            tint = GovUkTheme.colourScheme.textAndIcons.secondary,
+        )
+
+        SmallHorizontalSpacer()
+
+        BodyRegularLabel(
+            text = linkText,
+            color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
+            modifier = Modifier.clickable(
+                enabled = true,
+                onClick = { onClick() }
+            )
+        )
+    }
+}
+
+@Composable
+private fun FeedbackThankYou(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+            .height(48.dp)
+            .padding(GovUkTheme.spacing.small)
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.outline_check_24),
+            contentDescription = null,
+            tint = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
+
+        SmallHorizontalSpacer()
+
+        BodyRegularLabel(
+            text = stringResource(R.string.chat_feedback_thank_you_text),
+            color = GovUkTheme.colourScheme.textAndIcons.secondary
+        )
     }
 }
 
@@ -369,7 +630,8 @@ private fun analyticsEvents() = AnalyticsEvents(
 private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
-    onClear = { }
+    onClear = { },
+    onFeedbackClick = { _, _, _ -> }
 )
 
 @PreviewLightDark
