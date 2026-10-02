@@ -99,7 +99,7 @@ internal fun CheckVehicleSheet(
 
     val sheetTitle = stringResource(R.string.check_vehicle_sheet_prompt)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(state is CheckVehicleSheetState.Error) {
         focusRequester.requestFocus()
     }
 
