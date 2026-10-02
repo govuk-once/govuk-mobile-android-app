@@ -203,6 +203,26 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
+    fun onFeedbackGiven(
+        conversationId: String,
+        answerId: String,
+        reaction: String
+    ) {
+        viewModelScope.launch {
+            handleChatResult(
+                chatRepo.giveFeedback(
+                    conversationId = conversationId,
+                    answerId = answerId,
+                    reaction = reaction
+                )
+            ) { answer ->
+                //            updateChatEntry(questionId, answer)
+                _uiState.updateDefault { it.copy(isLoading = false) }
+                //            analyticsClient.chatQuestionAnswerReturnedEvent()
+            }
+        }
+    }
+
     fun onPageView(screenClass: String, screenName: String, title: String) {
         analyticsClient.screenView(
             screenClass = screenClass,
@@ -359,5 +379,4 @@ internal class ChatViewModel @Inject constructor(
             if (state is Default) transform(state) else state
         }
     }
-
 }

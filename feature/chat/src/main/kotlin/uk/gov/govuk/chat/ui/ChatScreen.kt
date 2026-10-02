@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,7 +73,8 @@ internal class AnalyticsEvents(
 internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
-    val onClear: () -> Unit
+    val onClear: () -> Unit,
+    val onFeedback: (String, String, String) -> Unit
 )
 
 @Composable
@@ -148,6 +150,9 @@ internal fun ChatRoute(
                         },
                         onClear = {
                             viewModel.clearConversation()
+                        },
+                        onFeedback = { conversationId, answerId, reaction ->
+                            viewModel.onFeedbackGiven(conversationId, answerId, reaction)
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
@@ -265,6 +270,27 @@ internal fun ChatScreen(
                             clipboard.setPrimaryClip(clip)
                         }
                     )
+
+                    // TODO: temp fudge to test the new `feedback` endpoint
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Title2BoldLabel(
+                            text = "Feedback",
+                            modifier = Modifier
+                                .clickable(
+                                    enabled = true,
+                                    onClick = {
+                                        uiEvents.onFeedback(
+                                            "21f95945-c550-4339-96c9-1f6c35c1c687",
+                                            "2d3afb10-29e9-45c8-b227-7ec8fd538ecb",
+                                            "positive"
+                                        )
+                                    }
+                                )
+                                .padding(vertical = GovUkTheme.spacing.medium)
+                                .weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
                 item {
@@ -369,7 +395,8 @@ private fun analyticsEvents() = AnalyticsEvents(
 private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
-    onClear = { }
+    onClear = { },
+    onFeedback = { _, _, _ -> }
 )
 
 @PreviewLightDark
