@@ -394,6 +394,16 @@ private fun AnimatedFeedback(
         mutableStateOf(FeedbackSelection.Icons)
     }
 
+    // Stop double taps on icons - guards on clicks below
+    var iconClickProcessed by rememberSaveable(chatEntry.id) {
+        mutableStateOf(false)
+    }
+
+    // Stop double taps on links - guards on clicks below
+    var linkClickProcessed by rememberSaveable(chatEntry.id) {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(chatEntry.answer) {
         if (chatEntry.answer.isBlank()) {
             showFeedback = false
@@ -431,16 +441,22 @@ private fun AnimatedFeedback(
         when (feedbackSelection) {
             FeedbackSelection.Icons -> FeedbackIcons(
                 onPositiveIconClick = {
-                    onFeedbackClick(positiveIconText, "icon", chatEntry.id)
-                    feedbackSelection =
-                        if (isAnalyticsEnabled) FeedbackSelection.Positive
-                        else FeedbackSelection.ThankYou
+                    if (!iconClickProcessed) {
+                        iconClickProcessed = true
+                        onFeedbackClick(positiveIconText, "icon", chatEntry.id)
+                        feedbackSelection =
+                            if (isAnalyticsEnabled) FeedbackSelection.Positive
+                            else FeedbackSelection.ThankYou
+                    }
                 },
                 onNegativeIconClick = {
-                    onFeedbackClick(negativeIconText, "icon", chatEntry.id)
-                    feedbackSelection =
-                        if (isAnalyticsEnabled) FeedbackSelection.Negative
-                        else FeedbackSelection.ThankYou
+                    if (!iconClickProcessed) {
+                        iconClickProcessed = true
+                        onFeedbackClick(negativeIconText, "icon", chatEntry.id)
+                        feedbackSelection =
+                            if (isAnalyticsEnabled) FeedbackSelection.Negative
+                            else FeedbackSelection.ThankYou
+                    }
                 }
             )
 
@@ -449,11 +465,13 @@ private fun AnimatedFeedback(
                 contentDescription = stringResource(R.string.chat_feedback_positive_selected_icon_text),
                 icon = R.drawable.baseline_thumb_up_24,
                 onClick = {
-                    onFeedbackClick(positiveLinkText, "link", chatEntry.id)
-                    // Wait until the survey is shown before rendering the thank you text
-                    coroutineScope.launch {
-                        delay(THANK_YOU_DELAY_MILLIS)
-                        feedbackSelection = FeedbackSelection.ThankYou
+                    if (!linkClickProcessed) {
+                        linkClickProcessed = true
+                        onFeedbackClick(positiveLinkText, "link", chatEntry.id)
+                        coroutineScope.launch {
+                            delay(THANK_YOU_DELAY_MILLIS)
+                            feedbackSelection = FeedbackSelection.ThankYou
+                        }
                     }
                 }
             )
@@ -463,11 +481,13 @@ private fun AnimatedFeedback(
                 contentDescription = stringResource(R.string.chat_feedback_negative_selected_icon_text),
                 icon = R.drawable.baseline_thumb_down_24,
                 onClick = {
-                    onFeedbackClick(negativeLinkText, "link", chatEntry.id)
-                    // Wait until the survey is shown before rendering the thank you text
-                    coroutineScope.launch {
-                        delay(THANK_YOU_DELAY_MILLIS)
-                        feedbackSelection = FeedbackSelection.ThankYou
+                    if (!linkClickProcessed) {
+                        linkClickProcessed = true
+                        onFeedbackClick(negativeLinkText, "link", chatEntry.id)
+                        coroutineScope.launch {
+                            delay(THANK_YOU_DELAY_MILLIS)
+                            feedbackSelection = FeedbackSelection.ThankYou
+                        }
                     }
                 }
             )
