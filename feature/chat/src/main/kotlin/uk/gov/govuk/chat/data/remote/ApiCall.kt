@@ -27,6 +27,7 @@ internal suspend fun <T> safeChatApiCall(
             else -> {
                 when (code) {
                     404 -> ChatResult.NotFound()
+//                    409 -> ChatResult.AlreadyProvided // TODO
                     422 -> ChatResult.ValidationError()
                     429 -> ChatResult.RateLimitExceeded()
                     else -> ChatResult.Error()

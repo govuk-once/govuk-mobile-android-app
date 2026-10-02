@@ -8,6 +8,7 @@ import uk.gov.govuk.chat.data.remote.ChatResult
 import uk.gov.govuk.chat.data.remote.ChatResult.AwaitingAnswer
 import uk.gov.govuk.chat.data.remote.ChatResult.Success
 import uk.gov.govuk.chat.data.remote.model.Answer
+import uk.gov.govuk.chat.data.remote.model.AnswerFeedbackRequest
 import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 import uk.gov.govuk.chat.data.remote.model.Conversation
 import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
@@ -78,6 +79,17 @@ internal class ChatRepo @Inject constructor(
 
         return safeChatApiCall(
             apiCall = { chatApi.updateConversation(conversationId, requestBody) },
+            authRepo = authRepo
+        )
+    }
+
+    suspend fun giveFeedback(conversationId: String, answerId: String, reaction: String): ChatResult<Answer> {
+        val requestBody = AnswerFeedbackRequest(
+            reaction = reaction
+        )
+
+        return safeChatApiCall(
+            apiCall = { chatApi.giveFeedback(conversationId, answerId, requestBody) },
             authRepo = authRepo
         )
     }
