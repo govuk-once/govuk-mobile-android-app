@@ -528,7 +528,7 @@ private fun FeedbackIcons(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+        modifier = modifier.padding(start = GovUkTheme.spacing.small)
     ) {
         IconButton(
             onClick = { onPositiveIconClick() },
@@ -568,7 +568,7 @@ private fun FeedbackLink(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+        modifier = modifier.padding(start = GovUkTheme.spacing.small)
             .height(48.dp)
             .padding(GovUkTheme.spacing.small)
     ) {
@@ -597,7 +597,7 @@ private fun FeedbackThankYou(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(start = GovUkTheme.spacing.medium)
+        modifier = modifier.padding(start = GovUkTheme.spacing.small)
             .height(48.dp)
             .padding(GovUkTheme.spacing.small)
     ) {
