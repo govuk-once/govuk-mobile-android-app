@@ -6,6 +6,7 @@ import android.provider.Settings
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationManagerCompat
@@ -19,9 +20,11 @@ import uk.gov.govuk.notifications.R
 fun NotificationsSettingsAlert(
     onContinueButtonClick: (String) -> Unit,
     onCancelButtonClick: (String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    openSettings: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    val settingsLauncher = openSettings ?: remember { { openDeviceNotificationsSettings(context) } }
     val notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
     val alertTitle =
         stringResource(
@@ -59,8 +62,7 @@ fun NotificationsSettingsAlert(
                 text = continueButton,
                 onClick = {
                     onContinueButtonClick(continueButton)
-                    openDeviceNotificationsSettings(context)
-                    onDismiss()
+                    settingsLauncher()
                 },
                 isBold = true,
                 defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary

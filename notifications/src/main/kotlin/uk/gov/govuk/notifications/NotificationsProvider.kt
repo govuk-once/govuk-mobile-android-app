@@ -14,6 +14,6 @@ interface NotificationsProvider {
     fun consentGiven(): Boolean
     fun permissionGranted() =
         NotificationManagerCompat.from(context).areNotificationsEnabled()
-    suspend fun requestPermission()
+    suspend fun requestPermission(): Boolean
     fun addClickListener()
 }

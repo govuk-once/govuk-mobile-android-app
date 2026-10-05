@@ -3,6 +3,7 @@
     <string name="content_desc_back">Back</string>
     <string name="content_desc_close">Close</string>
     <string name="content_desc_remove">Remove</string>
+    <string name="content_desc_drag_handle">Drag handle</string>
     <string name="gov_uk">GOV.UK</string>
     <string name="gov_uk_alt_text">GOV dot UK</string>
     <string name="opens_in_web_browser">Opens in web browser</string>

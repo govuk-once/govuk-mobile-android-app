@@ -108,7 +108,7 @@ private fun NotificationsPreferenceBottomSheetContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = null,
+                        contentDescription = stringResource(uk.gov.govuk.design.R.string.content_desc_close),
                         tint = GovUkTheme.colourScheme.textAndIcons.iconSecondary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -177,6 +177,7 @@ private fun NotificationsPreferenceBottomSheetContent(
 
 @Composable
 private fun DragHandle(modifier: Modifier = Modifier) {
+    val dragHandleDesc = stringResource(uk.gov.govuk.design.R.string.content_desc_drag_handle)
     Box(
         modifier = modifier
             .padding(top = 22.dp, bottom = 2.dp)
@@ -185,7 +186,7 @@ private fun DragHandle(modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(2.dp)
             )
-            .semantics { contentDescription = "Bottom sheet drag handle" }
+            .semantics { contentDescription = dragHandleDesc }
     )
 }
 

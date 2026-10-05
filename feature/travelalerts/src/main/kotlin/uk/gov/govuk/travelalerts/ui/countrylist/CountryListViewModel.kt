@@ -121,6 +121,7 @@ class CountryListViewModel @Inject constructor(
 
     fun onGetNotificationsClick(country: Country) {
         if (notificationsRepo.permissionGranted()) {
+            notificationsRepo.giveConsent()
             viewModelScope.launch {
                 updateLoaded { copy(isSaving = true) }
                 when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = true)) {

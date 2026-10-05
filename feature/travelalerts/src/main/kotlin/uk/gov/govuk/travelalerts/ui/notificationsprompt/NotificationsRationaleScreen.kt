@@ -113,8 +113,11 @@ fun NotificationsRationaleScreen(
                 onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus) },
                 launchBrowser = launchBrowser,
                 showSettingsAlert = true,
-                onSettingsAlertCancel = { viewModel.onSettingsAlertCancel(countrySlug) }
-            ) { openDeviceNotificationsSettings(context) }
+                onSettingsAlertCancel = { viewModel.onSettingsAlertCancelClicked() },
+                onSettingsAlertContinue = { viewModel.onSettingsAlertContinue() },
+                onSettingsAlertDismiss = { viewModel.onSettingsAlertDismissed() },
+                openSettings = { openDeviceNotificationsSettings(context) }
+            )
         }
     }
 }
@@ -128,7 +131,9 @@ private fun NotificationsRationaleScreenContent(
     launchBrowser: (url: String) -> Unit,
     showSettingsAlert: Boolean = false,
     onSettingsAlertCancel: () -> Unit = {},
-    onSettingsAlertContinue: () -> Unit = {}
+    onSettingsAlertContinue: () -> Unit = {},
+    onSettingsAlertDismiss: () -> Unit = {},
+    openSettings: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxSize()
@@ -168,7 +173,8 @@ private fun NotificationsRationaleScreenContent(
         NotificationsSettingsAlert(
             onContinueButtonClick = { onSettingsAlertContinue() },
             onCancelButtonClick = { onSettingsAlertCancel() },
-            onDismiss = { onSettingsAlertCancel() }
+            onDismiss = { onSettingsAlertDismiss() },
+            openSettings = openSettings
         )
     }
 }
