@@ -301,6 +301,12 @@ internal fun ChatScreen(
                             isAnalyticsEnabled = isAnalyticsEnabled,
                             onFeedbackClick = { text, action, questionId ->
                                 uiEvents.onFeedbackClick(text, action, questionId)
+                            },
+                            onThankYouShown = {
+                                coroutineScope.launch {
+                                    delay(100)
+                                    listState.animateScrollToItem(chatEntries.size + 1)
+                                }
                             }
                         )
                     }
@@ -361,10 +367,11 @@ internal fun ChatScreen(
                 delay(animationDelay.toLong() + 100)
                 listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
             } else {
-                // If the updated entry is the answer then wait for the answer to fade in and scroll to
-                // the entry
+                // Scroll after the answer fades in, then again after the feedback icons appear
                 delay(animationDelay.toLong() + 100)
                 listState.animateScrollToItem(chatEntries.size + 1) // + 1 due to header and welcome message
+                delay(ANIMATION_DURATION.toLong() * 2)
+                listState.animateScrollToItem(chatEntries.size + 1)
             }
         }
     }
@@ -381,6 +388,7 @@ private fun AnimatedFeedback(
     animationDelay: Int,
     isAnalyticsEnabled: Boolean,
     onFeedbackClick: (String, String, String) -> Unit,
+    onThankYouShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -411,6 +419,22 @@ private fun AnimatedFeedback(
             // Add the feedback links after the answer is rendered
             if (chatEntry.shouldAnimate) delay(animationDelay.toLong() + ANIMATION_DURATION.toLong())
             showFeedback = true
+        }
+    }
+
+    // Scroll to the Thank you text when returning from the survey
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(feedbackSelection, lifecycleOwner) {
+        if (feedbackSelection != FeedbackSelection.ThankYou) return@DisposableEffect onDispose { }
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onThankYouShown()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
