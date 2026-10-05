@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
@@ -40,18 +45,66 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle.TrailingIcon
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
+import uk.gov.govuk.travelalerts.data.model.Subgroup
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
+import uk.gov.govuk.travelalerts.navigation.EDIT_NOTIFICATIONS_ENABLED_KEY
+import uk.gov.govuk.travelalerts.navigation.EDIT_OPT_IN_ERROR_KEY
+import uk.gov.govuk.travelalerts.navigation.EDIT_REOPEN_SLUG_KEY
+import uk.gov.govuk.travelalerts.navigation.NOTIFICATIONS_RATIONALE_ROUTE
+import uk.gov.govuk.travelalerts.navigation.ORIGIN_ARG
+import uk.gov.govuk.travelalerts.navigation.ORIGIN_EDIT
 
 @Composable
 fun EditCountriesScreen(
+    navController: NavController,
     onBack: () -> Unit,
     onFollowAnotherCountry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: EditCountriesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
         viewModel.onPageView()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is EditCountriesViewModel.NavigationEvent.ToNotificationsOptIn -> {
+                    navController.navigate("$NOTIFICATIONS_RATIONALE_ROUTE/${event.slug}?$ORIGIN_ARG=$ORIGIN_EDIT")
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        navController.currentBackStackEntry?.savedStateHandle
+            ?.getStateFlow(EDIT_REOPEN_SLUG_KEY, null as String?)
+            ?.collect { slug ->
+                if (slug != null) {
+                    val handle = navController.currentBackStackEntry?.savedStateHandle ?: return@collect
+                    val error = handle.get<Boolean>(EDIT_OPT_IN_ERROR_KEY) ?: false
+                    val notificationsEnabled = handle.get<Boolean>(EDIT_NOTIFICATIONS_ENABLED_KEY) ?: false
+                    viewModel.onOptInResult(slug, error, notificationsEnabled)
+                    handle.remove<String>(EDIT_REOPEN_SLUG_KEY)
+                    handle.remove<Boolean>(EDIT_OPT_IN_ERROR_KEY)
+                    handle.remove<Boolean>(EDIT_NOTIFICATIONS_ENABLED_KEY)
+                }
+            }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.onResume()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     Column(
@@ -67,15 +120,18 @@ fun EditCountriesScreen(
         when (val state = uiState) {
             is EditCountriesViewModel.State.Loading -> LoadingScreen()
             is EditCountriesViewModel.State.Error -> EditCountriesError(onRetry = viewModel::onRetry)
-            is EditCountriesViewModel.State.Loaded -> EditCountriesLoaded(
-                state = state,
-                onFollowAnotherCountry = onFollowAnotherCountry,
-                onToggleNotifications = viewModel::toggleNotifications,
-                onUnfollowCountry = viewModel::unfollowCountry,
-                onClearToggleError = viewModel::clearToggleError,
-                onClearUnfollowError = viewModel::clearUnfollowError,
-                onClearFollowError = viewModel::clearFollowError
-            )
+            is EditCountriesViewModel.State.Loaded -> {
+                EditCountriesLoaded(
+                    state = state,
+                    onFollowAnotherCountry = onFollowAnotherCountry,
+                    onToggleNotifications = viewModel::toggleNotifications,
+                    onUnfollowCountry = viewModel::unfollowCountry,
+                    onClearToggleError = viewModel::clearToggleError,
+                    onClearUnfollowError = viewModel::clearUnfollowError,
+                    onClearFollowError = viewModel::clearFollowError,
+                    onConsentResultHandled = viewModel::clearSelectedSlug
+                )
+            }
         }
     }
 }
@@ -86,10 +142,11 @@ private fun EditCountriesLoaded(
     state: EditCountriesViewModel.State.Loaded,
     onFollowAnotherCountry: () -> Unit,
     onToggleNotifications: (slug: String, enabled: Boolean) -> Unit,
-    onUnfollowCountry: (slug: String, currentNotificationsEnabled: Boolean) -> Unit,
+    onUnfollowCountry: (slug: String) -> Unit,
     onClearToggleError: () -> Unit,
     onClearUnfollowError: () -> Unit,
     onClearFollowError: () -> Unit,
+    onConsentResultHandled: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val selectedSlug = rememberSaveable { mutableStateOf<String?>(null) }
@@ -100,17 +157,32 @@ private fun EditCountriesLoaded(
 
     val groupsBySlug = state.groups.associateBy { it.group }
 
-    // Update initial toggle state when country is selected
-    LaunchedEffect(selectedCountry) {
+    // Update toggle state when country is selected or when groups are refreshed from server
+    LaunchedEffect(selectedCountry, state.groups) {
         selectedCountry?.let { country ->
             val group = groupsBySlug[country.slug]
-            notificationsEnabled.value = group?.subgroup == "instant"
+            notificationsEnabled.value = group?.subgroup == Subgroup.INSTANT
         }
     }
 
-    // Dismiss sheet when unfollow error occurs
+    // Reopen sheet when returning from consent opt-in flow
+    LaunchedEffect(state.selectedSlug) {
+        if (state.selectedSlug != null && selectedSlug.value == null) {
+            selectedSlug.value = state.selectedSlug
+            onConsentResultHandled()
+        }
+    }
+
+    // Dismiss sheet when unfollow error occurs or when returning from opt-in
     LaunchedEffect(state.unfollowError) {
         if (state.unfollowError != null) {
+            sheetState.hide()
+            selectedSlug.value = null
+        }
+    }
+
+    LaunchedEffect(state.toggleError) {
+        if (state.toggleError != null) {
             sheetState.hide()
             selectedSlug.value = null
         }
@@ -171,10 +243,13 @@ private fun EditCountriesLoaded(
             },
             onNotificationsToggle = { isEnabled ->
                 notificationsEnabled.value = isEnabled
+                if (isEnabled && !state.devicePermissionGranted) {
+                    selectedSlug.value = null
+                }
                 onToggleNotifications(country.slug, isEnabled)
             },
             onUnfollow = {
-                onUnfollowCountry(country.slug, notificationsEnabled.value)
+                onUnfollowCountry(country.slug)
             },
             onClearToggleError = onClearToggleError
         )
@@ -261,10 +336,11 @@ private fun EditCountriesLoadedPreview() {
             state = state,
             onFollowAnotherCountry = {},
             onToggleNotifications = { _, _ -> },
-            onUnfollowCountry = { _, _ -> },
+            onUnfollowCountry = { _ -> },
             onClearToggleError = {},
             onClearUnfollowError = {},
-            onClearFollowError = {}
+            onClearFollowError = {},
+            onConsentResultHandled = {}
         )
     }
 }

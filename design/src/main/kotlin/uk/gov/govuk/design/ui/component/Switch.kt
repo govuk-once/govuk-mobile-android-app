@@ -18,12 +18,14 @@ fun ToggleSwitch(
     onCheckedChange: (Boolean) -> Unit,
     testDescription: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Switch(
         checked = checked,
         onCheckedChange = {
             onCheckedChange(it)
         },
+        enabled = enabled,
         colors = SwitchDefaults.colors(
             checkedThumbColor = GovUkTheme.colourScheme.surfaces.toggleHandle,
             checkedTrackColor = GovUkTheme.colourScheme.surfaces.switchOn,
