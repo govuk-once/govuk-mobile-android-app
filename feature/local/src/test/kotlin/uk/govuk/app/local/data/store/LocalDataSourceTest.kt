@@ -1,175 +1,98 @@
 package uk.govuk.app.local.data.store
 
-import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
-import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.govuk.app.local.data.local.LocalDao
 import uk.govuk.app.local.data.local.LocalDataSource
-import uk.govuk.app.local.data.local.LocalRealmProvider
-import uk.govuk.app.local.data.local.model.StoredLocalAuthority
-import uk.govuk.app.local.data.local.model.StoredLocalAuthorityParent
+import uk.govuk.app.local.data.local.model.LocalAuthorityEntity
+import uk.govuk.app.local.data.local.model.LocalAuthorityParentEntity
 import uk.govuk.app.local.domain.model.LocalAuthority
 
 class LocalDataSourceTest {
-    private val realmProvider = mockk<LocalRealmProvider>(relaxed = true)
 
-    private lateinit var realm: Realm
+    private val dao = mockk<LocalDao>(relaxed = true)
+    private lateinit var dataSource: LocalDataSource
 
     @Before
     fun setup() {
-        val config =
-            RealmConfiguration.Builder(
-                schema =
-                    setOf(
-                        StoredLocalAuthority::class,
-                        StoredLocalAuthorityParent::class
-                    )
-            )
-                .inMemory() // In-memory Realm for testing
-                .build()
-
-        // Open the Realm instance
-        realm = Realm.open(config)
-
-        coEvery { realmProvider.open() } returns realm
-    }
-
-    @After
-    fun tearDown() {
-        realm.close()
+        dataSource = LocalDataSource(dao)
     }
 
     @Test
-    fun `Given a local authority, when get the local authority, then we emit the local authority`() {
+    fun `Given a local authority in db, when get local authority, then emit the local authority`() {
+        val entity = LocalAuthorityEntity(
+            name = "name", url = "url", slug = "slug",
+            parent = LocalAuthorityParentEntity(name = "parentName", url = "parentUrl", slug = "parentSlug")
+        )
+        every { dao.getLocalAuthority() } returns flowOf(entity)
+
         runTest {
-            realm.write {
-                copyToRealm(
-                    StoredLocalAuthority().apply {
-                        name = "name"
-                        url = "url"
-                        slug = "slug"
-                        parent = StoredLocalAuthorityParent().apply {
-                            name = "parentName"
-                            url = "parentUrl"
-                            slug = "parentSlug"
-                        }
-                    }
-                )
+            val result = dataSource.localAuthority.first()
+            assertEquals("name", result?.name)
+            assertEquals("url", result?.url)
+            assertEquals("slug", result?.slug)
+            assertEquals("parentName", result?.parent?.name)
+            assertEquals("parentUrl", result?.parent?.url)
+            assertEquals("parentSlug", result?.parent?.slug)
+        }
+    }
+
+    @Test
+    fun `Given no local authority in db, when get local authority, then emit null`() {
+        every { dao.getLocalAuthority() } returns flowOf(null)
+
+        runTest {
+            assertNull(dataSource.localAuthority.first())
+        }
+    }
+
+    @Test
+    fun `Given a local authority with parent, when insert or replace, then insert into db with parent fields`() {
+        val localAuthority = LocalAuthority(
+            name = "name", url = "url", slug = "slug",
+            parent = LocalAuthority(name = "parentName", url = "parentUrl", slug = "parentSlug")
+        )
+
+        runTest {
+            dataSource.insertOrReplace(localAuthority)
+
+            coVerify {
+                dao.insertOrReplace(match {
+                    it.name == "name" && it.url == "url" && it.slug == "slug" &&
+                    it.parent?.name == "parentName" && it.parent?.url == "parentUrl" && it.parent?.slug == "parentSlug"
+                })
             }
-
-            val localDataSource = LocalDataSource(realmProvider)
-
-            val localAuthority = localDataSource.localAuthority.first()
-            val parent = localAuthority?.parent
-
-            assertEquals("name", localAuthority?.name)
-            assertEquals("url", localAuthority?.url)
-            assertEquals("slug", localAuthority?.slug)
-            assertEquals("parentName", parent?.name)
-            assertEquals("parentUrl", parent?.url)
-            assertEquals("parentSlug", parent?.slug)
         }
     }
 
     @Test
-    fun `Given no local authorities, when a local authority is selected by the user, then we create the local authority`() {
+    fun `Given a local authority without parent, when insert or replace, then insert into db with null parent fields`() {
+        val localAuthority = LocalAuthority(name = "name", url = "url", slug = "slug")
+
         runTest {
-            val localDataSource = LocalDataSource(realmProvider)
+            dataSource.insertOrReplace(localAuthority)
 
-            localDataSource.insertOrReplace(
-                LocalAuthority(
-                    "name",
-                    "url",
-                    "slug",
-                    LocalAuthority(
-                        "parentName",
-                        "parentUrl",
-                        "parentSlug"
-                    )
-                )
-            )
-
-            val localAuthority = localDataSource.localAuthority.first()
-            val parent = localAuthority?.parent
-
-            assertEquals("name", localAuthority?.name)
-            assertEquals("url", localAuthority?.url)
-            assertEquals("slug", localAuthority?.slug)
-            assertEquals("parentName", parent?.name)
-            assertEquals("parentUrl", parent?.url)
-            assertEquals("parentSlug", parent?.slug)
-        }
-    }
-
-    @Test
-    fun `Given an existing local authority, when a user selects a local authority, then we replace the existing local authority`() {
-        runTest {
-            val localDataSource = LocalDataSource(realmProvider)
-
-            localDataSource.insertOrReplace(
-                LocalAuthority(
-                    "name",
-                    "url",
-                    "slug",
-                    LocalAuthority(
-                        "parentName",
-                        "parentUrl",
-                        "parentSlug"
-                    )
-                )
-            )
-
-            localDataSource.insertOrReplace(
-                LocalAuthority(
-                    "newName",
-                    "newUrl",
-                    "newSlug"
-                )
-            )
-
-            val localAuthority = localDataSource.localAuthority.first()
-
-            assertEquals("newName", localAuthority?.name)
-            assertEquals("newUrl", localAuthority?.url)
-            assertEquals("newSlug", localAuthority?.slug)
-            assertNull(localAuthority?.parent)
-        }
-    }
-
-    @Test
-    fun `Given a local authority, when clear, then delete from realm`() {
-        runTest {
-            realm.write {
-                copyToRealm(
-                    StoredLocalAuthority().apply {
-                        this.name = "name"
-                        this.url = "url"
-                        this.slug = "slug"
-                        this.parent =
-                            StoredLocalAuthorityParent().apply {
-                                this.name = "parent name"
-                                this.url = "parent url"
-                                this.slug = "parent slug"
-                            }
-                    }
-                )
-
-                assertTrue(query<StoredLocalAuthority>().find().isNotEmpty())
+            coVerify {
+                dao.insertOrReplace(match {
+                    it.name == "name" && it.parent == null
+                })
             }
+        }
+    }
 
-            val localDataSource = LocalDataSource(realmProvider)
-            localDataSource.clear()
-
-            assertTrue(realm.query<StoredLocalAuthority>().find().isEmpty())
+    @Test
+    fun `Given the data source is cleared, then delete all from db`() {
+        runTest {
+            dataSource.clear()
+            coVerify { dao.deleteAll() }
         }
     }
 }
