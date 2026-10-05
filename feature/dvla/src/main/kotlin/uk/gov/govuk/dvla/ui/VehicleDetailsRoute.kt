@@ -106,7 +106,7 @@ private fun SuccessScreen(
         FullScreenHeader(
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
-        VehicleDetailsScreen(
+        VehicleDetailsContent(
             launchBrowser = launchBrowser,
             details = details
         )

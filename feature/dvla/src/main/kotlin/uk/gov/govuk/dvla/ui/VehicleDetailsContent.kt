@@ -33,7 +33,7 @@ import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @Composable
-internal fun VehicleDetailsScreen(
+internal fun VehicleDetailsContent(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     details: VehicleDetailsUiModel,
     modifier: Modifier = Modifier

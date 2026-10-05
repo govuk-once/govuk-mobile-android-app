@@ -1,8 +1,6 @@
 package uk.gov.govuk.dvla.ui
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,11 +11,8 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.dvla.CheckVehicleDetailsUiState
 import uk.gov.govuk.dvla.CheckVehicleDetailsViewModel
 import uk.gov.govuk.dvla.R
-import uk.gov.govuk.dvla.ui.component.CheckVehicleDetailsHeader
 import uk.gov.govuk.dvla.ui.model.MenuAction
-import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CheckVehicleDetailsRoute(
     launchBrowser: (String) -> Unit,
@@ -30,44 +25,37 @@ internal fun CheckVehicleDetailsRoute(
 
     when (val state = uiState) {
         is CheckVehicleDetailsUiState.Default -> {
-            val handleMenuItemClick: (OverflowMenuItem) -> Unit = { item ->
-                if (item.action is MenuAction.WebLink) {
-                    viewModel.onExternalButtonClicked(
-                        text = item.text.displayText,
-                        url = item.action.url,
-                        section = title
-                    )
-                    launchBrowser(item.action.url)
-                }
-            }
-
             RunOnceLaunchedEffect {
                 viewModel.onPageView(title)
             }
 
-            Column(
-                modifier = modifier.safeDrawingPadding()
-            ) {
-                CheckVehicleDetailsHeader(
-                    onClose = onBack,
-                    menuItems = state.details.menuItems,
-                    onMenuItemClick = handleMenuItemClick
-                )
+            CheckVehicleDetailsScreen(
+                details = state.details,
+                onClose = onBack,
+                onMenuItemClick = { item ->
+                    val action = item.action
 
-                VehicleDetailsScreen(
-                    launchBrowser = { text, url ->
+                    if (action is MenuAction.WebLink) {
                         viewModel.onExternalButtonClicked(
-                            text = text,
-                            url = url.originalUrl,
+                            text = item.text.displayText,
+                            url = action.url,
                             section = title
                         )
-                        launchBrowser(url.urlToOpen)
-                    },
-                    details = state.details
-                )
-            }
+                        launchBrowser(action.url)
+                    }
+                },
+                launchBrowser = { text, url ->
+                    viewModel.onExternalButtonClicked(
+                        text = text,
+                        url = url.originalUrl,
+                        section = title
+                    )
+                    launchBrowser(url.urlToOpen)
+                },
+                modifier = modifier.safeDrawingPadding()
+            )
         }
 
-        is CheckVehicleDetailsUiState.Hidden -> { /* Do nothing */ }
+        CheckVehicleDetailsUiState.Hidden -> Unit
     }
 }
