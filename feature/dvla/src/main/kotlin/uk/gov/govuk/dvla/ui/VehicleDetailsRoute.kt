@@ -72,21 +72,22 @@ internal fun VehicleDetailsRoute(
 
         is VehicleDetailsUiState.Success -> {
             val section = stringResource(R.string.vehicle_details_success_title)
-            SuccessScreen(
+            VehicleDetailsScreen(
                 launchBrowser = { text, url ->
                     launchBrowser(url.urlToOpen)
                     viewModel.onExternalButtonClicked(text, url.originalUrl, section)
                 },
                 onBack = onBack,
                 onPageView = { viewModel.onPageView(section) },
-                details = state.details
+                details = state.details,
+                modifier = modifier
             )
         }
     }
 }
 
 @Composable
-private fun SuccessScreen(
+private fun VehicleDetailsScreen(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     onBack: () -> Unit,
     onPageView: () -> Unit,
@@ -151,7 +152,7 @@ private fun ErrorScreen(
 
 @Preview
 @Composable
-private fun SuccessScreenPreview() {
+private fun VehicleDetailsScreenPreview() {
     val date = AccessibleString("Calendar")
     val fuelType = AccessibleString("Diesel")
     val colour = AccessibleString("Red")
@@ -197,7 +198,7 @@ private fun SuccessScreenPreview() {
         specifications = listOf()
     )
     GovUkTheme {
-        SuccessScreen({ _, _ -> },{}, {}, details)
+        VehicleDetailsScreen({ _, _ -> },{}, {}, details)
     }
 }
 
