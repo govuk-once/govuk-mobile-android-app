@@ -62,7 +62,11 @@ class GovUkConfigDataSourceTest {
             driverDetails = "https://driver-and-vehicles-account.service.gov.uk/driver_details",
             account = "https://driver-and-vehicles-account.service.gov.uk",
             drivingRecord = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Entitlements",
-            contact = "https://www.gov.uk/contact-the-dvla"
+            contact = "https://www.gov.uk/contact-the-dvla",
+            buyingUsedCarChecks = "https://www.gov.uk/checks-when-buying-a-used-car",
+            reportAbandonedVehicle = "https://www.gov.uk/report-abandoned-vehicle",
+            reportUntaxedVehicle = "https://www.gov.uk/report-untaxed-vehicle",
+            reportNoMot = "https://www.gov.uk/report-no-mot"
         )
 
         val config = Config(

@@ -688,4 +688,115 @@ class TaxAndMotStatusMapperTest {
         assertNull(taxStatus.statusRowUi.description.altText)
         assertNull(taxStatus.statusRowUi.style)
     }
+
+    @Test
+    fun `Given the Tax status is TAXED, then the correct StatusUiModel is returned for an enquiry`() {
+        every { stringProvider.getString(R.string.valid) } returns "Valid"
+
+        val vehicle = makeVehicle(
+            taxStatus = TaxStatus.TAXED,
+            taxExpiryDate = null
+        )
+        val taxStatus = mapper.getTaxStatusEnquiry(vehicle, dvlaUrls)
+
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
+        taxStatus as StatusUiModel.StatusRow
+        assertEquals("Tax", taxStatus.statusRowUi.title?.displayText)
+        assertNull(taxStatus.statusRowUi.title?.altText)
+        assertEquals("Valid", taxStatus.statusRowUi.description.displayText)
+        assertNull(taxStatus.statusRowUi.description.altText)
+        assert(taxStatus.statusRowUi.iconStyle is StatusListItemIconStyle.Success)
+    }
+
+    @Test
+    fun `Given the Tax status is UNTAXED, then the correct StatusUiModel is returned for an enquiry`() {
+        every { stringProvider.getString(R.string.untaxed) } returns "Untaxed"
+
+        val vehicle = makeVehicle(
+            taxStatus = TaxStatus.UNTAXED
+        )
+        val taxStatus = mapper.getTaxStatusEnquiry(vehicle, null)
+
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
+        taxStatus as StatusUiModel.StatusRow
+        assertEquals("Tax", taxStatus.statusRowUi.title?.displayText)
+        assertNull(taxStatus.statusRowUi.title?.altText)
+        assertEquals("Untaxed", taxStatus.statusRowUi.description.displayText)
+        assertNull(taxStatus.statusRowUi.description.altText)
+        assertNull(taxStatus.statusRowUi.style)
+    }
+
+    @Test
+    fun `Given the Tax status is SORN, then the correct StatusUiModel is returned for an enquiry`() {
+        every { stringProvider.getString(R.string.off_the_road_sorn_message) } returns "Off the road (SORN)"
+
+        val vehicle = makeVehicle(
+            taxStatus = TaxStatus.SORN,
+            sornStart = LocalDate.now()
+        )
+        val taxStatus = mapper.getTaxStatusEnquiry(vehicle, dvlaUrls)
+
+        assertTrue(taxStatus is StatusUiModel.InfoRow)
+        taxStatus as StatusUiModel.InfoRow
+        assertEquals("Off the road (SORN)", taxStatus.infoRowUi.title.displayText)
+        assertNull(taxStatus.infoRowUi.title.altText)
+        assertNull(taxStatus.infoRowUi.subtitle)
+    }
+
+    @Test
+    fun `Given the Tax status is NOT TAXED FOR ON ROAD USE, then the correct StatusUiModel is returned for an enquiry`() {
+        every { stringProvider.getString(R.string.status_not_needed) } returns "No tax to pay"
+
+        val vehicle = makeVehicle(
+            taxStatus = TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE
+        )
+        val taxStatus = mapper.getTaxStatusEnquiry(vehicle, dvlaUrls)
+
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
+        taxStatus as StatusUiModel.StatusRow
+        assertEquals("Tax", taxStatus.statusRowUi.title?.displayText)
+        assertNull(taxStatus.statusRowUi.title?.altText)
+        assertEquals("No tax to pay", taxStatus.statusRowUi.description.displayText)
+        assertNull(taxStatus.statusRowUi.description.altText)
+        assertNull(taxStatus.statusRowUi.style)
+    }
+
+    @Test
+    fun `Given the Tax status is UNKNOWN and DVLA url's is not NULL, then the correct StatusUiModel is returned for an enquiry`() {
+        every { stringProvider.getString(R.string.tax_status_unknown) } returns "Not found - contact DVLA"
+
+        val vehicle = makeVehicle(
+            taxStatus = TaxStatus.UNKNOWN
+        )
+        val taxStatus = mapper.getTaxStatusEnquiry(vehicle, dvlaUrls)
+
+        assertTrue(taxStatus is StatusUiModel.LinkRow)
+        taxStatus as StatusUiModel.LinkRow
+        assertEquals("Tax", taxStatus.linkRowUi.title.displayText)
+        assertNull(taxStatus.linkRowUi.title.altText)
+        assertEquals("Not found - contact DVLA", taxStatus.linkRowUi.text.displayText)
+        assertNull(taxStatus.linkRowUi.text.altText)
+        assertEquals(
+            "https://www.gov.uk/contact-the-dvla",
+            taxStatus.linkRowUi.url.urlToOpen
+        )
+    }
+
+    @Test
+    fun `Given the Tax status is UNKNOWN and DVLA url's is NULL, then the correct StatusUiModel is returned for an enquiry`() {
+        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
+
+        val vehicle = makeVehicle(
+            taxStatus = TaxStatus.UNKNOWN
+        )
+        val taxStatus = mapper.getTaxStatusEnquiry(vehicle, null)
+
+        assertTrue(taxStatus is StatusUiModel.StatusRow)
+        taxStatus as StatusUiModel.StatusRow
+        assertEquals("Tax", taxStatus.statusRowUi.title?.displayText)
+        assertNull(taxStatus.statusRowUi.title?.altText)
+        assertEquals("Unknown", taxStatus.statusRowUi.description.displayText)
+        assertNull(taxStatus.statusRowUi.description.altText)
+        assertNull(taxStatus.statusRowUi.style)
+    }
 }
