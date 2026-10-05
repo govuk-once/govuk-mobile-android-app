@@ -217,7 +217,9 @@ private fun ExampleQuestion(
         BodyRegularLabel(
             text = text,
             color = GovUkTheme.colourScheme.textAndIcons.chatExampleQuestionText,
-            modifier = Modifier.talkBackText("$prompt $text")
+            modifier = Modifier
+                .fillMaxWidth()
+                .talkBackText("$prompt $text")
         )
     }
 }
