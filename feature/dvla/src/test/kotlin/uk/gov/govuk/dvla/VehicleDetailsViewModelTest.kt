@@ -22,9 +22,9 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.VehicleDetails
+import uk.gov.govuk.dvla.mapper.VehicleDetailsMapper
 import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.UrlModel
-import uk.gov.govuk.dvla.mapper.VehicleDetailsMapper
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -74,6 +74,23 @@ class VehicleDetailsViewModelTest {
                 url = "https://www.test.com",
                 external = true,
                 section = "Section"
+            )
+        }
+    }
+
+    @Test
+    fun `When onMenuItemClicked is called, then menuItemClick analytics event is fired with correct parameters`() = runTest(dispatcher) {
+        val text = "Change address"
+        val url = "https://www.gov.uk/change-naddress"
+
+        viewModel.onMenuItemClicked(text = text, url = url)
+
+        verify(exactly = 1) {
+            analyticsClient.menuItemClick(
+                text = text,
+                url = url,
+                external = true,
+                section = "Driving"
             )
         }
     }

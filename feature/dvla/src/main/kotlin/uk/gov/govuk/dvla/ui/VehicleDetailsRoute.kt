@@ -121,7 +121,7 @@ internal fun VehicleDetailsRoute(
                         launchBrowser(action.url)
                     }
 
-                    is MenuAction.ClipboardCopy -> { }
+                    else -> Unit
                 }
             }
             SuccessScreen(
