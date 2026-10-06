@@ -5,7 +5,7 @@ import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 
 internal data class VehicleDetailsUiModel(
     val make: String,
-    val model: String,
+    val model: String?,
     val registration: String,
     val keeper: KeeperUiModel?,
     val specificationsIcons: List<SpecificationIconUiModel>,

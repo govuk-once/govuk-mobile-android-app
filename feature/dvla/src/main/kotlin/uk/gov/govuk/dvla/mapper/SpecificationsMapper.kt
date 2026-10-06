@@ -54,54 +54,85 @@ internal class SpecificationsMapper @Inject constructor(
         )
     }
 
-    fun getVehicleSpecifications(vesVehicle: VehicleDetails): List<InternalLinkListItemModel> {
+    fun getVehicleSpecifications(vehicle: VehicleDetails): List<InternalLinkListItemModel> = listOf(
+            createMakeItem(vehicle),
+            createModelItem(vehicle),
+            createFirstRegisteredItem(vehicle),
+            createFuelTypeItem(vehicle),
+            createColourItem(vehicle),
+            createEngineSizeItem(vehicle),
+            createEmissionsItem(vehicle)
+        )
+
+    fun getVehicleEnquirySpecifications(vehicle: VehicleDetails): List<InternalLinkListItemModel> =
+        listOf(
+            createMakeItem(vehicle),
+            createFirstRegisteredItem(vehicle),
+            createFuelTypeItem(vehicle),
+            createColourItem(vehicle),
+            createEngineSizeItem(vehicle),
+            createEmissionsItem(vehicle)
+        )
+
+    private fun createMakeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+        InternalLinkListItemModel.Info(
+            title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
+            info = AccessibleString(displayText = vehicle.summary.make)
+        )
+
+    private fun createModelItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+        InternalLinkListItemModel.Info(
+            title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
+            info = AccessibleString(displayText = vehicle.summary.model ?: "Unknown")
+        )
+
+    private fun createFirstRegisteredItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info {
         val dateOfFirstRegistration =
-            vesVehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
-        return listOf(
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
-                info = AccessibleString(displayText = vesVehicle.summary.make)
-            ),
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
-                info = AccessibleString(displayText = vesVehicle.summary.model ?: "Unknown")
-            ),
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(
-                    displayText = stringProvider.getString(R.string.first_registered_title),
-                    altText = stringProvider.getString(
-                        R.string.first_registered_alt_text,
-                        dateOfFirstRegistration
-                    )
-                ),
-                info = AccessibleString(
-                    displayText = dateOfFirstRegistration,
-                    altText = "" // Set as empty string so nothing read as alt text handled in the title
+            vehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
+
+        return InternalLinkListItemModel.Info(
+            title = AccessibleString(
+                displayText = stringProvider.getString(R.string.first_registered_title),
+                altText = stringProvider.getString(
+                    R.string.first_registered_alt_text,
+                    dateOfFirstRegistration
                 )
             ),
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(displayText = stringProvider.getString(R.string.fuel_type_title)),
-                info = AccessibleString(
-                    displayText = stringProvider.getString(vesVehicle.fuelType.getResources().third)
-                )
-            ),
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(displayText = stringProvider.getString(R.string.colour_title)),
-                info = AccessibleString(displayText = vesVehicle.getVehicleColour(stringProvider))
-            ),
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
-                info = AccessibleString(
-                    displayText = vesVehicle.engineCapacity?.let { getFormattedEngineCapacity(it) }
-                        ?: "Unknown"
-                )
-            ),
-            InternalLinkListItemModel.Info(
-                title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
-                info = AccessibleString(
-                    displayText = vesVehicle.exhaustEmissionsCo2?.toString() ?: "Unknown"
-                )
+            info = AccessibleString(
+                displayText = dateOfFirstRegistration,
+                altText = "" // Set as empty string so nothing read as alt text handled in the title
             )
         )
     }
+
+    private fun createFuelTypeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+        InternalLinkListItemModel.Info(
+            title = AccessibleString(displayText = stringProvider.getString(R.string.fuel_type_title)),
+            info = AccessibleString(
+                displayText = stringProvider.getString(vehicle.fuelType.getResources().third)
+            )
+        )
+
+    private fun createColourItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+        InternalLinkListItemModel.Info(
+            title = AccessibleString(displayText = stringProvider.getString(R.string.colour_title)),
+            info = AccessibleString(displayText = vehicle.getVehicleColour(stringProvider))
+        )
+
+    private fun createEngineSizeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+        InternalLinkListItemModel.Info(
+            title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
+            info = AccessibleString(
+                displayText = vehicle.engineCapacity?.let { getFormattedEngineCapacity(it) }
+                    ?: "Unknown"
+            )
+        )
+
+    private fun createEmissionsItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+        InternalLinkListItemModel.Info(
+            title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
+            info = AccessibleString(
+                displayText = vehicle.exhaustEmissionsCo2?.toString() ?: "Unknown"
+            )
+        )
 }

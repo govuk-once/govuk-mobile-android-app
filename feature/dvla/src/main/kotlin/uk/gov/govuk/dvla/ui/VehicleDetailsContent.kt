@@ -50,12 +50,14 @@ internal fun VehicleDetailsContent(
                 .padding(horizontal = GovUkTheme.spacing.medium)
         )
 
-        Title3RegularLabel(
-            details.model,
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .padding(horizontal = GovUkTheme.spacing.medium)
-        )
+        details.model?.let { model ->
+            Title3RegularLabel(
+                text = model,
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .padding(horizontal = GovUkTheme.spacing.medium)
+            )
+        }
 
         MediumVerticalSpacer()
 

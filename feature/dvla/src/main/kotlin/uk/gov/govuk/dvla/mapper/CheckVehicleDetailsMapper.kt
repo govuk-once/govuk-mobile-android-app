@@ -23,7 +23,7 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
         val vehicle = vehicle.toVehicleDetails()
         return VehicleDetailsUiModel(
             make = vehicle.summary.make,
-            model = "",
+            model = null,
             registration = vehicle.summary.registration,
             keeper = null,
             specificationsIcons = listOf(
@@ -33,7 +33,7 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
             ),
             taxStatus = taxAndMotStatusMapper.getTaxStatusEnquiry(vehicle.summary, dvlaUrls),
             motStatus = taxAndMotStatusMapper.getMotStatus(vehicle.summary, dvlaUrls),
-            specifications = specificationsMapper.getVehicleSpecifications(vehicle),
+            specifications = specificationsMapper.getVehicleEnquirySpecifications(vehicle),
             menuItems = buildMenuItems(vehicle.summary, dvlaUrls)
         )
     }

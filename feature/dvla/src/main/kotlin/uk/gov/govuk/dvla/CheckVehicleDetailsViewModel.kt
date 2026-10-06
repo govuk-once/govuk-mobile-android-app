@@ -14,38 +14,37 @@ import uk.gov.govuk.dvla.navigation.ARG_REG_NUMBER
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 internal sealed interface CheckVehicleDetailsUiState {
-    data class Default(val details: VehicleDetailsUiModel) : CheckVehicleDetailsUiState
-    data object Hidden : CheckVehicleDetailsUiState
+    data class Success(val details: VehicleDetailsUiModel) : CheckVehicleDetailsUiState
+    data object Error : CheckVehicleDetailsUiState
 }
 
 @HiltViewModel
 internal class CheckVehicleDetailsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val mapper: CheckVehicleDetailsMapper,
-    savedStateHandle: SavedStateHandle,
-    dvlaRepo: DvlaRepo,
-    configRepo: ConfigRepo
+    private val savedStateHandle: SavedStateHandle,
+    private val dvlaRepo: DvlaRepo,
+    private val configRepo: ConfigRepo
 ) : ViewModel() {
 
     private companion object {
         const val SCREEN_CLASS = "VehicleDetailsScreen"
     }
 
-    private val _uiState =
-        MutableStateFlow<CheckVehicleDetailsUiState>(CheckVehicleDetailsUiState.Hidden)
+    private val _uiState = MutableStateFlow(createInitialState())
     val uiState = _uiState.asStateFlow()
 
-    private val dvlaUrls = configRepo.dvlaUrls
-
-    init {
-        val regNumber: String? = savedStateHandle[ARG_REG_NUMBER]
-        regNumber?.let {
-            dvlaRepo.findVehicleEnquiryDetails(regNumber)?.let { vehicleEnquiryDetails ->
-                val details =
-                    mapper.toUiModel(vehicleEnquiryDetails, dvlaUrls)
-                _uiState.value = CheckVehicleDetailsUiState.Default(details)
-            }
-        }
+    private fun createInitialState(): CheckVehicleDetailsUiState {
+        val regNumber: String = savedStateHandle[ARG_REG_NUMBER]
+            ?: return CheckVehicleDetailsUiState.Error
+        val vehicle = dvlaRepo.findVehicleEnquiryDetails(regNumber)
+            ?: return CheckVehicleDetailsUiState.Error
+        return CheckVehicleDetailsUiState.Success(
+            details = mapper.toUiModel(
+                vehicle = vehicle,
+                dvlaUrls = configRepo.dvlaUrls
+            )
+        )
     }
 
     fun onPageView(title: String) {

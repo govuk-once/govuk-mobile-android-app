@@ -24,7 +24,7 @@ internal fun CheckVehicleDetailsRoute(
     val title = stringResource(R.string.vehicle_details_success_title)
 
     when (val state = uiState) {
-        is CheckVehicleDetailsUiState.Default -> {
+        is CheckVehicleDetailsUiState.Success -> {
             RunOnceLaunchedEffect {
                 viewModel.onPageView(title)
             }
@@ -56,6 +56,8 @@ internal fun CheckVehicleDetailsRoute(
             )
         }
 
-        CheckVehicleDetailsUiState.Hidden -> Unit
+        CheckVehicleDetailsUiState.Error -> {
+            // TODO coming in next tickets
+        }
     }
 }
