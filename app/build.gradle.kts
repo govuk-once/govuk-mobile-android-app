@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.google.play.services)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.firebaseAppDistribution)
+    alias(libs.plugins.firebasePerformance)
     alias(libs.plugins.kover)
 }
 
@@ -161,6 +162,7 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.appcheck.play)
+    implementation(libs.firebase.performance)
 
     implementation(libs.google.accompanist)
 
