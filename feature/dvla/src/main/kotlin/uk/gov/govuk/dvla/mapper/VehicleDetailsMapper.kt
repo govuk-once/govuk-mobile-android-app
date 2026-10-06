@@ -23,7 +23,17 @@ internal class VehicleDetailsMapper @Inject constructor(
             ),
             taxStatus = taxAndMotStatusMapper.getTaxStatus(vehicle.summary, dvlaUrls),
             motStatus = taxAndMotStatusMapper.getMotStatus(vehicle.summary, dvlaUrls),
-            specifications = specificationsMapper.getVehicleSpecifications(vehicle)
+            specifications = with(specificationsMapper) {
+                listOf(
+                    createMakeItem(vehicle),
+                    createModelItem(vehicle),
+                    createFirstRegisteredItem(vehicle),
+                    createFuelTypeItem(vehicle),
+                    createColourItem(vehicle),
+                    createEngineSizeItem(vehicle),
+                    createEmissionsItem(vehicle)
+                )
+            }
         )
     }
 

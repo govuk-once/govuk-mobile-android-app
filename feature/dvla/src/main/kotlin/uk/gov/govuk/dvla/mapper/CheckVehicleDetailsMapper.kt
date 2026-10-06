@@ -20,21 +20,30 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
     private val specificationsMapper: SpecificationsMapper
 ) {
     fun toUiModel(vehicle: VehicleEnquiryDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
-        val vehicle = vehicle.toVehicleDetails()
+        val vehicleDetails = vehicle.toVehicleDetails()
         return VehicleDetailsUiModel(
-            make = vehicle.summary.make,
+            make = vehicleDetails.summary.make,
             model = null,
-            registration = vehicle.summary.registration,
+            registration = vehicleDetails.summary.registration,
             keeper = null,
             specificationsIcons = listOf(
-                specificationsMapper.getCalendarSpecification(vehicle.dateOfFirstRegistration),
-                specificationsMapper.getFuelTypeSpecification(vehicle.fuelType),
-                specificationsMapper.getColourSpecification(vehicle.colour)
+                specificationsMapper.getCalendarSpecification(vehicleDetails.dateOfFirstRegistration),
+                specificationsMapper.getFuelTypeSpecification(vehicleDetails.fuelType),
+                specificationsMapper.getColourSpecification(vehicleDetails.colour)
             ),
-            taxStatus = taxAndMotStatusMapper.getTaxStatusEnquiry(vehicle.summary, dvlaUrls),
-            motStatus = taxAndMotStatusMapper.getMotStatus(vehicle.summary, dvlaUrls),
-            specifications = specificationsMapper.getVehicleEnquirySpecifications(vehicle),
-            menuItems = buildMenuItems(vehicle.summary, dvlaUrls)
+            taxStatus = taxAndMotStatusMapper.getTaxStatusEnquiry(vehicleDetails.summary, dvlaUrls),
+            motStatus = taxAndMotStatusMapper.getMotStatus(vehicleDetails.summary, dvlaUrls),
+            specifications = with(specificationsMapper) {
+                listOf(
+                    createMakeItem(vehicleDetails),
+                    createFirstRegisteredItem(vehicleDetails),
+                    createFuelTypeItem(vehicleDetails),
+                    createColourItem(vehicleDetails),
+                    createEngineSizeItem(vehicleDetails),
+                    createEmissionsItem(vehicleDetails)
+                )
+            },
+            menuItems = buildMenuItems(vehicleDetails.summary, dvlaUrls)
         )
     }
 

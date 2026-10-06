@@ -54,39 +54,19 @@ internal class SpecificationsMapper @Inject constructor(
         )
     }
 
-    fun getVehicleSpecifications(vehicle: VehicleDetails): List<InternalLinkListItemModel> = listOf(
-            createMakeItem(vehicle),
-            createModelItem(vehicle),
-            createFirstRegisteredItem(vehicle),
-            createFuelTypeItem(vehicle),
-            createColourItem(vehicle),
-            createEngineSizeItem(vehicle),
-            createEmissionsItem(vehicle)
-        )
-
-    fun getVehicleEnquirySpecifications(vehicle: VehicleDetails): List<InternalLinkListItemModel> =
-        listOf(
-            createMakeItem(vehicle),
-            createFirstRegisteredItem(vehicle),
-            createFuelTypeItem(vehicle),
-            createColourItem(vehicle),
-            createEngineSizeItem(vehicle),
-            createEmissionsItem(vehicle)
-        )
-
-    private fun createMakeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+    fun createMakeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
             info = AccessibleString(displayText = vehicle.summary.make)
         )
 
-    private fun createModelItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+    fun createModelItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
             info = AccessibleString(displayText = vehicle.summary.model ?: "Unknown")
         )
 
-    private fun createFirstRegisteredItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info {
+    fun createFirstRegisteredItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info {
         val dateOfFirstRegistration =
             vehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
 
@@ -105,7 +85,7 @@ internal class SpecificationsMapper @Inject constructor(
         )
     }
 
-    private fun createFuelTypeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+    fun createFuelTypeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.fuel_type_title)),
             info = AccessibleString(
@@ -113,13 +93,13 @@ internal class SpecificationsMapper @Inject constructor(
             )
         )
 
-    private fun createColourItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+    fun createColourItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.colour_title)),
             info = AccessibleString(displayText = vehicle.getVehicleColour(stringProvider))
         )
 
-    private fun createEngineSizeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+    fun createEngineSizeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
             info = AccessibleString(
@@ -128,7 +108,7 @@ internal class SpecificationsMapper @Inject constructor(
             )
         )
 
-    private fun createEmissionsItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
+    fun createEmissionsItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
             info = AccessibleString(
