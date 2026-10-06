@@ -5,11 +5,12 @@ import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 
 internal data class VehicleDetailsUiModel(
     val make: String,
-    val model: String,
+    val model: String?,
     val registration: String,
-    val keeper: KeeperUiModel,
+    val keeper: KeeperUiModel?,
     val specificationsIcons: List<SpecificationIconUiModel>,
     val taxStatus: StatusUiModel,
     val motStatus: StatusUiModel,
-    val specifications: List<InternalLinkListItemModel>
+    val specifications: List<InternalLinkListItemModel>,
+    val menuItems: List<OverflowMenuItem> = emptyList()
 )

@@ -67,7 +67,10 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         }
     }
 
-    fun getTaxStatus(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): StatusUiModel {
+    fun getTaxStatus(
+        vehicle: VehicleSummary,
+        dvlaUrls: DvlaUrls?
+    ): StatusUiModel {
         val expiryDate = vehicle.taxExpiryDate
         return when (vehicle.taxStatus) {
             TaxStatus.TAXED -> {
@@ -87,6 +90,25 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             }
 
             TaxStatus.UNTAXED -> getUntaxed(dvlaUrls)
+            TaxStatus.SORN -> getSorn(vehicle.sornStart)
+            TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getTaxNotNeeded()
+            TaxStatus.UNKNOWN -> dvlaUrls?.contact?.let { contactUrl ->
+                getTaxStatusUnknown(contactUrl)
+            } ?: run {
+                getUnknown(getTaxStatusTitle())
+            }
+        }
+    }
+
+    fun getTaxStatusEnquiry(
+        vehicle: VehicleSummary,
+        dvlaUrls: DvlaUrls?
+    ): StatusUiModel {
+        val expiryDate = vehicle.taxExpiryDate
+        return when (vehicle.taxStatus) {
+            TaxStatus.TAXED -> getValid(getTaxStatusTitle(), expiryDate)
+
+            TaxStatus.UNTAXED -> getUntaxed()
             TaxStatus.SORN -> getSorn(vehicle.sornStart)
             TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getTaxNotNeeded()
             TaxStatus.UNKNOWN -> dvlaUrls?.contact?.let { contactUrl ->
@@ -226,6 +248,16 @@ internal class TaxAndMotStatusMapper @Inject constructor(
             ),
             iconStyle = StatusListItemIconStyle.Warning,
             style = getRenewTaxStyle(dvlaUrls)
+        )
+    )
+
+    private fun getUntaxed() = StatusUiModel.StatusRow(
+        statusRowUi = StatusRowUiModel(
+            title = getTaxStatusTitle(),
+            description = AccessibleString(
+                displayText = stringProvider.getString(R.string.untaxed)
+            ),
+            iconStyle = StatusListItemIconStyle.Warning
         )
     )
 

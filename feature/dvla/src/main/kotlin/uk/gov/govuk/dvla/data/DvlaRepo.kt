@@ -32,6 +32,8 @@ class DvlaRepo @Inject constructor(
     private val dvlaDataStore: DvlaDataStore,
     private val identityRepo: IdentityRepo
 ) {
+    private var lastVehicleEnquiry: Pair<String, VehicleEnquiryDetails>? = null
+
     val linkState: Flow<ServiceLinkStatus> = identityRepo.linkStatusOf(LinkedService.DVLA)
 
     val currentLinkState: ServiceLinkStatus
@@ -44,6 +46,7 @@ class DvlaRepo @Inject constructor(
     internal suspend fun setSelectedDrivingView(drivingView: DrivingView) = dvlaDataStore.setSelectedDrivingView(drivingView)
 
     suspend fun clear() {
+        lastVehicleEnquiry = null
         dvlaDataStore.clear()
     }
 
@@ -100,5 +103,11 @@ class DvlaRepo @Inject constructor(
     internal suspend fun lookupVehicleByRegistration(reg: String): Result<VehicleEnquiryDetails> =
         safeAuthApiCall({ api.lookupVehicleByRegistration(reg) }, authRepo)
             .map { it.toDomainModel() }
+            .also { result ->
+                if (result is Result.Success) lastVehicleEnquiry = reg to result.value
+            }
 
+    /** Details from the most recent successful [lookupVehicleByRegistration]  */
+    internal fun findVehicleEnquiryDetails(reg: String): VehicleEnquiryDetails? =
+        lastVehicleEnquiry?.takeIf { it.first == reg }?.second
 }
