@@ -83,14 +83,15 @@ internal class ChatRepo @Inject constructor(
         )
     }
 
-    suspend fun giveFeedback(conversationId: String, answerId: String, reaction: String): ChatResult<Answer> {
+    suspend fun giveFeedback(conversationId: String, answerId: String, reaction: String): ChatResult<Unit> {
         val requestBody = AnswerFeedbackRequest(
             reaction = reaction
         )
 
         return safeChatApiCall(
             apiCall = { chatApi.giveFeedback(conversationId, answerId, requestBody) },
-            authRepo = authRepo
+            authRepo = authRepo,
+            onAlreadyGiven = { } // Feedback has already been given, to treat this as success
         )
     }
 

@@ -32,6 +32,7 @@ class ChatRepoTest {
     private val answeredQuestion = mockk<AnsweredQuestion>(relaxed = true)
     private val answerResponse = mockk<Response<Answer>>(relaxed = true)
     private val answer = mockk<Answer>(relaxed = true)
+    private val feedbackResponse = mockk<Response<Unit>>(relaxed = true)
 
     private lateinit var chatRepo: ChatRepo
 
@@ -161,10 +162,11 @@ class ChatRepoTest {
     }
 
     @Test
-    fun `Give feedback calls API with reaction and returns answer`() = runTest {
-        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns answerResponse
-        every { answerResponse.isSuccessful } returns true
-        every { answerResponse.body() } returns answer
+    fun `Give feedback calls API with reaction and returns success`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
+        every { feedbackResponse.isSuccessful } returns true
+        every { feedbackResponse.code() } returns 201
+        every { feedbackResponse.body() } returns Unit
 
         val result = chatRepo.giveFeedback("123", "abc", "positive")
 
@@ -175,19 +177,28 @@ class ChatRepoTest {
                 requestBody = AnswerFeedbackRequest(reaction = "positive")
             )
         }
-        assertEquals(Success(answer), result)
+        assertEquals(Success(Unit), result)
+    }
+
+    @Test
+    fun `Give feedback returns success when feedback has already been given`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
+        every { feedbackResponse.isSuccessful } returns false
+        every { feedbackResponse.code() } returns 409
+
+        val result = chatRepo.giveFeedback("123", "abc", "positive")
+
+        assertEquals(Success(Unit), result)
     }
 
     @Test
     fun `Give feedback returns error when API returns an error`() = runTest {
-        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns answerResponse
-        every { answerResponse.isSuccessful } returns false
-        every { answerResponse.code() } returns 404
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
+        every { feedbackResponse.isSuccessful } returns false
+        every { feedbackResponse.code() } returns 404
 
         val result = chatRepo.giveFeedback("123", "abc", "positive")
 
         assertTrue(result is NotFound)
     }
-
-    // TODO: Add test(s) for AlreadyProvided (409)
 }

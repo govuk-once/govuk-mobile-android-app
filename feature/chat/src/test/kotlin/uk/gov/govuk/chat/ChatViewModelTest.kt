@@ -934,8 +934,7 @@ class ChatViewModelTest {
 
     @Test
     fun `When feedback is given, call repo and clear loading state on success`() = runTest {
-        val answer = Answer("abc", "", null, null, "Answer 1", "", null)
-        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns ChatResult.Success(answer)
+        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns ChatResult.Success(Unit)
 
         viewModel.onFeedbackGiven("123", "abc", "positive")
         advanceUntilIdle()

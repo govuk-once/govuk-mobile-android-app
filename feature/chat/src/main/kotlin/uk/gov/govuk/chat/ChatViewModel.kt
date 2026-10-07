@@ -328,7 +328,6 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private suspend fun <T> handleChatResult(chatResult: ChatResult<T>, onSuccess: suspend (T) -> Unit) {
-        // TODO: handle AlreadyProvided (409)
         when (chatResult) {
             is Success -> onSuccess(chatResult.value)
             is ValidationError -> _uiState.updateDefault {

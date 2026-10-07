@@ -9,5 +9,4 @@ sealed class ChatResult<T> {
     class RateLimitExceeded<T>: ChatResult<T>()
     class DeviceOffline<T>: ChatResult<T>()
     class Error<T>: ChatResult<T>()
-    // TODO: class AlreadyProvided<T>: ChatResult<T>()
 }

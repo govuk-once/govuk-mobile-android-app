@@ -42,5 +42,5 @@ interface ChatApi {
         @Path("conversationId") conversationId: String,
         @Path("answerId") answerId: String,
         @Body requestBody: AnswerFeedbackRequest
-    ): Response<Answer> // Status == 201 if successful
+    ): Response<Unit> // Status == 201 if successful, 409 if feedback already given
 }
