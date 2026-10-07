@@ -13,8 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +46,7 @@ import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.CheckVehicleWidgetViewModel
 import uk.gov.govuk.dvla.R
 
@@ -74,10 +80,12 @@ private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehic
 
 @Composable
 fun CheckVehicleWidget(
-    onSearchClick: () -> Unit,
+    onVehicleFound: (regNumber: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CheckVehicleWidgetViewModel = hiltViewModel()
+    val sheetState by viewModel.sheetState.collectAsState()
+    var showSheet by rememberSaveable { mutableStateOf(false) }
 
     val searchPrompt = stringResource(R.string.check_vehicle_search_prompt)
     val description =
@@ -90,6 +98,15 @@ fun CheckVehicleWidget(
                 )
             )
         }
+
+    LaunchedEffect(sheetState) {
+        val state = sheetState
+        if (state is CheckVehicleSheetState.Success) {
+            showSheet = false
+            viewModel.onSheetDismissed()
+            onVehicleFound(state.regNumber)
+        }
+    }
 
     Column(modifier) {
         Title3BoldLabel(
@@ -109,12 +126,28 @@ fun CheckVehicleWidget(
         CheckVehicleCard(
             prompt = searchPrompt,
             onClick = {
-                viewModel.onSearchClicked(searchPrompt)
-                onSearchClick()
+                viewModel.onSearchVehicleClicked(searchPrompt)
+                showSheet = true
             }
         )
 
         LargeVerticalSpacer()
+    }
+
+    if (showSheet) {
+        val submitLabel = stringResource(R.string.check_vehicle_submit)
+        val cancelLabel = stringResource(R.string.check_vehicle_cancel)
+
+        CheckVehicleSheet(
+            state = sheetState,
+            onRegistrationChange = viewModel::onRegistrationNumberChanged,
+            onClear = { viewModel.onClearClicked() },
+            onSubmit = { viewModel.onSubmitClicked(submitLabel) },
+            onCancel = {
+                showSheet = false
+                viewModel.onCancelClicked(cancelLabel)
+            }
+        )
     }
 }
 
@@ -188,7 +221,7 @@ fun CheckVehicleCard(
 @Composable
 private fun CheckAVehicleWidgetPreview() {
     GovUkTheme {
-        CheckVehicleWidget(onSearchClick = {})
+        CheckVehicleWidget({})
     }
 }
 

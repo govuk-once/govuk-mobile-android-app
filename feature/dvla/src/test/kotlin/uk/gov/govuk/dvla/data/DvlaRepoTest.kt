@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -31,6 +32,7 @@ import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
+import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaRepoTest {
@@ -281,4 +283,38 @@ class DvlaRepoTest {
         assertTrue(result is Result.Error)
         coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
     }
+
+    @Test
+    fun `Given vehicle enquiry api returns success, when lookupVehicleByRegistration is called, then return Success`() =
+        runTest {
+            coEvery { api.lookupVehicleByRegistration("AB12CDE") } returns
+                    Response.success(mockk<VehicleEnquiryResponse>(relaxed = true))
+
+            val result = repo.lookupVehicleByRegistration("AB12CDE")
+
+            assertTrue(result is Result.Success)
+            coVerify(exactly = 1) { api.lookupVehicleByRegistration("AB12CDE") }
+        }
+
+    @Test
+    fun `Given vehicle enquiry api fails, when lookupVehicleByRegistration is called, then return Error`() =
+        runTest {
+            coEvery { api.lookupVehicleByRegistration("AB12CDE") } throws Exception("Exception")
+
+            val result = repo.lookupVehicleByRegistration("AB12CDE")
+
+            assertTrue(result is Result.Error)
+            coVerify(exactly = 1) { api.lookupVehicleByRegistration("AB12CDE") }
+        }
+
+    @Test
+    fun `Given a successful lookup, when findVehicleEnquiryDetails is called with the same reg, then return the details`() =
+        runTest {
+            coEvery { api.lookupVehicleByRegistration("AB12CDE") } returns
+                    Response.success(mockk<VehicleEnquiryResponse>(relaxed = true))
+
+            val result = repo.lookupVehicleByRegistration("AB12CDE") as Result.Success
+
+            assertSame(result.value, repo.findVehicleEnquiryDetails("AB12CDE"))
+        }
 }
