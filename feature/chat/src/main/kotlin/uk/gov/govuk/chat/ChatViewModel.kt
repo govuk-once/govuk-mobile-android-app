@@ -203,6 +203,28 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
+    fun onFeedbackGiven(
+        conversationId: String,
+        answerId: String,
+        reaction: String
+    ) {
+        viewModelScope.launch {
+            handleChatResult(
+                chatRepo.giveFeedback(
+                    conversationId = conversationId,
+                    answerId = answerId,
+                    reaction = reaction
+                )
+            ) {
+                /*
+                 TODO: update the state so that either the Thank you message is shown
+                    (if analytics consent is given), or the appropriate thumb icon and
+                    survey link is shown (if analytics consent is given)
+                 */
+            }
+        }
+    }
+
     fun onPageView(screenClass: String, screenName: String, title: String) {
         analyticsClient.screenView(
             screenClass = screenClass,
@@ -306,6 +328,7 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private suspend fun <T> handleChatResult(chatResult: ChatResult<T>, onSuccess: suspend (T) -> Unit) {
+        // TODO: handle AlreadyProvided (409)
         when (chatResult) {
             is Success -> onSuccess(chatResult.value)
             is ValidationError -> _uiState.updateDefault {
@@ -359,5 +382,4 @@ internal class ChatViewModel @Inject constructor(
             if (state is Default) transform(state) else state
         }
     }
-
 }

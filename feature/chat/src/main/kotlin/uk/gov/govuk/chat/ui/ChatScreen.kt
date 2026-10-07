@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,7 +73,8 @@ internal class AnalyticsEvents(
 internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
-    val onClear: () -> Unit
+    val onClear: () -> Unit,
+    val onFeedback: (String, String, String) -> Unit
 )
 
 @Composable
@@ -148,6 +150,9 @@ internal fun ChatRoute(
                         },
                         onClear = {
                             viewModel.clearConversation()
+                        },
+                        onFeedback = { conversationId, answerId, reaction ->
+                            viewModel.onFeedbackGiven(conversationId, answerId, reaction)
                         }
                     ),
                     chatUrls = viewModel.chatUrls,
@@ -265,6 +270,9 @@ internal fun ChatScreen(
                             clipboard.setPrimaryClip(clip)
                         }
                     )
+
+                    // TODO: hook up the initial thumb icon clicks to give feedback
+//                    uiEvents.onFeedback(conversationId, answerId, reaction)
                 }
 
                 item {
@@ -369,7 +377,8 @@ private fun analyticsEvents() = AnalyticsEvents(
 private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
-    onClear = { }
+    onClear = { },
+    onFeedback = { _, _, _ -> }
 )
 
 @PreviewLightDark

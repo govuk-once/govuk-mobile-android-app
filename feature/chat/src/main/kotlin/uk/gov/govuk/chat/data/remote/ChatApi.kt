@@ -7,6 +7,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import uk.gov.govuk.chat.data.remote.model.Answer
+import uk.gov.govuk.chat.data.remote.model.AnswerFeedbackRequest
 import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 import uk.gov.govuk.chat.data.remote.model.Conversation
 import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
@@ -35,4 +36,11 @@ interface ChatApi {
         @Path("conversationId") conversationId: String,
         @Path("questionId") questionId: String
     ): Response<Answer>
+
+    @POST("conversation/{conversationId}/answers/{answerId}/feedback")
+    suspend fun giveFeedback(
+        @Path("conversationId") conversationId: String,
+        @Path("answerId") answerId: String,
+        @Body requestBody: AnswerFeedbackRequest
+    ): Response<Answer> // Status == 201 if successful
 }

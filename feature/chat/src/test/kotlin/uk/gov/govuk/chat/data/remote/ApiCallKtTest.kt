@@ -173,4 +173,16 @@ class ApiCallKtTest {
             safeChatApiCall(apiCall, authRepo)
         }
     }
+
+//    TODO: Test AlreadyProvided (409)
+//    @Test
+//    fun `Returns validation error for 409`() = runTest {
+//        coEvery { apiCall.invoke() } returns response
+//        every { response.isSuccessful } returns false
+//        every { response.code() } returns 409
+//
+//        val result = safeChatApiCall(apiCall, authRepo)
+//
+//        assertTrue(result is AlreadyProvided)
+//    }
 }

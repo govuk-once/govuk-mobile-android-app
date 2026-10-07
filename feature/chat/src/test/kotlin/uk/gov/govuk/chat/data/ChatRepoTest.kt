@@ -15,6 +15,7 @@ import uk.gov.govuk.chat.data.remote.ChatApi
 import uk.gov.govuk.chat.data.remote.ChatResult.NotFound
 import uk.gov.govuk.chat.data.remote.ChatResult.Success
 import uk.gov.govuk.chat.data.remote.model.Answer
+import uk.gov.govuk.chat.data.remote.model.AnswerFeedbackRequest
 import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
 import uk.gov.govuk.config.data.ConfigRepo
@@ -158,4 +159,35 @@ class ChatRepoTest {
             dataStore.clear()
         }
     }
+
+    @Test
+    fun `Give feedback calls API with reaction and returns answer`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns answerResponse
+        every { answerResponse.isSuccessful } returns true
+        every { answerResponse.body() } returns answer
+
+        val result = chatRepo.giveFeedback("123", "abc", "positive")
+
+        coVerify {
+            chatApi.giveFeedback(
+                conversationId = "123",
+                answerId = "abc",
+                requestBody = AnswerFeedbackRequest(reaction = "positive")
+            )
+        }
+        assertEquals(Success(answer), result)
+    }
+
+    @Test
+    fun `Give feedback returns error when API returns an error`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns answerResponse
+        every { answerResponse.isSuccessful } returns false
+        every { answerResponse.code() } returns 404
+
+        val result = chatRepo.giveFeedback("123", "abc", "positive")
+
+        assertTrue(result is NotFound)
+    }
+
+    // TODO: Add test(s) for AlreadyProvided (409)
 }
