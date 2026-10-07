@@ -20,6 +20,7 @@ private val BlueLighter95 = Color(0xFFF4F8FB)
 private val BlueDarker25 = Color(0xFF16548A)
 private val BlueDarker50 = Color(0xFF0F385C)
 private val BlueDarker65 = Color(0xFF0A2740)
+private val BlueDarker70 = Color(0xFF092237)
 private val BlueDarker80 = Color(0xFF061625)
 private val BlueDarker90 = Color(0xFF030B12)
 private val BlueDarker80Alpha50 = Color(0x80061625)
@@ -30,6 +31,7 @@ private val TealAccent = Color(0xFF00FFE0)
 private val YellowPrimary = Color(0xFFFFDD00)
 private val YellowDarker50 = Color(0xFF806F0D)
 private val YellowRegPlate = Color(0xFFFFC800)
+private val YellowLighter80 = Color(0xFFFFF8CC)
 
 private val RedPrimary = Color(0xFFCA3535)
 private val RedAccent = Color(0xFFFF5E5E)
@@ -131,7 +133,8 @@ data class GovUkColourScheme(
         val cardInformationEmergencyBannerPrimary: Color,
         val cardInformationEmergencyBannerLink: Color,
         val registrationPlateText: Color,
-        val cardOverflowIcon: Color
+        val cardOverflowIcon: Color,
+        val bottomSheetErrorLabel: Color
     )
 
     data class Surfaces(
@@ -209,7 +212,11 @@ data class GovUkColourScheme(
         val msgUnread: Color,
         val cardMsgHeader: Color,
         val fullScreen: Color,
-        val surfaceModal: Color
+        val surfaceModal: Color,
+        val bottomSheet: Color,
+        val sheetButtonAction: Color,
+        val sheetButtonCancel: Color,
+        val bottomSheetErrorLabel: Color
     )
 
     data class Strokes(
@@ -239,7 +246,8 @@ data class GovUkColourScheme(
         val chatExampleQuestionCardBorder: Color,
         val cardCarousel: Color,
         val iconSeparator: Color,
-        val registrationPlate: Color
+        val registrationPlate: Color,
+        val bottomSheet: Color,
     )
 }
 
@@ -299,7 +307,8 @@ internal val LightColorScheme = GovUkColourScheme(
         cardInformationEmergencyBannerPrimary = Black,
         cardInformationEmergencyBannerLink = BluePrimary,
         registrationPlateText = Black,
-        cardOverflowIcon = White
+        cardOverflowIcon = White,
+        bottomSheetErrorLabel = Black
     ),
     surfaces = Surfaces(
         background = White,
@@ -382,7 +391,11 @@ internal val LightColorScheme = GovUkColourScheme(
         msgUnread = RedAccent,
         cardMsgHeader = BlackLighter95,
         fullScreen = White,
-        surfaceModal = White
+        surfaceModal = White,
+        bottomSheet = White,
+        sheetButtonAction = BluePrimary,
+        sheetButtonCancel = Grey60,
+        bottomSheetErrorLabel = YellowLighter80
     ),
     strokes = Strokes(
         fixedContainer = BlackAlpha30,
@@ -411,7 +424,8 @@ internal val LightColorScheme = GovUkColourScheme(
         chatExampleQuestionCardBorder = BluePrimary,
         cardCarousel = BlueDarker50,
         iconSeparator = BluePrimary,
-        registrationPlate = Black
+        registrationPlate = Black,
+        bottomSheet = Color.Transparent
     )
 )
 
@@ -471,7 +485,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         cardInformationEmergencyBannerPrimary = White,
         cardInformationEmergencyBannerLink = BlueAccent,
         registrationPlateText = Black,
-        cardOverflowIcon = BlueDarker65
+        cardOverflowIcon = BlueDarker65,
+        bottomSheetErrorLabel = YellowPrimary
     ),
     surfaces = Surfaces(
         background = BlueDarker80,
@@ -554,7 +569,11 @@ internal val DarkColorScheme = GovUkColourScheme(
         msgUnread = RedAccent,
         cardMsgHeader = BlueDarker65,
         fullScreen = BlueDarker80,
-        surfaceModal = BlueDarker90
+        surfaceModal = BlueDarker90,
+        bottomSheet = BlueDarker50,
+        sheetButtonAction = BluePrimary,
+        sheetButtonCancel = BlueDarker70,
+        bottomSheetErrorLabel = BlueDarker65
     ),
     strokes = Strokes(
         fixedContainer = WhiteAlpha30,
@@ -583,7 +602,8 @@ internal val DarkColorScheme = GovUkColourScheme(
         chatExampleQuestionCardBorder = White,
         cardCarousel = BlueDarker50,
         iconSeparator = BlueAccent,
-        registrationPlate = Black
+        registrationPlate = Black,
+        bottomSheet = BlueDarker25
     )
 )
 
@@ -644,7 +664,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             cardInformationEmergencyBannerPrimary = Color.Unspecified,
             cardInformationEmergencyBannerLink = Color.Unspecified,
             registrationPlateText = Color.Unspecified,
-            cardOverflowIcon = Color.Unspecified
+            cardOverflowIcon = Color.Unspecified,
+            bottomSheetErrorLabel = Color.Unspecified
         ),
         surfaces = Surfaces(
             background = Color.Unspecified,
@@ -721,7 +742,11 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             msgUnread = Color.Unspecified,
             cardMsgHeader = Color.Unspecified,
             fullScreen = Color.Unspecified,
-            surfaceModal = Color.Unspecified
+            surfaceModal = Color.Unspecified,
+            bottomSheet = Color.Unspecified,
+            sheetButtonAction = Color.Unspecified,
+            sheetButtonCancel = Color.Unspecified,
+            bottomSheetErrorLabel = Color.Unspecified
         ),
         strokes = Strokes(
             fixedContainer = Color.Unspecified,
@@ -750,7 +775,8 @@ internal val LocalColourScheme = staticCompositionLocalOf {
             chatExampleQuestionCardBorder = Color.Unspecified,
             cardCarousel = Color.Unspecified,
             iconSeparator = Color.Unspecified,
-            registrationPlate = Color.Unspecified
+            registrationPlate = Color.Unspecified,
+            bottomSheet = Color.Unspecified
         )
     )
 }
