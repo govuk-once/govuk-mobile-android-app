@@ -23,6 +23,7 @@ import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 @Composable
 internal fun CheckVehicleDetailsHeader(
     onClose: () -> Unit,
+    onSearch: () -> Unit,
     menuItems: List<OverflowMenuItem>,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier
@@ -46,10 +47,25 @@ internal fun CheckVehicleDetailsHeader(
             )
         }
 
-        CardOverflowMenu(
-            menuItems = menuItems,
-            onMenuItemClick = onMenuItemClick
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = onSearch
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = stringResource(
+                        R.string.content_desc_close
+                    ),
+                    tint = GovUkTheme.colourScheme.textAndIcons.iconSecondary
+                )
+            }
+            CardOverflowMenu(
+                menuItems = menuItems,
+                onMenuItemClick = onMenuItemClick
+            )
+        }
     }
 }
 
@@ -57,6 +73,10 @@ internal fun CheckVehicleDetailsHeader(
 @Composable
 private fun CheckVehicleDetailsHeaderPreview() {
     GovUkTheme {
-        CheckVehicleDetailsHeader({ }, listOf(), { })
+        CheckVehicleDetailsHeader(
+            onClose = {},
+            onSearch = {},
+            menuItems = listOf(),
+            onMenuItemClick = {})
     }
 }

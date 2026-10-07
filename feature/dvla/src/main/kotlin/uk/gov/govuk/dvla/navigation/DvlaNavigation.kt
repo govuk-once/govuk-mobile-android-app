@@ -32,6 +32,7 @@ fun NavGraphBuilder.dvlaGraph(
     onWebFlowClosed: () -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
+    onVehicleFound: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -100,10 +101,10 @@ fun NavGraphBuilder.dvlaGraph(
             CheckVehicleDetailsRoute(
                 launchBrowser = launchBrowser,
                 onBack = onBack,
-                modifier = modifier
+                modifier = modifier,
+                onVehicleFound = onVehicleFound
             )
         }
-
     }
 }
 
@@ -120,5 +121,9 @@ fun NavController.navigateToVehicleDetails(vehicleId: Int) {
 }
 
 fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
-    navigate("$VEHICLE_SEARCH_RESULT_ROUTE/$regNumber")
+    navigate("$VEHICLE_SEARCH_RESULT_ROUTE/$regNumber") {
+        popUpTo("$VEHICLE_SEARCH_RESULT_ROUTE/{$ARG_REG_NUMBER}") {
+            inclusive = true
+        }
+    }
 }

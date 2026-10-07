@@ -12,6 +12,7 @@ import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 internal fun CheckVehicleDetailsScreen(
     details: VehicleDetailsUiModel,
     onClose: () -> Unit,
+    onSearch: () -> Unit,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     modifier: Modifier = Modifier
@@ -19,6 +20,7 @@ internal fun CheckVehicleDetailsScreen(
     Column(modifier = modifier) {
         CheckVehicleDetailsHeader(
             onClose = onClose,
+            onSearch = onSearch,
             menuItems = details.menuItems,
             onMenuItemClick = onMenuItemClick
         )

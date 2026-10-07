@@ -680,6 +680,9 @@ private fun GovUkNavHost(
                 },
                 onWebFlowClosed = {
                     navController.popBackStack()
+                },
+                onVehicleFound = { regNumber ->
+                    navController.navigateToVehicleDetailsByRegistration(regNumber)
                 }
             )
             travelAlertsGraph(
