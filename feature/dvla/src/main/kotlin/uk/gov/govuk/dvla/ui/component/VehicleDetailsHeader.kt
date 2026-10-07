@@ -15,7 +15,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
+import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 
 @Composable
@@ -45,10 +47,12 @@ internal fun VehicleDetailsHeader(
             )
         }
 
-        CardOverflowMenu(
-            menuItems = menuItems,
-            onMenuItemClick = onMenuItemClick
-        )
+        if (menuItems.isNotEmpty()){
+            CardOverflowMenu(
+                menuItems = menuItems,
+                onMenuItemClick = onMenuItemClick
+            )
+        }
     }
 }
 
@@ -56,6 +60,15 @@ internal fun VehicleDetailsHeader(
 @Composable
 private fun VehicleDetailsHeaderPreview() {
     GovUkTheme {
-        VehicleDetailsHeader({}, listOf(), { })
+        VehicleDetailsHeader(
+            {},
+            listOf(
+                OverflowMenuItem(
+                    text = AccessibleString("Change address"),
+                    action = MenuAction.WebLink("https://www.gov.uk/change-naddress")
+                )
+            ),
+            { }
+        )
     }
 }

@@ -42,10 +42,12 @@ internal fun SummaryCardHeader(
             ) {
                 leadingContent()
 
-                CardOverflowMenu(
-                    menuItems = menuItems,
-                    onMenuItemClick = onMenuItemClick
-                )
+                if (menuItems.isNotEmpty()) {
+                    CardOverflowMenu(
+                        menuItems = menuItems,
+                        onMenuItemClick = onMenuItemClick
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))

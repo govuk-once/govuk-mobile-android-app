@@ -24,7 +24,8 @@ class VehicleDetailsMapperTest {
 
     private val stringProvider = mockk<StringProvider>()
     private val taxAndMotStatusMapper = TaxAndMotStatusMapper(stringProvider)
-    private val mapper = VehicleDetailsMapper(stringProvider, taxAndMotStatusMapper)
+    private val vehicleMenuItemsMapper = VehicleMenuItemsMapper(stringProvider)
+    private val mapper = VehicleDetailsMapper(stringProvider, taxAndMotStatusMapper, vehicleMenuItemsMapper)
 
     private companion object{
         const val FUEL_TYPE = "Fuel type"

@@ -19,7 +19,8 @@ class VehicleSummaryMapperTest {
 
     private val stringProvider = mockk<StringProvider>()
     private val taxAndMotStatusMapper = TaxAndMotStatusMapper(stringProvider)
-    private val mapper = VehicleSummaryMapper(stringProvider, taxAndMotStatusMapper)
+    private val vehicleMenuItemsMapper = VehicleMenuItemsMapper(stringProvider)
+    private val mapper = VehicleSummaryMapper(taxAndMotStatusMapper, vehicleMenuItemsMapper)
 
     @Before
     fun setup() {
