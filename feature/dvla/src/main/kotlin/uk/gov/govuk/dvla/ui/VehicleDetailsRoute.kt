@@ -1,47 +1,31 @@
 package uk.gov.govuk.dvla.ui
 
-import android.content.Context
-import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.AddressListItem
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -51,9 +35,7 @@ import uk.gov.govuk.design.ui.component.SpecificationsIcons
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
-import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
@@ -65,6 +47,7 @@ import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.RegistrationPlate
 import uk.gov.govuk.dvla.ui.component.StatusUiItem
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
+import uk.gov.govuk.dvla.ui.component.VehicleDetailsHeader
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
 import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
@@ -158,7 +141,7 @@ private fun SuccessScreen(
             .safeDrawingPadding()
             .fillMaxWidth()
     ) {
-        FullScreenHeaderOverflowMenu(
+        VehicleDetailsHeader(
             onBack = onBack,
             menuItems = menuItems,
             onMenuItemClick = onMenuItemClick
@@ -311,103 +294,6 @@ private fun ErrorScreen(
             modifier = Modifier.padding(all = GovUkTheme.spacing.medium)
         )
     }
-}
-
-@Composable
-private fun FullScreenHeaderOverflowMenu(
-    onBack: () -> Unit,
-    menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (OverflowMenuItem) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val isTalkBackOn = isTalkBackEnabled()
-
-    Box {
-        FullScreenHeader(
-            dismissStyle = HeaderDismissStyle.Back(onBack),
-            actionStyle = HeaderActionStyle.OverflowActionButton({ expanded = true })
-        )
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .wrapContentSize(Alignment.TopEnd)
-        ){
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
-                containerColor = GovUkTheme.colourScheme.surfaces.actionMenu,
-                offset = DpOffset(x = - GovUkTheme.spacing.small, y = GovUkTheme.spacing.extraSmall)
-            ) {
-                menuItems.forEach { item ->
-                    OverflowMenuItemRow(
-                        title = AccessibleString(item.text.displayText, item.text.altText),
-                        onClick = {
-                            onMenuItemClick(item)
-                            expanded = false
-                        }
-                    )
-                }
-
-                if (isTalkBackOn) {
-                    HorizontalDivider()
-                    OverflowMenuItemRow(
-                        title = AccessibleString(stringResource(R.string.menu_close_menu)),
-                        onClick = { expanded = false }
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun OverflowMenuItemRow(
-    title: AccessibleString,
-    onClick: () -> Unit
-) {
-    DropdownMenuItem(
-        text = {
-            BodyRegularLabel(
-                text = title.displayText,
-                color = GovUkTheme.colourScheme.textAndIcons.primary,
-                modifier = Modifier.withAltText(title.altText)
-            )
-        },
-        onClick = onClick,
-        contentPadding = PaddingValues(
-            horizontal = GovUkTheme.spacing.medium,
-            vertical = GovUkTheme.spacing.small
-        ),
-        colors = MenuDefaults.itemColors(
-            textColor = GovUkTheme.colourScheme.textAndIcons.primary
-        )
-    )
-}
-
-@Composable
-private fun isTalkBackEnabled(): Boolean {
-    val context = LocalContext.current
-    val accessibilityManager =
-        context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-
-    var isEnabled by remember {
-        mutableStateOf(accessibilityManager.isTouchExplorationEnabled)
-    }
-
-    DisposableEffect(accessibilityManager) {
-        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled ->
-            isEnabled = enabled
-        }
-        accessibilityManager.addTouchExplorationStateChangeListener(listener)
-
-        onDispose {
-            accessibilityManager.removeTouchExplorationStateChangeListener(listener)
-        }
-    }
-
-    return isEnabled
 }
 
 @Preview
