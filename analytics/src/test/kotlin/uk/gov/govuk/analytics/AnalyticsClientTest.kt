@@ -763,6 +763,28 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a widget function, then log event`() {
+        analyticsClient.widgetFunction(
+            text = "text",
+            section = "section",
+            action = "action"
+        )
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "Function",
+                mapOf(
+                    "type" to "Widget",
+                    "language" to Locale.getDefault().language,
+                    "text" to "text",
+                    "section" to "section",
+                    "action" to "action"
+                )
+            )
+        }
+    }
+
+    @Test
     fun `Given a deep link event, When the app has the deep link, then log event`() {
         analyticsClient.deepLinkEvent(true, "url")
 

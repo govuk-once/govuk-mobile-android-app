@@ -146,6 +146,19 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun widgetFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
+        function(
+            text = text,
+            type = "Widget",
+            section = section,
+            action = action
+        )
+    }
+
     fun menuItemClick(
         text: String,
         url: String? = null,

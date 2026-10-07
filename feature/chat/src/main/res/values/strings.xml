@@ -32,8 +32,9 @@
     <string name="error_page_additional_text_link_text">GOV.UK app homepage</string>
     <string name="error_page_additional_text_outro">if you need information now.</string>
     <string name="error_page_additional_text_url">https://www.gov.uk</string>
-    <string name="bot_message">Hello, I’m GOV.UK Chat %s. I’m an experimental AI tool.\n\nWhen you ask a question, I’ll find the most relevant information from GOV.UK and use it to create an answer.\n\nMessages will be available for 90 days.</string>
+    <string name="bot_message">Hi, I’m GOV.UK Chat %s. I use AI to help you find what you need on GOV.UK.</string>
     <string name="bot_message_emoji">👋</string>
+    <string name="bot_message_duration">Messages will be saved for 90 days.</string>
     <string name="example_question_prompt">Try asking:</string>
     <string name="error_retry_page_sub_text_1">Your previous conversation is no longer available.</string>
     <string name="error_retry_page_sub_text_2">To continue using GOV.UK Chat, you need to start a new chat.</string>
@@ -49,13 +50,14 @@
     <string name="onboarding_page_one_text">An easy way to find answers about topics, services and information on GOV.UK.</string>
     <string name="onboarding_page_one_button">Continue</string>
     <string name="onboarding_page_two_header">Double-check the answers</string>
-    <string name="onboarding_page_two_text_one">GOV.UK Chat is an AI tool and can sometimes make mistakes.</string>
+    <string name="onboarding_page_two_text_one">GOV.UK Chat uses AI and can sometimes make mistakes.</string>
     <string name="onboarding_page_two_text_two">It’s simple to double-check information. Use the links provided with each answer.</string>
     <string name="onboarding_page_two_button">I understand</string>
     <string name="onboarding_page_three_header">Your GOV.UK Chat conversation data</string>
-    <string name="onboarding_page_three_text_one">We analyse questions and answers to improve Chat, as we’re still developing it.</string>
+    <string name="onboarding_page_three_text_one">Chat is an experimental AI tool. We analyse questions and answers to improve it.</string>
     <string name="onboarding_page_three_text_two">Find out more, including how to ask us to delete your data, in the</string>
     <string name="onboarding_page_three_text_two_link_text">privacy notice</string>
+    <string name="onboarding_page_three_terms_link">Chat terms and conditions</string>
     <string name="onboarding_page_three_button">Agree and continue</string>
     <string name="onboarding_page_three_decline_button">Exit GOV.UK Chat</string>
     <string name="onboarding_page_cancel_text">Cancel</string>
