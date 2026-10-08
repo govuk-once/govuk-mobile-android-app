@@ -426,6 +426,18 @@ private fun AnimatedFeedback(
         mutableStateOf(false)
     }
 
+    // Move TalkBack focus to the link or Thank you text that replaces the icons.
+    // Only set on an icon or link tap, so focus isn't moved when state is restored.
+    val feedbackFocusRequester = remember { FocusRequester() }
+    var moveFocusToFeedback by remember { mutableStateOf(false) }
+
+    LaunchedEffect(feedbackSelection) {
+        if (moveFocusToFeedback) {
+            moveFocusToFeedback = false
+            feedbackFocusRequester.requestFocus()
+        }
+    }
+
     LaunchedEffect(chatEntry.answer) {
         if (chatEntry.answer.isBlank()) {
             showFeedback = false
@@ -482,6 +494,7 @@ private fun AnimatedFeedback(
                     if (!iconClickProcessed) {
                         iconClickProcessed = true
                         onFeedbackClick(positiveIconText, "icon", chatEntry.id)
+                        moveFocusToFeedback = true
                         feedbackSelection =
                             if (isAnalyticsEnabled) FeedbackSelection.Positive
                             else FeedbackSelection.ThankYou
@@ -491,6 +504,7 @@ private fun AnimatedFeedback(
                     if (!iconClickProcessed) {
                         iconClickProcessed = true
                         onFeedbackClick(negativeIconText, "icon", chatEntry.id)
+                        moveFocusToFeedback = true
                         feedbackSelection =
                             if (isAnalyticsEnabled) FeedbackSelection.Negative
                             else FeedbackSelection.ThankYou
@@ -502,10 +516,12 @@ private fun AnimatedFeedback(
                 linkText = positiveLinkText,
                 contentDescription = stringResource(R.string.chat_feedback_positive_selected_icon_text),
                 icon = R.drawable.baseline_thumb_up_24,
+                focusRequester = feedbackFocusRequester,
                 onClick = {
                     if (!linkClickProcessed) {
                         linkClickProcessed = true
                         onFeedbackClick(positiveLinkText, "link", chatEntry.id)
+                        moveFocusToFeedback = true
                         coroutineScope.launch {
                             delay(THANK_YOU_DELAY_MILLIS)
                             feedbackSelection = FeedbackSelection.ThankYou
@@ -518,10 +534,12 @@ private fun AnimatedFeedback(
                 linkText = negativeLinkText,
                 contentDescription = stringResource(R.string.chat_feedback_negative_selected_icon_text),
                 icon = R.drawable.baseline_thumb_down_24,
+                focusRequester = feedbackFocusRequester,
                 onClick = {
                     if (!linkClickProcessed) {
                         linkClickProcessed = true
                         onFeedbackClick(negativeLinkText, "link", chatEntry.id)
+                        moveFocusToFeedback = true
                         coroutineScope.launch {
                             delay(THANK_YOU_DELAY_MILLIS)
                             feedbackSelection = FeedbackSelection.ThankYou
@@ -530,7 +548,9 @@ private fun AnimatedFeedback(
                 }
             )
 
-            FeedbackSelection.ThankYou -> FeedbackThankYou()
+            FeedbackSelection.ThankYou -> FeedbackThankYou(
+                focusRequester = feedbackFocusRequester
+            )
         }
     }
 }
@@ -583,6 +603,7 @@ private fun FeedbackLink(
     linkText: String,
     contentDescription: String,
     @DrawableRes icon: Int,
+    focusRequester: FocusRequester,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -603,21 +624,29 @@ private fun FeedbackLink(
         BodyRegularLabel(
             text = linkText,
             color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
-            modifier = Modifier.clickable(
-                enabled = true,
-                onClick = { onClick() }
-            )
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .focusable()
+                .clickable(
+                    enabled = true,
+                    onClick = { onClick() }
+                )
         )
     }
 }
 
 @Composable
 private fun FeedbackThankYou(
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(start = GovUkTheme.spacing.small)
+        modifier = modifier
+            .focusRequester(focusRequester)
+            .focusable()
+            .semantics(mergeDescendants = true) { }
+            .padding(start = GovUkTheme.spacing.small)
             .height(48.dp)
             .padding(GovUkTheme.spacing.small)
     ) {
