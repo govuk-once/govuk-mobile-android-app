@@ -107,7 +107,10 @@ class ChatViewModelTest {
                         uk.gov.govuk.chat.data.remote.model.Answer(
                             "",
                             "",
+                            null,
+                            null,
                             "Answer 1",
+                            "",
                             listOf(
                                 Source(
                                     "url",
@@ -267,6 +270,9 @@ class ChatViewModelTest {
             Answer(
                 "",
                 "",
+                null,
+                null,
+                "",
                 "",
                 null
             ),
@@ -311,6 +317,9 @@ class ChatViewModelTest {
             Answer(
                 "",
                 "",
+                null,
+                null,
+                "",
                 "",
                 null
             ),
@@ -322,7 +331,10 @@ class ChatViewModelTest {
         val answer = Answer(
             "",
             "",
+            null,
+            null,
             "Answer 1",
+            "",
             listOf(
                 Source(
                     "url",
@@ -912,14 +924,14 @@ class ChatViewModelTest {
     fun `onSubmit allows a new question once the previous one has completed`() = runTest {
         val firstQuestion = AnsweredQuestion(
             "abc",
-            Answer("", "", "", null),
+            Answer("", "", null, null, "", "", null),
             "",
             "",
             "First Question"
         )
         val secondQuestion = AnsweredQuestion(
             "def",
-            Answer("", "", "", null),
+            Answer("", "", null, null, "", "", null),
             "",
             "",
             "Second Question"
@@ -927,7 +939,7 @@ class ChatViewModelTest {
 
         coEvery { chatRepo.askQuestion("First Question") } returns ChatResult.Success(firstQuestion)
         coEvery { chatRepo.askQuestion("Second Question") } returns ChatResult.Success(secondQuestion)
-        coEvery { chatRepo.getAnswer(any(), any()) } returns ChatResult.Success(Answer("", "", "", null))
+        coEvery { chatRepo.getAnswer(any(), any()) } returns ChatResult.Success(Answer("", "", null, null, "", "", null))
 
         viewModel.onSubmit("First Question")
         advanceUntilIdle()
@@ -937,5 +949,50 @@ class ChatViewModelTest {
 
         coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }
         coVerify(exactly = 1) { chatRepo.askQuestion("Second Question") }
+    }
+
+    @Test
+    fun `When feedback is given, call repo and clear loading state on success`() = runTest {
+        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns ChatResult.Success(Unit)
+
+        viewModel.onFeedbackGiven("123", "abc", "positive")
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) {
+            chatRepo.giveFeedback(
+                conversationId = "123",
+                answerId = "abc",
+                reaction = "positive"
+            )
+        }
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        assertFalse(uiState.isLoading)
+    }
+
+    @Test
+    fun `Feedback given emits error`() = runTest {
+        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns ChatResult.Error()
+
+        viewModel.onFeedbackGiven("123", "abc", "negative")
+        advanceUntilIdle()
+
+        assertEquals(ChatUiState.Error(canRetry = false), viewModel.uiState.value)
+    }
+
+    @Test
+    fun `Feedback given emits auth error`() = runTest {
+        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns ChatResult.AuthError()
+
+        val authErrors = mutableListOf<Unit>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.authError.toList(authErrors)
+        }
+
+        viewModel.onFeedbackGiven("123", "abc", "negative")
+        advanceUntilIdle()
+
+        coVerify { authRepo.clear() }
+        assertEquals(1, authErrors.size)
     }
 }

@@ -8,7 +8,8 @@ import uk.gov.govuk.data.remote.withAuthRetry
 
 internal suspend fun <T> safeChatApiCall(
     apiCall: suspend () -> Response<T>,
-    authRepo: AuthRepo
+    authRepo: AuthRepo,
+    onAlreadyGiven: (() -> T)? = null
 ): ChatResult<T> {
     return try {
         val response = withAuthRetry(apiCall, authRepo)
@@ -25,10 +26,11 @@ internal suspend fun <T> safeChatApiCall(
             }
 
             else -> {
-                when (code) {
-                    404 -> ChatResult.NotFound()
-                    422 -> ChatResult.ValidationError()
-                    429 -> ChatResult.RateLimitExceeded()
+                when {
+                    code == 404 -> ChatResult.NotFound()
+                    code == 409 && onAlreadyGiven != null -> ChatResult.Success(onAlreadyGiven())
+                    code == 422 -> ChatResult.ValidationError()
+                    code == 429 -> ChatResult.RateLimitExceeded()
                     else -> ChatResult.Error()
                 }
             }
