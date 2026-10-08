@@ -613,13 +613,16 @@ private fun GovUkNavHost(
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
-                                vehiclesFooter = {
-                                    CheckVehicleWidget(
-                                        onVehicleFound = { reg ->
-                                            navController.navigateToVehicleDetailsByRegistration(reg)
-                                        }
-                                    )
-                                }
+
+                                // Commenting out for 1.9 DVLA private beta release
+
+//                                vehiclesFooter = {
+//                                    CheckVehicleWidget(
+//                                        onVehicleFound = { reg ->
+//                                            navController.navigateToVehicleDetailsByRegistration(reg)
+//                                        }
+//                                    )
+//                                }
                             )
                         }
                     } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {
