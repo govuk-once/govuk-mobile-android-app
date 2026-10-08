@@ -6,7 +6,14 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -898,6 +905,45 @@ class AnalyticsClientTest {
         runTest {
             assertFalse(analyticsClient.isAnalyticsEnabled())
         }
+    }
+
+    @Test
+    fun `Given analytics are not set, when is analytics enabled flow, then emit false`() = runTest {
+        every { analyticsRepo.analyticsEnabledStateFlow } returns MutableStateFlow(NOT_SET)
+
+        assertFalse(analyticsClient.isAnalyticsEnabledFlow.first())
+    }
+
+    @Test
+    fun `Given analytics are enabled, when is analytics enabled flow, then emit true`() = runTest {
+        every { analyticsRepo.analyticsEnabledStateFlow } returns MutableStateFlow(ENABLED)
+
+        assertTrue(analyticsClient.isAnalyticsEnabledFlow.first())
+    }
+
+    @Test
+    fun `Given analytics are disabled, when is analytics enabled flow, then emit false`() = runTest {
+        every { analyticsRepo.analyticsEnabledStateFlow } returns MutableStateFlow(DISABLED)
+
+        assertFalse(analyticsClient.isAnalyticsEnabledFlow.first())
+    }
+
+    @Test
+    fun `Given analytics state changes, when is analytics enabled flow, then emit distinct values`() = runTest {
+        val stateFlow = MutableStateFlow(NOT_SET)
+        every { analyticsRepo.analyticsEnabledStateFlow } returns stateFlow
+
+        val results = mutableListOf<Boolean>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            analyticsClient.isAnalyticsEnabledFlow.take(3).toList(results)
+        }
+
+        stateFlow.value = DISABLED
+        stateFlow.value = ENABLED
+        stateFlow.value = DISABLED
+
+        job.join()
+        assertEquals(listOf(false, true, false), results)
     }
 
     @Test

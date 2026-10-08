@@ -1,5 +1,6 @@
 package uk.gov.govuk.analytics.data
 
+import kotlinx.coroutines.flow.StateFlow
 import uk.gov.govuk.analytics.data.local.AnalyticsDataStore
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import javax.inject.Inject
@@ -11,6 +12,9 @@ class AnalyticsRepo @Inject constructor(
 ) {
     internal val analyticsEnabledState: AnalyticsEnabledState
         get() = dataStore.analyticsEnabledState
+
+    internal val analyticsEnabledStateFlow: StateFlow<AnalyticsEnabledState>
+        get() = dataStore.analyticsEnabledStateFlow
 
     internal suspend fun analyticsEnabled() = dataStore.analyticsEnabled()
 

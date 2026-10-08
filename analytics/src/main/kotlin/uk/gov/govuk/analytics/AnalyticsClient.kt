@@ -1,6 +1,9 @@
 package uk.gov.govuk.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
@@ -25,6 +28,11 @@ class AnalyticsClient @Inject constructor(
     fun isAnalyticsEnabled(): Boolean {
         return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
     }
+
+    val isAnalyticsEnabledFlow: Flow<Boolean>
+        get() = analyticsRepo.analyticsEnabledStateFlow
+            .map { it == AnalyticsEnabledState.ENABLED }
+            .distinctUntilChanged()
 
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()

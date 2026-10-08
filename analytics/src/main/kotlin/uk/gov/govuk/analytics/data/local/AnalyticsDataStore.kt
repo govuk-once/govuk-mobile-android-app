@@ -4,6 +4,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.DISABLED
@@ -26,34 +29,33 @@ class AnalyticsDataStore @Inject constructor(
         internal const val ANALYTICS_ENABLED_KEY = "analytics_enabled"
     }
 
-    private var _analyticsEnabledState: AnalyticsEnabledState
-    val analyticsEnabledState: AnalyticsEnabledState
-        get() = _analyticsEnabledState
-
-    init {
+    private val _analyticsEnabledState = MutableStateFlow(
         runBlocking {
-            _analyticsEnabledState = dataStore.data.firstOrNull()?.get(booleanPreferencesKey(ANALYTICS_ENABLED_KEY))?.let { enabled ->
+            dataStore.data.firstOrNull()?.get(booleanPreferencesKey(ANALYTICS_ENABLED_KEY))?.let { enabled ->
                 if (enabled) ENABLED else DISABLED
             } ?: NOT_SET
         }
-    }
+    )
+    val analyticsEnabledStateFlow: StateFlow<AnalyticsEnabledState> = _analyticsEnabledState.asStateFlow()
+    val analyticsEnabledState: AnalyticsEnabledState
+        get() = _analyticsEnabledState.value
 
     internal suspend fun analyticsEnabled() {
-        _analyticsEnabledState = ENABLED
+        _analyticsEnabledState.value = ENABLED
         dataStore.edit { preferences ->
             preferences[booleanPreferencesKey(ANALYTICS_ENABLED_KEY)] = true
         }
     }
 
     internal suspend fun analyticsDisabled() {
-        _analyticsEnabledState = DISABLED
+        _analyticsEnabledState.value = DISABLED
         dataStore.edit { preferences ->
             preferences[booleanPreferencesKey(ANALYTICS_ENABLED_KEY)] = false
         }
     }
 
     internal suspend fun clear() {
-        _analyticsEnabledState = NOT_SET
+        _analyticsEnabledState.value = NOT_SET
         dataStore.edit { preferences ->
             preferences.remove(booleanPreferencesKey(ANALYTICS_ENABLED_KEY))
         }

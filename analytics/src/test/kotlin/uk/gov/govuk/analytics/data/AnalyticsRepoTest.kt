@@ -3,6 +3,7 @@ package uk.gov.govuk.analytics.data
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -42,6 +43,14 @@ class AnalyticsRepoTest {
         every { dataStore.analyticsEnabledState  } returns DISABLED
 
         assertEquals(DISABLED, analyticsRepo.analyticsEnabledState )
+    }
+
+    @Test
+    fun `Given analytics state flow, then return data store analytics state flow`() {
+        val stateFlow = MutableStateFlow(ENABLED)
+        every { dataStore.analyticsEnabledStateFlow } returns stateFlow
+
+        assertEquals(stateFlow, analyticsRepo.analyticsEnabledStateFlow)
     }
 
     @Test
