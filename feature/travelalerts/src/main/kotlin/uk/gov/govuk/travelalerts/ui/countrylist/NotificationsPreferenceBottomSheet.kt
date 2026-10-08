@@ -20,8 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,11 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FixedContainerDivider
-import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
+import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -138,6 +135,7 @@ private fun NotificationsPreferenceBottomSheetContent(
             MediumVerticalSpacer()
         }
 
+
         FixedContainerDivider()
 
         Column(
@@ -168,20 +166,11 @@ private fun NotificationsPreferenceBottomSheetContent(
 
             Spacer(modifier = Modifier.height(GovUkTheme.spacing.medium))
 
-            TextButton(
+            SecondaryButton(
+                text = stringResource(R.string.follow_country_notification_not_now),
                 onClick = onNotNow,
-                enabled = !isSaving,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.follow_country_notification_not_now),
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
-                    style = GovUkTheme.typography.bodyRegular
-                )
-            }
+                enabled = !isSaving
+            )
         }
     }
 }

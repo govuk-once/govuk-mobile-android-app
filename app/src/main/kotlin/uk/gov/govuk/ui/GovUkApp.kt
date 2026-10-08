@@ -69,8 +69,10 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
+import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -101,6 +103,7 @@ import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
 import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
 import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
+import uk.gov.govuk.travelalerts.navigation.NOTIFICATIONS_RATIONALE_ROUTE
 import uk.gov.govuk.travelalerts.navigation.travelAlertsGraph
 import uk.gov.govuk.travelalerts.ui.widget.TravelAlertsWidget
 import uk.gov.govuk.visited.navigation.visitedGraph
@@ -122,7 +125,8 @@ private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
 
 /** Routes where the bottom nav bar should be hidden */
 private val HIDE_BOTTOM_NAV_ROUTES = setOf(
-    COUNTRY_LIST_ROUTE
+    COUNTRY_LIST_ROUTE,
+    NOTIFICATIONS_RATIONALE_ROUTE
 )
 
 @Composable
@@ -360,7 +364,7 @@ private fun BottomNav(
 
     // Display the nav bar if the current destination has a tab index (is a top level destination
     // or associated route) and is not explicitly excluded
-    val displayBottomNavBar = selectedIndex != -1 && currentRoute !in HIDE_BOTTOM_NAV_ROUTES
+    val displayBottomNavBar = selectedIndex != -1 && HIDE_BOTTOM_NAV_ROUTES.none { currentRoute?.startsWith(it) == true }
 
     if (displayBottomNavBar) {
         Column {
@@ -601,13 +605,20 @@ private fun GovUkNavHost(
                                 onActionClick = { navController.navigateToDvlaLinkIntro() }
                             )
 
-                            // and licence summary widget from DVLA module
+                            // and vehicles/licence summary widget from DVLA module
                             VehiclesAndLicenceSummaryWidget(
                                 launchBrowser = { url ->
                                     externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                                 },
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
+                                },
+                                vehiclesFooter = {
+                                    CheckVehicleWidget(
+                                        onVehicleFound = { reg ->
+                                            navController.navigateToVehicleDetailsByRegistration(reg)
+                                        }
+                                    )
                                 }
                             )
                         }

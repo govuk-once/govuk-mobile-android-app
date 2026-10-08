@@ -5,9 +5,9 @@ import uk.gov.govuk.travelalerts.data.model.Group
 
 object TravelAlertsFixtures {
     val mockGroups = listOf(
-        Group(namespace = "travel", group = "france", subgroup = "daily"),
-        Group(namespace = "travel", group = "germany", subgroup = "daily"),
-        Group(namespace = "travel", group = "spain", subgroup = "daily")
+        Group(namespace = "travel", group = "france", subgroup = "instant"),
+        Group(namespace = "travel", group = "germany", subgroup = "instant"),
+        Group(namespace = "travel", group = "spain", subgroup = "instant")
     )
 
     val mockCountries = listOf(

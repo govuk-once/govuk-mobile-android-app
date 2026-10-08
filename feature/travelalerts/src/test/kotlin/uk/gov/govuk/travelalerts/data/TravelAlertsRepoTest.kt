@@ -107,7 +107,7 @@ class TravelAlertsRepoTest {
     // Follow Country
 
     @Test
-    fun `Follow country with notifications enabled calls API with LEAVE NONE and JOIN DAILY`() = runTest {
+    fun `Follow country with notifications enabled calls API with LEAVE NONE and JOIN INSTANT`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
@@ -127,7 +127,7 @@ class TravelAlertsRepoTest {
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
-                        subgroup = Subgroup.DAILY,
+                        subgroup = Subgroup.INSTANT,
                         action = SubscriptionRequest.Action.JOIN
                     )
                 )
@@ -136,7 +136,7 @@ class TravelAlertsRepoTest {
     }
 
     @Test
-    fun `Follow country with notifications disabled calls API with LEAVE DAILY and JOIN NONE`() = runTest {
+    fun `Follow country with notifications disabled calls API with LEAVE INSTANT and JOIN NONE`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
@@ -150,7 +150,7 @@ class TravelAlertsRepoTest {
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
-                        subgroup = Subgroup.DAILY,
+                        subgroup = Subgroup.INSTANT,
                         action = SubscriptionRequest.Action.LEAVE
                     ),
                     SubscriptionRequest(
@@ -215,7 +215,7 @@ class TravelAlertsRepoTest {
     // Unfollow Country
 
     @Test
-    fun `Unfollow country with notifications on calls API with LEAVE DAILY`() = runTest {
+    fun `Unfollow country with notifications on calls API with LEAVE INSTANT`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
@@ -229,7 +229,7 @@ class TravelAlertsRepoTest {
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
-                        subgroup = Subgroup.DAILY,
+                        subgroup = Subgroup.INSTANT,
                         action = SubscriptionRequest.Action.LEAVE
                     )
                 )
@@ -311,7 +311,7 @@ class TravelAlertsRepoTest {
     // Toggle Notifications
 
     @Test
-    fun `Toggle notifications off sends LEAVE DAILY and JOIN NONE`() = runTest {
+    fun `Toggle notifications off sends LEAVE INSTANT and JOIN NONE`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
@@ -325,7 +325,7 @@ class TravelAlertsRepoTest {
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
-                        subgroup = Subgroup.DAILY,
+                        subgroup = Subgroup.INSTANT,
                         action = SubscriptionRequest.Action.LEAVE
                     ),
                     SubscriptionRequest(
@@ -340,7 +340,7 @@ class TravelAlertsRepoTest {
     }
 
     @Test
-    fun `Toggle notifications on sends LEAVE NONE and JOIN DAILY`() = runTest {
+    fun `Toggle notifications on sends LEAVE NONE and JOIN INSTANT`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
@@ -360,7 +360,7 @@ class TravelAlertsRepoTest {
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
-                        subgroup = Subgroup.DAILY,
+                        subgroup = Subgroup.INSTANT,
                         action = SubscriptionRequest.Action.JOIN
                     )
                 )

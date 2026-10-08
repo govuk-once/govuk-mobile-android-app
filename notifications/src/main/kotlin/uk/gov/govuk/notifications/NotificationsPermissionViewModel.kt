@@ -15,15 +15,15 @@ import uk.gov.govuk.notifications.data.NotificationsRepo
 import javax.inject.Inject
 
 @HiltViewModel
-internal class NotificationsPermissionViewModel @Inject constructor(
+class NotificationsPermissionViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<NotificationsUiState?> = MutableStateFlow(null)
-    internal val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     @OptIn(ExperimentalPermissionsApi::class)
-    internal fun updateUiState(
+    fun updateUiState(
         status: PermissionStatus,
         androidVersion: Int = Build.VERSION.SDK_INT
     ) {
