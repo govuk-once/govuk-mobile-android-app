@@ -50,6 +50,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -540,8 +541,14 @@ private fun FeedbackIcons(
     onNegativeIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val iconPrefixText = stringResource(R.string.chat_feedback_icon_prefix_text)
+
     Row(
-        modifier = modifier.padding(start = GovUkTheme.spacing.small)
+        modifier = modifier
+            .padding(start = GovUkTheme.spacing.small)
+            .semantics(mergeDescendants = true) {
+                contentDescription = iconPrefixText
+            }
     ) {
         IconButton(
             onClick = { onPositiveIconClick() },
