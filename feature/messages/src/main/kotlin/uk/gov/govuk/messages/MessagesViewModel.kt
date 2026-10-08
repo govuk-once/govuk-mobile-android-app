@@ -59,7 +59,7 @@ internal class MessagesViewModel @Inject constructor(
                     if (notifications.value.isEmpty()) {
                         MessagesUiState.Empty
                     } else {
-                        val sorted = notifications.value.sortedBy { it.date }
+                        val sorted = notifications.value.sortedByDescending { it.date }
                         val sevenDaysBack = Instant.now().minus(7, ChronoUnit.DAYS)
                         val groups = MessageGroups(
                             sorted.filter { it.date >= sevenDaysBack },
