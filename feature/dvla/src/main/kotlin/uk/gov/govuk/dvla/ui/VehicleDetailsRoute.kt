@@ -104,7 +104,7 @@ internal fun VehicleDetailsRoute(
                         launchBrowser(action.url)
                     }
 
-                    else -> Unit
+                    is MenuAction.ClipboardCopy -> Unit
                 }
             }
             SuccessScreen(
@@ -114,7 +114,6 @@ internal fun VehicleDetailsRoute(
                 },
                 onBack = onBack,
                 onPageView = { viewModel.onPageView(section) },
-                menuItems = state.details.menuItems,
                 onMenuItemClick = handleMenuItemClick,
                 details = state.details
             )
@@ -127,7 +126,6 @@ private fun SuccessScreen(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     onBack: () -> Unit,
     onPageView: () -> Unit,
-    menuItems: List<OverflowMenuItem>,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     details: VehicleDetailsUiModel,
     modifier: Modifier = Modifier
@@ -143,7 +141,7 @@ private fun SuccessScreen(
     ) {
         VehicleDetailsHeader(
             onBack = onBack,
-            menuItems = menuItems,
+            menuItems = details.menuItems,
             onMenuItemClick = onMenuItemClick
         )
 
@@ -341,14 +339,19 @@ private fun SuccessScreenPreview() {
         ),
         taxStatus,
         motStatus,
-        specifications = listOf()
+        specifications = listOf(),
+        menuItems = listOf(
+            OverflowMenuItem(
+                text = AccessibleString("Change address"),
+                action = MenuAction.WebLink("https://www.gov.uk/change-naddress")
+            )
+        )
     )
     GovUkTheme {
         SuccessScreen(
             { _, _ -> },
             {},
             {},
-            emptyList(),
             {},
             details
         )

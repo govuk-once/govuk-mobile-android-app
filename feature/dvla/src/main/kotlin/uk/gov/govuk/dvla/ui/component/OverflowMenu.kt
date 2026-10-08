@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
@@ -29,17 +30,20 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 
 @Composable
-fun CardOverflowMenu(
+internal fun CardOverflowMenu(
+    modifier: Modifier = Modifier,
     menuItems: List<OverflowMenuItem>,
-    onMenuItemClick: (OverflowMenuItem) -> Unit
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
+    actionColour: Color = GovUkTheme.colourScheme.surfaces.cardOverflowButton
 ) {
     var expanded by remember { mutableStateOf(false) }
     val isTalkBackOn = isTalkBackEnabled()
 
-    Box {
+    Box(modifier = modifier) {
         OverflowButton(
             onClick = { expanded = true },
-            altText = stringResource(R.string.more_options_alt_text)
+            altText = stringResource(R.string.more_options_alt_text),
+            background = actionColour
         )
 
         DropdownMenu(

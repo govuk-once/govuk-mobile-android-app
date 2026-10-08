@@ -52,7 +52,7 @@ class VehicleDetailsMapperTest {
         model: String? = null,
         fuelType: FuelType = FuelType.PETROL,
         sornStart: LocalDate? = null,
-        taxStatus: TaxStatus = TaxStatus.UNKNOWN
+        taxStatus: TaxStatus = TaxStatus.TAXED
     ) = VehicleDetails(
         summary = VehicleSummary(
             vehicleId = 156487251,
