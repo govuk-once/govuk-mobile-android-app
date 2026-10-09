@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.dvla.CheckVehicleDetailsUiState
 import uk.gov.govuk.dvla.CheckVehicleDetailsViewModel
 import uk.gov.govuk.dvla.CheckVehicleSheetState
@@ -51,24 +50,22 @@ internal fun CheckVehicleDetailsRoute(
 
     when (val state = detailsState) {
         is CheckVehicleDetailsUiState.Success -> {
-            RunOnceLaunchedEffect {
-                detailsViewModel.onPageView(title)
-            }
-
             CheckVehicleDetailsScreen(
                 details = state.details,
-                onClose = onBack,
+                onClose = {
+                    detailsViewModel.onCloseClicked()
+                    onBack()
+                },
                 onSearch = {
+                    detailsViewModel.onSearchClicked()
                     showSearchSheet = true
                 },
                 onMenuItemClick = { item ->
                     val action = item.action
-
                     if (action is MenuAction.WebLink) {
-                        detailsViewModel.onExternalButtonClicked(
+                        detailsViewModel.onMenuItemClicked(
                             text = item.text.displayText,
-                            url = action.url,
-                            section = title
+                            url = action.url
                         )
                         launchBrowser(action.url)
                     }
@@ -80,6 +77,9 @@ internal fun CheckVehicleDetailsRoute(
                         section = title
                     )
                     launchBrowser(url.urlToOpen)
+                },
+                onPageView = {
+                    detailsViewModel.onPageView()
                 },
                 modifier = modifier.safeDrawingPadding()
             )

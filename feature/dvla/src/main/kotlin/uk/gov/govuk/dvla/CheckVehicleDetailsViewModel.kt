@@ -29,6 +29,10 @@ internal class CheckVehicleDetailsViewModel @Inject constructor(
 
     private companion object {
         const val SCREEN_CLASS = "VehicleDetailsScreen"
+        const val SCREEN_NAME = "VehicleDetailsScreenSearchResult"
+        const val SECTION = "Driving"
+        const val CLOSE_TEXT = "Back"
+        const val SEARCH_TEXT = "Search"
     }
 
     private val _uiState = MutableStateFlow(createInitialState())
@@ -47,11 +51,34 @@ internal class CheckVehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onPageView(title: String) {
+    fun onPageView() {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
-            screenName = title,
-            title = title
+            screenName = SCREEN_NAME,
+            title = SCREEN_NAME
+        )
+    }
+
+    fun onCloseClicked() {
+        analyticsClient.buttonClick(
+            text = CLOSE_TEXT,
+            section = SECTION
+        )
+    }
+
+    fun onSearchClicked() {
+        analyticsClient.buttonClick(
+            text = SEARCH_TEXT,
+            section = SECTION
+        )
+    }
+
+    fun onMenuItemClicked(text: String, url: String) {
+        analyticsClient.menuItemClick(
+            text = text,
+            external = true,
+            section = SECTION,
+            url = url
         )
     }
 
