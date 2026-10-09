@@ -122,7 +122,7 @@ class VehicleSummaryMapperTest {
     }
 
     @Test
-    fun `Given vehicle has future SORN and is taxed, then cancel tax is not present`() {
+    fun `Given vehicle has SORN start date and is taxed, then cancel tax is not present`() {
         val result = mapper.toUiModel(
             makeVehicle(sornStart = LocalDate.now().plusDays(30), taxStatus = TaxStatus.TAXED),
             dvlaUrls
@@ -132,7 +132,7 @@ class VehicleSummaryMapperTest {
     }
 
     @Test
-    fun `Given vehicle has future SORN and is taxed, then register off road is not present`() {
+    fun `Given vehicle has SORN start date and is taxed, then register off road is not present`() {
         val result = mapper.toUiModel(
             makeVehicle(sornStart = LocalDate.now().plusDays(30), taxStatus = TaxStatus.TAXED),
             dvlaUrls

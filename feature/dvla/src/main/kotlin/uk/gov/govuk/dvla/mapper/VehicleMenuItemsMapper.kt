@@ -13,7 +13,6 @@ internal class VehicleMenuItemsMapper @Inject constructor(
 ) {
     fun buildMenuItems(
         hasSorn: Boolean,
-        isFutureSorn: Boolean,
         isTaxed: Boolean,
         dvlaUrls: DvlaUrls?
     ): List<OverflowMenuItem> {
@@ -59,7 +58,7 @@ internal class VehicleMenuItemsMapper @Inject constructor(
                     action = MenuAction.WebLink(dvlaUrls.changeLogbookAddress)
                 )
             )
-            if (isTaxed && !isFutureSorn) {
+            if (isTaxed && !hasSorn) {
                 add(
                     OverflowMenuItem(
                         text = AccessibleString(

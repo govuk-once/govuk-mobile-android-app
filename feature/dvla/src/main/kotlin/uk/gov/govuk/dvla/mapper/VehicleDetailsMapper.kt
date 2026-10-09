@@ -13,7 +13,6 @@ import uk.gov.govuk.dvla.ui.model.KeeperUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
-import uk.gov.govuk.dvla.util.isInTheFuture
 import uk.gov.govuk.dvla.util.toMonthYearDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
 import javax.inject.Inject
@@ -85,7 +84,6 @@ internal class VehicleDetailsMapper @Inject constructor(
             ),
             menuItems = vehicleMenuItemsMapper.buildMenuItems(
                 hasSorn = vesVehicle.summary.sornStart != null,
-                isFutureSorn = vesVehicle.summary.sornStart.isInTheFuture(),
                 isTaxed = vesVehicle.summary.taxStatus == TaxStatus.TAXED,
                 dvlaUrls = dvlaUrls
             )

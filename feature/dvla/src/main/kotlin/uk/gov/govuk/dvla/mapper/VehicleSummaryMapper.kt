@@ -4,7 +4,6 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
-import uk.gov.govuk.dvla.util.isInTheFuture
 import javax.inject.Inject
 
 internal class VehicleSummaryMapper @Inject constructor(
@@ -21,7 +20,6 @@ internal class VehicleSummaryMapper @Inject constructor(
             motStatus = taxAndMotStatusMapper.getMotStatus(vehicle = vehicle, dvlaUrls = dvlaUrls),
             menuItems = vehicleMenuItemsMapper.buildMenuItems(
                 hasSorn = vehicle.sornStart != null,
-                isFutureSorn = vehicle.sornStart.isInTheFuture(),
                 isTaxed = vehicle.taxStatus == TaxStatus.TAXED,
                 dvlaUrls = dvlaUrls
             )
