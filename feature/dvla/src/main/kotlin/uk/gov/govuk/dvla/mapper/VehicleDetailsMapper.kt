@@ -6,6 +6,7 @@ import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.FuelType
+import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.domain.VehicleColour
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 internal class VehicleDetailsMapper @Inject constructor(
     private val stringProvider: StringProvider,
-    private val taxAndMotStatusMapper: TaxAndMotStatusMapper
+    private val taxAndMotStatusMapper: TaxAndMotStatusMapper,
+    private val vehicleMenuItemsMapper: VehicleMenuItemsMapper
 ) {
     fun toUiModel(vesVehicle: VehicleDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
         val dateOfFirstRegistration =
@@ -79,6 +81,11 @@ internal class VehicleDetailsMapper @Inject constructor(
                     info = AccessibleString(
                         displayText = vesVehicle.exhaustEmissionsCo2?.toString() ?: "Unknown")
                 )
+            ),
+            menuItems = vehicleMenuItemsMapper.buildMenuItems(
+                hasSorn = vesVehicle.summary.sornStart != null,
+                isTaxed = vesVehicle.summary.taxStatus == TaxStatus.TAXED,
+                dvlaUrls = dvlaUrls
             )
         )
     }

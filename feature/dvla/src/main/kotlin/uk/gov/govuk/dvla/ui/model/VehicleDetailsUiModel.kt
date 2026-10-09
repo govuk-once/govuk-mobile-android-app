@@ -11,5 +11,6 @@ internal data class VehicleDetailsUiModel(
     val specificationsIcons: List<SpecificationIconUiModel>,
     val taxStatus: StatusUiModel,
     val motStatus: StatusUiModel,
-    val specifications: List<InternalLinkListItemModel>
+    val specifications: List<InternalLinkListItemModel>,
+    val menuItems: List<OverflowMenuItem> = emptyList()
 )
