@@ -116,7 +116,7 @@ class NotificationsViewModelTest {
     @Test
     fun `Given Allow notifications button click, then first permission request completed, request permission and log analytics`() {
         coEvery { notificationsRepo.firstPermissionRequestCompleted() } returns Unit
-        coEvery { notificationsRepo.requestPermission() } returns Unit
+        coEvery { notificationsRepo.requestPermission() } returns true
         coEvery { notificationsRepo.giveConsent() } returns Unit
 
         viewModel.onAllowNotificationsClick("Title") {}

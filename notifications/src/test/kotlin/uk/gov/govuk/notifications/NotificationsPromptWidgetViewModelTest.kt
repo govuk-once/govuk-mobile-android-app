@@ -35,7 +35,7 @@ class NotificationsPromptWidgetViewModelTest {
     @Test
     fun `Given on click, then call request permission`() {
         coEvery { notificationsRepo.firstPermissionRequestCompleted() } returns Unit
-        coEvery { notificationsRepo.requestPermission() } returns Unit
+        coEvery { notificationsRepo.requestPermission() } returns true
 
         runTest {
             viewModel.onClick()

@@ -215,13 +215,13 @@ class TravelAlertsRepoTest {
     // Unfollow Country
 
     @Test
-    fun `Unfollow country with notifications on calls API with LEAVE INSTANT`() = runTest {
+    fun `Unfollow country calls API with LEAVE both subgroups`() = runTest {
         val mockResponse = mockk<Response<Unit>>(relaxed = true)
         every { mockResponse.isSuccessful } returns true
         every { mockResponse.code() } returns 204
         coEvery { api.subscribeToGroups(any()) } returns mockResponse
 
-        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+        travelAlertsRepo.unfollowCountry("france")
 
         coVerify {
             api.subscribeToGroups(
@@ -231,24 +231,7 @@ class TravelAlertsRepoTest {
                         group = "france",
                         subgroup = Subgroup.INSTANT,
                         action = SubscriptionRequest.Action.LEAVE
-                    )
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `Unfollow country with notifications off calls API with LEAVE NONE`() = runTest {
-        val mockResponse = mockk<Response<Unit>>(relaxed = true)
-        every { mockResponse.isSuccessful } returns true
-        every { mockResponse.code() } returns 204
-        coEvery { api.subscribeToGroups(any()) } returns mockResponse
-
-        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = false)
-
-        coVerify {
-            api.subscribeToGroups(
-                listOf(
+                    ),
                     SubscriptionRequest(
                         namespace = "travel",
                         group = "france",
@@ -267,7 +250,7 @@ class TravelAlertsRepoTest {
         every { mockResponse.code() } returns 204
         coEvery { api.subscribeToGroups(any()) } returns mockResponse
 
-        val result = travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+        val result = travelAlertsRepo.unfollowCountry("france")
 
         assertTrue(result is Result.Success)
     }
@@ -284,7 +267,7 @@ class TravelAlertsRepoTest {
         coEvery { api.subscribeToGroups(any()) } returns mockResponse
 
         travelAlertsRepo.getGroups()
-        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+        travelAlertsRepo.unfollowCountry("france")
         travelAlertsRepo.getGroups()
 
         coVerify(exactly = 2) { api.getGroups() }
@@ -302,7 +285,7 @@ class TravelAlertsRepoTest {
         coEvery { api.subscribeToGroups(any()) } returns failResponse
 
         travelAlertsRepo.getGroups()
-        travelAlertsRepo.unfollowCountry("france", currentNotificationsEnabled = true)
+        travelAlertsRepo.unfollowCountry("france")
         travelAlertsRepo.getGroups()
 
         coVerify(exactly = 1) { api.getGroups() }

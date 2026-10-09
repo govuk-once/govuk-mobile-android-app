@@ -8,5 +8,5 @@ data class Group(
     @SerializedName("Group")
     val group: String,
     @SerializedName("Subgroup")
-    val subgroup: String,
+    val subgroup: Subgroup,
 )

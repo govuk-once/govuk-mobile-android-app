@@ -14,5 +14,5 @@ interface TravelAlertsRepo {
     suspend fun getCountries(): Result<List<Country>>
     suspend fun followCountry(slug: String, notificationsEnabled: Boolean): Result<Unit>
     suspend fun toggleNotifications(slug: String, enabled: Boolean): Result<Unit>
-    suspend fun unfollowCountry(slug: String, currentNotificationsEnabled: Boolean): Result<Unit>
+    suspend fun unfollowCountry(slug: String): Result<Unit>
 }
