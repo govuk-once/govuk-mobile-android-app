@@ -162,7 +162,6 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.appcheck.play)
-    implementation(libs.firebase.performance)
 
     implementation(libs.google.accompanist)
 

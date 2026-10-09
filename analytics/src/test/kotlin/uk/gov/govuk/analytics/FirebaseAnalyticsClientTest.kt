@@ -2,6 +2,7 @@ package uk.gov.govuk.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.perf.FirebasePerformance
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,6 +14,7 @@ class FirebaseAnalyticsClientTest {
 
     private val firebaseAnalytics = mockk<FirebaseAnalytics>(relaxed = true)
     private val firebaseCrashlytics = mockk<FirebaseCrashlytics>(relaxed = true)
+    private val firebasePerformance = mockk<FirebasePerformance>(relaxed = true)
     private val firebaseIdentifiers = mockk<FirebaseIdentifiers>(relaxed = true)
 
     private lateinit var firebaseAnalyticsClient: FirebaseAnalyticsClient
@@ -22,6 +24,7 @@ class FirebaseAnalyticsClientTest {
         firebaseAnalyticsClient = FirebaseAnalyticsClient(
             firebaseAnalytics,
             firebaseCrashlytics,
+            firebasePerformance,
             firebaseIdentifiers
         )
     }
@@ -33,6 +36,7 @@ class FirebaseAnalyticsClientTest {
         verify {
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             firebaseCrashlytics.isCrashlyticsCollectionEnabled = true
+            firebasePerformance.isPerformanceCollectionEnabled = true
         }
     }
 
@@ -43,6 +47,7 @@ class FirebaseAnalyticsClientTest {
         verify {
             firebaseAnalytics.setAnalyticsCollectionEnabled(false)
             firebaseCrashlytics.isCrashlyticsCollectionEnabled = false
+            firebasePerformance.isPerformanceCollectionEnabled = false
         }
     }
 
