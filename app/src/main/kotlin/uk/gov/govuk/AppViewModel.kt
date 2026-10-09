@@ -107,6 +107,7 @@ internal class AppViewModel @Inject constructor(
         // returning users
         if (analyticsClient.isAnalyticsEnabled()) {
             configRepo.activateRemoteConfig()
+            analyticsClient.enableDataCollection()
         }
 
         when (configResult) {

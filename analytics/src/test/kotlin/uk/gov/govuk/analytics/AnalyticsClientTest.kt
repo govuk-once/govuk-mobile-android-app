@@ -914,6 +914,18 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given data collection has been enabled, then enable firebase and initialise coordinator`() {
+        runTest {
+            analyticsClient.enableDataCollection()
+
+            verify(exactly = 1) {
+                firebaseAnalyticClient.enable()
+                analyticsCoordinator.initialize()
+            }
+        }
+    }
+
+    @Test
     fun `Given analytics have been disabled, then disable`() {
         runTest {
             analyticsClient.disable()
