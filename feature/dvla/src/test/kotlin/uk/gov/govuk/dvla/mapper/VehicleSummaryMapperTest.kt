@@ -120,4 +120,24 @@ class VehicleSummaryMapperTest {
         val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
         assertFalse(urls.contains(dvlaUrls.cancelTax))
     }
+
+    @Test
+    fun `Given vehicle has future SORN and is taxed, then cancel tax is not present`() {
+        val result = mapper.toUiModel(
+            makeVehicle(sornStart = LocalDate.now().plusDays(30), taxStatus = TaxStatus.TAXED),
+            dvlaUrls
+        )
+        val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
+        assertFalse(urls.contains(dvlaUrls.cancelTax))
+    }
+
+    @Test
+    fun `Given vehicle has future SORN and is taxed, then register off road is not present`() {
+        val result = mapper.toUiModel(
+            makeVehicle(sornStart = LocalDate.now().plusDays(30), taxStatus = TaxStatus.TAXED),
+            dvlaUrls
+        )
+        val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
+        assertFalse(urls.contains(dvlaUrls.makeSorn))
+    }
 }
