@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
@@ -302,6 +303,11 @@ internal class AppViewModel @Inject constructor(
             external,
             section
         )
+    }
+
+    // TODO - Android A/A test 10-26 - remove when the test has finished
+    fun onSearchWidgetClick() {
+        analyticsClient.abTestEvent(AbTestEvent.SEARCH_CONVERSION_10_26)
     }
 
     fun onSuppressWidgetClick(

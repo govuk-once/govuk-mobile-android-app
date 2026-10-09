@@ -30,6 +30,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.AppViewModel.TimeoutEvent
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
@@ -384,6 +385,18 @@ class AppViewModelTest {
 
             coVerify {
                 analyticsClient.tabClick("text")
+            }
+        }
+    }
+
+    // TODO - Android A/A test 10-26 - remove when the test has finished
+    @Test
+    fun `When the search widget is clicked, then log AB test conversion`() {
+        runTest {
+            viewModel.onSearchWidgetClick()
+
+            coVerify {
+                analyticsClient.abTestEvent(AbTestEvent.SEARCH_CONVERSION_10_26)
             }
         }
     }

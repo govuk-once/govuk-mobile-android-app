@@ -15,6 +15,7 @@ import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.DISABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.ENABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.NOT_SET
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import java.util.Locale
 
@@ -357,6 +358,22 @@ class AnalyticsClientTest {
                 mapOf(
                     "action" to "cancel"
                 )
+            )
+        }
+    }
+
+    @Test
+    fun `Given an AB test event, then log event`() {
+        val event = mockk<AbTestEvent> {
+            every { eventName } returns "test_event"
+        }
+
+        analyticsClient.abTestEvent(event)
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "test_event",
+                mapOf()
             )
         }
     }
