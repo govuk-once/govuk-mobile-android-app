@@ -32,7 +32,7 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
                 specificationsMapper.getColourSpecification(vehicleDetails.colour)
             ),
             taxStatus = taxAndMotStatusMapper.getTaxStatusEnquiry(vehicleDetails.summary, dvlaUrls),
-            motStatus = taxAndMotStatusMapper.getMotStatus(vehicleDetails.summary, dvlaUrls),
+            motStatus = taxAndMotStatusMapper.getMotStatusEnquiry(vehicleDetails.summary, dvlaUrls),
             specifications = with(specificationsMapper) {
                 listOf(
                     createMakeItem(vehicleDetails),
@@ -55,7 +55,10 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
         return buildList {
             add(
                 OverflowMenuItem(
-                    text = AccessibleString(stringProvider.getString(R.string.menu_register_to_you)),
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_register_to_you),
+                        stringProvider.getString(R.string.menu_register_to_you_alt_text)
+                    ),
                     action = MenuAction.WebLink(dvlaUrls.soldVehicle)
                 )
             )
@@ -69,40 +72,46 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
             )
             add(
                 OverflowMenuItem(
-                    text = AccessibleString(stringProvider.getString(R.string.menu_report_as_abandoned)),
+                    text = AccessibleString(
+                        stringProvider.getString(R.string.menu_report_as_abandoned),
+                        stringProvider.getString(R.string.menu_report_as_abandoned_alt_text)
+                    ),
                     action = MenuAction.WebLink(dvlaUrls.reportAbandonedVehicle)
                 )
             )
-            when (vehicleSummary.motStatus) {
-                MotStatus.VALID -> {
-                    when (vehicleSummary.taxStatus) {
-                        TaxStatus.UNTAXED, TaxStatus.SORN, TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> {
-                            add(
-                                OverflowMenuItem(
-                                    text = AccessibleString(stringProvider.getString(R.string.menu_report_an_untaxed_vehicle)),
-                                    action = MenuAction.WebLink(dvlaUrls.reportUntaxedVehicle)
-                                )
-                            )
-                        }
-                        else -> { /* Do nothing */ }
-                    }
-                }
-
-                MotStatus.EXPIRED -> {
-                    when (vehicleSummary.taxStatus) {
-                        TaxStatus.TAXED, TaxStatus.UNTAXED, TaxStatus.SORN, TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> {
-                            add(
-                                OverflowMenuItem(
-                                    text = AccessibleString(stringProvider.getString(R.string.menu_report_a_vehicle_with_no_mot)),
-                                    action = MenuAction.WebLink(dvlaUrls.reportNoMot)
-                                )
-                            )
-                        }
-                        else -> { /* Do nothing */ }
-                    }
-                }
-                else -> { /* Do nothing */ }
+            getReportOnTheRoadUrl(vehicleSummary, dvlaUrls)?.let { url ->
+                add(
+                    OverflowMenuItem(
+                        text = AccessibleString(
+                            stringProvider.getString(R.string.menu_report_as_on_the_road),
+                            stringProvider.getString(R.string.menu_report_as_on_the_road_alt_text)
+                        ),
+                        action = MenuAction.WebLink(url)
+                    )
+                )
             }
+        }
+    }
+
+    /**
+     * Rules:
+     * If taxStatus is ‘Untaxed’, ‘SORN’, or ‘Not taxed for on road use’, and motStatus is ‘Valid’, link to Report an untaxed vehicle
+     * If taxStatus is ‘Taxed’ and motStatus is ‘Not valid’, link to Report a vehicle with no MOT
+     * If taxStatus is ‘Untaxed’, ‘SORN’, or ‘Not taxed for on road use’, and motStatus is ‘Not valid’, link to Report a vehicle with no MOT (this seems like the more serious crime, as the vehicle might be unsafe)
+     * In all other scenarios, don’t include this button at all
+     */
+    private fun getReportOnTheRoadUrl(vehicle: VehicleSummary, dvlaUrls: DvlaUrls): String? {
+        val isTaxed = vehicle.taxStatus == TaxStatus.TAXED
+        val isNotTaxed = vehicle.taxStatus in setOf(
+            TaxStatus.UNTAXED,
+            TaxStatus.SORN,
+            TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE
+        )
+
+        return when {
+            vehicle.motStatus == MotStatus.VALID && isNotTaxed -> dvlaUrls.reportUntaxedVehicle      // rule 1
+            vehicle.motStatus == MotStatus.EXPIRED && (isTaxed || isNotTaxed) -> dvlaUrls.reportNoMot // rules 2 & 3
+            else -> null                                                                              // rule 4
         }
     }
 }

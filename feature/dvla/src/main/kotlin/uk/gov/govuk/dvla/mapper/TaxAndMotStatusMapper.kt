@@ -119,6 +119,15 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         }
     }
 
+    fun getMotStatusEnquiry(
+        vehicle: VehicleSummary,
+        dvlaUrls: DvlaUrls?
+    ): StatusUiModel =
+        when (vehicle.motStatus) {
+            MotStatus.VALID -> getValid(getMotStatusTitle(), vehicle.motExpiryDate)
+            else -> getMotStatus(vehicle, dvlaUrls)
+        }
+
     private fun getValid(title: AccessibleString, expiryDate: LocalDate?): StatusUiModel {
         val resources =
             Triple(R.string.valid_until, R.string.valid, StatusListItemIconStyle.Success)
