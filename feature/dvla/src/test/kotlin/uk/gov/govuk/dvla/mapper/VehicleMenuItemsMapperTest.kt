@@ -97,8 +97,8 @@ class VehicleMenuItemsMapperTest {
     }
 
     @Test
-    fun `Given vehicle is not taxed then the cancel tax button is not present`() {
-        val result = mapper.buildMenuItems(hasSorn = true, isTaxed = false, dvlaUrls = dvlaUrls)
+    fun `Given vehicle has not SORN and is not taxed then the cancel tax button is not present`() {
+        val result = mapper.buildMenuItems(hasSorn = false, isTaxed = false, dvlaUrls = dvlaUrls)
         val urls = result.map { (it.action as MenuAction.WebLink).url }
         assertFalse(urls.contains(dvlaUrls.cancelTax))
     }
