@@ -1,30 +1,51 @@
 package uk.gov.govuk.travelalerts.ui.notificationsprompt
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import androidx.window.core.layout.WindowSizeClass
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import uk.gov.govuk.design.ui.component.OnboardingSlide
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
+import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
+import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrivacyPolicyLink
+import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.notifications.R.drawable.notifications_bell
 import uk.gov.govuk.notifications.ui.NotificationsSettingsAlert
 import uk.gov.govuk.notifications.ui.getNotificationsPermissionStatus
 import uk.gov.govuk.notifications.ui.openDeviceNotificationsSettings
@@ -159,25 +180,71 @@ private fun NotificationsRationaleScreenContent(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        OnboardingSlide(
-            title = R.string.notifications_rationale_title,
-            body = R.string.notifications_rationale_body,
-            image = uk.gov.govuk.notifications.R.drawable.notifications_bell,
-            privacyPolicy = {
-                PrivacyPolicyLink(
-                    onClick = { _, url -> launchBrowser(url) }
+        val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+        val isWindowHeightNotCompact =
+            windowAdaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .padding(top = GovUkTheme.spacing.extraLarge)
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            if (isWindowHeightNotCompact) {
+                Image(
+                    painter = painterResource(notifications_bell),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(
+                            horizontal = GovUkTheme.spacing.extraLarge,
+                            vertical = GovUkTheme.spacing.medium
+                        )
                 )
             }
-        )
 
-        Box(modifier = Modifier.weight(1f))
+            LargeTitleBoldLabel(
+                text = stringResource(R.string.notifications_rationale_title),
+                modifier = Modifier
+                    .focusRequester(remember { FocusRequester() })
+                    .focusable()
+                    .padding(horizontal = GovUkTheme.spacing.extraLarge)
+                    .semantics { heading() },
+                textAlign = TextAlign.Center
+            )
+            MediumVerticalSpacer()
+            BodyRegularLabel(
+                text = stringResource(R.string.notifications_rationale_body_part1),
+                modifier = Modifier
+                    .focusable()
+                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                textAlign = TextAlign.Center
+            )
+            SmallVerticalSpacer()
+            BodyRegularLabel(
+                text = stringResource(R.string.notifications_rationale_body_part2),
+                modifier = Modifier
+                    .focusable()
+                    .padding(horizontal = GovUkTheme.spacing.extraLarge),
+                textAlign = TextAlign.Center
+            )
+            SmallVerticalSpacer()
+
+            PrivacyPolicyLink(
+                text = stringResource(R.string.notifications_rationale_privacy_link),
+                onClick = { _, url -> launchBrowser(url) }
+            )
+            LargeVerticalSpacer()
+            MediumVerticalSpacer()
+        }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
-            uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup(
+            FixedDoubleButtonGroup(
                 primaryButton = Button(
                     text = stringResource(R.string.notifications_rationale_agree),
                     onClick = onAgreeContinue
@@ -196,6 +263,18 @@ private fun NotificationsRationaleScreenContent(
             onCancelButtonClick = { onSettingsAlertCancel() },
             onDismiss = { onSettingsAlertDismiss() },
             openSettings = openSettings
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun NotificationsRationaleScreenContentPreview() {
+    GovUkTheme {
+        NotificationsRationaleScreenContent(
+            onNotNow = {},
+            onAgreeContinue = {},
+            launchBrowser = {}
         )
     }
 }
