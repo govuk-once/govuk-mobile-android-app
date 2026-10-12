@@ -239,6 +239,18 @@ class AnalyticsClient @Inject constructor(
         navigation(text = "Chat Question Answer Returned", type = "ChatQuestionAnswerReturned")
     }
 
+    fun chatFeedback(text: String, action: String, questionId: String) {
+        val parameters = mapOf(
+            "text" to text,
+            "action" to action,
+            "questionId" to questionId,
+            "section" to "Chat",
+            "type" to "Feedback"
+        )
+
+        logEvent("ChatFeedback", parameters)
+    }
+
     fun searchResultClick(text: String, url: String) {
         // external as these links will be opened in the device browser
         navigation(text = text, type = "SearchResult", url = url, external = true)
