@@ -121,7 +121,8 @@ class ExampleQuestionsFocusOrderTest {
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },
                         onSubmit = onSubmit,
-                        onClear = { }
+                        onClear = { },
+                        onFeedbackClick = { _, _, _ -> }
                     )
                 )
             }
