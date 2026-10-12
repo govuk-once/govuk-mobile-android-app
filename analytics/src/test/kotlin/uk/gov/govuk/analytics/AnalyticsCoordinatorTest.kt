@@ -2,7 +2,6 @@ package uk.gov.govuk.analytics
 
 import com.qualtrics.digital.TargetingResult
 import io.mockk.every
-import io.mockk.excludeRecords
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -33,7 +32,7 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
-    fun `Given analytics consent has been given, when initialize is called, then call the Firebase enable and Qualtrics initialize methods`() = runTest {
+    fun `Given analytics consent has been given, when initialize is called, then call the Firebase enable and Qualtrics initialize functions`() = runTest {
         every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.ENABLED
 
         analyticsCoordinator.initialize()
@@ -45,7 +44,7 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
-    fun `Given analytics consent has not been given, when initialize is called, then do not call the Firebase enable and Qualtrics initialize methods`() = runTest {
+    fun `Given analytics consent has not been given, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() = runTest {
         every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.NOT_SET
 
         analyticsCoordinator.initialize()
@@ -57,12 +56,13 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
-    fun `Given analytics consent has been disabled, when initialize is called, then do not call the Qualtrics initialize method`() = runTest {
+    fun `Given analytics consent has been disabled, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() = runTest {
         every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.DISABLED
 
         analyticsCoordinator.initialize()
 
         verify(exactly = 0) {
+            firebaseAnalyticClient.enable()
             qualtricsAnalyticsClient.initialize()
         }
     }
