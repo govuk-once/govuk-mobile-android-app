@@ -19,6 +19,7 @@ class AnalyticsCoordinator @Inject constructor(
     override fun initialize() {
         // Respect the user's privacy preference
         if (analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED) {
+            firebaseAnalyticsClient.enable()
             qualtricsAnalyticsClient.initialize()
             qualtricsAnalyticsClient.setOnSurveyClosedListener { targetingIds ->
                 onSurveyClosed(targetingIds)

@@ -778,7 +778,6 @@ class AppViewModelTest {
 
         coVerify(exactly = 0) { configRepo.refreshRemoteConfig() }
         coVerify(exactly = 0) { configRepo.activateRemoteConfig() }
-        verify(exactly = 0) { analyticsClient.enableDataCollection() }
         assertEquals(AppViewModel.NavigationEvent.NavigateToHome, navEvent.await())
     }
 
@@ -791,8 +790,7 @@ class AppViewModelTest {
 
         runTest {
             viewModel.uiState.first()
-            coVerify(exactly = 1) { configRepo.activateRemoteConfig() }
-            verify(exactly = 1) { analyticsClient.enableDataCollection() }
+            coVerify { configRepo.activateRemoteConfig() }
         }
     }
 

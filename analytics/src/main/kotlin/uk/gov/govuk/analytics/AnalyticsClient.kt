@@ -28,11 +28,6 @@ class AnalyticsClient @Inject constructor(
 
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
-        enableDataCollection()
-    }
-
-    fun enableDataCollection() {
-        firebaseAnalyticsClient.enable()
         analyticsCoordinator.initialize()
     }
 
