@@ -96,6 +96,7 @@ class AppViewModelTest {
 
         coEvery { termsRepo.getTermsAcceptanceState() } returns TermsAcceptanceState.Accepted
         every { analyticsClient.isAnalyticsConsentRequired() } returns false
+        every { analyticsClient.isAnalyticsEnabledFlow } returns flowOf(true)
         every { flagRepo.isTopicsEnabled() } returns false
         every { flagRepo.isNotificationsEnabled() } returns false
         every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.UNLINKED)
@@ -306,18 +307,57 @@ class AppViewModelTest {
     }
 
     @Test
-    fun `Given the quarterly survey feature is enabled, When init, then emit quarterly survey enabled state`() {
+    fun `Given the quarterly survey feature is enabled and analytics are enabled, When init, then emit quarterly survey enabled state`() {
         val quarterlySurvey = QuarterlySurvey(id = "", title = "")
 
         coEvery { flagRepo.isQuarterlySurveyEnabled() } returns true
+        every { analyticsClient.isAnalyticsEnabledFlow } returns flowOf(true)
 
         val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
             localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature, context)
 
         runTest {
             val quarterlyFeedback = HomeWidget.QuarterlyFeedback(quarterlySurvey = quarterlySurvey)
-            viewModel.homeWidgets.value
-                ?.let { assertTrue(it.contains(quarterlyFeedback)) }
+            assertTrue(viewModel.homeWidgets.value!!.contains(quarterlyFeedback))
+        }
+    }
+
+    @Test
+    fun `Given the quarterly survey feature is enabled and analytics are disabled, When init, then emit quarterly survey disabled state`() {
+        val quarterlySurvey = QuarterlySurvey(id = "", title = "")
+
+        coEvery { flagRepo.isQuarterlySurveyEnabled() } returns true
+        every { analyticsClient.isAnalyticsEnabledFlow } returns flowOf(false)
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature, context)
+
+        runTest {
+            val quarterlyFeedback = HomeWidget.QuarterlyFeedback(quarterlySurvey = quarterlySurvey)
+            assertFalse(viewModel.homeWidgets.value!!.contains(quarterlyFeedback))
+        }
+    }
+
+    @Test
+    fun `Given the quarterly survey feature is enabled, When analytics consent changes, then update quarterly survey state`() {
+        val quarterlySurvey = QuarterlySurvey(id = "", title = "")
+        val quarterlyFeedback = HomeWidget.QuarterlyFeedback(quarterlySurvey = quarterlySurvey)
+        val isAnalyticsEnabled = MutableStateFlow(true)
+
+        coEvery { flagRepo.isQuarterlySurveyEnabled() } returns true
+        every { analyticsClient.isAnalyticsEnabledFlow } returns isAnalyticsEnabled
+
+        val viewModel = AppViewModel(timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature, context)
+
+        runTest {
+            assertTrue(viewModel.homeWidgets.value!!.contains(quarterlyFeedback))
+
+            isAnalyticsEnabled.value = false
+            assertFalse(viewModel.homeWidgets.value!!.contains(quarterlyFeedback))
+
+            isAnalyticsEnabled.value = true
+            assertTrue(viewModel.homeWidgets.value!!.contains(quarterlyFeedback))
         }
     }
 
@@ -332,8 +372,7 @@ class AppViewModelTest {
 
         runTest {
             val quarterlyFeedback = HomeWidget.QuarterlyFeedback(quarterlySurvey = quarterlySurvey)
-            viewModel.homeWidgets.value
-                ?.let { assertFalse(it.contains(quarterlyFeedback)) }
+            assertFalse(viewModel.homeWidgets.value!!.contains(quarterlyFeedback))
         }
     }
 
