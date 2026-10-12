@@ -94,7 +94,7 @@ internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
     val onClear: () -> Unit,
-    val onFeedback: (String, String, String) -> Unit
+    val onFeedbackGiven: (String, String, String) -> Unit,
     val onFeedbackClick: (String, String, String) -> Unit
 )
 
@@ -173,8 +173,9 @@ internal fun ChatRoute(
                         onClear = {
                             viewModel.clearConversation()
                         },
-                        onFeedback = { conversationId, answerId, reaction ->
+                        onFeedbackGiven = { conversationId, answerId, reaction ->
                             viewModel.onFeedbackGiven(conversationId, answerId, reaction)
+                        },
                         onFeedbackClick = { text, action, questionId ->
                             viewModel.onFeedbackClick(text, action, questionId)
                         }
@@ -303,8 +304,6 @@ internal fun ChatScreen(
                         }
                     )
 
-                    // TODO: hook up the initial thumb icon clicks to give feedback
-//                    uiEvents.onFeedback(conversationId, answerId, reaction)
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
                     if (item == chatEntries.last()) {
                         AnimatedFeedback(
@@ -313,6 +312,9 @@ internal fun ChatScreen(
                             isAnalyticsEnabled = isAnalyticsEnabled,
                             onFeedbackClick = { text, action, questionId ->
                                 uiEvents.onFeedbackClick(text, action, questionId)
+                            },
+                            onFeedbackIconClick = { conversationId, answerId, reaction ->
+                                uiEvents.onFeedbackGiven(conversationId, answerId, reaction)
                             },
                             onThankYouShown = {
                                 coroutineScope.launch {
@@ -407,6 +409,7 @@ private fun AnimatedFeedback(
     animationDelay: Int,
     isAnalyticsEnabled: Boolean,
     onFeedbackClick: (String, String, String) -> Unit,
+    onFeedbackIconClick: (String, String, String) -> Unit,
     onThankYouShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -475,6 +478,9 @@ private fun AnimatedFeedback(
     val positiveIconText = stringResource(R.string.chat_feedback_positive_icon_analytics_text)
     val negativeIconText = stringResource(R.string.chat_feedback_negative_icon_analytics_text)
 
+    val positiveReaction = stringResource(R.string.chat_feedback_api_post_reaction_positive)
+    val negativeReaction = stringResource(R.string.chat_feedback_api_post_reaction_negative)
+
     AnimatedVisibility(
         visible = showFeedback,
         enter =
@@ -499,6 +505,11 @@ private fun AnimatedFeedback(
                     if (!iconClickProcessed) {
                         iconClickProcessed = true
                         onFeedbackClick(positiveIconText, "icon", chatEntry.id)
+                        onFeedbackIconClick(
+                            chatEntry.conversationId,
+                            chatEntry.answerId,
+                            positiveReaction
+                        )
                         moveFocusToFeedback = true
                         feedbackSelection =
                             if (isAnalyticsEnabled) FeedbackSelection.Positive
@@ -509,6 +520,11 @@ private fun AnimatedFeedback(
                     if (!iconClickProcessed) {
                         iconClickProcessed = true
                         onFeedbackClick(negativeIconText, "icon", chatEntry.id)
+                        onFeedbackIconClick(
+                            chatEntry.conversationId,
+                            chatEntry.answerId,
+                            negativeReaction
+                        )
                         moveFocusToFeedback = true
                         feedbackSelection =
                             if (isAnalyticsEnabled) FeedbackSelection.Negative
@@ -709,7 +725,7 @@ private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
     onClear = { },
-    onFeedback = { _, _, _ -> }
+    onFeedbackGiven = { _, _, _ -> },
     onFeedbackClick = { _, _, _ -> }
 )
 

@@ -7,5 +7,7 @@ data class ChatEntry(
     val question: String,
     var answer: String,
     var sources: List<String>?,
-    val shouldAnimate: Boolean = true
+    val shouldAnimate: Boolean = true,
+    val conversationId: String,
+    var answerId: String,
 )
