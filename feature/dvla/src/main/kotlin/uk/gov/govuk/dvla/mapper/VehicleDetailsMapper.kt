@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.mapper
 
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
+import uk.gov.govuk.dvla.domain.TaxStatus
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
@@ -8,7 +9,8 @@ import javax.inject.Inject
 
 internal class VehicleDetailsMapper @Inject constructor(
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper,
-    private val specificationsMapper: SpecificationsMapper
+    private val specificationsMapper: SpecificationsMapper,
+    private val vehicleMenuItemsMapper: VehicleMenuItemsMapper
 ) {
     fun toUiModel(vehicle: VehicleDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
         return VehicleDetailsUiModel(
@@ -33,7 +35,12 @@ internal class VehicleDetailsMapper @Inject constructor(
                     createEngineSizeItem(vehicle),
                     createEmissionsItem(vehicle)
                 )
-            }
+            },
+            menuItems = vehicleMenuItemsMapper.buildMenuItems(
+                hasSorn = vehicle.summary.sornStart != null,
+                isTaxed = vehicle.summary.taxStatus == TaxStatus.TAXED,
+                dvlaUrls = dvlaUrls
+            )
         )
     }
 

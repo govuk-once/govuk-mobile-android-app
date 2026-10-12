@@ -23,15 +23,19 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
-import uk.gov.govuk.dvla.ui.model.UrlModel
+import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
 import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
+import uk.gov.govuk.dvla.ui.component.VehicleDetailsHeader
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
+import uk.gov.govuk.dvla.ui.model.MenuAction
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @Composable
@@ -51,8 +55,7 @@ internal fun VehicleDetailsRoute(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(36.dp),
+                    modifier = Modifier.size(36.dp),
                     color = GovUkTheme.colourScheme.surfaces.primary
                 )
             }
@@ -72,6 +75,19 @@ internal fun VehicleDetailsRoute(
 
         is VehicleDetailsUiState.Success -> {
             val section = stringResource(R.string.vehicle_details_success_title)
+            val handleMenuItemClick: (OverflowMenuItem) -> Unit = { item ->
+                when (val action = item.action) {
+                    is MenuAction.WebLink -> {
+                        viewModel.onMenuItemClicked(
+                            text = item.text.displayText,
+                            url = action.url
+                        )
+                        launchBrowser(action.url)
+                    }
+
+                    is MenuAction.ClipboardCopy -> Unit
+                }
+            }
             VehicleDetailsScreen(
                 launchBrowser = { text, url ->
                     launchBrowser(url.urlToOpen)
@@ -79,6 +95,7 @@ internal fun VehicleDetailsRoute(
                 },
                 onBack = onBack,
                 onPageView = { viewModel.onPageView(section) },
+                onMenuItemClick = handleMenuItemClick,
                 details = state.details,
                 modifier = modifier
             )
@@ -91,6 +108,7 @@ private fun VehicleDetailsScreen(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     onBack: () -> Unit,
     onPageView: () -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     details: VehicleDetailsUiModel,
     modifier: Modifier = Modifier
 ) {
@@ -103,9 +121,10 @@ private fun VehicleDetailsScreen(
             .safeDrawingPadding()
             .fillMaxWidth()
     ) {
-        // Todo - re-add overflow menu button
-        FullScreenHeader(
-            dismissStyle = HeaderDismissStyle.Back(onBack)
+        VehicleDetailsHeader(
+            onBack = onBack,
+            menuItems = details.menuItems,
+            onMenuItemClick = onMenuItemClick
         )
         VehicleDetailsContent(
             launchBrowser = launchBrowser,
@@ -149,18 +168,14 @@ private fun ErrorScreen(
     }
 }
 
-
 @Preview
 @Composable
 private fun VehicleDetailsScreenPreview() {
-    val date = AccessibleString("Calendar")
-    val fuelType = AccessibleString("Diesel")
-    val colour = AccessibleString("Red")
     val taxStatus = StatusUiModel.StatusRow(
         StatusRowUiModel(
             AccessibleString("Tax"),
             AccessibleString("Valid until 1 February 2027"),
-            iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
+            iconStyle = StatusListItemIconStyle.Success
         )
     )
 
@@ -168,37 +183,42 @@ private fun VehicleDetailsScreenPreview() {
         StatusRowUiModel(
             AccessibleString("Mot"),
             AccessibleString("Valid until 1 February 2027"),
-            iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
+            iconStyle = StatusListItemIconStyle.Success
         )
     )
+
     val details = VehicleDetailsUiModel(
-        "Volkswagen",
-        "ID4",
-        "TE5T PL8",
-        KeeperUiModel(
+        make = "Volkswagen",
+        model = "ID4",
+        registration = "TE5T PL8",
+        keeper = KeeperUiModel(
             "Name",
             listOf("Street", "City", "Postcode")
         ),
-        listOf(
-            SpecificationIconUiModel(
-                R.drawable.ic_calendar,
-                date
-            ),
-            SpecificationIconUiModel(
-                R.drawable.ic_petrol_diesel,
-                fuelType
-            ),
-            SpecificationIconUiModel(
-                R.drawable.ic_colour,
-                colour
-            )
+        specificationsIcons = listOf(
+            SpecificationIconUiModel(R.drawable.ic_calendar, AccessibleString("Calendar")),
+            SpecificationIconUiModel(R.drawable.ic_petrol_diesel, AccessibleString("Diesel")),
+            SpecificationIconUiModel(R.drawable.ic_colour, AccessibleString("Red"))
         ),
-        taxStatus,
-        motStatus,
-        specifications = listOf()
+        taxStatus = taxStatus,
+        motStatus = motStatus,
+        specifications = listOf(),
+        menuItems = listOf(
+            OverflowMenuItem(
+                text = AccessibleString("Change address"),
+                action = MenuAction.WebLink("https://www.gov.uk/change-naddress")
+            )
+        )
     )
+
     GovUkTheme {
-        VehicleDetailsScreen({ _, _ -> },{}, {}, details)
+        VehicleDetailsScreen(
+            launchBrowser = { _, _ -> },
+            onBack = {},
+            onPageView = {},
+            onMenuItemClick = {},
+            details = details
+        )
     }
 }
 
@@ -206,6 +226,10 @@ private fun VehicleDetailsScreenPreview() {
 @Composable
 private fun ErrorScreenPreview() {
     GovUkTheme {
-        ErrorScreen({}, {},  {})
+        ErrorScreen(
+            onBack = {},
+            onPageView = {},
+            onClick = {}
+        )
     }
 }
