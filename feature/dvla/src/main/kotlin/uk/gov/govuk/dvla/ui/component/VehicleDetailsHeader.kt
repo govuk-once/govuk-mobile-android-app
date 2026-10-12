@@ -53,7 +53,7 @@ internal fun VehicleDetailsHeader(
         if (menuItems.isNotEmpty()){
             Spacer(Modifier.weight(1f))
 
-            CardOverflowMenu(
+            OverflowMenu(
                 Modifier.padding(end = GovUkTheme.spacing.medium),
                 menuItems = menuItems,
                 onMenuItemClick = onMenuItemClick,

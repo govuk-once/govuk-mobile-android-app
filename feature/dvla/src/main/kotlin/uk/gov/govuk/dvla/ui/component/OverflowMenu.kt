@@ -30,21 +30,24 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 
 @Composable
-internal fun CardOverflowMenu(
+internal fun OverflowMenu(
     modifier: Modifier = Modifier,
     menuItems: List<OverflowMenuItem>,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
-    actionColour: Color = GovUkTheme.colourScheme.surfaces.cardOverflowButton
+    actionColour: Color = GovUkTheme.colourScheme.surfaces.cardOverflowButton,
+    overflowButton: @Composable (onClick: () -> Unit) -> Unit = { onClick ->
+        OverflowButton(
+            onClick = onClick,
+            altText = stringResource(R.string.more_options_alt_text),
+            background = actionColour
+        )
+    }
 ) {
     var expanded by remember { mutableStateOf(false) }
     val isTalkBackOn = isTalkBackEnabled()
 
     Box(modifier = modifier) {
-        OverflowButton(
-            onClick = { expanded = true },
-            altText = stringResource(R.string.more_options_alt_text),
-            background = actionColour
-        )
+        overflowButton { expanded = true }
 
         DropdownMenu(
             expanded = expanded,
