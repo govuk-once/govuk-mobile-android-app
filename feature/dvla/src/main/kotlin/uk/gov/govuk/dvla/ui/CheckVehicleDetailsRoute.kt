@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.dvla.CheckVehicleDetailsUiState
 import uk.gov.govuk.dvla.CheckVehicleDetailsViewModel
 import uk.gov.govuk.dvla.CheckVehicleSheetState
@@ -85,8 +86,12 @@ internal fun CheckVehicleDetailsRoute(
             )
         }
 
-        CheckVehicleDetailsUiState.Error -> {
-            // TODO coming in next tickets
+        is CheckVehicleDetailsUiState.Error -> {
+
+            RunOnceLaunchedEffect {
+                searchViewModel.onResultUnavailable(state.regNumber)
+                showSearchSheet = true
+            }
         }
     }
 
@@ -104,6 +109,7 @@ internal fun CheckVehicleDetailsRoute(
             onCancel = {
                 showSearchSheet = false
                 searchViewModel.onCancelClicked(cancelLabel)
+                if (detailsState is CheckVehicleDetailsUiState.Error) onBack()
             }
         )
     }

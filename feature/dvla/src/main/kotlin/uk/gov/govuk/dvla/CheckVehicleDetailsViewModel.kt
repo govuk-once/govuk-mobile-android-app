@@ -15,7 +15,7 @@ import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 internal sealed interface CheckVehicleDetailsUiState {
     data class Success(val details: VehicleDetailsUiModel) : CheckVehicleDetailsUiState
-    data object Error : CheckVehicleDetailsUiState
+    data class Error(val regNumber: String) : CheckVehicleDetailsUiState
 }
 
 @HiltViewModel
@@ -39,15 +39,13 @@ internal class CheckVehicleDetailsViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private fun createInitialState(): CheckVehicleDetailsUiState {
-        val regNumber: String = savedStateHandle[ARG_REG_NUMBER]
-            ?: return CheckVehicleDetailsUiState.Error
+        val regNumber = savedStateHandle.get<String>(ARG_REG_NUMBER).orEmpty()
+
         val vehicle = dvlaRepo.findVehicleEnquiryDetails(regNumber)
-            ?: return CheckVehicleDetailsUiState.Error
+            ?: return CheckVehicleDetailsUiState.Error(regNumber)
+
         return CheckVehicleDetailsUiState.Success(
-            details = mapper.toUiModel(
-                vehicle = vehicle,
-                dvlaUrls = configRepo.dvlaUrls
-            )
+            details = mapper.toUiModel(vehicle = vehicle, dvlaUrls = configRepo.dvlaUrls)
         )
     }
 
