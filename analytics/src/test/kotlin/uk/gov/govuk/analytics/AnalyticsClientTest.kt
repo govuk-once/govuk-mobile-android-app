@@ -971,7 +971,6 @@ class AnalyticsClientTest {
 
             coVerify {
                 analyticsRepo.analyticsEnabled()
-                firebaseAnalyticClient.enable()
                 analyticsCoordinator.initialize()
             }
         }

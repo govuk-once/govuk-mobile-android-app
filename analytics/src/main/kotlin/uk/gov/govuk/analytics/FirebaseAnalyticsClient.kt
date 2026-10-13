@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.perf.FirebasePerformance
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import java.io.Serializable
 import javax.inject.Inject
@@ -13,17 +14,20 @@ import javax.inject.Singleton
 class FirebaseAnalyticsClient @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val firebasePerformance: FirebasePerformance,
     private val firebaseIdentifiers: FirebaseIdentifiers
 ) {
 
     fun enable() {
         firebaseAnalytics.setAnalyticsCollectionEnabled(true)
         firebaseCrashlytics.isCrashlyticsCollectionEnabled = true
+        firebasePerformance.isPerformanceCollectionEnabled = true
     }
 
     fun disable() {
         firebaseAnalytics.setAnalyticsCollectionEnabled(false)
         firebaseCrashlytics.isCrashlyticsCollectionEnabled = false
+        firebasePerformance.isPerformanceCollectionEnabled = false
     }
 
     fun logEvent(name: String, parameters: Map<String, Any>) {
