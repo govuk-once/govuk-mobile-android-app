@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.analytics.extension.redactPii
 import java.util.Locale
@@ -399,6 +400,10 @@ class AnalyticsClient @Inject constructor(
         )
 
         logEvent("Function", parametersWithLanguage(parameters))
+    }
+
+    fun abTestEvent(event: AbTestEvent) {
+        logEvent(event.eventName, mapOf())
     }
 
     private fun parametersWithLanguage(parameters: Map<String, Any>): Map<String, Any> {
