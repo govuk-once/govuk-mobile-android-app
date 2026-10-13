@@ -1,5 +1,6 @@
 package uk.gov.govuk.travelalerts.ui.notificationsprompt
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +29,11 @@ import uk.gov.govuk.notifications.ui.NotificationsSettingsAlert
 import uk.gov.govuk.notifications.ui.getNotificationsPermissionStatus
 import uk.gov.govuk.notifications.ui.openDeviceNotificationsSettings
 import uk.gov.govuk.travelalerts.R
+import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
 import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
+import uk.gov.govuk.travelalerts.navigation.EDIT_NOTIFICATIONS_ENABLED_KEY
+import uk.gov.govuk.travelalerts.navigation.EDIT_OPT_IN_ERROR_KEY
+import uk.gov.govuk.travelalerts.navigation.EDIT_REOPEN_SLUG_KEY
 import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
 import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 
@@ -36,9 +41,9 @@ import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 @Composable
 fun NotificationsRationaleScreen(
     countrySlug: String,
-    onBack: () -> Unit,
     navController: NavController,
     launchBrowser: (url: String) -> Unit,
+    origin: NotificationsRationaleViewModel.Origin = NotificationsRationaleViewModel.Origin.FOLLOW,
     viewModel: NotificationsRationaleViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState()
@@ -46,30 +51,42 @@ fun NotificationsRationaleScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
-        viewModel.onPageView(countrySlug)
+        viewModel.onPageView(countrySlug, origin)
     }
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect { error ->
-            if (error) {
-                val hasEditCountries = try {
-                    navController.getBackStackEntry(EDIT_COUNTRIES_ROUTE)
-                    true
-                } catch (_: IllegalArgumentException) {
-                    false
-                }
-                if (hasEditCountries) {
-                    navController.navigate("$EDIT_COUNTRIES_ROUTE?$SHOW_ERROR_ARG=true") {
-                        popUpTo(EDIT_COUNTRIES_ROUTE) { inclusive = true }
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is NotificationsRationaleViewModel.NavigationEvent.ExitToTopic -> {
+                    if (event.error) {
+                        val hasEditCountries = try {
+                            navController.getBackStackEntry(EDIT_COUNTRIES_ROUTE)
+                            true
+                        } catch (_: IllegalArgumentException) {
+                            false
+                        }
+                        if (hasEditCountries) {
+                            navController.navigate("$EDIT_COUNTRIES_ROUTE?$SHOW_ERROR_ARG=true") {
+                                popUpTo(EDIT_COUNTRIES_ROUTE) { inclusive = true }
+                            }
+                        } else {
+                            navController.popBackStack(COUNTRY_LIST_ROUTE, inclusive = true)
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(TRAVEL_ALERTS_FOLLOW_ERROR_KEY, true)
+                        }
+                    } else {
+                        navController.popBackStack(COUNTRY_LIST_ROUTE, inclusive = true)
                     }
-                } else {
-                    onBack()
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set(TRAVEL_ALERTS_FOLLOW_ERROR_KEY, true)
                 }
-            } else {
-                onBack()
+                is NotificationsRationaleViewModel.NavigationEvent.ReturnToEdit -> {
+                    navController.previousBackStackEntry?.savedStateHandle?.apply {
+                        set(EDIT_REOPEN_SLUG_KEY, event.slug)
+                        set(EDIT_OPT_IN_ERROR_KEY, event.error)
+                        set(EDIT_NOTIFICATIONS_ENABLED_KEY, event.notificationsEnabled)
+                    }
+                    navController.popBackStack()
+                }
             }
         }
     }
@@ -84,6 +101,10 @@ fun NotificationsRationaleScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
+    }
+
+    BackHandler(enabled = origin == NotificationsRationaleViewModel.Origin.EDIT) {
+        viewModel.onNotNow(countrySlug)
     }
 
     when (uiState.value) {
@@ -113,8 +134,11 @@ fun NotificationsRationaleScreen(
                 onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus) },
                 launchBrowser = launchBrowser,
                 showSettingsAlert = true,
-                onSettingsAlertCancel = { viewModel.onSettingsAlertCancel(countrySlug) }
-            ) { openDeviceNotificationsSettings(context) }
+                onSettingsAlertCancel = { viewModel.onSettingsAlertCancelClicked() },
+                onSettingsAlertContinue = { viewModel.onSettingsAlertContinue() },
+                onSettingsAlertDismiss = { viewModel.onSettingsAlertDismissed() },
+                openSettings = { openDeviceNotificationsSettings(context) }
+            )
         }
     }
 }
@@ -128,7 +152,9 @@ private fun NotificationsRationaleScreenContent(
     launchBrowser: (url: String) -> Unit,
     showSettingsAlert: Boolean = false,
     onSettingsAlertCancel: () -> Unit = {},
-    onSettingsAlertContinue: () -> Unit = {}
+    onSettingsAlertContinue: () -> Unit = {},
+    onSettingsAlertDismiss: () -> Unit = {},
+    openSettings: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxSize()
@@ -168,7 +194,8 @@ private fun NotificationsRationaleScreenContent(
         NotificationsSettingsAlert(
             onContinueButtonClick = { onSettingsAlertContinue() },
             onCancelButtonClick = { onSettingsAlertCancel() },
-            onDismiss = { onSettingsAlertCancel() }
+            onDismiss = { onSettingsAlertDismiss() },
+            openSettings = openSettings
         )
     }
 }

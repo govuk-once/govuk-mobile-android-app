@@ -37,9 +37,10 @@ class OneSignalClient @Inject constructor(
 
     override fun consentGiven() = OneSignal.consentGiven
 
-    override suspend fun requestPermission() {
-        val consentGiven = OneSignal.Notifications.requestPermission(false)
-        OneSignal.consentGiven = consentGiven
+    override suspend fun requestPermission(): Boolean {
+        val granted = OneSignal.Notifications.requestPermission(false)
+        OneSignal.consentGiven = granted
+        return granted
     }
 
     override fun addClickListener() {

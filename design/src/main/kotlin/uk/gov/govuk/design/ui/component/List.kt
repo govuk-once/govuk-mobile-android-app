@@ -277,7 +277,8 @@ fun ToggleListItem(
     modifier: Modifier = Modifier,
     isFirst: Boolean = true,
     isLast: Boolean = true,
-    backgroundOverride: Color? = null
+    backgroundOverride: Color? = null,
+    enabled: Boolean = true,
 ) {
 
     val status = stringResource(if (checked) R.string.on_button else R.string.off_button)
@@ -298,6 +299,7 @@ fun ToggleListItem(
                 .clickable(
                     interactionSource = interactionSource,
                     indication = LocalIndication.current,
+                    enabled = enabled,
                     onClick = { onCheckedChange(!checked) },
                     onClickLabel = stringResource(R.string.action_toggle)
                 )
@@ -323,7 +325,8 @@ fun ToggleListItem(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 testDescription = title,
-                Modifier
+                enabled = enabled,
+                modifier = Modifier
                     .clearAndSetSemantics { }
                     .focusProperties { canFocus = false }
             )

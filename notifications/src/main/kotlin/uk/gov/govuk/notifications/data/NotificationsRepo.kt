@@ -40,8 +40,8 @@ class NotificationsRepo @Inject constructor(
         notificationsProvider.logout()
     }
 
-    suspend fun requestPermission() {
-        notificationsProvider.requestPermission()
+    suspend fun requestPermission(): Boolean {
+        return notificationsProvider.requestPermission()
     }
 
     fun permissionGranted() = notificationsProvider.permissionGranted()

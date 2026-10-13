@@ -23,6 +23,8 @@ import uk.gov.govuk.messages.MessagesUiState
 import uk.gov.govuk.messages.MessagesViewModel
 import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.messages.fixtures.MessagesFixtures.Companion.mockMessages
+import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MessagesViewModelTest {
@@ -78,7 +80,7 @@ class MessagesViewModelTest {
     fun `Given view appears, then state transitions to Loading`() {
         runTest {
             coEvery { messagesRepo.getMessages() } coAnswers {
-                delay(100)
+                delay(100.milliseconds)
                 Result.Success(listOf())
             }
 
@@ -96,7 +98,7 @@ class MessagesViewModelTest {
     fun `Given view appears, when offline, transitions to No Internet`() {
         runTest {
             coEvery { messagesRepo.getMessages() } coAnswers {
-                delay(100)
+                delay(100.milliseconds)
                 Result.DeviceOffline()
             }
 
@@ -115,7 +117,7 @@ class MessagesViewModelTest {
     fun `Given view appears, when request fails, transitions to Error`() {
         runTest {
             coEvery { messagesRepo.getMessages() } coAnswers {
-                delay(100)
+                delay(100.milliseconds)
                 Result.Error()
             }
 
@@ -135,7 +137,7 @@ class MessagesViewModelTest {
     fun `Given view appears, when request returns empty, transitions to Empty`() {
         runTest {
             coEvery { messagesRepo.getMessages() } coAnswers {
-                delay(100)
+                delay(100.milliseconds)
                 Result.Success(listOf())
             }
 
@@ -155,7 +157,7 @@ class MessagesViewModelTest {
     fun `Given view appears, when request returns results, transitions to Loaded and filters into buckets`() {
         runTest {
             coEvery { messagesRepo.getMessages() } coAnswers {
-                delay(100)
+                delay(100.milliseconds)
                 Result.Success(mockMessages)
             }
 
@@ -178,6 +180,38 @@ class MessagesViewModelTest {
             assertTrue(notifications.recent.contains(mockMessages[1]))
             assertTrue(notifications.older.size == 1)
             assertTrue(notifications.older.contains(mockMessages[2]))
+
+        }
+    }
+
+    // NOT-486 Wrong date order
+
+    @Test
+    fun `Given view appears, when request returns results, transitions to Loaded and buckets sorted in date order`() {
+        runTest {
+            coEvery { messagesRepo.getMessages() } coAnswers {
+                delay(100.milliseconds)
+                Result.Success(mockMessages.reversed()) // In the right order in the fixture
+            }
+
+            val states = mutableListOf<MessagesUiState>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.toList(states)
+            }
+            viewModel.onPageView()
+
+            advanceUntilIdle()
+
+            val lastState = states.last()
+
+            assertTrue(lastState is MessagesUiState.Loaded)
+
+            val notifications = (lastState as MessagesUiState.Loaded).notifications
+
+            assertEquals(notifications.recent[0],mockMessages[0])
+            assertEquals(notifications.recent[1],mockMessages[1])
+            assertEquals(notifications.older[0],mockMessages[2])
+
 
         }
     }
