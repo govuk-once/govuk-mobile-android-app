@@ -397,4 +397,57 @@ class CountryListViewModelTest {
         val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
         assertEquals(listOf("France"), state.countries.map { it.name })
     }
+
+    // NOT-520 Whitespace not handled
+    @Test
+    fun `Given search query with leading whitespace, when query matches synonym, then country is returned`() = runTest {
+        val countries = listOf(
+            Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = listOf("Gaul")),
+            Country(name = "Germany", slug = "germany", rawLastUpdated = "2025-01-01T00:00:00Z", synonyms = emptyList())
+        )
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(countries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange(" gaul")
+
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(listOf("France"), state.countries.map { it.name })
+    }
+
+    @Test
+    fun `Given search query with trailing whitespace, when query matches synonym, then country is returned`() = runTest {
+        val countries = listOf(
+            Country(name = "France", slug = "france", rawLastUpdated = "2024-01-01T00:00:00Z", synonyms = listOf("Gaul")),
+            Country(name = "Germany", slug = "germany", rawLastUpdated = "2025-01-01T00:00:00Z", synonyms = emptyList())
+        )
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(countries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("gaul ")
+
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(listOf("France"), state.countries.map { it.name })
+    }
+
+    @Test
+    fun `Given search query with leading whitespace, when query matches country name, then filtered results are returned`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange(" fra")
+
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(listOf("France"), state.countries.map { it.name })
+    }
+
+    @Test
+    fun `Given search query with trailing whitespace, when query matches country name, then filtered results are returned`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("fra ")
+
+        val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
+        assertEquals(listOf("France"), state.countries.map { it.name })
+    }
 }

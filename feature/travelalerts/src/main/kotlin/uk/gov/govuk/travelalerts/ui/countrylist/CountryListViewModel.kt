@@ -151,7 +151,7 @@ class CountryListViewModel @Inject constructor(
     }
 
     fun onSearchQueryChange(query: String) {
-        val q = query.lowercase()
+        val q = query.lowercase().trim()
         val filtered = if (q.isEmpty()) {
             allCountries
         } else {
