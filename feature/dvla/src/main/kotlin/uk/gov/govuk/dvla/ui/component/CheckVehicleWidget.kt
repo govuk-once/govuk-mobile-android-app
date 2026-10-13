@@ -219,7 +219,7 @@ fun CheckVehicleCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun CheckAVehicleWidgetPreview() {
+internal fun CheckAVehicleWidgetPreview() {
     GovUkTheme {
         CheckVehicleWidget({})
     }
@@ -227,7 +227,7 @@ private fun CheckAVehicleWidgetPreview() {
 
 @PreviewLightDark
 @Composable
-private fun SearchVehicleCardPreview() {
+internal fun SearchVehicleCardPreview() {
     GovUkTheme {
         CheckVehicleCard(
             prompt = "Search for a vehicle",
