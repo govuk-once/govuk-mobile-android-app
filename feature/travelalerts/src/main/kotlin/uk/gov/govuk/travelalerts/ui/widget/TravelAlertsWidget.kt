@@ -172,7 +172,7 @@ private fun TravelAlertsError() {
 
             ExtraSmallVerticalSpacer()
 
-            BodyRegularLabel(stringResource(R.string.country_list_error_description))
+            BodyRegularLabel(stringResource(R.string.country_list_error_description), textAlign = TextAlign.Center)
 
             ExtraLargeVerticalSpacer()
         }
