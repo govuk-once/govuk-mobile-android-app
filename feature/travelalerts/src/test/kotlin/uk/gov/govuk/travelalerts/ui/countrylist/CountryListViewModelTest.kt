@@ -18,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
@@ -323,6 +324,22 @@ class CountryListViewModelTest {
         assertEquals(1, events.size)
         assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale)
         assertEquals("france", (events.first() as CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale).countrySlug)
+    }
+
+    // onHelpAndFeedbackClick
+
+    @Test
+    fun `Given help and feedback tapped, then analytics event is fired`() {
+        viewModel.onHelpAndFeedbackClick()
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "HelpAndFeedback",
+                url = Urls.HELP_AND_FEEDBACK_URL,
+                external = true,
+                section = "Travel Abroad Notifications"
+            )
+        }
     }
 
     // onSearchQueryChange

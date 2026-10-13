@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
@@ -28,6 +29,7 @@ class CountryListViewModel @Inject constructor(
         private const val TITLE = "Follow a country"
         private const val SECTION = "Travel Abroad Notifications"
         private const val SEARCH_SECTION = "country_search"
+        private const val HELP_AND_FEEDBACK_TEXT = "HelpAndFeedback"
     }
 
     sealed class State {
@@ -148,6 +150,15 @@ class CountryListViewModel @Inject constructor(
         if (currentState is State.Loaded && currentState.searchQuery.isNotEmpty()) {
             analyticsClient.search(currentState.searchQuery, section = SEARCH_SECTION)
         }
+    }
+
+    fun onHelpAndFeedbackClick() {
+        analyticsClient.buttonClick(
+            text = HELP_AND_FEEDBACK_TEXT,
+            url = Urls.HELP_AND_FEEDBACK_URL,
+            external = true,
+            section = SECTION
+        )
     }
 
     fun onSearchQueryChange(query: String) {

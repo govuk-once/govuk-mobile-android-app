@@ -50,6 +50,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -57,6 +58,7 @@ import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumHorizontalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
+import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -73,6 +75,7 @@ import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 @Composable
 fun CountryListScreen(
     onClose: () -> Unit,
+    onClickFooter: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
@@ -129,7 +132,8 @@ fun CountryListScreen(
                 searchQuery = state.searchQuery,
                 onSearchQueryChange = viewModel::onSearchQueryChange,
                 onSearchSubmitted = viewModel::onSearchSubmitted,
-                onCountrySelected = viewModel::onCountrySelected
+                onCountrySelected = viewModel::onCountrySelected,
+                onClickFooter = onClickFooter
             )
         }
     }
@@ -183,6 +187,7 @@ private fun CountryListLoaded(
     onSearchQueryChange: (String) -> Unit,
     onSearchSubmitted: () -> Unit,
     onCountrySelected: (Country) -> Unit,
+    onClickFooter: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier.fillMaxSize()) {
@@ -196,15 +201,17 @@ private fun CountryListLoaded(
             )
         )
         if (countries.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize().imePadding(),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                LargeVerticalSpacer()
                 BodyRegularLabel(
                     text = stringResource(R.string.country_list_no_results),
                     color = GovUkTheme.colourScheme.textAndIcons.primary,
                     textAlign = TextAlign.Center
                 )
+                MediumVerticalSpacer()
             }
         } else {
             LazyColumn(
@@ -222,9 +229,15 @@ private fun CountryListLoaded(
                         background = GovUkTheme.colourScheme.surfaces.listAlt
                     )
                 }
-                item { LargeVerticalSpacer() }
             }
         }
+
+        CaptionRegularLabelTrailingLink(
+            stringResource(R.string.country_list_footer),
+            stringResource(R.string.country_list_footer_link_text),
+            modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium).fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            onClick = onClickFooter)
     }
 }
 
@@ -349,7 +362,35 @@ private fun CountryListLoadedPreview() {
             verticalArrangement = Arrangement.Top
         ) {
             CountryListHeader(onClose = {})
-            CountryListLoaded(countries = countries, searchQuery = "", onSearchQueryChange = {}, onSearchSubmitted = {}, onCountrySelected = {})
+            CountryListLoaded(
+                countries = countries,
+                searchQuery = "",
+                onSearchQueryChange = {},
+                onSearchSubmitted = {},
+                onCountrySelected = {},
+                onClickFooter = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun CountryListLoadedEmptyPreview() {
+    GovUkTheme {
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            CountryListHeader(onClose = {})
+            CountryListLoaded(
+                countries = listOf(),
+                searchQuery = "",
+                onSearchQueryChange = {},
+                onSearchSubmitted = {},
+                onCountrySelected = {},
+                onClickFooter = {}
+            )
         }
     }
 }
