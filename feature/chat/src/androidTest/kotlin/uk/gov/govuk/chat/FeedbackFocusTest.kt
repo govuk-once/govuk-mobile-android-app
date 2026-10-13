@@ -2,6 +2,10 @@ package uk.gov.govuk.chat
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotFocused
@@ -130,13 +134,18 @@ class FeedbackFocusTest {
 
     @Composable
     private fun ChatScreenContent(isAnalyticsEnabled: Boolean) {
+        var feedbackReaction by rememberSaveable { mutableStateOf<String?>(null) }
+
         // Already answered and not animating, so the feedback icons are shown straight away
         val chatEntry = ChatEntry(
             id = "questionId",
             question = "How do I renew my passport?",
             answer = "You can renew your passport online.",
             sources = null,
-            shouldAnimate = false
+            shouldAnimate = false,
+            conversationId = "conversationId",
+            answerId = "answerId",
+            feedbackReaction = feedbackReaction
         )
 
         GovUkTheme {
@@ -164,7 +173,8 @@ class FeedbackFocusTest {
                     onQuestionUpdated = { _ -> },
                     onSubmit = { _ -> },
                     onClear = { },
-                    onFeedbackClick = { _, _, _ -> }
+                    onFeedbackClick = { _, _, _ -> },
+                    onFeedbackGiven = { _, _, reaction -> feedbackReaction = reaction }
                 )
             )
         }

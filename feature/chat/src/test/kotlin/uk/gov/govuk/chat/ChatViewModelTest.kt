@@ -27,6 +27,7 @@ import uk.gov.govuk.chat.data.remote.ChatResult
 import uk.gov.govuk.chat.data.remote.model.Answer
 import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 import uk.gov.govuk.chat.data.remote.model.Conversation
+import uk.gov.govuk.chat.data.remote.model.Feedback
 import uk.gov.govuk.chat.data.remote.model.PendingQuestion
 import uk.gov.govuk.chat.data.remote.model.Source
 import uk.gov.govuk.chat.domain.Analytics
@@ -34,6 +35,7 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -954,7 +956,7 @@ class ChatViewModelTest {
         advanceUntilIdle()
         assertTrue(viewModel.isAnalyticsEnabled.value)
     }
-    
+
     @Test
     fun `onSubmit does not submit a second question while one is already in flight`() = runTest {
         coEvery { chatRepo.askQuestion(any()) } coAnswers {
@@ -1046,4 +1048,95 @@ class ChatViewModelTest {
         coVerify { authRepo.clear() }
         assertEquals(1, authErrors.size)
     }
+
+    @Test
+    fun `Load conversation emits the feedback reaction returned with an answer`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns ChatResult.Success(
+            conversationWithAnswer(
+                feedback = Feedback(reaction = "negative", createdAt = "")
+            )
+        )
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        assertEquals("negative", uiState.chatEntries["questionId"]?.feedbackReaction)
+    }
+
+    @Test
+    fun `Load conversation emits no feedback reaction if no feedback returned with an answer`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns ChatResult.Success(
+            conversationWithAnswer(feedback = null)
+        )
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        assertNull(uiState.chatEntries["questionId"]?.feedbackReaction)
+    }
+
+    @Test
+    fun `When feedback is given successfully, the reaction is set on the matching chat entry`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns ChatResult.Success(
+            conversationWithAnswer(feedback = null)
+        )
+        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns
+            ChatResult.Success(Unit)
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+
+        viewModel.onFeedbackGiven("conversationId", "answerId", "positive")
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        assertEquals("positive", uiState.chatEntries["questionId"]?.feedbackReaction)
+    }
+
+    @Test
+    fun `When feedback is not given successfully, the reaction is not set`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns ChatResult.Success(
+            conversationWithAnswer(feedback = null)
+        )
+        coEvery { chatRepo.giveFeedback(any(), any(), any()) } returns
+            ChatResult.ValidationError()
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+
+        viewModel.onFeedbackGiven("conversationId", "answerId", "positive")
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        assertNull(uiState.chatEntries["questionId"]?.feedbackReaction)
+    }
+
+    private fun conversationWithAnswer(feedback: Feedback?) = Conversation(
+        id = "conversationId",
+        answeredQuestions = listOf(
+            AnsweredQuestion(
+                id = "questionId",
+                answer = Answer(
+                    id = "answerId",
+                    createdAt = "",
+                    feedbackUrl = null,
+                    feedback = feedback,
+                    message = "Answer",
+                    status = "",
+                    sources = null
+                ),
+                conversationId = "conversationId",
+                createdAt = "",
+                message = "Question"
+            )
+        ),
+        createdAt = "",
+        pendingQuestion = null
+    )
 }

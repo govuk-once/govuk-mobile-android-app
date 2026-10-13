@@ -125,7 +125,8 @@ internal class ChatViewModel @Inject constructor(
                                     },
                                     shouldAnimate = false,
                                     conversationId = conversation.id,
-                                    answerId = answer.id
+                                    answerId = answer.id,
+                                    feedbackReaction = answer.feedback?.reaction
                                 )
                             }
                         }.toMap(LinkedHashMap())
@@ -227,11 +228,7 @@ internal class ChatViewModel @Inject constructor(
                     reaction = reaction
                 )
             ) {
-                /*
-                 TODO: update the state so that either the Thank you message is shown
-                    (if analytics consent is given), or the appropriate thumb icon and
-                    survey link is shown (if analytics consent is given)
-                 */
+                updateFeedbackReaction(answerId, reaction)
             }
         }
     }
@@ -395,6 +392,18 @@ internal class ChatViewModel @Inject constructor(
                 }
                 chatEntry.answerId = answer.id
             }
+        }
+    }
+
+    private fun updateFeedbackReaction(answerId: String, reaction: String) {
+        _uiState.updateDefault { state ->
+            val entry = state.chatEntries.entries.firstOrNull { it.value.answerId == answerId }
+                ?: return@updateDefault state
+            state.copy(
+                chatEntries = LinkedHashMap(state.chatEntries).apply {
+                    put(entry.key, entry.value.copy(feedbackReaction = reaction))
+                }
+            )
         }
     }
 

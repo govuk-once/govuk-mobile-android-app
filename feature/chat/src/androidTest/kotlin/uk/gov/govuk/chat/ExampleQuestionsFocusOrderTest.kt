@@ -122,7 +122,8 @@ class ExampleQuestionsFocusOrderTest {
                         onQuestionUpdated = { _ -> },
                         onSubmit = onSubmit,
                         onClear = { },
-                        onFeedbackClick = { _, _, _ -> }
+                        onFeedbackClick = { _, _, _ -> },
+                        onFeedbackGiven = { _, _, _ -> }
                     )
                 )
             }

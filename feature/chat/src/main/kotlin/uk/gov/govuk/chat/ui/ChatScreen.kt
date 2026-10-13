@@ -420,8 +420,21 @@ private fun AnimatedFeedback(
         mutableStateOf(chatEntry.answer.isNotBlank())
     }
 
-    var feedbackSelection by rememberSaveable(chatEntry.id) {
-        mutableStateOf(FeedbackSelection.Icons)
+    // Set when the survey is tapped
+    var surveyLinkClicked by rememberSaveable(chatEntry.id) {
+        mutableStateOf(false)
+    }
+
+    val positiveReaction = stringResource(R.string.chat_feedback_api_post_reaction_positive)
+    val negativeReaction = stringResource(R.string.chat_feedback_api_post_reaction_negative)
+
+    // The feedback reaction comes back with the answer response, or is set
+    // when the feedback API call succeeds
+    val feedbackSelection = when {
+        chatEntry.feedbackReaction == null -> FeedbackSelection.Icons
+        surveyLinkClicked || !isAnalyticsEnabled -> FeedbackSelection.ThankYou
+        chatEntry.feedbackReaction == positiveReaction -> FeedbackSelection.Positive
+        else -> FeedbackSelection.Negative
     }
 
     // Stop double taps on icons - guards on clicks below
@@ -478,9 +491,6 @@ private fun AnimatedFeedback(
     val positiveIconText = stringResource(R.string.chat_feedback_positive_icon_analytics_text)
     val negativeIconText = stringResource(R.string.chat_feedback_negative_icon_analytics_text)
 
-    val positiveReaction = stringResource(R.string.chat_feedback_api_post_reaction_positive)
-    val negativeReaction = stringResource(R.string.chat_feedback_api_post_reaction_negative)
-
     AnimatedVisibility(
         visible = showFeedback,
         enter =
@@ -511,9 +521,6 @@ private fun AnimatedFeedback(
                             positiveReaction
                         )
                         moveFocusToFeedback = true
-                        feedbackSelection =
-                            if (isAnalyticsEnabled) FeedbackSelection.Positive
-                            else FeedbackSelection.ThankYou
                     }
                 },
                 onNegativeIconClick = {
@@ -526,9 +533,6 @@ private fun AnimatedFeedback(
                             negativeReaction
                         )
                         moveFocusToFeedback = true
-                        feedbackSelection =
-                            if (isAnalyticsEnabled) FeedbackSelection.Negative
-                            else FeedbackSelection.ThankYou
                     }
                 }
             )
@@ -545,7 +549,7 @@ private fun AnimatedFeedback(
                         moveFocusToFeedback = true
                         coroutineScope.launch {
                             delay(THANK_YOU_DELAY_MILLIS)
-                            feedbackSelection = FeedbackSelection.ThankYou
+                            surveyLinkClicked = true
                         }
                     }
                 }
@@ -563,7 +567,7 @@ private fun AnimatedFeedback(
                         moveFocusToFeedback = true
                         coroutineScope.launch {
                             delay(THANK_YOU_DELAY_MILLIS)
-                            feedbackSelection = FeedbackSelection.ThankYou
+                            surveyLinkClicked = true
                         }
                     }
                 }

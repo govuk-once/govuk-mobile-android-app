@@ -10,4 +10,5 @@ data class ChatEntry(
     val shouldAnimate: Boolean = true,
     val conversationId: String,
     var answerId: String,
+    val feedbackReaction: String? = null
 )
