@@ -202,7 +202,7 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     fun onMessagesClick() {
-        analyticsClient.settingsItemClick(MESSAGES_EVENT)
+        analyticsClient.settingsItemClick(MESSAGES_EVENT, external = false)
 
     }
 }

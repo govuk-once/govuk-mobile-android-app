@@ -66,8 +66,8 @@ class MessagesDetailViewModelTest {
             verify {
                 analyticsClient.screenView(
                     screenClass = "MessagesDetailScreen",
-                    screenName = "MessagesDetail",
-                    title = "MessagesDetailScreen"
+                    screenName = "Messages Detail",
+                    title = "Messages Detail"
                 )
             }
         }
@@ -185,6 +185,7 @@ class MessagesDetailViewModelTest {
             advanceUntilIdle()
 
             assertTrue(states.last() is MessagesDetailUiState.Error)
+            verify { analyticsClient.messagesNotFound() }
         }
     }
 

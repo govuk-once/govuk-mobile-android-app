@@ -388,6 +388,18 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a Notification is not found, then log event`() {
+        analyticsClient.messagesNotFound()
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "MessagesNotFound",
+                mapOf()
+            )
+        }
+    }
+
+    @Test
     fun `Given an AB test event, then log event`() {
         val event = mockk<AbTestEvent> {
             every { eventName } returns "test_event"

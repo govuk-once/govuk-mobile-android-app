@@ -226,6 +226,10 @@ class AnalyticsClient @Inject constructor(
         ))
     }
 
+    fun messagesNotFound() {
+        logEvent("MessagesNotFound", mapOf())
+    }
+
     fun search(searchTerm: String, section: String? = null) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm, section = section)
     }
