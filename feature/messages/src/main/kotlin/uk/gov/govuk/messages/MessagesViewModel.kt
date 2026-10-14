@@ -32,7 +32,7 @@ internal class MessagesViewModel @Inject constructor(
     companion object {
         private const val SCREEN_CLASS = "MessagesScreen"
         private const val SCREEN_NAME = "Messages"
-        private const val TITLE = "MessagesScreen"
+        private const val TITLE = "Messages"
     }
 
     private val _uiState: MutableStateFlow<MessagesUiState> =
