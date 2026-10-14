@@ -11,10 +11,10 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dvla.mapper.VehicleDetailsMapper
 import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
-import uk.gov.govuk.dvla.mapper.VehicleDetailsMapper
 import uk.gov.govuk.govkit.browser.Urls
 import javax.inject.Inject
 
@@ -35,6 +35,8 @@ internal class VehicleDetailsViewModel @Inject constructor(
 
     private companion object {
         const val SCREEN_CLASS = "VehicleDetailsScreen"
+
+        private const val SECTION_DRIVING = "Driving"
     }
 
     private val _uiState = MutableStateFlow<VehicleDetailsUiState>(VehicleDetailsUiState.Loading)
@@ -60,6 +62,15 @@ internal class VehicleDetailsViewModel @Inject constructor(
             url = url,
             external = true,
             section = section
+        )
+    }
+
+    fun onMenuItemClicked(text: String, url: String) {
+        analyticsClient.menuItemClick(
+            text = text,
+            external = true,
+            section = SECTION_DRIVING,
+            url = url
         )
     }
 

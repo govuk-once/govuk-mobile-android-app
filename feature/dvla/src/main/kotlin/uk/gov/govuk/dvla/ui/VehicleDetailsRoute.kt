@@ -36,12 +36,10 @@ import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehicleDetailsUiState
@@ -49,9 +47,13 @@ import uk.gov.govuk.dvla.VehicleDetailsViewModel
 import uk.gov.govuk.dvla.ui.component.RegistrationPlate
 import uk.gov.govuk.dvla.ui.component.StatusUiItem
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
+import uk.gov.govuk.dvla.ui.component.VehicleDetailsHeader
 import uk.gov.govuk.dvla.ui.model.KeeperUiModel
+import uk.gov.govuk.dvla.ui.model.MenuAction
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @Composable
@@ -92,6 +94,19 @@ internal fun VehicleDetailsRoute(
 
         is VehicleDetailsUiState.Success -> {
             val section = stringResource(R.string.vehicle_details_success_title)
+            val handleMenuItemClick: (OverflowMenuItem) -> Unit = { item ->
+                when (val action = item.action) {
+                    is MenuAction.WebLink -> {
+                        viewModel.onMenuItemClicked(
+                            text = item.text.displayText,
+                            url = action.url
+                        )
+                        launchBrowser(action.url)
+                    }
+
+                    is MenuAction.ClipboardCopy -> Unit
+                }
+            }
             SuccessScreen(
                 launchBrowser = { text, url ->
                     launchBrowser(url.urlToOpen)
@@ -99,6 +114,7 @@ internal fun VehicleDetailsRoute(
                 },
                 onBack = onBack,
                 onPageView = { viewModel.onPageView(section) },
+                onMenuItemClick = handleMenuItemClick,
                 details = state.details
             )
         }
@@ -110,6 +126,7 @@ private fun SuccessScreen(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     onBack: () -> Unit,
     onPageView: () -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
     details: VehicleDetailsUiModel,
     modifier: Modifier = Modifier
 ) {
@@ -122,9 +139,10 @@ private fun SuccessScreen(
             .safeDrawingPadding()
             .fillMaxWidth()
     ) {
-        // Todo - re-add overflow menu button
-        FullScreenHeader(
-            dismissStyle = HeaderDismissStyle.Back(onBack)
+        VehicleDetailsHeader(
+            onBack = onBack,
+            menuItems = details.menuItems,
+            onMenuItemClick = onMenuItemClick
         )
 
         Column(
@@ -276,7 +294,6 @@ private fun ErrorScreen(
     }
 }
 
-
 @Preview
 @Composable
 private fun SuccessScreenPreview() {
@@ -322,10 +339,22 @@ private fun SuccessScreenPreview() {
         ),
         taxStatus,
         motStatus,
-        specifications = listOf()
+        specifications = listOf(),
+        menuItems = listOf(
+            OverflowMenuItem(
+                text = AccessibleString("Change address"),
+                action = MenuAction.WebLink("https://www.gov.uk/change-naddress")
+            )
+        )
     )
     GovUkTheme {
-        SuccessScreen({ _, _ -> },{}, {}, details)
+        SuccessScreen(
+            { _, _ -> },
+            {},
+            {},
+            {},
+            details
+        )
     }
 }
 
