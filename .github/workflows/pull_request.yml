@@ -49,8 +49,22 @@ jobs:
       - name: Unit Test with Code Coverage
         run: ./gradlew koverXmlReportDebug
 
+      - name: Install Git LFS
+        run: |
+          sudo apt-get install git-lfs
+          git lfs install
+      - name: Pull LFS files
+        run: git lfs pull
+
       - name: Run Debug Screenshot tests
         run: ./gradlew validateDebugScreenshotTest
+
+      - name: Upload screenshot test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-test-report
+          path: feature/dvla/build/reports/screenshotTest/preview/debug/
 
       - name: Analyze
         run: ./gradlew sonar --info
