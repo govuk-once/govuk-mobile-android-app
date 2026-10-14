@@ -80,6 +80,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.performance)
     implementation(libs.google.tag.manager)
     implementation(libs.androidx.datastore.preferences)
 

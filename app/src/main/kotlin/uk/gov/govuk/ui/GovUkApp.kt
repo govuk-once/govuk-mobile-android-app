@@ -578,6 +578,8 @@ private fun GovUkNavHost(
                         SearchWidget(
                             onClick = { text ->
                                 onWidgetClick(text, null)
+                                // TODO - Android A/A test 10-26 - remove when the test has finished
+                                viewModel.onSearchWidgetClick()
                                 navController.navigate(SEARCH_GRAPH_ROUTE)
                             },
                             modifier = modifier

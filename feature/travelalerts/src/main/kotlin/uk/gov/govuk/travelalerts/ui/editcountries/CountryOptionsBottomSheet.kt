@@ -50,7 +50,7 @@ fun CountryOptionsBottomSheet(
     notificationsEnabled: Boolean,
     isTogglingNotifications: Boolean,
     isUnfollowing: Boolean,
-    toggleError: String?,
+    toggleError: Boolean,
     onDismiss: () -> Unit,
     onNotificationsToggle: (Boolean) -> Unit,
     onUnfollow: () -> Unit,
@@ -94,7 +94,7 @@ private fun CountryOptionsBottomSheetContent(
     notificationsEnabled: Boolean,
     isTogglingNotifications: Boolean,
     isUnfollowing: Boolean,
-    toggleError: String?,
+    toggleError: Boolean,
     onDismiss: () -> Unit,
     onNotificationsToggle: (Boolean) -> Unit,
     onUnfollow: () -> Unit,
@@ -120,7 +120,7 @@ private fun CountryOptionsBottomSheetContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = null,
+                    contentDescription = stringResource(uk.gov.govuk.design.R.string.content_desc_close),
                     tint = GovUkTheme.colourScheme.textAndIcons.iconSecondary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -142,7 +142,8 @@ private fun CountryOptionsBottomSheetContent(
         ToggleListItem(
             title = stringResource(R.string.edit_countries_notifications),
             checked = notificationsEnabled,
-            onCheckedChange = if (!isTogglingNotifications && !isUnfollowing) onNotificationsToggle else ({} ),
+            onCheckedChange = onNotificationsToggle,
+            enabled = !isTogglingNotifications && !isUnfollowing,
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium),
             backgroundOverride = GovUkTheme.colourScheme.surfaces.listAlt
         )
@@ -187,7 +188,7 @@ private fun CountryOptionsBottomSheetContent(
         )
     }
 
-    if (toggleError != null) {
+    if (toggleError) {
         AlertDialog(
             onDismissRequest = onClearToggleError,
             title = { Text(stringResource(R.string.edit_countries_error_title)) },
@@ -203,6 +204,7 @@ private fun CountryOptionsBottomSheetContent(
 
 @Composable
 private fun DragHandle(modifier: Modifier = Modifier) {
+    val dragHandleDesc = stringResource(uk.gov.govuk.design.R.string.content_desc_drag_handle)
     Box(
         modifier = modifier
             .padding(top = 22.dp, bottom = 2.dp)
@@ -211,7 +213,7 @@ private fun DragHandle(modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(2.dp)
             )
-            .semantics { contentDescription = "Bottom sheet drag handle" }
+            .semantics { contentDescription = dragHandleDesc }
     )
 }
 
@@ -227,7 +229,7 @@ private fun CountryOptionsBottomSheetContentPreview() {
             notificationsEnabled = true,
             isTogglingNotifications = false,
             isUnfollowing = false,
-            toggleError = null,
+            toggleError = false,
             onDismiss = {},
             onNotificationsToggle = {},
             onUnfollow = {},
