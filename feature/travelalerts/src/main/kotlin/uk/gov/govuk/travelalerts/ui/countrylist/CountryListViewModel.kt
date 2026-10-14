@@ -29,7 +29,6 @@ class CountryListViewModel @Inject constructor(
         private const val TITLE = "Follow a country"
         private const val SECTION = "Travel Abroad Notifications"
         private const val SEARCH_SECTION = "country_search"
-        private const val HELP_AND_FEEDBACK_TEXT = "HelpAndFeedback"
     }
 
     sealed class State {
@@ -105,7 +104,8 @@ class CountryListViewModel @Inject constructor(
         updateLoaded { copy(selectedCountry = null) }
     }
 
-    fun onNotNowNotifications(country: Country) {
+    fun onNotNowNotifications(country: Country, text: String) {
+        analyticsClient.widgetClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             updateLoaded { copy(isSaving = true) }
             when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = false)) {
@@ -121,7 +121,8 @@ class CountryListViewModel @Inject constructor(
         }
     }
 
-    fun onGetNotificationsClick(country: Country) {
+    fun onGetNotificationsClick(country: Country, text: String) {
+        analyticsClient.widgetClick(text = text, external = false, section = SECTION)
         if (notificationsRepo.permissionGranted()) {
             notificationsRepo.giveConsent()
             viewModelScope.launch {
@@ -152,9 +153,9 @@ class CountryListViewModel @Inject constructor(
         }
     }
 
-    fun onHelpAndFeedbackClick() {
+    fun onHelpAndFeedbackClick(text: String) {
         analyticsClient.buttonClick(
-            text = HELP_AND_FEEDBACK_TEXT,
+            text = text,
             url = Urls.HELP_AND_FEEDBACK_URL,
             external = true,
             section = SECTION

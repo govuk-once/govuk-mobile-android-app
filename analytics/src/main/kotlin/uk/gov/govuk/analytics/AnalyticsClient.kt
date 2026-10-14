@@ -414,6 +414,18 @@ class AnalyticsClient @Inject constructor(
         return parameters + Pair("language", Locale.getDefault().language)
     }
 
+    fun notificationsRationaleView(origin: String) {
+        logEvent("notifications_rationale_view", mapOf("origin" to origin))
+    }
+
+    fun notificationsRationaleSettingsContinue(origin: String) {
+        logEvent("notifications_rationale_settings_continue", mapOf("origin" to origin))
+    }
+
+    fun notificationsRationaleSettingsCancel(origin: String) {
+        logEvent("notifications_rationale_settings_cancel", mapOf("origin" to origin))
+    }
+
     private fun logEvent(name: String, parameters: Map<String, Any>) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             analyticsCoordinator.logEvent(name, parameters)

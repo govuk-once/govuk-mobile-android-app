@@ -8,6 +8,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.analytics.AnalyticsCoordinatorInterface
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.NotificationsPermissionResolver
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -32,7 +33,7 @@ class NotificationsRationaleViewModelTest {
     private val travelAlertsRepo = mockk<TravelAlertsRepo>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val permissionResolver = mockk<NotificationsPermissionResolver>()
-    private val analyticsCoordinator = mockk<AnalyticsCoordinatorInterface>(relaxed = true)
+    private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val savedStateHandle = SavedStateHandle()
     private lateinit var viewModel: NotificationsRationaleViewModel
 
@@ -43,7 +44,7 @@ class NotificationsRationaleViewModelTest {
             notificationsRepo,
             travelAlertsRepo,
             permissionResolver,
-            analyticsCoordinator,
+            analyticsClient,
             savedStateHandle
         )
     }
@@ -73,7 +74,7 @@ class NotificationsRationaleViewModelTest {
 
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onNotNow("france")
+        viewModel.onNotNow("france", "Not now")
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ExitToTopic
@@ -89,7 +90,7 @@ class NotificationsRationaleViewModelTest {
 
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Error()
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onNotNow("france")
+        viewModel.onNotNow("france", "Not now")
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ExitToTopic
@@ -104,7 +105,7 @@ class NotificationsRationaleViewModelTest {
         }
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onNotNow("france")
+        viewModel.onNotNow("france", "Not now")
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ReturnToEdit
@@ -137,7 +138,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Error()
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ExitToTopic
@@ -150,7 +151,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
 
         viewModel.onPageView("france")
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
 
         assertEquals(NotificationsRationaleViewModel.State.Alert, viewModel.uiState.value)
     }
@@ -167,7 +168,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ExitToTopic
@@ -181,7 +182,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { notificationsRepo.permissionGranted() } returns false
 
         viewModel.onPageView("france")
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertContinue()
         viewModel.onResume("france")
 
@@ -201,7 +202,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertContinue()
         viewModel.onResume("france")
 
@@ -223,7 +224,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.toggleNotifications("france", enabled = true) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertContinue()
         viewModel.onResume("france")
 
@@ -240,10 +241,11 @@ class NotificationsRationaleViewModelTest {
         coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
 
         viewModel.onPageView("france")
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertCancelClicked()
 
         assertEquals(NotificationsRationaleViewModel.State.Alert, viewModel.uiState.value)
+        verify { analyticsClient.notificationsRationaleSettingsCancel("FOLLOW") }
     }
 
     @Test
@@ -252,7 +254,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
 
         viewModel.onPageView("france")
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertContinue()
 
         val events = mutableListOf<NotificationsRationaleViewModel.NavigationEvent>()
@@ -276,7 +278,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertDismissed()
 
         assertEquals(1, events.size)
@@ -285,9 +287,22 @@ class NotificationsRationaleViewModelTest {
     }
 
     @Test
-    fun `Given onPageView called with EDIT origin, then analytics is recorded with EDIT`() = runTest {
+    fun `Given onPageView called, then rationale view analytics event is fired with origin`() = runTest {
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        assertEquals(NotificationsRationaleViewModel.State.Default, viewModel.uiState.value)
+
+        verify { analyticsClient.notificationsRationaleView("EDIT") }
+    }
+
+    @Test
+    fun `Given settings alert continue tapped, then settings continue analytics event is fired with origin`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+
+        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+        viewModel.onSettingsAlertContinue()
+
+        verify { analyticsClient.notificationsRationaleSettingsContinue("FOLLOW") }
     }
 
     @Test
@@ -302,7 +317,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.toggleNotifications("france", enabled = true) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ReturnToEdit
@@ -326,7 +341,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.toggleNotifications("france", enabled = false) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
 
         assertEquals(1, events.size)
         val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ReturnToEdit
@@ -347,7 +362,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { travelAlertsRepo.toggleNotifications("france", enabled = false) } returns Result.Success(Unit)
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertDismissed()
 
         assertEquals(1, events.size)
@@ -357,6 +372,55 @@ class NotificationsRationaleViewModelTest {
         assertEquals(false, event.notificationsEnabled)
     }
 
+    // Analytics — TA-07, TA-08, TA-09
+
+    @Test
+    fun `Given Agree tapped, then allow notifications analytics event is fired`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.GRANTED
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
+        viewModel.onPageView("france")
+
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Agree and continue",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given Not now tapped on permission screen, then not now analytics event is fired`() = runTest {
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
+        viewModel.onPageView("france")
+
+        viewModel.onNotNow("france", "Not now")
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Not now",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given privacy link tapped, then read privacy notice analytics event is fired`() {
+        viewModel.onPrivacyLinkClick("Read the privacy notice")
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Read the privacy notice",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
     @Test
     fun `Given on resume after Settings Continue and permission denied with EDIT origin, then state returns to Default`() = runTest {
         val permissionStatus = mockk<PermissionStatus>()
@@ -364,7 +428,7 @@ class NotificationsRationaleViewModelTest {
         coEvery { notificationsRepo.permissionGranted() } returns false
 
         viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onAgreeToContinue(permissionStatus, androidVersion = 33)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
         viewModel.onSettingsAlertContinue()
         viewModel.onResume("france")
 

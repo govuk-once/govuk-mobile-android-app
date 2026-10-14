@@ -116,6 +116,10 @@ fun CountryListScreen(
         }
     }
 
+    val notNowText = stringResource(R.string.follow_country_notification_not_now)
+    val getNotificationsText = stringResource(R.string.follow_country_notification_get)
+    val footerLinkText = stringResource(R.string.country_list_footer_link_text)
+
     Column(
         modifier
             .fillMaxSize()
@@ -133,7 +137,10 @@ fun CountryListScreen(
                 onSearchQueryChange = viewModel::onSearchQueryChange,
                 onSearchSubmitted = viewModel::onSearchSubmitted,
                 onCountrySelected = viewModel::onCountrySelected,
-                onClickFooter = onClickFooter
+                onClickFooter = {
+                    viewModel.onHelpAndFeedbackClick(footerLinkText)
+                    onClickFooter()
+                }
             )
         }
     }
@@ -145,8 +152,8 @@ fun CountryListScreen(
             sheetState = sheetState,
             isSaving = isSaving,
             onDismiss = viewModel::onDismissPreferenceSheet,
-            onNotNow = { viewModel.onNotNowNotifications(selectedCountry) },
-            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry) }
+            onNotNow = { viewModel.onNotNowNotifications(selectedCountry, notNowText) },
+            onGetNotifications = { viewModel.onGetNotificationsClick(selectedCountry, getNotificationsText) }
         )
     }
 }
