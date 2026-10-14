@@ -30,8 +30,8 @@ import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
-import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
 import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
@@ -203,7 +203,7 @@ class SettingsViewModelTest {
         verify {
             analyticsClient.settingsItemClick(
                 text = HELP_AND_FEEDBACK_EVENT,
-                url = HELP_AND_FEEDBACK_URL
+                url = Urls.HELP_AND_FEEDBACK_URL
             )
         }
     }

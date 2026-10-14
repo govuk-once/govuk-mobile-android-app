@@ -8,6 +8,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import uk.gov.govuk.govkit.browser.DeviceInfo
+import uk.gov.govuk.govkit.browser.getHelpAndFeedbackUrl
 import uk.gov.govuk.travelalerts.ui.countrylist.CountryListScreen
 import uk.gov.govuk.travelalerts.ui.editcountries.EditCountriesScreen
 import uk.gov.govuk.travelalerts.ui.notificationsprompt.NotificationsRationaleScreen
@@ -33,7 +35,8 @@ val travelAlertsDeepLinks = mapOf(
 fun NavGraphBuilder.travelAlertsGraph(
     navController: NavController,
     launchBrowser: (url: String) -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
+    appVersion: String
 ) {
     composable(
         route = COUNTRY_LIST_ROUTE,
@@ -42,6 +45,10 @@ fun NavGraphBuilder.travelAlertsGraph(
     ) {
         CountryListScreen(
             onClose = { navController.popBackStack() },
+            onClickFooter = {
+                val url = getHelpAndFeedbackUrl(appVersion, DeviceInfo.fromBuild())
+                launchBrowser(url)
+            },
             navController = navController
         )
     }
