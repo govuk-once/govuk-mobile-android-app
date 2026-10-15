@@ -1259,4 +1259,40 @@ class AnalyticsClientTest {
             )
         }
     }
+
+    @Test
+    fun `Given notifications rationale viewed, then log event`() {
+        analyticsClient.notificationsRationaleView("FOLLOW")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_view",
+                mapOf("origin" to "FOLLOW")
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale settings continue tapped, then log event`() {
+        analyticsClient.notificationsRationaleSettingsContinue("EDIT")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_settings_continue",
+                mapOf("origin" to "EDIT")
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale settings cancel tapped, then log event`() {
+        analyticsClient.notificationsRationaleSettingsCancel("FOLLOW")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_settings_cancel",
+                mapOf("origin" to "FOLLOW")
+            )
+        }
+    }
 }

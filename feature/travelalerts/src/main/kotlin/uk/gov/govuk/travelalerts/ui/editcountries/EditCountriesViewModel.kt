@@ -31,6 +31,8 @@ class EditCountriesViewModel @Inject constructor(
         private const val SCREEN_CLASS = "EditCountriesScreen"
         private const val SCREEN_NAME = "Edit countries"
         private const val TITLE = "Edit countries"
+        private const val SECTION = "Travel Abroad Notifications"
+        private const val UNFOLLOW_ACTION = "Remove"
     }
 
     sealed class State {
@@ -118,6 +120,10 @@ class EditCountriesViewModel @Inject constructor(
     }
 
     fun unfollowCountry(slug: String) {
+        val countryName = (_uiState.value as? State.Loaded)?.countries?.find { it.slug == slug }?.name
+        countryName?.let {
+            analyticsClient.toggleFunction(text = it, section = SECTION, action = UNFOLLOW_ACTION)
+        }
         viewModelScope.launch {
             updateLoaded { copy(isUnfollowing = true, unfollowError = false) }
             val result = travelAlertsRepo.unfollowCountry(slug)

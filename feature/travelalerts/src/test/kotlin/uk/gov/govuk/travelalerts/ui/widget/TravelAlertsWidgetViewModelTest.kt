@@ -167,6 +167,19 @@ class TravelAlertsWidgetViewModelTest {
     }
 
     @Test
+    fun `Given follow country click, then analytics event is fired`() {
+        viewModel.onFollowCountryClick("Follow countries for updates")
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "Follow countries for updates",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
     fun `Given row click, then analytics event is fired with correct parameters`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
@@ -178,7 +191,7 @@ class TravelAlertsWidgetViewModelTest {
         verify {
             analyticsClient.widgetClick(
                 text = "France",
-                url = "govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/france",
+                url = "https://www.gov.uk/foreign-travel-advice/france",
                 external = true,
                 section = "Travel Abroad Notifications"
             )

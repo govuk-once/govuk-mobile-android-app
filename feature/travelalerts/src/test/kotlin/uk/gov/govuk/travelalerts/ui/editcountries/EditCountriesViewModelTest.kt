@@ -272,6 +272,42 @@ class EditCountriesViewModelTest {
     }
 
     @Test
+    fun `Given unfollow country tapped, then toggle analytics event is fired`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france") } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.unfollowCountry("france")
+
+        verify {
+            analyticsClient.toggleFunction(
+                text = "France",
+                section = "Travel Abroad Notifications",
+                action = "Remove"
+            )
+        }
+    }
+
+    @Test
+    fun `Given unfollow country tapped, then analytics fires before async operation`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france") } returns Result.Error()
+        viewModel.onPageView()
+
+        viewModel.unfollowCountry("france")
+
+        verify {
+            analyticsClient.toggleFunction(
+                text = "France",
+                section = "Travel Abroad Notifications",
+                action = "Remove"
+            )
+        }
+    }
+
+    @Test
     fun `Given unfollow country succeeds, then page reloads and isUnfollowing is false`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)

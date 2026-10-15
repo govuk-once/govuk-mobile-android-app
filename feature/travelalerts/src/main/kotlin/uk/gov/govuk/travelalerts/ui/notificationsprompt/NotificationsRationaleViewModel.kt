@@ -1,21 +1,18 @@
 package uk.gov.govuk.travelalerts.ui.notificationsprompt
 
 import android.os.Build
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.shouldShowRationale
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import uk.gov.govuk.analytics.AnalyticsCoordinatorInterface
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.NotificationsPermissionResolver
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -27,7 +24,7 @@ class NotificationsRationaleViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val travelAlertsRepo: TravelAlertsRepo,
     private val permissionResolver: NotificationsPermissionResolver,
-    private val analyticsCoordinator: AnalyticsCoordinatorInterface,
+    private val analyticsClient: AnalyticsClient,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,6 +37,7 @@ class NotificationsRationaleViewModel @Inject constructor(
         private const val STATE_LOADING = "Loading"
         private const val STATE_DEFAULT = "Default"
         private const val STATE_ALERT = "Alert"
+        private const val SECTION = "Travel Abroad Notifications"
     }
 
     sealed class State {
@@ -95,10 +93,7 @@ class NotificationsRationaleViewModel @Inject constructor(
         selectedCountrySlug = countrySlug
         this.origin = origin
         setUiState(State.Default)
-        analyticsCoordinator.logEvent(
-            "notifications_rationale_view",
-            mapOf("origin" to origin.name)
-        )
+        analyticsClient.notificationsRationaleView(origin.name)
     }
 
     private fun setUiState(state: State) {
@@ -111,11 +106,8 @@ class NotificationsRationaleViewModel @Inject constructor(
         savedStateHandle[KEY_UI_STATE] = stateName
     }
 
-    fun onNotNow(countrySlug: String) {
-        analyticsCoordinator.logEvent(
-            "notifications_rationale_not_now",
-            mapOf("origin" to origin.name)
-        )
+    fun onNotNow(countrySlug: String, text: String) {
+        analyticsClient.buttonClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             setUiState(State.Loading)
             val result = when (origin) {
@@ -134,12 +126,10 @@ class NotificationsRationaleViewModel @Inject constructor(
     @OptIn(ExperimentalPermissionsApi::class)
     fun onAgreeToContinue(
         permissionStatus: PermissionStatus,
+        text: String,
         androidVersion: Int = Build.VERSION.SDK_INT
     ) {
-        analyticsCoordinator.logEvent(
-            "notifications_rationale_agree",
-            mapOf("origin" to origin.name)
-        )
+        analyticsClient.buttonClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             val path = permissionResolver.resolve(permissionStatus, androidVersion)
 
@@ -163,19 +153,13 @@ class NotificationsRationaleViewModel @Inject constructor(
     }
 
     fun onSettingsAlertContinue() {
-        analyticsCoordinator.logEvent(
-            "notifications_rationale_settings_continue",
-            mapOf("origin" to origin.name)
-        )
+        analyticsClient.notificationsRationaleSettingsContinue(origin.name)
         pending = Pending.SETTINGS
         setUiState(State.Default)
     }
 
     fun onSettingsAlertCancelClicked() {
-        analyticsCoordinator.logEvent(
-            "notifications_rationale_settings_cancel",
-            mapOf("origin" to origin.name)
-        )
+        analyticsClient.notificationsRationaleSettingsCancel(origin.name)
     }
 
     fun onSettingsAlertDismissed() {
@@ -185,6 +169,10 @@ class NotificationsRationaleViewModel @Inject constructor(
             return
         }
         selectedCountrySlug?.let { complete(false) }
+    }
+
+    fun onPrivacyLinkClick(text: String) {
+        analyticsClient.buttonClick(text = text, external = false, section = SECTION)
     }
 
     fun onResume(countrySlug: String) {

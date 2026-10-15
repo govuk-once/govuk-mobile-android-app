@@ -70,6 +70,9 @@ fun NotificationsRationaleScreen(
     val uiState = viewModel.uiState.collectAsState()
     val permissionStatus = getNotificationsPermissionStatus()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val agreeText = stringResource(R.string.notifications_rationale_agree)
+    val notNowText = stringResource(R.string.notifications_rationale_not_now)
+    val privacyText = stringResource(R.string.notifications_rationale_privacy_link)
 
     LaunchedEffect(Unit) {
         viewModel.onPageView(countrySlug, origin)
@@ -125,7 +128,7 @@ fun NotificationsRationaleScreen(
     }
 
     BackHandler(enabled = origin == NotificationsRationaleViewModel.Origin.EDIT) {
-        viewModel.onNotNow(countrySlug)
+        viewModel.onNotNow(countrySlug, notNowText)
     }
 
     when (uiState.value) {
@@ -142,8 +145,9 @@ fun NotificationsRationaleScreen(
 
         is NotificationsRationaleViewModel.State.Default -> {
             NotificationsRationaleScreenContent(
-                onNotNow = { viewModel.onNotNow(countrySlug) },
-                onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus) },
+                onNotNow = { viewModel.onNotNow(countrySlug, notNowText) },
+                onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus, agreeText) },
+                onPrivacyLinkClick = { viewModel.onPrivacyLinkClick(privacyText) },
                 launchBrowser = launchBrowser
             )
         }
@@ -151,8 +155,9 @@ fun NotificationsRationaleScreen(
         is NotificationsRationaleViewModel.State.Alert -> {
             val context = LocalContext.current
             NotificationsRationaleScreenContent(
-                onNotNow = { viewModel.onNotNow(countrySlug) },
-                onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus) },
+                onNotNow = { viewModel.onNotNow(countrySlug, notNowText) },
+                onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus, agreeText) },
+                onPrivacyLinkClick = { viewModel.onPrivacyLinkClick(privacyText) },
                 launchBrowser = launchBrowser,
                 showSettingsAlert = true,
                 onSettingsAlertCancel = { viewModel.onSettingsAlertCancelClicked() },
@@ -170,6 +175,7 @@ private fun NotificationsRationaleScreenContent(
     modifier: Modifier = Modifier,
     onNotNow: () -> Unit,
     onAgreeContinue: () -> Unit,
+    onPrivacyLinkClick: () -> Unit,
     launchBrowser: (url: String) -> Unit,
     showSettingsAlert: Boolean = false,
     onSettingsAlertCancel: () -> Unit = {},
@@ -233,7 +239,10 @@ private fun NotificationsRationaleScreenContent(
 
             PrivacyPolicyLink(
                 text = stringResource(R.string.notifications_rationale_privacy_link),
-                onClick = { _, url -> launchBrowser(url) }
+                onClick = { _, url ->
+                    onPrivacyLinkClick()
+                    launchBrowser(url)
+                }
             )
             LargeVerticalSpacer()
             MediumVerticalSpacer()
@@ -274,6 +283,7 @@ private fun NotificationsRationaleScreenContentPreview() {
         NotificationsRationaleScreenContent(
             onNotNow = {},
             onAgreeContinue = {},
+            onPrivacyLinkClick = {},
             launchBrowser = {}
         )
     }

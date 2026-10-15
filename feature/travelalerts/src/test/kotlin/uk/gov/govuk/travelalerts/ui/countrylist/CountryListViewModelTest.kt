@@ -243,7 +243,7 @@ class CountryListViewModelTest {
         }
 
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = false) } returns Result.Success(Unit)
-        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first(), "Not now")
 
         assertEquals(1, events.size)
         assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToTopic)
@@ -257,7 +257,7 @@ class CountryListViewModelTest {
         viewModel.onCountrySelected(country)
         coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
 
-        viewModel.onNotNowNotifications(country)
+        viewModel.onNotNowNotifications(country, "Not now")
 
         val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
         assertEquals(null, state.selectedCountry)
@@ -271,11 +271,61 @@ class CountryListViewModelTest {
         }
 
         coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
-        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first(), "Not now")
 
         assertEquals(1, events.size)
         val event = events.first() as CountryListViewModel.NavigationEvent.NavigateToTopic
         assertTrue(event.error)
+    }
+
+    // onNotNowNotifications — analytics
+
+    @Test
+    fun `Given Not now tapped on notifications prompt, then analytics event is fired`() = runTest {
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
+
+        viewModel.onNotNowNotifications(TravelAlertsFixtures.mockCountries.first(), "Not now")
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "Not now",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    // onGetNotificationsClick — analytics
+
+    @Test
+    fun `Given Get notifications tapped, then analytics event is fired`() = runTest {
+        every { notificationsRepo.permissionGranted() } returns true
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
+
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "Get notifications",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given Get notifications tapped with permissions not granted, then analytics event is still fired`() = runTest {
+        every { notificationsRepo.permissionGranted() } returns false
+
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "Get notifications",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
     }
 
     // onGetNotificationsClick
@@ -289,7 +339,7 @@ class CountryListViewModelTest {
         }
 
         coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
-        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
 
         assertEquals(1, events.size)
         assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToTopic)
@@ -304,7 +354,7 @@ class CountryListViewModelTest {
         }
 
         coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
-        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
 
         assertEquals(1, events.size)
         val event = events.first() as CountryListViewModel.NavigationEvent.NavigateToTopic
@@ -319,7 +369,7 @@ class CountryListViewModelTest {
             viewModel.navigationEvent.collect { events.add(it) }
         }
 
-        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
 
         assertEquals(1, events.size)
         assertTrue(events.first() is CountryListViewModel.NavigationEvent.NavigateToNotificationsRationale)
@@ -330,11 +380,11 @@ class CountryListViewModelTest {
 
     @Test
     fun `Given help and feedback tapped, then analytics event is fired`() {
-        viewModel.onHelpAndFeedbackClick()
+        viewModel.onHelpAndFeedbackClick("Tell us the country you're looking for")
 
         verify {
             analyticsClient.buttonClick(
-                text = "HelpAndFeedback",
+                text = "Tell us the country you're looking for",
                 url = Urls.HELP_AND_FEEDBACK_URL,
                 external = true,
                 section = "Travel Abroad Notifications"
