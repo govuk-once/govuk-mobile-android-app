@@ -51,7 +51,7 @@ class AuthRepo @Inject constructor(
 
     val authIntent: Intent by lazy {
         val intent = CustomTabsIntent.Builder()
-            .setEphemeralBrowsingEnabled(true)
+            .setEphemeralBrowsingEnabled(false)
             .build()
         authService.getAuthorizationRequestIntent(authRequest, intent)
     }
