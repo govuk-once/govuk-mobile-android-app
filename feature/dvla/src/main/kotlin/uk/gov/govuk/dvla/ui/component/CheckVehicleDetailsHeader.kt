@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,12 +34,14 @@ internal fun CheckVehicleDetailsHeader(
     menuItems: List<OverflowMenuItem>,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier,
+    backgroundColour: Color = GovUkTheme.colourScheme.surfaces.background,
     actionColour: Color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
 ) {
     Row(
         modifier = modifier
             .height(64.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(backgroundColour),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = onClose) {

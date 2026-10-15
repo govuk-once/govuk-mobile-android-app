@@ -107,7 +107,6 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         val expiryDate = vehicle.taxExpiryDate
         return when (vehicle.taxStatus) {
             TaxStatus.TAXED -> getValid(getTaxStatusTitle(), expiryDate)
-
             TaxStatus.UNTAXED -> getUntaxed()
             TaxStatus.SORN -> getSorn(vehicle.sornStart)
             TaxStatus.NOT_TAXED_FOR_ON_ROAD_USE -> getTaxNotNeeded()

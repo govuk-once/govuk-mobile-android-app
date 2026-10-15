@@ -25,5 +25,5 @@ data class DvlaUrls(
     @SerializedName("buyingUsedCarChecks") val buyingUsedCarChecks: String,
     @SerializedName("reportAbandonedVehicle") val reportAbandonedVehicle: String,
     @SerializedName("reportUntaxedVehicle") val reportUntaxedVehicle: String,
-    @SerializedName("reportNoMot") val reportNoMot: String
+    @SerializedName("reportNoMot") val reportNoMot: String,
 )

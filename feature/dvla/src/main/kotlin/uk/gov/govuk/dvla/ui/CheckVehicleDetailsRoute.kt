@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.dvla.CheckVehicleDetailsUiState
 import uk.gov.govuk.dvla.CheckVehicleDetailsViewModel
@@ -53,7 +54,7 @@ internal fun CheckVehicleDetailsRoute(
         is CheckVehicleDetailsUiState.Success -> {
             CheckVehicleDetailsScreen(
                 details = state.details,
-                onClose = {
+                onClose = dropUnlessResumed {
                     detailsViewModel.onCloseClicked()
                     onBack()
                 },
@@ -87,7 +88,6 @@ internal fun CheckVehicleDetailsRoute(
         }
 
         is CheckVehicleDetailsUiState.Error -> {
-
             RunOnceLaunchedEffect {
                 searchViewModel.onResultUnavailable(state.regNumber)
                 showSearchSheet = true
