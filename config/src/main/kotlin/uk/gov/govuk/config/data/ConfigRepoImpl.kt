@@ -105,8 +105,7 @@ class ConfigRepoImpl @Inject constructor(
     override val isFlexEnabled: Boolean
         get() = safeConfig.releaseFlags.flex
 
-    override val isDvlaLinkEnabled: Boolean
-        get() = safeConfig.releaseFlags.dvla
+    override val isDvlaLinkEnabled: Boolean = true
 
     override val isMessagesEnabled: Boolean
         get() = safeConfig.releaseFlags.messages
