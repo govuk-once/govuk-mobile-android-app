@@ -94,7 +94,14 @@ internal class TravelAlertsRepoImpl @Inject constructor(
             )
         }, authRepo = authRepo)
 
-        if (result is Success) groups = null
+        if (result is Success) {
+            groups = groups?.let { cached ->
+                cached.copy(
+                    value = cached.value.filterNot { it.group == slug } +
+                        Group(namespace = "travel", group = slug, subgroup = joinSubgroup)
+                )
+            }
+        }
 
         return result
     }
