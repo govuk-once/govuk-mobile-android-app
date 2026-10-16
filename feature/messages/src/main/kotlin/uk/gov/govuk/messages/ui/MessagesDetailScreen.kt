@@ -327,7 +327,7 @@ private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun MessagesDetailLoadingPreview() {
+internal fun MessagesDetailLoadingPreview() {
     GovUkTheme {
         MessagesDetailScreen(
             {},
@@ -341,7 +341,7 @@ private fun MessagesDetailLoadingPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun MessagesDetailErrorPreview() {
+internal fun MessagesDetailErrorPreview() {
     GovUkTheme {
         MessagesDetailScreen(
             {},
@@ -355,7 +355,7 @@ private fun MessagesDetailErrorPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun MessagesDetailLoadedPreview() {
+internal fun MessagesDetailLoadedPreview() {
     GovUkTheme {
         MessagesDetailScreen(
             {},
@@ -368,7 +368,7 @@ private fun MessagesDetailLoadedPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ConfirmationDialogPreview() {
+internal fun ConfirmationDialogPreview() {
     GovUkTheme {
         ConfirmationDialog({}, {})
     }
