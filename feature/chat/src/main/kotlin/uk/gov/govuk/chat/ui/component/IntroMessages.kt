@@ -236,7 +236,7 @@ private fun ExampleQuestion(
 
 @PreviewLightDark
 @Composable
-private fun MessagePreview() {
+internal fun MessagePreview() {
     GovUkTheme {
         Message()
     }
