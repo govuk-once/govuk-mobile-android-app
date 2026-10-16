@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
     alias(libs.plugins.kover)
+    alias(libs.plugins.screenshot)
 }
 
 val privacyPolicyUrl: String by project
@@ -36,6 +37,8 @@ android {
         compose = true
         buildConfig = true
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -54,4 +57,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    screenshotTestImplementation(libs.screenshot.validation.api) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+    }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }
