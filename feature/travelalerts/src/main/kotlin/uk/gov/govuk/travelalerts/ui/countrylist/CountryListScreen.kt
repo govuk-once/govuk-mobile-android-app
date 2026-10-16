@@ -333,7 +333,7 @@ private fun CountryListError(
 
 @Composable
 @PreviewLightDark
-private fun CountryListLoadingPreview() {
+internal fun CountryListLoadingPreview() {
     GovUkTheme {
         Column(Modifier.fillMaxSize()) {
             CountryListHeader(onClose = {})
@@ -344,7 +344,7 @@ private fun CountryListLoadingPreview() {
 
 @Composable
 @PreviewLightDark
-private fun CountryListErrorPreview() {
+internal fun CountryListErrorPreview() {
     GovUkTheme {
         Column(Modifier.fillMaxSize()) {
             CountryListHeader(onClose = {})
@@ -355,7 +355,7 @@ private fun CountryListErrorPreview() {
 
 @Composable
 @PreviewLightDark
-private fun CountryListLoadedPreview() {
+internal fun CountryListLoadedPreview() {
     val countries = listOf(
         Country("Afghanistan", "afghanistan", "2022-01-01T00:00:00Z", listOf()),
         Country("Albania", "albania", "2023-01-01T00:00:00Z", listOf()),
@@ -383,7 +383,7 @@ private fun CountryListLoadedPreview() {
 
 @Composable
 @PreviewLightDark
-private fun CountryListLoadedEmptyPreview() {
+internal fun CountryListLoadedEmptyPreview() {
     GovUkTheme {
         Column(
             Modifier.fillMaxSize(),
