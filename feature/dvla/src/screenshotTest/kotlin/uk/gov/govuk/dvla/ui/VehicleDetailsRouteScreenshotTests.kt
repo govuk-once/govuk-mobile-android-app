@@ -7,10 +7,10 @@ import com.android.tools.screenshot.PreviewTest
 
 internal class VehicleDetailsRouteScreenshotTests {
     @PreviewTest
-    @Preview(name = "SuccessScreen", showBackground = true)
+    @Preview(name = "VehicleDetailsScreen", showBackground = true)
     @Composable
-    fun SuccessScreenScreenshots() {
-        SuccessScreenPreview()
+    fun VehicleDetailsScreenScreenshots() {
+        VehicleDetailsScreenPreview()
     }
 
     @PreviewTest
