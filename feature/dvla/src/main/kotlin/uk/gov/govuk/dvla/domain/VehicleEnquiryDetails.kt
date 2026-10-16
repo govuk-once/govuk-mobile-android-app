@@ -37,3 +37,30 @@ internal fun VehicleEnquiryResponse.toDomainModel(): VehicleEnquiryDetails {
         exhaustEmissionsCo2 = vehicle.exhaustEmissionsCo2
     )
 }
+
+internal fun VehicleEnquiryDetails.toVehicleDetails(): VehicleDetails {
+    return VehicleDetails(
+        summary = VehicleSummary(
+            vehicleId = this.vehicleId,
+            registration = this.registration ?: "",
+            make = this.make ?: "",
+            model = null,
+            taxStatus = this.taxStatus,
+            taxExpiryDate = this.taxExpiryDate,
+            motStatus = this.motStatus,
+            motExpiryDate = this.motExpiryDate,
+            sornStart = null,
+            currentLicencePaymentMethod = null
+        ),
+        dateOfFirstRegistration = this.dateOfFirstRegistration,
+        fuelType = this.fuelType,
+        colour = this.colour,
+        secondaryColour = this.secondaryColour,
+        engineCapacity = this.engineCapacity,
+        exhaustEmissionsCo2 = this.exhaustEmissionsCo2,
+        keeperTitle = null,
+        keeperFirstNames = null,
+        keeperLastName = null,
+        keeperFullAddress = null
+    )
+}

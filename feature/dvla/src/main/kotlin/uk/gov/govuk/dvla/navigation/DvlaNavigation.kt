@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import uk.gov.govuk.dvla.DvlaViewModel
+import uk.gov.govuk.dvla.ui.CheckVehicleDetailsRoute
 import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
 import uk.gov.govuk.dvla.ui.VehicleDetailsRoute
@@ -31,6 +32,7 @@ fun NavGraphBuilder.dvlaGraph(
     onWebFlowClosed: () -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
+    onVehicleFound: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -96,13 +98,13 @@ fun NavGraphBuilder.dvlaGraph(
                 navArgument(ARG_REG_NUMBER) { type = NavType.StringType }
             )
         ) {
-            VehicleDetailsRoute(
+            CheckVehicleDetailsRoute(
                 launchBrowser = launchBrowser,
                 onBack = onBack,
-                modifier = modifier
+                modifier = modifier,
+                onVehicleFound = onVehicleFound
             )
         }
-
     }
 }
 
@@ -119,5 +121,9 @@ fun NavController.navigateToVehicleDetails(vehicleId: Int) {
 }
 
 fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
-    navigate("$VEHICLE_SEARCH_RESULT_ROUTE/$regNumber")
+    navigate("$VEHICLE_SEARCH_RESULT_ROUTE/$regNumber") {
+        popUpTo("$VEHICLE_SEARCH_RESULT_ROUTE/{$ARG_REG_NUMBER}") {
+            inclusive = true
+        }
+    }
 }

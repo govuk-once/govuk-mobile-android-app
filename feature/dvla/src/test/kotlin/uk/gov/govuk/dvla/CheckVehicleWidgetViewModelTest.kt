@@ -194,4 +194,14 @@ class CheckVehicleWidgetViewModelTest {
 
         assertEquals(CheckVehicleSheetState.Input(), viewModel.sheetState.value)
     }
+
+    @Test
+    fun `When onResultUnavailable is called, then state is SEARCH_UNAVAILABLE error with the registration number`() {
+        viewModel.onResultUnavailable("AB12CDE")
+
+        assertEquals(
+            CheckVehicleSheetState.Error("AB12CDE", CheckVehicleError.SEARCH_UNAVAILABLE),
+            viewModel.sheetState.value
+        )
+    }
 }

@@ -24,8 +24,9 @@ class VehicleDetailsMapperTest {
 
     private val stringProvider = mockk<StringProvider>()
     private val taxAndMotStatusMapper = TaxAndMotStatusMapper(stringProvider)
+    private val specificationsMapper = SpecificationsMapper(stringProvider)
     private val vehicleMenuItemsMapper = VehicleMenuItemsMapper(stringProvider)
-    private val mapper = VehicleDetailsMapper(stringProvider, taxAndMotStatusMapper, vehicleMenuItemsMapper)
+    private val mapper = VehicleDetailsMapper( taxAndMotStatusMapper, specificationsMapper, vehicleMenuItemsMapper)
 
     private companion object{
         const val FUEL_TYPE = "Fuel type"
@@ -82,10 +83,10 @@ class VehicleDetailsMapperTest {
     fun `Given a vehicle with full keeper details, when mapped, the keeper name and address are assembled correctly`() {
         val result = mapper.toUiModel(makeVehicleDetails(), dvlaUrls = null)
 
-        assertEquals("MR DAWN WILLIAMS", result.keeper.name)
+        assertEquals("MR DAWN WILLIAMS", result.keeper?.name)
         assertEquals(
             listOf("Long View Rd", "Morriston", "Swansea", "SA6 7JL"),
-            result.keeper.addressLines
+            result.keeper?.addressLines
         )
     }
 
@@ -93,7 +94,7 @@ class VehicleDetailsMapperTest {
     fun `Given a vehicle with no keeper title, when mapped, the keeper name omits it`() {
         val result = mapper.toUiModel(makeVehicleDetails(keeperTitle = null), dvlaUrls = null)
 
-        assertEquals("DAWN WILLIAMS", result.keeper.name)
+        assertEquals("DAWN WILLIAMS", result.keeper?.name)
     }
 
     @Test
@@ -103,14 +104,14 @@ class VehicleDetailsMapperTest {
             dvlaUrls = null
         )
 
-        assertEquals("", result.keeper.name)
+        assertEquals("", result.keeper?.name)
     }
 
     @Test
     fun `Given a vehicle with no keeper address, when mapped, the address lines are empty`() {
         val result = mapper.toUiModel(makeVehicleDetails(keeperFullAddress = null), dvlaUrls = null)
 
-        assertEquals(emptyList<String>(), result.keeper.addressLines)
+        assertEquals(emptyList<String>(), result.keeper?.addressLines)
     }
 
     @Test

@@ -43,7 +43,7 @@ internal fun SummaryCardHeader(
                 leadingContent()
 
                 if (menuItems.isNotEmpty()) {
-                    CardOverflowMenu(
+                    OverflowMenu(
                         menuItems = menuItems,
                         onMenuItemClick = onMenuItemClick
                     )
@@ -56,4 +56,5 @@ internal fun SummaryCardHeader(
         }
     }
 }
+
 
