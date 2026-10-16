@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshot-test-report
-          path: feature/dvla/build/reports/screenshotTest/preview/debug/
+          path: "**/build/reports/screenshotTest/**/index.html"
 
       - name: Analyze
         run: ./gradlew sonar --info
