@@ -60,7 +60,7 @@ internal fun NotificationsScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun NotificationsScreenPreview() {
+internal fun NotificationsScreenPreview() {
     GovUkTheme {
         NotificationsScreen(
             {},

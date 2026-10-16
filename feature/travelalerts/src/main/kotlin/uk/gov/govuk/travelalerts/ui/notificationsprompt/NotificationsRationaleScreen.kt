@@ -278,7 +278,7 @@ private fun NotificationsRationaleScreenContent(
 
 @PreviewLightDark
 @Composable
-private fun NotificationsRationaleScreenContentPreview() {
+internal fun NotificationsRationaleScreenContentPreview() {
     GovUkTheme {
         NotificationsRationaleScreenContent(
             onNotNow = {},

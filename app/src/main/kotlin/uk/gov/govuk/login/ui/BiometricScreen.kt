@@ -161,7 +161,7 @@ private fun IconRow(
 
 @Preview(showBackground = true)
 @Composable
-private fun BiometricPreview() {
+internal fun BiometricPreview() {
     GovUkTheme {
         BiometricScreen(
             onSetupBiometrics = { },
