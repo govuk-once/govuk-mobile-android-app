@@ -94,6 +94,7 @@ internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
     val onSubmit: (String) -> Unit,
     val onClear: () -> Unit,
+    val onFeedbackGiven: (String, String, String) -> Unit,
     val onFeedbackClick: (String, String, String) -> Unit
 )
 
@@ -171,6 +172,9 @@ internal fun ChatRoute(
                         },
                         onClear = {
                             viewModel.clearConversation()
+                        },
+                        onFeedbackGiven = { conversationId, answerId, reaction ->
+                            viewModel.onFeedbackGiven(conversationId, answerId, reaction)
                         },
                         onFeedbackClick = { text, action, questionId ->
                             viewModel.onFeedbackClick(text, action, questionId)
@@ -309,6 +313,9 @@ internal fun ChatScreen(
                             onFeedbackClick = { text, action, questionId ->
                                 uiEvents.onFeedbackClick(text, action, questionId)
                             },
+                            onFeedbackIconClick = { conversationId, answerId, reaction ->
+                                uiEvents.onFeedbackGiven(conversationId, answerId, reaction)
+                            },
                             onThankYouShown = {
                                 coroutineScope.launch {
                                     delay(100)
@@ -402,6 +409,7 @@ private fun AnimatedFeedback(
     animationDelay: Int,
     isAnalyticsEnabled: Boolean,
     onFeedbackClick: (String, String, String) -> Unit,
+    onFeedbackIconClick: (String, String, String) -> Unit,
     onThankYouShown: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -412,8 +420,21 @@ private fun AnimatedFeedback(
         mutableStateOf(chatEntry.answer.isNotBlank())
     }
 
-    var feedbackSelection by rememberSaveable(chatEntry.id) {
-        mutableStateOf(FeedbackSelection.Icons)
+    // Set when the survey is tapped
+    var surveyLinkClicked by rememberSaveable(chatEntry.id) {
+        mutableStateOf(false)
+    }
+
+    val positiveReaction = stringResource(R.string.chat_feedback_api_post_reaction_positive)
+    val negativeReaction = stringResource(R.string.chat_feedback_api_post_reaction_negative)
+
+    // The feedback reaction comes back with the answer response, or is set
+    // when the feedback API call succeeds
+    val feedbackSelection = when {
+        chatEntry.feedbackReaction == null -> FeedbackSelection.Icons
+        surveyLinkClicked || !isAnalyticsEnabled -> FeedbackSelection.ThankYou
+        chatEntry.feedbackReaction == positiveReaction -> FeedbackSelection.Positive
+        else -> FeedbackSelection.Negative
     }
 
     // Stop double taps on icons - guards on clicks below
@@ -494,20 +515,24 @@ private fun AnimatedFeedback(
                     if (!iconClickProcessed) {
                         iconClickProcessed = true
                         onFeedbackClick(positiveIconText, "icon", chatEntry.id)
+                        onFeedbackIconClick(
+                            chatEntry.conversationId,
+                            chatEntry.answerId,
+                            positiveReaction
+                        )
                         moveFocusToFeedback = true
-                        feedbackSelection =
-                            if (isAnalyticsEnabled) FeedbackSelection.Positive
-                            else FeedbackSelection.ThankYou
                     }
                 },
                 onNegativeIconClick = {
                     if (!iconClickProcessed) {
                         iconClickProcessed = true
                         onFeedbackClick(negativeIconText, "icon", chatEntry.id)
+                        onFeedbackIconClick(
+                            chatEntry.conversationId,
+                            chatEntry.answerId,
+                            negativeReaction
+                        )
                         moveFocusToFeedback = true
-                        feedbackSelection =
-                            if (isAnalyticsEnabled) FeedbackSelection.Negative
-                            else FeedbackSelection.ThankYou
                     }
                 }
             )
@@ -524,7 +549,7 @@ private fun AnimatedFeedback(
                         moveFocusToFeedback = true
                         coroutineScope.launch {
                             delay(THANK_YOU_DELAY_MILLIS)
-                            feedbackSelection = FeedbackSelection.ThankYou
+                            surveyLinkClicked = true
                         }
                     }
                 }
@@ -542,7 +567,7 @@ private fun AnimatedFeedback(
                         moveFocusToFeedback = true
                         coroutineScope.launch {
                             delay(THANK_YOU_DELAY_MILLIS)
-                            feedbackSelection = FeedbackSelection.ThankYou
+                            surveyLinkClicked = true
                         }
                     }
                 }
@@ -704,6 +729,7 @@ private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
     onSubmit = { _ -> },
     onClear = { },
+    onFeedbackGiven = { _, _, _ -> },
     onFeedbackClick = { _, _, _ -> }
 )
 
