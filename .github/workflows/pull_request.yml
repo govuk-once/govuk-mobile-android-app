@@ -53,8 +53,8 @@ jobs:
       - name: Run Debug Screenshot tests
         run: ./gradlew validateDebugScreenshotTest
 
-      - name: Upload screenshot test report
-        if: always()
+      - name: Upload screenshot Test Report on Failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: screenshot-test-report
