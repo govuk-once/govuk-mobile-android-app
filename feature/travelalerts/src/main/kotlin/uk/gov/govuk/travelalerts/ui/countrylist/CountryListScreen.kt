@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -50,15 +49,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.CaptionRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
+import uk.gov.govuk.design.ui.component.FootnoteRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumHorizontalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
-import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.model.AccessibleString
@@ -239,10 +237,11 @@ private fun CountryListLoaded(
             }
         }
 
-        CaptionRegularLabelTrailingLink(
+        FootnoteRegularLabelTrailingLink(
             stringResource(R.string.country_list_footer),
             stringResource(R.string.country_list_footer_link_text),
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium).fillMaxWidth(),
+            isLinkUnderlined = true,
             textAlign = TextAlign.Center,
             onClick = onClickFooter)
     }
