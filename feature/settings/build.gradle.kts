@@ -32,7 +32,6 @@ android {
         buildConfigField("String", "ACCESSIBILITY_STATEMENT_URL", "\"https://www.gov.uk/government/publications/accessibility-statement-for-the-govuk-app\"")
 
         buildConfigField("String", "HELP_AND_FEEDBACK_EVENT", "\"HelpAndFeedback\"")
-        buildConfigField("String", "HELP_AND_FEEDBACK_URL", "\"https://www.gov.uk/contact/govuk-app\"")
 
         buildConfigField("String", "OPEN_SOURCE_LICENCE_EVENT", "\"OpenSourceLicenses\"")
 
@@ -65,6 +64,7 @@ android {
 dependencies {
     implementation(projects.analytics)
     implementation(projects.design)
+    implementation(projects.govkit)
     implementation(projects.config)
     implementation(projects.notifications)
     implementation(projects.data)

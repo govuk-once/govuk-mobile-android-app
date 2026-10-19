@@ -1,5 +1,6 @@
 package uk.gov.govuk.messages.ui
 
+import uk.gov.govuk.govkit.date.toRelativeDate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -283,7 +284,7 @@ private fun NotificationRow(
             )
 
             Text(
-                message.formattedDate,
+                message.date.toRelativeDate(),
                 color = GovUkTheme.colourScheme.textAndIcons.secondary,
                 style = subtitleStyle ,
                 maxLines = 1,

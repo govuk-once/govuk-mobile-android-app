@@ -16,8 +16,8 @@ import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
-import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
 import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
 import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
@@ -143,7 +143,7 @@ internal class SettingsViewModel @Inject constructor(
     fun onHelpAndFeedbackView() {
         analyticsClient.settingsItemClick(
             text = HELP_AND_FEEDBACK_EVENT,
-            url = HELP_AND_FEEDBACK_URL
+            url = Urls.HELP_AND_FEEDBACK_URL
         )
     }
 
@@ -202,7 +202,7 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     fun onMessagesClick() {
-        analyticsClient.settingsItemClick(MESSAGES_EVENT)
+        analyticsClient.settingsItemClick(MESSAGES_EVENT, external = false)
 
     }
 }

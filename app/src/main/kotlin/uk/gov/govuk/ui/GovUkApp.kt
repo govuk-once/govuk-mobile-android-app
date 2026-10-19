@@ -69,8 +69,10 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
+import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -99,6 +101,11 @@ import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
+import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
+import uk.gov.govuk.travelalerts.navigation.NOTIFICATIONS_RATIONALE_ROUTE
+import uk.gov.govuk.travelalerts.navigation.travelAlertsGraph
+import uk.gov.govuk.travelalerts.ui.widget.TravelAlertsWidget
 import uk.gov.govuk.visited.navigation.visitedGraph
 import uk.gov.govuk.widgets.ui.contains
 import uk.gov.govuk.widgets.ui.homeWidgets
@@ -107,12 +114,19 @@ import uk.govuk.app.local.navigation.localGraph
 /** Routes that draw status bar, add any routes that draw status bar here */
 private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
     CHAT_GRAPH_ROUTE,
-    DVLA_GRAPH_ROUTE
+    DVLA_GRAPH_ROUTE,
+    COUNTRY_LIST_ROUTE
 )
 
 /** Routes that draw system nav bar, add any routes that draw system nav bar here */
 private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
     DVLA_GRAPH_ROUTE
+)
+
+/** Routes where the bottom nav bar should be hidden */
+private val HIDE_BOTTOM_NAV_ROUTES = setOf(
+    COUNTRY_LIST_ROUTE,
+    NOTIFICATIONS_RATIONALE_ROUTE
 )
 
 @Composable
@@ -200,13 +214,14 @@ private fun BottomNavScaffold(
     val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE
             && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
+    val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
             currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
-    val useDarkIcons = (isChatRoute || isMessagesDetailRoute) && !isSystemInDarkTheme()
+    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -348,8 +363,8 @@ private fun BottomNav(
     }
 
     // Display the nav bar if the current destination has a tab index (is a top level destination
-    // or associated route)
-    val displayBottomNavBar = selectedIndex != -1
+    // or associated route) and is not explicitly excluded
+    val displayBottomNavBar = selectedIndex != -1 && HIDE_BOTTOM_NAV_ROUTES.none { currentRoute?.startsWith(it) == true }
 
     if (displayBottomNavBar) {
         Column {
@@ -471,6 +486,10 @@ private fun GovUkNavHost(
             showDeepLinkNotFoundAlert = true
         }
 
+        appNavigation.setOnNotificationRead { id ->
+            viewModel.onNotificationRead(id)
+        }
+
         intentFlow.collectLatest { intent ->
             appNavigation.setDeeplink(navController, intent.data)
         }
@@ -559,6 +578,8 @@ private fun GovUkNavHost(
                         SearchWidget(
                             onClick = { text ->
                                 onWidgetClick(text, null)
+                                // TODO - Android A/A test 10-26 - remove when the test has finished
+                                viewModel.onSearchWidgetClick()
                                 navController.navigate(SEARCH_GRAPH_ROUTE)
                             },
                             modifier = modifier
@@ -586,13 +607,20 @@ private fun GovUkNavHost(
                                 onActionClick = { navController.navigateToDvlaLinkIntro() }
                             )
 
-                            // and licence summary widget from DVLA module
+                            // and vehicles/licence summary widget from DVLA module
                             VehiclesAndLicenceSummaryWidget(
                                 launchBrowser = { url ->
                                     externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                                 },
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
+                                },
+                                vehiclesFooter = {
+                                    CheckVehicleWidget(
+                                        onVehicleFound = { reg ->
+                                            navController.navigateToVehicleDetailsByRegistration(reg)
+                                        }
+                                    )
                                 }
                             )
                         }
@@ -602,7 +630,13 @@ private fun GovUkNavHost(
                                 .padding(horizontal = GovUkTheme.spacing.medium),
                             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                         ) {
-                            Text("Placeholder: Travel Alerts")
+                            TravelAlertsWidget(
+                                launchBrowser = { url ->
+                                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
+                                },
+                                onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
+                                onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
+                            )
                         }
                     }
                 },
@@ -648,7 +682,16 @@ private fun GovUkNavHost(
                 },
                 onWebFlowClosed = {
                     navController.popBackStack()
+                },
+                onVehicleFound = { regNumber ->
+                    navController.navigateToVehicleDetailsByRegistration(regNumber)
                 }
+            )
+            travelAlertsGraph(
+                navController = navController,
+                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
+                appVersion = BuildConfig.VERSION_NAME_USER_FACING,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

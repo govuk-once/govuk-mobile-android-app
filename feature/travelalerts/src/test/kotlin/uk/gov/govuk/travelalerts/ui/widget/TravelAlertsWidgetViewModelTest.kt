@@ -1,0 +1,200 @@
+package uk.gov.govuk.travelalerts.ui.widget
+
+import io.mockk.coEvery
+import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
+import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class TravelAlertsWidgetViewModelTest {
+    private val dispatcher = UnconfinedTestDispatcher()
+    private val travelAlertsRepo = mockk<TravelAlertsRepo>(relaxed = true)
+    private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
+    private lateinit var viewModel: TravelAlertsWidgetViewModel
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(dispatcher)
+        viewModel = TravelAlertsWidgetViewModel(travelAlertsRepo, analyticsClient)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `Given view created, then state is Loading with no follow error`() {
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Loading)
+        assertFalse(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given page view, when both repos succeed, then state is Loaded with matched rows`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+
+        viewModel.onPageView()
+
+        val state = viewModel.uiState.value.content as TravelAlertsWidgetViewModel.State.Loaded
+        assertEquals(TravelAlertsFixtures.mockCountries.size, state.rows.size)
+        assertEquals("France", state.rows[0].headline)
+        assertEquals("govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/france", state.rows[0].link)
+    }
+
+    @Test
+    fun `Given page view, when both repos succeed, then rows are sorted by country name`() = runTest {
+        // Both are alphabetical in the fixture
+        val unsortedGroups = TravelAlertsFixtures.mockGroups.reversed()
+        val unsortedCountries = TravelAlertsFixtures.mockCountries.reversed()
+
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(unsortedGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(unsortedCountries)
+
+        viewModel.onPageView()
+
+        val state = viewModel.uiState.value.content as TravelAlertsWidgetViewModel.State.Loaded
+        assertEquals(listOf("France", "Germany", "Spain"), state.rows.map { it.headline })
+    }
+
+    @Test
+    fun `Given page view, when groups is empty, then state is Empty`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(emptyList())
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Empty)
+    }
+
+    @Test
+    fun `Given page view, when no countries match groups, then state is Empty`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(emptyList())
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Empty)
+    }
+
+    @Test
+    fun `Given page view, when groups fails, then state is Error`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.ServiceNotResponding(500)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+    }
+
+    @Test
+    fun `Given page view, when countries fails, then state is Error`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.ServiceNotResponding(500)
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+    }
+
+    @Test
+    fun `Given page view, when offline, then state is Error`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.DeviceOffline()
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+    }
+
+    @Test
+    fun `Given follow error reported, then followError is set`() {
+        viewModel.onFollowError()
+
+        assertTrue(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given follow error reported before page view, when page view resolves, then followError is preserved`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(emptyList())
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onFollowError()
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Empty)
+        assertTrue(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given follow error reported, when widget content fails to load, then followError is preserved`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.DeviceOffline()
+        coEvery { travelAlertsRepo.getCountries() } returns Result.DeviceOffline()
+        viewModel.onFollowError()
+
+        viewModel.onPageView()
+
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+        assertTrue(viewModel.uiState.value.followError)
+    }
+
+    @Test
+    fun `Given follow error dismissed, then followError is false and content is unchanged`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        viewModel.onFollowError()
+
+        viewModel.onDismissFollowError()
+
+        assertFalse(viewModel.uiState.value.followError)
+        assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Loaded)
+    }
+
+    @Test
+    fun `Given follow country click, then analytics event is fired`() {
+        viewModel.onFollowCountryClick("Follow countries for updates")
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "Follow countries for updates",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given row click, then analytics event is fired with correct parameters`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        val state = viewModel.uiState.value.content as TravelAlertsWidgetViewModel.State.Loaded
+
+        viewModel.onRowClick(state.rows.first { it.headline == "France" })
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "France",
+                url = "https://www.gov.uk/foreign-travel-advice/france",
+                external = true,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+}

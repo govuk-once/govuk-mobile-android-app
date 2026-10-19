@@ -21,6 +21,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.data.ChatRepo
 import uk.gov.govuk.chat.data.remote.ChatResult
 import uk.gov.govuk.chat.data.remote.model.Answer
@@ -653,6 +654,73 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `Given example questions are viewed, then log ecommerce analytics`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        val questions = listOf("Question one", "Question two", "Question three")
+        every { configRepo.chatExampleQuestions } returns questions
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onExampleQuestionsViewed()
+
+        verify {
+            analyticsClient.viewItemListEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = "chat suggestions",
+                    itemListName = "chat suggestions",
+                    items = questions.map { question ->
+                        EcommerceEvent.Item(
+                            itemName = question,
+                            itemCategory = "chat_suggestion",
+                            locationId = ""
+                        )
+                    },
+                    totalItemCount = questions.size
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given no example questions, when the viewed event fires, then do not log ecommerce analytics`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        every { configRepo.chatExampleQuestions } returns emptyList()
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onExampleQuestionsViewed()
+
+        verify(exactly = 0) { analyticsClient.viewItemListEvent(any()) }
+    }
+
+    @Test
+    fun `When the user selects an example question, then log chat and select item analytics`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        val questions = listOf("Question one", "Question two", "Question three")
+        every { configRepo.chatExampleQuestions } returns questions
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        viewModel.onExampleQuestionSelected("Question two", 1)
+
+        verify {
+            analyticsClient.chat(type = "suggestion", section = "chat")
+            analyticsClient.selectItemEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = "chat suggestions",
+                    itemListName = "chat suggestions",
+                    items = listOf(
+                        EcommerceEvent.Item(
+                            itemName = "Question two",
+                            itemCategory = "chat_suggestion",
+                            locationId = ""
+                        )
+                    ),
+                    totalItemCount = 3
+                ),
+                selectedItemIndex = 2
+            )
+        }
+    }
+
+    @Test
     fun `Given an onboarding screen button click, then log analytics`() {
         val text = "text"
         val section = "section"
@@ -707,6 +775,25 @@ class ChatViewModelTest {
         val url = "url"
 
         viewModel.onPrivacyPolicyView(
+            text = text,
+            url = url
+        )
+
+        verify {
+            analyticsClient.buttonClick(
+                text = text,
+                url = url,
+                external = true
+            )
+        }
+    }
+
+    @Test
+    fun `Given an onboarding screen terms click, then log analytics`() {
+        val text = "text"
+        val url = "url"
+
+        viewModel.onTermsView(
             text = text,
             url = url
         )
@@ -803,5 +890,103 @@ class ChatViewModelTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { chatRepo.getConversation() }
+    }
+
+    @Test
+    fun `Given a feedback click, then log analytics`() {
+        val text = "text"
+        val action = "action"
+        val questionId = "questionId"
+
+        viewModel.onFeedbackClick(text = text, action = action, questionId = questionId)
+
+        verify {
+            analyticsClient.chatFeedback(text = text, action = action, questionId = questionId)
+        }
+    }
+
+    @Test
+    fun `Init emits analytics enabled state`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+        every { analyticsClient.isAnalyticsEnabled() } returns true
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        assertTrue(viewModel.isAnalyticsEnabled.value)
+    }
+
+    @Test
+    fun `Init emits analytics disabled state`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+        every { analyticsClient.isAnalyticsEnabled() } returns false
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+
+        assertFalse(viewModel.isAnalyticsEnabled.value)
+    }
+
+    @Test
+    fun `onResume refreshes the analytics state`() = runTest {
+        every { chatRepo.isChatIntroSeen } returns flowOf(true)
+        coEvery { chatRepo.getConversation() } returns null
+        every { analyticsClient.isAnalyticsEnabled() } returns false
+
+        viewModel = ChatViewModel(chatRepo, authRepo, analyticsClient, configRepo)
+        advanceUntilIdle()
+        assertFalse(viewModel.isAnalyticsEnabled.value)
+
+        every { analyticsClient.isAnalyticsEnabled() } returns true
+        viewModel.onResume()
+        advanceUntilIdle()
+        assertTrue(viewModel.isAnalyticsEnabled.value)
+    }
+    
+    @Test
+    fun `onSubmit does not submit a second question while one is already in flight`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("Second Question")
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }
+        coVerify(exactly = 0) { chatRepo.askQuestion("Second Question") }
+    }
+
+    @Test
+    fun `onSubmit allows a new question once the previous one has completed`() = runTest {
+        val firstQuestion = AnsweredQuestion(
+            "abc",
+            Answer("", "", "", null),
+            "",
+            "",
+            "First Question"
+        )
+        val secondQuestion = AnsweredQuestion(
+            "def",
+            Answer("", "", "", null),
+            "",
+            "",
+            "Second Question"
+        )
+
+        coEvery { chatRepo.askQuestion("First Question") } returns ChatResult.Success(firstQuestion)
+        coEvery { chatRepo.askQuestion("Second Question") } returns ChatResult.Success(secondQuestion)
+        coEvery { chatRepo.getAnswer(any(), any()) } returns ChatResult.Success(Answer("", "", "", null))
+
+        viewModel.onSubmit("First Question")
+        advanceUntilIdle()
+
+        viewModel.onSubmit("Second Question")
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }
+        coVerify(exactly = 1) { chatRepo.askQuestion("Second Question") }
     }
 }

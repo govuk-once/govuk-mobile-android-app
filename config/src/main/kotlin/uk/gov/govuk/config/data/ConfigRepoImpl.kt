@@ -9,7 +9,6 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
-import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
 import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
 import uk.gov.govuk.data.model.Result
@@ -91,9 +90,6 @@ class ConfigRepoImpl @Inject constructor(
     override val chatUrls: ChatUrls
         get() = safeConfig.chatUrls
 
-    override val userFeedbackBanner: UserFeedbackBanner?
-        get() = safeConfig.userFeedbackBanner
-
     override val refreshTokenExpirySeconds: Long?
         get() = safeConfig.refreshTokenExpirySeconds
 
@@ -109,18 +105,28 @@ class ConfigRepoImpl @Inject constructor(
     override val isFlexEnabled: Boolean
         get() = safeConfig.releaseFlags.flex
 
+    override val isDvlaLinkEnabled: Boolean
+        get() = safeConfig.releaseFlags.dvla
+
     override val isMessagesEnabled: Boolean
         get() = safeConfig.releaseFlags.messages
 
     override val isTravelAlertsEnabled: Boolean
         get() = safeConfig.releaseFlags.travelAlerts
-    override suspend fun clearRemoteConfigValues() {
-        firebaseDataSource.clearRemoteValues()
-    }
+
+    override val isQuarterlySurveyEnabled: Boolean
+        get() = safeConfig.releaseFlags.quarterlySurvey
 
     override val dvlaUrls: DvlaUrls?
         get() = safeConfig.dvlaUrls
 
     override val promoBanners: List<PromoBanner>?
         get() = safeConfig.promoBanners
+
+    override val chatExampleQuestions: List<String>?
+        get() = safeConfig.chatExampleQuestions
+
+    override suspend fun clearRemoteConfigValues() {
+        firebaseDataSource.clearRemoteValues()
+    }
 }

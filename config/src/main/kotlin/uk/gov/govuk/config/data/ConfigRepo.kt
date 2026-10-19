@@ -6,7 +6,6 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.PromoBanner
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
-import uk.gov.govuk.config.data.remote.model.UserFeedbackBanner
 import uk.gov.govuk.data.model.Result
 
 interface ConfigRepo {
@@ -22,16 +21,18 @@ interface ConfigRepo {
     val isExternalBrowserEnabled: Boolean
     val isChatEnabled: Boolean
     val chatUrls: ChatUrls
-    val userFeedbackBanner: UserFeedbackBanner?
     val refreshTokenExpirySeconds: Long?
     val emergencyBanners: List<EmergencyBanner>?
     val chatBanner: ChatBanner?
     val termsAndConditions: TermsAndConditions?
     val isFlexEnabled: Boolean
+    val isDvlaLinkEnabled: Boolean
     val isMessagesEnabled: Boolean
     val isTravelAlertsEnabled: Boolean
+    val isQuarterlySurveyEnabled: Boolean
     val dvlaUrls: DvlaUrls?
     val promoBanners: List<PromoBanner>?
+    val chatExampleQuestions: List<String>?
 
     suspend fun initConfig(): Result<Unit>
     suspend fun activateRemoteConfig(): Boolean

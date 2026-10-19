@@ -28,7 +28,8 @@
     <string name="manage_payment_button">Manage payment</string>
     <string name="manage_payment_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
     <string name="status_unknown">Unknown</string>
-    <string name="status_not_needed">Not needed</string>
+    <string name="status_not_needed">No tax to pay</string>
+    <string name="tax_status_unknown">Not found - contact DVLA</string>
     <string name="tax_status_title">Tax</string>
     <string name="renew_tax_button">Renew tax</string>
     <string name="renew_tax_button_caption">It can take a couple of days after you’ve paid for your status to update</string>
@@ -38,6 +39,7 @@
     <string name="valid">Valid</string>
     <string name="expired_on">Expired %s</string>
     <string name="expired">Expired</string>
+    <string name="untaxed">Untaxed</string>
     <string name="sorn_from">From %s</string>
     <string name="off_the_road_sorn_message">Off the road (SORN)</string>
     <string name="renew_licence_button">Renew licence</string>
@@ -81,6 +83,14 @@
     <string name="licence_not_available_title">Not available</string>
     <string name="licence_not_available_description">Check your account to see your licence status and restrictions that apply to you</string>
     <string name="licence_not_available_link_text">Your driver and vehicles account</string>
+
+    <string name="menu_register_to_you">Register to you</string>
+    <string name="menu_register_to_you_alt_text">Register vehicle to you</string>
+    <string name="menu_used_vehicle_checks">Used vehicle checks</string>
+    <string name="menu_report_as_abandoned">Report as abandoned</string>
+    <string name="menu_report_as_abandoned_alt_text">Report vehicle as abandoned</string>
+    <string name="menu_report_as_on_the_road">Report as on the road</string>
+    <string name="menu_report_as_on_the_road_alt_text">Report vehicle as on the road</string>
 
     <string name="menu_sorn_rules">SORN rules</string>
     <string name="menu_report_as_sold">Report as sold</string>
@@ -172,4 +182,16 @@
     <string name="cream">Cream</string>
     <string name="not_stated">Not stated</string>
     <!-- Vehicle Details end -->
+
+    <string name="check_vehicle_title">Check vehicle details</string>
+    <string name="check_vehicle_description">Tax and MOT information for any vehicle</string>
+    <string name="check_vehicle_search_prompt">Search for a vehicle</string>
+    <string name="check_vehicle_sheet_prompt">Enter number plate</string>
+    <string name="check_vehicle_cancel">Cancel</string>
+    <string name="check_vehicle_submit">Submit</string>
+    <string name="check_vehicle_clear_registration">Clear text</string>
+    <string name="check_vehicle_search_unavailable">Search not working - try again later</string>
+    <string name="check_vehicle_number_plate_not_found">Number plate not found</string>
+    <string name="check_vehicle_loading_alt_text">Getting vehicle details</string>
+    <string name="search_vehicle_content_desc">Search for another vehicle</string>
 </resources>

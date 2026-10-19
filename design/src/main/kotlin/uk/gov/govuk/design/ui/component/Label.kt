@@ -1,12 +1,16 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -337,7 +341,11 @@ fun BodyRegularLabelTrailingLink(
                     color = linkColor,
                     textDecoration = textDecoration
                 ),
-                pressedStyle = SpanStyle(background = highlightColor)
+                pressedStyle = SpanStyle(background = highlightColor),
+                focusedStyle = SpanStyle(
+                    background = GovUkTheme.colourScheme.surfaces.focused,
+                    color = GovUkTheme.colourScheme.textAndIcons.focused
+                )
             ),
             linkInteractionListener = { _ -> onClick() }
         )
@@ -479,7 +487,8 @@ fun CaptionRegularLabelTrailingLink(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     altText: String? = null,
-    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary
+    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.link
     val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
@@ -490,8 +499,15 @@ fun CaptionRegularLabelTrailingLink(
         val link = LinkAnnotation.Clickable(
             tag = "link",
             styles = TextLinkStyles(
-                style = SpanStyle(color = linkColor, textDecoration = TextDecoration.None),
-                pressedStyle = SpanStyle(background = highlightColor)
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = TextDecoration.None
+                ),
+                pressedStyle = SpanStyle(background = highlightColor),
+                focusedStyle = SpanStyle(
+                    background = GovUkTheme.colourScheme.surfaces.focused,
+                    color = GovUkTheme.colourScheme.textAndIcons.focused
+                )
             ),
             linkInteractionListener = { _ -> onClick() }
         )
@@ -508,7 +524,8 @@ fun CaptionRegularLabelTrailingLink(
                     true
                 })
             },
-        color = textColor
+        color = textColor,
+        textAlign = textAlign
     )
 }
 
@@ -596,8 +613,18 @@ fun SectionHeadingLabel(
         }
 
         button?.let { button ->
+            val interactionSource = remember { MutableInteractionSource() }
+            val isFocused by interactionSource.collectIsFocusedAsState()
+
+            val (backgroundColour, textColour) = if (isFocused) {
+                GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+            } else {
+                GovUkTheme.colourScheme.surfaces.cardDefault to GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            }
+
             TextButton(
                 onClick = button.onClick,
+                interactionSource = interactionSource,
                 modifier = Modifier.padding(
                     top = GovUkTheme.spacing.extraSmall,
                     start = GovUkTheme.spacing.medium,
@@ -608,13 +635,13 @@ fun SectionHeadingLabel(
                 BodyRegularLabel(
                     text = button.title,
                     modifier = Modifier
-                        .background(GovUkTheme.colourScheme.surfaces.cardDefault)
+                        .background(backgroundColour)
                         .padding(
                             horizontal = GovUkTheme.spacing.medium,
                             vertical = 9.dp
                         )
                         .semantics { contentDescription = button.altText },
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+                    color = textColour
                 )
             }
         }

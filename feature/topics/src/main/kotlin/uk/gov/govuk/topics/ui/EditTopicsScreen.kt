@@ -59,14 +59,9 @@ private fun EditTopicsScreen(
     modifier: Modifier = Modifier
 ) {
     val title = stringResource(R.string.edit_title)
-    val focusRequester = remember { FocusRequester() }
 
     RunOnceLaunchedEffect {
         onPageView(title)
-    }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
     }
 
     Column(modifier) {
@@ -75,15 +70,14 @@ private fun EditTopicsScreen(
             actionStyle = HeaderActionStyle.TextActionButton(
                 title = stringResource(R.string.done_button),
                 onClick = onDone
-            ),
-            modifier = Modifier.focusRequester(focusRequester)
+            )
         )
         LazyColumn(
             Modifier
                 .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
             item {
-                Column{
+                Column {
                     MediumVerticalSpacer()
                     BodyRegularLabel(stringResource(R.string.edit_message))
                     MediumVerticalSpacer()

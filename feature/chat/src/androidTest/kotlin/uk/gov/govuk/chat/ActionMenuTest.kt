@@ -107,15 +107,19 @@ class ActionMenuTest {
                         onFunctionActionItemClicked = { _, _, _ -> },
                         onQuestionSubmit = { },
                         onMarkdownLinkClicked = { _, _ -> },
-                        onSourcesExpanded = { }
+                        onSourcesExpanded = { },
+                        onExampleQuestionsViewed = { },
+                        onExampleQuestionSelected = { _, _ -> }
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = hasConversation,
                     chatUrls = ChatUrls("", "", "", ""),
+                    chatExampleQuestions = emptyList(),
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },
                         onSubmit = { _ -> },
-                        onClear = { }
+                        onClear = { },
+                        onFeedbackClick = { _, _, _ -> }
                     ),
                     isTalkBackActive = isTalkBackActive
                 )

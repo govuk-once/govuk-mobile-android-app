@@ -1,8 +1,12 @@
 package uk.gov.govuk.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.analytics.extension.redactPii
 import java.util.Locale
@@ -26,9 +30,13 @@ class AnalyticsClient @Inject constructor(
         return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
     }
 
+    val isAnalyticsEnabledFlow: Flow<Boolean>
+        get() = analyticsRepo.analyticsEnabledStateFlow
+            .map { it == AnalyticsEnabledState.ENABLED }
+            .distinctUntilChanged()
+
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
-        firebaseAnalyticsClient.enable()
         analyticsCoordinator.initialize()
     }
 
@@ -146,6 +154,19 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun widgetFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
+        function(
+            text = text,
+            type = "Widget",
+            section = section,
+            action = action
+        )
+    }
+
     fun menuItemClick(
         text: String,
         url: String? = null,
@@ -161,14 +182,17 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun chat() {
-        logEvent(
-            "Chat",
-            mapOf(
-                "action" to "Ask Question",
-                "type" to "typed"
-            )
+    fun chat(type: String = "typed", action: String = "Ask Question", section: String? = null) {
+        val parameters = mutableMapOf(
+            "action" to action,
+            "type" to type
         )
+
+        section?.let {
+            parameters["section"] = it
+        }
+
+        logEvent("Chat", parameters)
     }
 
     fun messagesUrlLaunched(url: String) {
@@ -202,8 +226,12 @@ class AnalyticsClient @Inject constructor(
         ))
     }
 
-    fun search(searchTerm: String) {
-        redactedEvent(name = "Search", type = "typed", inputString = searchTerm)
+    fun messagesNotFound() {
+        logEvent("MessagesNotFound", mapOf())
+    }
+
+    fun search(searchTerm: String, section: String? = null) {
+        redactedEvent(name = "Search", type = "typed", inputString = searchTerm, section = section)
     }
 
     fun autocomplete(searchTerm: String) {
@@ -221,6 +249,18 @@ class AnalyticsClient @Inject constructor(
 
     fun chatQuestionAnswerReturnedEvent() {
         navigation(text = "Chat Question Answer Returned", type = "ChatQuestionAnswerReturned")
+    }
+
+    fun chatFeedback(text: String, action: String, questionId: String) {
+        val parameters = mapOf(
+            "text" to text,
+            "action" to action,
+            "questionId" to questionId,
+            "section" to "Chat",
+            "type" to "Feedback"
+        )
+
+        logEvent("ChatFeedback", parameters)
     }
 
     fun searchResultClick(text: String, url: String) {
@@ -319,14 +359,13 @@ class AnalyticsClient @Inject constructor(
         firebaseAnalyticsClient.logException(exception)
     }
 
-    private fun redactedEvent(name: String, type: String, inputString: String) {
-        logEvent(
-            name,
-            mapOf(
-                "type" to type,
-                "text" to inputString.redactPii()
-            )
+    private fun redactedEvent(name: String, type: String, inputString: String, section: String? = null) {
+        val params = mutableMapOf<String, Any>(
+            "type" to type,
+            "text" to inputString.redactPii()
         )
+        section?.let { params["section"] = it }
+        logEvent(name, params)
     }
 
     private fun navigation(
@@ -367,8 +406,24 @@ class AnalyticsClient @Inject constructor(
         logEvent("Function", parametersWithLanguage(parameters))
     }
 
+    fun abTestEvent(event: AbTestEvent) {
+        logEvent(event.eventName, mapOf())
+    }
+
     private fun parametersWithLanguage(parameters: Map<String, Any>): Map<String, Any> {
         return parameters + Pair("language", Locale.getDefault().language)
+    }
+
+    fun notificationsRationaleView(origin: String) {
+        logEvent("notifications_rationale_view", mapOf("origin" to origin))
+    }
+
+    fun notificationsRationaleSettingsContinue(origin: String) {
+        logEvent("notifications_rationale_settings_continue", mapOf("origin" to origin))
+    }
+
+    fun notificationsRationaleSettingsCancel(origin: String) {
+        logEvent("notifications_rationale_settings_cancel", mapOf("origin" to origin))
     }
 
     private fun logEvent(name: String, parameters: Map<String, Any>) {

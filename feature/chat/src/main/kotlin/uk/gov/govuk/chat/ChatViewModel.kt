@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatUiState.Default
 import uk.gov.govuk.chat.ChatUiState.Error
 import uk.gov.govuk.chat.ChatUiState.Onboarding
@@ -28,6 +29,10 @@ import uk.gov.govuk.chat.ui.model.ChatEntry
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import javax.inject.Inject
+
+private const val CHAT_SUGGESTIONS_LIST_ID = "chat suggestions"
+private const val CHAT_SUGGESTIONS_LIST_NAME = "chat suggestions"
+private const val CHAT_SUGGESTION_ITEM_CATEGORY = "chat_suggestion"
 
 internal sealed class ChatUiState {
     data object Onboarding: ChatUiState()
@@ -54,10 +59,14 @@ internal class ChatViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<ChatUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
 
+    private val _isAnalyticsEnabled = MutableStateFlow(analyticsClient.isAnalyticsEnabled())
+    val isAnalyticsEnabled = _isAnalyticsEnabled.asStateFlow()
+
     private val _authError = MutableSharedFlow<Unit>()
     val authError: SharedFlow<Unit> = _authError
 
     val chatUrls = configRepo.chatUrls
+    val chatExampleQuestions = configRepo.chatExampleQuestions
 
     private var loadConversationJob: Job? = null
     private var askQuestionJob: Job? = null
@@ -73,6 +82,8 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onResume() {
+        // In case the user changes their consent setting while away from Chat
+        _isAnalyticsEnabled.value = analyticsClient.isAnalyticsEnabled()
         viewModelScope.launch {
             if (chatRepo.isChatIntroSeen.first()) {
                 loadConversation()
@@ -154,6 +165,8 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onSubmit(question: String) {
+        if (askQuestionJob?.isActive == true) return
+
         val isPiiError = StringCleaner.includesPII(question)
         _uiState.updateDefault { it.copy(isPiiError = isPiiError) }
 
@@ -204,11 +217,7 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onNavigationActionItemClicked(text: String, url: String) {
-        analyticsClient.buttonClick(
-            text = text,
-            url = url,
-            external = true
-        )
+        onExternalButtonClick(text, url)
     }
 
     fun onFunctionActionItemClicked(text: String, section: String, action: String) {
@@ -222,6 +231,40 @@ internal class ChatViewModel @Inject constructor(
     fun onQuestionSubmit() {
         analyticsClient.chat()
     }
+
+    fun onExampleQuestionsViewed() {
+        val questions = chatExampleQuestions
+        if (!questions.isNullOrEmpty()) {
+            analyticsClient.viewItemListEvent(
+                ecommerceEvent = EcommerceEvent(
+                    itemListId = CHAT_SUGGESTIONS_LIST_ID,
+                    itemListName = CHAT_SUGGESTIONS_LIST_NAME,
+                    items = questions.map { question -> chatSuggestionItem(question) },
+                    totalItemCount = questions.size
+                )
+            )
+        }
+    }
+
+    fun onExampleQuestionSelected(question: String, index: Int) {
+        analyticsClient.chat(type = "suggestion", section = "chat")
+
+        analyticsClient.selectItemEvent(
+            ecommerceEvent = EcommerceEvent(
+                itemListId = CHAT_SUGGESTIONS_LIST_ID,
+                itemListName = CHAT_SUGGESTIONS_LIST_NAME,
+                items = listOf(chatSuggestionItem(question)),
+                totalItemCount = chatExampleQuestions?.size ?: 0
+            ),
+            selectedItemIndex = index + 1 // not zero indexed
+        )
+    }
+
+    private fun chatSuggestionItem(question: String) = EcommerceEvent.Item(
+        itemName = question,
+        itemCategory = CHAT_SUGGESTION_ITEM_CATEGORY,
+        locationId = ""
+    )
 
     fun onButtonClicked(text: String, section: String) {
         analyticsClient.buttonClick(
@@ -243,11 +286,23 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onPrivacyPolicyView(text: String, url: String) {
+        onExternalButtonClick(text, url)
+    }
+
+    fun onTermsView(text: String, url: String) {
+        onExternalButtonClick(text, url)
+    }
+
+    private fun onExternalButtonClick(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
             external = true
         )
+    }
+
+    fun onFeedbackClick(text: String, action: String, questionId: String) {
+        analyticsClient.chatFeedback(text = text, action = action, questionId = questionId)
     }
 
     private suspend fun getAnswer(conversationId: String, questionId: String) {
@@ -317,5 +372,4 @@ internal class ChatViewModel @Inject constructor(
             if (state is Default) transform(state) else state
         }
     }
-
 }

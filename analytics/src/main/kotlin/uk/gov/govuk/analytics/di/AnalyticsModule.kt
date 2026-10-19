@@ -12,6 +12,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.performance
 import com.qualtrics.digital.Qualtrics
 import dagger.Binds
 import dagger.Module
@@ -50,6 +52,10 @@ internal abstract class AnalyticsModule {
         @Provides
         @Singleton
         fun provideCrashlytics(): FirebaseCrashlytics = Firebase.crashlytics
+
+        @Provides
+        @Singleton
+        fun provideFirebasePerformance(): FirebasePerformance = Firebase.performance
 
         @Provides
         @Singleton

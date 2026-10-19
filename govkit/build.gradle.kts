@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -48,7 +49,7 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/BrowserLauncher.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/BrowserLauncher.*,**/DeviceInfo.*"
         )
     }
 }

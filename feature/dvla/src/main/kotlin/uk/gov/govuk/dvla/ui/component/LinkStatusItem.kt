@@ -1,12 +1,18 @@
 package uk.gov.govuk.dvla.ui.component
 
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +42,16 @@ internal fun LinkStatusItem(
     isLast: Boolean = false,
     background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (rowBackground, contentColour) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to GovUkTheme.colourScheme.textAndIcons.linkPrimary
+    }
+
     CardListItem(
         modifier = modifier,
         isFirst = isFirst,
@@ -62,9 +78,12 @@ internal fun LinkStatusItem(
             Row(
                 modifier = Modifier
                     .semantics(mergeDescendants = true) {}
-                    .clickable(true) {
-                        onClick.invoke()
-                    },
+                    .background(rowBackground)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = LocalIndication.current,
+                        onClick = onClick
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BodyRegularLabel(
@@ -72,7 +91,7 @@ internal fun LinkStatusItem(
                     modifier = Modifier
                         .withAltText(text.altText)
                         .weight(1f),
-                    color = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+                    color = contentColour
                 )
 
                 Icon(
@@ -80,7 +99,7 @@ internal fun LinkStatusItem(
                     contentDescription = stringResource(R.string.opens_in_web_browser),
                     modifier = Modifier
                         .padding(start = GovUkTheme.spacing.small),
-                    tint = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+                    tint = contentColour
                 )
             }
             LargeVerticalSpacer()

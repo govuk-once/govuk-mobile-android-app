@@ -3,27 +3,28 @@ package uk.gov.govuk.notifications.ui
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationManagerCompat
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.notifications.R
 
 @Composable
-internal fun NotificationsSettingsAlert(
+fun NotificationsSettingsAlert(
     onContinueButtonClick: (String) -> Unit,
     onCancelButtonClick: (String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    openSettings: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    val settingsLauncher = openSettings ?: remember { { openDeviceNotificationsSettings(context) } }
     val notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
     val alertTitle =
         stringResource(
@@ -43,53 +44,46 @@ internal fun NotificationsSettingsAlert(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
+        title = {
+            BodyBoldLabel(
+                text = alertTitle,
+                color = GovUkTheme.colourScheme.textAndIcons.primary
+            )
+        },
         text = {
-            Column {
-                BodyBoldLabel(
-                    text = alertTitle,
-                    color = GovUkTheme.colourScheme.textAndIcons.primary
-                )
-                MediumVerticalSpacer()
-                BodyRegularLabel(
-                    text = alertMessage,
-                    color = GovUkTheme.colourScheme.textAndIcons.secondary
-                )
-            }
+            BodyRegularLabel(
+                text = alertMessage,
+                color = GovUkTheme.colourScheme.textAndIcons.secondary
+            )
         },
         confirmButton = {
             val continueButton = stringResource(id = R.string.continue_button)
-            TextButton(
+            DialogButton(
+                text = continueButton,
                 onClick = {
                     onContinueButtonClick(continueButton)
-                    openDeviceNotificationsSettings(context)
-                    onDismiss()
-                }
-            ) {
-                BodyBoldLabel(
-                    text = continueButton,
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                )
-            }
+                    settingsLauncher()
+                },
+                isBold = true,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
         },
         dismissButton = {
             val cancelButton = stringResource(id = R.string.cancel_button)
-            TextButton(
+            DialogButton(
+                text = cancelButton,
                 onClick = {
                     onCancelButtonClick(cancelButton)
                     onDismiss()
-                }
-            ) {
-                BodyRegularLabel(
-                    text = cancelButton,
-                    color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-                )
-            }
+                },
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
         },
         containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
 
-private fun openDeviceNotificationsSettings(
+fun openDeviceNotificationsSettings(
     context: Context
 ) {
     Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {

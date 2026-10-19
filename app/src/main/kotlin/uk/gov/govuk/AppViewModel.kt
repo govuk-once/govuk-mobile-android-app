@@ -1,9 +1,11 @@
 package uk.gov.govuk
 
+import android.content.Context
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.chat.ChatFeature
 import uk.gov.govuk.config.data.ConfigRepo
@@ -21,6 +24,7 @@ import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.config.data.local.model.HOME_BANNERS
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.local.model.toAnalyticsItems
+import uk.gov.govuk.config.data.remote.model.QuarterlySurvey
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.identity.IdentityRepo
@@ -29,6 +33,7 @@ import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.login.data.LoginRepo
+import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.search.SearchFeature
@@ -38,6 +43,7 @@ import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
 import uk.govuk.app.local.LocalFeature
 import javax.inject.Inject
+
 
 @HiltViewModel
 internal class AppViewModel @Inject constructor(
@@ -56,7 +62,9 @@ internal class AppViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val notificationsRepo: NotificationsRepo,
     private val dvlaRepo: DvlaRepo,
-    private val identityRepo: IdentityRepo
+    private val identityRepo: IdentityRepo,
+    private val messagesFeature: MessagesFeature,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AppUiState?> = MutableStateFlow(null)
@@ -138,9 +146,10 @@ internal class AppViewModel @Inject constructor(
 
                     combine(
                         appRepo.suppressedHomeWidgets,
-                        chatFeature.shouldDisplayChatBanner
-                    ) { suppressedWidgets, shouldDisplayChatBanner ->
-                        updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner)
+                        chatFeature.shouldDisplayChatBanner,
+                        analyticsClient.isAnalyticsEnabledFlow
+                    ) { suppressedWidgets, shouldDisplayChatBanner, isAnalyticsEnabled ->
+                        updateHomeWidgets(suppressedWidgets, shouldDisplayChatBanner, isAnalyticsEnabled)
                     }.collect()
                 }
             }
@@ -226,7 +235,8 @@ internal class AppViewModel @Inject constructor(
 
     private fun updateHomeWidgets(
         suppressedWidgets: Set<String>,
-        shouldDisplayChatBanner: Boolean
+        shouldDisplayChatBanner: Boolean,
+        isAnalyticsEnabled: Boolean
     ) {
         viewModelScope.launch {
             with(flagRepo) {
@@ -264,9 +274,18 @@ internal class AppViewModel @Inject constructor(
                 if (isRecentActivityEnabled()) {
                     widgets.add(HomeWidget.RecentActivity)
                 }
-                configRepo.userFeedbackBanner?.let { userFeedbackBanner ->
-                    widgets.add(HomeWidget.UserFeedback(userFeedbackBanner = userFeedbackBanner))
+                // The survey is triggered by an analytics event, so it can't be shown without consent
+                if (isQuarterlySurveyEnabled() && isAnalyticsEnabled) {
+                    widgets.add(
+                        HomeWidget.QuarterlyFeedback(
+                            quarterlySurvey = QuarterlySurvey(
+                                id = context.getString(R.string.quarterly_feedback_id),
+                                title = context.getString(R.string.quarterly_feedback_title)
+                            )
+                        )
+                    )
                 }
+
                 _homeWidgets.value = widgets
             }
         }
@@ -287,6 +306,11 @@ internal class AppViewModel @Inject constructor(
             external,
             section
         )
+    }
+
+    // TODO - Android A/A test 10-26 - remove when the test has finished
+    fun onSearchWidgetClick() {
+        analyticsClient.abTestEvent(AbTestEvent.SEARCH_CONVERSION_10_26)
     }
 
     fun onSuppressWidgetClick(
@@ -328,6 +352,10 @@ internal class AppViewModel @Inject constructor(
                 selectedItemIndex = items.indexOfLast { item -> item.locationId == url }
             )
         }
+    }
+
+    fun onNotificationRead(notificationId: String) {
+        viewModelScope.launch { messagesFeature.markAsRead(notificationId) }
     }
 
     fun onNext() {

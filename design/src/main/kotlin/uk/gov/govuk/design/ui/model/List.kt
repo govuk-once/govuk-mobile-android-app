@@ -1,6 +1,7 @@
 package uk.gov.govuk.design.ui.model
 
 import androidx.annotation.DrawableRes
+import androidx.compose.ui.graphics.Color
 
 sealed interface ExternalLinkListItemStyle {
     data object Default : ExternalLinkListItemStyle
@@ -14,6 +15,7 @@ sealed interface ExternalLinkListItemStyle {
 
 sealed interface InternalLinkListItemStyle {
     data object Default : InternalLinkListItemStyle
+    data object Simple: InternalLinkListItemStyle
     data class Status(
         val status: String
     ) : InternalLinkListItemStyle
@@ -26,6 +28,16 @@ sealed interface InternalLinkListItemStyle {
         @param:DrawableRes val icon: Int,
         val altText: String,
         val onClick: () -> Unit
+    ) : InternalLinkListItemStyle
+
+    data class ShortButton(
+        @param:DrawableRes val icon: Int,
+        val altText: String,
+        val onClick: () -> Unit
+    ) : InternalLinkListItemStyle
+
+    data class TrailingIcon(
+        @param:DrawableRes val icon: Int
     ) : InternalLinkListItemStyle
 }
 
@@ -47,3 +59,12 @@ sealed interface InternalLinkListItemModel {
         val info: AccessibleString
     ) : InternalLinkListItemModel
 }
+
+internal data class ListItemColours(
+    val background: Color,
+    val content: Color,
+    val contentSecondary: Color,
+    val contentTertiary: Color,
+    val link: Color,
+    val linkPrimary: Color
+)

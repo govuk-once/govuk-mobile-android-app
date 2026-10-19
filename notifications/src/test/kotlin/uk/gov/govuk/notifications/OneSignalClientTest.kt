@@ -68,13 +68,14 @@ class OneSignalClientTest {
     }
 
     @Test
-    fun `Given we have a notifications client, when request permission is called, then One Signal request permission function is called`() {
+    fun `Given we have a notifications client, when request permission is called, then One Signal request permission function is called and result is returned`() {
         every { OneSignal.Notifications.canRequestPermission } returns true
-        coEvery { OneSignal.Notifications.requestPermission(false) } returns false
+        coEvery { OneSignal.Notifications.requestPermission(false) } returns true
 
         runTest {
-            notificationsProvider.requestPermission()
+            val result = notificationsProvider.requestPermission()
 
+            assertTrue(result)
             coVerify(exactly = 1) {
                 OneSignal.Notifications.requestPermission(false)
             }

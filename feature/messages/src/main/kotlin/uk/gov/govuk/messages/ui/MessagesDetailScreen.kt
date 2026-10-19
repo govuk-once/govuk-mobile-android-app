@@ -1,5 +1,6 @@
 package uk.gov.govuk.messages.ui
 
+import uk.gov.govuk.govkit.date.toRelativeDateTime
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -240,7 +242,7 @@ private fun MessagesDetailScreenLoaded(
 ) {
     val headerContentDescription = stringResource(
         R.string.notification_detail_header_content_description,
-        message.detailFormattedDate,
+        message.date.toRelativeDateTime(),
         message.metadata.sender.displayName
     )
 
@@ -264,7 +266,7 @@ private fun MessagesDetailScreenLoaded(
                     contentDescription = headerContentDescription
                 }) {
             BodyRegularLabel(
-                message.detailFormattedDate,
+                message.date.toRelativeDateTime(),
                 Modifier.padding(bottom = 4.dp),
                 GovUkTheme.colourScheme.textAndIcons.secondary
             )
@@ -297,33 +299,29 @@ private fun MessagesDetailScreenLoaded(
 @Composable
 private fun ConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
     AlertDialog(
-        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList), title = {
-        BodyBoldLabel(stringResource(R.string.delete_notification_sheet_title))
-    }, text = {
-        BodyRegularLabel(stringResource(R.string.delete_notification_sheet_body))
-    }, onDismissRequest = {
-        onCancel()
-    }, confirmButton = {
-        TextButton(
-            onClick = {
-                onConfirm()
-            }) {
-            BodyRegularLabel(
-                stringResource(R.string.delete_notification_sheet_confirm),
-                color = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+        shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
+        title = {
+            BodyBoldLabel(stringResource(R.string.delete_notification_sheet_title))
+        },
+        text = {
+            BodyRegularLabel(stringResource(R.string.delete_notification_sheet_body))
+        },
+        onDismissRequest = onCancel,
+        confirmButton = {
+            DialogButton(
+                text = stringResource(R.string.delete_notification_sheet_confirm),
+                onClick = onConfirm,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
             )
-        }
-    }, dismissButton = {
-        TextButton(
-            onClick = {
-                onCancel()
-            }) {
-            BodyRegularLabel(
-                stringResource(R.string.delete_notification_sheet_cancel),
-                color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+        },
+        dismissButton = {
+            DialogButton(
+                text = stringResource(R.string.delete_notification_sheet_cancel),
+                onClick = onCancel,
+                defaultTextColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
             )
-        }
-    }, containerColor = GovUkTheme.colourScheme.surfaces.alert
+        },
+        containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
 

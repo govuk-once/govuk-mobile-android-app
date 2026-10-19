@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import uk.gov.govuk.dvla.DvlaViewModel
+import uk.gov.govuk.dvla.ui.CheckVehicleDetailsRoute
 import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
 import uk.gov.govuk.dvla.ui.VehicleDetailsRoute
@@ -18,8 +19,10 @@ const val DVLA_LINK_INTRO_ROUTE = "dvla_link_intro_route"
 const val DVLA_LINK_ROUTE = "dvla_link_route"
 const val DVLA_DEEP_LINK_PATH = "/callback/dvla/auth"
 const val VEHICLE_DETAILS_ROUTE = "vehicle_details_route"
+const val VEHICLE_SEARCH_RESULT_ROUTE = "vehicle_search_result_route"
 const val ARG_DVLA_TOKEN = "token"
 const val ARG_VEHICLE_ID = "vehicle_id"
+const val ARG_REG_NUMBER = "registration_number"
 
 fun NavGraphBuilder.dvlaGraph(
     onBack: () -> Unit,
@@ -29,6 +32,7 @@ fun NavGraphBuilder.dvlaGraph(
     onWebFlowClosed: () -> Unit,
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
+    onVehicleFound: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -87,6 +91,20 @@ fun NavGraphBuilder.dvlaGraph(
                 modifier = modifier
             )
         }
+
+        composable(
+            route = "$VEHICLE_SEARCH_RESULT_ROUTE/{$ARG_REG_NUMBER}",
+            arguments = listOf(
+                navArgument(ARG_REG_NUMBER) { type = NavType.StringType }
+            )
+        ) {
+            CheckVehicleDetailsRoute(
+                launchBrowser = launchBrowser,
+                onBack = onBack,
+                modifier = modifier,
+                onVehicleFound = onVehicleFound
+            )
+        }
     }
 }
 
@@ -100,4 +118,12 @@ fun NavController.navigateToDvlaLink() {
 
 fun NavController.navigateToVehicleDetails(vehicleId: Int) {
     navigate("$VEHICLE_DETAILS_ROUTE/$vehicleId")
+}
+
+fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
+    navigate("$VEHICLE_SEARCH_RESULT_ROUTE/$regNumber") {
+        popUpTo("$VEHICLE_SEARCH_RESULT_ROUTE/{$ARG_REG_NUMBER}") {
+            inclusive = true
+        }
+    }
 }

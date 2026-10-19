@@ -24,10 +24,11 @@ fun HomeWidget.toAnalyticsItem() : Item? {
             itemCategory = promoBanner.javaClass.simpleName,
             locationId = promoBanner.link.url
         )
-        is HomeWidget.UserFeedback -> Item(
-            itemName = userFeedbackBanner.link.title,
-            itemCategory = userFeedbackBanner.javaClass.simpleName,
-            locationId = userFeedbackBanner.link.url
+        is HomeWidget.QuarterlyFeedback -> Item(
+            itemId = quarterlySurvey.id,
+            itemName = quarterlySurvey.title,
+            itemCategory = quarterlySurvey.javaClass.simpleName,
+            locationId = ""
         )
         else -> null
     }

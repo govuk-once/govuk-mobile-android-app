@@ -1,0 +1,39 @@
+package uk.gov.govuk.dvla.ui
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.dvla.ui.component.CheckVehicleDetailsHeader
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
+import uk.gov.govuk.dvla.ui.model.UrlModel
+import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
+
+@Composable
+internal fun CheckVehicleDetailsScreen(
+    details: VehicleDetailsUiModel,
+    onClose: () -> Unit,
+    onSearch: () -> Unit,
+    onMenuItemClick: (OverflowMenuItem) -> Unit,
+    launchBrowser: (text: String, url: UrlModel) -> Unit,
+    onPageView: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    RunOnceLaunchedEffect {
+        onPageView()
+    }
+
+    Column(modifier = modifier) {
+        CheckVehicleDetailsHeader(
+            onClose = onClose,
+            onSearch = onSearch,
+            menuItems = details.menuItems,
+            onMenuItemClick = onMenuItemClick
+        )
+
+        VehicleDetailsContent(
+            details = details,
+            launchBrowser = launchBrowser
+        )
+    }
+}

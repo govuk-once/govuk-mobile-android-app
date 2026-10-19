@@ -1,6 +1,7 @@
 package uk.gov.govuk.analytics
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.qualtrics.digital.Qualtrics
@@ -105,13 +106,16 @@ class QualtricsAnalyticsClient @Inject constructor(
 
             val targetResult = passedResults.values.filterNotNull().firstOrNull()
             val surveyUrl = targetResult?.surveyUrl.orEmpty()
-            val skipPrompt = targetResult?.surveyUrl?.toUri()?.query?.contains("hide_prompt=true") == true
+            val uri = targetResult?.surveyUrl?.toUri()
+            val skipPrompt = uri?.getQueryParameter("hide_prompt") == "true"
+            val autoCloseAtEndOfSurvey = uri?.getQueryParameter("auto_close") == "true"
 
             if (skipPrompt) {
-                qualtrics.displayTarget(context, surveyUrl)
+                qualtrics.displayTarget(context, surveyUrl, autoCloseAtEndOfSurvey)
             } else {
-                qualtrics.display(activity)
+                qualtrics.display(activity, autoCloseAtEndOfSurvey)
             }
+
             onSurveyShown?.invoke(results)
         }
     }
@@ -144,6 +148,10 @@ class QualtricsAnalyticsClient @Inject constructor(
             qualtrics.properties.setString(FIREBASE_SESSION_ID, it)
         }
 
+        val currentMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val theme = if (currentMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
+        qualtrics.properties.setString("app_theme", theme)
+
         analyticsParameterKeys.forEach { key ->
             qualtrics.properties.setString(key, parameters[key]?.toString() ?: "")
         }
@@ -171,7 +179,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                     headlineFont = FontTheme(bodyBold, largeSize),
                     descriptionTextColor = R.color.text_primary,
                     descriptionFont = FontTheme(bodyRegular, regularSize),
-                    closeButtonColor = R.color.white,
+                    closeButtonColor = R.color.button_text,
                     closeButtonBackgroundColor = R.color.accent,
                     buttonOneTheme = ButtonTheme(
                         labelColor = R.color.accent,
@@ -181,7 +189,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                         linkColor = R.color.accent
                     ),
                     buttonTwoTheme = ButtonTheme(
-                        labelColor = R.color.white,
+                        labelColor = R.color.button_text,
                         font = FontTheme(bodyRegular, mediumSize),
                         backgroundColor = R.color.accent,
                         borderColor = R.color.accent,
@@ -192,7 +200,7 @@ class QualtricsAnalyticsClient @Inject constructor(
             .setEmbeddedAppFeedbackTheme(
                 EmbeddedAppFeedbackTheme(
                     dialogBackgroundColor = R.color.surface_list,
-                    closeButtonColor = R.color.white,
+                    closeButtonColor = R.color.button_text,
                     closeButtonBackgroundColor = R.color.accent,
                     initialQuestionTheme = InitialQuestionTheme(
                         color = R.color.text_primary,
@@ -208,8 +216,8 @@ class QualtricsAnalyticsClient @Inject constructor(
                         thankYouTextFont = FontTheme(bodyBold, largeSize),
                     ),
                     yesNoButtonsTheme = YesNoButtonsTheme(
-                        yesButtonTextColor = R.color.accent,
-                        yesButtonBorderColor = R.color.white,
+                        yesButtonTextColor = R.color.button_text,
+                        yesButtonBorderColor = R.color.accent,
                         yesButtonFillColor = R.color.accent,
                         yesButtonFont = FontTheme(bodyRegular, mediumSize),
                         noButtonTextColor = R.color.accent,
@@ -226,7 +234,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                     emojiTheme = EmojiTheme(
                         borderColor = R.color.accent,
                         fillColor = R.color.accent,
-                        tintColor = R.color.white
+                        tintColor = R.color.button_text
                     ),
                     starTheme = StarTheme(
                         borderColor = R.color.accent
@@ -244,8 +252,8 @@ class QualtricsAnalyticsClient @Inject constructor(
                         )
                     ),
                     submitButtonTheme = SubmitButtonTheme(
-                        textColor = R.color.white,
-                        fillColor = R.color.accent,
+                        textColor = R.color.button_text,
+                        fillColor = R.color.button,
                         font = FontTheme(bodyRegular, mediumSize)
                     ),
                     textInputTheme = TextInputTheme(

@@ -27,6 +27,10 @@ internal class AppNavigation @Inject constructor(
         deeplinkHandler.onDeeplinkNotFound = onDeeplinkNotFound
     }
 
+    fun setOnNotificationRead(onNotificationRead: (String) -> Unit) {
+        deeplinkHandler.onNotificationRead = onNotificationRead
+    }
+
     fun setDeeplink(navController: NavController, uri: Uri?) {
         deeplinkHandler.deepLink = uri
         if (authRepo.isUserSessionActive()) {
