@@ -192,7 +192,7 @@ private fun DragHandle(modifier: Modifier = Modifier) {
 
 @Composable
 @PreviewLightDark
-private fun NotificationsPreferenceBottomSheetContentPreview() {
+internal fun NotificationsPreferenceBottomSheetContentPreview() {
     val country = Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf())
 
     GovUkTheme {
@@ -208,7 +208,7 @@ private fun NotificationsPreferenceBottomSheetContentPreview() {
 
 @Composable
 @PreviewLightDark
-private fun NotificationsPreferenceBottomSheetContentLoadingPreview() {
+internal fun NotificationsPreferenceBottomSheetContentLoadingPreview() {
     val country = Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf())
 
     GovUkTheme {

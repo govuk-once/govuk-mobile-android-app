@@ -302,7 +302,7 @@ private fun EditCountriesError(
 
 @Composable
 @PreviewLightDark
-private fun EditCountriesLoadingPreview() {
+internal fun EditCountriesLoadingPreview() {
     GovUkTheme {
         LoadingScreen()
     }
@@ -310,7 +310,7 @@ private fun EditCountriesLoadingPreview() {
 
 @Composable
 @PreviewLightDark
-private fun EditCountriesErrorPreview() {
+internal fun EditCountriesErrorPreview() {
     GovUkTheme {
         EditCountriesError(onRetry = {})
     }
@@ -318,7 +318,7 @@ private fun EditCountriesErrorPreview() {
 
 @Composable
 @PreviewLightDark
-private fun EditCountriesLoadedPreview() {
+internal fun EditCountriesLoadedPreview() {
     val countries = listOf(
         Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf()),
         Country("Fiji", "fiji", "2023-01-01T00:00:00Z", listOf()),
