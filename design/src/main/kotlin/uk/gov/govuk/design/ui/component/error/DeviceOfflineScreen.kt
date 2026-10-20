@@ -61,7 +61,7 @@ fun DeviceOfflineScreen(
 
 @PreviewLightDark
 @Composable
-private fun DeviceOfflinePreview() {
+internal fun DeviceOfflinePreview() {
     GovUkTheme {
         Surface {
             DeviceOfflineScreen(

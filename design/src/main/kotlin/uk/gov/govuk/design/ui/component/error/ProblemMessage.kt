@@ -29,7 +29,7 @@ fun ProblemMessage(
 
 @Preview
 @Composable
-private fun ProblemMessagePreview() {
+internal fun ProblemMessagePreview() {
     GovUkTheme {
         ProblemMessage({})
     }
