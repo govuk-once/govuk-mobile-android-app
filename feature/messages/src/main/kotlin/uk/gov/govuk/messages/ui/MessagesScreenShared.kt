@@ -119,7 +119,7 @@ internal fun Footer() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ErrorPreview() {
+internal fun ErrorPreview() {
     GovUkTheme {
         MessagesScreenError()
     }
@@ -127,7 +127,7 @@ private fun ErrorPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun NoInternetPreview() {
+internal fun NoInternetPreview() {
     GovUkTheme {
         MessagesScreenNoInternet()
     }
@@ -135,7 +135,7 @@ private fun NoInternetPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun FooterPreview() {
+internal fun FooterPreview() {
     GovUkTheme {
         Footer()
     }
