@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GOV.UK</string>
+    <string name="app_name">GOV\u200B.UK</string>
 
     <string name="forced_update_button_title_update">Update</string>
     <string name="forced_update_description">You’re using an old version of the app. Update your app to continue.</string>
