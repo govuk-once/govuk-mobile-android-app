@@ -52,7 +52,7 @@ fun AppUnavailableScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun AppUnavailablePreview() {
+internal fun AppUnavailablePreview() {
     GovUkTheme {
         AppUnavailableScreen(
             {},
