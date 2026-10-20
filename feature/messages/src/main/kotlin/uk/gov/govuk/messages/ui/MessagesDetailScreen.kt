@@ -39,8 +39,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -127,7 +129,9 @@ private fun MessagesDetailScreen(
     }
 
     Column(
-        Modifier.fillMaxWidth(),
+        Modifier
+            .fillMaxWidth()
+            .semantics { isTraversalGroup = true },
         Arrangement.Center,
         Alignment.CenterHorizontally
     ) {
@@ -140,7 +144,9 @@ private fun MessagesDetailScreen(
         )
 
         Column(
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
+                .semantics { traversalIndex = 1f }
         ) {
             when (state) {
                 is MessagesDetailUiState.Loading -> MessagesDetailScreenLoading()
@@ -195,7 +201,9 @@ private fun Header(
 
             IconButton(
                 onUnread,
-                Modifier.size(48.dp)
+                Modifier
+                    .size(48.dp)
+                    .semantics { traversalIndex = 2f }
             ) {
                 Icon(
                     painterResource(id = R.drawable.ic_mark_unread),
@@ -205,8 +213,10 @@ private fun Header(
             }
 
             IconButton(
-                onDelete, Modifier.size(48.dp)
-
+                onDelete,
+                Modifier
+                    .size(48.dp)
+                    .semantics { traversalIndex = 3f }
             ) {
                 Icon(
                     painterResource(id = R.drawable.ic_delete_notification),
