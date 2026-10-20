@@ -76,7 +76,7 @@ fun Error(
 
 @Preview
 @Composable
-private fun MessagePreview() {
+internal fun MessagePreview() {
     GovUkTheme {
         Error(
             title = "Title",
