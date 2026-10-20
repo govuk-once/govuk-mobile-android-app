@@ -103,7 +103,7 @@ internal fun VehicleSummaryHeader(
 
 @PreviewLightDark
 @Composable
-private fun RegistrationPlatePreview() {
+internal fun VehicleSummaryRegistrationPlatePreview() {
     GovUkTheme {
         RegistrationPlate(registration = "FH08 PDH")
     }
@@ -111,7 +111,7 @@ private fun RegistrationPlatePreview() {
 
 @PreviewLightDark
 @Composable
-private fun VehicleHeaderPreview() {
+internal fun VehicleHeaderPreview() {
     GovUkTheme {
         VehicleSummaryHeader(
             registration = "FH08 PDH",
@@ -125,7 +125,7 @@ private fun VehicleHeaderPreview() {
 
 @PreviewLightDark
 @Composable
-private fun VehicleSummaryCardPreview() {
+internal fun VehicleSummaryCardPreview() {
     val taxStatus = StatusUiModel.StatusRow(
         StatusRowUiModel(
             AccessibleString("Tax"),
