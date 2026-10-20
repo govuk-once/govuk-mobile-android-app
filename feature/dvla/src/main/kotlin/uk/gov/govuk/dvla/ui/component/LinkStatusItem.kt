@@ -109,7 +109,7 @@ internal fun LinkStatusItem(
 
 @PreviewLightDark
 @Composable
-private fun LinkStatusItemPreview() {
+internal fun LinkStatusItemPreview() {
     GovUkTheme {
         LinkStatusItem(
             title = AccessibleString("Title"),
