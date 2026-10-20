@@ -87,7 +87,7 @@ fun ErrorPage(
 
 @Preview(showBackground = true)
 @Composable
-private fun ErrorPageWithoutAdditionalContentPreview() {
+internal fun ErrorPageWithoutAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
@@ -104,7 +104,7 @@ private fun ErrorPageWithoutAdditionalContentPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ErrorPageWithAdditionalContentPreview() {
+internal fun ErrorPageWithAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
