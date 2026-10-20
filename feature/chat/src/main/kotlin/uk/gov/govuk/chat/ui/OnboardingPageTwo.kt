@@ -118,7 +118,7 @@ private fun OnboardingPageTwoScreen(
 
 @PreviewLightDark
 @Composable
-private fun OnboardingPageTwoPreview() {
+internal fun OnboardingPageTwoPreview() {
     GovUkTheme {
         OnboardingPageTwoScreen(
             onPageView = {},
