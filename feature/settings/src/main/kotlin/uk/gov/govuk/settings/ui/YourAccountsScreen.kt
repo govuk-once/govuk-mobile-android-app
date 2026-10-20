@@ -267,7 +267,7 @@ internal fun RemoveAccountErrorScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun YourAccountsScreenEmptyPreview() {
+internal fun YourAccountsScreenEmptyPreview() {
     GovUkTheme {
         YourAccountsScreen(
             accounts = emptyList(),
@@ -282,7 +282,7 @@ private fun YourAccountsScreenEmptyPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun YourAccountsScreenPreview() {
+internal fun YourAccountsScreenPreview() {
     GovUkTheme {
         YourAccountsScreen(
             accounts = listOf(
@@ -302,7 +302,7 @@ private fun YourAccountsScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun YourAccountsScreenUnlinkingPreview() {
+internal fun YourAccountsScreenUnlinkingPreview() {
     GovUkTheme {
         YourAccountsScreen(
             accounts = listOf(
