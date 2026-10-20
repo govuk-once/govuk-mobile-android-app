@@ -100,7 +100,7 @@ private fun LocalExplainerScreen(
 
 @Preview
 @Composable
-private fun LocalScreenPreview() {
+internal fun LocalScreenPreview() {
     GovUkTheme {
         LocalExplainerScreen(
             onBack = {},
