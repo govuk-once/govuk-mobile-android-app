@@ -10,6 +10,7 @@ internal data class LicenceSummaryUiModel(
     val statusUi: StatusUiModel,
     private val addressLines: List<String>,
     val menuItems: List<OverflowMenuItem> = emptyList(),
+    val notValidIdNote: String? = null,
     val drivingRecordUrl: String? = null
 ) {
     val formattedAddressLines: List<String>

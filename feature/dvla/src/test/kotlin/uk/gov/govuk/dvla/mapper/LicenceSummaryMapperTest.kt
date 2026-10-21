@@ -7,6 +7,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceStatus
 import uk.gov.govuk.dvla.domain.LicenceType
@@ -25,13 +26,15 @@ class LicenceSummaryMapperTest {
     fun setup() {
         every { stringProvider.getString(any<Int>(), *anyVararg()) } returns ""
         every { stringProvider.getQuantityString(any(), any(), *anyVararg()) } returns ""
+        every { stringProvider.getString(R.string.licence_id_footnote) } returns "This is not a valid form of identification"
     }
 
     private fun makeLicenceDetails(
         status: LicenceStatus,
-        expiryDate: LocalDate? = LocalDate.now().plusYears(1)
+        expiryDate: LocalDate? = LocalDate.now().plusYears(1),
+        type: LicenceType = LicenceType.FULL
     ) = LicenceDetails(
-        licenceType = LicenceType.FULL,
+        licenceType = type,
         drivingLicenceNumber = "ARENO803236AA170",
         driverTitle = "Ms",
         driverFirstNames = "Anna Ornella",
@@ -41,8 +44,15 @@ class LicenceSummaryMapperTest {
         licenceStatus = status
     )
 
-    private fun successLicence(status: LicenceStatus, expiryDate: LocalDate? = LocalDate.now().plusYears(1)) =
-        (mapper.toUiModel(makeLicenceDetails(status, expiryDate), dvlaUrls) as LicenceSummaryUiState.Success).licence
+    private fun successLicence(
+        status: LicenceStatus,
+        expiryDate: LocalDate? = LocalDate.now().plusYears(1),
+        type: LicenceType = LicenceType.FULL
+    ) =
+        (mapper.toUiModel(
+            makeLicenceDetails(status, expiryDate, type),
+            dvlaUrls
+        ) as LicenceSummaryUiState.Success).licence
 
     @Test
     fun `Given licence status is valid, then result is Success and drivingRecordUrl is populated from dvlaUrls`() {
@@ -108,5 +118,23 @@ class LicenceSummaryMapperTest {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXCHANGED), dvlaUrls = null)
         assertTrue(result is LicenceSummaryUiState.NotAvailable)
         assertEquals(Urls.GOV_UK_HOME, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
+    }
+
+    @Test
+    fun `Given a full licence, then the not valid ID note is shown`() {
+        val licence = successLicence(status = LicenceStatus.VALID, type = LicenceType.FULL)
+        assertEquals("This is not a valid form of identification", licence.notValidIdNote)
+    }
+
+    @Test
+    fun `Given a provisional licence, then the not valid ID note is shown`() {
+        val licence = successLicence(status = LicenceStatus.VALID, type = LicenceType.PROVISIONAL)
+        assertEquals("This is not a valid form of identification", licence.notValidIdNote)
+    }
+
+    @Test
+    fun `Given an unknown licence type, then there is no not valid ID note`() {
+        val licence = successLicence(status = LicenceStatus.VALID, type = LicenceType.UNKNOWN)
+        assertNull(licence.notValidIdNote)
     }
 }
