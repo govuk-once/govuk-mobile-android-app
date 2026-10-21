@@ -965,4 +965,22 @@ class VehicleDetailsMapperTest {
         val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
         assertFalse(urls.contains(dvlaUrls.makeSorn))
     }
+
+    @Test
+    fun `Given no registration date, then calendar icon and first registered row show unknown`() {
+        every { stringProvider.getString(R.string.first_registered_title) } returns "First registered"
+
+        val vehicleDetails = mapper.toUiModel(
+            makeVehicleDetails(dateOfFirstRegistration = null),
+            dvlaUrls = null
+        )
+
+        val calendarIcon = vehicleDetails.specificationsIcons[0]
+        val dateSpec = vehicleDetails.specifications
+            .filterIsInstance<InternalLinkListItemModel.Info>()
+            .first { it.title.displayText == "First registered" }
+
+        assertEquals(UNKNOWN, calendarIcon.description.displayText)
+        assertEquals(UNKNOWN, dateSpec.info.displayText)
+    }
 }
