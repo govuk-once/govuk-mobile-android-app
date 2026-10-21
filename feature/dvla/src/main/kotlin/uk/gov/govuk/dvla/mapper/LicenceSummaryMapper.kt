@@ -55,8 +55,10 @@ internal class LicenceSummaryMapper @Inject constructor(
                     licenceNumber = details.drivingLicenceNumber,
                     dvlaUrls = dvlaUrls
                 ),
-                notValidIdNote = if (details.licenceType == LicenceType.FULL || details.licenceType == LicenceType.PROVISIONAL)
-                    stringProvider.getString(R.string.licence_id_footnote) else null,
+                notValidIdNote = when (details.licenceType) {
+                    LicenceType.FULL, LicenceType.PROVISIONAL -> stringProvider.getString(R.string.licence_id_footnote)
+                    else -> null
+                },
                 drivingRecordUrl = getDrivingRecordUrl(
                     status = details.licenceStatus,
                     dvlaUrls = dvlaUrls

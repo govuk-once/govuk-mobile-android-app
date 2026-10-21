@@ -26,7 +26,7 @@ class LicenceSummaryMapperTest {
     fun setup() {
         every { stringProvider.getString(any<Int>(), *anyVararg()) } returns ""
         every { stringProvider.getQuantityString(any(), any(), *anyVararg()) } returns ""
-        every { stringProvider.getString(R.string.licence_id_footnote) } returns "This is not a valid form of identification"
+        every { stringProvider.getString(R.string.licence_id_footnote, *anyVararg()) } returns "This is not a valid form of identification"
     }
 
     private fun makeLicenceDetails(
