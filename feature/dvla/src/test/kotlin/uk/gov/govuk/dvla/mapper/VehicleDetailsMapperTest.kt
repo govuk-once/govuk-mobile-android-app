@@ -31,11 +31,13 @@ class VehicleDetailsMapperTest {
     private companion object{
         const val FUEL_TYPE = "Fuel type"
         const val COLOUR = "Colour"
+        const val UNKNOWN = "Unknown"
     }
 
     @Before
     fun setup() {
         every { stringProvider.getString(any<Int>(), *anyVararg()) } returns ""
+        every { stringProvider.getString(R.string.value_unknown) } returns UNKNOWN
         every { stringProvider.getString(R.string.fuel_type_title) } returns FUEL_TYPE
         every { stringProvider.getString(R.string.colour_title) } returns COLOUR
     }
@@ -231,7 +233,7 @@ class VehicleDetailsMapperTest {
             .filterIsInstance<InternalLinkListItemModel.Info>()
             .first { it.title.displayText == "Engine size" }
 
-        assertEquals("Unknown", emissionsSpec.info.displayText)
+        assertEquals(UNKNOWN, emissionsSpec.info.displayText)
     }
 
     @Test
@@ -263,7 +265,7 @@ class VehicleDetailsMapperTest {
             .filterIsInstance<InternalLinkListItemModel.Info>()
             .first { it.title.displayText == "Emissions" }
 
-        assertEquals("Unknown", emissionsSpec.info.displayText)
+        assertEquals(UNKNOWN, emissionsSpec.info.displayText)
     }
 
     @Test
