@@ -94,7 +94,14 @@ internal class TravelAlertsRepoImpl @Inject constructor(
             )
         }, authRepo = authRepo)
 
-        if (result is Success) groups = null
+        if (result is Success) {
+            groups = groups?.let { cached ->
+                cached.copy(
+                    value = cached.value.filterNot { it.group == slug } +
+                        Group(namespace = "travel", group = slug, subgroup = joinSubgroup)
+                )
+            }
+        }
 
         return result
     }
@@ -126,16 +133,20 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         return result
     }
 
-    override suspend fun unfollowCountry(slug: String, currentNotificationsEnabled: Boolean): Result<Unit> {
-        val subgroupToLeave = if (currentNotificationsEnabled) Subgroup.INSTANT else Subgroup.NONE
-
+    override suspend fun unfollowCountry(slug: String): Result<Unit> {
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
                     SubscriptionRequest(
                         namespace = "travel",
                         group = slug,
-                        subgroup = subgroupToLeave,
+                        subgroup = Subgroup.INSTANT,
+                        action = SubscriptionRequest.Action.LEAVE
+                    ),
+                    SubscriptionRequest(
+                        namespace = "travel",
+                        group = slug,
+                        subgroup = Subgroup.NONE,
                         action = SubscriptionRequest.Action.LEAVE
                     )
                 )

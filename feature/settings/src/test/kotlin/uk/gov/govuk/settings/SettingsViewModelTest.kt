@@ -30,12 +30,13 @@ import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
-import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
 import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
+import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.SIGN_OUT_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
@@ -203,7 +204,7 @@ class SettingsViewModelTest {
         verify {
             analyticsClient.settingsItemClick(
                 text = HELP_AND_FEEDBACK_EVENT,
-                url = HELP_AND_FEEDBACK_URL
+                url = Urls.HELP_AND_FEEDBACK_URL
             )
         }
     }
@@ -288,6 +289,17 @@ class SettingsViewModelTest {
         verify {
             analyticsClient.settingsItemClick(
                 text = SIGN_OUT_EVENT,
+                external = false
+            )
+        }
+    }
+
+    @Test
+    fun `Given a messages click, then log analytics`() {
+        viewModel.onMessagesClick()
+        verify {
+            analyticsClient.settingsItemClick(
+                text = MESSAGES_EVENT,
                 external = false
             )
         }

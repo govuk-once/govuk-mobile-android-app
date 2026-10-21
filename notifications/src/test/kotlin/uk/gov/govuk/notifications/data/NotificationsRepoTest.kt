@@ -114,9 +114,11 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given request permission, then call request permission`() {
+    fun `Given request permission, then call request permission and return result`() {
+        coEvery { notificationsProvider.requestPermission() } returns true
         runTest {
-            notificationsRepo.requestPermission()
+            val result = notificationsRepo.requestPermission()
+            assertTrue(result)
             coVerify(exactly = 1) {
                 notificationsProvider.requestPermission()
             }

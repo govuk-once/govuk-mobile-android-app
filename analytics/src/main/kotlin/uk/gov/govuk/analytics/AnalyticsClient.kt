@@ -1,8 +1,12 @@
 package uk.gov.govuk.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.analytics.extension.redactPii
 import java.util.Locale
@@ -26,9 +30,13 @@ class AnalyticsClient @Inject constructor(
         return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
     }
 
+    val isAnalyticsEnabledFlow: Flow<Boolean>
+        get() = analyticsRepo.analyticsEnabledStateFlow
+            .map { it == AnalyticsEnabledState.ENABLED }
+            .distinctUntilChanged()
+
     suspend fun enable() {
         analyticsRepo.analyticsEnabled()
-        firebaseAnalyticsClient.enable()
         analyticsCoordinator.initialize()
     }
 
@@ -218,6 +226,10 @@ class AnalyticsClient @Inject constructor(
         ))
     }
 
+    fun messagesNotFound() {
+        logEvent("MessagesNotFound", mapOf())
+    }
+
     fun search(searchTerm: String, section: String? = null) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm, section = section)
     }
@@ -237,6 +249,18 @@ class AnalyticsClient @Inject constructor(
 
     fun chatQuestionAnswerReturnedEvent() {
         navigation(text = "Chat Question Answer Returned", type = "ChatQuestionAnswerReturned")
+    }
+
+    fun chatFeedback(text: String, action: String, questionId: String) {
+        val parameters = mapOf(
+            "text" to text,
+            "action" to action,
+            "questionId" to questionId,
+            "section" to "Chat",
+            "type" to "Feedback"
+        )
+
+        logEvent("ChatFeedback", parameters)
     }
 
     fun searchResultClick(text: String, url: String) {
@@ -382,8 +406,24 @@ class AnalyticsClient @Inject constructor(
         logEvent("Function", parametersWithLanguage(parameters))
     }
 
+    fun abTestEvent(event: AbTestEvent) {
+        logEvent(event.eventName, mapOf())
+    }
+
     private fun parametersWithLanguage(parameters: Map<String, Any>): Map<String, Any> {
         return parameters + Pair("language", Locale.getDefault().language)
+    }
+
+    fun notificationsRationaleView(origin: String) {
+        logEvent("notifications_rationale_view", mapOf("origin" to origin))
+    }
+
+    fun notificationsRationaleSettingsContinue(origin: String) {
+        logEvent("notifications_rationale_settings_continue", mapOf("origin" to origin))
+    }
+
+    fun notificationsRationaleSettingsCancel(origin: String) {
+        logEvent("notifications_rationale_settings_cancel", mapOf("origin" to origin))
     }
 
     private fun logEvent(name: String, parameters: Map<String, Any>) {

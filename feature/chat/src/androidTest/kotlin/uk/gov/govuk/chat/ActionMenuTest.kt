@@ -118,7 +118,9 @@ class ActionMenuTest {
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },
                         onSubmit = { _ -> },
-                        onClear = { }
+                        onClear = { },
+                        onFeedbackClick = { _, _, _ -> },
+                        onFeedbackGiven = { _, _, _ -> }
                     ),
                     isTalkBackActive = isTalkBackActive
                 )

@@ -19,7 +19,8 @@ class VehicleSummaryMapperTest {
 
     private val stringProvider = mockk<StringProvider>()
     private val taxAndMotStatusMapper = TaxAndMotStatusMapper(stringProvider)
-    private val mapper = VehicleSummaryMapper(stringProvider, taxAndMotStatusMapper)
+    private val vehicleMenuItemsMapper = VehicleMenuItemsMapper(stringProvider)
+    private val mapper = VehicleSummaryMapper(taxAndMotStatusMapper, vehicleMenuItemsMapper)
 
     @Before
     fun setup() {
@@ -118,5 +119,25 @@ class VehicleSummaryMapperTest {
         val result = mapper.toUiModel(makeVehicle(taxStatus = TaxStatus.UNTAXED), dvlaUrls)
         val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
         assertFalse(urls.contains(dvlaUrls.cancelTax))
+    }
+
+    @Test
+    fun `Given vehicle has SORN start date and is taxed, then cancel tax is not present`() {
+        val result = mapper.toUiModel(
+            makeVehicle(sornStart = LocalDate.now().plusDays(30), taxStatus = TaxStatus.TAXED),
+            dvlaUrls
+        )
+        val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
+        assertFalse(urls.contains(dvlaUrls.cancelTax))
+    }
+
+    @Test
+    fun `Given vehicle has SORN start date and is taxed, then register off road is not present`() {
+        val result = mapper.toUiModel(
+            makeVehicle(sornStart = LocalDate.now().plusDays(30), taxStatus = TaxStatus.TAXED),
+            dvlaUrls
+        )
+        val urls = result.menuItems.map { (it.action as MenuAction.WebLink).url }
+        assertFalse(urls.contains(dvlaUrls.makeSorn))
     }
 }

@@ -31,7 +31,7 @@ class TravelAlertsWidgetViewModel @Inject constructor(
         data object Error: State()
     }
 
-    data class LoadedRow(val headline: String, val subtitle: String, val link: String)
+    data class LoadedRow(val headline: String, val subtitle: String, val link: String, val url: String)
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -44,10 +44,18 @@ class TravelAlertsWidgetViewModel @Inject constructor(
         _uiState.update { it.copy(followError = false) }
     }
 
+    fun onFollowCountryClick(text: String) {
+        analyticsClient.widgetClick(
+            text = text,
+            external = false,
+            section = SECTION
+        )
+    }
+
     fun onRowClick(row: LoadedRow) {
         analyticsClient.widgetClick(
             text = row.headline,
-            url = row.link,
+            url = row.url,
             external = true,
             section = SECTION
         )
@@ -66,8 +74,8 @@ class TravelAlertsWidgetViewModel @Inject constructor(
                         LoadedRow(
                             headline = country.name,
                             subtitle = country.date.toRelativeDate(),
-                            // TODO Would rather this wasn't hard-coded, but not 100% if it's coming back whole off the API
-                            link = "govuk://app.gov.uk/web?url=https://www.gov.uk/foreign-travel-advice/${country.slug}"
+                            link = "govuk://app.gov.uk/web?url=$TRAVEL_ADVICE_BASE_URL${country.slug}",
+                            url = "$TRAVEL_ADVICE_BASE_URL${country.slug}"
                         )
                     }
                 }.sortedBy { it.headline }
@@ -81,5 +89,6 @@ class TravelAlertsWidgetViewModel @Inject constructor(
 
     companion object {
         private const val SECTION = "Travel Abroad Notifications"
+        private const val TRAVEL_ADVICE_BASE_URL = "https://www.gov.uk/foreign-travel-advice/"
     }
 }

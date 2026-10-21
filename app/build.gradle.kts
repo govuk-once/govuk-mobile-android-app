@@ -10,11 +10,12 @@ plugins {
     alias(libs.plugins.google.play.services)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.firebaseAppDistribution)
+    alias(libs.plugins.firebasePerformance)
     alias(libs.plugins.kover)
 }
 
 val majorVersion = "1"
-val minorVersion = "9"
+val minorVersion = "10"
 
 val privacyPolicyUrl: String by project
 

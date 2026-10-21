@@ -578,6 +578,8 @@ private fun GovUkNavHost(
                         SearchWidget(
                             onClick = { text ->
                                 onWidgetClick(text, null)
+                                // TODO - Android A/A test 10-26 - remove when the test has finished
+                                viewModel.onSearchWidgetClick()
                                 navController.navigate(SEARCH_GRAPH_ROUTE)
                             },
                             modifier = modifier
@@ -683,12 +685,16 @@ private fun GovUkNavHost(
                 },
                 onWebFlowClosed = {
                     navController.popBackStack()
+                },
+                onVehicleFound = { regNumber ->
+                    navController.navigateToVehicleDetailsByRegistration(regNumber)
                 }
             )
             travelAlertsGraph(
                 navController = navController,
                 launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-                modifier = Modifier.padding(paddingValues)
+                appVersion = BuildConfig.VERSION_NAME_USER_FACING,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

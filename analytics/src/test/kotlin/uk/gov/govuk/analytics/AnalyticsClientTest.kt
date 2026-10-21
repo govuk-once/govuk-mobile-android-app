@@ -6,7 +6,14 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -15,6 +22,7 @@ import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.DISABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.ENABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.NOT_SET
+import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import java.util.Locale
 
@@ -293,6 +301,24 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a chat feedback item is clicked, then log event`() {
+        analyticsClient.chatFeedback(text = "text", action = "action", questionId = "questionId")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "ChatFeedback",
+                mapOf(
+                    "text" to "text",
+                    "action" to "action",
+                    "questionId" to "questionId",
+                    "type" to "Feedback",
+                    "section" to "Chat"
+                )
+            )
+        }
+    }
+
+    @Test
     fun `Given a Notification Centre URL is launched, then log event`() {
         val testUrl = "Test"
         analyticsClient.messagesUrlLaunched(testUrl)
@@ -357,6 +383,34 @@ class AnalyticsClientTest {
                 mapOf(
                     "action" to "cancel"
                 )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a Notification is not found, then log event`() {
+        analyticsClient.messagesNotFound()
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "MessagesNotFound",
+                mapOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given an AB test event, then log event`() {
+        val event = mockk<AbTestEvent> {
+            every { eventName } returns "test_event"
+        }
+
+        analyticsClient.abTestEvent(event)
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "test_event",
+                mapOf()
             )
         }
     }
@@ -901,13 +955,51 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given analytics are not set, when is analytics enabled flow, then emit false`() = runTest {
+        every { analyticsRepo.analyticsEnabledStateFlow } returns MutableStateFlow(NOT_SET)
+
+        assertFalse(analyticsClient.isAnalyticsEnabledFlow.first())
+    }
+
+    @Test
+    fun `Given analytics are enabled, when is analytics enabled flow, then emit true`() = runTest {
+        every { analyticsRepo.analyticsEnabledStateFlow } returns MutableStateFlow(ENABLED)
+
+        assertTrue(analyticsClient.isAnalyticsEnabledFlow.first())
+    }
+
+    @Test
+    fun `Given analytics are disabled, when is analytics enabled flow, then emit false`() = runTest {
+        every { analyticsRepo.analyticsEnabledStateFlow } returns MutableStateFlow(DISABLED)
+
+        assertFalse(analyticsClient.isAnalyticsEnabledFlow.first())
+    }
+
+    @Test
+    fun `Given analytics state changes, when is analytics enabled flow, then emit distinct values`() = runTest {
+        val stateFlow = MutableStateFlow(NOT_SET)
+        every { analyticsRepo.analyticsEnabledStateFlow } returns stateFlow
+
+        val results = mutableListOf<Boolean>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            analyticsClient.isAnalyticsEnabledFlow.take(3).toList(results)
+        }
+
+        stateFlow.value = DISABLED
+        stateFlow.value = ENABLED
+        stateFlow.value = DISABLED
+
+        job.join()
+        assertEquals(listOf(false, true, false), results)
+    }
+
+    @Test
     fun `Given analytics have been enabled, then enable`() {
         runTest {
             analyticsClient.enable()
 
             coVerify {
                 analyticsRepo.analyticsEnabled()
-                firebaseAnalyticClient.enable()
                 analyticsCoordinator.initialize()
             }
         }
@@ -1164,6 +1256,42 @@ class AnalyticsClientTest {
                     "section" to "section",
                     "action" to "action"
                 )
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale viewed, then log event`() {
+        analyticsClient.notificationsRationaleView("FOLLOW")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_view",
+                mapOf("origin" to "FOLLOW")
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale settings continue tapped, then log event`() {
+        analyticsClient.notificationsRationaleSettingsContinue("EDIT")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_settings_continue",
+                mapOf("origin" to "EDIT")
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale settings cancel tapped, then log event`() {
+        analyticsClient.notificationsRationaleSettingsCancel("FOLLOW")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_settings_cancel",
+                mapOf("origin" to "FOLLOW")
             )
         }
     }

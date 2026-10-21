@@ -8,6 +8,8 @@
     <string name="country_list_search_placeholder">Search</string>
     <string name="country_list_search_clear">Clear search</string>
     <string name="country_list_no_results">No results found</string>
+    <string name="country_list_footer">We\'ll add more countries as we test this service.\n</string>
+    <string name="country_list_footer_link_text">Tell us the country you’re looking for</string>
     <string name="edit_countries_title">Edit countries</string>
     <string name="edit_countries_description">Manage the countries you follow and how you\'re updated</string>
     <string name="edit_countries_follow_another">Follow another country</string>
@@ -27,8 +29,10 @@
     <string name="follow_country_error_title">There was a problem</string>
     <string name="follow_country_error_description">This action could not be completed. Please try again.</string>
     <string name="follow_country_error_button">OK</string>
-    <string name="notifications_rationale_title">Get notifications for travel advice</string>
-    <string name="notifications_rationale_body">Enable notifications to be alerted immediately when travel advice changes for countries you follow.</string>
+    <string name="notifications_rationale_title">Give permission</string>
+    <string name="notifications_rationale_body_part1">We need your permission to send notifications and collect app usage statistics.</string>
+    <string name="notifications_rationale_body_part2">You can change this at any time in your phone settings.</string>
+    <string name="notifications_rationale_privacy_link">Read the privacy notice</string>
     <string name="notifications_rationale_agree">Agree and continue</string>
     <string name="notifications_rationale_not_now">Not now</string>
 </resources>

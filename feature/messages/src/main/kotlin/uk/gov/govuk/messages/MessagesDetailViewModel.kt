@@ -34,8 +34,8 @@ internal class MessagesDetailViewModel @Inject constructor(
 
     companion object {
         private const val SCREEN_CLASS = "MessagesDetailScreen"
-        private const val SCREEN_NAME = "MessagesDetail"
-        private const val TITLE = "MessagesDetailScreen"
+        private const val SCREEN_NAME = "Messages Detail"
+        private const val TITLE = "Messages Detail"
     }
 
     private val _uiState: MutableStateFlow<MessagesDetailUiState> = MutableStateFlow(
@@ -102,6 +102,7 @@ internal class MessagesDetailViewModel @Inject constructor(
                             markUnreadIfNecessary(notification)
                             MessagesDetailUiState.Loaded(notification, false)
                         } else {
+                            analyticsClient.messagesNotFound()
                             MessagesDetailUiState.Error
                         }
                     }

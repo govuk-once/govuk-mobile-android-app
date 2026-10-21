@@ -132,6 +132,13 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
+    fun onResultUnavailable(regNumber: String) {
+        _sheetState.value = CheckVehicleSheetState.Error(
+            regNumber = regNumber,
+            error = CheckVehicleError.SEARCH_UNAVAILABLE
+        )
+    }
+
     private fun showError(error: CheckVehicleError) {
         _sheetState.update { CheckVehicleSheetState.Error(it.regNumber, error) }
     }

@@ -84,6 +84,14 @@
     <string name="licence_not_available_description">Check your account to see your licence status and restrictions that apply to you</string>
     <string name="licence_not_available_link_text">Your driver and vehicles account</string>
 
+    <string name="menu_register_to_you">Register to you</string>
+    <string name="menu_register_to_you_alt_text">Register vehicle to you</string>
+    <string name="menu_used_vehicle_checks">Used vehicle checks</string>
+    <string name="menu_report_as_abandoned">Report as abandoned</string>
+    <string name="menu_report_as_abandoned_alt_text">Report vehicle as abandoned</string>
+    <string name="menu_report_as_on_the_road">Report as on the road</string>
+    <string name="menu_report_as_on_the_road_alt_text">Report vehicle as on the road</string>
+
     <string name="menu_sorn_rules">SORN rules</string>
     <string name="menu_report_as_sold">Report as sold</string>
     <string name="menu_report_as_sold_alt_text">Report vehicle as sold</string>
@@ -185,4 +193,5 @@
     <string name="check_vehicle_search_unavailable">Search not working - try again later</string>
     <string name="check_vehicle_number_plate_not_found">Number plate not found</string>
     <string name="check_vehicle_loading_alt_text">Getting vehicle details</string>
+    <string name="search_vehicle_content_desc">Search for another vehicle</string>
 </resources>

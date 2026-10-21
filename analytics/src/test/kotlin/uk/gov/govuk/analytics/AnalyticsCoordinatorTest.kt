@@ -32,34 +32,37 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
-    fun `Given analytics consent has been given, when initialize is called, then call the Qualtrics initialize method`() = runTest {
+    fun `Given analytics consent has been given, when initialize is called, then call the Firebase enable and Qualtrics initialize functions`() = runTest {
         every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.ENABLED
 
         analyticsCoordinator.initialize()
 
-        verify {
+        verify(exactly = 1) {
+            firebaseAnalyticClient.enable()
             qualtricsAnalyticsClient.initialize()
         }
     }
 
     @Test
-    fun `Given analytics consent has not been given, when initialize is called, then do not call the Qualtrics initialize method`() = runTest {
+    fun `Given analytics consent has not been given, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() = runTest {
         every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.NOT_SET
 
         analyticsCoordinator.initialize()
 
         verify(exactly = 0) {
+            firebaseAnalyticClient.enable()
             qualtricsAnalyticsClient.initialize()
         }
     }
 
     @Test
-    fun `Given analytics consent has been disabled, when initialize is called, then do not call the Qualtrics initialize method`() = runTest {
+    fun `Given analytics consent has been disabled, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() = runTest {
         every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.DISABLED
 
         analyticsCoordinator.initialize()
 
         verify(exactly = 0) {
+            firebaseAnalyticClient.enable()
             qualtricsAnalyticsClient.initialize()
         }
     }

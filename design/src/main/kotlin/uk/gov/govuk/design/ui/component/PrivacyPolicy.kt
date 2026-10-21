@@ -22,9 +22,9 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 fun PrivacyPolicyLink(
     modifier: Modifier = Modifier,
+    text: String = stringResource(R.string.privacy_policy_read_more),
     onClick: ((text: String, url: String) -> Unit)? = null
 ) {
-    val text = stringResource(R.string.privacy_policy_read_more)
     val url = PRIVACY_POLICY_URL
 
     val interactionSource = remember { MutableInteractionSource() }

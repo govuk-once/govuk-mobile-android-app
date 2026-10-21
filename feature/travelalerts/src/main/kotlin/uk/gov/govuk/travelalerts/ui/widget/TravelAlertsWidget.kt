@@ -62,9 +62,13 @@ fun TravelAlertsWidget(
         }
     }
 
+    val emptyTitle = stringResource(R.string.empty_title)
     when (val state = uiState.content) {
         TravelAlertsWidgetViewModel.State.Loading -> TravelAlertsLoading()
-        TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty(onFollowCountry)
+        TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty {
+            viewModel.onFollowCountryClick(emptyTitle)
+            onFollowCountry()
+        }
         is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(
             rows = state.rows,
             onEditCountries = onEditCountries
@@ -172,7 +176,7 @@ private fun TravelAlertsError() {
 
             ExtraSmallVerticalSpacer()
 
-            BodyRegularLabel(stringResource(R.string.country_list_error_description))
+            BodyRegularLabel(stringResource(R.string.country_list_error_description), textAlign = TextAlign.Center)
 
             ExtraLargeVerticalSpacer()
         }
@@ -201,8 +205,8 @@ fun TravelAlertsWidgetLoadedPreview() {
     GovUkTheme {
         TravelAlertsLoaded(
             rows = listOf(
-                TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "Updated on 12th September 26", "test"),
-                TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "Updated on 13th September 26", "test")
+                TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "Updated on 12th September 26", "test", "test"),
+                TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "Updated on 13th September 26", "test", "test")
             ),
             onEditCountries = {}
         ) { }
