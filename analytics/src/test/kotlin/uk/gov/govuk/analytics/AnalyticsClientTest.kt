@@ -388,6 +388,18 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a Notification is not found, then log event`() {
+        analyticsClient.messagesNotFound()
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "MessagesNotFound",
+                mapOf()
+            )
+        }
+    }
+
+    @Test
     fun `Given an AB test event, then log event`() {
         val event = mockk<AbTestEvent> {
             every { eventName } returns "test_event"
@@ -1244,6 +1256,42 @@ class AnalyticsClientTest {
                     "section" to "section",
                     "action" to "action"
                 )
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale viewed, then log event`() {
+        analyticsClient.notificationsRationaleView("FOLLOW")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_view",
+                mapOf("origin" to "FOLLOW")
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale settings continue tapped, then log event`() {
+        analyticsClient.notificationsRationaleSettingsContinue("EDIT")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_settings_continue",
+                mapOf("origin" to "EDIT")
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications rationale settings cancel tapped, then log event`() {
+        analyticsClient.notificationsRationaleSettingsCancel("FOLLOW")
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "notifications_rationale_settings_cancel",
+                mapOf("origin" to "FOLLOW")
             )
         }
     }

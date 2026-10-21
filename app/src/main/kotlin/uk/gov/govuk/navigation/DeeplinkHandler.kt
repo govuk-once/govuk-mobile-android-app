@@ -79,6 +79,7 @@ internal class DeeplinkHandler @Inject constructor(
             }
 
             if (interceptMessagesDetailDeeplink(it, navController)) {
+                deepLink = null
                 return
             }
 

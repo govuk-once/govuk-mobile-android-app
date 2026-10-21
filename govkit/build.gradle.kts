@@ -49,7 +49,7 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/BrowserLauncher.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/BrowserLauncher.*,**/DeviceInfo.*"
         )
     }
 }

@@ -690,7 +690,8 @@ private fun GovUkNavHost(
             travelAlertsGraph(
                 navController = navController,
                 launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-                modifier = Modifier.padding(paddingValues)
+                appVersion = BuildConfig.VERSION_NAME_USER_FACING,
+                modifier = Modifier.padding(paddingValues),
             )
         }
 

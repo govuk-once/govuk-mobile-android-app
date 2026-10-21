@@ -58,7 +58,7 @@ class MessagesViewModelTest {
                 analyticsClient.screenView(
                     screenClass = "MessagesScreen",
                     screenName = "Messages",
-                    title = "MessagesScreen"
+                    title = "Messages"
                 )
             }
         }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
@@ -103,7 +104,8 @@ class CountryListViewModel @Inject constructor(
         updateLoaded { copy(selectedCountry = null) }
     }
 
-    fun onNotNowNotifications(country: Country) {
+    fun onNotNowNotifications(country: Country, text: String) {
+        analyticsClient.widgetClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             updateLoaded { copy(isSaving = true) }
             when (travelAlertsRepo.followCountry(country.slug, notificationsEnabled = false)) {
@@ -119,7 +121,8 @@ class CountryListViewModel @Inject constructor(
         }
     }
 
-    fun onGetNotificationsClick(country: Country) {
+    fun onGetNotificationsClick(country: Country, text: String) {
+        analyticsClient.widgetClick(text = text, external = false, section = SECTION)
         if (notificationsRepo.permissionGranted()) {
             notificationsRepo.giveConsent()
             viewModelScope.launch {
@@ -150,8 +153,17 @@ class CountryListViewModel @Inject constructor(
         }
     }
 
+    fun onHelpAndFeedbackClick(text: String) {
+        analyticsClient.buttonClick(
+            text = text,
+            url = Urls.HELP_AND_FEEDBACK_URL,
+            external = true,
+            section = SECTION
+        )
+    }
+
     fun onSearchQueryChange(query: String) {
-        val q = query.lowercase()
+        val q = query.lowercase().trim()
         val filtered = if (q.isEmpty()) {
             allCountries
         } else {

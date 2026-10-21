@@ -15,6 +15,7 @@ import uk.gov.govuk.chat.data.remote.ChatApi
 import uk.gov.govuk.chat.data.remote.ChatResult.NotFound
 import uk.gov.govuk.chat.data.remote.ChatResult.Success
 import uk.gov.govuk.chat.data.remote.model.Answer
+import uk.gov.govuk.chat.data.remote.model.AnswerFeedbackRequest
 import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
 import uk.gov.govuk.config.data.ConfigRepo
@@ -31,6 +32,7 @@ class ChatRepoTest {
     private val answeredQuestion = mockk<AnsweredQuestion>(relaxed = true)
     private val answerResponse = mockk<Response<Answer>>(relaxed = true)
     private val answer = mockk<Answer>(relaxed = true)
+    private val feedbackResponse = mockk<Response<Unit>>(relaxed = true)
 
     private lateinit var chatRepo: ChatRepo
 
@@ -157,5 +159,46 @@ class ChatRepoTest {
         coVerify {
             dataStore.clear()
         }
+    }
+
+    @Test
+    fun `Give feedback calls API with reaction and returns success`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
+        every { feedbackResponse.isSuccessful } returns true
+        every { feedbackResponse.code() } returns 201
+        every { feedbackResponse.body() } returns Unit
+
+        val result = chatRepo.giveFeedback("123", "abc", "positive")
+
+        coVerify {
+            chatApi.giveFeedback(
+                conversationId = "123",
+                answerId = "abc",
+                requestBody = AnswerFeedbackRequest(reaction = "positive")
+            )
+        }
+        assertEquals(Success(Unit), result)
+    }
+
+    @Test
+    fun `Give feedback returns success when feedback has already been given`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
+        every { feedbackResponse.isSuccessful } returns false
+        every { feedbackResponse.code() } returns 409
+
+        val result = chatRepo.giveFeedback("123", "abc", "positive")
+
+        assertEquals(Success(Unit), result)
+    }
+
+    @Test
+    fun `Give feedback returns error when API returns an error`() = runTest {
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
+        every { feedbackResponse.isSuccessful } returns false
+        every { feedbackResponse.code() } returns 404
+
+        val result = chatRepo.giveFeedback("123", "abc", "positive")
+
+        assertTrue(result is NotFound)
     }
 }

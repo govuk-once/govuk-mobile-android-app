@@ -1,6 +1,5 @@
 package uk.gov.govuk.settings.navigation
 
-import android.os.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -10,7 +9,8 @@ import androidx.navigation.navigation
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_PERMISSION_ROUTE
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
-import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_URL
+import uk.gov.govuk.govkit.browser.DeviceInfo
+import uk.gov.govuk.govkit.browser.getHelpAndFeedbackUrl
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
 import uk.gov.govuk.settings.ui.OpenSourceLicensesScreen
@@ -20,8 +20,6 @@ import uk.gov.govuk.settings.ui.SettingsRouteActions
 import uk.gov.govuk.settings.ui.SignOutErrorRoute
 import uk.gov.govuk.settings.ui.SignOutRoute
 import uk.gov.govuk.settings.ui.YourAccountsRoute
-import java.net.URLEncoder
-
 
 const val SETTINGS_GRAPH_ROUTE = "settings_graph_route"
 private const val SETTINGS_ROUTE = "settings_route"
@@ -71,7 +69,7 @@ fun NavGraphBuilder.settingsGraph(
                         launchBrowser(PRIVACY_POLICY_URL)
                     },
                     onHelpClick = {
-                        val url = getHelpAndFeedbackUrl(appVersion)
+                        val url = getHelpAndFeedbackUrl(appVersion, DeviceInfo.fromBuild())
                         launchBrowser(url)
                     },
                     onAccessibilityStatementClick = {
@@ -148,11 +146,3 @@ fun NavController.navigateToErrorScreen() {
     navigate(SIGN_OUT_ERROR_ROUTE)
 }
 
-fun getHelpAndFeedbackUrl(
-    appVersion: String
-): String {
-    val deviceInfo = "${Build.MANUFACTURER} ${Build.MODEL} ${Build.VERSION.RELEASE}"
-    return "$HELP_AND_FEEDBACK_URL?" +
-            "app_version=$appVersion&" +
-            "phone=${URLEncoder.encode(deviceInfo, "UTF-8")}"
-}
