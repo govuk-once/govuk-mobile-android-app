@@ -195,8 +195,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
 
-    screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.screenshot.validation.api) {
-        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
     }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }
