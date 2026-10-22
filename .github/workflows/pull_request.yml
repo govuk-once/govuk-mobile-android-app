@@ -51,11 +51,12 @@ jobs:
         run: ./gradlew koverXmlReportDebug
 
       - name: Run Debug Screenshot tests
+        id: screenshot-tests
         run: ./gradlew validateDebugScreenshotTest
 
       - name: Upload screenshot Test Report on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
+        if: steps.screenshot-tests.outcome == 'failure'
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae7b
         with:
           name: screenshot-test-report
           path: "**/build/reports/screenshotTest/"
