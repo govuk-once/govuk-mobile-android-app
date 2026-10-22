@@ -54,6 +54,7 @@
     <string name="licence_name_alt_text">Name on licence %1$s</string>
     <string name="licence_address_alt_text">Address on licence %1$s</string>
     <string name="licence_expiration_alt_text">Licence %1$s</string>
+    <string name="licence_id_footnote">This is not a valid form of identification</string>
     <string name="clipboard_data_label_licence_number">copy licence number</string>
     <string name="expiring_status_date">Expiring %1$s</string>
     <string name="expiring_direct_debit_status_date">Renews %1$s</string>
