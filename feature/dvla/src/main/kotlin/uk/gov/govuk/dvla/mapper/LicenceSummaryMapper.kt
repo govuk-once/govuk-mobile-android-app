@@ -216,9 +216,11 @@ internal class LicenceSummaryMapper @Inject constructor(
     }
 
     private fun getLicenceTypeString(type: LicenceType): String =
-        when (type) {
-            LicenceType.FULL -> stringProvider.getString(R.string.licence_type_full)
-            LicenceType.PROVISIONAL -> stringProvider.getString(R.string.licence_type_provisional)
-            LicenceType.UNKNOWN -> "Unknown"    // TODO return unknown for now, other states in future tickets
-        }
+        stringProvider.getString(
+            when (type) {
+                LicenceType.FULL -> R.string.licence_type_full
+                LicenceType.PROVISIONAL -> R.string.licence_type_provisional
+                LicenceType.UNKNOWN -> R.string.value_unknown
+            }
+        )
 }

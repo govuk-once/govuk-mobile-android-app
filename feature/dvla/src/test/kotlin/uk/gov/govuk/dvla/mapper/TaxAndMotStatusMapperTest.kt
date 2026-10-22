@@ -25,6 +25,10 @@ class TaxAndMotStatusMapperTest {
     private val stringProvider = mockk<StringProvider>()
     private val mapper = TaxAndMotStatusMapper(stringProvider)
 
+    private companion object {
+        const val UNKNOWN = "Unknown"
+    }
+
     private fun makeVehicle(
         model: String? = null,
         sornStart: LocalDate? = null,
@@ -50,6 +54,7 @@ class TaxAndMotStatusMapperTest {
     fun setup() {
         every { stringProvider.getString(any<Int>(), *anyVararg()) } returns ""
         every { stringProvider.getQuantityString(any(), any(), *anyVararg()) } returns ""
+        every { stringProvider.getString(R.string.status_unknown) } returns UNKNOWN
         every { stringProvider.getString(R.string.acronym_mot) } returns "MOT"
         every { stringProvider.getString(R.string.acronym_mot_alt_text) } returns "M.O.T."
         every { stringProvider.getString(R.string.tax_status_title) } returns "Tax"
@@ -257,8 +262,6 @@ class TaxAndMotStatusMapperTest {
 
     @Test
     fun `Given the MOT status is NO DETAILS HELD and DVLA url's is NULL, then the correct StatusUiModel is returned`() {
-        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
-
         val vehicle = makeVehicle(
             motStatus = MotStatus.NO_DETAILS_HELD
         )
@@ -268,7 +271,7 @@ class TaxAndMotStatusMapperTest {
         motStatus as StatusUiModel.StatusRow
         assertEquals("MOT", motStatus.statusRowUi.title?.displayText)
         assertEquals("M.O.T.", motStatus.statusRowUi.title?.altText)
-        assertEquals("Unknown", motStatus.statusRowUi.description.displayText)
+        assertEquals(UNKNOWN, motStatus.statusRowUi.description.displayText)
         assertNull(motStatus.statusRowUi.description.altText)
         assertNull(motStatus.statusRowUi.style)
     }
@@ -297,8 +300,6 @@ class TaxAndMotStatusMapperTest {
 
     @Test
     fun `Given the MOT status is NO RESULTS RETURNED and DVLA url's is NULL, then the correct StatusUiModel is returned`() {
-        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
-
         val vehicle = makeVehicle(
             motStatus = MotStatus.NO_RESULTS_RETURNED
         )
@@ -308,15 +309,13 @@ class TaxAndMotStatusMapperTest {
         motStatus as StatusUiModel.StatusRow
         assertEquals("MOT", motStatus.statusRowUi.title?.displayText)
         assertEquals("M.O.T.", motStatus.statusRowUi.title?.altText)
-        assertEquals("Unknown", motStatus.statusRowUi.description.displayText)
+        assertEquals(UNKNOWN, motStatus.statusRowUi.description.displayText)
         assertNull(motStatus.statusRowUi.description.altText)
         assertNull(motStatus.statusRowUi.style)
     }
 
     @Test
     fun `Given the MOT status is UNKNOWN, then the correct StatusUiModel is returned`() {
-        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
-
         val vehicle = makeVehicle(
             motStatus = MotStatus.UNKNOWN
         )
@@ -326,7 +325,7 @@ class TaxAndMotStatusMapperTest {
         motStatus as StatusUiModel.StatusRow
         assertEquals("MOT", motStatus.statusRowUi.title?.displayText)
         assertEquals("M.O.T.", motStatus.statusRowUi.title?.altText)
-        assertEquals("Unknown", motStatus.statusRowUi.description.displayText)
+        assertEquals(UNKNOWN, motStatus.statusRowUi.description.displayText)
         assertNull(motStatus.statusRowUi.description.altText)
         assertNull(motStatus.statusRowUi.style)
     }
@@ -673,8 +672,6 @@ class TaxAndMotStatusMapperTest {
 
     @Test
     fun `Given the Tax status is UNKNOWN and DVLA url's is NULL, then the correct StatusUiModel is returned`() {
-        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
-
         val vehicle = makeVehicle(
             taxStatus = TaxStatus.UNKNOWN
         )
@@ -684,7 +681,7 @@ class TaxAndMotStatusMapperTest {
         taxStatus as StatusUiModel.StatusRow
         assertEquals("Tax", taxStatus.statusRowUi.title?.displayText)
         assertNull(taxStatus.statusRowUi.title?.altText)
-        assertEquals("Unknown", taxStatus.statusRowUi.description.displayText)
+        assertEquals(UNKNOWN, taxStatus.statusRowUi.description.displayText)
         assertNull(taxStatus.statusRowUi.description.altText)
         assertNull(taxStatus.statusRowUi.style)
     }
@@ -784,8 +781,6 @@ class TaxAndMotStatusMapperTest {
 
     @Test
     fun `Given the Tax status is UNKNOWN and DVLA url's is NULL, then the correct StatusUiModel is returned for an enquiry`() {
-        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
-
         val vehicle = makeVehicle(
             taxStatus = TaxStatus.UNKNOWN
         )
@@ -795,7 +790,7 @@ class TaxAndMotStatusMapperTest {
         taxStatus as StatusUiModel.StatusRow
         assertEquals("Tax", taxStatus.statusRowUi.title?.displayText)
         assertNull(taxStatus.statusRowUi.title?.altText)
-        assertEquals("Unknown", taxStatus.statusRowUi.description.displayText)
+        assertEquals(UNKNOWN, taxStatus.statusRowUi.description.displayText)
         assertNull(taxStatus.statusRowUi.description.altText)
         assertNull(taxStatus.statusRowUi.style)
     }
