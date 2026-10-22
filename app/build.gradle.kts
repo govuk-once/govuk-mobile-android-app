@@ -197,6 +197,6 @@ dependencies {
 
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation(libs.screenshot.validation.api) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+        exclude(group = "org.jetbrains.kotlin")
     }
 }
