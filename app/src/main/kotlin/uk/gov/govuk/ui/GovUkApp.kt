@@ -66,6 +66,7 @@ import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
+import uk.gov.govuk.dvla.navigation.navigateToDrivingCategories
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
@@ -303,7 +304,7 @@ private fun BottomNavScaffold(
                         viewModel.onSuppressWidgetClick(id, text, section)
                     },
                     shouldShowExternalBrowser = uiState.shouldShowExternalBrowser,
-                    paddingValues = paddingValues
+                    paddingValues = paddingValues,
                 )
                 HandleOnResumeNavigation(
                     navController = { navController },
@@ -615,6 +616,7 @@ private fun GovUkNavHost(
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
+                                onDrivingCategoriesClick = { navController.navigateToDrivingCategories() },
                                 vehiclesFooter = {
                                     CheckVehicleWidget(
                                         onVehicleFound = { reg ->
