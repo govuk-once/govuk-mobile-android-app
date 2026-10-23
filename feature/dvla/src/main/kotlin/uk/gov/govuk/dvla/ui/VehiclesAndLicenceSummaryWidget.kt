@@ -425,7 +425,6 @@ private fun LicenceSummarySuccess(
             )
         }
 
-
         LargeVerticalSpacer()
 
         DrivingCategoriesSection(
