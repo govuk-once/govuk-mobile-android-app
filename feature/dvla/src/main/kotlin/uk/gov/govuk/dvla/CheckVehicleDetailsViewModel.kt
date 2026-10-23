@@ -41,7 +41,7 @@ internal class CheckVehicleDetailsViewModel @Inject constructor(
     private fun createInitialState(): CheckVehicleDetailsUiState {
         val regNumber = savedStateHandle.get<String>(ARG_REG_NUMBER).orEmpty()
 
-        val vehicle = dvlaRepo.findVehicleEnquiryDetails(regNumber)
+        val vehicle = dvlaRepo.getCachedVehicleEnquiryDetails(regNumber)
             ?: return CheckVehicleDetailsUiState.Error(regNumber)
 
         return CheckVehicleDetailsUiState.Success(

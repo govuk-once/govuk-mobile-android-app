@@ -9,6 +9,8 @@ import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import java.time.LocalDate
 import uk.gov.govuk.dvla.remote.model.common.LicenceStatus as RemoteLicenceStatus
 import uk.gov.govuk.dvla.remote.model.common.LicenceType as RemoteLicenceType
+import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
+import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 
 class LicenceMapperTest {
     @Test
@@ -22,6 +24,10 @@ class LicenceMapperTest {
             every { drivingLicence.driverFullAddress  } returns "29 Orchard Drive\nMilton Keynes\nPA98 J83"
             every { drivingLicence.licenceStatus } returns RemoteLicenceStatus.VALID
             every { drivingLicence.tokenValidToDate } returns "2035-05-01"
+            every { drivingLicence.entitlements } returns listOf(
+                RemoteEntitlement("B", RemoteEntitlementType.FULL),
+                RemoteEntitlement("A", RemoteEntitlementType.PROVISIONAL)
+            )
         }
 
         val domainModel = networkResponse.toDomainModel()
@@ -35,6 +41,13 @@ class LicenceMapperTest {
         assertEquals(LicenceStatus.VALID, domainModel.licenceStatus)
         assertEquals(LocalDate.of(2035, 5, 1), domainModel.tokenValidToDate)
         assertEquals("Ms Anna Ornella Arenö", domainModel.fullName)
+        assertEquals(
+            listOf(
+                Entitlement("B", EntitlementType.FULL),
+                Entitlement("A", EntitlementType.PROVISIONAL)
+            ),
+            domainModel.entitlements
+        )
     }
 
     @Test
@@ -44,6 +57,7 @@ class LicenceMapperTest {
             every { drivingLicence.driverFirstNames } returns null
             every { drivingLicence.driverLastName } returns null
             every { drivingLicence.driverFullAddress } returns null
+            every { drivingLicence.entitlements } returns null
         }
 
         val domainModel = networkResponse.toDomainModel()
@@ -54,5 +68,6 @@ class LicenceMapperTest {
         assertEquals("", domainModel.driverLastName)
         assertNull(domainModel.tokenValidToDate)
         assertEquals("", domainModel.fullName)
+        assertEquals(emptyList<Entitlement>(), domainModel.entitlements)
     }
 }
