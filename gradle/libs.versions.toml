@@ -50,6 +50,7 @@ uiToolingPreview = "1.11.2"
 uiTooling = "1.11.2"
 
 qualtricsDigitalSdk = "2.32.0"
+screenshot = "0.0.1-alpha13"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -107,6 +108,7 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 about-libraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
 qualtrics-digital-sdk = { module = "com.qualtrics:digital", version.ref = "qualtricsDigitalSdk" }
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -124,4 +126,5 @@ firebasePerformance = { id = "com.google.firebase.firebase-perf", version.ref = 
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
