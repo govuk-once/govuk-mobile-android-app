@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import uk.gov.govuk.dvla.R
 
 class StringProviderTest {
 
@@ -11,6 +12,8 @@ class StringProviderTest {
 
     @Test
     fun `resolveSummaryDescription returns Unknown when resId is null`() {
+        every { stringProvider.getString(R.string.status_unknown) } returns "Unknown"
+
         val result = stringProvider.resolveSummaryDescription(resId = null, dateArg = "1 January 2030")
         assertEquals("Unknown", result)
     }

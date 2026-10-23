@@ -16,6 +16,11 @@ if (githubPropertiesFile.exists()) {
     githubPropertiesFile.reader().use { githubProperties.load(it) }
 }
 
+fun getQualtricsId(key: String, useLocal: Boolean = true): String =
+    (if (useLocal) githubProperties.getProperty(key)?.takeIf { it.isNotBlank() } else null)
+        ?: System.getenv(key)?.takeIf { it.isNotBlank() }
+        ?: ""
+
 android {
     namespace = "uk.gov.govuk.analytics"
     compileSdk = Version.COMPILE_SDK
@@ -25,14 +30,14 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "QUALTRICS_BRAND_ID", "\"${githubProperties.getProperty("QUALTRICS_BRAND_ID") ?: System.getenv("QUALTRICS_BRAND_ID_DEFAULT") ?: ""}\"")
-        buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"${githubProperties.getProperty("QUALTRICS_PROJECT_ID") ?: System.getenv("QUALTRICS_PROJECT_ID_DEFAULT") ?: ""}\"")
+        buildConfigField("String", "QUALTRICS_BRAND_ID", "\"${getQualtricsId("QUALTRICS_BRAND_ID")}\"")
+        buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"${getQualtricsId("QUALTRICS_PROJECT_ID")}\"")
     }
 
     buildTypes {
         release {
-            buildConfigField("String", "QUALTRICS_BRAND_ID", "\"${System.getenv("QUALTRICS_BRAND_ID_RELEASE") ?: ""}\"")
-            buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"${System.getenv("QUALTRICS_PROJECT_ID_RELEASE") ?: ""}\"")
+            buildConfigField("String", "QUALTRICS_BRAND_ID", "\"${getQualtricsId("QUALTRICS_BRAND_ID", useLocal = false)}\"")
+            buildConfigField("String", "QUALTRICS_PROJECT_ID", "\"${getQualtricsId("QUALTRICS_PROJECT_ID", useLocal = false)}\"")
         }
     }
 
