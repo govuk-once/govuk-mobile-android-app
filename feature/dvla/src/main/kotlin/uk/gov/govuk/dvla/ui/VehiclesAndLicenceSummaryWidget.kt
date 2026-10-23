@@ -38,6 +38,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
+import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
@@ -58,6 +59,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
+    onDrivingCategoriesClick: () -> Unit,
     modifier: Modifier = Modifier,
     vehiclesFooter: @Composable () -> Unit = {}
 ) {
@@ -189,6 +191,10 @@ fun VehiclesAndLicenceSummaryWidget(
                                 )
                                 viewModel.onLicenceNumberLongPressed()
                             },
+                            onCategoriesClick = { text ->
+                                viewModel.onButtonClicked(text)
+                                onDrivingCategoriesClick()
+                            },
                             modifier = modifier
                         )
                     }
@@ -242,6 +248,7 @@ private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
+    onCategoriesClick: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -261,6 +268,7 @@ private fun LicenceViewContent(
                 licenceSummary = licenceState.licence,
                 onMenuItemClick = onMenuItemClick,
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
+                onCategoriesClick = onCategoriesClick,
                 modifier = modifier
             )
         }
@@ -393,6 +401,7 @@ private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
+    onCategoriesClick: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -415,6 +424,14 @@ private fun LicenceSummarySuccess(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+
+        LargeVerticalSpacer()
+
+        DrivingCategoriesSection(
+            onClick = onCategoriesClick,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
             LargeVerticalSpacer()

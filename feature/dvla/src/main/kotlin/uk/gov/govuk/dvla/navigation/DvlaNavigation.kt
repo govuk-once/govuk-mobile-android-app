@@ -127,3 +127,7 @@ fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
         }
     }
 }
+
+fun NavController.navigateToDrivingCategories() {
+    // TODO coming in next ticket
+}

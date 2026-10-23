@@ -6,6 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import uk.gov.govuk.design.ui.model.AccessibleString
+import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
 fun TitledSection(
@@ -27,5 +30,18 @@ fun TitledSection(
         MediumVerticalSpacer()
 
         content()
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TitledSectionPreview() {
+    GovUkTheme {
+        TitledSection(
+            title = "Title",
+            description = "Description"
+        ) {
+            InternalLinkListItem(title = AccessibleString("This is an internal list item"))
+        }
     }
 }
