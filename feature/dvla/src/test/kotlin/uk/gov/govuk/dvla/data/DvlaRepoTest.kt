@@ -316,7 +316,7 @@ class DvlaRepoTest {
 
             val result = repo.lookupVehicleByRegistration("AB12CDE") as Result.Success
 
-            assertSame(result.value, repo.findVehicleEnquiryDetails("AB12CDE"))
+            assertSame(result.value, repo.getCachedVehicleEnquiryDetails("AB12CDE"))
         }
 
     @Test

@@ -120,6 +120,6 @@ class DvlaRepo @Inject constructor(
             }
 
     /** Details from the most recent successful [lookupVehicleByRegistration]  */
-    internal fun findVehicleEnquiryDetails(reg: String): VehicleEnquiryDetails? =
+    internal fun getCachedVehicleEnquiryDetails(reg: String): VehicleEnquiryDetails? =
         lastVehicleEnquiry?.takeIf { it.first == reg }?.second
 }
