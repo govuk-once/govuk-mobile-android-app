@@ -1,26 +1,26 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class ScreenScreenshotTests {
     @PreviewTest
-    @Preview(name = "BookendToWebScreen", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun BookendToWebScreenScreenshots() {
         BookendToWebScreenPreview()
     }
 
     @PreviewTest
-    @Preview(name = "BookendConnectingScreen", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun BookendConnectingScreenScreenshots() {
         BookendConnectingScreenPreview()
     }
 
     @PreviewTest
-    @Preview(name = "AccountConnectionSuccessScreen", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun AccountConnectionSuccessScreenScreenshots() {
         AccountConnectionSuccessScreenPreview()
