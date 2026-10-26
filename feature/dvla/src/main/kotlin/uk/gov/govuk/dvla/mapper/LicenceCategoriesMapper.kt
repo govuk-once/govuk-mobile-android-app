@@ -24,10 +24,13 @@ internal class LicenceCategoriesMapper @Inject constructor(
             .toSet()
 
 
-        return allCategoryGroups.mapNotNull { group ->
-            val heldCategories = group.categories.filter { it.code.uppercase() in heldCodes }
-            if (heldCategories.isEmpty()) null else group.copy(categories = heldCategories)
-        }
+        return allCategoryGroups
+            // groups with categories the customer holds codes for
+            .map { group ->
+                val heldCategories = group.categories.filter { it.code.uppercase() in heldCodes }   // codes are returned as uppercase but we display some lowercase
+                group.copy(categories = heldCategories)
+            }
+            .filter { it.categories.isNotEmpty() }
     }
 
     // TODO GOVUKAPP-4152: categories not listed here are not shown, confirm with product
