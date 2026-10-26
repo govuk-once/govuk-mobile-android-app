@@ -30,9 +30,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import androidx.core.net.toUri
 
 @Singleton
 class AuthRepo @Inject constructor(
+    private val ephemeralBrowsingProvider: EphemeralBrowsingProvider,
     private val attestationProvider: AttestationProvider,
     private val authRequest: AuthorizationRequest,
     private val authService: AuthorizationService,
@@ -50,20 +52,51 @@ class AuthRepo @Inject constructor(
     }
 
     val authIntent: Intent by lazy {
-        val intent = CustomTabsIntent.Builder()
-            .setEphemeralBrowsingEnabled(true)
-            .build()
-        authService.getAuthorizationRequestIntent(authRequest, intent)
+        if (ephemeralBrowsingProvider.isSupported) {
+            val customTabsIntent = CustomTabsIntent.Builder()
+                .setEphemeralBrowsingEnabled(true)
+                .build()
+            authService.getAuthorizationRequestIntent(authRequest, customTabsIntent)
+        } else {
+            ephemeralBrowsingProvider.fallbackIntent(
+                authRequest.toUri().toString(),
+                authRequest.redirectUri.toString()
+            )
+        }
     }
 
     private var tokens = Tokens()
 
     suspend fun handleAuthResponse(data: Intent?): Boolean {
         clear()
+
+        // Try Custom Tab path first
         val authResponse = data?.let { AuthorizationResponse.fromIntent(it) }
-        return if (authResponse != null) {
-            performTokenRequest(authResponse.createTokenExchangeRequest())
-        } else {
+        if (authResponse != null) {
+            return performTokenRequest(authResponse.createTokenExchangeRequest())
+        }
+
+        // Try WebView fallback path
+        val redirectUrl = data?.getStringExtra("redirect_url")
+        return !redirectUrl.isNullOrEmpty() && handleWebViewRedirect(redirectUrl)
+    }
+
+    private suspend fun handleWebViewRedirect(redirectUrl: String): Boolean {
+        return try {
+            val uri = redirectUrl.toUri()
+            val code = uri.getQueryParameter("code")
+            val state = uri.getQueryParameter("state")
+
+            if (!code.isNullOrEmpty() && !state.isNullOrEmpty()) {
+                val authResponse = AuthorizationResponse.Builder(authRequest)
+                    .setAuthorizationCode(code)
+                    .setState(state)
+                    .build()
+                performTokenRequest(authResponse.createTokenExchangeRequest())
+            } else {
+                false
+            }
+        } catch (e: Exception) {
             false
         }
     }

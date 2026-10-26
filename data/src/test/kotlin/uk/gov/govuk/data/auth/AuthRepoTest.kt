@@ -975,4 +975,30 @@ class AuthRepoTest {
             }
         }
     }
+
+    @Test
+    fun `Given ephemeral browsing is supported, when authIntent is called, then returns intent with ephemeral enabled`() {
+        every { authService.getAuthorizationRequestIntent(authRequest, any()) } returns intent
+
+        val result = authRepo.authIntent(isEphemeralSupported = true)
+
+        verify { authService.getAuthorizationRequestIntent(authRequest, any()) }
+        assertEquals(intent, result)
+    }
+
+    @Test
+    fun `Given ephemeral browsing is not supported, when authIntent is called, then returns intent with prompt=login`() {
+        every { authService.getAuthorizationRequestIntent(any(), any()) } returns intent
+        every { authRequest.configuration } returns mockk(relaxed = true)
+        every { authRequest.clientId } returns "test-client-id"
+        every { authRequest.responseType } returns "code"
+        every { authRequest.redirectUri } returns mockk(relaxed = true)
+
+        val result = authRepo.authIntent(isEphemeralSupported = false)
+
+        verify {
+            authService.getAuthorizationRequestIntent(any(), any())
+        }
+        assertEquals(intent, result)
+    }
 }

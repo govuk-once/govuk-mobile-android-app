@@ -45,6 +45,10 @@
         </activity>
 
         <activity
+            android:name=".login.WebViewLoginActivity"
+            android:exported="false" />
+
+        <activity
           android:name="com.qualtrics.digital.QualtricsSurveyActivity"
           android:configChanges="orientation|screenSize"
           android:exported="false" />
