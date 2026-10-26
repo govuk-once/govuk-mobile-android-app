@@ -304,7 +304,7 @@ private fun BottomNavScaffold(
                         viewModel.onSuppressWidgetClick(id, text, section)
                     },
                     shouldShowExternalBrowser = uiState.shouldShowExternalBrowser,
-                    paddingValues = paddingValues,
+                    paddingValues = paddingValues
                 )
                 HandleOnResumeNavigation(
                     navController = { navController },
