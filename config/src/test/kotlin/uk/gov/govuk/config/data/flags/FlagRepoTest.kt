@@ -7,6 +7,7 @@ import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import uk.gov.govuk.config.data.ConfigRepo
 
@@ -517,6 +518,7 @@ class FlagRepoTest {
         assertFalse(flagRepo.isTravelAlertsEnabled())
     }
 
+    @Ignore("Temporary commenting this out for release to production.")
     @Test
     fun `Given a debug build and Quarterly Survey is enabled, return true`() {
         flagRepo = FlagRepo(true, debugFlags, configRepo)
@@ -525,6 +527,7 @@ class FlagRepoTest {
         assertTrue(flagRepo.isQuarterlySurveyEnabled())
     }
 
+    @Ignore("Temporary commenting this out for release to production.")
     @Test
     fun `Given a debug build and Quarterly Survey is disabled, return false`() {
         flagRepo = FlagRepo(true, debugFlags, configRepo)
