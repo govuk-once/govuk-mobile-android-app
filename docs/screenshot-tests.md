@@ -6,6 +6,15 @@ This guide explains how to work with screenshot tests in this project, including
 
 Screenshot tests in this project use the [Android `PreviewTest` framework](https://developer.android.com/studio/preview/compose-screenshot-testing) to capture and validate UI rendering across different configurations (light/dark modes, device sizes, etc.). They are located in the `screenshotTest` source set.
 
+## How Screenshot Tests Work
+
+Screenshot tests are **host-side tests** that run on your machine (macOS or Ubuntu) and don't require a device emulator. They:
+- Render composable previews on your development machine
+- Capture reference screenshots automatically
+- Compare new screenshots against baselines to detect UI changes
+
+**Important**: Since tests run on the host machine, they will produce different images on macOS vs Ubuntu due to different system font rendering. Ensure baseline images match the platform they will run on (CI runs on Ubuntu).
+
 ## Key Requirements
 
 - **@PreviewLightDark annotation**: All screenshot tests MUST include the `@PreviewLightDark` annotation to ensure both light and dark mode screenshots are captured. This is critical for accessibility and design consistency.
