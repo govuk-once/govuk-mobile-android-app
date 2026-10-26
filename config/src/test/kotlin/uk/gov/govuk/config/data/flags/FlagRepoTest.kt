@@ -527,7 +527,6 @@ class FlagRepoTest {
         assertTrue(flagRepo.isQuarterlySurveyEnabled())
     }
 
-    @Ignore("Temporary commenting this out for release to production.")
     @Test
     fun `Given a debug build and Quarterly Survey is disabled, return false`() {
         flagRepo = FlagRepo(true, debugFlags, configRepo)
