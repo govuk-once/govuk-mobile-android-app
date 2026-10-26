@@ -1,19 +1,19 @@
 package uk.gov.govuk.visited.ui.widget
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class VisitedWidgetScreenshotTests {
     @PreviewTest
-    @Preview(name = "NoVisitedItems", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun NoVisitedItemsScreenshots() {
         NoVisitedItemsPreview()
     }
 
     @PreviewTest
-    @Preview(name = "VisitedItems", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun VisitedItemsScreenshots() {
         VisitedItemsPreview()

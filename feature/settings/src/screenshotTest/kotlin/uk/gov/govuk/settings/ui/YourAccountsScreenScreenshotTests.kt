@@ -1,26 +1,26 @@
 package uk.gov.govuk.settings.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class YourAccountsScreenScreenshotTests {
     @PreviewTest
-    @Preview(name = "YourAccountsScreenEmpty", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun YourAccountsScreenEmptyScreenshots() {
         YourAccountsScreenEmptyPreview()
     }
 
     @PreviewTest
-    @Preview(name = "YourAccountsScreen", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun YourAccountsScreenScreenshots() {
         YourAccountsScreenPreview()
     }
 
     @PreviewTest
-    @Preview(name = "YourAccountsScreenUnlinking", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun YourAccountsScreenUnlinkingScreenshots() {
         YourAccountsScreenUnlinkingPreview()

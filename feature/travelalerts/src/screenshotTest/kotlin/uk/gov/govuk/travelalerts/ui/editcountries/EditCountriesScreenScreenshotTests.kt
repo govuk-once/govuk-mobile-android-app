@@ -1,26 +1,26 @@
 package uk.gov.govuk.travelalerts.ui.editcountries
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class EditCountriesScreenScreenshotTests {
     @PreviewTest
-    @Preview(name = "LoadingScreen", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun LoadingScreenScreenshots() {
         EditCountriesLoadingPreview()
     }
 
     @PreviewTest
-    @Preview(name = "EditCountriesError", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun EditCountriesErrorScreenshots() {
         EditCountriesErrorPreview()
     }
 
     @PreviewTest
-    @Preview(name = "EditCountriesLoaded", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun EditCountriesLoadedScreenshots() {
         EditCountriesLoadedPreview()
