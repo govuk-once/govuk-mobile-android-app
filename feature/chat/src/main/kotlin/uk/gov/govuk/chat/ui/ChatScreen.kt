@@ -305,7 +305,7 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    // Temporary commenting this out for release to production.
+                    // Temporary commenting this out for release '1.10' to production.
 //                    if (item == chatEntries.last()) {
 //                        AnimatedFeedback(
 //                            chatEntry = item.second,

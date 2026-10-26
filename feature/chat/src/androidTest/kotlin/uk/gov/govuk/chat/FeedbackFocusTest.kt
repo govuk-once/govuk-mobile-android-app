@@ -35,7 +35,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
  * load) and reads that instead.
  * These tests guard against focus not following the user's feedback.
  */
-@Ignore("Temporary commenting this out for release to production.")
+@Ignore("Temporary commenting this out for release '1.10' to production.")
 @OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 class FeedbackFocusTest {

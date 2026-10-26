@@ -518,7 +518,7 @@ class FlagRepoTest {
         assertFalse(flagRepo.isTravelAlertsEnabled())
     }
 
-    @Ignore("Temporary commenting this out for release to production.")
+    @Ignore("Temporary commenting this out for release '1.10' to production.")
     @Test
     fun `Given a debug build and Quarterly Survey is enabled, return true`() {
         flagRepo = FlagRepo(true, debugFlags, configRepo)
