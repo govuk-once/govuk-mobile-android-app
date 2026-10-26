@@ -1,125 +1,125 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class HeaderScreenshotTests {
 
     @PreviewTest
-    @Preview(name = "TabHeader", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun TabHeaderScreenshots() {
         TabHeaderPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderNoTextWithBackAndAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderNoTextWithBackAndActionScreenshots() {
         FullScreenHeaderNoTextWithBackAndActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderBackAndAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderBackAndActionScreenshots() {
         FullScreenHeaderBackAndActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderActionNoBack", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderActionNoBackScreenshots() {
         FullScreenHeaderActionNoBackPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderBackNoAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderBackNoActionScreenshots() {
         FullScreenHeaderBackNoActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderNoActionOrBack", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderNoActionOrBackScreenshots() {
         FullScreenHeaderNoActionOrBackPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderLongTextNoActionOrBack", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderLongTextNoActionOrBackScreenshots() {
         FullScreenHeaderLongTextNoActionOrBackPreview()
     }
 
     @PreviewTest
-    @Preview(name = "FullScreenHeaderWithOverflowAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FullScreenHeaderWithOverflowActionScreenshots() {
         FullScreenHeaderWithOverflowActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ChildPageHeaderNoTextWithBackAndAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ChildPageHeaderNoTextWithBackAndActionScreenshots() {
         ChildPageHeaderNoTextWithBackAndActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ChildPageHeaderBackAndAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ChildPageHeaderBackAndActionScreenshots() {
         ChildPageHeaderBackAndActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ChildPageHeaderActionNoBack", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ChildPageHeaderActionNoBackScreenshots() {
         ChildPageHeaderActionNoBackPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ChildPageHeaderBackNoAction", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ChildPageHeaderBackNoActionScreenshots() {
         ChildPageHeaderBackNoActionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ChildPageHeaderNoActionOrBack", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ChildPageHeaderNoActionOrBackScreenshots() {
         ChildPageHeaderNoActionOrBackPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ChildPageHeaderLongTextNoActionOrBack", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ChildPageHeaderLongTextNoActionOrBackScreenshots() {
         ChildPageHeaderLongTextNoActionOrBackPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ModalHeader", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ModalHeaderScreenshots() {
         ModalHeaderPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ModalHeaderWithClose", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ModalHeaderWithCloseScreenshots() {
         ModalHeaderWithClosePreview()
     }
 
     @PreviewTest
-    @Preview(name = "Title", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun TitleScreenshots() {
         TitlePreview()

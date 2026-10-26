@@ -1,124 +1,124 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class CardScreenshotTests {
     @PreviewTest
-    @Preview(name = "HomeNotableDeathBannerCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun HomeNotableDeathBannerCardScreenshots() {
         HomeNotableDeathBannerCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "HomeNationalEmergencyBannerCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun HomeNationalEmergencyBannerCardScreenshots() {
         HomeNationalEmergencyBannerCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "HomeLocalEmergencyBannerCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun HomeLocalEmergencyBannerCardScreenshots() {
         HomeLocalEmergencyBannerCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "HomeInformationEmergencyBannerCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun HomeInformationEmergencyBannerCardScreenshots() {
         HomeInformationEmergencyBannerCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "SearchResultWithDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SearchResultWithDescriptionScreenshots() {
         SearchResultWithDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "SearchResultWithoutDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SearchResultWithoutDescriptionScreenshots() {
         SearchResultWithoutDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "QuarterlyFeedbackCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun QuarterlyFeedbackCardScreenshots() {
         QuarterlyFeedbackCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "NonTappableCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun NonTappableCardScreenshots() {
         NonTappableCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "CentredCardWithIconWithTitleAndDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CentredCardWithIconWithTitleAndDescriptionScreenshots() {
         CentredCardWithIconWithTitleAndDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "CentredCardWithIconWithTitle", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CentredCardWithIconWithTitleScreenshots() {
         CentredCardWithIconWithTitlePreview()
     }
 
     @PreviewTest
-    @Preview(name = "CentredCardWithIconWithDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CentredCardWithIconWithDescriptionScreenshots() {
         CentredCardWithIconWithDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "NavigationCardWithTitleAndDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun NavigationCardWithTitleAndDescriptionScreenshots() {
         NavigationCardWithTitleAndDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "NavigationCardWithoutDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun NavigationCardWithoutDescriptionScreenshots() {
         NavigationCardWithoutDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "DrillInCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun DrillInCardScreenshots() {
         DrillInCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "DrillInCardDescription", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun DrillInCardDescriptionScreenshots() {
         DrillInCardDescriptionPreview()
     }
 
     @PreviewTest
-    @Preview(name = "AccountConnectionCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun AccountConnectionCardScreenshots() {
         AccountConnectionCardPreview()
     }
 
     @PreviewTest
-    @Preview(name = "LoaderCard", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun LoaderCardScreenshots() {
         LoaderCardPreview()

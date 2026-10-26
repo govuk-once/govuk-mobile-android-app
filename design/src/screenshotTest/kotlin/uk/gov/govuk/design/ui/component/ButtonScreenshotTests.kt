@@ -1,131 +1,131 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class ButtonScreenshotTests {
     @PreviewTest
-    @Preview(name = "PrimaryButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun PrimaryButtonScreenshots() {
         Primary()
     }
 
     @PreviewTest
-    @Preview(name = "PrimaryButtonExternalLink", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun PrimaryButtonExternalLinkScreenshots() {
         PrimaryExternalLink()
     }
 
     @PreviewTest
-    @Preview(name = "PrimaryButtonDisabled", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun PrimaryButtonDisabledScreenshots() {
         PrimaryDisabled()
     }
 
     @PreviewTest
-    @Preview(name = "PrimaryButtonLoading", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun PrimaryButtonLoadingScreenshots() {
         PrimaryLoading()
     }
 
     @PreviewTest
-    @Preview(name = "AccountConnectionButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun AccountConnectionButtonScreenshots() {
         AccountConnection()
     }
 
     @PreviewTest
-    @Preview(name = "SecondaryButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SecondaryButtonScreenshots() {
         Secondary()
     }
 
     @PreviewTest
-    @Preview(name = "SecondaryButtonExternalLink", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SecondaryButtonExternalLinkScreenshots() {
         SecondaryExternalLink()
     }
 
     @PreviewTest
-    @Preview(name = "SecondaryButtonDisabled", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SecondaryButtonDisabledScreenshots() {
         SecondaryDisabled()
     }
 
     @PreviewTest
-    @Preview(name = "CompactButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CompactButtonScreenshots() {
         Compact()
     }
 
     @PreviewTest
-    @Preview(name = "CompactButtonExternalLink", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CompactButtonExternalLinkScreenshots() {
         CompactExternalLink()
     }
 
     @PreviewTest
-    @Preview(name = "CompactButtonDisabled", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CompactButtonDisabledScreenshots() {
         CompactDisabled()
     }
 
     @PreviewTest
-    @Preview(name = "CompactPrimaryWithIconButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CompactPrimaryWithIconButtonScreenshots() {
         CompactPrimaryWithIcon()
     }
 
     @PreviewTest
-    @Preview(name = "DestructiveButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun DestructiveButtonScreenshots() {
         Destructive()
     }
 
     @PreviewTest
-    @Preview(name = "DestructiveButtonExternalLink", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun DestructiveButtonExternalLinkScreenshots() {
         DestructiveExternalLink()
     }
 
     @PreviewTest
-    @Preview(name = "DestructiveButtonDisabled", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun DestructiveButtonDisabledScreenshots() {
         DestructiveDisabled()
     }
 
     @PreviewTest
-    @Preview(name = "ConnectedActiveButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ConnectedActiveButtonScreenshots() {
         ConnectedActive()
     }
 
     @PreviewTest
-    @Preview(name = "ConnectedInactiveButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ConnectedInactiveButtonScreenshots() {
         ConnectedInactive()
     }
 
     @PreviewTest
-    @Preview(name = "OverflowButton", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun OverflowButtonScreenshots() {
         Overflow()

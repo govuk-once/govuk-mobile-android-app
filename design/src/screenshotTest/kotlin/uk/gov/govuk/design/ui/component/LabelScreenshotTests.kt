@@ -1,174 +1,174 @@
 package uk.gov.govuk.design.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class LabelScreenshotTests {
 
     @PreviewTest
-    @Preview(name = "LargeTitleBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun LargeTitleBoldScreenshots() {
         LargeTitleBold()
     }
 
     @PreviewTest
-    @Preview(name = "LargeTitleRegular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun LargeTitleRegularScreenshots() {
         LargeTitleRegular()
     }
 
     @PreviewTest
-    @Preview(name = "Title1Bold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title1BoldScreenshots() {
         Title1Bold()
     }
 
     @PreviewTest
-    @Preview(name = "Title1Regular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title1RegularScreenshots() {
         Title1Regular()
     }
 
     @PreviewTest
-    @Preview(name = "Title2Bold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title2BoldScreenshots() {
         Title2Bold()
     }
 
     @PreviewTest
-    @Preview(name = "Title2Regular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title2RegularScreenshots() {
         Title2Regular()
     }
 
     @PreviewTest
-    @Preview(name = "Title3Bold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title3BoldScreenshots() {
         Title3Bold()
     }
 
     @PreviewTest
-    @Preview(name = "Title3SemiBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title3SemiBoldScreenshots() {
         Title3SemiBold()
     }
 
     @PreviewTest
-    @Preview(name = "Title3Regular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun Title3RegularScreenshots() {
         Title3Regular()
     }
 
     @PreviewTest
-    @Preview(name = "HeadlineSemibold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun HeadlineSemiboldScreenshots() {
         HeadlineSemibold()
     }
 
     @PreviewTest
-    @Preview(name = "BodyBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun BodyBoldScreenshots() {
         BodyBold()
     }
 
     @PreviewTest
-    @Preview(name = "BodyRegular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun BodyRegularScreenshots() {
         BodyRegular()
     }
 
     @PreviewTest
-    @Preview(name = "BodySemibold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun BodySemiboldScreenshots() {
         BodySemibold()
     }
 
     @PreviewTest
-    @Preview(name = "CalloutBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CalloutBoldScreenshots() {
         CalloutBold()
     }
 
     @PreviewTest
-    @Preview(name = "CalloutRegular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CalloutRegularScreenshots() {
         CalloutRegular()
     }
 
     @PreviewTest
-    @Preview(name = "SubheadlineBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SubheadlineBoldScreenshots() {
         SubheadlineBold()
     }
 
     @PreviewTest
-    @Preview(name = "SubheadlineRegular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SubheadlineRegularScreenshots() {
         SubheadlineRegular()
     }
 
     @PreviewTest
-    @Preview(name = "FootnoteBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FootnoteBoldScreenshots() {
         FootnoteBold()
     }
 
     @PreviewTest
-    @Preview(name = "FootnoteRegular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun FootnoteRegularScreenshots() {
         FootnoteRegular()
     }
 
     @PreviewTest
-    @Preview(name = "CaptionBold", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CaptionBoldScreenshots() {
         CaptionBold()
     }
 
     @PreviewTest
-    @Preview(name = "CaptionRegular", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CaptionRegularScreenshots() {
         CaptionRegular()
     }
 
     @PreviewTest
-    @Preview(name = "ListHeadingLabel", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ListHeadingLabelScreenshots() {
         ListHeadingLabelPreview()
     }
 
     @PreviewTest
-    @Preview(name = "SectionHeadingLabelTitle1", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SectionHeadingLabelTitle1Screenshots() {
         SectionHeadingLabelTitle1Preview()
     }
 
     @PreviewTest
-    @Preview(name = "SectionHeadingLabelTitle3", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun SectionHeadingLabelTitle3PreviewScreenshots() {
         SectionHeadingLabelTitle3Preview()
