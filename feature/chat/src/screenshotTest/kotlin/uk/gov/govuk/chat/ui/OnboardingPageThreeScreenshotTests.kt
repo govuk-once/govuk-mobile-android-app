@@ -1,26 +1,26 @@
 package uk.gov.govuk.chat.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class OnboardingPageThreeScreenshotTests {
     @PreviewTest
-    @Preview(name = "OnboardingPageThree", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun OnboardingPageThreeScreenshots() {
         OnboardingPageThreePreview()
     }
 
     @PreviewTest
-    @Preview(name = "OnboardingPageThreeLandscapeLight", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun OnboardingPageThreeLandscapeLightScreenshots() {
         OnboardingPageThreePreviewLandscapeLight()
     }
 
     @PreviewTest
-    @Preview(name = "OnboardingPageThreeLandscapeDark", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun OnboardingPageThreeLandscapeDarkScreenshots() {
         OnboardingPageThreePreviewLandscapeDark()
