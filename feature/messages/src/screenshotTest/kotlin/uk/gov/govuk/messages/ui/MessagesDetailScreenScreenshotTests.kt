@@ -1,33 +1,33 @@
 package uk.gov.govuk.messages.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class MessagesDetailScreenScreenshotTests {
     @PreviewTest
-    @Preview(name = "MessagesDetailLoading", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun MessagesDetailLoadingScreenshots() {
         MessagesDetailLoadingPreview()
     }
 
     @PreviewTest
-    @Preview(name = "MessagesDetailError", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun MessagesDetailErrorScreenshots() {
         MessagesDetailErrorPreview()
     }
 
     @PreviewTest
-    @Preview(name = "MessagesDetailLoaded", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun MessagesDetailLoadedScreenshots() {
         MessagesDetailLoadedPreview()
     }
 
     @PreviewTest
-    @Preview(name = "ConfirmationDialog", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun ConfirmationDialogScreenshots() {
         ConfirmationDialogPreview()

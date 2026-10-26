@@ -1,47 +1,47 @@
 package uk.gov.govuk.dvla.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class CheckVehicleSheetScreenshotTests {
     @PreviewTest
-    @Preview(name = "CheckVehicleSheetEmpty", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CheckVehicleSheetEmptyScreenshots() {
         CheckVehicleSheetEmptyPreview()
     }
 
     @PreviewTest
-    @Preview(name = "CheckVehicleSheetTyping", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CheckVehicleSheetTypingScreenshots() {
         CheckVehicleSheetTypingPreview()
     }
 
     @PreviewTest
-    @Preview(name = "CheckVehicleSheetComplete", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CheckVehicleSheetCompleteScreenshots() {
         CheckVehicleSheetCompletePreview()
     }
 
     @PreviewTest
-    @Preview(name = "CheckVehicleSheetLoading", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CheckVehicleSheetLoadingScreenshots() {
         CheckVehicleSheetLoadingPreview()
     }
 
     @PreviewTest
-    @Preview(name = "CheckVehicleSheetSearchUnavailable", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CheckVehicleSheetSearchUnavailableScreenshots() {
         CheckVehicleSheetSearchUnavailablePreview()
     }
 
     @PreviewTest
-    @Preview(name = "CheckVehicleSheetNotFound", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun CheckVehicleSheetNotFoundScreenshots() {
         CheckVehicleSheetNotFoundPreview()

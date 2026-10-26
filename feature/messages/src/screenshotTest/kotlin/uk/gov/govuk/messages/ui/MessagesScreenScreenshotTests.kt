@@ -1,40 +1,40 @@
 package uk.gov.govuk.messages.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
 internal class MessagesScreenScreenshotTests {
     @PreviewTest
-    @Preview(name = "MessagesLoading", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun MessagesLoadingScreenshots() {
         MessagesLoadingPreview()
     }
 
     @PreviewTest
-    @Preview(name = "MessagesEmpty", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun MessagesEmptyScreenshots() {
         MessagesEmptyPreview()
     }
 
     @PreviewTest
-    @Preview(name = "MessagesLoaded", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun MessagesLoadedScreenshots() {
         MessagesLoadedPreview()
     }
 
     @PreviewTest
-    @Preview(name = "NotificationRowRead", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun NotificationRowReadScreenshots() {
         NotificationRowReadPreview()
     }
 
     @PreviewTest
-    @Preview(name = "NotificationRowUnread", showBackground = true)
+    @PreviewLightDark
     @Composable
     fun NotificationRowUnreadScreenshots() {
         NotificationRowUnreadPreview()
