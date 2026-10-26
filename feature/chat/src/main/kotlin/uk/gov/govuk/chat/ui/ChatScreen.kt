@@ -305,25 +305,26 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    if (item == chatEntries.last()) {
-                        AnimatedFeedback(
-                            chatEntry = item.second,
-                            animationDelay = animationDelay,
-                            isAnalyticsEnabled = isAnalyticsEnabled,
-                            onFeedbackClick = { text, action, questionId ->
-                                uiEvents.onFeedbackClick(text, action, questionId)
-                            },
-                            onFeedbackIconClick = { conversationId, answerId, reaction ->
-                                uiEvents.onFeedbackGiven(conversationId, answerId, reaction)
-                            },
-                            onThankYouShown = {
-                                coroutineScope.launch {
-                                    delay(100)
-                                    listState.animateScrollToItem(chatEntries.size + 1)
-                                }
-                            }
-                        )
-                    }
+                    // Temporary commenting this out for release '1.10' to production.
+//                    if (item == chatEntries.last()) {
+//                        AnimatedFeedback(
+//                            chatEntry = item.second,
+//                            animationDelay = animationDelay,
+//                            isAnalyticsEnabled = isAnalyticsEnabled,
+//                            onFeedbackClick = { text, action, questionId ->
+//                                uiEvents.onFeedbackClick(text, action, questionId)
+//                            },
+//                            onFeedbackIconClick = { conversationId, answerId, reaction ->
+//                                uiEvents.onFeedbackGiven(conversationId, answerId, reaction)
+//                            },
+//                            onThankYouShown = {
+//                                coroutineScope.launch {
+//                                    delay(100)
+//                                    listState.animateScrollToItem(chatEntries.size + 1)
+//                                }
+//                            }
+//                        )
+//                    }
                 }
 
                 item {
