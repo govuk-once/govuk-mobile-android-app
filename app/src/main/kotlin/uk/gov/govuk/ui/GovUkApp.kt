@@ -616,7 +616,7 @@ private fun GovUkNavHost(
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
 
-                                // Commenting out for 1.9 DVLA private beta release
+                                // Commenting out for 1.11 DVLA private beta release
 
 //                                vehiclesFooter = {
 //                                    CheckVehicleWidget(
