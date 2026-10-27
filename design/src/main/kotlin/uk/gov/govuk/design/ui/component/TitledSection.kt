@@ -24,7 +24,6 @@ fun TitledSection(
             text = title,
             modifier = Modifier
                 .padding(top = 12.dp)
-                .semantics { heading() }
         )
 
         SmallVerticalSpacer()
