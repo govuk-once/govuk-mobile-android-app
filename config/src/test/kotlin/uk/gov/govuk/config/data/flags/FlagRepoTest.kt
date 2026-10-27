@@ -485,12 +485,12 @@ class FlagRepoTest {
     // Travel Alerts
 
     @Test
-    fun `Given a release build, When Travel Alerts is enabled, return false`() {
+    fun `Given a release build, When Travel Alerts is enabled, return true`() {
         // Overriding for now to keep off in Prod
         every { configRepo.isTravelAlertsEnabled } returns true
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
-        assertFalse(flagRepo.isTravelAlertsEnabled())
+        assertTrue(flagRepo.isTravelAlertsEnabled())
     }
 
     @Test
