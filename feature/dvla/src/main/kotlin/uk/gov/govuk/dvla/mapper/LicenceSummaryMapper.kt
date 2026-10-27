@@ -55,6 +55,10 @@ internal class LicenceSummaryMapper @Inject constructor(
                     licenceNumber = details.drivingLicenceNumber,
                     dvlaUrls = dvlaUrls
                 ),
+                notValidIdNote = when (details.licenceType) {
+                    LicenceType.FULL, LicenceType.PROVISIONAL -> stringProvider.getString(R.string.licence_id_footnote)
+                    else -> null
+                },
                 drivingRecordUrl = getDrivingRecordUrl(
                     status = details.licenceStatus,
                     dvlaUrls = dvlaUrls
@@ -216,9 +220,11 @@ internal class LicenceSummaryMapper @Inject constructor(
     }
 
     private fun getLicenceTypeString(type: LicenceType): String =
-        when (type) {
-            LicenceType.FULL -> stringProvider.getString(R.string.licence_type_full)
-            LicenceType.PROVISIONAL -> stringProvider.getString(R.string.licence_type_provisional)
-            LicenceType.UNKNOWN -> "Unknown"    // TODO return unknown for now, other states in future tickets
-        }
+        stringProvider.getString(
+            when (type) {
+                LicenceType.FULL -> R.string.licence_type_full
+                LicenceType.PROVISIONAL -> R.string.licence_type_provisional
+                LicenceType.UNKNOWN -> R.string.value_unknown
+            }
+        )
 }

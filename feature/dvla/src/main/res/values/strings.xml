@@ -54,6 +54,7 @@
     <string name="licence_name_alt_text">Name on licence %1$s</string>
     <string name="licence_address_alt_text">Address on licence %1$s</string>
     <string name="licence_expiration_alt_text">Licence %1$s</string>
+    <string name="licence_id_footnote">This is not a valid form of identification</string>
     <string name="clipboard_data_label_licence_number">copy licence number</string>
     <string name="expiring_status_date">Expiring %1$s</string>
     <string name="expiring_direct_debit_status_date">Renews %1$s</string>
@@ -155,6 +156,7 @@
     <string name="registered_to_title">Registered to</string>
     <string name="vehicle_details_success_title">Vehicle Details Screen</string>
     <string name="concatenated_vehicle_colours">%1$s and %2$s</string>
+    <string name="value_unknown">Unknown</string>
 
     <string name="first_registered_alt_text">First registered %1$s</string>
     <string name="first_registered_in_alt_text">First registered in %1$s</string>

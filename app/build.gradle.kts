@@ -15,7 +15,7 @@ plugins {
 }
 
 val majorVersion = "1"
-val minorVersion = "10"
+val minorVersion = "11"
 
 val privacyPolicyUrl: String by project
 
@@ -63,6 +63,7 @@ android {
         create("alpha") {
             applicationIdSuffix = ".dev"
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -90,6 +91,7 @@ android {
 
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

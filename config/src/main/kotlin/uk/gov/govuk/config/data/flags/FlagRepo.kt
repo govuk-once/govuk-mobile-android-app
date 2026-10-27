@@ -129,11 +129,13 @@ class FlagRepo @Inject constructor(
     }
 
     fun isQuarterlySurveyEnabled(): Boolean {
-        return isEnabled(
-            debugEnabled = debugEnabled,
-            debugFlag = debugFlags.isQuarterlySurveyEnabled,
-            remoteFlag = configRepo.isQuarterlySurveyEnabled
-        )
+        // Temporary commenting this out for release '1.10' to production.
+//        return isEnabled(
+//            debugEnabled = debugEnabled,
+//            debugFlag = debugFlags.isQuarterlySurveyEnabled,
+//            remoteFlag = configRepo.isQuarterlySurveyEnabled
+//        )
+        return false
     }
 }
 
