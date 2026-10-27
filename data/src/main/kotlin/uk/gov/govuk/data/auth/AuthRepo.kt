@@ -34,7 +34,6 @@ import androidx.core.net.toUri
 
 @Singleton
 class AuthRepo @Inject constructor(
-    private val ephemeralBrowsingProvider: EphemeralBrowsingProvider,
     private val attestationProvider: AttestationProvider,
     private val authRequest: AuthorizationRequest,
     private val authService: AuthorizationService,
@@ -44,7 +43,8 @@ class AuthRepo @Inject constructor(
     private val biometricManager: BiometricManager,
     private val authApi: AuthApi,
     private val tokenRepo: TokenRepo,
-    private val cryptoProvider: CryptoProvider
+    private val cryptoProvider: CryptoProvider,
+    private val ephemeralBrowsingProvider: EphemeralBrowsingProvider
 ) {
     companion object {
         private const val REFRESH_TOKEN_KEY = "refreshToken"
