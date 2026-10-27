@@ -17,7 +17,7 @@ class EphemeralCustomTabsProvider @Inject constructor(
         get() = checkEphemeralBrowsingSupported()
 
     override fun fallbackIntent(authUrl: String, redirectUri: String): Intent {
-        return Intent(context, WebViewLoginActivity::class.java).apply {
+        return Intent(context, SecureWebViewLoginActivity::class.java).apply {
             putExtra("auth_url", authUrl)
             putExtra("redirect_uri", redirectUri)
         }

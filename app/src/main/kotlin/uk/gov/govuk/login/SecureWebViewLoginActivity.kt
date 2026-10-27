@@ -1,6 +1,5 @@
 package uk.gov.govuk.login
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.webkit.CookieManager
@@ -8,8 +7,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.core.net.toUri
+import android.webkit.WebSettings.LOAD_NO_CACHE
+import android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
 
-class WebViewLoginActivity : ComponentActivity() {
+class SecureWebViewLoginActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
     private var authUrl: String = ""
@@ -31,19 +32,23 @@ class WebViewLoginActivity : ComponentActivity() {
     private fun configureWebViewForEphemeralBrowsing() {
         webView.apply {
             settings.apply {
-                cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
-                databaseEnabled = false
+                cacheMode = LOAD_NO_CACHE
                 domStorageEnabled = false
-                mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                mixedContentMode = MIXED_CONTENT_NEVER_ALLOW
             }
 
             CookieManager.getInstance().apply {
-                setAcceptCookie(false)
+                setAcceptCookie(true)
                 removeAllCookies(null)
             }
 
             webViewClient = OAuthRedirectWebViewClient()
         }
+    }
+
+    override fun onDestroy() {
+        CookieManager.getInstance().removeAllCookies(null)
+        super.onDestroy()
     }
 
     private inner class OAuthRedirectWebViewClient : WebViewClient() {
@@ -65,14 +70,17 @@ class WebViewLoginActivity : ComponentActivity() {
                 val error = uri.getQueryParameter("error")
 
                 if (!code.isNullOrEmpty() && !state.isNullOrEmpty()) {
-                    setResult(Activity.RESULT_OK, Intent().putExtra("redirect_url", redirectUrl))
+                    CookieManager.getInstance().removeAllCookies(null)
+                    setResult(RESULT_OK, Intent().putExtra("redirect_url", redirectUrl))
                     finish()
                 } else if (!error.isNullOrEmpty()) {
-                    setResult(Activity.RESULT_CANCELED)
+                    CookieManager.getInstance().removeAllCookies(null)
+                    setResult(RESULT_CANCELED)
                     finish()
                 }
             } catch (e: Exception) {
-                setResult(Activity.RESULT_CANCELED)
+                CookieManager.getInstance().removeAllCookies(null)
+                setResult(RESULT_CANCELED)
                 finish()
             }
         }
