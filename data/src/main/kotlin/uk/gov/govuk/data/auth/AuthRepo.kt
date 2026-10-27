@@ -6,6 +6,7 @@ import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -30,7 +31,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import androidx.core.net.toUri
 
 @Singleton
 class AuthRepo @Inject constructor(
@@ -70,34 +70,27 @@ class AuthRepo @Inject constructor(
     suspend fun handleAuthResponse(data: Intent?): Boolean {
         clear()
 
-        // Try Custom Tab path first
-        val authResponse = data?.let { AuthorizationResponse.fromIntent(it) }
-        if (authResponse != null) {
-            return performTokenRequest(authResponse.createTokenExchangeRequest())
+        val authResponse = data?.let {
+            AuthorizationResponse.fromIntent(it) ?: buildWebViewAuthResponse(it)
         }
 
-        // Try WebView fallback path
-        val redirectUrl = data?.getStringExtra("redirect_url")
-        return !redirectUrl.isNullOrEmpty() && handleWebViewRedirect(redirectUrl)
+        return authResponse != null && performTokenRequest(authResponse.createTokenExchangeRequest())
     }
 
-    private suspend fun handleWebViewRedirect(redirectUrl: String): Boolean {
+    private fun buildWebViewAuthResponse(data: Intent): AuthorizationResponse? {
         return try {
+            val redirectUrl = data.getStringExtra("redirect_url") ?: return null
             val uri = redirectUrl.toUri()
             val code = uri.getQueryParameter("code")
             val state = uri.getQueryParameter("state")
-
             if (!code.isNullOrEmpty() && !state.isNullOrEmpty()) {
-                val authResponse = AuthorizationResponse.Builder(authRequest)
+                AuthorizationResponse.Builder(authRequest)
                     .setAuthorizationCode(code)
                     .setState(state)
                     .build()
-                performTokenRequest(authResponse.createTokenExchangeRequest())
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            false
+            } else null
+        } catch (_: Exception) {
+            null
         }
     }
 
