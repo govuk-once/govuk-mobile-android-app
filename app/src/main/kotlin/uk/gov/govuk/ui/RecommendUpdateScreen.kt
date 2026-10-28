@@ -61,7 +61,7 @@ internal fun RecommendUpdateScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun RecommendUpdatePreview() {
+internal fun RecommendUpdatePreview() {
     GovUkTheme {
         RecommendUpdateScreen(
             onUpdateClick = {},

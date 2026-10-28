@@ -12,10 +12,11 @@ plugins {
     alias(libs.plugins.firebaseAppDistribution)
     alias(libs.plugins.firebasePerformance)
     alias(libs.plugins.kover)
+    alias(libs.plugins.screenshot)
 }
 
 val majorVersion = "1"
-val minorVersion = "10"
+val minorVersion = "12"
 
 val privacyPolicyUrl: String by project
 
@@ -132,6 +133,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -193,4 +196,9 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
+
+    screenshotTestImplementation(libs.screenshot.validation.api) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+    }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

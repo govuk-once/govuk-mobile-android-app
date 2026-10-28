@@ -63,6 +63,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.ChatViewModel
 import uk.gov.govuk.chat.R
@@ -305,7 +306,7 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    if (item == chatEntries.last()) {
+                    if (item == chatEntries.last() && BuildConfig.ANIMATED_FEEDBACK_ENABLED) {
                         AnimatedFeedback(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
