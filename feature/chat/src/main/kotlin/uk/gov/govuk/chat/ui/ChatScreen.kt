@@ -63,6 +63,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.ChatViewModel
 import uk.gov.govuk.chat.R
@@ -305,26 +306,25 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    // Temporary commenting this out for release '1.10' to production.
-//                    if (item == chatEntries.last()) {
-//                        AnimatedFeedback(
-//                            chatEntry = item.second,
-//                            animationDelay = animationDelay,
-//                            isAnalyticsEnabled = isAnalyticsEnabled,
-//                            onFeedbackClick = { text, action, questionId ->
-//                                uiEvents.onFeedbackClick(text, action, questionId)
-//                            },
-//                            onFeedbackIconClick = { conversationId, answerId, reaction ->
-//                                uiEvents.onFeedbackGiven(conversationId, answerId, reaction)
-//                            },
-//                            onThankYouShown = {
-//                                coroutineScope.launch {
-//                                    delay(100)
-//                                    listState.animateScrollToItem(chatEntries.size + 1)
-//                                }
-//                            }
-//                        )
-//                    }
+                    if (item == chatEntries.last() && BuildConfig.ANIMATED_FEEDBACK_ENABLED) {
+                        AnimatedFeedback(
+                            chatEntry = item.second,
+                            animationDelay = animationDelay,
+                            isAnalyticsEnabled = isAnalyticsEnabled,
+                            onFeedbackClick = { text, action, questionId ->
+                                uiEvents.onFeedbackClick(text, action, questionId)
+                            },
+                            onFeedbackIconClick = { conversationId, answerId, reaction ->
+                                uiEvents.onFeedbackGiven(conversationId, answerId, reaction)
+                            },
+                            onThankYouShown = {
+                                coroutineScope.launch {
+                                    delay(100)
+                                    listState.animateScrollToItem(chatEntries.size + 1)
+                                }
+                            }
+                        )
+                    }
                 }
 
                 item {
