@@ -47,7 +47,7 @@
         <activity
             android:name=".login.SecureWebViewLoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.GovUkMobileApp"/>
+            android:theme="@style/Theme.GovUkMobileApp.WithActionBar"/>
 
         <activity
           android:name="com.qualtrics.digital.QualtricsSurveyActivity"

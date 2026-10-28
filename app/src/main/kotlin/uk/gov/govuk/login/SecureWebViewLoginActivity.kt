@@ -1,7 +1,9 @@
 package uk.gov.govuk.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.webkit.CookieManager
 import android.webkit.ServiceWorkerController
 import android.webkit.WebSettings.LOAD_NO_CACHE
@@ -9,8 +11,9 @@ import android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import uk.gov.govuk.R
 import uk.gov.govuk.data.auth.AuthRepo.Companion.AUTH_URL_KEY
 import uk.gov.govuk.data.auth.AuthRepo.Companion.CODE_KEY
 import uk.gov.govuk.data.auth.AuthRepo.Companion.ERROR_KEY
@@ -18,7 +21,7 @@ import uk.gov.govuk.data.auth.AuthRepo.Companion.REDIRECT_URI_KEY
 import uk.gov.govuk.data.auth.AuthRepo.Companion.REDIRECT_URL_KEY
 import uk.gov.govuk.data.auth.AuthRepo.Companion.STATE_KEY
 
-class SecureWebViewLoginActivity : ComponentActivity() {
+class SecureWebViewLoginActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var authUrl: String? = null
@@ -26,6 +29,8 @@ class SecureWebViewLoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_webview)
 
         authUrl = intent.getStringExtra(AUTH_URL_KEY)
         redirectUri = intent.getStringExtra(REDIRECT_URI_KEY)
@@ -36,13 +41,26 @@ class SecureWebViewLoginActivity : ComponentActivity() {
             return
         }
 
-        webView = WebView(this)
-        setContentView(webView)
+        webView = findViewById(R.id.webview)
+
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         configureWebViewForEphemeralBrowsing()
         authUrl?.let { webView.loadUrl(it) }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
     private fun configureWebViewForEphemeralBrowsing() {
         webView.apply {
             settings.apply {
