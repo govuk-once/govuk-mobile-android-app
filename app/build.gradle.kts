@@ -141,6 +141,8 @@ dependencies {
     implementation(projects.data)
     implementation(projects.govkit)
     implementation(projects.feature.chat)
+    implementation(projects.feature.dvla)
+    implementation(projects.feature.dwp)
     implementation(projects.feature.home)
     implementation(projects.feature.local)
     implementation(projects.feature.messages)
@@ -149,7 +151,6 @@ dependencies {
     implementation(projects.feature.topics)
     implementation(projects.feature.travelalerts)
     implementation(projects.feature.visited)
-    implementation(projects.feature.dvla)
     implementation(projects.notifications)
 
     implementation(libs.androidx.activity.compose)
