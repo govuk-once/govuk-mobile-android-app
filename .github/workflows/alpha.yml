@@ -65,6 +65,17 @@ jobs:
       - name: Unit Test with Code Coverage
         run: ./gradlew koverXmlReportDebug
 
+      - name: Run Debug Screenshot tests
+        id: screenshot-tests
+        run: ./gradlew validateDebugScreenshotTest
+
+      - name: Upload screenshot Test Report on Failure
+        if: steps.screenshot-tests.outcome == 'failure'
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 #v4.3.1
+        with:
+          name: screenshot-test-report
+          path: "**/build/reports/screenshotTest/"
+
       - name: Analyze
         run: ./gradlew sonar --info
 
