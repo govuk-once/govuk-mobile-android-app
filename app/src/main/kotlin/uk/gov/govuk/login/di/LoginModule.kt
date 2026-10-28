@@ -37,11 +37,11 @@ internal class LoginModule {
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal interface LoginBindsModule {
+internal abstract class LoginBindsModule {
 
     @Binds
     @Singleton
-    fun bindEphemeralBrowsingProvider(
+    abstract fun bindEphemeralBrowsingProvider(
         ephemeralCustomTabsProvider: EphemeralCustomTabsProvider
     ): EphemeralBrowsingProvider
 }

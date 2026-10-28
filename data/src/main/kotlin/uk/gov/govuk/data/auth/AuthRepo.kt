@@ -49,6 +49,13 @@ class AuthRepo @Inject constructor(
     companion object {
         private const val REFRESH_TOKEN_KEY = "refreshToken"
         private const val SUB_ID_KEY = "subId"
+
+        const val AUTH_URL_KEY      = "auth_url"
+        const val REDIRECT_URI_KEY  = "redirect_uri"
+        const val REDIRECT_URL_KEY = "redirect_url"
+        const val CODE_KEY  = "code"
+        const val STATE_KEY = "state"
+        const val ERROR_KEY = "error"
     }
 
     val authIntent: Intent by lazy {
@@ -71,24 +78,26 @@ class AuthRepo @Inject constructor(
         clear()
 
         val authResponse = data?.let {
-            AuthorizationResponse.fromIntent(it) ?: buildWebViewAuthResponse(it)
+            AuthorizationResponse.fromIntent(it) ?: buildSecureWebViewAuthResponse(it)
         }
 
         return authResponse != null && performTokenRequest(authResponse.createTokenExchangeRequest())
     }
 
-    private fun buildWebViewAuthResponse(data: Intent): AuthorizationResponse? {
+    private fun buildSecureWebViewAuthResponse(data: Intent): AuthorizationResponse? {
         return try {
-            val redirectUrl = data.getStringExtra("redirect_url") ?: return null
-            val uri = redirectUrl.toUri()
-            val code = uri.getQueryParameter("code")
-            val state = uri.getQueryParameter("state")
-            if (!code.isNullOrEmpty() && !state.isNullOrEmpty()) {
-                AuthorizationResponse.Builder(authRequest)
-                    .setAuthorizationCode(code)
-                    .setState(state)
-                    .build()
-            } else null
+            data.getStringExtra(REDIRECT_URL_KEY)?.let { redirectUrl ->
+                val uri = redirectUrl.toUri()
+                val code = uri.getQueryParameter(CODE_KEY)
+                val state = uri.getQueryParameter(STATE_KEY)
+
+                if (!code.isNullOrEmpty() && !state.isNullOrEmpty()) {
+                    AuthorizationResponse.Builder(authRequest)
+                        .setAuthorizationCode(code)
+                        .setState(state)
+                        .build()
+                } else null
+            }
         } catch (_: Exception) {
             null
         }

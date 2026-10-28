@@ -40,6 +40,9 @@ import uk.gov.android.securestore.RetrievalEvent
 import uk.gov.android.securestore.SecureStore
 import uk.gov.android.securestore.error.SecureStorageError
 import uk.gov.android.securestore.error.SecureStoreErrorType
+import uk.gov.govuk.data.auth.AuthRepo.Companion.CODE_KEY
+import uk.gov.govuk.data.auth.AuthRepo.Companion.REDIRECT_URL_KEY
+import uk.gov.govuk.data.auth.AuthRepo.Companion.STATE_KEY
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Error
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Loading
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Success
@@ -1017,7 +1020,7 @@ class AuthRepoTest {
         val localAuthRequest = AuthorizationRequest.Builder(
             config,
             "client-id",
-            "code",
+            CODE_KEY,
             Uri.parse("https://redirect.example.com")
         ).build()
         val localAuthRepo = AuthRepo(
@@ -1036,16 +1039,16 @@ class AuthRepoTest {
     }
 
     @Test
-    fun `Given a null auth response and a valid WebView redirect URL with code and state, when handle auth response, return true`() {
+    fun `Given a valid SecureWebView redirect URL with code and state, when handle auth response, return true`() {
         val mockUri = mockk<Uri>(relaxed = true)
         val webViewUrl = "https://example.com/callback?code=authcode&state=authstate"
 
         mockkStatic(Uri::class)
         every { AuthorizationResponse.fromIntent(any()) } returns null
-        every { intent.getStringExtra("redirect_url") } returns webViewUrl
+        every { intent.getStringExtra(REDIRECT_URL_KEY) } returns webViewUrl
         every { Uri.parse(webViewUrl) } returns mockUri
-        every { mockUri.getQueryParameter("code") } returns "authcode"
-        every { mockUri.getQueryParameter("state") } returns "authstate"
+        every { mockUri.getQueryParameter(CODE_KEY) } returns "authcode"
+        every { mockUri.getQueryParameter(STATE_KEY) } returns "authstate"
 
         mockkConstructor(AuthorizationResponse.Builder::class)
         every { anyConstructed<AuthorizationResponse.Builder>().setAuthorizationCode(any()) } answers { self as AuthorizationResponse.Builder }
@@ -1070,36 +1073,51 @@ class AuthRepoTest {
 
     }
 
-
     @Test
-    fun `Given a null auth response and a WebView redirect URL without a code, when handle auth response, return false`() {
+    fun `Given a SecureWebView redirect URL without a code, when handle auth response, return false`() {
         val mockUri = mockk<Uri>(relaxed = true)
         val webViewUrl = "https://example.com/callback?state=authstate"
 
         mockkStatic(Uri::class)
         every { AuthorizationResponse.fromIntent(any()) } returns null
-        every { intent.getStringExtra("redirect_url") } returns webViewUrl
+        every { intent.getStringExtra(REDIRECT_URL_KEY) } returns webViewUrl
         every { Uri.parse(webViewUrl) } returns mockUri
-        every { mockUri.getQueryParameter("code") } returns null
-        every { mockUri.getQueryParameter("state") } returns "authstate"
+        every { mockUri.getQueryParameter(CODE_KEY) } returns null
+        every { mockUri.getQueryParameter(STATE_KEY) } returns "authstate"
 
         runTest {
             assertFalse(authRepo.handleAuthResponse(intent))
         }
     }
 
-
     @Test
-    fun `Given a null auth response and a WebView redirect URL without a state, when handle auth response, return false`() {
+    fun `Given a SecureWebView redirect URL without a state, when handle auth response, return false`() {
         val mockUri = mockk<Uri>(relaxed = true)
         val webViewUrl = "https://example.com/callback?code=authcode"
 
         mockkStatic(Uri::class)
         every { AuthorizationResponse.fromIntent(any()) } returns null
-        every { intent.getStringExtra("redirect_url") } returns webViewUrl
+        every { intent.getStringExtra(REDIRECT_URL_KEY) } returns webViewUrl
         every { Uri.parse(webViewUrl) } returns mockUri
-        every { mockUri.getQueryParameter("code") } returns "authcode"
-        every { mockUri.getQueryParameter("state") } returns null
+        every { mockUri.getQueryParameter(CODE_KEY) } returns "authcode"
+        every { mockUri.getQueryParameter(STATE_KEY) } returns null
+
+        runTest {
+            assertFalse(authRepo.handleAuthResponse(intent))
+        }
+    }
+
+    @Test
+    fun `Given a SecureWebView intent without a redirect URL, when handle auth response, return false`() {
+        val mockUri = mockk<Uri>(relaxed = true)
+        val webViewUrl = "https://example.com/callback?code=authcode"
+
+        mockkStatic(Uri::class)
+        every { AuthorizationResponse.fromIntent(any()) } returns null
+        every { intent.getStringExtra(REDIRECT_URL_KEY) } returns null
+        every { Uri.parse(webViewUrl) } returns mockUri
+        every { mockUri.getQueryParameter(CODE_KEY) } returns "authcode"
+        every { mockUri.getQueryParameter(STATE_KEY) } returns "authstate"
 
         runTest {
             assertFalse(authRepo.handleAuthResponse(intent))

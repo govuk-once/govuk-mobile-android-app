@@ -14,6 +14,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.data.auth.AuthRepo.Companion.AUTH_URL_KEY
+import uk.gov.govuk.data.auth.AuthRepo.Companion.REDIRECT_URI_KEY
 
 class EphemeralCustomTabsProviderTest {
 
@@ -70,7 +72,7 @@ class EphemeralCustomTabsProviderTest {
 
         provider.fallbackIntent("https://auth.gov.uk/login", "app://callback")
 
-        verify { anyConstructed<Intent>().putExtra("auth_url", "https://auth.gov.uk/login") }
-        verify { anyConstructed<Intent>().putExtra("redirect_uri", "app://callback") }
+        verify { anyConstructed<Intent>().putExtra(AUTH_URL_KEY, "https://auth.gov.uk/login") }
+        verify { anyConstructed<Intent>().putExtra(REDIRECT_URI_KEY, "app://callback") }
     }
 }
