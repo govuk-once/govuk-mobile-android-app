@@ -194,7 +194,7 @@ private fun DenialDialog(
 
 @PreviewLightDark
 @Composable
-private fun TermsNewUserPreview() {
+internal fun TermsNewUserPreview() {
     GovUkTheme {
             TermsScreen(
                 isUpdated = false,
@@ -208,7 +208,7 @@ private fun TermsNewUserPreview() {
 
 @PreviewLightDark
 @Composable
-private fun TermsUpdatedPreview() {
+internal fun TermsUpdatedPreview() {
     GovUkTheme {
         TermsScreen(
             isUpdated = true,
