@@ -39,6 +39,7 @@ android {
     }
 
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
+    experimentalProperties["android.compose.screenshot.maxHeapSize"] = "4g"
 }
 
 dependencies {
