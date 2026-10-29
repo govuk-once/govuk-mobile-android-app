@@ -28,6 +28,10 @@ internal fun LicenceCategoriesRoute(
                     viewModel.onCategoryInfoClicked()
                     // TODO open the category detail (separate ticket)
                 },
+                onFurtherInfoLinkClick = { text, url ->
+                    viewModel.onFurtherInfoLinkClicked(text, url)
+                    launchBrowser(url)
+                },
                 modifier = modifier
             )
         }

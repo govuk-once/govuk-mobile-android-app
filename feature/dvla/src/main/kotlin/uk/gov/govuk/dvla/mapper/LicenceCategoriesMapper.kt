@@ -1,10 +1,12 @@
 package uk.gov.govuk.dvla.mapper
 
+import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.Entitlement
 import uk.gov.govuk.dvla.domain.EntitlementType
 import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryLinkUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.util.StringProvider
 import javax.inject.Inject
@@ -12,9 +14,10 @@ import javax.inject.Inject
 internal class LicenceCategoriesMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
-    fun toUiModel(entitlements: List<Entitlement>) = LicenceCategoriesUiModel(
+    fun toUiModel(entitlements: List<Entitlement>, dvlaUrls: DvlaUrls?) = LicenceCategoriesUiModel(
         canDrive = entitlements.toGroups(EntitlementType.FULL),
-        provisionallyDrive = entitlements.toGroups(EntitlementType.PROVISIONAL)
+        provisionallyDrive = entitlements.toGroups(EntitlementType.PROVISIONAL),
+        furtherInformationLinks = dvlaUrls?.toFurtherInformationLinks().orEmpty()
     )
 
     private fun List<Entitlement>.toGroups(type: EntitlementType): List<LicenceCategoryGroupUiModel> {
@@ -23,11 +26,11 @@ internal class LicenceCategoriesMapper @Inject constructor(
             .map { it.categoryCode.uppercase() }
             .toSet()
 
-
         return allCategoryGroups
             // groups with categories the customer holds codes for
             .map { group ->
-                val heldCategories = group.categories.filter { it.code.uppercase() in heldCodes }   // codes are returned as uppercase but we display some lowercase
+                // codes are returned as uppercase but we display some lowercase
+                val heldCategories = group.categories.filter { it.code.uppercase() in heldCodes }
                 group.copy(categories = heldCategories)
             }
             .filter { it.categories.isNotEmpty() }
@@ -86,4 +89,37 @@ internal class LicenceCategoriesMapper @Inject constructor(
                 )
             )
         )
+
+    private fun furtherInformationLinks(dvlaUrls: DvlaUrls?): List<LicenceCategoryLinkUiModel> {
+        dvlaUrls ?: return emptyList()
+        return listOf(
+            LicenceCategoryLinkUiModel(
+                stringProvider.getString(R.string.licence_categories_link_compare),
+                dvlaUrls.compareLicenceCategories
+            ),
+            LicenceCategoryLinkUiModel(
+                stringProvider.getString(R.string.licence_categories_link_weights),
+                dvlaUrls.vehicleWeightExplained
+            ),
+            LicenceCategoryLinkUiModel(
+                stringProvider.getString(R.string.licence_categories_link_add_categories),
+                dvlaUrls.addLicenceCategories
+            )
+        )
+    }
+
+    private fun DvlaUrls.toFurtherInformationLinks() = listOf(
+        LicenceCategoryLinkUiModel(
+            stringProvider.getString(R.string.licence_categories_link_compare),
+            compareLicenceCategories
+        ),
+        LicenceCategoryLinkUiModel(
+            stringProvider.getString(R.string.licence_categories_link_weights),
+            vehicleWeightExplained
+        ),
+        LicenceCategoryLinkUiModel(
+            stringProvider.getString(R.string.licence_categories_link_add_categories),
+            addLicenceCategories
+        )
+    )
 }

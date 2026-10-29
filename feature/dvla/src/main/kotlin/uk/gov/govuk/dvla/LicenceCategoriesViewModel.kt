@@ -28,13 +28,11 @@ internal class LicenceCategoriesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(createInitialState())
     val uiState = _uiState.asStateFlow()
 
-    // TODO GOVUKAPP-4152 add urls to remote config
-    val dvlaUrls = configRepo.dvlaUrls
     private fun createInitialState(): LicenceCategoriesUiState {
         val licence = dvlaRepo.getCachedLicenceDetails()
             ?: return LicenceCategoriesUiState.Error
 
-        val categories = categoriesMapper.toUiModel(licence.entitlements)
+        val categories = categoriesMapper.toUiModel(licence.entitlements, configRepo.dvlaUrls)
         return LicenceCategoriesUiState.Success(categories)
     }
 
@@ -62,5 +60,4 @@ internal class LicenceCategoriesViewModel @Inject constructor(
     fun onFurtherInfoLinkClicked(text: String, url: String) {
 
     }
-
 }

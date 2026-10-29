@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
+import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
@@ -32,6 +33,7 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.component.CategoryListItem
 import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryLinkUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 
 @Composable
@@ -40,6 +42,7 @@ internal fun LicenceCategoriesScreen(
     onBack: () -> Unit,
     onPageView: () -> Unit,
     onCategoryInfoClick: (code: String) -> Unit,
+    onFurtherInfoLinkClick: (text: String, url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     RunOnceLaunchedEffect { onPageView() }
@@ -74,9 +77,9 @@ internal fun LicenceCategoriesScreen(
                 onInfoClick = onCategoryInfoClick
             )
 
-            // TODO further information links, heading only for now
-            SectionHeadingLabel(
-                title3 = stringResource(R.string.licence_categories_further_information_header)
+            FurtherInformation(
+                links = categories.furtherInformationLinks,
+                onLinkClick = onFurtherInfoLinkClick
             )
 
             LargeVerticalSpacer()
@@ -123,6 +126,25 @@ private fun CategoryGroup(
     }
 }
 
+@Composable
+private fun FurtherInformation(
+    links: List<LicenceCategoryLinkUiModel>,
+    onLinkClick: (text: String, url: String) -> Unit
+) {
+    if (links.isEmpty()) return
+
+    SectionHeadingLabel(title3 = stringResource(R.string.licence_categories_further_information_header))
+
+    links.forEachIndexed { index, link ->
+        ExternalLinkListItem(
+            title = link.text,
+            onClick = { onLinkClick(link.text, link.url) },
+            isFirst = index == 0,
+            isLast = index == links.lastIndex
+        )
+    }
+}
+
 @PreviewLightDark
 @Composable
 private fun LicenceCategoriesScreenPreview() {
@@ -159,7 +181,8 @@ private fun LicenceCategoriesScreenPreview() {
                 ),
                 onBack = {},
                 onPageView = {},
-                onCategoryInfoClick = {}
+                onCategoryInfoClick = {},
+                onFurtherInfoLinkClick = { _, _ -> }
             )
         }
     }
