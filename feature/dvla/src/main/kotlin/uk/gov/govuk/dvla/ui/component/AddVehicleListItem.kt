@@ -90,7 +90,7 @@ fun AddVehicleListItem(
 
 @PreviewLightDark
 @Composable
-internal fun AddVehicleListItemPreview() {
+private fun AddVehicleListItemPreview() {
     GovUkTheme {
         AddVehicleListItem(
             title = "Add vehicle",

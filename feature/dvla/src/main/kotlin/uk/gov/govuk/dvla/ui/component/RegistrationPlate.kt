@@ -75,7 +75,7 @@ internal fun RegistrationPlate(
 
 @PreviewLightDark
 @Composable
-internal fun RegistrationPlatePreview() {
+private fun RegistrationPlatePreview() {
     GovUkTheme {
         RegistrationPlate("TE5T PL8")
     }

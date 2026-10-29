@@ -220,7 +220,7 @@ private fun Buttons(
 
 @PreviewLightDark
 @Composable
-internal fun OnboardingPageThreePreview() {
+private fun OnboardingPageThreePreview() {
     GovUkTheme {
         OnboardingPageThreeScreen(
             onPageView = {},
@@ -241,7 +241,7 @@ internal fun OnboardingPageThreePreview() {
     uiMode = UI_MODE_NIGHT_NO
 )
 @Composable
-internal fun OnboardingPageThreePreviewLandscapeLight() {
+private fun OnboardingPageThreePreviewLandscapeLight() {
     GovUkTheme {
         OnboardingPageThreeScreen(
             onPageView = {},
@@ -260,7 +260,7 @@ internal fun OnboardingPageThreePreviewLandscapeLight() {
     uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-internal fun OnboardingPageThreePreviewLandscapeDark() {
+private fun OnboardingPageThreePreviewLandscapeDark() {
     GovUkTheme {
         OnboardingPageThreeScreen(
             onPageView = {},

@@ -296,7 +296,7 @@ private fun VerticalConnectedButtonGroup(
 
 @Preview
 @Composable
-internal fun FixedPrimaryButtonPreview()
+private fun FixedPrimaryButtonPreview()
 {
     GovUkTheme {
         FixedPrimaryButton(
@@ -308,7 +308,7 @@ internal fun FixedPrimaryButtonPreview()
 
 @Preview
 @Composable
-internal fun FixedSecondaryButtonPreview()
+private fun FixedSecondaryButtonPreview()
 {
     GovUkTheme {
         FixedSecondaryButton(
@@ -320,7 +320,7 @@ internal fun FixedSecondaryButtonPreview()
 
 @Preview
 @Composable
-internal fun VerticalButtonGroupPreview()
+private fun VerticalButtonGroupPreview()
 {
     GovUkTheme {
         FixedDoubleButtonGroup(
@@ -333,7 +333,7 @@ internal fun VerticalButtonGroupPreview()
 
 @Preview
 @Composable
-internal fun HorizontalButtonGroupPreview()
+private fun HorizontalButtonGroupPreview()
 {
     GovUkTheme {
         FixedDoubleButtonGroup(
@@ -346,7 +346,7 @@ internal fun HorizontalButtonGroupPreview()
 
 @Preview
 @Composable
-internal fun VerticalDestructiveButtonGroupPreview()
+private fun VerticalDestructiveButtonGroupPreview()
 {
     val primaryButton = Button("Primary", {}, true)
     GovUkTheme {
@@ -360,7 +360,7 @@ internal fun VerticalDestructiveButtonGroupPreview()
 
 @Preview
 @Composable
-internal fun HorizontalDestructiveButtonGroupPreview()
+private fun HorizontalDestructiveButtonGroupPreview()
 {
     val primaryButton = Button("Primary", {}, true)
     GovUkTheme {
@@ -374,7 +374,7 @@ internal fun HorizontalDestructiveButtonGroupPreview()
 
 @Preview
 @Composable
-internal fun HorizontalConnectedButtonGroupPreview()
+private fun HorizontalConnectedButtonGroupPreview()
 {
     GovUkTheme {
         HorizontalConnectedButtonGroup(
@@ -393,7 +393,7 @@ internal fun HorizontalConnectedButtonGroupPreview()
 
 @Preview
 @Composable
-internal fun VerticalConnectedButtonGroupPreview()
+private fun VerticalConnectedButtonGroupPreview()
 {
     GovUkTheme {
         VerticalConnectedButtonGroup(

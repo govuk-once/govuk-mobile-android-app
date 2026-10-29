@@ -295,7 +295,7 @@ private fun NotificationRow(
 
 @Preview(showBackground = true)
 @Composable
-internal fun MessagesLoadingPreview() {
+private fun MessagesLoadingPreview() {
     GovUkTheme {
         MessagesScreen({}, MessagesUiState.Loading, {}) { }
 
@@ -304,7 +304,7 @@ internal fun MessagesLoadingPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun MessagesEmptyPreview() {
+private fun MessagesEmptyPreview() {
     GovUkTheme {
         MessagesScreen({}, MessagesUiState.Empty, { }) { }
     }
@@ -312,7 +312,7 @@ internal fun MessagesEmptyPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun MessagesLoadedPreview() {
+private fun MessagesLoadedPreview() {
     GovUkTheme {
         MessagesScreen(
             {},
@@ -325,7 +325,7 @@ internal fun MessagesLoadedPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun NotificationRowReadPreview() {
+private fun NotificationRowReadPreview() {
     GovUkTheme {
         NotificationRow(mockNotifications.recent[2]) { }
     }
@@ -333,7 +333,7 @@ internal fun NotificationRowReadPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun NotificationRowUnreadPreview() {
+private fun NotificationRowUnreadPreview() {
     GovUkTheme {
         NotificationRow(mockNotifications.recent[3]) { }
     }

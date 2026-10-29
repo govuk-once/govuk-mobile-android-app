@@ -205,7 +205,7 @@ private fun BottomNavBar(
 
 @Preview
 @Composable
-internal fun LocalAddressSelectScreenPreview() {
+private fun LocalAddressSelectScreenPreview() {
     GovUkTheme {
         LocalAddressSelectScreen(
             onBack = {},

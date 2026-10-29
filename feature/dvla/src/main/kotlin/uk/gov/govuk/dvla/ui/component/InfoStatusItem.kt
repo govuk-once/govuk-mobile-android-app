@@ -72,7 +72,7 @@ internal fun InfoStatusItem(
 
 @PreviewLightDark
 @Composable
-internal fun InfoStatusItemPreview() {
+private fun InfoStatusItemPreview() {
     GovUkTheme {
         InfoStatusItem(
             title = AccessibleString("Title"),
@@ -83,7 +83,7 @@ internal fun InfoStatusItemPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun InfoStatusItemWithSubtitlePreview() {
+private fun InfoStatusItemWithSubtitlePreview() {
     GovUkTheme {
         InfoStatusItem(
             title = AccessibleString("Title"),
@@ -95,7 +95,7 @@ internal fun InfoStatusItemWithSubtitlePreview() {
 
 @PreviewLightDark
 @Composable
-internal fun InfoStatusItemWithNoIconPreview() {
+private fun InfoStatusItemWithNoIconPreview() {
     GovUkTheme {
         InfoStatusItem(
             title = AccessibleString("Title"),

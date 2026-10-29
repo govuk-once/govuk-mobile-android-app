@@ -83,7 +83,7 @@ internal fun SummaryErrorCard(
 
 @PreviewLightDark
 @Composable
-internal fun SummaryErrorCardPreview() {
+private fun SummaryErrorCardPreview() {
     GovUkTheme {
         SummaryErrorCard(
             AccessibleString("Text"),

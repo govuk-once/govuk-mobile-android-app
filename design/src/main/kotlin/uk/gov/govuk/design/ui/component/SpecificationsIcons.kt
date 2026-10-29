@@ -166,7 +166,7 @@ private fun VerticalSpecificationItem(
 
 @PreviewLightDark
 @Composable
-internal fun HorizontalSpecificationsIconsPreview() {
+private fun HorizontalSpecificationsIconsPreview() {
     val home = AccessibleString("Home")
     val crown = AccessibleString("Crown")
     val settings = AccessibleString("Settings")
@@ -193,7 +193,7 @@ internal fun HorizontalSpecificationsIconsPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun VerticalSpecificationsIconsPreview() {
+private fun VerticalSpecificationsIconsPreview() {
     val home = AccessibleString("Home")
     val crown = AccessibleString("Crown with really long description")
     val settings = AccessibleString("Settings")

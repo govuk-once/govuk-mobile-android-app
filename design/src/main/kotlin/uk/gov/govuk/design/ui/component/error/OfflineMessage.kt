@@ -26,7 +26,7 @@ fun OfflineMessage(
 
 @Preview (showBackground = true)
 @Composable
-internal fun OfflineMessagePreview() {
+private fun OfflineMessagePreview() {
     GovUkTheme {
         OfflineMessage(onButtonClick = {})
     }

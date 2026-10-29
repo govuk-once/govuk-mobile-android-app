@@ -465,6 +465,22 @@ fun FootnoteRegularLabel(
 }
 
 @Composable
+fun FootnoteRegularLabel(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    color: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    BaseLabel(
+        text = text,
+        modifier = modifier,
+        style = GovUkTheme.typography.footnoteRegular,
+        color = color,
+        textAlign = textAlign
+    )
+}
+
+@Composable
 fun CaptionBoldLabel(
     text: String,
     modifier: Modifier = Modifier,
@@ -515,6 +531,56 @@ fun CaptionRegularLabelTrailingLink(
     }
 
     CaptionRegularLabel(
+        text = annotatedString,
+        modifier = modifier
+            .clearAndSetSemantics {
+                contentDescription = altText ?: "$text $linkText"
+                onClick(action = {
+                    onClick()
+                    true
+                })
+            },
+        color = textColor,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun FootnoteRegularLabelTrailingLink(
+    text: String,
+    linkText: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    altText: String? = null,
+    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
+    isLinkUnderlined: Boolean = false,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+
+    val annotatedString = buildAnnotatedString {
+        append(text)
+        append(" ")
+        val link = LinkAnnotation.Clickable(
+            tag = "link",
+            styles = TextLinkStyles(
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = if (isLinkUnderlined) TextDecoration.Underline else TextDecoration.None,
+                ),
+                pressedStyle = SpanStyle(background = highlightColor),
+                focusedStyle = SpanStyle(
+                    background = GovUkTheme.colourScheme.surfaces.focused,
+                    color = GovUkTheme.colourScheme.textAndIcons.focused
+                )
+            ),
+            linkInteractionListener = { _ -> onClick() }
+        )
+        withLink(link) { append(linkText) }
+    }
+
+    FootnoteRegularLabel(
         text = annotatedString,
         modifier = modifier
             .clearAndSetSemantics {
@@ -650,7 +716,7 @@ fun SectionHeadingLabel(
 
 @Preview(showBackground = true)
 @Composable
-internal fun LargeTitleBold() {
+private fun LargeTitleBold() {
     GovUkTheme {
         LargeTitleBoldLabel("Large Title Bold Label")
     }
@@ -658,7 +724,7 @@ internal fun LargeTitleBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun LargeTitleRegular() {
+private fun LargeTitleRegular() {
     GovUkTheme {
         LargeTitleRegularLabel("Large Title Regular Label")
     }
@@ -666,7 +732,7 @@ internal fun LargeTitleRegular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title1Bold() {
+private fun Title1Bold() {
     GovUkTheme {
         Title1BoldLabel("Title 1 Bold Label")
     }
@@ -674,7 +740,7 @@ internal fun Title1Bold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title1Regular() {
+private fun Title1Regular() {
     GovUkTheme {
         Title1RegularLabel("Title 1 Regular Label")
     }
@@ -682,7 +748,7 @@ internal fun Title1Regular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title2Bold() {
+private fun Title2Bold() {
     GovUkTheme {
         Title2BoldLabel("Title 2 Bold Label")
     }
@@ -690,7 +756,7 @@ internal fun Title2Bold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title2Regular() {
+private fun Title2Regular() {
     GovUkTheme {
         Title2RegularLabel("Title 2 Regular Label")
     }
@@ -698,7 +764,7 @@ internal fun Title2Regular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title3Bold() {
+private fun Title3Bold() {
     GovUkTheme {
         Title3BoldLabel("Title 3 Bold Label")
     }
@@ -706,7 +772,7 @@ internal fun Title3Bold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title3SemiBold() {
+private fun Title3SemiBold() {
     GovUkTheme {
         Title3SemiBoldLabel("Title 3 Bold Label")
     }
@@ -714,7 +780,7 @@ internal fun Title3SemiBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun Title3Regular() {
+private fun Title3Regular() {
     GovUkTheme {
         Title3RegularLabel("Title 3 Regular Label")
     }
@@ -722,7 +788,7 @@ internal fun Title3Regular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun HeadlineSemibold() {
+private fun HeadlineSemibold() {
     GovUkTheme {
         HeadlineSemiboldLabel("Headline Semibold Label")
     }
@@ -731,7 +797,7 @@ internal fun HeadlineSemibold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun BodyBold() {
+private fun BodyBold() {
     GovUkTheme {
         BodyBoldLabel("Body Bold Label")
     }
@@ -739,7 +805,7 @@ internal fun BodyBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun BodyRegular() {
+private fun BodyRegular() {
     GovUkTheme {
         BodyRegularLabel("Body Regular Label")
     }
@@ -747,7 +813,7 @@ internal fun BodyRegular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun BodySemibold() {
+private fun BodySemibold() {
     GovUkTheme {
         BodySemiboldLabel("Body Semibold Label")
     }
@@ -756,7 +822,7 @@ internal fun BodySemibold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun CalloutBold() {
+private fun CalloutBold() {
     GovUkTheme {
         CalloutBoldLabel("Callout Bold Label")
     }
@@ -764,7 +830,7 @@ internal fun CalloutBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun CalloutRegular() {
+private fun CalloutRegular() {
     GovUkTheme {
         CalloutRegularLabel("Callout Regular Label")
     }
@@ -772,7 +838,7 @@ internal fun CalloutRegular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun SubheadlineBold() {
+private fun SubheadlineBold() {
     GovUkTheme {
         SubheadlineBoldLabel("Subheadline Bold Label")
     }
@@ -780,7 +846,7 @@ internal fun SubheadlineBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun SubheadlineRegular() {
+private fun SubheadlineRegular() {
     GovUkTheme {
         SubheadlineRegularLabel("Subheadline Regular Label")
     }
@@ -788,7 +854,7 @@ internal fun SubheadlineRegular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FootnoteBold() {
+private fun FootnoteBold() {
     GovUkTheme {
         FootnoteBoldLabel("Footnote Bold Label")
     }
@@ -796,7 +862,7 @@ internal fun FootnoteBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FootnoteRegular() {
+private fun FootnoteRegular() {
     GovUkTheme {
         FootnoteRegularLabel("Footnote Regular Label")
     }
@@ -804,7 +870,7 @@ internal fun FootnoteRegular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun CaptionBold() {
+private fun CaptionBold() {
     GovUkTheme {
         CaptionBoldLabel("Caption Bold Label")
     }
@@ -812,7 +878,7 @@ internal fun CaptionBold() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun CaptionRegular() {
+private fun CaptionRegular() {
     GovUkTheme {
         CaptionRegularLabel("Caption Regular Label")
     }
@@ -820,7 +886,7 @@ internal fun CaptionRegular() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ListHeadingLabelPreview() {
+private fun ListHeadingLabelPreview() {
     GovUkTheme {
         ListHeadingLabel("Settings text")
     }
@@ -828,7 +894,7 @@ internal fun ListHeadingLabelPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun SectionHeadingLabelTitle1Preview() {
+private fun SectionHeadingLabelTitle1Preview() {
     val button = SectionHeadingLabelButton(
         title = "Button Title",
         altText = "Alt text",
@@ -844,7 +910,7 @@ internal fun SectionHeadingLabelTitle1Preview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun SectionHeadingLabelTitle3Preview() {
+private fun SectionHeadingLabelTitle3Preview() {
     val button = SectionHeadingLabelButton(
         title = "Button Title",
         altText = "Alt text",

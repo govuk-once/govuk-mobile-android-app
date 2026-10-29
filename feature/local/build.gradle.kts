@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.realm)
     alias(libs.plugins.kover)
-    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -45,8 +44,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -80,9 +77,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
-
-    screenshotTestImplementation(libs.screenshot.validation.api) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-    }
-    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

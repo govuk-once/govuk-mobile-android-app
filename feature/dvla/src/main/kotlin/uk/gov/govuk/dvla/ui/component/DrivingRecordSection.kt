@@ -32,7 +32,7 @@ internal fun DrivingRecordSection(
 
 @PreviewLightDark
 @Composable
-internal fun DrivingRecordSectionPreview() {
+private fun DrivingRecordSectionPreview() {
     GovUkTheme {
         DrivingRecordSection(
             onLinkClick = { _, _ -> },

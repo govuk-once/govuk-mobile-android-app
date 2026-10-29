@@ -242,7 +242,7 @@ fun Title(
 
 @Preview(showBackground = true)
 @Composable
-internal fun TabHeaderPreview() {
+private fun TabHeaderPreview() {
     GovUkTheme {
         TabHeader("Tab label")
     }
@@ -250,7 +250,7 @@ internal fun TabHeaderPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderNoTextWithBackAndActionPreview() {
+private fun FullScreenHeaderNoTextWithBackAndActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             dismissStyle = HeaderDismissStyle.Back {},
@@ -261,7 +261,7 @@ internal fun FullScreenHeaderNoTextWithBackAndActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderBackAndActionPreview() {
+private fun FullScreenHeaderBackAndActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title",
@@ -273,7 +273,7 @@ internal fun FullScreenHeaderBackAndActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderActionNoBackPreview() {
+private fun FullScreenHeaderActionNoBackPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title",
@@ -284,7 +284,7 @@ internal fun FullScreenHeaderActionNoBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderBackNoActionPreview() {
+private fun FullScreenHeaderBackNoActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title",
@@ -295,7 +295,7 @@ internal fun FullScreenHeaderBackNoActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderNoActionOrBackPreview() {
+private fun FullScreenHeaderNoActionOrBackPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title"
@@ -305,7 +305,7 @@ internal fun FullScreenHeaderNoActionOrBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderLongTextNoActionOrBackPreview() {
+private fun FullScreenHeaderLongTextNoActionOrBackPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "This is a very long child page title that goes on and on"
@@ -315,7 +315,7 @@ internal fun FullScreenHeaderLongTextNoActionOrBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun FullScreenHeaderWithOverflowActionPreview() {
+private fun FullScreenHeaderWithOverflowActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "This is a very long child page title that goes on and on",
@@ -326,7 +326,7 @@ internal fun FullScreenHeaderWithOverflowActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ChildPageHeaderNoTextWithBackAndActionPreview() {
+private fun ChildPageHeaderNoTextWithBackAndActionPreview() {
     GovUkTheme {
         ChildPageHeader(
             dismissStyle = HeaderDismissStyle.Back {},
@@ -337,7 +337,7 @@ internal fun ChildPageHeaderNoTextWithBackAndActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ChildPageHeaderBackAndActionPreview() {
+private fun ChildPageHeaderBackAndActionPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title",
@@ -349,7 +349,7 @@ internal fun ChildPageHeaderBackAndActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ChildPageHeaderActionNoBackPreview() {
+private fun ChildPageHeaderActionNoBackPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title",
@@ -360,7 +360,7 @@ internal fun ChildPageHeaderActionNoBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ChildPageHeaderBackNoActionPreview() {
+private fun ChildPageHeaderBackNoActionPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title",
@@ -371,7 +371,7 @@ internal fun ChildPageHeaderBackNoActionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ChildPageHeaderNoActionOrBackPreview() {
+private fun ChildPageHeaderNoActionOrBackPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title"
@@ -381,7 +381,7 @@ internal fun ChildPageHeaderNoActionOrBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ChildPageHeaderLongTextNoActionOrBackPreview() {
+private fun ChildPageHeaderLongTextNoActionOrBackPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "This is a very long child page title that goes on and on"
@@ -391,7 +391,7 @@ internal fun ChildPageHeaderLongTextNoActionOrBackPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ModalHeaderPreview() {
+private fun ModalHeaderPreview() {
     GovUkTheme {
         ModalHeader(
             text = "Modal title",
@@ -405,7 +405,7 @@ internal fun ModalHeaderPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ModalHeaderWithClosePreview() {
+private fun ModalHeaderWithClosePreview() {
     GovUkTheme {
         ModalHeader(
             text = "Modal title",
@@ -420,7 +420,7 @@ internal fun ModalHeaderWithClosePreview() {
 
 @Preview
 @Composable
-internal fun TitlePreview() {
+private fun TitlePreview() {
     GovUkTheme {
         Title(
             title = "Title",

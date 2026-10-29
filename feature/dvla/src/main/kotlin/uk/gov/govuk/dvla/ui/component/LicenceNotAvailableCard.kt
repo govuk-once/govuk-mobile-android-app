@@ -63,7 +63,7 @@ internal fun LicenceNotAvailableCard(
 
 @PreviewLightDark
 @Composable
-internal fun LicenceNotAvailableCardPreview() {
+private fun LicenceNotAvailableCardPreview() {
     GovUkTheme {
         LicenceNotAvailableCard(onClick = {})
     }

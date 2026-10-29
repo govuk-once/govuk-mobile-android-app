@@ -763,7 +763,7 @@ private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): Li
 
 @Preview
 @Composable
-internal fun InternalLinkListItemPreview() {
+private fun InternalLinkListItemPreview() {
     GovUkTheme {
         InternalLinkListItem(AccessibleString("Title"))
     }
@@ -771,7 +771,7 @@ internal fun InternalLinkListItemPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemDescriptionPreview() {
+private fun InternalLinkListItemDescriptionPreview() {
     GovUkTheme {
         InternalLinkListItem(AccessibleString("Title"), description = "Description")
     }
@@ -779,7 +779,7 @@ internal fun InternalLinkListItemDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemStatusPreview() {
+private fun InternalLinkListItemStatusPreview() {
     GovUkTheme {
         InternalLinkListItem(AccessibleString("Title"), style = InternalLinkListItemStyle.Status("Status"))
     }
@@ -787,7 +787,7 @@ internal fun InternalLinkListItemStatusPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemInfoPreview() {
+private fun InternalLinkListItemInfoPreview() {
     val info = AccessibleString("Info")
     GovUkTheme {
         InternalLinkListItem(
@@ -801,7 +801,7 @@ internal fun InternalLinkListItemInfoPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemButtonPreview() {
+private fun InternalLinkListItemButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
@@ -811,7 +811,7 @@ internal fun InternalLinkListItemButtonPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemShortButtonPreview() {
+private fun InternalLinkListItemShortButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
@@ -821,7 +821,7 @@ internal fun InternalLinkListItemShortButtonPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemTrailingIconPreview() {
+private fun InternalLinkListItemTrailingIconPreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
@@ -831,7 +831,7 @@ internal fun InternalLinkListItemTrailingIconPreview() {
 
 @Preview
 @Composable
-internal fun InternalLinkListItemSimplePreview() {
+private fun InternalLinkListItemSimplePreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
@@ -841,7 +841,7 @@ internal fun InternalLinkListItemSimplePreview() {
 
 @Preview
 @Composable
-internal fun ExternalLinkListItemDefaultPreview() {
+private fun ExternalLinkListItemDefaultPreview() {
     GovUkTheme {
         ExternalLinkListItem("Title", {})
     }
@@ -849,7 +849,7 @@ internal fun ExternalLinkListItemDefaultPreview() {
 
 @Preview
 @Composable
-internal fun ExternalLinkListItemIconPreview() {
+private fun ExternalLinkListItemIconPreview() {
     GovUkTheme {
         ExternalLinkListItem(
             "Title",
@@ -862,7 +862,7 @@ internal fun ExternalLinkListItemIconPreview() {
 
 @Preview
 @Composable
-internal fun ExternalLinkListItemButtonPreview() {
+private fun ExternalLinkListItemButtonPreview() {
     GovUkTheme {
         ExternalLinkListItem(
             "Title", {}, description = "Description",
@@ -872,7 +872,7 @@ internal fun ExternalLinkListItemButtonPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun StatusListItemPreview() {
+private fun StatusListItemPreview() {
     GovUkTheme {
         StatusListItem(
             title = AccessibleString("Tax"),
@@ -886,7 +886,7 @@ internal fun StatusListItemPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun StatusListItemWarningPreview() {
+private fun StatusListItemWarningPreview() {
     GovUkTheme {
         StatusListItem(
             title = AccessibleString("Tax"),
@@ -900,7 +900,7 @@ internal fun StatusListItemWarningPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun StatusListItemNoTitlePreview() {
+private fun StatusListItemNoTitlePreview() {
     GovUkTheme {
         StatusListItem(
             description = AccessibleString("Valid until 1 February 2027"),
@@ -913,7 +913,7 @@ internal fun StatusListItemNoTitlePreview() {
 
 @PreviewLightDark
 @Composable
-internal fun AddressListItemPreview() {
+private fun AddressListItemPreview() {
     GovUkTheme {
         AddressListItem(
             name = AccessibleString("Ms Anna Ornella Arenö"),
@@ -928,7 +928,7 @@ internal fun AddressListItemPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun CountListItemPreview() {
+private fun CountListItemPreview() {
     GovUkTheme {
         Column {
             CountListItem(title = "Test Idle Indicator Full Indicator", state = CountListState.Idle(42, CountListState.IndicatorState.FULL), onClick = {})
@@ -940,7 +940,7 @@ internal fun CountListItemPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun CountdownBarItemListItemPreview() {
+private fun CountdownBarItemListItemPreview() {
     GovUkTheme {
         CountdownBarListItem(
             AccessibleString("Top text"),
@@ -952,7 +952,7 @@ internal fun CountdownBarItemListItemPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun ToggleListItemPreview() {
+private fun ToggleListItemPreview() {
     GovUkTheme {
         Column {
             ToggleListItem(
