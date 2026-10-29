@@ -246,7 +246,7 @@ fun AccountConnectionSuccessScreen(
 
 @PreviewLightDark
 @Composable
-internal fun BookendToWebScreenPreview() {
+private fun BookendToWebScreenPreview() {
     GovUkTheme {
         BookendToWebScreen(
             title = "Add your driver and vehicles account",
@@ -261,7 +261,7 @@ internal fun BookendToWebScreenPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun BookendConnectingScreenPreview() {
+private fun BookendConnectingScreenPreview() {
     GovUkTheme {
         BookendConnectingScreen(
             title = "Add your driver and vehicles account"
@@ -271,7 +271,7 @@ internal fun BookendConnectingScreenPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun AccountConnectionSuccessScreenPreview() {
+private fun AccountConnectionSuccessScreenPreview() {
     GovUkTheme {
         AccountConnectionSuccessScreen(
             title = "Driver and vehicles account added",

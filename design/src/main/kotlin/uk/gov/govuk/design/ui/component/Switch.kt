@@ -42,7 +42,7 @@ fun ToggleSwitch(
 
 @Preview(showBackground = true)
 @Composable
-internal fun ToggleSwitchOnPreview() {
+private fun ToggleSwitchOnPreview() {
     GovUkTheme {
         ToggleSwitch(
             checked = true,
@@ -54,7 +54,7 @@ internal fun ToggleSwitchOnPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun ToggleSwitchOffPreview() {
+private fun ToggleSwitchOffPreview() {
     GovUkTheme {
         ToggleSwitch(
             checked = false,

@@ -737,7 +737,7 @@ fun LoaderCard(
 
 @PreviewLightDark
 @Composable
-internal fun HomeNotableDeathBannerCardPreview() {
+private fun HomeNotableDeathBannerCardPreview() {
     GovUkTheme {
         HomeBannerCard(
             title = "His Majesty King Henry VIII",
@@ -752,7 +752,7 @@ internal fun HomeNotableDeathBannerCardPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun HomeNationalEmergencyBannerCardPreview() {
+private fun HomeNationalEmergencyBannerCardPreview() {
     GovUkTheme {
         HomeBannerCard(
             title = "National emergency",
@@ -767,7 +767,7 @@ internal fun HomeNationalEmergencyBannerCardPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun HomeLocalEmergencyBannerCardPreview() {
+private fun HomeLocalEmergencyBannerCardPreview() {
     GovUkTheme {
         HomeBannerCard(
             title = "Local emergency",
@@ -782,7 +782,7 @@ internal fun HomeLocalEmergencyBannerCardPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun HomeInformationEmergencyBannerCardPreview() {
+private fun HomeInformationEmergencyBannerCardPreview() {
     GovUkTheme {
         HomeBannerCard(
             title = "Emergency alerts",
@@ -797,7 +797,7 @@ internal fun HomeInformationEmergencyBannerCardPreview() {
 
 @Preview
 @Composable
-internal fun SearchResultWithDescriptionPreview() {
+private fun SearchResultWithDescriptionPreview() {
     GovUkTheme {
         SearchResultCard(
             title = "Card title",
@@ -809,7 +809,7 @@ internal fun SearchResultWithDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun SearchResultWithoutDescriptionPreview() {
+private fun SearchResultWithoutDescriptionPreview() {
     GovUkTheme {
         SearchResultCard(
             title = "Card title",
@@ -821,7 +821,7 @@ internal fun SearchResultWithoutDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun QuarterlyFeedbackCardPreview() {
+private fun QuarterlyFeedbackCardPreview() {
     GovUkTheme {
         QuarterlyFeedbackCard(
             "Card body",
@@ -833,7 +833,7 @@ internal fun QuarterlyFeedbackCardPreview() {
 
 @Preview
 @Composable
-internal fun NonTappableCardPreview() {
+private fun NonTappableCardPreview() {
     GovUkTheme {
         NonTappableCard("Card body")
     }
@@ -841,7 +841,7 @@ internal fun NonTappableCardPreview() {
 
 @Preview
 @Composable
-internal fun CentredCardWithIconWithTitleAndDescriptionPreview() {
+private fun CentredCardWithIconWithTitleAndDescriptionPreview() {
     GovUkTheme {
         CentredCardWithIcon(
             onClick = { },
@@ -854,7 +854,7 @@ internal fun CentredCardWithIconWithTitleAndDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun CentredCardWithIconWithTitlePreview() {
+private fun CentredCardWithIconWithTitlePreview() {
     GovUkTheme {
         CentredCardWithIcon(
             onClick = { },
@@ -866,7 +866,7 @@ internal fun CentredCardWithIconWithTitlePreview() {
 
 @Preview
 @Composable
-internal fun CentredCardWithIconWithDescriptionPreview() {
+private fun CentredCardWithIconWithDescriptionPreview() {
     GovUkTheme {
         CentredCardWithIcon(
             onClick = { },
@@ -878,7 +878,7 @@ internal fun CentredCardWithIconWithDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun NavigationCardWithTitleAndDescriptionPreview() {
+private fun NavigationCardWithTitleAndDescriptionPreview() {
     GovUkTheme {
         NavigationCard(
             title = "Card title",
@@ -890,7 +890,7 @@ internal fun NavigationCardWithTitleAndDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun NavigationCardWithoutDescriptionPreview() {
+private fun NavigationCardWithoutDescriptionPreview() {
     GovUkTheme {
         NavigationCard(
             title = "Card title",
@@ -901,7 +901,7 @@ internal fun NavigationCardWithoutDescriptionPreview() {
 
 @Preview
 @Composable
-internal fun DrillInCardPreview() {
+private fun DrillInCardPreview() {
     GovUkTheme {
         DrillInCard(
             title = "Card title",
@@ -912,7 +912,7 @@ internal fun DrillInCardPreview() {
 
 @Preview
 @Composable
-internal fun DrillInCardDescriptionPreview() {
+private fun DrillInCardDescriptionPreview() {
     GovUkTheme {
         DrillInCard(
             title = "Card title",
@@ -924,7 +924,7 @@ internal fun DrillInCardDescriptionPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun AccountConnectionCardPreview() {
+private fun AccountConnectionCardPreview() {
     GovUkTheme {
         AccountConnectionCard(
             title = "Add driver and vehicles account",
@@ -936,7 +936,7 @@ internal fun AccountConnectionCardPreview() {
 
 @PreviewLightDark
 @Composable
-internal fun LoaderCardPreview() {
+private fun LoaderCardPreview() {
     GovUkTheme {
         LoaderCard()
     }

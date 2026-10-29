@@ -530,7 +530,7 @@ fun DialogButton(
 
 @Preview
 @Composable
-internal fun Primary()
+private fun Primary()
 {
     GovUkTheme {
         PrimaryButton(
@@ -542,7 +542,7 @@ internal fun Primary()
 
 @Preview
 @Composable
-internal fun PrimaryExternalLink()
+private fun PrimaryExternalLink()
 {
     GovUkTheme {
         PrimaryButton(
@@ -555,7 +555,7 @@ internal fun PrimaryExternalLink()
 
 @Preview
 @Composable
-internal fun PrimaryDisabled()
+private fun PrimaryDisabled()
 {
     GovUkTheme {
         PrimaryButton(
@@ -568,7 +568,7 @@ internal fun PrimaryDisabled()
 
 @Preview
 @Composable
-internal fun PrimaryLoading() {
+private fun PrimaryLoading() {
     GovUkTheme {
         PrimaryButton(
             text = "Primary button",
@@ -580,7 +580,7 @@ internal fun PrimaryLoading() {
 
 @PreviewLightDark
 @Composable
-internal fun AccountConnection()
+private fun AccountConnection()
 {
     GovUkTheme {
         AccountConnectionButton(
@@ -592,7 +592,7 @@ internal fun AccountConnection()
 
 @Preview
 @Composable
-internal fun Secondary()
+private fun Secondary()
 {
     GovUkTheme {
         SecondaryButton(
@@ -604,7 +604,7 @@ internal fun Secondary()
 
 @Preview
 @Composable
-internal fun SecondaryExternalLink()
+private fun SecondaryExternalLink()
 {
     GovUkTheme {
         SecondaryButton(
@@ -617,7 +617,7 @@ internal fun SecondaryExternalLink()
 
 @Preview
 @Composable
-internal fun SecondaryDisabled()
+private fun SecondaryDisabled()
 {
     GovUkTheme {
         SecondaryButton(
@@ -630,7 +630,7 @@ internal fun SecondaryDisabled()
 
 @Preview(showBackground = true)
 @Composable
-internal fun Compact()
+private fun Compact()
 {
     GovUkTheme {
         CompactButton(
@@ -642,7 +642,7 @@ internal fun Compact()
 
 @Preview(showBackground = true)
 @Composable
-internal fun CompactExternalLink()
+private fun CompactExternalLink()
 {
     GovUkTheme {
         CompactButton(
@@ -655,7 +655,7 @@ internal fun CompactExternalLink()
 
 @Preview(showBackground = true)
 @Composable
-internal fun CompactDisabled()
+private fun CompactDisabled()
 {
     GovUkTheme {
         CompactButton(
@@ -668,7 +668,7 @@ internal fun CompactDisabled()
 
 @PreviewLightDark
 @Composable
-internal fun CompactPrimaryWithIcon() {
+private fun CompactPrimaryWithIcon() {
     GovUkTheme {
         CompactPrimaryButtonWithIcon(
             text = "Compact button with icon",
@@ -680,7 +680,7 @@ internal fun CompactPrimaryWithIcon() {
 
 @Preview
 @Composable
-internal fun Destructive()
+private fun Destructive()
 {
     GovUkTheme {
         DestructiveButton(
@@ -692,7 +692,7 @@ internal fun Destructive()
 
 @Preview
 @Composable
-internal fun DestructiveExternalLink()
+private fun DestructiveExternalLink()
 {
     GovUkTheme {
         DestructiveButton(
@@ -705,7 +705,7 @@ internal fun DestructiveExternalLink()
 
 @Preview
 @Composable
-internal fun DestructiveDisabled()
+private fun DestructiveDisabled()
 {
     GovUkTheme {
         DestructiveButton(
@@ -718,7 +718,7 @@ internal fun DestructiveDisabled()
 
 @Preview
 @Composable
-internal fun ConnectedActive()
+private fun ConnectedActive()
 {
     GovUkTheme {
         ConnectedButton(
@@ -736,7 +736,7 @@ internal fun ConnectedActive()
 
 @Preview
 @Composable
-internal fun ConnectedInactive()
+private fun ConnectedInactive()
 {
     GovUkTheme {
         ConnectedButton(
@@ -754,7 +754,7 @@ internal fun ConnectedInactive()
 
 @Preview
 @Composable
-internal fun Overflow()
+private fun Overflow()
 {
     GovUkTheme {
         OverflowButton(
