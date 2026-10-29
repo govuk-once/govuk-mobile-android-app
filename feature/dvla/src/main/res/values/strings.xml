@@ -206,6 +206,8 @@
     <string name="licence_categories_intro">Your licence categories and codes show which vehicles you can drive and any restrictions or requirements. Check each category for restrictions and expiry dates.</string>
     <string name="licence_categories_can_drive_header">You can drive</string>
     <string name="licence_categories_provisionally_drive_header">You can provisionally drive</string>
+    <string name="licence_categories_further_information_header">Further information</string>
+    <string name="licence_category_at_text">Category %1$s</string>
     <string name="categories_group_mopeds">Mopeds</string>
     <string name="categories_group_motorcycles">Motorcycles</string>
     <string name="categories_group_light_vehicles">Light vehicles and quad bikes</string>
