@@ -52,7 +52,7 @@ jobs:
 
       - name: Run Debug Screenshot tests
         id: screenshot-tests
-        run: ./gradlew validateDebugScreenshotTest
+        run: ./gradlew validateDebugScreenshotTest --no-daemon --max-workers=1
 
       - name: Upload screenshot Test Report on Failure
         if: always() && steps.screenshot-tests.outcome == 'failure'
