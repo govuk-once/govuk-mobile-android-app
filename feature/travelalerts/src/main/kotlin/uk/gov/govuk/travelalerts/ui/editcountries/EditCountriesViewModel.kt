@@ -61,6 +61,8 @@ class EditCountriesViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
     val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
 
+    private var allCountries: List<Country> = emptyList()
+
     private var selectedSlug: String?
         get() = savedStateHandle["selectedSlug"]
         set(value) = savedStateHandle.set("selectedSlug", value)
@@ -136,18 +138,24 @@ class EditCountriesViewModel @Inject constructor(
     }
 
     fun onOptInResult(slug: String, error: Boolean, notificationsEnabled: Boolean = false) {
-        selectedSlug = slug
         if (error) {
+            selectedSlug = slug
             updateLoaded { copy(toggleError = true) }
         } else {
+            val newSubgroup = if (notificationsEnabled) Subgroup.INSTANT else Subgroup.NONE
+            val newGroup = Group(namespace = "travel", group = slug, subgroup = newSubgroup)
+            // selectedSlug reopens the bottom sheet — only needed when toggling an already-followed country,
+            // not when following a new one (which would incorrectly pop open the sheet on return)
+            val wasAlreadyFollowing = (_uiState.value as? State.Loaded)?.groups?.any { it.group == slug } == true
+            if (wasAlreadyFollowing) selectedSlug = slug
             updateLoaded {
+                val newGroups = groups.filterNot { it.group == slug } + newGroup
+                val countriesBySlug = allCountries.associateBy(Country::slug)
+                val newFollowed = newGroups.mapNotNull { g -> countriesBySlug[g.group] }.sortedBy { it.name }
                 copy(
-                    selectedSlug = slug,
-                    groups = if (notificationsEnabled) {
-                        groups.map { g -> if (g.group == slug) g.copy(subgroup = Subgroup.INSTANT) else g }
-                    } else {
-                        groups
-                    }
+                    selectedSlug = if (wasAlreadyFollowing) slug else null,
+                    countries = newFollowed,
+                    groups = newGroups
                 )
             }
             fetchFollowedCountries()
@@ -180,6 +188,7 @@ class EditCountriesViewModel @Inject constructor(
             val groupsResult = travelAlertsRepo.getGroups()
             val countriesResult = travelAlertsRepo.getCountries()
             if (groupsResult is Result.Success && countriesResult is Result.Success) {
+                allCountries = countriesResult.value
                 val countriesBySlug = countriesResult.value.associateBy(Country::slug)
                 val followed = groupsResult.value
                     .mapNotNull { group -> countriesBySlug[group.group] }
