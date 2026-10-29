@@ -74,6 +74,7 @@ import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
+import uk.gov.govuk.dwp.ui.DwpLinkHeader
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -100,6 +101,7 @@ import uk.gov.govuk.settings.navigation.yourAccountsGraph
 import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
+import uk.gov.govuk.topics.ui.model.isBenefitsTopic
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
 import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
@@ -639,6 +641,14 @@ private fun GovUkNavHost(
                                 onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
                                 onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
                             )
+                        }
+                    } else if (topicRef.isBenefitsTopic() && viewModel.isDwpFeatureEnabled()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = GovUkTheme.spacing.medium),
+                            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                        ) {
+                            DwpLinkHeader()
                         }
                     }
                 },
