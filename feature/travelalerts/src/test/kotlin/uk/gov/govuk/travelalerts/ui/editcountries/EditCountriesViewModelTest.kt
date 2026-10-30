@@ -7,6 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -320,6 +321,26 @@ class EditCountriesViewModelTest {
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
         assertTrue(!state.isUnfollowing)
         assertEquals(false, state.unfollowError)
+    }
+
+    @Test
+    fun `Given unfollow country succeeds and no countries remain, then PopBack navigation event is emitted`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france") } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        val events = mutableListOf<EditCountriesViewModel.NavigationEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
+
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(emptyList())
+        viewModel.unfollowCountry("france")
+
+        advanceUntilIdle()
+        assertEquals(1, events.size)
+        assertTrue(events.first() is EditCountriesViewModel.NavigationEvent.PopBack)
     }
 
     @Test

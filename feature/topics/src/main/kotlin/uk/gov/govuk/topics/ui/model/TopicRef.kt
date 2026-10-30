@@ -32,5 +32,6 @@ internal enum class TopicRef(
 fun String?.isDrivingTopic(): Boolean = this == TopicRef.DRIVING.ref
 fun String?.isTravelTopic(): Boolean = this == TopicRef.TRAVEL_ABROAD.ref
 
-/** Public ref value for the driving topic, for use outside the topics module (e.g. deep link handling) */
+/** Public ref values for topics, for use outside the topics module (e.g. deep link handling) */
 val DRIVING_TOPIC_REF: String = TopicRef.DRIVING.ref
+val TRAVEL_ABROAD_TOPIC_REF: String = TopicRef.TRAVEL_ABROAD.ref

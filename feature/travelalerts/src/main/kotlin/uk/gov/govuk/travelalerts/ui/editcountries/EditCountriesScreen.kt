@@ -75,6 +75,7 @@ fun EditCountriesScreen(
                 is EditCountriesViewModel.NavigationEvent.ToNotificationsOptIn -> {
                     navController.navigate("$NOTIFICATIONS_RATIONALE_ROUTE/${event.slug}?$ORIGIN_ARG=$ORIGIN_EDIT")
                 }
+                is EditCountriesViewModel.NavigationEvent.PopBack -> onBack()
             }
         }
     }
