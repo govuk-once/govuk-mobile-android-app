@@ -42,7 +42,7 @@ android {
 }
 
 // Set the property for this module specifically during evaluation
-ext.set("android.compose.screenshot.maxHeapSize", "4g")
+//ext.set("android.compose.screenshot.maxHeapSize", "4g")
 
 dependencies {
     implementation(libs.androidx.navigation.compose)
@@ -65,4 +65,15 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
     }
     screenshotTestImplementation(libs.androidx.compose.ui.tooling)
+}
+
+// Split up screenshot generation to clear the plugin's image pool cache
+tasks.configureEach {
+    if (name.contains("ScreenshotTest", ignoreCase = true)) {
+        // Enforce zero parallel threads within the leaked task block
+        //maxWorkers.set(1)
+
+        // Force the execution engine to completely dump its cached instances frequently
+        System.setProperty("android.experimental.screenshotTest.worker.jvmArgs", "-Xmx3g -XX:+UseG1GC -XX:SoftRefLRUPolicyMSPerMB=50")
+    }
 }
