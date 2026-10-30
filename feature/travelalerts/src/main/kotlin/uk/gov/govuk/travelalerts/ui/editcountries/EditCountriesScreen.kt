@@ -75,6 +75,7 @@ fun EditCountriesScreen(
                 is EditCountriesViewModel.NavigationEvent.ToNotificationsOptIn -> {
                     navController.navigate("$NOTIFICATIONS_RATIONALE_ROUTE/${event.slug}?$ORIGIN_ARG=$ORIGIN_EDIT")
                 }
+                is EditCountriesViewModel.NavigationEvent.PopBack -> onBack()
             }
         }
     }
@@ -170,6 +171,15 @@ private fun EditCountriesLoaded(
         if (state.selectedSlug != null && selectedSlug.value == null) {
             selectedSlug.value = state.selectedSlug
             onConsentResultHandled()
+        }
+    }
+
+    // Dismiss sheet when unfollowed country is removed from the list
+    LaunchedEffect(state.countries) {
+        val slug = selectedSlug.value ?: return@LaunchedEffect
+        if (state.countries.none { it.slug == slug }) {
+            sheetState.hide()
+            selectedSlug.value = null
         }
     }
 
