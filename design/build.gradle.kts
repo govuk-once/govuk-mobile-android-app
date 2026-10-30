@@ -39,8 +39,10 @@ android {
     }
 
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
-    experimentalProperties["android.compose.screenshot.maxHeapSize"] = "4g"
 }
+
+// Set the property for this module specifically during evaluation
+ext.set("android.compose.screenshot.maxHeapSize", "4g")
 
 dependencies {
     implementation(libs.androidx.navigation.compose)
