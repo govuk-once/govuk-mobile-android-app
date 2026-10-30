@@ -25,5 +25,8 @@ internal val dvlaUrls = DvlaUrls(
     buyingUsedCarChecks = "https://www.gov.uk/checks-when-buying-a-used-car",
     reportAbandonedVehicle = "https://www.gov.uk/report-abandoned-vehicle",
     reportUntaxedVehicle = "https://www.gov.uk/report-untaxed-vehicle",
-    reportNoMot = "https://www.gov.uk/report-no-mot"
+    reportNoMot = "https://www.gov.uk/report-no-mot",
+    compareLicenceCategories = "https://www.gov.uk/compare-categories",
+    vehicleWeightExplained = "https://www.gov.uk/vehicle-weigh-explained",
+    addLicenceCategories = "https://www.gov.uk/add-categories",
 )
