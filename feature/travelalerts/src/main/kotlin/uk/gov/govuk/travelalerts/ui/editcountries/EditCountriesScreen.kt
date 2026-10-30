@@ -174,6 +174,15 @@ private fun EditCountriesLoaded(
         }
     }
 
+    // Dismiss sheet when unfollowed country is removed from the list
+    LaunchedEffect(state.countries) {
+        val slug = selectedSlug.value ?: return@LaunchedEffect
+        if (state.countries.none { it.slug == slug }) {
+            sheetState.hide()
+            selectedSlug.value = null
+        }
+    }
+
     // Dismiss sheet when unfollow error occurs or when returning from opt-in
     LaunchedEffect(state.unfollowError) {
         if (state.unfollowError) {
