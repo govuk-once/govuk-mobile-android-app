@@ -111,7 +111,7 @@ internal fun LicenceSummaryHeader(
 
 @PreviewLightDark
 @Composable
-private fun LicenceHeaderPreview() {
+internal fun LicenceHeaderPreview() {
     GovUkTheme {
         LicenceSummaryHeader(
             licenceType = "Full licence",
@@ -126,7 +126,7 @@ private fun LicenceHeaderPreview() {
 
 @PreviewLightDark
 @Composable
-private fun LicenceSummaryCardPreview() {
+internal fun LicenceSummaryCardPreview() {
     GovUkTheme {
         LicenceSummaryCard(
             launchBrowser = {_,_ ->},
@@ -150,7 +150,7 @@ private fun LicenceSummaryCardPreview() {
 
 @PreviewLightDark
 @Composable
-private fun LicenceSummaryCardExpiredPreview() {
+internal fun LicenceSummaryCardExpiredPreview() {
     GovUkTheme {
         LicenceSummaryCard(
             launchBrowser = {_,_ ->},
