@@ -6,6 +6,7 @@ import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -42,29 +43,63 @@ class AuthRepo @Inject constructor(
     private val biometricManager: BiometricManager,
     private val authApi: AuthApi,
     private val tokenRepo: TokenRepo,
-    private val cryptoProvider: CryptoProvider
+    private val cryptoProvider: CryptoProvider,
+    private val ephemeralBrowsingProvider: EphemeralBrowsingProvider
 ) {
     companion object {
         private const val REFRESH_TOKEN_KEY = "refreshToken"
         private const val SUB_ID_KEY = "subId"
+
+        const val AUTH_URL_KEY      = "auth_url"
+        const val REDIRECT_URI_KEY  = "redirect_uri"
+        const val REDIRECT_URL_KEY = "redirect_url"
+        const val CODE_KEY  = "code"
+        const val STATE_KEY = "state"
+        const val ERROR_KEY = "error"
     }
 
     val authIntent: Intent by lazy {
-        val intent = CustomTabsIntent.Builder()
-            .setEphemeralBrowsingEnabled(true)
-            .build()
-        authService.getAuthorizationRequestIntent(authRequest, intent)
+        if (ephemeralBrowsingProvider.isSupported) {
+            val customTabsIntent = CustomTabsIntent.Builder()
+                .setEphemeralBrowsingEnabled(true)
+                .build()
+            authService.getAuthorizationRequestIntent(authRequest, customTabsIntent)
+        } else {
+            ephemeralBrowsingProvider.fallbackIntent(
+                authRequest.toUri().toString(),
+                authRequest.redirectUri.toString()
+            )
+        }
     }
 
     private var tokens = Tokens()
 
     suspend fun handleAuthResponse(data: Intent?): Boolean {
         clear()
-        val authResponse = data?.let { AuthorizationResponse.fromIntent(it) }
-        return if (authResponse != null) {
-            performTokenRequest(authResponse.createTokenExchangeRequest())
-        } else {
-            false
+
+        val authResponse = data?.let {
+            AuthorizationResponse.fromIntent(it) ?: buildSecureWebViewAuthResponse(it)
+        }
+
+        return authResponse != null && performTokenRequest(authResponse.createTokenExchangeRequest())
+    }
+
+    private fun buildSecureWebViewAuthResponse(data: Intent): AuthorizationResponse? {
+        return try {
+            data.getStringExtra(REDIRECT_URL_KEY)?.let { redirectUrl ->
+                val uri = redirectUrl.toUri()
+                val code = uri.getQueryParameter(CODE_KEY)
+                val state = uri.getQueryParameter(STATE_KEY)
+
+                if (!code.isNullOrEmpty() && !state.isNullOrEmpty()) {
+                    AuthorizationResponse.Builder(authRequest)
+                        .setAuthorizationCode(code)
+                        .setState(state)
+                        .build()
+                } else null
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 
