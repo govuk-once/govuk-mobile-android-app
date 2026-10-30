@@ -67,13 +67,13 @@ dependencies {
     screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }
 
-// Split up screenshot generation to clear the plugin's image pool cache
-tasks.configureEach {
+// Filter tests dynamically based on a custom property flag
+// Force the screenshot runner to fork and restart its JVM mid-task execution
+tasks.withType<Test>().configureEach {
     if (name.contains("ScreenshotTest", ignoreCase = true)) {
-        // Enforce zero parallel threads within the leaked task block
-        //maxWorkers.set(1)
-
-        // Force the execution engine to completely dump its cached instances frequently
-        System.setProperty("android.experimental.screenshotTest.worker.jvmArgs", "-Xmx3g -XX:+UseG1GC -XX:SoftRefLRUPolicyMSPerMB=50")
+        // Automatically splits your tests into sequential batches of 50!
+        forkEvery = 50
     }
 }
+
+
