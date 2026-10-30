@@ -47,7 +47,7 @@ fun InfoAlert(
 
 @Preview(showBackground = true)
 @Composable
-private fun InfoAlertPreview() {
+internal fun InfoAlertPreview() {
     GovUkTheme {
         InfoAlert(
             title = R.string.problem_title,

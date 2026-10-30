@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose)
     alias(libs.plugins.kover)
+    alias(libs.plugins.screenshot)
 }
 
 val privacyPolicyUrl: String by project
@@ -36,7 +37,12 @@ android {
         compose = true
         buildConfig = true
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
+
+// Set the property for this module specifically during evaluation
+//ext.set("android.compose.screenshot.maxHeapSize", "4g")
 
 dependencies {
     implementation(libs.androidx.navigation.compose)
@@ -54,4 +60,20 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    screenshotTestImplementation(libs.screenshot.validation.api) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+    }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }
+
+// Filter tests dynamically based on a custom property flag
+// Force the screenshot runner to fork and restart its JVM mid-task execution
+tasks.withType<Test>().configureEach {
+    if (name.contains("ScreenshotTest", ignoreCase = true)) {
+        // Automatically splits your tests into sequential batches of 50!
+        forkEvery = 50
+    }
+}
+
+

@@ -18,6 +18,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import kotlinx.coroutines.delay
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
@@ -85,9 +86,9 @@ fun ErrorPage(
     }
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
-private fun ErrorPageWithoutAdditionalContentPreview() {
+internal fun ErrorPageWithoutAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
@@ -102,9 +103,9 @@ private fun ErrorPageWithoutAdditionalContentPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
-private fun ErrorPageWithAdditionalContentPreview() {
+internal fun ErrorPageWithAdditionalContentPreview() {
     GovUkTheme {
         ErrorPage(
             headerText = "Header text",
