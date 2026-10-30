@@ -12,7 +12,6 @@ import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
 import javax.inject.Inject
 
 internal sealed interface LicenceCategoriesUiState {
-    // TODO GOVUKAPP-4152 do we need to cover empty state?
     data class Success(val categories: LicenceCategoriesUiModel) : LicenceCategoriesUiState
     data object Error : LicenceCategoriesUiState
 }
@@ -25,6 +24,12 @@ internal class LicenceCategoriesViewModel @Inject constructor(
     private val configRepo: ConfigRepo
 ) : ViewModel() {
 
+    private companion object {
+        const val SCREEN_CLASS = "LicenceCategoriesScreen"
+        const val CATEGORY_INFO_TEXT = "Vehicle Category"
+        const val SECTION = "Driving"
+    }
+
     private val _uiState = MutableStateFlow(createInitialState())
     val uiState = _uiState.asStateFlow()
 
@@ -36,28 +41,27 @@ internal class LicenceCategoriesViewModel @Inject constructor(
         return LicenceCategoriesUiState.Success(categories)
     }
 
-//    screen_view on page load: Screen title and name should both be the “title of the screen”
-    fun onPageView() {
-
+    fun onPageView(title: String) {
+        analyticsClient.screenView(
+            screenClass = SCREEN_CLASS,
+            screenName = title,
+            title = title
+        )
     }
 
-//    Navigation event on “Info “with following parameters
-//    text: Vehicle Category
-//    type: Button
-//    external: false
-//    section: Driving
     fun onCategoryInfoClicked() {
-
+        analyticsClient.buttonClick(
+            text = CATEGORY_INFO_TEXT,
+            section = SECTION
+        )
     }
 
-
-
-//    type: button
-//    text: “Link name”
-//    external: True
-//    section: Driving
-//    URL: “The URL for each option”
     fun onFurtherInfoLinkClicked(text: String, url: String) {
-
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION
+        )
     }
 }

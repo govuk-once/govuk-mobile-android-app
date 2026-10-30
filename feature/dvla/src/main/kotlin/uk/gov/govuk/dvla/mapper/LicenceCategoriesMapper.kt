@@ -61,6 +61,8 @@ internal class LicenceCategoriesMapper @Inject constructor(
                 listOf(
                     LicenceCategoryUiModel("B", R.drawable.ic_licence_cat_b),
                     LicenceCategoryUiModel("BE", R.drawable.ic_licence_cat_be)
+
+                    // TODO GOVUK-4142 Check about 'B auto'
                 )
             ),
             LicenceCategoryGroupUiModel(
@@ -89,24 +91,6 @@ internal class LicenceCategoriesMapper @Inject constructor(
                 )
             )
         )
-
-    private fun furtherInformationLinks(dvlaUrls: DvlaUrls?): List<LicenceCategoryLinkUiModel> {
-        dvlaUrls ?: return emptyList()
-        return listOf(
-            LicenceCategoryLinkUiModel(
-                stringProvider.getString(R.string.licence_categories_link_compare),
-                dvlaUrls.compareLicenceCategories
-            ),
-            LicenceCategoryLinkUiModel(
-                stringProvider.getString(R.string.licence_categories_link_weights),
-                dvlaUrls.vehicleWeightExplained
-            ),
-            LicenceCategoryLinkUiModel(
-                stringProvider.getString(R.string.licence_categories_link_add_categories),
-                dvlaUrls.addLicenceCategories
-            )
-        )
-    }
 
     private fun DvlaUrls.toFurtherInformationLinks() = listOf(
         LicenceCategoryLinkUiModel(

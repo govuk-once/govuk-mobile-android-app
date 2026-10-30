@@ -23,8 +23,10 @@ internal fun LicenceCategoriesRoute(
             LicenceCategoriesScreen(
                 categories = state.categories,
                 onBack = dropUnlessResumed { onBack() },
-                onPageView = { viewModel.onPageView() },
-                onCategoryInfoClick = { code ->
+                onPageView = { title ->
+                    viewModel.onPageView(title)
+                },
+                onCategoryInfoClick = { _ ->
                     viewModel.onCategoryInfoClicked()
                     // TODO open the category detail (separate ticket)
                 },

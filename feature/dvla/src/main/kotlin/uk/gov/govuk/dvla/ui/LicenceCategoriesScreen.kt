@@ -40,12 +40,16 @@ import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 internal fun LicenceCategoriesScreen(
     categories: LicenceCategoriesUiModel,
     onBack: () -> Unit,
-    onPageView: () -> Unit,
+    onPageView: (title: String) -> Unit,
     onCategoryInfoClick: (code: String) -> Unit,
     onFurtherInfoLinkClick: (text: String, url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    RunOnceLaunchedEffect { onPageView() }
+    val title = stringResource(R.string.licence_categories_title)
+
+    RunOnceLaunchedEffect {
+        onPageView(title)
+    }
 
     Column(modifier = modifier.safeDrawingPadding().fillMaxWidth()) {
         FullScreenHeader(dismissStyle = HeaderDismissStyle.Back(onBack))
@@ -56,7 +60,7 @@ internal fun LicenceCategoriesScreen(
                 .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
             LargeTitleBoldLabel(
-                text = stringResource(R.string.licence_categories_title),
+                text = title,
             )
 
             Spacer(Modifier.height(12.dp))
@@ -177,6 +181,11 @@ private fun LicenceCategoriesScreenPreview() {
                             "Motorcycles",
                             listOf(LicenceCategoryUiModel("A", R.drawable.ic_licence_cat_a))
                         )
+                    ),
+                    furtherInformationLinks = listOf(
+                        LicenceCategoryLinkUiModel("Compare old and new categories", "https://www.gov.uk"),
+                        LicenceCategoryLinkUiModel("Vehicle weights explained", "https://www.gov.uk"),
+                        LicenceCategoryLinkUiModel("Adding categories to your licence", "https://www.gov.uk")
                     )
                 ),
                 onBack = {},
