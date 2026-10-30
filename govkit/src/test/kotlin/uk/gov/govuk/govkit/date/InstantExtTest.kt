@@ -41,6 +41,32 @@ class InstantExtTest {
         assertEquals("29 July", date.toRelativeDate(now))
     }
 
+    // NOT-599
+
+    @Test
+    fun `toRelativeDate, older, lowercase, returns formatted date`() {
+        val date = Instant.parse("2026-07-29T09:00:00Z")
+        assertEquals("29 July", date.toRelativeDate(now, true))
+    }
+
+    @Test
+    fun `toRelativeDate, within last 7 days, lowercase, returns day name`() {
+        val date = Instant.parse("2026-08-25T09:00:00Z") // Tuesday
+        assertEquals("Tuesday", date.toRelativeDate(now, true))
+    }
+
+    @Test
+    fun `toRelativeDate, today, lowercase, returns Today with time`() {
+        val date = Instant.parse("2026-08-28T09:00:00Z") // 10:00am BST
+        assertEquals("today, 10:00am", date.toRelativeDate(now, true))
+    }
+
+    @Test
+    fun `toRelativeDate, yesterday, lowercase, returns Yesterday`() {
+        val date = Instant.parse("2026-08-27T09:00:00Z")
+        assertEquals("yesterday", date.toRelativeDate(now, true))
+    }
+
     // --- toRelativeDateTime ---
 
     @Test
