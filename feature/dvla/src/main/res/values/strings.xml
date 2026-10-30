@@ -213,7 +213,9 @@
     <string name="categories_group_light_vehicles">Light vehicles and quad bikes</string>
     <string name="categories_group_cars">Cars</string>
     <string name="categories_group_medium_vehicles">Medium-sized vehicles</string>
+    <string name="categories_group_large_vehicles">Large vehicles</string>
     <string name="categories_group_minibuses">Minibuses</string>
+    <string name="categories_group_buses">Buses</string>
     <string name="categories_group_other_vehicles">Other vehicles</string>
     <string name="licence_categories_link_compare">Compare old and new categories</string>
     <string name="licence_categories_link_weights">Vehicle weights explained</string>

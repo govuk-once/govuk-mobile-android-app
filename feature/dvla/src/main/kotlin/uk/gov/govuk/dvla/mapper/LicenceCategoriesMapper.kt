@@ -36,10 +36,10 @@ internal class LicenceCategoriesMapper @Inject constructor(
             .filter { it.categories.isNotEmpty() }
     }
 
-    // TODO GOVUKAPP-4152: categories not listed here are not shown, confirm with product
-    // catalog of every category we display, order is the order on screen, as per GOVUKAPP-4152
+    // catalog of every category we display - order is the order on screen as per GOVUKAPP-4152
     private val allCategoryGroups: List<LicenceCategoryGroupUiModel>
         get() = listOf(
+            // mopeds
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_mopeds),
                 listOf(
@@ -48,14 +48,21 @@ internal class LicenceCategoriesMapper @Inject constructor(
                     LicenceCategoryUiModel("Q", R.drawable.ic_licence_cat_q)
                 )
             ),
+            // motorcycles
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_motorcycles),
-                listOf(LicenceCategoryUiModel("A", R.drawable.ic_licence_cat_a))
+                listOf(
+                    LicenceCategoryUiModel("A", R.drawable.ic_licence_cat_a),
+                    LicenceCategoryUiModel("A1", R.drawable.ic_licence_cat_a1),
+                    LicenceCategoryUiModel("A2", R.drawable.ic_licence_cat_a2)
+                )
             ),
+            // light vehicles
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_light_vehicles),
                 listOf(LicenceCategoryUiModel("B1", R.drawable.ic_licence_cat_b1))
             ),
+            // cars
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_cars),
                 listOf(
@@ -65,6 +72,7 @@ internal class LicenceCategoriesMapper @Inject constructor(
                     // TODO GOVUK-4142 Check about 'B auto'
                 )
             ),
+            // medium vehicles
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_medium_vehicles),
                 listOf(
@@ -72,6 +80,15 @@ internal class LicenceCategoriesMapper @Inject constructor(
                     LicenceCategoryUiModel("C1E", R.drawable.ic_licence_cat_c1e)
                 )
             ),
+            // large
+            LicenceCategoryGroupUiModel(
+                stringProvider.getString(R.string.categories_group_large_vehicles),
+                listOf(
+                    LicenceCategoryUiModel("C", R.drawable.ic_licence_cat_c),
+                    LicenceCategoryUiModel("CE", R.drawable.ic_licence_cat_ce)
+                )
+            ),
+            // mini buses
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_minibuses),
                 listOf(
@@ -79,15 +96,25 @@ internal class LicenceCategoriesMapper @Inject constructor(
                     LicenceCategoryUiModel("D1E", R.drawable.ic_licence_cat_d1e)
                 )
             ),
+            // buses
+            LicenceCategoryGroupUiModel(
+                stringProvider.getString(R.string.categories_group_buses),
+                listOf(
+                    LicenceCategoryUiModel("D", R.drawable.ic_licence_cat_d),
+                    LicenceCategoryUiModel("DE", R.drawable.ic_licence_cat_de)
+                )
+            ),
+            // other vehicles
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_other_vehicles),
                 listOf(
                     LicenceCategoryUiModel("f"),
+                    LicenceCategoryUiModel("G"),
+                    LicenceCategoryUiModel("H"),
                     LicenceCategoryUiModel("k"),
                     LicenceCategoryUiModel("l"),
-                    LicenceCategoryUiModel("n"),
-                    LicenceCategoryUiModel("G"),
-                    LicenceCategoryUiModel("H")
+                    LicenceCategoryUiModel("M"),
+                    LicenceCategoryUiModel("n")
                 )
             )
         )
