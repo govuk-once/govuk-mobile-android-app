@@ -537,13 +537,13 @@ class FlagRepoTest {
     fun `Given a debug build DWP feature is disabled, return false`() {
         flagRepo = FlagRepo(true, debugFlags, configRepo)
 
-        assertFalse(flagRepo.isDwpFeatureEnabled())
+        assertFalse(flagRepo.isDwpLinkEnabled())
     }
 
     @Test
     fun `Given a release build, DWP feature is disabled, return false`() {
         flagRepo = FlagRepo(false, debugFlags, configRepo)
 
-        assertFalse(flagRepo.isDwpFeatureEnabled())
+        assertFalse(flagRepo.isDwpLinkEnabled())
     }
 }

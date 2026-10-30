@@ -137,7 +137,7 @@ class FlagRepo @Inject constructor(
         )
     }
 
-    fun isDwpFeatureEnabled(): Boolean {
+    fun isDwpLinkEnabled(): Boolean {
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = false, // Set debug release always off
