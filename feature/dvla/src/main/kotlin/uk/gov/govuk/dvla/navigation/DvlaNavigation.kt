@@ -12,6 +12,7 @@ import uk.gov.govuk.dvla.DvlaViewModel
 import uk.gov.govuk.dvla.ui.CheckVehicleDetailsRoute
 import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
+import uk.gov.govuk.dvla.ui.LicenceCategoriesRoute
 import uk.gov.govuk.dvla.ui.VehicleDetailsRoute
 
 const val DVLA_GRAPH_ROUTE = "dvla_graph_route"
@@ -20,6 +21,7 @@ const val DVLA_LINK_ROUTE = "dvla_link_route"
 const val DVLA_DEEP_LINK_PATH = "/callback/dvla/auth"
 const val VEHICLE_DETAILS_ROUTE = "vehicle_details_route"
 const val VEHICLE_SEARCH_RESULT_ROUTE = "vehicle_search_result_route"
+const val LICENCE_CATEGORIES_ROUTE = "licence_categories_route"
 const val ARG_DVLA_TOKEN = "token"
 const val ARG_VEHICLE_ID = "vehicle_id"
 const val ARG_REG_NUMBER = "registration_number"
@@ -105,6 +107,14 @@ fun NavGraphBuilder.dvlaGraph(
                 onVehicleFound = onVehicleFound
             )
         }
+
+        composable(route = LICENCE_CATEGORIES_ROUTE) {
+            LicenceCategoriesRoute(
+                launchBrowser = launchBrowser,
+                onBack = onBack,
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -129,5 +139,5 @@ fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
 }
 
 fun NavController.navigateToDrivingCategories() {
-    // TODO coming in next ticket
+    navigate(LICENCE_CATEGORIES_ROUTE)
 }
