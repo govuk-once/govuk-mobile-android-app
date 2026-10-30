@@ -74,6 +74,7 @@ import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
+import uk.gov.govuk.dwp.ui.DwpLinkHeader
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -100,6 +101,7 @@ import uk.gov.govuk.settings.navigation.yourAccountsGraph
 import uk.gov.govuk.terms.navigation.termsGraph
 import uk.gov.govuk.topics.navigation.topicSelectionGraph
 import uk.gov.govuk.topics.navigation.topicsGraph
+import uk.gov.govuk.topics.ui.model.isBenefitsTopic
 import uk.gov.govuk.topics.ui.model.isDrivingTopic
 import uk.gov.govuk.topics.ui.model.isTravelTopic
 import uk.gov.govuk.travelalerts.navigation.COUNTRY_LIST_ROUTE
@@ -597,48 +599,68 @@ private fun GovUkNavHost(
                     }
                 },
                 topicHeader = { topicRef ->
-                    if (topicRef.isDrivingTopic() && viewModel.isDvlaLinkEnabled()) {
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = GovUkTheme.spacing.medium),
-                            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
-                        ) {
-                            // drop in the self-managed public header from the DVLA module
-                            DvlaLinkHeader(
-                                onActionClick = { navController.navigateToDvlaLinkIntro() }
-                            )
+                    when {
+                        topicRef.isDrivingTopic() && viewModel.isDvlaLinkEnabled() -> {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = GovUkTheme.spacing.medium),
+                                verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                            ) {
+                                // drop in the self-managed public header from the DVLA module
+                                DvlaLinkHeader(
+                                    onActionClick = { navController.navigateToDvlaLinkIntro() }
+                                )
 
-                            // and vehicles/licence summary widget from DVLA module
-                            VehiclesAndLicenceSummaryWidget(
-                                launchBrowser = { url ->
-                                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
-                                },
-                                onVehicleDetailsClick = { vehicleId ->
-                                    navController.navigateToVehicleDetails(vehicleId)
-                                },
-                                onDrivingCategoriesClick = { navController.navigateToDrivingCategories() },
-                                vehiclesFooter = {
-                                    CheckVehicleWidget(
-                                        onVehicleFound = { reg ->
-                                            navController.navigateToVehicleDetailsByRegistration(reg)
+                                // and vehicles/licence summary widget from DVLA module
+                                VehiclesAndLicenceSummaryWidget(
+                                    launchBrowser = { url ->
+                                        externalLauncher.launch(url) {
+                                            showBrowserNotFoundAlert = true
                                         }
-                                    )
-                                }
-                            )
+                                    },
+                                    onVehicleDetailsClick = { vehicleId ->
+                                        navController.navigateToVehicleDetails(vehicleId)
+                                    },
+                                    onDrivingCategoriesClick = { navController.navigateToDrivingCategories() },
+                                    vehiclesFooter = {
+                                        CheckVehicleWidget(
+                                            onVehicleFound = { reg ->
+                                                navController.navigateToVehicleDetailsByRegistration(
+                                                    reg
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         }
-                    } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = GovUkTheme.spacing.medium),
-                            verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
-                        ) {
-                            TravelAlertsWidget(
-                                launchBrowser = { url ->
-                                    externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
-                                },
-                                onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
-                                onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
-                            )
+
+                        topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled() -> {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = GovUkTheme.spacing.medium),
+                                verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                            ) {
+                                TravelAlertsWidget(
+                                    launchBrowser = { url ->
+                                        externalLauncher.launch(url) {
+                                            showBrowserNotFoundAlert = true
+                                        }
+                                    },
+                                    onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
+                                    onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
+                                )
+                            }
+                        }
+
+                        topicRef.isBenefitsTopic() && viewModel.isDwpLinkEnabled() -> {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = GovUkTheme.spacing.medium),
+                                verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                            ) {
+                                DwpLinkHeader()
+                            }
                         }
                     }
                 },
