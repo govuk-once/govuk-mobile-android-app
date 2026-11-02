@@ -68,8 +68,6 @@ internal class LicenceCategoriesMapper @Inject constructor(
                 listOf(
                     LicenceCategoryUiModel("B", R.drawable.ic_licence_cat_b),
                     LicenceCategoryUiModel("BE", R.drawable.ic_licence_cat_be)
-
-                    // TODO GOVUK-4142 Check about 'B auto'
                 )
             ),
             // medium vehicles
