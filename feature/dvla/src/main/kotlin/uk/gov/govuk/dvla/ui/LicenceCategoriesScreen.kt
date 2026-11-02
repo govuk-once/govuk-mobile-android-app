@@ -102,7 +102,7 @@ private fun CategorySection(
     SectionHeadingLabel(title3 = title)
 
     groups.forEachIndexed { index, group ->
-        if (index == 0) SmallVerticalSpacer() else Spacer(Modifier.height(36.dp))
+        if (index > 0) Spacer(Modifier.height(36.dp))
 
         CategoryGroup(group = group, onInfoClick = onInfoClick)
     }
@@ -143,6 +143,7 @@ private fun FurtherInformation(
         ExternalLinkListItem(
             title = link.text,
             onClick = { onLinkClick(link.text, link.url) },
+            background = GovUkTheme.colourScheme.surfaces.listAlt,
             isFirst = index == 0,
             isLast = index == links.lastIndex
         )
