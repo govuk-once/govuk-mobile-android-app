@@ -61,6 +61,8 @@ internal fun LicenceCategoriesScreen(
         ) {
             LargeTitleBoldLabel(
                 text = title,
+                modifier = Modifier
+                    .semantics { heading() }
             )
 
             Spacer(Modifier.height(12.dp))
