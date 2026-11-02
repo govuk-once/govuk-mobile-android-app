@@ -70,6 +70,7 @@ import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDrivingCategories
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
+import uk.gov.govuk.dvla.navigation.navigateToLicenceCategoryDetail
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
@@ -689,6 +690,9 @@ private fun GovUkNavHost(
                 },
                 onVehicleFound = { regNumber ->
                     navController.navigateToVehicleDetailsByRegistration(regNumber)
+                },
+                onCategoryInfoClick = { code, type ->
+                    navController.navigateToLicenceCategoryDetail(code, type)
                 }
             )
             travelAlertsGraph(
