@@ -19,8 +19,11 @@ private val london = ZoneId.of("Europe/London")
  * - Older     → "7 December"
  *
  * @param now the reference instant used to compute relative labels; defaults to [Instant.now].
+ * @param lowercase whether the Today and Yesterday branches are lowercased; defaults to false
  */
-fun Instant.toRelativeDate(now: Instant = Instant.now()): String {
+fun Instant.toRelativeDate(now: Instant = Instant.now(), lowercase: Boolean = false): String {
+    fun String.maybeLower() = if (lowercase) this.lowercase() else this
+
     val zonedSelf = atZone(london)
     val today = now.atZone(london)
 
@@ -34,7 +37,8 @@ fun Instant.toRelativeDate(now: Instant = Instant.now()): String {
             .format(this)
             .replace("AM", "am")
             .replace("PM", "pm")
-        isYesterday -> "Yesterday"
+            .maybeLower()
+        isYesterday -> "Yesterday".maybeLower()
         daysAgo < 7 -> zonedSelf.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         else -> DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault())
             .withZone(london)
