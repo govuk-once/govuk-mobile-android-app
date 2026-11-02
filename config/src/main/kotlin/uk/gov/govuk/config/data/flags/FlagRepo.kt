@@ -136,14 +136,6 @@ class FlagRepo @Inject constructor(
             remoteFlag = configRepo.isQuarterlySurveyEnabled
         )
     }
-
-    fun isDwpLinkEnabled(): Boolean {
-        return isEnabled(
-            debugEnabled = debugEnabled,
-            debugFlag = false, // Set debug release always off
-            remoteFlag = false // Set production release always off
-        )
-    }
 }
 
 internal fun isEnabled(
