@@ -1,6 +1,7 @@
 package uk.gov.govuk.config.data.remote.source
 
 import com.google.gson.Gson
+import kotlinx.coroutines.CancellationException
 import uk.gov.govuk.config.SignatureValidator
 import uk.gov.govuk.config.data.remote.ConfigApi
 import uk.gov.govuk.config.data.remote.ContentApi
@@ -62,6 +63,8 @@ class GovUkConfigDataSource @Inject constructor(
             }
         } catch (_: UnknownHostException) {
             DeviceOffline()
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             Error()
         }
