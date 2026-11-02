@@ -73,7 +73,7 @@ class TravelAlertsWidgetViewModel @Inject constructor(
                     countriesBySlug[group.group]?.let { country ->
                         LoadedRow(
                             headline = country.name,
-                            subtitle = country.date.toRelativeDate(),
+                            subtitle = country.date.toRelativeDate(lowercase = true),
                             link = "govuk://app.gov.uk/web?url=$TRAVEL_ADVICE_BASE_URL${country.slug}",
                             url = "$TRAVEL_ADVICE_BASE_URL${country.slug}"
                         )
