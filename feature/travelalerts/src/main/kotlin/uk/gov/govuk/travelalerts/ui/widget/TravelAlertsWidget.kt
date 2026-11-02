@@ -135,7 +135,7 @@ private fun TravelAlertsLoaded(
                 title = row.headline,
                 onClick = { onRowClick(row) },
                 modifier = Modifier.semantics(mergeDescendants = true) { role = Role.Button },
-                description = row.subtitle,
+                description = stringResource(R.string.country_list_last_updated, row.subtitle),
                 isFirst = index == 0,
                 isLast = index == rows.lastIndex
             )
@@ -205,8 +205,8 @@ fun TravelAlertsWidgetLoadedPreview() {
     GovUkTheme {
         TravelAlertsLoaded(
             rows = listOf(
-                TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "Updated on 12th September 26", "test", "test"),
-                TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "Updated on 13th September 26", "test", "test")
+                TravelAlertsWidgetViewModel.LoadedRow("Mock 1", "12th September 26", "test", "test"),
+                TravelAlertsWidgetViewModel.LoadedRow("Mock 2", "13th September 26", "test", "test")
             ),
             onEditCountries = {}
         ) { }

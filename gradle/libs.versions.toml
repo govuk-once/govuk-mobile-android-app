@@ -33,7 +33,7 @@ realm = "3.0.0"
 
 mockk = "1.14.6"
 coroutineTest = "1.10.2"
-firebaseAppDistribution = "5.2.0"
+firebaseAppDistribution = "5.3.1"
 firebasePerformance = "2.0.2"
 kover = "0.9.3"
 sonarqube = "7.1.0.6387"
