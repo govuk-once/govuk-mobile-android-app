@@ -17,8 +17,11 @@ import javax.inject.Inject
 internal class SpecificationsMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
+    private val unknown: String
+        get() = stringProvider.getString(R.string.value_unknown)
+
     fun getCalendarSpecification(dateOfFirstRegistration: LocalDate?): SpecificationIconUiModel {
-        val year = dateOfFirstRegistration?.toYearDisplayFormat() ?: "Unknown"
+        val year = dateOfFirstRegistration?.toYearDisplayFormat() ?: unknown
         return SpecificationIconUiModel(
             icon = R.drawable.ic_calendar,
             description = AccessibleString(
@@ -63,12 +66,12 @@ internal class SpecificationsMapper @Inject constructor(
     fun createModelItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
-            info = AccessibleString(displayText = vehicle.summary.model ?: "Unknown")
+            info = AccessibleString(displayText = vehicle.summary.model ?: unknown)
         )
 
     fun createFirstRegisteredItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info {
         val dateOfFirstRegistration =
-            vehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: "Unknown"
+            vehicle.dateOfFirstRegistration?.toMonthYearDisplayFormat() ?: unknown
 
         return InternalLinkListItemModel.Info(
             title = AccessibleString(
@@ -104,7 +107,7 @@ internal class SpecificationsMapper @Inject constructor(
             title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
             info = AccessibleString(
                 displayText = vehicle.engineCapacity?.let { getFormattedEngineCapacity(it) }
-                    ?: "Unknown"
+                    ?: unknown
             )
         )
 
@@ -112,7 +115,7 @@ internal class SpecificationsMapper @Inject constructor(
         InternalLinkListItemModel.Info(
             title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
             info = AccessibleString(
-                displayText = vehicle.exhaustEmissionsCo2?.toString() ?: "Unknown"
+                displayText = vehicle.exhaustEmissionsCo2?.toString() ?: unknown
             )
         )
 }

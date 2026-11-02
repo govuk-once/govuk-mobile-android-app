@@ -184,7 +184,7 @@ private fun WelcomeText(
 
 @PreviewLightDark
 @Composable
-private fun LoginScreenPreview() {
+internal fun LoginScreenPreview() {
     GovUkTheme {
         LoginScreen(
             onContinueClick = { },

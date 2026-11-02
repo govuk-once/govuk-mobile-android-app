@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
+import uk.gov.govuk.dvla.R
 import javax.inject.Inject
 
 interface StringProvider {
@@ -24,6 +25,6 @@ class StringProviderImpl @Inject constructor(
 }
 
 fun StringProvider.resolveSummaryDescription(@StringRes resId: Int?, dateArg: String?): String {
-    val id = resId ?: return "Unknown" // TODO: return unknown for now, other states in future tickets
+    val id = resId ?: return getString(R.string.status_unknown) // TODO: return unknown for now, other states in future tickets
     return (dateArg?.let { getString(id, it) } ?: getString(id, "")).trim()
 }

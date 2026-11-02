@@ -465,6 +465,22 @@ fun FootnoteRegularLabel(
 }
 
 @Composable
+fun FootnoteRegularLabel(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    color: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    BaseLabel(
+        text = text,
+        modifier = modifier,
+        style = GovUkTheme.typography.footnoteRegular,
+        color = color,
+        textAlign = textAlign
+    )
+}
+
+@Composable
 fun CaptionBoldLabel(
     text: String,
     modifier: Modifier = Modifier,
@@ -515,6 +531,56 @@ fun CaptionRegularLabelTrailingLink(
     }
 
     CaptionRegularLabel(
+        text = annotatedString,
+        modifier = modifier
+            .clearAndSetSemantics {
+                contentDescription = altText ?: "$text $linkText"
+                onClick(action = {
+                    onClick()
+                    true
+                })
+            },
+        color = textColor,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun FootnoteRegularLabelTrailingLink(
+    text: String,
+    linkText: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    altText: String? = null,
+    textColor: Color = GovUkTheme.colourScheme.textAndIcons.secondary,
+    isLinkUnderlined: Boolean = false,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    val linkColor = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+
+    val annotatedString = buildAnnotatedString {
+        append(text)
+        append(" ")
+        val link = LinkAnnotation.Clickable(
+            tag = "link",
+            styles = TextLinkStyles(
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = if (isLinkUnderlined) TextDecoration.Underline else TextDecoration.None,
+                ),
+                pressedStyle = SpanStyle(background = highlightColor),
+                focusedStyle = SpanStyle(
+                    background = GovUkTheme.colourScheme.surfaces.focused,
+                    color = GovUkTheme.colourScheme.textAndIcons.focused
+                )
+            ),
+            linkInteractionListener = { _ -> onClick() }
+        )
+        withLink(link) { append(linkText) }
+    }
+
+    FootnoteRegularLabel(
         text = annotatedString,
         modifier = modifier
             .clearAndSetSemantics {

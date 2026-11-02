@@ -112,7 +112,7 @@ private fun BiometricSettingsScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun BiometricSettingsPreview() {
+internal fun BiometricSettingsPreview() {
     GovUkTheme {
         BiometricSettingsScreen(
             onBack = { },

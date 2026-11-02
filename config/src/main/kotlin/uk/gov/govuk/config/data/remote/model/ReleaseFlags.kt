@@ -14,5 +14,5 @@ data class ReleaseFlags(
     @SerializedName("dvla") val dvla: Boolean,
     @SerializedName("messages") val messages: Boolean,
     @SerializedName("travelalerts") val travelAlerts: Boolean,
-    @SerializedName("quarterlySurvey") val quarterlySurvey: Boolean
+    @SerializedName("quarterlySurvey_v2") val quarterlySurvey: Boolean
 )

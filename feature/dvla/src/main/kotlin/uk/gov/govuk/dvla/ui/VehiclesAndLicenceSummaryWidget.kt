@@ -6,7 +6,9 @@ import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,15 +18,19 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.FootnoteRegularLabel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ButtonColours
 import uk.gov.govuk.dvla.ui.model.UrlModel
@@ -32,6 +38,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
+import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
@@ -52,6 +59,7 @@ import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
+    onDrivingCategoriesClick: () -> Unit,
     modifier: Modifier = Modifier,
     vehiclesFooter: @Composable () -> Unit = {}
 ) {
@@ -183,6 +191,10 @@ fun VehiclesAndLicenceSummaryWidget(
                                 )
                                 viewModel.onLicenceNumberLongPressed()
                             },
+                            onCategoriesClick = { text ->
+                                viewModel.onButtonClicked(text)
+                                onDrivingCategoriesClick()
+                            },
                             modifier = modifier
                         )
                     }
@@ -236,6 +248,7 @@ private fun LicenceViewContent(
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
+    onCategoriesClick: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -255,6 +268,7 @@ private fun LicenceViewContent(
                 licenceSummary = licenceState.licence,
                 onMenuItemClick = onMenuItemClick,
                 onLicenceNumberLongClick = { onLicenceNumberLongClick(licenceState.licence.licenceNumber) },
+                onCategoriesClick = onCategoriesClick,
                 modifier = modifier
             )
         }
@@ -387,6 +401,7 @@ private fun LicenceSummarySuccess(
     licenceSummary: LicenceSummaryUiModel,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
+    onCategoriesClick: (text: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -397,6 +412,23 @@ private fun LicenceSummarySuccess(
             licenceSummary = licenceSummary,
             onMenuItemClick = onMenuItemClick,
             onLicenceNumberLongClick = { onLicenceNumberLongClick() },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        licenceSummary.notValidIdNote?.let { note ->
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FootnoteRegularLabel(
+                text = note,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        LargeVerticalSpacer()
+
+        DrivingCategoriesSection(
+            onClick = onCategoriesClick,
             modifier = Modifier.fillMaxWidth()
         )
 

@@ -54,6 +54,7 @@
     <string name="licence_name_alt_text">Name on licence %1$s</string>
     <string name="licence_address_alt_text">Address on licence %1$s</string>
     <string name="licence_expiration_alt_text">Licence %1$s</string>
+    <string name="licence_id_footnote">This is not a valid form of identification</string>
     <string name="clipboard_data_label_licence_number">copy licence number</string>
     <string name="expiring_status_date">Expiring %1$s</string>
     <string name="expiring_direct_debit_status_date">Renews %1$s</string>
@@ -114,6 +115,9 @@
     <string name="driving_record_title">Driving record</string>
     <string name="driving_record_description">Vehicles you can drive, offences and penalty points</string>
     <string name="driving_record_link_text">Your driving record</string>
+    <string name="driving_categories_title">You can drive</string>
+    <string name="driving_categories_description">Vehicles you’re permitted to drive</string>
+    <string name="driving_categories_button_text">Categories</string>
     <string name="account_error_text">Driver and vehicles account information is not working</string>
     <string name="account_error_sub_text">Try again later, or</string>
     <string name="account_error_link_text">go to the GOV.UK website.</string>
@@ -155,6 +159,7 @@
     <string name="registered_to_title">Registered to</string>
     <string name="vehicle_details_success_title">Vehicle Details Screen</string>
     <string name="concatenated_vehicle_colours">%1$s and %2$s</string>
+    <string name="value_unknown">Unknown</string>
 
     <string name="first_registered_alt_text">First registered %1$s</string>
     <string name="first_registered_in_alt_text">First registered in %1$s</string>

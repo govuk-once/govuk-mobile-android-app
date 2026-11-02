@@ -123,7 +123,10 @@ internal class ChatViewModel @Inject constructor(
                                     sources = answer.sources?.map { source ->
                                         "[${source.title}](${source.url})"
                                     },
-                                    shouldAnimate = false
+                                    shouldAnimate = false,
+                                    conversationId = conversation.id,
+                                    answerId = answer.id,
+                                    feedbackReaction = answer.feedback?.reaction
                                 )
                             }
                         }.toMap(LinkedHashMap())
@@ -134,7 +137,9 @@ internal class ChatViewModel @Inject constructor(
 
                         addChatEntry(
                             questionId = pendingQuestion.id,
-                            question = pendingQuestion.message
+                            question = pendingQuestion.message,
+                            conversationId = conversation.id,
+                            answerId = ""
                         )
                         getAnswer(
                             conversationId = conversation.id,
@@ -177,7 +182,9 @@ internal class ChatViewModel @Inject constructor(
                 handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
                     addChatEntry(
                         questionId = answeredQuestion.id,
-                        question = answeredQuestion.message
+                        question = answeredQuestion.message,
+                        conversationId = answeredQuestion.conversationId,
+                        answerId = ""
                     )
                     onQuestionUpdated("")
                     getAnswer(
@@ -205,6 +212,24 @@ internal class ChatViewModel @Inject constructor(
                 displayCharacterError = displayCharacterError,
                 charactersRemaining = characterLimit - question.length
             )
+        }
+    }
+
+    fun onFeedbackGiven(
+        conversationId: String,
+        answerId: String,
+        reaction: String
+    ) {
+        viewModelScope.launch {
+            handleChatResult(
+                chatRepo.giveFeedback(
+                    conversationId = conversationId,
+                    answerId = answerId,
+                    reaction = reaction
+                )
+            ) {
+                updateFeedbackReaction(answerId, reaction)
+            }
         }
     }
 
@@ -335,7 +360,9 @@ internal class ChatViewModel @Inject constructor(
 
     private fun addChatEntry(
         questionId: String,
-        question: String
+        question: String,
+        conversationId: String,
+        answerId: String
     ) {
         _uiState.updateDefault {
             it.copy(
@@ -346,7 +373,9 @@ internal class ChatViewModel @Inject constructor(
                             id = questionId,
                             question = question,
                             answer = "",
-                            sources = emptyList()
+                            sources = emptyList(),
+                            conversationId = conversationId,
+                            answerId = answerId
                         )
                     )
                 }
@@ -361,7 +390,20 @@ internal class ChatViewModel @Inject constructor(
                 chatEntry.sources = answer.sources?.map { source ->
                     "[${source.title}](${source.url})"
                 }
+                chatEntry.answerId = answer.id
             }
+        }
+    }
+
+    private fun updateFeedbackReaction(answerId: String, reaction: String) {
+        _uiState.updateDefault { state ->
+            val entry = state.chatEntries.entries.firstOrNull { it.value.answerId == answerId }
+                ?: return@updateDefault state
+            state.copy(
+                chatEntries = LinkedHashMap(state.chatEntries).apply {
+                    put(entry.key, entry.value.copy(feedbackReaction = reaction))
+                }
+            )
         }
     }
 

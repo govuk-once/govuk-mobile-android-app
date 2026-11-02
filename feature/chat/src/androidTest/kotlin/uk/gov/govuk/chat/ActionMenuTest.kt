@@ -119,7 +119,8 @@ class ActionMenuTest {
                         onQuestionUpdated = { _ -> },
                         onSubmit = { _ -> },
                         onClear = { },
-                        onFeedbackClick = { _, _, _ -> }
+                        onFeedbackClick = { _, _, _ -> },
+                        onFeedbackGiven = { _, _, _ -> }
                     ),
                     isTalkBackActive = isTalkBackActive
                 )

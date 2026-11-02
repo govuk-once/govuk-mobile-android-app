@@ -40,7 +40,7 @@ private fun ErrorScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun ErrorScreenPreview() {
+internal fun ErrorScreenPreview() {
     GovUkTheme {
         ErrorScreen(
             onBack = { }
