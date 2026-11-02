@@ -39,7 +39,7 @@ internal fun LicenceCategoriesRoute(
         }
 
         LicenceCategoriesUiState.Error -> {
-            // TODO GOVUKAPP-4152
+            // TODO tbc in separate ticket, awaiting requirements
         }
     }
 }

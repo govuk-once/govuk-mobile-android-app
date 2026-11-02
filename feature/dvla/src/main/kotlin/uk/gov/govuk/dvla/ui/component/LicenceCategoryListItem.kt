@@ -68,7 +68,7 @@ internal fun CategoryListItem(
 
             IconButton(onClick = onInfoClick) {
                 Icon(
-                    imageVector = Icons.Outlined.Info, // TODO GOVUKAPP-4152 check icon
+                    imageVector = Icons.Outlined.Info,
                     contentDescription = null,
                     tint = GovUkTheme.colourScheme.textAndIcons.link
                 )
