@@ -1,11 +1,16 @@
 package uk.gov.govuk.dvla.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
+import uk.gov.govuk.design.ui.component.FullScreenHeader
+import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.dvla.LicenceCategoriesUiState
 import uk.gov.govuk.dvla.LicenceCategoriesViewModel
 
@@ -39,7 +44,22 @@ internal fun LicenceCategoriesRoute(
         }
 
         LicenceCategoriesUiState.Error -> {
-            // TODO tbc in separate ticket, awaiting requirements
+            LicenceCategoriesError(
+                onBack = dropUnlessResumed { onBack() },
+                modifier = modifier
+            )
         }
+    }
+}
+
+@Composable
+private fun LicenceCategoriesError(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.safeDrawingPadding().fillMaxWidth()) {
+        FullScreenHeader(dismissStyle = HeaderDismissStyle.Back(onBack))
+
+        // TODO tbc in separate ticket, awaiting requirements
     }
 }

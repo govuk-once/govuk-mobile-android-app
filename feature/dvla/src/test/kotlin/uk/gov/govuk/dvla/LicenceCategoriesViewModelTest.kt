@@ -95,4 +95,15 @@ class LicenceCategoriesViewModelTest {
             )
         }
     }
+
+    @Test
+    fun `Given no cached licence, when viewModel is created, then state is Error`() {
+        every { dvlaRepo.getCachedLicenceDetails() } returns null
+
+        viewModel = LicenceCategoriesViewModel(
+            analyticsClient, categoriesMapper, dvlaRepo, configRepo
+        )
+
+        assertEquals(LicenceCategoriesUiState.Error, viewModel.uiState.value)
+    }
 }

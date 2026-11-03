@@ -39,7 +39,7 @@ internal fun CategoryListItem(
             .fillMaxWidth()
             .padding(horizontal = GovUkTheme.spacing.medium)
     ) {
-        val categoryAltText = stringResource(R.string.licence_category_at_text, category.code)
+        val categoryAltText = stringResource(R.string.licence_category_alt_text, category.code)
 
         Row(
             modifier = Modifier

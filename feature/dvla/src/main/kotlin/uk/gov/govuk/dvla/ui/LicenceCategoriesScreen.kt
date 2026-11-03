@@ -109,9 +109,7 @@ private fun CategorySection(
         CategoryGroup(group = group, onInfoClick = onInfoClick)
     }
 
-    // 48dp before the next section
-    LargeVerticalSpacer()
-    LargeVerticalSpacer()
+    Spacer(Modifier.height(48.dp))
 }
 
 @Composable

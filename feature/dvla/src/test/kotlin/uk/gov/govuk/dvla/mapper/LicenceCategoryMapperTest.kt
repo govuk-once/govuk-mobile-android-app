@@ -27,6 +27,11 @@ class LicenceCategoriesMapperTest {
         every { stringProvider.getString(R.string.categories_group_large_vehicles) } returns "Large vehicles"
         every { stringProvider.getString(R.string.categories_group_buses) } returns "Buses"
         every { stringProvider.getString(R.string.categories_group_other_vehicles) } returns "Other vehicles"
+        every { stringProvider.getString(R.string.categories_group_light_vehicles) } returns "Light vehicles"
+        every { stringProvider.getString(R.string.categories_group_cars) } returns "Cars"
+        every { stringProvider.getString(R.string.categories_group_medium_vehicles) } returns "Medium vehicles"
+        every { stringProvider.getString(R.string.categories_group_large_vehicles) } returns "Large vehicles"
+        every { stringProvider.getString(R.string.categories_group_minibuses) } returns "Minibuses"
         every { stringProvider.getString(R.string.licence_categories_link_compare) } returns "Compare"
         every { stringProvider.getString(R.string.licence_categories_link_weights) } returns "Weights"
         every { stringProvider.getString(R.string.licence_categories_link_add_categories) } returns "Add"
@@ -151,5 +156,31 @@ class LicenceCategoriesMapperTest {
         val result = mapper.toUiModel(emptyList(), dvlaUrls = null)
 
         assertTrue(result.furtherInformationLinks.isEmpty())
+    }
+
+    @Test
+    fun `Given an entitlement from every group, then all groups are returned with their titles in order`() {
+        val result = mapper.toUiModel(
+            listOf(
+                full("F"), full("D"), full("D1"), full("C"), full("C1"),
+                full("B"), full("B1"), full("A"), full("P")
+            ),
+            dvlaUrls = null
+        )
+
+        assertEquals(
+            listOf(
+                "Mopeds",
+                "Motorcycles",
+                "Light vehicles",
+                "Cars",
+                "Medium vehicles",
+                "Large vehicles",
+                "Minibuses",
+                "Buses",
+                "Other vehicles"
+            ),
+            result.canDrive.map { it.title }
+        )
     }
 }
