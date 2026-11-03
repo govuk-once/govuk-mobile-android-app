@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.firebasePerformance) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.sonarqube)
+    alias(libs.plugins.ktlint) apply false
 }
 
 subprojects {
@@ -39,6 +40,7 @@ subprojects {
             }
         }
     }
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 }
 
 apply(from = "${project.rootDir}/sonar.gradle")
