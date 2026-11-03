@@ -5,20 +5,69 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.Entitlement
 import uk.gov.govuk.dvla.domain.EntitlementType
 import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryDetailUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryLinkUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryRestrictionUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.util.StringProvider
+import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
+import uk.gov.govuk.dvla.util.isToday
+import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
+import java.time.LocalDate
 import javax.inject.Inject
 
 internal class LicenceCategoriesMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
+
+    private companion object {
+        const val EXPIRY_INDICATOR_DAYS = 60
+    }
+
     fun toUiModel(entitlements: List<Entitlement>, dvlaUrls: DvlaUrls?) = LicenceCategoriesUiModel(
         canDrive = entitlements.toGroups(EntitlementType.FULL),
         provisionallyDrive = entitlements.toGroups(EntitlementType.PROVISIONAL),
         furtherInformationLinks = dvlaUrls?.toFurtherInformationLinks().orEmpty()
     )
+
+    fun toDetailUiModel(entitlement: Entitlement): LicenceCategoryDetailUiModel? {
+        // api returns uppercase codes but we display some lowercase
+        val matchesCode: (LicenceCategoryUiModel) -> Boolean = {
+            it.code.equals(entitlement.categoryCode, ignoreCase = true)
+        }
+
+        // code comes from allCategoryGroups catalogue, this would only fail if the nav args are wrong
+        val group = allCategoryGroups.firstOrNull { it.categories.any(matchesCode) } ?: return null
+
+        return LicenceCategoryDetailUiModel(
+            title = group.title,
+            category = group.categories.first(matchesCode),
+            expiryIndicator = entitlement.expiryDate?.toExpiryIndicator(),
+            validFrom = entitlement.fromDate?.toSummaryDisplayFormat(),
+            validTo = entitlement.expiryDate?.toSummaryDisplayFormat(),
+            restrictions = entitlement.restrictions.map {
+                LicenceCategoryRestrictionUiModel(
+                    code = it.restrictionCode,
+                    description = it.restrictionLiteral
+                )
+            },
+            youCanDrive = entitlement.categoryLegalLiteral.takeIf { it.isNotBlank() }
+        )
+    }
+
+    private fun LocalDate.toExpiryIndicator(): String? {
+        if (isToday()) return stringProvider.getString(R.string.licence_category_detail_expires_today)
+
+        val days = getNumberOfDaysFromNow()
+        if (days !in 1..EXPIRY_INDICATOR_DAYS) return null
+
+        return stringProvider.getQuantityString(
+            R.plurals.licence_category_detail_expires_in_days,
+            days,
+            days
+        )
+    }
 
     private fun List<Entitlement>.toGroups(type: EntitlementType): List<LicenceCategoryGroupUiModel> {
         // codes customer holds for this type

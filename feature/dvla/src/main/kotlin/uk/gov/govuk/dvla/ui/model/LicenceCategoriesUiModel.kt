@@ -22,3 +22,18 @@ internal data class LicenceCategoryLinkUiModel(
     val text: String,
     val url: String
 )
+
+internal data class LicenceCategoryDetailUiModel(
+    val title: String,
+    val category: LicenceCategoryUiModel,
+    val expiryIndicator: String?,
+    val validFrom: String?,
+    val validTo: String?,
+    val restrictions: List<LicenceCategoryRestrictionUiModel>,
+    val youCanDrive: String?
+)
+
+internal data class LicenceCategoryRestrictionUiModel(
+    val code: String,
+    val description: String
+)
