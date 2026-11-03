@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -40,6 +39,7 @@ internal fun OnboardingPageThreeRoute(
     onClick: () -> Unit,
     onCancel: () -> Unit,
     onBack: () -> Unit,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
@@ -83,6 +83,7 @@ internal fun OnboardingPageThreeRoute(
         onTermsClick = { text, url ->
             viewModel.onTermsView(text = text, url = url)
         },
+        launchBrowser = launchBrowser,
         modifier = modifier
     )
 }
@@ -96,6 +97,7 @@ private fun OnboardingPageThreeScreen(
     onPrivacyNoticeClick: (String, String) -> Unit,
     termsUrl: String,
     onTermsClick: (String, String) -> Unit,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     RunOnceLaunchedEffect {
@@ -120,7 +122,6 @@ private fun OnboardingPageThreeScreen(
             val introText = stringResource(id = R.string.onboarding_page_three_text_two)
             val linkText = stringResource(id = R.string.onboarding_page_three_text_two_link_text)
             val altText = "$introText $linkText. ${stringResource(R.string.sources_open_in_text)}"
-            val uriHandler = LocalUriHandler.current
             val url = BuildConfig.PRIVACY_POLICY_URL
 
             BodyRegularLabelTrailingLink(
@@ -129,7 +130,7 @@ private fun OnboardingPageThreeScreen(
                 linkText = linkText,
                 onClick = {
                     onPrivacyNoticeClick(linkText, url)
-                    uriHandler.openUri(url)
+                    launchBrowser(url)
                 },
                 altText = altText,
                 textColor = GovUkTheme.colourScheme.textAndIcons.primary,
@@ -148,7 +149,7 @@ private fun OnboardingPageThreeScreen(
                 linkText = termsLink,
                 onClick = {
                     onTermsClick(termsLink, termsUrl)
-                    uriHandler.openUri(termsUrl)
+                    launchBrowser(termsUrl)
                 },
                 altText = termsAltText,
                 textColor = GovUkTheme.colourScheme.textAndIcons.primary,
@@ -229,7 +230,8 @@ private fun OnboardingPageThreePreview() {
             onBack = {},
             onPrivacyNoticeClick = { _, _ -> },
             termsUrl = "",
-            onTermsClick = { _, _ -> }
+            onTermsClick = { _, _ -> },
+            launchBrowser = {}
         )
     }
 }
@@ -250,7 +252,8 @@ private fun OnboardingPageThreePreviewLandscapeLight() {
             onBack = {},
             onPrivacyNoticeClick = { _, _ -> },
             termsUrl = "",
-            onTermsClick = { _, _ -> }
+            onTermsClick = { _, _ -> },
+            launchBrowser = {}
         )
     }
 }
@@ -269,7 +272,8 @@ private fun OnboardingPageThreePreviewLandscapeDark() {
             onBack = {},
             onPrivacyNoticeClick = { _, _ -> },
             termsUrl = "",
-            onTermsClick = { _, _ -> }
+            onTermsClick = { _, _ -> },
+            launchBrowser = {}
         )
     }
 }
