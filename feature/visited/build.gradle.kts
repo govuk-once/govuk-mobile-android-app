@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
     alias(libs.plugins.realm)
+    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -32,6 +33,8 @@ android {
             jvmTarget = JvmTarget.JVM_17
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 sonar {
@@ -73,4 +76,9 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    screenshotTestImplementation(libs.screenshot.validation.api) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+    }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

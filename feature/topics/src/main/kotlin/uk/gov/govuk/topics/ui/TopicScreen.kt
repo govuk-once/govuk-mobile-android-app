@@ -503,7 +503,7 @@ private fun TopicLoadingScreen(
 
 @Preview
 @Composable
-private fun ErrorScreenOfflinePreview() {
+internal fun ErrorScreenOfflinePreview() {
     GovUkTheme {
         ErrorScreen(
             topicReference = "benefits",
@@ -516,7 +516,7 @@ private fun ErrorScreenOfflinePreview() {
 
 @Preview
 @Composable
-private fun ErrorScreenProblemPreview() {
+internal fun ErrorScreenProblemPreview() {
     GovUkTheme {
         ErrorScreen(
             topicReference = "benefits",
@@ -529,7 +529,7 @@ private fun ErrorScreenProblemPreview() {
 
 @Preview
 @Composable
-private fun TopicLoadingScreenPreview() {
+internal fun TopicLoadingScreenPreview() {
     GovUkTheme {
         TopicLoadingScreen(
             topicReference = "benefits",

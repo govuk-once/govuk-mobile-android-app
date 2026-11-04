@@ -230,7 +230,7 @@ private fun ErrorCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun TopicsWidgetPreview() {
+internal fun TopicsWidgetPreview() {
     val topics = listOf(
         TopicItemUi(
             "",
@@ -272,7 +272,7 @@ private fun TopicsWidgetPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun TopicsWidgetEmptyTopicsPreview() {
+internal fun TopicsWidgetEmptyTopicsPreview() {
     GovUkTheme {
         TopicsWidgetContent(
             uiState = TopicsWidgetUiState(
