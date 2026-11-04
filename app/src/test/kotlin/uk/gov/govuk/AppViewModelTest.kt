@@ -1223,6 +1223,26 @@ class AppViewModelTest {
         every { authRepo.isUserSessionActive() } returns true
         every { flagRepo.isDvlaLinkEnabled() } returns true
 
+        AppViewModel(
+            timeoutManager,
+            appRepo,
+            loginRepo,
+            termsRepo,
+            configRepo,
+            flagRepo,
+            authRepo,
+            topicsFeature,
+            localFeature,
+            searchFeature,
+            visited,
+            chatFeature,
+            analyticsClient,
+            notificationsRepo,
+            dvlaRepo,
+            identityRepo,
+            messagesFeature,
+            context
+        )
         advanceUntilIdle()
 
         coVerify(exactly = 1) { identityRepo.getLinkedServices() }
