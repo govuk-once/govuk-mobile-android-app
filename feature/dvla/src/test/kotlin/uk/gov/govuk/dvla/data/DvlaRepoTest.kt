@@ -24,9 +24,8 @@ import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dvla.domain.LicenceDetailsResult
-import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
+import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.model.CustomerVehicleDetailsResponse
 import uk.gov.govuk.dvla.remote.model.CustomerVehiclesResponse
@@ -34,6 +33,7 @@ import uk.gov.govuk.dvla.remote.model.LicenceResponse
 import uk.gov.govuk.dvla.remote.model.MultiShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.SingleShareCodeResponse
 import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
+import uk.gov.govuk.dvla.ui.model.DrivingView
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaRepoTest {
@@ -61,36 +61,33 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given getSelectedDrivingView is called, then getSelectedDrivingView is called on the data store`() =
-        runTest {
-            coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLES
+    fun `Given getSelectedDrivingView is called, then getSelectedDrivingView is called on the data store`() = runTest {
+        coEvery { dvlaDataStore.getSelectedDrivingView() } returns DrivingView.VEHICLES
 
-            repo.getSelectedDrivingView()
+        repo.getSelectedDrivingView()
 
-            coVerify(exactly = 1) { dvlaDataStore.getSelectedDrivingView() }
-        }
-
-    @Test
-    fun `Given setSelectedDrivingView is called, then setSelectedDrivingView is called on the data store`() =
-        runTest {
-            coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) } returns Unit
-
-            repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
-
-            coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) }
-        }
+        coVerify(exactly = 1) { dvlaDataStore.getSelectedDrivingView() }
+    }
 
     @Test
-    fun `Given clear is called, then clear is called on the data store`() =
-        runTest {
-            coEvery { dvlaDataStore.clear() } returns Unit
+    fun `Given setSelectedDrivingView is called, then setSelectedDrivingView is called on the data store`() = runTest {
+        coEvery { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) } returns Unit
 
-            repo.clear()
+        repo.setSelectedDrivingView(drivingView = DrivingView.VEHICLES)
 
-            coVerify(exactly = 1) {
-                dvlaDataStore.clear()
-            }
+        coVerify(exactly = 1) { dvlaDataStore.setSelectedDrivingView(drivingView = DrivingView.VEHICLES) }
+    }
+
+    @Test
+    fun `Given clear is called, then clear is called on the data store`() = runTest {
+        coEvery { dvlaDataStore.clear() } returns Unit
+
+        repo.clear()
+
+        coVerify(exactly = 1) {
+            dvlaDataStore.clear()
         }
+    }
 
     @Test
     fun `Given linking api returns success, when linkAccount is called, then return Success and sync Identity`() = runTest {
@@ -218,16 +215,17 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given create share code api returns success, when createShareCode is called, then return Success with ShareCodeDetails`() = runTest {
-        val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
+    fun `Given create share code api returns success, when createShareCode is called, then return Success with ShareCodeDetails`() =
+        runTest {
+            val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
 
-        coEvery { api.createShareCode() } returns Response.success(shareCodeResponse)
+            coEvery { api.createShareCode() } returns Response.success(shareCodeResponse)
 
-        val result = repo.createCheckCode()
+            val result = repo.createCheckCode()
 
-        assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.createShareCode() }
-    }
+            assertTrue(result is Result.Success)
+            coVerify(exactly = 1) { api.createShareCode() }
+        }
 
     @Test
     fun `Given create share code api fails, when createShareCode is called, then return Error`() = runTest {
@@ -240,16 +238,17 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given get share codes api returns success, when getShareCodes is called, then return Success with list of ShareCodeDetails`() = runTest {
-        val shareCodesResponse = mockk<MultiShareCodeResponse>(relaxed = true)
+    fun `Given get share codes api returns success, when getShareCodes is called, then return Success with list of ShareCodeDetails`() =
+        runTest {
+            val shareCodesResponse = mockk<MultiShareCodeResponse>(relaxed = true)
 
-        coEvery { api.getShareCodes() } returns Response.success(shareCodesResponse)
+            coEvery { api.getShareCodes() } returns Response.success(shareCodesResponse)
 
-        val result = repo.getCheckCodes()
+            val result = repo.getCheckCodes()
 
-        assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.getShareCodes() }
-    }
+            assertTrue(result is Result.Success)
+            coVerify(exactly = 1) { api.getShareCodes() }
+        }
 
     @Test
     fun `Given get share codes api fails, when getShareCodes is called, then return Error`() = runTest {
@@ -262,17 +261,18 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given cancel share code api returns success, when cancelShareCode is called, then return Success with ShareCodeDetails`() = runTest {
-        val tokenId = "token_id"
-        val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
+    fun `Given cancel share code api returns success, when cancelShareCode is called, then return Success with ShareCodeDetails`() =
+        runTest {
+            val tokenId = "token_id"
+            val shareCodeResponse = mockk<SingleShareCodeResponse>(relaxed = true)
 
-        coEvery { api.cancelShareCode(tokenId) } returns Response.success(shareCodeResponse)
+            coEvery { api.cancelShareCode(tokenId) } returns Response.success(shareCodeResponse)
 
-        val result = repo.cancelCheckCode(tokenId)
+            val result = repo.cancelCheckCode(tokenId)
 
-        assertTrue(result is Result.Success)
-        coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
-    }
+            assertTrue(result is Result.Success)
+            coVerify(exactly = 1) { api.cancelShareCode(tokenId) }
+        }
 
     @Test
     fun `Given cancel share code api fails, when cancelShareCode is called, then return Error`() = runTest {
@@ -286,38 +286,35 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given vehicle enquiry api returns success, when lookupVehicleByRegistration is called, then return Success`() =
-        runTest {
-            coEvery { api.lookupVehicleByRegistration("AB12CDE") } returns
-                    Response.success(mockk<VehicleEnquiryResponse>(relaxed = true))
+    fun `Given vehicle enquiry api returns success, when lookupVehicleByRegistration is called, then return Success`() = runTest {
+        coEvery { api.lookupVehicleByRegistration("AB12CDE") } returns
+            Response.success(mockk<VehicleEnquiryResponse>(relaxed = true))
 
-            val result = repo.lookupVehicleByRegistration("AB12CDE")
+        val result = repo.lookupVehicleByRegistration("AB12CDE")
 
-            assertTrue(result is Result.Success)
-            coVerify(exactly = 1) { api.lookupVehicleByRegistration("AB12CDE") }
-        }
-
-    @Test
-    fun `Given vehicle enquiry api fails, when lookupVehicleByRegistration is called, then return Error`() =
-        runTest {
-            coEvery { api.lookupVehicleByRegistration("AB12CDE") } throws Exception("Exception")
-
-            val result = repo.lookupVehicleByRegistration("AB12CDE")
-
-            assertTrue(result is Result.Error)
-            coVerify(exactly = 1) { api.lookupVehicleByRegistration("AB12CDE") }
-        }
+        assertTrue(result is Result.Success)
+        coVerify(exactly = 1) { api.lookupVehicleByRegistration("AB12CDE") }
+    }
 
     @Test
-    fun `Given a successful lookup, when findVehicleEnquiryDetails is called with the same reg, then return the details`() =
-        runTest {
-            coEvery { api.lookupVehicleByRegistration("AB12CDE") } returns
-                    Response.success(mockk<VehicleEnquiryResponse>(relaxed = true))
+    fun `Given vehicle enquiry api fails, when lookupVehicleByRegistration is called, then return Error`() = runTest {
+        coEvery { api.lookupVehicleByRegistration("AB12CDE") } throws Exception("Exception")
 
-            val result = repo.lookupVehicleByRegistration("AB12CDE") as Result.Success
+        val result = repo.lookupVehicleByRegistration("AB12CDE")
 
-            assertSame(result.value, repo.getCachedVehicleEnquiryDetails("AB12CDE"))
-        }
+        assertTrue(result is Result.Error)
+        coVerify(exactly = 1) { api.lookupVehicleByRegistration("AB12CDE") }
+    }
+
+    @Test
+    fun `Given a successful lookup, when findVehicleEnquiryDetails is called with the same reg, then return the details`() = runTest {
+        coEvery { api.lookupVehicleByRegistration("AB12CDE") } returns
+            Response.success(mockk<VehicleEnquiryResponse>(relaxed = true))
+
+        val result = repo.lookupVehicleByRegistration("AB12CDE") as Result.Success
+
+        assertSame(result.value, repo.getCachedVehicleEnquiryDetails("AB12CDE"))
+    }
 
     @Test
     fun `Given no licence has been fetched, when getCachedLicenceDetails is called, then return null`() {
@@ -325,26 +322,24 @@ class DvlaRepoTest {
     }
 
     @Test
-    fun `Given a successful licence fetch, when getCachedLicenceDetails is called, then return the details`() =
-        runTest {
-            coEvery { api.getDrivingLicence() } returns
-                    Response.success(mockk<LicenceResponse>(relaxed = true))
+    fun `Given a successful licence fetch, when getCachedLicenceDetails is called, then return the details`() = runTest {
+        coEvery { api.getDrivingLicence() } returns
+            Response.success(mockk<LicenceResponse>(relaxed = true))
 
-            val result = repo.getLicenceDetails() as LicenceDetailsResult.Success
+        val result = repo.getLicenceDetails() as LicenceDetailsResult.Success
 
-            assertSame(result.details, repo.getCachedLicenceDetails())
-        }
+        assertSame(result.details, repo.getCachedLicenceDetails())
+    }
 
     @Test
-    fun `Given a cached licence, when clear is called, then the cache is cleared`() =
-        runTest {
-            coEvery { api.getDrivingLicence() } returns
-                    Response.success(mockk<LicenceResponse>(relaxed = true))
-            coEvery { dvlaDataStore.clear() } returns Unit
+    fun `Given a cached licence, when clear is called, then the cache is cleared`() = runTest {
+        coEvery { api.getDrivingLicence() } returns
+            Response.success(mockk<LicenceResponse>(relaxed = true))
+        coEvery { dvlaDataStore.clear() } returns Unit
 
-            repo.getLicenceDetails()
-            repo.clear()
+        repo.getLicenceDetails()
+        repo.clear()
 
-            assertNull(repo.getCachedLicenceDetails())
-        }
+        assertNull(repo.getCachedLicenceDetails())
+    }
 }
