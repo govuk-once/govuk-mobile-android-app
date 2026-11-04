@@ -1,5 +1,7 @@
 package uk.gov.govuk.topics.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
@@ -9,14 +11,9 @@ import uk.gov.govuk.topics.data.remote.TopicsApi
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic.RemoteTopicContent
 import uk.gov.govuk.topics.domain.model.TopicItem
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class TopicsRepo @Inject constructor(
-    private val topicsApi: TopicsApi,
-    private val localDataSource: TopicsLocalDataSource,
-) {
+internal class TopicsRepo @Inject constructor(private val topicsApi: TopicsApi, private val localDataSource: TopicsLocalDataSource) {
 
     private var _stepBySteps: List<RemoteTopicContent> = emptyList()
     private var _popularPages: List<RemoteTopicContent> = emptyList()
@@ -29,7 +26,7 @@ internal class TopicsRepo @Inject constructor(
 
     suspend fun sync() {
         val result = safeApiCall { topicsApi.getTopics() }
-        if (result is Success){
+        if (result is Success) {
             localDataSource.sync(result.value)
         }
     }
@@ -45,9 +42,7 @@ internal class TopicsRepo @Inject constructor(
         }
     }
 
-    suspend fun hasTopics(): Boolean {
-        return localDataSource.hasTopics()
-    }
+    suspend fun hasTopics(): Boolean = localDataSource.hasTopics()
 
     suspend fun toggleSelection(ref: String, isSelected: Boolean) {
         localDataSource.toggleSelection(ref, isSelected)
@@ -66,9 +61,7 @@ internal class TopicsRepo @Inject constructor(
         return result
     }
 
-    internal suspend fun isTopicsCustomised(): Boolean {
-        return localDataSource.isTopicsCustomised()
-    }
+    internal suspend fun isTopicsCustomised(): Boolean = localDataSource.isTopicsCustomised()
 
     internal suspend fun topicsCustomised() {
         localDataSource.topicsCustomised()

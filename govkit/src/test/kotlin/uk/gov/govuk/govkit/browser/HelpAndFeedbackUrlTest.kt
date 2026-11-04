@@ -1,8 +1,8 @@
 package uk.gov.govuk.govkit.browser
 
+import java.net.URLEncoder
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.net.URLEncoder
 
 class HelpAndFeedbackUrlTest {
 

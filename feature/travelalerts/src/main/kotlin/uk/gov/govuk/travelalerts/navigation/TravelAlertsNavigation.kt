@@ -28,7 +28,6 @@ const val EDIT_REOPEN_SLUG_KEY = "EDIT_REOPEN_SLUG_KEY"
 const val EDIT_OPT_IN_ERROR_KEY = "EDIT_OPT_IN_ERROR_KEY"
 const val EDIT_NOTIFICATIONS_ENABLED_KEY = "EDIT_NOTIFICATIONS_ENABLED_KEY"
 
-
 fun NavGraphBuilder.travelAlertsGraph(
     navController: NavController,
     launchBrowser: (url: String) -> Unit,

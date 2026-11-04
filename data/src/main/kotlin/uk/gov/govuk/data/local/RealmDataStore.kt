@@ -10,9 +10,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 
 @Singleton
-class RealmDataStore @Inject constructor(
-    @param:Named("database_prefs") private val dataStore: DataStore<Preferences>
-) {
+class RealmDataStore @Inject constructor(@param:Named("database_prefs") private val dataStore: DataStore<Preferences>) {
 
     companion object {
         internal const val REALM_KEY = "realm_key"

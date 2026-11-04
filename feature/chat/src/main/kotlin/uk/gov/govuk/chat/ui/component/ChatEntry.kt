@@ -167,9 +167,7 @@ private fun AnimatedChatEntry(
 }
 
 @Composable
-private fun Loading(
-    modifier: Modifier = Modifier
-) {
+private fun Loading(modifier: Modifier = Modifier) {
     val loadingText = stringResource(R.string.loading_text)
 
     Row(
@@ -208,9 +206,7 @@ private fun Loading(
 }
 
 @Composable
-private fun Sending(
-    modifier: Modifier = Modifier
-) {
+private fun Sending(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth()
             .padding(horizontal = GovUkTheme.spacing.medium),

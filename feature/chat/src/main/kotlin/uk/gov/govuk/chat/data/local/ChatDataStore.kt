@@ -14,9 +14,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 @Singleton
-internal class ChatDataStore @Inject constructor(
-    @param:Named("chat_prefs") private val dataStore: DataStore<Preferences>
-) {
+internal class ChatDataStore @Inject constructor(@param:Named("chat_prefs") private val dataStore: DataStore<Preferences>) {
 
     companion object {
         internal const val CHAT_INTRO_SEEN_KEY = "chat_intro_seen"

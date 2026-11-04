@@ -166,11 +166,7 @@ internal fun ActionMenu(
 }
 
 @Composable
-private fun CloseMenuItem(
-    isTalkBackActive: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun CloseMenuItem(isTalkBackActive: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     if (isTalkBackActive) {
         val closeText = stringResource(R.string.action_close)
         HorizontalDivider()
@@ -307,10 +303,7 @@ private fun MenuItem(
 }
 
 @Composable
-private fun ActionIconButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun ActionIconButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier

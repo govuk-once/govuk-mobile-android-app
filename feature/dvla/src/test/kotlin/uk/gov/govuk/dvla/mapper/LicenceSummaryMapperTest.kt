@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -15,7 +16,6 @@ import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.govkit.browser.Urls
-import java.time.LocalDate
 
 class LicenceSummaryMapperTest {
 
@@ -48,11 +48,12 @@ class LicenceSummaryMapperTest {
         status: LicenceStatus,
         expiryDate: LocalDate? = LocalDate.now().plusYears(1),
         type: LicenceType = LicenceType.FULL
-    ) =
-        (mapper.toUiModel(
+    ) = (
+        mapper.toUiModel(
             makeLicenceDetails(status, expiryDate, type),
             dvlaUrls
-        ) as LicenceSummaryUiState.Success).licence
+        ) as LicenceSummaryUiState.Success
+        ).licence
 
     @Test
     fun `Given licence status is valid, then result is Success and drivingRecordUrl is populated from dvlaUrls`() {
@@ -88,7 +89,12 @@ class LicenceSummaryMapperTest {
     @Test
     fun `Given dvlaUrls drivingRecord is blank, then result is Success and drivingRecordUrl is null even when licence is valid`() {
         val blankUrls = dvlaUrls.copy(drivingRecord = "")
-        val licence = (mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), blankUrls) as LicenceSummaryUiState.Success).licence
+        val licence = (
+            mapper.toUiModel(
+                makeLicenceDetails(status = LicenceStatus.VALID),
+                blankUrls
+            ) as LicenceSummaryUiState.Success
+            ).licence
         assertNull(licence.drivingRecordUrl)
     }
 

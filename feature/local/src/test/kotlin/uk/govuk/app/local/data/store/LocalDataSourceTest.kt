@@ -29,10 +29,10 @@ class LocalDataSourceTest {
         val config =
             RealmConfiguration.Builder(
                 schema =
-                    setOf(
-                        StoredLocalAuthority::class,
-                        StoredLocalAuthorityParent::class
-                    )
+                setOf(
+                    StoredLocalAuthority::class,
+                    StoredLocalAuthorityParent::class
+                )
             )
                 .inMemory() // In-memory Realm for testing
                 .build()

@@ -72,11 +72,7 @@ private val WhiteAlpha30 = Color(0x4DFFFFFF)
 private val WhiteAlpha50 = Color(0x80FFFFFF)
 private val WhiteAlpha75 = Color(0x4BFFFFFF)
 
-data class GovUkColourScheme(
-    val textAndIcons: TextAndIcons,
-    val surfaces: Surfaces,
-    val strokes: Strokes
-) {
+data class GovUkColourScheme(val textAndIcons: TextAndIcons, val surfaces: Surfaces, val strokes: Strokes) {
     data class TextAndIcons(
         val primary: Color,
         val primaryInverse: Color,

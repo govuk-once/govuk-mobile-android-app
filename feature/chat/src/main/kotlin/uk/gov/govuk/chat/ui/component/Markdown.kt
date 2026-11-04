@@ -133,10 +133,7 @@ private fun ParagraphItem(
 }
 
 @Composable
-private fun CodeBlockItem(
-    codeBlock: MarkdownElement.CodeBlock,
-    accessibilityPrefix: String? = null
-) {
+private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock, accessibilityPrefix: String? = null) {
     val accessibilityText = accessibilityPrefix?.let { "$it ${codeBlock.plainText}" }
 
     Surface(
@@ -260,12 +257,7 @@ private fun ThematicBreakItem() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SegmentedText(
-    content: List<InlineContent>,
-    style: TextStyle,
-    onLinkClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun SegmentedText(content: List<InlineContent>, style: TextStyle, onLinkClick: (String) -> Unit, modifier: Modifier = Modifier) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.chatBotLinkText
     val codeBackground = GovUkTheme.colourScheme.surfaces.background
     val links = remember(content) { collectLinks(content) }
