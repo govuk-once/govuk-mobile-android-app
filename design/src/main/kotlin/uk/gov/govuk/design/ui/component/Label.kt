@@ -44,9 +44,8 @@ private fun BaseLabel(
     style: TextStyle,
     color: Color,
     textAlign: TextAlign,
-    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
-    ) {
-
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null
+) {
     BaseLabel(
         text = AnnotatedString(text),
         modifier = modifier,
@@ -64,7 +63,7 @@ private fun BaseLabel(
     style: TextStyle,
     color: Color,
     textAlign: TextAlign,
-    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null
 ) {
     val altText = text.text
         .replace(
@@ -217,7 +216,6 @@ fun Title3SemiBoldLabel(
     )
 }
 
-
 @Composable
 fun Title3RegularLabel(
     text: String,
@@ -256,7 +254,7 @@ fun BodyBoldLabel(
     modifier: Modifier = Modifier,
     color: Color = GovUkTheme.colourScheme.textAndIcons.primary,
     textAlign: TextAlign = TextAlign.Start,
-    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null
 ) {
     BaseLabel(
         text = text,
@@ -329,7 +327,7 @@ fun BodyRegularLabelTrailingLink(
     textDecoration: TextDecoration = TextDecoration.None
 ) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+    val highlightColor = textColor.copy(alpha = 0.12f) // Material 3's standard ripple colour
 
     val annotatedString = buildAnnotatedString {
         append(introText)
@@ -507,7 +505,7 @@ fun CaptionRegularLabelTrailingLink(
     textAlign: TextAlign = TextAlign.Start
 ) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.link
-    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+    val highlightColor = textColor.copy(alpha = 0.12f) // Material 3's standard ripple colour
 
     val annotatedString = buildAnnotatedString {
         append(text)
@@ -557,7 +555,7 @@ fun FootnoteRegularLabelTrailingLink(
     textAlign: TextAlign = TextAlign.Start
 ) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.linkSecondary
-    val highlightColor = textColor.copy(alpha = 0.12f)  // Material 3's standard ripple colour
+    val highlightColor = textColor.copy(alpha = 0.12f) // Material 3's standard ripple colour
 
     val annotatedString = buildAnnotatedString {
         append(text)
@@ -567,7 +565,7 @@ fun FootnoteRegularLabelTrailingLink(
             styles = TextLinkStyles(
                 style = SpanStyle(
                     color = linkColor,
-                    textDecoration = if (isLinkUnderlined) TextDecoration.Underline else TextDecoration.None,
+                    textDecoration = if (isLinkUnderlined) TextDecoration.Underline else TextDecoration.None
                 ),
                 pressedStyle = SpanStyle(background = highlightColor),
                 focusedStyle = SpanStyle(
@@ -628,16 +626,13 @@ fun CaptionRegularLabel(
 }
 
 @Composable
-fun ListHeadingLabel(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
+fun ListHeadingLabel(text: String, modifier: Modifier = Modifier) {
     Title3BoldLabel(
         text = text,
         modifier = modifier
             .padding(
                 start = GovUkTheme.spacing.medium,
-                end = GovUkTheme.spacing.medium,
+                end = GovUkTheme.spacing.medium
             )
             .semantics { heading() }
     )
@@ -794,7 +789,6 @@ private fun HeadlineSemibold() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun BodyBold() {
@@ -818,7 +812,6 @@ private fun BodySemibold() {
         BodySemiboldLabel("Body Semibold Label")
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

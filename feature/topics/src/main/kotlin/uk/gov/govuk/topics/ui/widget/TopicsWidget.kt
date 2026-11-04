@@ -96,11 +96,7 @@ private fun TopicsWidgetContent(
 }
 
 @Composable
-private fun Header(
-    displayEdit: Boolean,
-    onEditClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun Header(displayEdit: Boolean, onEditClick: (String) -> Unit, modifier: Modifier = Modifier) {
     val editButtonText = stringResource(R.string.edit_button)
     SectionHeadingLabel(
         modifier = modifier,
@@ -111,7 +107,9 @@ private fun Header(
                 altText = stringResource(R.string.edit_button_alt_text),
                 onClick = { onEditClick(editButtonText) }
             )
-        } else null
+        } else {
+            null
+        }
     )
 }
 
@@ -174,11 +172,7 @@ private fun TopicsCard(
 
 @Suppress("UnusedReceiverParameter")
 @Composable
-private fun ColumnScope.TopicsList(
-    topics: List<TopicItemUi>,
-    onClick: (String, String, Int) -> Unit,
-    onEmptyClick: (String) -> Unit
-) {
+private fun ColumnScope.TopicsList(topics: List<TopicItemUi>, onClick: (String, String, Int) -> Unit, onEmptyClick: (String) -> Unit) {
     if (topics.isEmpty()) {
         val emptyText = stringResource(R.string.empty_topics)
         CardListItem(
@@ -212,10 +206,7 @@ private fun ColumnScope.TopicsList(
 }
 
 @Composable
-private fun ErrorCard(
-    onGovUkClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun ErrorCard(onGovUkClick: () -> Unit, modifier: Modifier = Modifier) {
     OutlinedCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = GovUkTheme.colourScheme.surfaces.list),

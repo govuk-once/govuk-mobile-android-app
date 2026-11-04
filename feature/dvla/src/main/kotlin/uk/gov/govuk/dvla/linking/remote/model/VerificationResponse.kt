@@ -2,6 +2,4 @@ package uk.gov.govuk.dvla.linking.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class VerificationResponse(
-    @SerializedName("token") val token: String
-)
+internal data class VerificationResponse(@SerializedName("token") val token: String)

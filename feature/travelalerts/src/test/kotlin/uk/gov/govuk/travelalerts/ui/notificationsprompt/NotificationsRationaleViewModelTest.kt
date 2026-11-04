@@ -190,50 +190,52 @@ class NotificationsRationaleViewModelTest {
     }
 
     @Test
-    fun `Given on resume after Settings Continue and permission granted with FOLLOW origin, then followCountry called with true`() = runTest {
-        val events = mutableListOf<NotificationsRationaleViewModel.NavigationEvent>()
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.navigationEvent.collect { events.add(it) }
+    fun `Given on resume after Settings Continue and permission granted with FOLLOW origin, then followCountry called with true`() =
+        runTest {
+            val events = mutableListOf<NotificationsRationaleViewModel.NavigationEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.navigationEvent.collect { events.add(it) }
+            }
+
+            val permissionStatus = mockk<PermissionStatus>()
+            coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+            coEvery { notificationsRepo.permissionGranted() } returns true
+            coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
+
+            viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
+            viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+            viewModel.onSettingsAlertContinue()
+            viewModel.onResume("france")
+
+            assertEquals(1, events.size)
+            val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ExitToTopic
+            assertEquals(false, event.error)
         }
-
-        val permissionStatus = mockk<PermissionStatus>()
-        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
-        coEvery { notificationsRepo.permissionGranted() } returns true
-        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
-
-        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
-        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
-        viewModel.onSettingsAlertContinue()
-        viewModel.onResume("france")
-
-        assertEquals(1, events.size)
-        val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ExitToTopic
-        assertEquals(false, event.error)
-    }
 
     @Test
-    fun `Given on resume after Settings Continue and permission granted with EDIT origin, then toggleNotifications called with true`() = runTest {
-        val events = mutableListOf<NotificationsRationaleViewModel.NavigationEvent>()
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.navigationEvent.collect { events.add(it) }
+    fun `Given on resume after Settings Continue and permission granted with EDIT origin, then toggleNotifications called with true`() =
+        runTest {
+            val events = mutableListOf<NotificationsRationaleViewModel.NavigationEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.navigationEvent.collect { events.add(it) }
+            }
+
+            val permissionStatus = mockk<PermissionStatus>()
+            coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+            coEvery { notificationsRepo.permissionGranted() } returns true
+            coEvery { travelAlertsRepo.toggleNotifications("france", enabled = true) } returns Result.Success(Unit)
+
+            viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
+            viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+            viewModel.onSettingsAlertContinue()
+            viewModel.onResume("france")
+
+            assertEquals(1, events.size)
+            val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ReturnToEdit
+            assertEquals("france", event.slug)
+            assertEquals(false, event.error)
+            assertEquals(true, event.notificationsEnabled)
         }
-
-        val permissionStatus = mockk<PermissionStatus>()
-        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
-        coEvery { notificationsRepo.permissionGranted() } returns true
-        coEvery { travelAlertsRepo.toggleNotifications("france", enabled = true) } returns Result.Success(Unit)
-
-        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
-        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
-        viewModel.onSettingsAlertContinue()
-        viewModel.onResume("france")
-
-        assertEquals(1, events.size)
-        val event = events.first() as NotificationsRationaleViewModel.NavigationEvent.ReturnToEdit
-        assertEquals("france", event.slug)
-        assertEquals(false, event.error)
-        assertEquals(true, event.notificationsEnabled)
-    }
 
     @Test
     fun `Given settings alert cancel clicked, then only analytics is recorded`() = runTest {

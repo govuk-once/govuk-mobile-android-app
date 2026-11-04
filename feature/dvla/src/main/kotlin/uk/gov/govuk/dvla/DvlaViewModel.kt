@@ -1,9 +1,12 @@
 package uk.gov.govuk.dvla
 
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import javax.inject.Named
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -15,9 +18,6 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.linking.data.LinkingRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
-import javax.inject.Inject
-import javax.inject.Named
-import androidx.core.net.toUri
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(

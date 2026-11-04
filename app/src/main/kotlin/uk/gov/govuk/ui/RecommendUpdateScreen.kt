@@ -19,11 +19,7 @@ import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun RecommendUpdateScreen(
-    onUpdateClick: () -> Unit,
-    recommendUpdateSkipped: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun RecommendUpdateScreen(onUpdateClick: () -> Unit, recommendUpdateSkipped: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
             .fillMaxWidth()

@@ -48,7 +48,6 @@ internal fun SearchResults(
             searchResults.size
         )
 
-
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         state = listState
@@ -84,7 +83,6 @@ internal fun SearchResults(
         }
     }
 
-
     LaunchedEffect(searchTerm) {
         // We only want to trigger scroll and focus if we have a new search (rather than orientation change)
         if (searchTerm != previousSearchTerm) {
@@ -96,11 +94,7 @@ internal fun SearchResults(
 }
 
 @Composable
-private fun Header(
-    focusRequester: FocusRequester,
-    resultCountAltText: String,
-    modifier: Modifier = Modifier
-) {
+private fun Header(focusRequester: FocusRequester, resultCountAltText: String, modifier: Modifier = Modifier) {
     val heading = stringResource(R.string.search_results_heading)
     val combinedDescription = "$resultCountAltText. $heading"
 

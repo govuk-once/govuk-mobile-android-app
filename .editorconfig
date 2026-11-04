@@ -1,0 +1,14 @@
+root = true
+
+[*.{kt,kts}]
+# Tells ktlint to follow Android Studio
+ktlint_code_style = android_studio
+
+# Globally sets the line length to the Android industry standard
+max_line_length = 140
+
+# Tells ktlint to ignore line lengths if the line contains backticks (``)
+ktlint_ignore_back_ticked_identifier = true
+
+# Globally whitelists PascalCase for Composable and Preview functions
+ktlint_function_naming_ignore_when_annotated_with = Composable,Preview
