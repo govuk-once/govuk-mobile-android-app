@@ -56,5 +56,3 @@ internal fun SummaryCardHeader(
         }
     }
 }
-
-

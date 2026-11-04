@@ -11,9 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TinkClient @Inject constructor(
-    context: Context
-) : CryptoProvider {
+class TinkClient @Inject constructor(context: Context) : CryptoProvider {
     private companion object {
         const val KEYSET_NAME = "tink_key_set"
         const val PREF_FILENAME = "tink_prefs"
@@ -35,17 +33,13 @@ class TinkClient @Inject constructor(
             .getPrimitive(RegistryConfiguration.get(), Aead::class.java)
     }
 
-    override fun encrypt(input: ByteArray): Result<String> {
-        return runCatching {
-            val encrypted = aead.encrypt(input, null)
-            Base64.encode(encrypted)
-        }
+    override fun encrypt(input: ByteArray): Result<String> = runCatching {
+        val encrypted = aead.encrypt(input, null)
+        Base64.encode(encrypted)
     }
 
-    override fun decrypt(inputEncrypted: String): Result<ByteArray> {
-        return runCatching {
-            val encrypted = Base64.decode(inputEncrypted)
-            aead.decrypt(encrypted, null)
-        }
+    override fun decrypt(inputEncrypted: String): Result<ByteArray> = runCatching {
+        val encrypted = Base64.decode(inputEncrypted)
+        aead.decrypt(encrypted, null)
     }
 }

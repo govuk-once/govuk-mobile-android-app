@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -12,7 +13,6 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import javax.inject.Inject
 
 @HiltViewModel
 internal class BiometricSettingsViewModel @Inject constructor(
@@ -62,10 +62,9 @@ internal class BiometricSettingsViewModel @Inject constructor(
         }
     }
 
-    fun getDescriptionTwo(androidVersion: Int = Build.VERSION.SDK_INT): Int =
-        if (androidVersion > Build.VERSION_CODES.Q) {
-            R.string.biometric_settings_android_11_description_2
-        } else {
-            R.string.biometric_settings_android_10_description_2
-        }
+    fun getDescriptionTwo(androidVersion: Int = Build.VERSION.SDK_INT): Int = if (androidVersion > Build.VERSION_CODES.Q) {
+        R.string.biometric_settings_android_11_description_2
+    } else {
+        R.string.biometric_settings_android_10_description_2
+    }
 }

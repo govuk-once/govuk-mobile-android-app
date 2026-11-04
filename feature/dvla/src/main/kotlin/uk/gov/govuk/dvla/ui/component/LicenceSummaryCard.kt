@@ -13,13 +13,13 @@ import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.extension.longClickWithAltText
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.util.toSpacedString
 
 @Composable
@@ -43,7 +43,7 @@ internal fun LicenceSummaryCard(
             licenceNumber = licenceSummary.licenceNumber,
             menuItems = licenceSummary.menuItems,
             onMenuItemClick = onMenuItemClick,
-            onLicenceNumberLongClick = onLicenceNumberLongClick,
+            onLicenceNumberLongClick = onLicenceNumberLongClick
         )
 
         // address
@@ -76,9 +76,8 @@ internal fun LicenceSummaryHeader(
     menuItems: List<OverflowMenuItem>,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-
     val licenceTypeAltText = stringResource(R.string.licence_type_alt_text, licenceType)
     val licenceNumberAltText =
         stringResource(R.string.licence_number_alt_text, licenceNumber.toSpacedString())
@@ -123,13 +122,12 @@ private fun LicenceHeaderPreview() {
     }
 }
 
-
 @PreviewLightDark
 @Composable
 private fun LicenceSummaryCardPreview() {
     GovUkTheme {
         LicenceSummaryCard(
-            launchBrowser = {_,_ ->},
+            launchBrowser = { _, _ -> },
             licenceSummary = LicenceSummaryUiModel(
                 licenceType = "Full licence",
                 licenceNumber = "ARENO803236AA170",
@@ -138,12 +136,12 @@ private fun LicenceSummaryCardPreview() {
                 statusUi = StatusUiModel.StatusRow(
                     statusRowUi = StatusRowUiModel(
                         description = AccessibleString("Valid until 1 February 2027"),
-                        iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success,
+                        iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Success
                     )
                 )
             ),
             onMenuItemClick = {},
-            onLicenceNumberLongClick = {},
+            onLicenceNumberLongClick = {}
         )
     }
 }
@@ -153,7 +151,7 @@ private fun LicenceSummaryCardPreview() {
 private fun LicenceSummaryCardExpiredPreview() {
     GovUkTheme {
         LicenceSummaryCard(
-            launchBrowser = {_,_ ->},
+            launchBrowser = { _, _ -> },
             licenceSummary = LicenceSummaryUiModel(
                 licenceType = "Full licence",
                 licenceNumber = "ARENO803236AA170",
@@ -162,7 +160,7 @@ private fun LicenceSummaryCardExpiredPreview() {
                 statusUi = StatusUiModel.StatusRow(
                     statusRowUi = StatusRowUiModel(
                         description = AccessibleString("Expired on 1 February 2027"),
-                        iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning,
+                        iconStyle = uk.gov.govuk.design.ui.model.StatusListItemIconStyle.Warning
                     )
                 )
             ),

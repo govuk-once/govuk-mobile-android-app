@@ -21,12 +21,7 @@ import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun OnboardingPageTwoRoute(
-    onClick: () -> Unit,
-    onCancel: () -> Unit,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+internal fun OnboardingPageTwoRoute(onClick: () -> Unit, onCancel: () -> Unit, onBack: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: ChatViewModel = hiltViewModel()
     val cancelText = stringResource(id = R.string.onboarding_page_cancel_text)
     val continueText = stringResource(id = R.string.onboarding_page_two_button)
@@ -128,4 +123,3 @@ private fun OnboardingPageTwoPreview() {
         )
     }
 }
-

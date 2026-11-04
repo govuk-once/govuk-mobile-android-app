@@ -20,7 +20,11 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String", "CONFIG_BASE_URL", "\"https://app.integration.publishing.service.gov.uk/config/\"")
-        buildConfigField("String", "CONFIG_PUBLIC_KEY", "\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI9ifhn/iLdu3PwCKMhzqICSNUTivwF78Z9ybmhyIDF1Nvv+BavPyvz1XICfgEQ8g6IvHapaALXHcTszv5tFFfg==\"")
+        buildConfigField(
+            "String",
+            "CONFIG_PUBLIC_KEY",
+            "\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI9ifhn/iLdu3PwCKMhzqICSNUTivwF78Z9ybmhyIDF1Nvv+BavPyvz1XICfgEQ8g6IvHapaALXHcTszv5tFFfg==\""
+        )
     }
 
     buildTypes {

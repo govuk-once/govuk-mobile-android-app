@@ -30,7 +30,11 @@ android {
         buildConfigField("String", "MESSAGES_EVENT", "\"Messages\"")
 
         buildConfigField("String", "ACCESSIBILITY_STATEMENT_EVENT", "\"AccessibilityStatement\"")
-        buildConfigField("String", "ACCESSIBILITY_STATEMENT_URL", "\"https://www.gov.uk/government/publications/accessibility-statement-for-the-govuk-app\"")
+        buildConfigField(
+            "String",
+            "ACCESSIBILITY_STATEMENT_URL",
+            "\"https://www.gov.uk/government/publications/accessibility-statement-for-the-govuk-app\""
+        )
 
         buildConfigField("String", "HELP_AND_FEEDBACK_EVENT", "\"HelpAndFeedback\"")
 
@@ -42,7 +46,11 @@ android {
         buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
 
         buildConfigField("String", "TERMS_AND_CONDITIONS_EVENT", "\"TermsAndConditions\"")
-        buildConfigField("String", "TERMS_AND_CONDITIONS_URL", "\"http://www.gov.uk/government/publications/govuk-app-terms-and-conditions\"")
+        buildConfigField(
+            "String",
+            "TERMS_AND_CONDITIONS_URL",
+            "\"http://www.gov.uk/government/publications/govuk-app-terms-and-conditions\""
+        )
     }
 
     compileOptions {

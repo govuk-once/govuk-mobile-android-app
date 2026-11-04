@@ -26,10 +26,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,12 +71,7 @@ import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CountryListScreen(
-    onClose: () -> Unit,
-    onClickFooter: () -> Unit,
-    navController: NavController,
-    modifier: Modifier = Modifier
-) {
+fun CountryListScreen(onClose: () -> Unit, onClickFooter: () -> Unit, navController: NavController, modifier: Modifier = Modifier) {
     val viewModel: CountryListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val loadedState = uiState as? CountryListViewModel.State.Loaded
@@ -243,17 +238,13 @@ private fun CountryListLoaded(
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium).fillMaxWidth(),
             isLinkUnderlined = true,
             textAlign = TextAlign.Center,
-            onClick = onClickFooter)
+            onClick = onClickFooter
+        )
     }
 }
 
 @Composable
-private fun CountrySearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onSearchSubmitted: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun CountrySearchBar(query: String, onQueryChange: (String) -> Unit, onSearchSubmitted: () -> Unit, modifier: Modifier = Modifier) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         value = query,
@@ -313,10 +304,7 @@ private fun CountrySearchBar(
 }
 
 @Composable
-private fun CountryListError(
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun CountryListError(onRetry: () -> Unit, modifier: Modifier = Modifier) {
     ErrorPage(
         headerText = stringResource(R.string.country_list_error_title),
         subText = listOf(stringResource(R.string.country_list_error_description)),
@@ -360,7 +348,7 @@ internal fun CountryListLoadedPreview() {
         Country("Albania", "albania", "2023-01-01T00:00:00Z", listOf()),
         Country("Algeria", "algeria", "2024-01-01T00:00:00Z", listOf()),
         Country("Andorra", "andorra", "2025-01-01T00:00:00Z", listOf()),
-        Country("Anguilla", "anguilla", "2026-01-01T00:00:00Z", listOf()),
+        Country("Anguilla", "anguilla", "2026-01-01T00:00:00Z", listOf())
     )
     GovUkTheme {
         Column(

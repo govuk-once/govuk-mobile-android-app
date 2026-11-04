@@ -10,7 +10,10 @@ data class SubscriptionRequest(
     @SerializedName("Action") val action: Action = Action.JOIN
 ) {
     enum class Action {
-        @SerializedName("JOIN") JOIN,
-        @SerializedName("LEAVE") LEAVE
+        @SerializedName("JOIN")
+        JOIN,
+
+        @SerializedName("LEAVE")
+        LEAVE
     }
 }

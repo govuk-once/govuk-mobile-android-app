@@ -21,7 +21,6 @@ import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.data.model.Result
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaLinkWidgetViewModelTest {

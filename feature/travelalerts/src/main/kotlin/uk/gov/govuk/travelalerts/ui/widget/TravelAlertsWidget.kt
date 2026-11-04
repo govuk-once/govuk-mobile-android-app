@@ -41,11 +41,7 @@ import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.navigation.TRAVEL_ALERTS_FOLLOW_ERROR_KEY
 
 @Composable
-fun TravelAlertsWidget(
-    launchBrowser: (String) -> Unit,
-    onFollowCountry: () -> Unit,
-    onEditCountries: () -> Unit = {}
-) {
+fun TravelAlertsWidget(launchBrowser: (String) -> Unit, onFollowCountry: () -> Unit, onEditCountries: () -> Unit = {}) {
     val viewModel: TravelAlertsWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -110,7 +106,8 @@ private fun TravelAlertsEmpty(onFollowCountry: () -> Unit) {
         description = stringResource(R.string.empty_description),
         paddingValues = PaddingValues(
             horizontal = GovUkTheme.spacing.extraLarge,
-            vertical = GovUkTheme.spacing.extraLarge)
+            vertical = GovUkTheme.spacing.extraLarge
+        )
     )
 }
 

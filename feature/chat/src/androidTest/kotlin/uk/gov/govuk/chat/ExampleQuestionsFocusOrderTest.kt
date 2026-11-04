@@ -130,7 +130,5 @@ class ExampleQuestionsFocusOrderTest {
         }
     }
 
-    private fun getString(@StringRes id: Int): String {
-        return InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
-    }
+    private fun getString(@StringRes id: Int): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 }

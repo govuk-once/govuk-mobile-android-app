@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -42,8 +43,6 @@ import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
 import uk.govuk.app.local.LocalFeature
-import javax.inject.Inject
-
 
 @HiltViewModel
 internal class AppViewModel @Inject constructor(
@@ -74,7 +73,8 @@ internal class AppViewModel @Inject constructor(
     internal val homeWidgets = _homeWidgets.asStateFlow()
 
     enum class TimeoutEvent {
-        WARNING, TIMEOUT
+        WARNING,
+        TIMEOUT
     }
 
     private val _timeOutEvent = Channel<TimeoutEvent>(Channel.CONFLATED)
@@ -132,7 +132,9 @@ internal class AppViewModel @Inject constructor(
                                         identityRepo.getLinkedServices()
                                     }
                                 }
-                            } else null
+                            } else {
+                                null
+                            }
 
                         initTopics.await()
                         checkDvlaLinkStatus?.await()
@@ -166,9 +168,7 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    fun onUserInteraction(
-        interactionTime: Long = SystemClock.elapsedRealtime()
-    ) {
+    fun onUserInteraction(interactionTime: Long = SystemClock.elapsedRealtime()) {
         timeoutManager.onUserInteraction(
             interactionTime,
             onWarning = {
@@ -233,11 +233,7 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    private fun updateHomeWidgets(
-        suppressedWidgets: Set<String>,
-        shouldDisplayChatBanner: Boolean,
-        isAnalyticsEnabled: Boolean
-    ) {
+    private fun updateHomeWidgets(suppressedWidgets: Set<String>, shouldDisplayChatBanner: Boolean, isAnalyticsEnabled: Boolean) {
         viewModelScope.launch {
             with(flagRepo) {
                 val widgets = mutableListOf<HomeWidget>()
@@ -254,7 +250,8 @@ internal class AppViewModel @Inject constructor(
                 configRepo.chatBanner?.let { chatBanner ->
                     if (isChatEnabled() &&
                         shouldDisplayChatBanner &&
-                        !suppressedWidgets.contains(chatBanner.id)) {
+                        !suppressedWidgets.contains(chatBanner.id)
+                    ) {
                         widgets.add(HomeWidget.Chat(chatBanner))
                     }
                 }
@@ -291,11 +288,7 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    fun onWidgetClick(
-        text: String,
-        url: String? = null,
-        section: String
-    ) {
+    fun onWidgetClick(text: String, url: String? = null, section: String) {
         val external = url?.let { url ->
             url.startsWith("http") || url.contains("web?url=")
         } ?: false
@@ -313,11 +306,7 @@ internal class AppViewModel @Inject constructor(
         analyticsClient.abTestEvent(AbTestEvent.SEARCH_CONVERSION_10_26)
     }
 
-    fun onSuppressWidgetClick(
-        id: String,
-        text: String,
-        section: String
-    ) {
+    fun onSuppressWidgetClick(id: String, text: String, section: String) {
         viewModelScope.launch {
             appRepo.suppressHomeWidget(id)
         }
@@ -382,27 +371,21 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    private suspend fun isTermsAcceptanceRequired() =
-        termsRepo.getTermsAcceptanceState() !is TermsAcceptanceState.Accepted
+    private suspend fun isTermsAcceptanceRequired() = termsRepo.getTermsAcceptanceState() !is TermsAcceptanceState.Accepted
 
-    private fun isAnalyticsConsentRequired() =
-        analyticsClient.isAnalyticsConsentRequired()
+    private fun isAnalyticsConsentRequired() = analyticsClient.isAnalyticsConsentRequired()
 
-    private suspend fun isTopicSelectionRequired() =
-        flagRepo.isTopicsEnabled() &&
-                !appRepo.isTopicSelectionCompleted() &&
-                topicsFeature.hasTopics()
+    private suspend fun isTopicSelectionRequired() = flagRepo.isTopicsEnabled() &&
+        !appRepo.isTopicSelectionCompleted() &&
+        topicsFeature.hasTopics()
 
-    private suspend fun isNotificationsOnboardingRequired() =
-        flagRepo.isNotificationsEnabled() &&
-                !notificationsRepo.isNotificationsOnboardingCompleted()
+    private suspend fun isNotificationsOnboardingRequired() = flagRepo.isNotificationsEnabled() &&
+        !notificationsRepo.isNotificationsOnboardingCompleted()
 
-    private suspend fun isNotificationsConsentRequired() =
-        flagRepo.isNotificationsEnabled() &&
-                notificationsRepo.isNotificationsOnboardingCompleted() &&
-                notificationsRepo.permissionGranted() &&
-                !notificationsRepo.consentGiven()
-
+    private suspend fun isNotificationsConsentRequired() = flagRepo.isNotificationsEnabled() &&
+        notificationsRepo.isNotificationsOnboardingCompleted() &&
+        notificationsRepo.permissionGranted() &&
+        !notificationsRepo.consentGiven()
 
     fun onResume(currentRoute: String?) {
         viewModelScope.launch {

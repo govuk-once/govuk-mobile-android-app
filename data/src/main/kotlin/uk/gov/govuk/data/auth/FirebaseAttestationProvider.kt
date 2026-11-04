@@ -5,9 +5,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseAttestationProvider @Inject constructor(
-    private val appCheck: FirebaseAppCheck
-): AttestationProvider {
+class FirebaseAttestationProvider @Inject constructor(private val appCheck: FirebaseAppCheck) : AttestationProvider {
 
     override suspend fun getToken(): String? = suspendCoroutine { continuation ->
         appCheck.getAppCheckToken(false)
@@ -18,5 +16,4 @@ class FirebaseAttestationProvider @Inject constructor(
                 continuation.resume(null)
             }
     }
-
 }

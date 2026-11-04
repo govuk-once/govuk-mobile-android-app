@@ -5,15 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.design.R
+import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun OfflineMessage(
-    onButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    focusRequester: FocusRequester = FocusRequester()
-) {
+fun OfflineMessage(onButtonClick: () -> Unit, modifier: Modifier = Modifier, focusRequester: FocusRequester = FocusRequester()) {
     Error(
         title = stringResource(R.string.no_internet_title),
         description = stringResource(R.string.no_internet_description),
@@ -24,7 +20,7 @@ fun OfflineMessage(
     )
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 private fun OfflineMessagePreview() {
     GovUkTheme {
