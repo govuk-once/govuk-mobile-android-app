@@ -192,11 +192,7 @@ private fun OnboardingPageThreeScreen(
 }
 
 @Composable
-private fun Buttons(
-    onClick: () -> Unit,
-    onCancel: () -> Unit,
-    modifier: Modifier
-) {
+private fun Buttons(onClick: () -> Unit, onCancel: () -> Unit, modifier: Modifier) {
     PrimaryButton(
         text = stringResource(id = R.string.onboarding_page_three_button),
         onClick = onClick,

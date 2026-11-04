@@ -10,9 +10,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 
 @Singleton
-internal class TermsDataStore @Inject constructor(
-    @param:Named("terms_prefs") private val dataStore: DataStore<Preferences>
-) {
+internal class TermsDataStore @Inject constructor(@param:Named("terms_prefs") private val dataStore: DataStore<Preferences>) {
     companion object {
         private const val TERMS_ACCEPTED_DATE_KEY = "terms_accepted_date"
     }
