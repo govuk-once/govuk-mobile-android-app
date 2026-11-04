@@ -4,6 +4,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
+import javax.inject.Qualifier
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -15,9 +18,6 @@ import uk.gov.govuk.messages.data.DateProviderImpl
 import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.messages.data.MessagesRepoImpl
 import uk.gov.govuk.messages.data.remote.NotificationsApi
-import javax.inject.Named
-import javax.inject.Qualifier
-import javax.inject.Singleton
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
@@ -28,32 +28,22 @@ internal annotation class MessagesScope
 internal object MessagesModule {
     @Provides
     @Singleton
-    fun providesMessagesApi(@Named("FlexRetrofit") retrofit: Retrofit): NotificationsApi =
-        retrofit.create(NotificationsApi::class.java)
+    fun providesMessagesApi(@Named("FlexRetrofit") retrofit: Retrofit): NotificationsApi = retrofit.create(NotificationsApi::class.java)
 
     @Provides
     @Singleton
-    fun provideMessagesRepo(messagesRepo: MessagesRepoImpl): MessagesRepo {
-        return messagesRepo
-    }
+    fun provideMessagesRepo(messagesRepo: MessagesRepoImpl): MessagesRepo = messagesRepo
 
     @Provides
     @Singleton
-    fun providesMessagesFeature(messagesRepo: MessagesRepo): MessagesFeature {
-        return DefaultMessagesFeature(messagesRepo)
-    }
+    fun providesMessagesFeature(messagesRepo: MessagesRepo): MessagesFeature = DefaultMessagesFeature(messagesRepo)
 
     @Provides
     @Singleton
-    fun provideDateProvider(): DateProvider {
-        return DateProviderImpl()
-    }
+    fun provideDateProvider(): DateProvider = DateProviderImpl()
 
     @Provides
     @Singleton
     @MessagesScope
-    fun provideCoroutineScope(): CoroutineScope =
-        CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
+    fun provideCoroutineScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 }
-

@@ -28,18 +28,17 @@ data class Notification(
 
     data class Metadata(
         @SerializedName("Sender")
-        val sender: Sender) {
+        val sender: Sender
+    ) {
         data class Sender(
             @SerializedName("DisplayName")
-            val displayName: String)
+            val displayName: String
+        )
     }
-
 
     val date: Instant
         get() = Instant.parse(rawDate)
 
     val isUnread: Boolean
         get() = status != "READ"
-
-
 }

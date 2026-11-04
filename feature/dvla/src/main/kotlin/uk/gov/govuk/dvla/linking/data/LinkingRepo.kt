@@ -10,10 +10,7 @@ import uk.gov.govuk.dvla.linking.remote.model.VerificationRequest
 import uk.gov.govuk.dvla.linking.remote.model.VerificationResponse
 
 @Singleton
-internal class LinkingRepo @Inject constructor(
-    private val api: LinkingApi,
-    private val authRepo: AuthRepo
-) {
+internal class LinkingRepo @Inject constructor(private val api: LinkingApi, private val authRepo: AuthRepo) {
     suspend fun getVerification(): Result<VerificationResponse> {
         val result = safeAuthApiCall(
             { api.getVerification(VerificationRequest(authRepo.getAccessToken())) },

@@ -16,18 +16,11 @@ import uk.gov.govuk.dvla.data.DvlaRepo
 internal sealed interface CheckVehicleSheetState {
     val regNumber: String
 
-    data class Input(
-        override val regNumber: String = ""
-    ) : CheckVehicleSheetState
+    data class Input(override val regNumber: String = "") : CheckVehicleSheetState
 
-    data class Loading(
-        override val regNumber: String
-    ) : CheckVehicleSheetState
+    data class Loading(override val regNumber: String) : CheckVehicleSheetState
 
-    data class Error(
-        override val regNumber: String,
-        val error: CheckVehicleError
-    ) : CheckVehicleSheetState
+    data class Error(override val regNumber: String, val error: CheckVehicleError) : CheckVehicleSheetState
 
     data class Success(
         override val regNumber: String

@@ -19,8 +19,8 @@ import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -30,12 +30,7 @@ import uk.gov.govuk.settings.SignOutViewModel
 import uk.gov.govuk.settings.navigation.navigateToErrorScreen
 
 @Composable
-internal fun SignOutRoute(
-    navController: NavController,
-    onBack: () -> Unit,
-    onSignOut: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun SignOutRoute(navController: NavController, onBack: () -> Unit, onSignOut: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: SignOutViewModel = hiltViewModel()
 
     SignOutScreen(
@@ -58,12 +53,7 @@ internal fun SignOutRoute(
 }
 
 @Composable
-private fun SignOutScreen(
-    onPageView: () -> Unit,
-    onBack: () -> Unit,
-    onSignOut: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun SignOutScreen(onPageView: () -> Unit, onBack: () -> Unit, onSignOut: (String) -> Unit, modifier: Modifier = Modifier) {
     RunOnceLaunchedEffect {
         onPageView()
     }
@@ -72,10 +62,11 @@ private fun SignOutScreen(
         FullScreenHeader(
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
-        Column(Modifier
-            .verticalScroll(rememberScrollState())
-            .weight(1f)
-            .padding(horizontal = GovUkTheme.spacing.medium)
+        Column(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .weight(1f)
+                .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
             LargeTitleBoldLabel(
                 text = stringResource(R.string.sign_out_title),
