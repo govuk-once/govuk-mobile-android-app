@@ -2,7 +2,6 @@ package uk.gov.govuk.data.auth
 
 import android.content.Intent
 import android.os.Build
-import kotlinx.coroutines.CancellationException
 import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
@@ -13,6 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import net.openid.appauth.AuthorizationException
