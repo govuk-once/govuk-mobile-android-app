@@ -29,6 +29,8 @@ internal class LicenceCategoryDetailViewModel @Inject constructor(
 
     private companion object {
         const val SCREEN_CLASS = "LicenceCategoryDetailScreen"
+        const val BACK_TEXT = "Back"
+        const val SECTION = "Driving"
     }
 
     private val _uiState = MutableStateFlow(createInitialState())
@@ -58,6 +60,13 @@ internal class LicenceCategoryDetailViewModel @Inject constructor(
             screenClass = SCREEN_CLASS,
             screenName = title,
             title = title
+        )
+    }
+
+    fun onBackClicked() {
+        analyticsClient.buttonClick(
+            text = BACK_TEXT,
+            section = SECTION
         )
     }
 }
