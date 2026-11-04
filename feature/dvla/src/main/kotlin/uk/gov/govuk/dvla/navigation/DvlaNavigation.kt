@@ -14,6 +14,7 @@ import uk.gov.govuk.dvla.ui.CheckVehicleDetailsRoute
 import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
 import uk.gov.govuk.dvla.ui.LicenceCategoriesRoute
+import uk.gov.govuk.dvla.ui.LicenceCategoryDetailRoute
 import uk.gov.govuk.dvla.ui.VehicleDetailsRoute
 
 const val DVLA_GRAPH_ROUTE = "dvla_graph_route"
@@ -129,10 +130,10 @@ fun NavGraphBuilder.dvlaGraph(
                 navArgument(ARG_ENTITLEMENT_TYPE) { type = NavType.StringType }
             )
         ) {
-//            LicenceCategoryDetailRoute(
-//                onBack = onBack,
-//                modifier = modifier
-//            )
+            LicenceCategoryDetailRoute(
+                onBack = onBack,
+                modifier = modifier
+            )
         }
     }
 }
