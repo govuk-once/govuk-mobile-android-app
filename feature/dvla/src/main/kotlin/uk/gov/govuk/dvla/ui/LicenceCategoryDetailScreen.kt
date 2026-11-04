@@ -55,9 +55,13 @@ internal fun LicenceCategoryDetailScreen(
         onPageView(detail.title)
     }
 
-    Column(modifier = modifier
-        .safeDrawingPadding()
-        .fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(GovUkTheme.colourScheme.surfaces.background)
+            .safeDrawingPadding()
+    )
+    {
         FullScreenHeader(dismissStyle = HeaderDismissStyle.Back(onBack))
 
         Column(
@@ -82,10 +86,16 @@ internal fun LicenceCategoryDetailScreen(
             CategoryBadge(category = category)
 
             detail.validFrom?.let {
-                ValidityRow(label = stringResource(R.string.licence_category_detail_valid_from), date = it)
+                ValidityRow(
+                    label = stringResource(R.string.licence_category_detail_valid_from),
+                    date = it
+                )
             }
             detail.validTo?.let {
-                ValidityRow(label = stringResource(R.string.licence_category_detail_valid_to), date = it)
+                ValidityRow(
+                    label = stringResource(R.string.licence_category_detail_valid_to),
+                    date = it
+                )
             }
 
             // restrictions

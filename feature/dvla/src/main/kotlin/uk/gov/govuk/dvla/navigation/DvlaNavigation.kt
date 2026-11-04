@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -128,7 +129,9 @@ fun NavGraphBuilder.dvlaGraph(
             arguments = listOf(
                 navArgument(ARG_CATEGORY_CODE) { type = NavType.StringType },
                 navArgument(ARG_ENTITLEMENT_TYPE) { type = NavType.StringType }
-            )
+            ),
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) }
         ) {
             LicenceCategoryDetailRoute(
                 onBack = onBack,
