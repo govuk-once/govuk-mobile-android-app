@@ -65,6 +65,7 @@ import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
+import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORIES_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDrivingCategories
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
@@ -218,13 +219,14 @@ private fun BottomNavScaffold(
             && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
     val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
+    val isLicenceCategoriesRoute = currentRoute == LICENCE_CATEGORIES_ROUTE
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
             currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
-    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute) && !isSystemInDarkTheme()
+    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute || isLicenceCategoriesRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 

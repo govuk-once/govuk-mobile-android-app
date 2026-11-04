@@ -295,7 +295,7 @@ private fun highlightVariants(
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightSingleSearchTerm1Preview() {
+internal fun HighlightSingleSearchTerm1Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -309,7 +309,7 @@ private fun HighlightSingleSearchTerm1Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightSingleSearchTerm2Preview() {
+internal fun HighlightSingleSearchTerm2Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -323,7 +323,7 @@ private fun HighlightSingleSearchTerm2Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightSingleSearchTerm3Preview() {
+internal fun HighlightSingleSearchTerm3Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -337,7 +337,7 @@ private fun HighlightSingleSearchTerm3Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightSingleSearchTerm4Preview() {
+internal fun HighlightSingleSearchTerm4Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -351,7 +351,7 @@ private fun HighlightSingleSearchTerm4Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightSingleSearchTerm5Preview() {
+internal fun HighlightSingleSearchTerm5Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -365,7 +365,7 @@ private fun HighlightSingleSearchTerm5Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightDoubleSearchTerm1Preview() {
+internal fun HighlightDoubleSearchTerm1Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -379,7 +379,7 @@ private fun HighlightDoubleSearchTerm1Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightDoubleSearchTerm2Preview() {
+internal fun HighlightDoubleSearchTerm2Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -393,7 +393,7 @@ private fun HighlightDoubleSearchTerm2Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightDoubleSearchTerm3Preview() {
+internal fun HighlightDoubleSearchTerm3Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -407,7 +407,7 @@ private fun HighlightDoubleSearchTerm3Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightDoubleSearchTerm4Preview() {
+internal fun HighlightDoubleSearchTerm4Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -421,7 +421,7 @@ private fun HighlightDoubleSearchTerm4Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightDoubleSearchTerm5Preview() {
+internal fun HighlightDoubleSearchTerm5Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -435,7 +435,7 @@ private fun HighlightDoubleSearchTerm5Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightMultipleSearchTerms1Preview() {
+internal fun HighlightMultipleSearchTerms1Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -449,7 +449,7 @@ private fun HighlightMultipleSearchTerms1Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightMultipleSearchTerms2Preview() {
+internal fun HighlightMultipleSearchTerms2Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -463,7 +463,7 @@ private fun HighlightMultipleSearchTerms2Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightMultipleSearchTerms3Preview() {
+internal fun HighlightMultipleSearchTerms3Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(
@@ -477,7 +477,7 @@ private fun HighlightMultipleSearchTerms3Preview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun HighlightMultipleSearchTerms4Preview() {
+internal fun HighlightMultipleSearchTerms4Preview() {
     GovUkTheme {
         Text(
             text = highlightSearchTerms(

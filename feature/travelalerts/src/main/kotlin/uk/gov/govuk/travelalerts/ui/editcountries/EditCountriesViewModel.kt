@@ -53,6 +53,7 @@ class EditCountriesViewModel @Inject constructor(
 
     sealed class NavigationEvent {
         data class ToNotificationsOptIn(val slug: String) : NavigationEvent()
+        data object PopBack : NavigationEvent()
     }
 
     private val _uiState: MutableStateFlow<State> = MutableStateFlow(State.Loading)
@@ -193,6 +194,10 @@ class EditCountriesViewModel @Inject constructor(
                 val followed = groupsResult.value
                     .mapNotNull { group -> countriesBySlug[group.group] }
                     .sortedBy { it.name }
+                if (isAlreadyLoaded && followed.isEmpty()) {
+                    _navigationEvent.emit(NavigationEvent.PopBack)
+                    return@launch
+                }
                 val followError = savedStateHandle.get<Boolean>(SHOW_ERROR_ARG) == true
                 if (followError) savedStateHandle[SHOW_ERROR_ARG] = false
                 val devicePermissionGranted = ((_uiState.value as? State.Loaded)?.devicePermissionGranted) ?: notificationsRepo.permissionGranted()

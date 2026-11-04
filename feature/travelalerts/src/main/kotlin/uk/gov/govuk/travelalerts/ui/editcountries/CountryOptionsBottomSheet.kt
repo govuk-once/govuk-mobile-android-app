@@ -220,7 +220,7 @@ private fun DragHandle(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @PreviewLightDark
-private fun CountryOptionsBottomSheetContentPreview() {
+internal fun CountryOptionsBottomSheetContentPreview() {
     val country = Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf())
 
     GovUkTheme {
