@@ -242,23 +242,24 @@ class LocalLookupViewModelTest {
     }
 
     @Test
-    fun `onSearchPostcode calls analytics client and fetches local authority - returns device not connected message - emits error`() = runTest {
-        val buttonText = "Search"
-        val postcode = "E18QS"
+    fun `onSearchPostcode calls analytics client and fetches local authority - returns device not connected message - emits error`() =
+        runTest {
+            val buttonText = "Search"
+            val postcode = "E18QS"
 
-        coEvery {
-            localRepo.fetchLocalAuthority(postcode)
-        } returns Success(LocalAuthorityResult.DeviceNotConnected)
+            coEvery {
+                localRepo.fetchLocalAuthority(postcode)
+            } returns Success(LocalAuthorityResult.DeviceNotConnected)
 
-        val errorMessage = "not connected error"
+            val errorMessage = "not connected error"
 
-        every { context.getString(R.string.local_not_connected_message) } returns errorMessage
+            every { context.getString(R.string.local_not_connected_message) } returns errorMessage
 
-        viewModel.onSearchPostcode(buttonText, postcode)
+            viewModel.onSearchPostcode(buttonText, postcode)
 
-        verify { analyticsClient.buttonClick(text = buttonText, section = "Local") }
-        coVerify { localRepo.fetchLocalAuthority(postcode) }
-        val uiState = viewModel.uiState.value as LocalUiState.Error
-        assertEquals(R.string.local_not_connected_message, uiState.message)
-    }
+            verify { analyticsClient.buttonClick(text = buttonText, section = "Local") }
+            coVerify { localRepo.fetchLocalAuthority(postcode) }
+            val uiState = viewModel.uiState.value as LocalUiState.Error
+            assertEquals(R.string.local_not_connected_message, uiState.message)
+        }
 }

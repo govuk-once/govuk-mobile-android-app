@@ -91,9 +91,9 @@ class VehicleMenuItemsMapperTest {
 
     @Test
     fun `Given vehicle has SORN and is taxed, then register off road is not present`() {
-      val result = mapper.buildMenuItems(hasSorn = true, isTaxed = true, dvlaUrls = dvlaUrls)
-      val urls = result.map { (it.action as MenuAction.WebLink).url }
-      assertFalse(urls.contains(dvlaUrls.makeSorn))
+        val result = mapper.buildMenuItems(hasSorn = true, isTaxed = true, dvlaUrls = dvlaUrls)
+        val urls = result.map { (it.action as MenuAction.WebLink).url }
+        assertFalse(urls.contains(dvlaUrls.makeSorn))
     }
 
     @Test

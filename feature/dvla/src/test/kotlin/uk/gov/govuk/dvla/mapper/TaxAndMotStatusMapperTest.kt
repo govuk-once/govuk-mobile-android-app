@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -19,7 +20,6 @@ import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
-import java.time.LocalDate
 
 class TaxAndMotStatusMapperTest {
     private val stringProvider = mockk<StringProvider>()
@@ -66,8 +66,10 @@ class TaxAndMotStatusMapperTest {
         val dateToDisplay = date.toSummaryDisplayFormat()
         val daysFromNow = date.getNumberOfDaysFromNow()
         every { stringProvider.getString(R.string.expiring_status_date) } returns "Expiring %1\$s"
-        every { stringProvider.getString(R.string.expiring_mot_caption) } returns "It can take a couple of days after your MOT for your status to update"
-        every { stringProvider.getString(R.string.expiring_mot_caption_alt_text) } returns "It can take a couple of days after your M.O.T for your status to update"
+        every { stringProvider.getString(R.string.expiring_mot_caption) } returns
+            "It can take a couple of days after your MOT for your status to update"
+        every { stringProvider.getString(R.string.expiring_mot_caption_alt_text) } returns
+            "It can take a couple of days after your M.O.T for your status to update"
         every {
             stringProvider.getQuantityString(
                 R.plurals.expiring_status_days_left,
@@ -113,8 +115,10 @@ class TaxAndMotStatusMapperTest {
         val date = LocalDate.now()
         val dateToDisplay = date.toSummaryDisplayFormat()
         every { stringProvider.getString(R.string.today) } returns "Today"
-        every { stringProvider.getString(R.string.expiring_mot_caption) } returns "It can take a couple of days after your MOT for your status to update"
-        every { stringProvider.getString(R.string.expiring_mot_caption_alt_text) } returns "It can take a couple of days after your M.O.T for your status to update"
+        every { stringProvider.getString(R.string.expiring_mot_caption) } returns
+            "It can take a couple of days after your MOT for your status to update"
+        every { stringProvider.getString(R.string.expiring_mot_caption_alt_text) } returns
+            "It can take a couple of days after your M.O.T for your status to update"
         every {
             stringProvider.resolveSummaryDescription(
                 R.string.expiring_status_date,
@@ -364,7 +368,8 @@ class TaxAndMotStatusMapperTest {
         every { stringProvider.getString(R.string.paying_by_direct_debit) } returns "Paying by Direct Debit"
         every { stringProvider.getString(R.string.expiring_direct_debit_status_date) } returns "Renews %1\$s"
         every { stringProvider.getString(R.string.manage_payment_button) } returns "Manage payment"
-        every { stringProvider.getString(R.string.manage_payment_button_caption) } returns "It can take a couple of days after you’ve paid for your status to update"
+        every { stringProvider.getString(R.string.manage_payment_button_caption) } returns
+            "It can take a couple of days after you’ve paid for your status to update"
         every {
             stringProvider.resolveSummaryDescription(
                 R.string.expiring_direct_debit_status_date,
@@ -412,7 +417,8 @@ class TaxAndMotStatusMapperTest {
         val dateToDisplay = date.toSummaryDisplayFormat()
         every { stringProvider.getString(R.string.expiring_status_date) } returns "Expiring %1\$s"
         every { stringProvider.getString(R.string.renew_tax_button) } returns "Renew tax"
-        every { stringProvider.getString(R.string.renew_tax_button_caption) } returns "It can take a couple of days after you’ve paid for your status to update"
+        every { stringProvider.getString(R.string.renew_tax_button_caption) } returns
+            "It can take a couple of days after you’ve paid for your status to update"
         every {
             stringProvider.resolveSummaryDescription(
                 R.string.expiring_status_date,
@@ -460,7 +466,8 @@ class TaxAndMotStatusMapperTest {
         every { stringProvider.getString(R.string.today) } returns "Today"
         every { stringProvider.getString(R.string.expiring_status_date) } returns "Expiring %1\$s"
         every { stringProvider.getString(R.string.renew_tax_button) } returns "Renew tax"
-        every { stringProvider.getString(R.string.renew_tax_button_caption) } returns "It can take a couple of days after you’ve paid for your status to update"
+        every { stringProvider.getString(R.string.renew_tax_button_caption) } returns
+            "It can take a couple of days after you’ve paid for your status to update"
         every {
             stringProvider.resolveSummaryDescription(
                 R.string.expiring_status_date,
@@ -544,7 +551,8 @@ class TaxAndMotStatusMapperTest {
     fun `Given the Tax status is UNTAXED and DVLA url's is not NULL, then the correct StatusUiModel is returned`() {
         every { stringProvider.getString(R.string.untaxed) } returns "Untaxed"
         every { stringProvider.getString(R.string.renew_tax_button) } returns "Renew tax"
-        every { stringProvider.getString(R.string.renew_tax_button_caption) } returns "It can take a couple of days after you’ve paid for your status to update"
+        every { stringProvider.getString(R.string.renew_tax_button_caption) } returns
+            "It can take a couple of days after you’ve paid for your status to update"
 
         val vehicle = makeVehicle(
             taxStatus = TaxStatus.UNTAXED

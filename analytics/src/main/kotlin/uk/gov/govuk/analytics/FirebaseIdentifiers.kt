@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 const val FIREBASE_USER_PSEUDO_ID = "fb_user_pseudo_id" // appInstanceId
-const val FIREBASE_SESSION_ID = "fb_session_id" //sessionId
+const val FIREBASE_SESSION_ID = "fb_session_id" // sessionId
 
 /**
  * Firebase resolves the appInstanceId and sessionId asynchronously. Plus the
@@ -14,9 +14,7 @@ const val FIREBASE_SESSION_ID = "fb_session_id" //sessionId
  * that the caller always has an available, best-effort value.
  */
 @Singleton
-class FirebaseIdentifiers @Inject constructor(
-    private val firebaseAnalytics: FirebaseAnalytics
-) {
+class FirebaseIdentifiers @Inject constructor(private val firebaseAnalytics: FirebaseAnalytics) {
     @Volatile
     var userPseudoId: String? = null
         private set

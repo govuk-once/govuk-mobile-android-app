@@ -2,6 +2,4 @@ package uk.gov.govuk.data.user.model
 
 import com.google.gson.annotations.SerializedName
 
-data class UpdateNotificationsRequest(
-    @SerializedName("consentStatus") val consentStatus: ConsentStatus
-)
+data class UpdateNotificationsRequest(@SerializedName("consentStatus") val consentStatus: ConsentStatus)

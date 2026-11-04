@@ -11,19 +11,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import uk.gov.govuk.design.markdown.model.InlineContent
 
-data class ContentSegment(
-    val text: AnnotatedString,
-    val linkUrl: String? = null
-)
+data class ContentSegment(val text: AnnotatedString, val linkUrl: String? = null)
 
-fun hasLinks(content: List<InlineContent>): Boolean {
-    return content.any { inline ->
-        when (inline) {
-            is InlineContent.Link -> true
-            is InlineContent.Emphasis -> hasLinks(inline.content)
-            is InlineContent.StrongEmphasis -> hasLinks(inline.content)
-            else -> false
-        }
+fun hasLinks(content: List<InlineContent>): Boolean = content.any { inline ->
+    when (inline) {
+        is InlineContent.Link -> true
+        is InlineContent.Emphasis -> hasLinks(inline.content)
+        is InlineContent.StrongEmphasis -> hasLinks(inline.content)
+        else -> false
     }
 }
 
@@ -95,11 +90,7 @@ fun appendInlineContent(
     }
 }
 
-fun splitIntoSegments(
-    content: List<InlineContent>,
-    linkColor: Color,
-    codeBackground: Color
-): List<ContentSegment> {
+fun splitIntoSegments(content: List<InlineContent>, linkColor: Color, codeBackground: Color): List<ContentSegment> {
     val segments = mutableListOf<ContentSegment>()
     val currentText = StringBuilder()
     val currentStyles = mutableListOf<Pair<IntRange, SpanStyle>>()

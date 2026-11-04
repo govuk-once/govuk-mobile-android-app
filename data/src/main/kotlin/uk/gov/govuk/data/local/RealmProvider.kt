@@ -6,9 +6,7 @@ import io.realm.kotlin.migration.AutomaticSchemaMigration
 import io.realm.kotlin.types.TypedRealmObject
 import kotlin.reflect.KClass
 
-abstract class RealmProvider(
-    private val encryptionHelper: RealmEncryptionHelper
-) {
+abstract class RealmProvider(private val encryptionHelper: RealmEncryptionHelper) {
 
     private lateinit var realm: Realm
 

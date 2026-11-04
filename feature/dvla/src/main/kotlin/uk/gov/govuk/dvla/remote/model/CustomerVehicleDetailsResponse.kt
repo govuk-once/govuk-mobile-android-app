@@ -6,9 +6,7 @@ import uk.gov.govuk.dvla.remote.model.common.MotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus
 import uk.gov.govuk.dvla.remote.model.common.VehicleColour
 
-data class CustomerVehicleDetailsResponse(
-    @SerializedName("customerVehicleDetails") val customerVehicleDetails: CustomerVehicleDetails
-)
+data class CustomerVehicleDetailsResponse(@SerializedName("customerVehicleDetails") val customerVehicleDetails: CustomerVehicleDetails)
 
 data class CustomerVehicleDetails(
     @SerializedName("vehicleId") val vehicleId: Int,
