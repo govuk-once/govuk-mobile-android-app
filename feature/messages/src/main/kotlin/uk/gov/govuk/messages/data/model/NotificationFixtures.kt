@@ -34,7 +34,11 @@ class NotificationFixtures {
                             metadata = metadata
                         ),
                         Notification(
-                            "3", "Test 3", "Body 3", "READ", referenceDate.minusDays(2).format(
+                            "3",
+                            "Test 3",
+                            "Body 3",
+                            "READ",
+                            referenceDate.minusDays(2).format(
                                 DateTimeFormatter.ISO_DATE_TIME
                             ),
                             metadata = metadata
@@ -80,7 +84,24 @@ class NotificationFixtures {
                                 DateTimeFormatter.ISO_DATE_TIME
                             ),
                             messageTitle = "Alternate message title 2",
-                            messageBody = "Alternate message body 2 Purr as loud as possible, be the most annoying cat that you can, and, knock everything off the table grass smells good and proudly present butt to human but attack curtains, or dream about hunting birds. Going to catch the red dot today going to catch the red dot today sleep on dog bed, force dog to sleep on floor. Poop on couch. Pet me pet me pet me pet me, bite, scratch, why are you petting me miaow then turn around and show you my bum so walk on a keyboard and kitty kitty pussy cat doll munch on tasty moths. Furball roll roll roll meow all night, get video posted to internet for chasing red dot yet one of these days i'm going to get that red dot, just you wait and see ooh, are those your \$250 dollar sandals? lemme use that as my litter box. Eat and than sleep on your face the dog smells bad rub my belly hiss eat the fat cats food. Make plans to dominate world and then take a nap bury the poop bury it deep or pretend you want to go out but then don't. Steal mom's crouton while she is in the bathroom destroy dog. Caticus cuteicus annoy the old grumpy cat, start a fight and then retreat to wash when i lose. Run outside as soon as door open. Check cat door for ambush 10 times before coming in meow and walk away and i like cats because they are fat and fluffy and behind the couch, and swat turds around the house for have a lot of grump in yourself because you can't forget to be grumpy and not be like king grumpy cat where is my slave? I'm getting hungry. There's a forty year old lady there let us feast eats owners hair then claws head, give me some of your food give me some of your food give me some of your food meh, i don't want it. I shredded your linens for you.",
+                            messageBody = "Alternate message body 2 Purr as loud as possible, be the most annoying cat that you can, and," +
+                                " knock everything off the table grass smells good and proudly present butt to human but attack" +
+                                " curtains, or dream about hunting birds. Going to catch the red dot today going to catch the red dot" +
+                                " today sleep on dog bed, force dog to sleep on floor. Poop on couch. Pet me pet me pet me pet me," +
+                                " bite, scratch, why are you petting me miaow then turn around and show you my bum so walk on a" +
+                                " keyboard and kitty kitty pussy cat doll munch on tasty moths. Furball roll roll roll meow all night," +
+                                " get video posted to internet for chasing red dot yet one of these days i'm going to get that red dot," +
+                                " just you wait and see ooh, are those your \$250 dollar sandals? lemme use that as my litter box." +
+                                " Eat and than sleep on your face the dog smells bad rub my belly hiss eat the fat cats food. Make" +
+                                " plans to dominate world and then take a nap bury the poop bury it deep or pretend you want to go" +
+                                " out but then don't. Steal mom's crouton while she is in the bathroom destroy dog. Caticus cuteicus" +
+                                " annoy the old grumpy cat, start a fight and then retreat to wash when i lose. Run outside as soon" +
+                                " as door open. Check cat door for ambush 10 times before coming in meow and walk away and i like" +
+                                " cats because they are fat and fluffy and behind the couch, and swat turds around the house for" +
+                                " have a lot of grump in yourself because you can't forget to be grumpy and not be like king" +
+                                " grumpy cat where is my slave? I'm getting hungry. There's a forty year old lady there let us" +
+                                " feast eats owners hair then claws head, give me some of your food give me some of your food" +
+                                " give me some of your food meh, i don't want it. I shredded your linens for you.",
                             metadata = metadata
                         )
                     ),

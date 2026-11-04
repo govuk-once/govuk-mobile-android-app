@@ -27,7 +27,7 @@ internal fun SearchError(
     error: SearchUiState.Error,
     onRetry: (String) -> Unit,
     onGoToGovUkClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -58,11 +58,7 @@ internal fun SearchError(
 }
 
 @Composable
-private fun NoResults(
-    searchTerm: String,
-    focusRequester: FocusRequester,
-    modifier: Modifier = Modifier
-) {
+private fun NoResults(searchTerm: String, focusRequester: FocusRequester, modifier: Modifier = Modifier) {
     Row(
         modifier.padding(
             GovUkTheme.spacing.medium,
@@ -74,7 +70,7 @@ private fun NoResults(
         horizontalArrangement = Arrangement.Center
     ) {
         BodyRegularLabel(
-            text = "${stringResource(R.string.search_no_results)} '${searchTerm}'",
+            text = "${stringResource(R.string.search_no_results)} '$searchTerm'",
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .focusRequester(focusRequester)

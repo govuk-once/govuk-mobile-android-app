@@ -55,11 +55,7 @@ private fun ErrorScreenNoRetry(
 }
 
 @Composable
-private fun ErrorScreenWithRetry(
-    onPageView: (String, String, String) -> Unit,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun ErrorScreenWithRetry(onPageView: (String, String, String) -> Unit, onRetry: () -> Unit, modifier: Modifier = Modifier) {
     RunOnceLaunchedEffect {
         onPageView(
             Analytics.CHAT_ERROR_SCREEN_CLASS,

@@ -31,7 +31,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import uk.gov.govuk.messages.R
 import uk.gov.govuk.design.markdown.MarkdownParser
 import uk.gov.govuk.design.markdown.appendInlineContent
 import uk.gov.govuk.design.markdown.collectLinks
@@ -40,13 +39,10 @@ import uk.gov.govuk.design.markdown.model.InlineContent
 import uk.gov.govuk.design.markdown.model.MarkdownElement
 import uk.gov.govuk.design.markdown.splitIntoSegments
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.messages.R
 
 @Composable
-internal fun Markdown(
-    text: String,
-    onLinkClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun Markdown(text: String, onLinkClick: (String) -> Unit, modifier: Modifier = Modifier) {
     val parser = remember { MarkdownParser() }
     val elements = remember(text) { parser.parse(text) }
     val linkAccessibilityLabel = stringResource(R.string.notification_markdown_link_opens_in_browser)
@@ -66,11 +62,7 @@ internal fun Markdown(
 }
 
 @Composable
-private fun MarkdownElementItem(
-    element: MarkdownElement,
-    onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
-) {
+private fun MarkdownElementItem(element: MarkdownElement, onLinkClick: (String) -> Unit, linkAccessibilityLabel: String) {
     when (element) {
         is MarkdownElement.Heading -> HeadingItem(element, onLinkClick, linkAccessibilityLabel)
         is MarkdownElement.Paragraph -> ParagraphItem(element, onLinkClick, linkAccessibilityLabel)
@@ -82,23 +74,17 @@ private fun MarkdownElementItem(
 }
 
 @Composable
-private fun headingStyle(level: Int): TextStyle {
-    return when (level) {
-        1 -> GovUkTheme.typography.titleLargeBold
-        2 -> GovUkTheme.typography.title1Bold
-        3 -> GovUkTheme.typography.title2Bold
-        4 -> GovUkTheme.typography.title3Bold
-        5 -> GovUkTheme.typography.subheadlineBold
-        else -> GovUkTheme.typography.captionBold
-    }
+private fun headingStyle(level: Int): TextStyle = when (level) {
+    1 -> GovUkTheme.typography.titleLargeBold
+    2 -> GovUkTheme.typography.title1Bold
+    3 -> GovUkTheme.typography.title2Bold
+    4 -> GovUkTheme.typography.title3Bold
+    5 -> GovUkTheme.typography.subheadlineBold
+    else -> GovUkTheme.typography.captionBold
 }
 
 @Composable
-private fun HeadingItem(
-    heading: MarkdownElement.Heading,
-    onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
-) {
+private fun HeadingItem(heading: MarkdownElement.Heading, onLinkClick: (String) -> Unit, linkAccessibilityLabel: String) {
     SegmentedText(
         content = heading.content,
         style = headingStyle(heading.level),
@@ -115,11 +101,7 @@ private fun HeadingItem(
 }
 
 @Composable
-private fun ParagraphItem(
-    paragraph: MarkdownElement.Paragraph,
-    onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
-) {
+private fun ParagraphItem(paragraph: MarkdownElement.Paragraph, onLinkClick: (String) -> Unit, linkAccessibilityLabel: String) {
     SegmentedText(
         content = paragraph.content,
         style = GovUkTheme.typography.bodyRegular,
@@ -149,11 +131,7 @@ private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
 }
 
 @Composable
-private fun BlockQuoteItem(
-    blockQuote: MarkdownElement.BlockQuote,
-    onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
-) {
+private fun BlockQuoteItem(blockQuote: MarkdownElement.BlockQuote, onLinkClick: (String) -> Unit, linkAccessibilityLabel: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -182,11 +160,7 @@ private fun BlockQuoteItem(
 }
 
 @Composable
-private fun ListItemItem(
-    listItem: MarkdownElement.ListItem,
-    onLinkClick: (String) -> Unit,
-    linkAccessibilityLabel: String
-) {
+private fun ListItemItem(listItem: MarkdownElement.ListItem, onLinkClick: (String) -> Unit, linkAccessibilityLabel: String) {
     val indent = ((listItem.depth + 1) * 16).dp
     val bullet = if (listItem.isOrdered) "${listItem.number}." else "\u2022"
 
@@ -226,12 +200,7 @@ private fun ThematicBreakItem() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SegmentedText(
-    content: List<InlineContent>,
-    style: TextStyle,
-    onLinkClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun SegmentedText(content: List<InlineContent>, style: TextStyle, onLinkClick: (String) -> Unit, modifier: Modifier = Modifier) {
     val linkColor = GovUkTheme.colourScheme.textAndIcons.linkPrimary
     val codeBackground = GovUkTheme.colourScheme.surfaces.background
     val links = remember(content) { collectLinks(content) }
