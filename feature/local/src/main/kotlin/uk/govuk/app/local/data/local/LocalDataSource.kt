@@ -2,6 +2,8 @@ package uk.govuk.app.local.data.local
 
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.find
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -9,13 +11,9 @@ import kotlinx.coroutines.flow.map
 import uk.govuk.app.local.data.local.model.StoredLocalAuthority
 import uk.govuk.app.local.data.local.model.StoredLocalAuthorityParent
 import uk.govuk.app.local.domain.model.LocalAuthority
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class LocalDataSource @Inject constructor(
-    private val realmProvider: LocalRealmProvider
-) {
+internal class LocalDataSource @Inject constructor(private val realmProvider: LocalRealmProvider) {
     val localAuthority: Flow<StoredLocalAuthority?> = flow {
         emitAll(
             realmProvider.open()
@@ -28,9 +26,7 @@ internal class LocalDataSource @Inject constructor(
         )
     }
 
-    suspend fun insertOrReplace(
-        localAuthority: LocalAuthority
-    ) {
+    suspend fun insertOrReplace(localAuthority: LocalAuthority) {
         realmProvider.open().write {
             query<StoredLocalAuthority>().find {
                 delete(it)

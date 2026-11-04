@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -19,7 +20,6 @@ import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
-import java.time.LocalDate
 
 class CheckVehicleDetailsMapperTest {
 

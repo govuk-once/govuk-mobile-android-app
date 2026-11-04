@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla.remote
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import java.net.UnknownHostException
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -17,7 +18,6 @@ import uk.gov.govuk.dvla.domain.LicenceDetailsResult.NotAvailableForEnquiry
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult.NotFound
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult.Success
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
-import java.net.UnknownHostException
 
 class ApiCallKtTest {
     private val apiCall = mockk<suspend () -> Response<LicenceResponse>>(relaxed = true)

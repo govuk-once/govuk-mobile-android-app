@@ -32,8 +32,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -46,7 +46,7 @@ internal fun LocalAddressSelectRoute(
     onBack: () -> Unit,
     onCancel: () -> Unit,
     onLocalAuthoritySelected: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: LocalSelectViewModel = hiltViewModel()
 
@@ -126,11 +126,7 @@ private fun LocalAddressSelectScreen(
 }
 
 @Composable
-private fun RadioButtonGroup(
-    radioOptions: List<Address>,
-    onSlugChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun RadioButtonGroup(radioOptions: List<Address>, onSlugChange: (String) -> Unit, modifier: Modifier = Modifier) {
     val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf("") }
 
     Column(modifier.selectableGroup()) {
@@ -144,10 +140,11 @@ private fun RadioButtonGroup(
                         selected = (address.address == selectedOption),
                         onClick = {
                             onSlugChange(address.slug)
-                            onOptionSelected(address.address) },
+                            onOptionSelected(address.address)
+                        },
                         role = Role.RadioButton
                     ),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = (address.address == selectedOption),
@@ -174,7 +171,6 @@ private fun RadioButtonGroup(
     }
 }
 
-
 @Composable
 private fun RadioDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
@@ -185,11 +181,7 @@ private fun RadioDivider(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun BottomNavBar(
-    selectedSlug: String,
-    onSlugSelect: (String, String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun BottomNavBar(selectedSlug: String, onSlugSelect: (String, String) -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
         val buttonText = stringResource(R.string.local_select_address_confirm)
 
@@ -211,7 +203,7 @@ internal fun LocalAddressSelectScreenPreview() {
             onBack = {},
             onPageView = {},
             onCancel = {},
-            onSlugSelect = { _, _ ->},
+            onSlugSelect = { _, _ -> },
             addresses = listOf(
                 Address(
                     address = "1 Dorset Street, BH22 8UB",

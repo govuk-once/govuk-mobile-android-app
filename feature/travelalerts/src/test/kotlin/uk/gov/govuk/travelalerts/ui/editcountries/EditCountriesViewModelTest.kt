@@ -151,7 +151,7 @@ class EditCountriesViewModelTest {
     fun `Given page view, when country slug does not match any group, then country is filtered out`() = runTest {
         val groupsWithMismatchedSlug = listOf(
             TravelAlertsFixtures.mockGroups[0], // france
-            TravelAlertsFixtures.mockGroups[1], // germany
+            TravelAlertsFixtures.mockGroups[1] // germany
             // spain group not included
         )
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(groupsWithMismatchedSlug)
@@ -403,8 +403,8 @@ class EditCountriesViewModelTest {
     fun `Given toggle notifications succeeds when enabling, then groups subgroup for country is updated to instant`() = runTest {
         val groupsWithNotificationsOff = listOf(
             TravelAlertsFixtures.mockGroups[0].copy(subgroup = Subgroup.NONE), // france - notifications off
-            TravelAlertsFixtures.mockGroups[1],                           // germany - notifications on
-            TravelAlertsFixtures.mockGroups[2]                            // spain - notifications on
+            TravelAlertsFixtures.mockGroups[1], // germany - notifications on
+            TravelAlertsFixtures.mockGroups[2] // spain - notifications on
         )
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(groupsWithNotificationsOff)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
@@ -499,7 +499,7 @@ class EditCountriesViewModelTest {
     fun `Given onOptInResult for newly followed country with notifications enabled, then country appears in list`() = runTest {
         val initialGroups = listOf(
             TravelAlertsFixtures.mockGroups[0], // france
-            TravelAlertsFixtures.mockGroups[1]  // germany
+            TravelAlertsFixtures.mockGroups[1] // germany
         )
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(initialGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
@@ -518,26 +518,27 @@ class EditCountriesViewModelTest {
     }
 
     @Test
-    fun `Given onOptInResult for newly followed country with notifications disabled, then country appears in list with NONE subgroup`() = runTest {
-        val initialGroups = listOf(
-            TravelAlertsFixtures.mockGroups[0], // france
-            TravelAlertsFixtures.mockGroups[1]  // germany
-        )
-        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(initialGroups)
-        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
-        viewModel.onPageView()
+    fun `Given onOptInResult for newly followed country with notifications disabled, then country appears in list with NONE subgroup`() =
+        runTest {
+            val initialGroups = listOf(
+                TravelAlertsFixtures.mockGroups[0], // france
+                TravelAlertsFixtures.mockGroups[1] // germany
+            )
+            coEvery { travelAlertsRepo.getGroups() } returns Result.Success(initialGroups)
+            coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+            viewModel.onPageView()
 
-        // Simulate repo cache updated by followCountry() before returning to this screen
-        val updatedGroups = initialGroups + Group(namespace = "travel", group = "spain", subgroup = Subgroup.NONE)
-        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(updatedGroups)
-        viewModel.onOptInResult("spain", error = false, notificationsEnabled = false)
+            // Simulate repo cache updated by followCountry() before returning to this screen
+            val updatedGroups = initialGroups + Group(namespace = "travel", group = "spain", subgroup = Subgroup.NONE)
+            coEvery { travelAlertsRepo.getGroups() } returns Result.Success(updatedGroups)
+            viewModel.onOptInResult("spain", error = false, notificationsEnabled = false)
 
-        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
-        assertEquals(listOf("France", "Germany", "Spain"), state.countries.map { it.name })
-        assertEquals(Subgroup.NONE, state.groups.find { it.group == "spain" }?.subgroup)
-        // selectedSlug must be null for new follows so the options bottom sheet does not pop open
-        assertEquals(null, state.selectedSlug)
-    }
+            val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+            assertEquals(listOf("France", "Germany", "Spain"), state.countries.map { it.name })
+            assertEquals(Subgroup.NONE, state.groups.find { it.group == "spain" }?.subgroup)
+            // selectedSlug must be null for new follows so the options bottom sheet does not pop open
+            assertEquals(null, state.selectedSlug)
+        }
 
     @Test
     fun `Given onOptInResult with error, then toggleError is true`() = runTest {
