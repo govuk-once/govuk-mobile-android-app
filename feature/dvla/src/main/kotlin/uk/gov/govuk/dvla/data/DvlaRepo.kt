@@ -14,6 +14,7 @@ import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.di.CoroutineScopeIo
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.VehicleEnquiryDetails
@@ -34,6 +35,7 @@ class DvlaRepo @Inject constructor(
     private val identityRepo: IdentityRepo
 ) {
     private var lastVehicleEnquiry: Pair<String, VehicleEnquiryDetails>? = null
+    private var lastLicenceDetails: LicenceDetails? = null
 
     val linkState: Flow<ServiceLinkStatus> = identityRepo.linkStatusOf(LinkedService.DVLA)
 
@@ -48,6 +50,7 @@ class DvlaRepo @Inject constructor(
 
     suspend fun clear() {
         lastVehicleEnquiry = null
+        lastLicenceDetails = null
         dvlaDataStore.clear()
     }
 
@@ -82,6 +85,15 @@ class DvlaRepo @Inject constructor(
 
     internal suspend fun getLicenceDetails(): LicenceDetailsResult =
         safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
+            .also { result ->
+                lastLicenceDetails = when (result) {
+                    is LicenceDetailsResult.Success -> result.details
+                    else -> null
+                }
+            }
+
+    /** Licence from the most recent successful [getLicenceDetails] */
+    internal fun getCachedLicenceDetails(): LicenceDetails? = lastLicenceDetails
 
     internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> =
         safeAuthApiCall({ api.getCustomerVehicles() }, authRepo)
@@ -111,6 +123,6 @@ class DvlaRepo @Inject constructor(
             }
 
     /** Details from the most recent successful [lookupVehicleByRegistration]  */
-    internal fun findVehicleEnquiryDetails(reg: String): VehicleEnquiryDetails? =
+    internal fun getCachedVehicleEnquiryDetails(reg: String): VehicleEnquiryDetails? =
         lastVehicleEnquiry?.takeIf { it.first == reg }?.second
 }
