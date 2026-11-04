@@ -43,11 +43,7 @@ class FirebaseAnalyticsClient @Inject constructor(
         firebaseIdentifiers.refresh()
     }
 
-    fun logEcommerceEvent(
-        event: String,
-        ecommerceEvent: EcommerceEvent,
-        selectedItemIndex: Int? = null
-    ) {
+    fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
         val bundle = Bundle()
 
         identifierParameters().forEach { (key, value) ->

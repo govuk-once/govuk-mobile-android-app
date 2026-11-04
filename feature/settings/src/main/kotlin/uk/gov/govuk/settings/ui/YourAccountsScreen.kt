@@ -135,11 +135,7 @@ private fun YourAccountsScreen(
 }
 
 @Composable
-private fun AccountsContainer(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
+private fun AccountsContainer(onBack: () -> Unit, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -245,10 +241,7 @@ private fun RemoveAccountDialog(
 }
 
 @Composable
-internal fun RemoveAccountErrorScreen(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun RemoveAccountErrorScreen(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     ErrorPage(
         headerText = stringResource(R.string.remove_account_error_page_header),
         subText = listOf(stringResource(R.string.remove_account_error_page_sub_text)),

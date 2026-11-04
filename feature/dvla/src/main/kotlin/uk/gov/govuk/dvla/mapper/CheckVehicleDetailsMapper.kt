@@ -50,10 +50,7 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun buildMenuItems(
-        vehicleSummary: VehicleSummary,
-        dvlaUrls: DvlaUrls?
-    ): List<OverflowMenuItem> {
+    private fun buildMenuItems(vehicleSummary: VehicleSummary, dvlaUrls: DvlaUrls?): List<OverflowMenuItem> {
         dvlaUrls ?: return emptyList()
         return buildList {
             add(

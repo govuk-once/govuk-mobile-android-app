@@ -14,9 +14,7 @@ import kotlinx.coroutines.flow.map
 import uk.gov.govuk.topics.TopicsCategory
 
 @Singleton
-internal class TopicsDataStore @Inject constructor(
-    @param:Named("topics_prefs") private val dataStore: DataStore<Preferences>
-) {
+internal class TopicsDataStore @Inject constructor(@param:Named("topics_prefs") private val dataStore: DataStore<Preferences>) {
 
     companion object {
         internal const val TOPICS_CUSTOMISED = "topics_customised"
