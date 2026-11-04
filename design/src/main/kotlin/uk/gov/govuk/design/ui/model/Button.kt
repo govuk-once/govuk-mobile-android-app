@@ -10,8 +10,4 @@ data class Button(
     val isExternal: Boolean = false
 )
 
-data class ButtonColours(
-    val containerActive: Color,
-    val containerInactive: Color,
-    val containerFocused: Color
-)
+data class ButtonColours(val containerActive: Color, val containerInactive: Color, val containerFocused: Color)

@@ -58,11 +58,7 @@ internal fun SearchError(
 }
 
 @Composable
-private fun NoResults(
-    searchTerm: String,
-    focusRequester: FocusRequester,
-    modifier: Modifier = Modifier
-) {
+private fun NoResults(searchTerm: String, focusRequester: FocusRequester, modifier: Modifier = Modifier) {
     Row(
         modifier.padding(
             GovUkTheme.spacing.medium,

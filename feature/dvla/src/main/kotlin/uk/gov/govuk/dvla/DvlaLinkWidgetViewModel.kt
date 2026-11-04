@@ -11,10 +11,8 @@ import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.dvla.data.DvlaRepo
 
 @HiltViewModel
-internal class DvlaLinkWidgetViewModel @Inject constructor(
-    private val dvlaRepo: DvlaRepo,
-    private val analyticsClient: AnalyticsClient
-) : ViewModel() {
+internal class DvlaLinkWidgetViewModel @Inject constructor(private val dvlaRepo: DvlaRepo, private val analyticsClient: AnalyticsClient) :
+    ViewModel() {
 
     companion object {
         private const val SECTION = "account link"

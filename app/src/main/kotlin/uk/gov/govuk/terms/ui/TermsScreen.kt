@@ -154,11 +154,7 @@ private fun TermsScreen(
 }
 
 @Composable
-private fun DenialDialog(
-    onDismiss: () -> Unit,
-    onSignOut: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun DenialDialog(onDismiss: () -> Unit, onSignOut: () -> Unit, modifier: Modifier = Modifier) {
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

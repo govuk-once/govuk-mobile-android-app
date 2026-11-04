@@ -107,12 +107,7 @@ private fun CountdownRow(
 }
 
 @Composable
-private fun InfoRow(
-    statusUiModel: StatusUiModel.InfoRow,
-    modifier: Modifier = Modifier,
-    isLast: Boolean,
-    background: Color
-) {
+private fun InfoRow(statusUiModel: StatusUiModel.InfoRow, modifier: Modifier = Modifier, isLast: Boolean, background: Color) {
     InfoStatusItem(
         title = statusUiModel.infoRowUi.title,
         modifier = modifier,
@@ -147,10 +142,7 @@ private fun LinkRow(
 }
 
 @Composable
-private fun Style(
-    launchBrowser: (text: String, url: UrlModel) -> Unit,
-    style: StatusStyle
-) {
+private fun Style(launchBrowser: (text: String, url: UrlModel) -> Unit, style: StatusStyle) {
     when (val style = style) {
         is StatusStyle.ActionButton ->
             StatusButton(

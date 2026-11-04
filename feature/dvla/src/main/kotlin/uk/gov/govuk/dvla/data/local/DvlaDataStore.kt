@@ -11,9 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import uk.gov.govuk.dvla.ui.model.DrivingView
 
 @Singleton
-class DvlaDataStore @Inject constructor(
-    @param:Named("dvla_prefs") private val dataStore: DataStore<Preferences>
-) {
+class DvlaDataStore @Inject constructor(@param:Named("dvla_prefs") private val dataStore: DataStore<Preferences>) {
     internal companion object {
         const val SELECTED_DRIVING_VIEW = "selected_driving_view"
     }

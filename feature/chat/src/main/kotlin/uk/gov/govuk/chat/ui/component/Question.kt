@@ -17,10 +17,7 @@ import uk.gov.govuk.design.ui.extension.talkBackText
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun Question(
-    question: String,
-    modifier: Modifier = Modifier
-) {
+internal fun Question(question: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
