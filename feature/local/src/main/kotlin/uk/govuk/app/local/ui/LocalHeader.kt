@@ -12,11 +12,7 @@ import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.govuk.app.local.R
 
 @Composable
-internal fun LocalFullScreenHeader(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-    onCancel: (() -> Unit)? = null
-) {
+internal fun LocalFullScreenHeader(onBack: () -> Unit, modifier: Modifier = Modifier, onCancel: (() -> Unit)? = null) {
     val style = onCancel?.let {
         HeaderActionStyle.TextActionButton(
             title = stringResource(R.string.local_cancel_button),

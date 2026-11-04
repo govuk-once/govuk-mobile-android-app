@@ -13,10 +13,7 @@ import uk.gov.govuk.settings.R
 import uk.gov.govuk.settings.SignOutViewModel
 
 @Composable
-internal fun SignOutErrorRoute(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun SignOutErrorRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: SignOutViewModel = hiltViewModel()
 
     SignOutErrorScreen(
@@ -30,11 +27,7 @@ internal fun SignOutErrorRoute(
 }
 
 @Composable
-private fun SignOutErrorScreen(
-    onPageView: () -> Unit,
-    onBackClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun SignOutErrorScreen(onPageView: () -> Unit, onBackClick: (String) -> Unit, modifier: Modifier = Modifier) {
     RunOnceLaunchedEffect {
         onPageView()
     }

@@ -12,10 +12,7 @@ import uk.gov.govuk.topics.data.TopicsRepo
 import uk.gov.govuk.topics.extension.toTopicItemUi
 import uk.gov.govuk.topics.ui.model.TopicItemUi
 
-internal data class TopicSelectionUiState(
-    val topics: List<TopicItemUi>,
-    val isDoneEnabled: Boolean
-)
+internal data class TopicSelectionUiState(val topics: List<TopicItemUi>, val isDoneEnabled: Boolean)
 
 @HiltViewModel
 internal class TopicSelectionViewModel @Inject constructor(

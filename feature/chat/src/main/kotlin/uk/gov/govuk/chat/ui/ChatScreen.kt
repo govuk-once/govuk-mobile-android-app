@@ -582,11 +582,7 @@ private fun AnimatedFeedback(
 }
 
 @Composable
-private fun FeedbackIcons(
-    onPositiveIconClick: () -> Unit,
-    onNegativeIconClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun FeedbackIcons(onPositiveIconClick: () -> Unit, onNegativeIconClick: () -> Unit, modifier: Modifier = Modifier) {
     val iconPrefixText = stringResource(R.string.chat_feedback_icon_prefix_text)
 
     Row(
@@ -662,10 +658,7 @@ private fun FeedbackLink(
 }
 
 @Composable
-private fun FeedbackThankYou(
-    focusRequester: FocusRequester,
-    modifier: Modifier = Modifier
-) {
+private fun FeedbackThankYou(focusRequester: FocusRequester, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier

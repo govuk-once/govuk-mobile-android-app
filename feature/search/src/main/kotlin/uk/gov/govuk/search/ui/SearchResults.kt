@@ -94,11 +94,7 @@ internal fun SearchResults(
 }
 
 @Composable
-private fun Header(
-    focusRequester: FocusRequester,
-    resultCountAltText: String,
-    modifier: Modifier = Modifier
-) {
+private fun Header(focusRequester: FocusRequester, resultCountAltText: String, modifier: Modifier = Modifier) {
     val heading = stringResource(R.string.search_results_heading)
     val combinedDescription = "$resultCountAltText. $heading"
 

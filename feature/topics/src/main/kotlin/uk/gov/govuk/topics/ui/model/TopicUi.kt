@@ -14,18 +14,9 @@ internal data class TopicUi(
     val subtopics: List<Subtopic>,
     val subtopicsSection: Section
 ) {
-    data class Section(
-        @StringRes val title: Int,
-        @DrawableRes val icon: Int
-    )
+    data class Section(@StringRes val title: Int, @DrawableRes val icon: Int)
 
-    data class Subtopic(
-        val ref: String,
-        val title: String
-    )
+    data class Subtopic(val ref: String, val title: String)
 
-    data class TopicContent(
-        val url: String,
-        val title: String
-    )
+    data class TopicContent(val url: String, val title: String)
 }

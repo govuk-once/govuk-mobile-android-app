@@ -493,11 +493,7 @@ private fun ErrorScreen(
 }
 
 @Composable
-private fun TopicLoadingScreen(
-    topicReference: String,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun TopicLoadingScreen(topicReference: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
     val topicName = topicReference.toTopicName(LocalContext.current)
     val altText = stringResource(R.string.loading_topic_pages, topicName)
 

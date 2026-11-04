@@ -139,11 +139,7 @@ class NotificationsRationaleViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalPermissionsApi::class)
-    fun onAgreeToContinue(
-        permissionStatus: PermissionStatus,
-        text: String,
-        androidVersion: Int = Build.VERSION.SDK_INT
-    ) {
+    fun onAgreeToContinue(permissionStatus: PermissionStatus, text: String, androidVersion: Int = Build.VERSION.SDK_INT) {
         analyticsClient.buttonClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             val path = permissionResolver.resolve(permissionStatus, androidVersion)

@@ -203,10 +203,7 @@ private fun CheckVehicleSheetContent(
 }
 
 @Composable
-private fun CheckVehicleSheetLabel(
-    state: CheckVehicleSheetState,
-    modifier: Modifier = Modifier
-) {
+private fun CheckVehicleSheetLabel(state: CheckVehicleSheetState, modifier: Modifier = Modifier) {
     val isError = state is CheckVehicleSheetState.Error
 
     val text = when (state) {

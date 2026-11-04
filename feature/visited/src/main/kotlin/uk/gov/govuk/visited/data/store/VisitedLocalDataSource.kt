@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.map
 import uk.gov.govuk.visited.data.model.VisitedItem
 
 @Singleton
-internal class VisitedLocalDataSource @Inject constructor(
-    private val realmProvider: VisitedRealmProvider
-) {
+internal class VisitedLocalDataSource @Inject constructor(private val realmProvider: VisitedRealmProvider) {
 
     val visitedItems: Flow<List<VisitedItem>> = flow {
         emitAll(
