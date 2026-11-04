@@ -71,11 +71,7 @@ internal class SettingsRouteActions(
 )
 
 @Composable
-internal fun SettingsRoute(
-    appVersion: String,
-    actions: SettingsRouteActions,
-    modifier: Modifier = Modifier
-) {
+internal fun SettingsRoute(appVersion: String, actions: SettingsRouteActions, modifier: Modifier = Modifier) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -157,12 +153,7 @@ private class SettingsActions(
 )
 
 @Composable
-private fun SettingsScreen(
-    uiState: SettingsUiState,
-    appVersion: String,
-    actions: SettingsActions,
-    modifier: Modifier = Modifier
-) {
+private fun SettingsScreen(uiState: SettingsUiState, appVersion: String, actions: SettingsActions, modifier: Modifier = Modifier) {
     RunOnceLaunchedEffect {
         actions.onPageView()
     }
@@ -272,11 +263,7 @@ private fun mapMessageToAccessibilityText(
 }
 
 @Composable
-private fun ManageLogin(
-    userEmail: String,
-    onAccountClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun ManageLogin(userEmail: String, onAccountClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
@@ -320,11 +307,7 @@ private fun ManageLogin(
 }
 
 @Composable
-private fun YourAccounts(
-    title: String,
-    onYourAccountsClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun YourAccounts(title: String, onYourAccountsClick: () -> Unit, modifier: Modifier = Modifier) {
     InternalLinkListItem(
         title = AccessibleString(displayText = title),
         onClick = onYourAccountsClick,
@@ -335,11 +318,7 @@ private fun YourAccounts(
 }
 
 @Composable
-private fun NotificationsAndPrivacy(
-    uiState: SettingsUiState,
-    actions: SettingsActions,
-    modifier: Modifier = Modifier
-) {
+private fun NotificationsAndPrivacy(uiState: SettingsUiState, actions: SettingsActions, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
@@ -383,10 +362,7 @@ private fun NotificationsAndPrivacy(
 }
 
 @Composable
-private fun Notifications(
-    onNotificationsClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun Notifications(onNotificationsClick: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     fun getStatus() = if (NotificationManagerCompat.from(context)
             .areNotificationsEnabled()
@@ -416,11 +392,7 @@ private fun Notifications(
 }
 
 @Composable
-private fun AboutTheApp(
-    appVersion: String,
-    onHelpClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun AboutTheApp(appVersion: String, onHelpClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
@@ -454,10 +426,7 @@ private fun AboutTheApp(
 }
 
 @Composable
-private fun PrivacyPolicy(
-    onPrivacyPolicyClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun PrivacyPolicy(onPrivacyPolicyClick: () -> Unit, modifier: Modifier = Modifier) {
     ExternalLinkListItem(
         title = stringResource(R.string.privacy_policy_title),
         onClick = onPrivacyPolicyClick,
@@ -468,10 +437,7 @@ private fun PrivacyPolicy(
 }
 
 @Composable
-private fun AccessibilityStatement(
-    onAccessibilityStatementClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun AccessibilityStatement(onAccessibilityStatementClick: () -> Unit, modifier: Modifier = Modifier) {
     ExternalLinkListItem(
         title = stringResource(R.string.accessibility_title),
         onClick = onAccessibilityStatementClick,
@@ -482,10 +448,7 @@ private fun AccessibilityStatement(
 }
 
 @Composable
-private fun OpenSourceLicenses(
-    onLicenseClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun OpenSourceLicenses(onLicenseClick: () -> Unit, modifier: Modifier = Modifier) {
     InternalLinkListItem(
         title = AccessibleString(displayText = stringResource(R.string.oss_licenses_title)),
         onClick = onLicenseClick,
@@ -496,10 +459,7 @@ private fun OpenSourceLicenses(
 }
 
 @Composable
-private fun TermsAndConditions(
-    onLicenseClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun TermsAndConditions(onLicenseClick: () -> Unit, modifier: Modifier = Modifier) {
     ExternalLinkListItem(
         title = stringResource(R.string.terms_and_conditions_title),
         onClick = onLicenseClick,
@@ -510,10 +470,7 @@ private fun TermsAndConditions(
 }
 
 @Composable
-private fun SignOut(
-    onSignOutClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun SignOut(onSignOutClick: () -> Unit, modifier: Modifier = Modifier) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 

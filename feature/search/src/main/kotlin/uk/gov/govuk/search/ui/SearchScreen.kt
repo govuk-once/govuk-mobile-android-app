@@ -40,11 +40,7 @@ import uk.gov.govuk.search.ui.component.SearchField
 import uk.gov.govuk.search.ui.component.SearchFieldActions
 
 @Composable
-internal fun SearchRoute(
-    onBack: () -> Unit,
-    launchBrowser: (url: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun SearchRoute(onBack: () -> Unit, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
     val viewModel: SearchViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 

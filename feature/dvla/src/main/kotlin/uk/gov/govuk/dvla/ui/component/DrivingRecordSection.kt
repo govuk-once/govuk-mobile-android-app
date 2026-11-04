@@ -11,11 +11,7 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.UrlModel
 
 @Composable
-internal fun DrivingRecordSection(
-    onLinkClick: (text: String, url: UrlModel) -> Unit,
-    url: String,
-    modifier: Modifier = Modifier
-) {
+internal fun DrivingRecordSection(onLinkClick: (text: String, url: UrlModel) -> Unit, url: String, modifier: Modifier = Modifier) {
     val linkText = stringResource(R.string.driving_record_link_text)
 
     TitledSection(

@@ -94,10 +94,7 @@ fun NavGraphBuilder.settingsGraph(
     }
 }
 
-fun NavGraphBuilder.yourAccountsGraph(
-    navController: NavController,
-    modifier: Modifier = Modifier
-) {
+fun NavGraphBuilder.yourAccountsGraph(navController: NavController, modifier: Modifier = Modifier) {
     composable(YOUR_ACCOUNTS_ROUTE) {
         YourAccountsRoute(
             onBack = { navController.popBackStack() },
@@ -117,11 +114,7 @@ fun NavGraphBuilder.unlinkAccountErrorGraph(
     }
 }
 
-fun NavGraphBuilder.signOutGraph(
-    navController: NavController,
-    onSignOut: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun NavGraphBuilder.signOutGraph(navController: NavController, onSignOut: () -> Unit, modifier: Modifier = Modifier) {
     navigation(
         route = SIGN_OUT_GRAPH_ROUTE,
         startDestination = SIGN_OUT_ROUTE

@@ -18,10 +18,7 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun ForcedUpdateScreen(
-    onUpdateClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun ForcedUpdateScreen(onUpdateClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
             .fillMaxWidth()

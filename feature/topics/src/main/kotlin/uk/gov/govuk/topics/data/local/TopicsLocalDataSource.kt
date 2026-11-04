@@ -23,10 +23,7 @@ internal class TopicsLocalDataSource @Inject constructor(
         emitAll(realmProvider.open().query<LocalTopicItem>().asFlow().map { it.list })
     }
 
-    suspend fun sync(
-        remoteTopics: List<RemoteTopicItem>,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO
-    ) {
+    suspend fun sync(remoteTopics: List<RemoteTopicItem>, dispatcher: CoroutineDispatcher = Dispatchers.IO) {
         withContext(dispatcher) {
             val localTopics = realmProvider.open().query<LocalTopicItem>().find().toList()
             val topicsToDelete =

@@ -26,10 +26,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.settings.R
 
 @Composable
-internal fun OpenSourceLicensesScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun OpenSourceLicensesScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val libraries by rememberLibraries { context ->
         context.loadLibrariesWithDvlaFont()
     }

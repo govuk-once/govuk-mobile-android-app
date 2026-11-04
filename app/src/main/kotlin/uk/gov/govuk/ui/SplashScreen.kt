@@ -31,9 +31,7 @@ import uk.gov.govuk.design.ui.extension.areAnimationsEnabled
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun SplashScreen(
-    onSplashDone: () -> Unit
-) {
+internal fun SplashScreen(onSplashDone: () -> Unit) {
     val altText: String = stringResource(id = uk.gov.govuk.design.R.string.gov_uk_alt_text)
 
     val govukSplashComposition by rememberLottieComposition(
@@ -119,8 +117,6 @@ internal fun SplashScreen(
 }
 
 @Composable
-private fun Int.toDpWithRatio(
-    ratio: Float
-) = with(LocalDensity.current) {
+private fun Int.toDpWithRatio(ratio: Float) = with(LocalDensity.current) {
     (this@toDpWithRatio * ratio).toDp()
 }

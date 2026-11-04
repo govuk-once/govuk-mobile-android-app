@@ -27,11 +27,7 @@ import uk.govuk.app.local.LocalExplainerViewModel
 import uk.govuk.app.local.R
 
 @Composable
-internal fun LocalExplainerRoute(
-    onBack: () -> Unit,
-    onContinue: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun LocalExplainerRoute(onBack: () -> Unit, onContinue: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: LocalExplainerViewModel = hiltViewModel()
 
     LocalExplainerScreen(

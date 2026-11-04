@@ -7,9 +7,7 @@ import uk.gov.govuk.analytics.data.local.AnalyticsDataStore
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 
 @Singleton
-class AnalyticsRepo @Inject constructor(
-    private val dataStore: AnalyticsDataStore
-) {
+class AnalyticsRepo @Inject constructor(private val dataStore: AnalyticsDataStore) {
     internal val analyticsEnabledState: AnalyticsEnabledState
         get() = dataStore.analyticsEnabledState
 

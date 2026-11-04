@@ -27,11 +27,7 @@ import uk.gov.govuk.topics.TopicSelectionViewModel
 import uk.gov.govuk.topics.ui.component.TopicSelectionCard
 
 @Composable
-internal fun TopicSelectionRoute(
-    onDone: () -> Unit,
-    onSkip: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun TopicSelectionRoute(onDone: () -> Unit, onSkip: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: TopicSelectionViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
