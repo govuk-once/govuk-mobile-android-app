@@ -10,12 +10,7 @@ import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun InfoAlert(
-    @StringRes title: Int,
-    @StringRes message: Int,
-    @StringRes buttonText: Int,
-    onDismiss: () -> Unit
-) {
+fun InfoAlert(@StringRes title: Int, @StringRes message: Int, @StringRes buttonText: Int, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

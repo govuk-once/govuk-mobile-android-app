@@ -14,11 +14,7 @@ val visitedDeepLinks = mapOf(
     "/visited" to listOf(VISITED_ROUTE)
 )
 
-fun NavGraphBuilder.visitedGraph(
-    navController: NavHostController,
-    launchBrowser: (url: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun NavGraphBuilder.visitedGraph(navController: NavHostController, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
     navigation(
         route = VISITED_GRAPH_ROUTE,
         startDestination = VISITED_ROUTE

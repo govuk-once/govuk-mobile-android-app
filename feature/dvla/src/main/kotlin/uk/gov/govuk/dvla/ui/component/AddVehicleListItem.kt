@@ -20,28 +20,23 @@ import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
-private data class AddVehicleListItemColours(
-    val background: Color,
-    val text: Color,
-    val icon: Color
-)
+private data class AddVehicleListItemColours(val background: Color, val text: Color, val icon: Color)
 
 @Composable
-private fun resolveAddVehicleListItemColours(isFocused: Boolean): AddVehicleListItemColours {
-    return if (isFocused) {
-        AddVehicleListItemColours(
-            background = GovUkTheme.colourScheme.surfaces.focused,
-            text = GovUkTheme.colourScheme.textAndIcons.focused,
-            icon = GovUkTheme.colourScheme.textAndIcons.focused
-        )
-    } else {
-        AddVehicleListItemColours(
-            background = GovUkTheme.colourScheme.surfaces.list,
-            text = GovUkTheme.colourScheme.textAndIcons.primary,
-            icon = GovUkTheme.colourScheme.textAndIcons.linkPrimary
-        )
-    }
+private fun resolveAddVehicleListItemColours(isFocused: Boolean): AddVehicleListItemColours = if (isFocused) {
+    AddVehicleListItemColours(
+        background = GovUkTheme.colourScheme.surfaces.focused,
+        text = GovUkTheme.colourScheme.textAndIcons.focused,
+        icon = GovUkTheme.colourScheme.textAndIcons.focused
+    )
+} else {
+    AddVehicleListItemColours(
+        background = GovUkTheme.colourScheme.surfaces.list,
+        text = GovUkTheme.colourScheme.textAndIcons.primary,
+        icon = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+    )
 }
+
 @Composable
 fun AddVehicleListItem(
     title: String,

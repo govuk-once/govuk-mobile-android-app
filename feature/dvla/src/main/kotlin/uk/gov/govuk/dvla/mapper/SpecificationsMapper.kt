@@ -1,5 +1,7 @@
 package uk.gov.govuk.dvla.mapper
 
+import java.time.LocalDate
+import javax.inject.Inject
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
@@ -11,12 +13,8 @@ import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.getFormattedEngineCapacity
 import uk.gov.govuk.dvla.util.toMonthYearDisplayFormat
 import uk.gov.govuk.dvla.util.toYearDisplayFormat
-import java.time.LocalDate
-import javax.inject.Inject
 
-internal class SpecificationsMapper @Inject constructor(
-    private val stringProvider: StringProvider
-) {
+internal class SpecificationsMapper @Inject constructor(private val stringProvider: StringProvider) {
     private val unknown: String
         get() = stringProvider.getString(R.string.value_unknown)
 
@@ -57,17 +55,15 @@ internal class SpecificationsMapper @Inject constructor(
         )
     }
 
-    fun createMakeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
-        InternalLinkListItemModel.Info(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
-            info = AccessibleString(displayText = vehicle.summary.make)
-        )
+    fun createMakeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info = InternalLinkListItemModel.Info(
+        title = AccessibleString(displayText = stringProvider.getString(R.string.make_title)),
+        info = AccessibleString(displayText = vehicle.summary.make)
+    )
 
-    fun createModelItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
-        InternalLinkListItemModel.Info(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
-            info = AccessibleString(displayText = vehicle.summary.model ?: unknown)
-        )
+    fun createModelItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info = InternalLinkListItemModel.Info(
+        title = AccessibleString(displayText = stringProvider.getString(R.string.model_title)),
+        info = AccessibleString(displayText = vehicle.summary.model ?: unknown)
+    )
 
     fun createFirstRegisteredItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info {
         val dateOfFirstRegistration =
@@ -88,34 +84,30 @@ internal class SpecificationsMapper @Inject constructor(
         )
     }
 
-    fun createFuelTypeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
-        InternalLinkListItemModel.Info(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.fuel_type_title)),
-            info = AccessibleString(
-                displayText = stringProvider.getString(vehicle.fuelType.getResources().third)
-            )
+    fun createFuelTypeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info = InternalLinkListItemModel.Info(
+        title = AccessibleString(displayText = stringProvider.getString(R.string.fuel_type_title)),
+        info = AccessibleString(
+            displayText = stringProvider.getString(vehicle.fuelType.getResources().third)
         )
+    )
 
-    fun createColourItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
-        InternalLinkListItemModel.Info(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.colour_title)),
-            info = AccessibleString(displayText = vehicle.getVehicleColour(stringProvider))
-        )
+    fun createColourItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info = InternalLinkListItemModel.Info(
+        title = AccessibleString(displayText = stringProvider.getString(R.string.colour_title)),
+        info = AccessibleString(displayText = vehicle.getVehicleColour(stringProvider))
+    )
 
-    fun createEngineSizeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
-        InternalLinkListItemModel.Info(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
-            info = AccessibleString(
-                displayText = vehicle.engineCapacity?.let { getFormattedEngineCapacity(it) }
-                    ?: unknown
-            )
+    fun createEngineSizeItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info = InternalLinkListItemModel.Info(
+        title = AccessibleString(displayText = stringProvider.getString(R.string.engine_size_title)),
+        info = AccessibleString(
+            displayText = vehicle.engineCapacity?.let { getFormattedEngineCapacity(it) }
+                ?: unknown
         )
+    )
 
-    fun createEmissionsItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info =
-        InternalLinkListItemModel.Info(
-            title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
-            info = AccessibleString(
-                displayText = vehicle.exhaustEmissionsCo2?.toString() ?: unknown
-            )
+    fun createEmissionsItem(vehicle: VehicleDetails): InternalLinkListItemModel.Info = InternalLinkListItemModel.Info(
+        title = AccessibleString(displayText = stringProvider.getString(R.string.emissions_title)),
+        info = AccessibleString(
+            displayText = vehicle.exhaustEmissionsCo2?.toString() ?: unknown
         )
+    )
 }

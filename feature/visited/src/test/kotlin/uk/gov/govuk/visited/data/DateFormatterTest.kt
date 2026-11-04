@@ -1,9 +1,9 @@
 package uk.gov.govuk.visited.data
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class DateFormatterTest {
     @Test
