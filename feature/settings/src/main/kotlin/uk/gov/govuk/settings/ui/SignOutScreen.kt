@@ -30,12 +30,7 @@ import uk.gov.govuk.settings.SignOutViewModel
 import uk.gov.govuk.settings.navigation.navigateToErrorScreen
 
 @Composable
-internal fun SignOutRoute(
-    navController: NavController,
-    onBack: () -> Unit,
-    onSignOut: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun SignOutRoute(navController: NavController, onBack: () -> Unit, onSignOut: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: SignOutViewModel = hiltViewModel()
 
     SignOutScreen(
@@ -58,12 +53,7 @@ internal fun SignOutRoute(
 }
 
 @Composable
-private fun SignOutScreen(
-    onPageView: () -> Unit,
-    onBack: () -> Unit,
-    onSignOut: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun SignOutScreen(onPageView: () -> Unit, onBack: () -> Unit, onSignOut: (String) -> Unit, modifier: Modifier = Modifier) {
     RunOnceLaunchedEffect {
         onPageView()
     }

@@ -40,10 +40,7 @@ internal class AllViewModel @Inject constructor(
     )
     val popularPages = _popularPages.asStateFlow()
 
-    fun onPopularPagesView(
-        topicContentItems: List<TopicContent>,
-        title: String
-    ) {
+    fun onPopularPagesView(topicContentItems: List<TopicContent>, title: String) {
         onPageView(
             topicContentItems = topicContentItems,
             title = title,
@@ -52,10 +49,7 @@ internal class AllViewModel @Inject constructor(
         )
     }
 
-    fun onStepByStepPageView(
-        topicContentItems: List<TopicContent>,
-        title: String
-    ) {
+    fun onStepByStepPageView(topicContentItems: List<TopicContent>, title: String) {
         onPageView(
             topicContentItems = topicContentItems,
             title = title,
@@ -64,13 +58,7 @@ internal class AllViewModel @Inject constructor(
         )
     }
 
-    fun onPopularPagesClick(
-        section: String,
-        text: String,
-        url: String,
-        selectedItemIndex: Int,
-        popularPagesCount: Int
-    ) {
+    fun onPopularPagesClick(section: String, text: String, url: String, selectedItemIndex: Int, popularPagesCount: Int) {
         onClick(
             analyticsClient = analyticsClient,
             viewModelScope = viewModelScope,
@@ -83,13 +71,7 @@ internal class AllViewModel @Inject constructor(
         )
     }
 
-    fun onStepByStepClick(
-        section: String,
-        text: String,
-        url: String,
-        selectedItemIndex: Int,
-        stepByStepsCount: Int
-    ) {
+    fun onStepByStepClick(section: String, text: String, url: String, selectedItemIndex: Int, stepByStepsCount: Int) {
         onClick(
             analyticsClient = analyticsClient,
             viewModelScope = viewModelScope,
@@ -102,12 +84,7 @@ internal class AllViewModel @Inject constructor(
         )
     }
 
-    private fun onPageView(
-        topicContentItems: List<TopicContent>,
-        title: String,
-        screenClass: String,
-        screenTitle: String
-    ) {
+    private fun onPageView(topicContentItems: List<TopicContent>, title: String, screenClass: String, screenTitle: String) {
         analyticsClient.screenView(
             screenClass = screenClass,
             screenName = title,
@@ -121,11 +98,7 @@ internal class AllViewModel @Inject constructor(
         )
     }
 
-    private fun sendViewItemListEvent(
-        topicContentItems: List<TopicContent>,
-        title: String,
-        screenTitle: String
-    ) {
+    private fun sendViewItemListEvent(topicContentItems: List<TopicContent>, title: String, screenTitle: String) {
         var topicItems = listOf<EcommerceEvent.Item>()
 
         if (topicContentItems.isNotEmpty()) {

@@ -131,12 +131,7 @@ internal class SearchViewModel @Inject constructor(
         )
     }
 
-    fun onSearchResultClicked(
-        term: String,
-        result: SearchResult,
-        index: Int,
-        count: Int
-    ) {
+    fun onSearchResultClicked(term: String, result: SearchResult, index: Int, count: Int) {
         analyticsClient.searchResultClick(text = result.title, url = result.link)
         analyticsClient.selectItemEvent(
             ecommerceEvent = EcommerceEvent(

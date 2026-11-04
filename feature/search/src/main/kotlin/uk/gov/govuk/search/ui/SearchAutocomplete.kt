@@ -52,12 +52,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.search.R
 
 @Composable
-internal fun SearchAutocomplete(
-    searchTerm: String,
-    suggestions: List<String>,
-    onSearch: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun SearchAutocomplete(searchTerm: String, suggestions: List<String>, onSearch: (String) -> Unit, modifier: Modifier = Modifier) {
     val focusRequester = remember { FocusRequester() }
 
     if (suggestions.isNotEmpty()) {
@@ -179,10 +174,7 @@ private fun highlightSearchTerms(
     return highlightVariants(suggestionWords, mappedVariants, marker, textColor)
 }
 
-private fun mapSuggestionVariants(
-    suggestionWords: List<String>,
-    parsedSuggestions: Array<String>
-): Map<String, ArrayList<String>> {
+private fun mapSuggestionVariants(suggestionWords: List<String>, parsedSuggestions: Array<String>): Map<String, ArrayList<String>> {
     val mappedVariants = emptyMap<String, ArrayList<String>>().toMutableMap()
 
     suggestionWords.forEachIndexed { index, suggestionWord ->
@@ -203,10 +195,7 @@ private fun mapSuggestionVariants(
     return mappedVariants
 }
 
-private fun mergeSuggestionVariants(
-    mappedVariant: Map.Entry<String, ArrayList<String>>,
-    marker: Char
-): Map<String, ArrayList<String>> {
+private fun mergeSuggestionVariants(mappedVariant: Map.Entry<String, ArrayList<String>>, marker: Char): Map<String, ArrayList<String>> {
     var startIndex = mappedVariant.key.length - 1
     var endIndex = 0
 

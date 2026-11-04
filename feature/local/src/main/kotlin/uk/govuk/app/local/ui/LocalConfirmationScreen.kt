@@ -34,12 +34,7 @@ import uk.govuk.app.local.R
 import uk.govuk.app.local.domain.model.LocalAuthority
 
 @Composable
-internal fun LocalConfirmationRoute(
-    onBack: () -> Unit,
-    onCancel: () -> Unit,
-    onDone: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun LocalConfirmationRoute(onBack: () -> Unit, onCancel: () -> Unit, onDone: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: LocalConfirmationViewModel = hiltViewModel()
     val localAuthority = viewModel.localAuthority
 
@@ -111,10 +106,7 @@ private fun LocalConfirmationScreen(
 }
 
 @Composable
-private fun Unitary(
-    localAuthority: LocalAuthority,
-    modifier: Modifier = Modifier
-) {
+private fun Unitary(localAuthority: LocalAuthority, modifier: Modifier = Modifier) {
     Column(modifier) {
         Title1BoldLabel(
             text = stringResource(R.string.local_confirmation_unitary_title, localAuthority.name),
@@ -130,10 +122,7 @@ private fun Unitary(
 }
 
 @Composable
-private fun TwoTier(
-    localAuthority: LocalAuthority,
-    modifier: Modifier = Modifier
-) {
+private fun TwoTier(localAuthority: LocalAuthority, modifier: Modifier = Modifier) {
     Column(modifier) {
         Title1BoldLabel(
             text = stringResource(R.string.local_confirmation_two_tier_title),
@@ -168,10 +157,7 @@ private fun TwoTier(
 }
 
 @Composable
-private fun BulletItem(
-    text: String,
-    modifier: Modifier = Modifier
-) {
+private fun BulletItem(text: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically

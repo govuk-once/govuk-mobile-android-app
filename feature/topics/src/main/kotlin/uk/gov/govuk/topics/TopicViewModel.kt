@@ -81,10 +81,7 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    fun onPageView(
-        topicUi: TopicUi? = null,
-        title: String
-    ) {
+    fun onPageView(topicUi: TopicUi? = null, title: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = title,
@@ -96,14 +93,7 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    fun onContentClick(
-        title: String,
-        section: String,
-        text: String,
-        url: String,
-        selectedItemIndex: Int,
-        totalItemCount: Int
-    ) {
+    fun onContentClick(title: String, section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -125,10 +115,7 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    fun onSeeAllClick(
-        section: String,
-        text: String
-    ) {
+    fun onSeeAllClick(section: String, text: String) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -136,11 +123,7 @@ internal class TopicViewModel @Inject constructor(
         )
     }
 
-    fun onSubtopicClick(
-        text: String,
-        selectedItemIndex: Int,
-        totalItemCount: Int
-    ) {
+    fun onSubtopicClick(text: String, selectedItemIndex: Int, totalItemCount: Int) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -182,10 +165,7 @@ internal class TopicViewModel @Inject constructor(
         )
     }
 
-    private fun sendViewItemListEvent(
-        topicUi: TopicUi,
-        title: String
-    ) {
+    private fun sendViewItemListEvent(topicUi: TopicUi, title: String) {
         val topicItems = listOf(
             topicUi.popularPages to POPULAR_PAGES_TITLE,
             topicUi.stepBySteps to STEP_BY_STEPS_TITLE,

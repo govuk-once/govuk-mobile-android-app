@@ -8,14 +8,8 @@ import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.util.StringProvider
 
-internal class VehicleMenuItemsMapper @Inject constructor(
-    private val stringProvider: StringProvider
-) {
-    fun buildMenuItems(
-        hasSorn: Boolean,
-        isTaxed: Boolean,
-        dvlaUrls: DvlaUrls?
-    ): List<OverflowMenuItem> {
+internal class VehicleMenuItemsMapper @Inject constructor(private val stringProvider: StringProvider) {
+    fun buildMenuItems(hasSorn: Boolean, isTaxed: Boolean, dvlaUrls: DvlaUrls?): List<OverflowMenuItem> {
         dvlaUrls ?: return emptyList()
         return buildList {
             if (hasSorn) {

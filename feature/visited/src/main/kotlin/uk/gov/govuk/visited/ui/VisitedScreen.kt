@@ -41,11 +41,7 @@ import uk.gov.govuk.visited.VisitedViewModel
 import uk.gov.govuk.visited.ui.model.VisitedUi
 
 @Composable
-internal fun VisitedRoute(
-    onBack: () -> Unit,
-    launchBrowser: (url: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun VisitedRoute(onBack: () -> Unit, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
     val viewModel: VisitedViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -126,9 +122,7 @@ private fun VisitedScreen(
 }
 
 @Composable
-private fun NoVisitedItems(
-    modifier: Modifier = Modifier
-) {
+private fun NoVisitedItems(modifier: Modifier = Modifier) {
     MediumVerticalSpacer()
 
     NonTappableCard(
@@ -203,11 +197,7 @@ private fun ShowVisitedItems(
 }
 
 @Composable
-private fun RemoveAllConfirmationDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun RemoveAllConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

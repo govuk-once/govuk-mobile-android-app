@@ -13,9 +13,7 @@ import uk.govuk.app.local.data.local.model.StoredLocalAuthorityParent
 import uk.govuk.app.local.domain.model.LocalAuthority
 
 @Singleton
-internal class LocalDataSource @Inject constructor(
-    private val realmProvider: LocalRealmProvider
-) {
+internal class LocalDataSource @Inject constructor(private val realmProvider: LocalRealmProvider) {
     val localAuthority: Flow<StoredLocalAuthority?> = flow {
         emitAll(
             realmProvider.open()
@@ -28,9 +26,7 @@ internal class LocalDataSource @Inject constructor(
         )
     }
 
-    suspend fun insertOrReplace(
-        localAuthority: LocalAuthority
-    ) {
+    suspend fun insertOrReplace(localAuthority: LocalAuthority) {
         realmProvider.open().write {
             query<StoredLocalAuthority>().find {
                 delete(it)

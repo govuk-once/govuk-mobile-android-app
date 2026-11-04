@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import uk.gov.govuk.topics.data.TopicsRepo
 
 @Singleton
-internal class DefaultTopicsFeature @Inject constructor(
-    private val topicsRepo: TopicsRepo
-) : TopicsFeature {
+internal class DefaultTopicsFeature @Inject constructor(private val topicsRepo: TopicsRepo) : TopicsFeature {
 
     override var topicsReferences: List<String>? = null
 

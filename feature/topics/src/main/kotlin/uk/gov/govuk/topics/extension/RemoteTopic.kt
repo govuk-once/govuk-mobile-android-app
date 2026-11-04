@@ -8,11 +8,7 @@ import uk.gov.govuk.topics.ui.model.TopicUi
 import uk.gov.govuk.topics.ui.model.TopicUi.Subtopic
 import uk.gov.govuk.topics.ui.model.TopicUi.TopicContent
 
-internal fun RemoteTopic.toTopicUi(
-    maxPopularPages: Int,
-    maxStepBySteps: Int,
-    isSubtopic: Boolean
-): TopicUi {
+internal fun RemoteTopic.toTopicUi(maxPopularPages: Int, maxStepBySteps: Int, isSubtopic: Boolean): TopicUi {
     val stepBySteps = content.filter { it.isStepByStep }
     val popularPages = content.filter { it.isPopular }
 

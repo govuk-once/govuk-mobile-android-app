@@ -290,13 +290,7 @@ fun DestructiveButton(
 }
 
 @Composable
-fun ConnectedButton(
-    text: String,
-    onClick: () -> Unit,
-    active: Boolean,
-    modifier: Modifier = Modifier,
-    colours: ButtonColours
-) {
+fun ConnectedButton(text: String, onClick: () -> Unit, active: Boolean, modifier: Modifier = Modifier, colours: ButtonColours) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -448,9 +442,7 @@ private fun BaseButton(
 }
 
 @Composable
-private fun ButtonIcon(
-    @DrawableRes icon: Int
-) {
+private fun ButtonIcon(@DrawableRes icon: Int) {
     Icon(
         painter = painterResource(icon),
         contentDescription = null,

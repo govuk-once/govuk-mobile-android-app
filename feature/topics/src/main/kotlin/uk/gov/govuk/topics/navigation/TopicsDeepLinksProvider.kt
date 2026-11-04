@@ -5,9 +5,7 @@ import javax.inject.Singleton
 import uk.gov.govuk.topics.TopicsFeature
 
 @Singleton
-class TopicsDeepLinksProvider @Inject constructor(
-    private val topicsFeature: TopicsFeature
-) {
+class TopicsDeepLinksProvider @Inject constructor(private val topicsFeature: TopicsFeature) {
     val deepLinks: Map<String, List<String>> by lazy {
         buildMap {
             put("/topics/edit", listOf(TOPICS_EDIT_ROUTE))

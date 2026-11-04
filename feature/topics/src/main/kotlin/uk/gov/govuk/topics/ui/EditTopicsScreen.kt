@@ -24,10 +24,7 @@ import uk.gov.govuk.topics.ui.component.TopicSelectionCard
 import uk.gov.govuk.topics.ui.model.TopicItemUi
 
 @Composable
-internal fun EditTopicsRoute(
-    onDone: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun EditTopicsRoute(onDone: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: EditTopicsViewModel = hiltViewModel()
     val topics by viewModel.topics.collectAsState()
 
