@@ -21,10 +21,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun DeviceOfflineScreen(
-    onTryAgain: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun DeviceOfflineScreen(onTryAgain: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
             .fillMaxWidth()
@@ -54,7 +51,7 @@ fun DeviceOfflineScreen(
 
         FixedPrimaryButton(
             text = stringResource(R.string.device_offline_button_title),
-            onClick = onTryAgain,
+            onClick = onTryAgain
         )
     }
 }

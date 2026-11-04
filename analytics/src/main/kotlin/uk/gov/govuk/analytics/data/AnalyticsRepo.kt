@@ -1,15 +1,13 @@
 package uk.gov.govuk.analytics.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.StateFlow
 import uk.gov.govuk.analytics.data.local.AnalyticsDataStore
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class AnalyticsRepo @Inject constructor(
-    private val dataStore: AnalyticsDataStore
-) {
+class AnalyticsRepo @Inject constructor(private val dataStore: AnalyticsDataStore) {
     internal val analyticsEnabledState: AnalyticsEnabledState
         get() = dataStore.analyticsEnabledState
 

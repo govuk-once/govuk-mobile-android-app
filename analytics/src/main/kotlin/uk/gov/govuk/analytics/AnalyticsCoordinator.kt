@@ -1,10 +1,10 @@
 package uk.gov.govuk.analytics
 
 import com.qualtrics.digital.TargetingResult
+import javax.inject.Inject
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
-import javax.inject.Inject
 
 class AnalyticsCoordinator @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,

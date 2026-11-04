@@ -25,8 +25,8 @@ import com.qualtrics.digital.theming.fonts.FontTheme
 import com.qualtrics.digital.theming.prompt.ButtonTheme
 import com.qualtrics.digital.theming.prompt.MobileAppPromptTheme
 import dagger.hilt.android.qualifiers.ApplicationContext
-import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import javax.inject.Inject
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 
 class QualtricsAnalyticsClient @Inject constructor(
     @param:ApplicationContext private val context: Context,
@@ -213,7 +213,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                     ),
                     thankYouTheme = ThankYouTheme(
                         color = R.color.text_primary,
-                        thankYouTextFont = FontTheme(bodyBold, largeSize),
+                        thankYouTextFont = FontTheme(bodyBold, largeSize)
                     ),
                     yesNoButtonsTheme = YesNoButtonsTheme(
                         yesButtonTextColor = R.color.button_text,
@@ -223,7 +223,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                         noButtonTextColor = R.color.accent,
                         noButtonBorderColor = R.color.accent,
                         noButtonFillColor = R.color.surface_list,
-                        noButtonFont = FontTheme(bodyRegular, mediumSize),
+                        noButtonFont = FontTheme(bodyRegular, mediumSize)
                     ),
                     thumbsButtonsTheme = ThumbsButtonsTheme(
                         thumbUpBorderColor = R.color.accent,
@@ -248,7 +248,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                             textFont = FontTheme(bodyRegular, regularSize),
                             selectedCircleColor = R.color.accent_light,
                             selectedBackgroundColor = R.color.surface_list,
-                            unselectedCircleColor = R.color.list_divider,
+                            unselectedCircleColor = R.color.list_divider
                         )
                     ),
                     submitButtonTheme = SubmitButtonTheme(
@@ -258,7 +258,7 @@ class QualtricsAnalyticsClient @Inject constructor(
                     ),
                     textInputTheme = TextInputTheme(
                         multilineTextInputColor = R.color.text_primary,
-                        multilineTextInputBackgroundColor = R.color.surface_background,
+                        multilineTextInputBackgroundColor = R.color.surface_background
                     )
                 )
             )

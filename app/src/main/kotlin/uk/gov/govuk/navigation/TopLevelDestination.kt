@@ -16,7 +16,6 @@ import uk.gov.govuk.topics.navigation.TOPICS_ALL_STEP_BY_STEPS_ROUTE
 import uk.gov.govuk.topics.navigation.TOPIC_ROUTE
 import uk.gov.govuk.visited.navigation.VISITED_ROUTE
 
-
 internal sealed class TopLevelDestination(
     val route: String,
     @StringRes val stringResId: Int,
@@ -24,7 +23,7 @@ internal sealed class TopLevelDestination(
     val associatedRoutes: List<String> = emptyList()
 ) {
     internal data object Home : TopLevelDestination(
-        route =  HOME_CONTAINER_ROUTE,
+        route = HOME_CONTAINER_ROUTE,
         stringResId = R.string.home,
         icon = ic_home,
         associatedRoutes = listOf(
@@ -52,12 +51,10 @@ internal sealed class TopLevelDestination(
     )
 
     companion object {
-        fun values(isChatEnabled: Boolean): List<TopLevelDestination> {
-            return buildList {
-                add(Home)
-                if (isChatEnabled) add(Chat)
-                add(Settings)
-            }
+        fun values(isChatEnabled: Boolean): List<TopLevelDestination> = buildList {
+            add(Home)
+            if (isChatEnabled) add(Chat)
+            add(Settings)
         }
     }
 }

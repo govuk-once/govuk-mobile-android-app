@@ -6,11 +6,7 @@ import uk.gov.govuk.data.model.Result
 
 class AuthenticationException : Exception()
 
-suspend fun <T> withAuthRetry(
-    apiCall: suspend () -> Response<T>,
-    authRepo: AuthRepo,
-    retry: Boolean = true
-): Response<T> {
+suspend fun <T> withAuthRetry(apiCall: suspend () -> Response<T>, authRepo: AuthRepo, retry: Boolean = true): Response<T> {
     val response = apiCall()
 
     return when (response.code()) {
@@ -25,9 +21,5 @@ suspend fun <T> withAuthRetry(
     }
 }
 
-suspend fun <T> safeAuthApiCall(
-    apiCall: suspend () -> Response<T>,
-    authRepo: AuthRepo
-): Result<T> {
-    return safeApiCall { withAuthRetry(apiCall, authRepo) }
-}
+suspend fun <T> safeAuthApiCall(apiCall: suspend () -> Response<T>, authRepo: AuthRepo): Result<T> =
+    safeApiCall { withAuthRetry(apiCall, authRepo) }

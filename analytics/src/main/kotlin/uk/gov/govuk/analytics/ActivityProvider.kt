@@ -8,7 +8,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ActivityProvider @Inject constructor() : ActivityProviderInterface, Application.ActivityLifecycleCallbacks {
+class ActivityProvider @Inject constructor() :
+    ActivityProviderInterface,
+    Application.ActivityLifecycleCallbacks {
     private var activityReference = WeakReference<Activity>(null)
     private val onActivityDestroyedListeners = mutableListOf<(Activity) -> Unit>()
 

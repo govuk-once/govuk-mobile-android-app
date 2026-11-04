@@ -40,7 +40,7 @@ internal fun OnboardingPageThreeRoute(
     onCancel: () -> Unit,
     onBack: () -> Unit,
     launchBrowser: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val cancelText = stringResource(id = R.string.onboarding_page_cancel_text)
@@ -192,11 +192,7 @@ private fun OnboardingPageThreeScreen(
 }
 
 @Composable
-private fun Buttons(
-    onClick: () -> Unit,
-    onCancel: () -> Unit,
-    modifier: Modifier
-) {
+private fun Buttons(onClick: () -> Unit, onCancel: () -> Unit, modifier: Modifier) {
     PrimaryButton(
         text = stringResource(id = R.string.onboarding_page_three_button),
         onClick = onClick,

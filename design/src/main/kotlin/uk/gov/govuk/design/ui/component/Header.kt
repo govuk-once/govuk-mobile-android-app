@@ -28,10 +28,7 @@ import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun TabHeader(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
+fun TabHeader(text: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -124,7 +121,7 @@ private fun Header(
                 modifier = Modifier
                     .height(64.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 if (hasDismissButton) {
                     HeaderDismissButton(
@@ -172,10 +169,7 @@ private fun Header(
 }
 
 @Composable
-private fun HeaderTextButton(
-    actionStyle: HeaderActionStyle.TextActionButton,
-    actionColour: Color
-) {
+private fun HeaderTextButton(actionStyle: HeaderActionStyle.TextActionButton, actionColour: Color) {
     val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -204,11 +198,7 @@ private fun HeaderTextButton(
 }
 
 @Composable
-fun Title(
-    title: String,
-    modifier: Modifier = Modifier,
-    description: String? = null
-) {
+fun Title(title: String, modifier: Modifier = Modifier, description: String? = null) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -284,7 +274,7 @@ private fun FullScreenHeaderBackNoActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title",
-            dismissStyle = HeaderDismissStyle.Back {},
+            dismissStyle = HeaderDismissStyle.Back {}
         )
     }
 }
@@ -360,7 +350,7 @@ private fun ChildPageHeaderBackNoActionPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title",
-            dismissStyle = HeaderDismissStyle.Back {},
+            dismissStyle = HeaderDismissStyle.Back {}
         )
     }
 }

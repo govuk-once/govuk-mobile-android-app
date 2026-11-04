@@ -39,8 +39,9 @@ fun PromoBanner(
     onDismiss: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier
-        .height(IntrinsicSize.Min)
+    Card(
+        modifier
+            .height(IntrinsicSize.Min)
     ) {
         Column(
             modifier = Modifier
@@ -54,15 +55,16 @@ fun PromoBanner(
                     .fillMaxWidth()
             ) {
                 Row(Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier
-                        .weight(1f)
-                        .padding(start = GovUkTheme.spacing.medium)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = GovUkTheme.spacing.medium)
                     ) {
                         MediumVerticalSpacer()
                         Title2BoldLabel(
                             promoBanner.title,
                             modifier = Modifier
-                                .semantics { heading() },
+                                .semantics { heading() }
                         )
                         SmallVerticalSpacer()
                         BodyRegularLabel(promoBanner.body)
@@ -141,7 +143,7 @@ private fun DisplayImage(image: String) {
     if (imageResId != 0) {
         Image(
             painter = painterResource(id = imageResId),
-            contentDescription = null,
+            contentDescription = null
         )
     }
 }

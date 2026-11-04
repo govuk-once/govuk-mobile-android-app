@@ -5,27 +5,23 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 @Singleton
-internal class AppDataStore @Inject constructor(
-    @param:Named("app_prefs") private val dataStore: DataStore<Preferences>
-) {
+internal class AppDataStore @Inject constructor(@param:Named("app_prefs") private val dataStore: DataStore<Preferences>) {
     companion object {
         internal const val SKIPPED_BIOMETRICS_KEY = "skipped_biometrics"
         internal const val TOPIC_SELECTION_COMPLETED_KEY = "topic_selection_completed"
         internal const val SUPPRESSED_HOME_WIDGETS = "suppressed_home_widgets"
     }
 
-    internal suspend fun hasSkippedBiometrics(): Boolean {
-        return dataStore.data.firstOrNull()
-            ?.get(booleanPreferencesKey(SKIPPED_BIOMETRICS_KEY)) == true
-    }
+    internal suspend fun hasSkippedBiometrics(): Boolean = dataStore.data.firstOrNull()
+        ?.get(booleanPreferencesKey(SKIPPED_BIOMETRICS_KEY)) == true
 
     internal suspend fun skipBiometrics() {
         dataStore.edit { prefs ->
@@ -39,10 +35,8 @@ internal class AppDataStore @Inject constructor(
         }
     }
 
-    internal suspend fun isTopicSelectionCompleted(): Boolean {
-        return dataStore.data.firstOrNull()
-            ?.get(booleanPreferencesKey(TOPIC_SELECTION_COMPLETED_KEY)) == true
-    }
+    internal suspend fun isTopicSelectionCompleted(): Boolean = dataStore.data.firstOrNull()
+        ?.get(booleanPreferencesKey(TOPIC_SELECTION_COMPLETED_KEY)) == true
 
     internal suspend fun topicSelectionCompleted() {
         dataStore.edit { prefs ->

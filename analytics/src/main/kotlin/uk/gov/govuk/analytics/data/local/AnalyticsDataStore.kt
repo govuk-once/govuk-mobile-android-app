@@ -4,6 +4,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,18 +15,15 @@ import kotlinx.coroutines.runBlocking
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.DISABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.ENABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.NOT_SET
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
 enum class AnalyticsEnabledState {
-    NOT_SET, ENABLED, DISABLED
+    NOT_SET,
+    ENABLED,
+    DISABLED
 }
 
 @Singleton
-class AnalyticsDataStore @Inject constructor(
-    @param:Named("analytics_prefs") private val dataStore: DataStore<Preferences>
-) {
+class AnalyticsDataStore @Inject constructor(@param:Named("analytics_prefs") private val dataStore: DataStore<Preferences>) {
 
     companion object {
         internal const val ANALYTICS_ENABLED_KEY = "analytics_enabled"

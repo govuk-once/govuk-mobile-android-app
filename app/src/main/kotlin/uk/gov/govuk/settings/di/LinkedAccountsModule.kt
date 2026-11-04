@@ -12,9 +12,5 @@ import uk.gov.govuk.settings.domain.LinkedAccountsRepo
 internal object LinkedAccountsModule {
 
     @Provides
-    fun provideLinkedAccountsRepo(
-        repo: LinkedAccountsRepoImpl
-    ): LinkedAccountsRepo {
-        return repo
-    }
+    fun provideLinkedAccountsRepo(repo: LinkedAccountsRepoImpl): LinkedAccountsRepo = repo
 }

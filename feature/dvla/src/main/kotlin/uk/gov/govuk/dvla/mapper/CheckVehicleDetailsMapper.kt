@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.mapper
 
+import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.dvla.R
@@ -12,7 +13,6 @@ import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.util.StringProvider
-import javax.inject.Inject
 
 internal class CheckVehicleDetailsMapper @Inject constructor(
     private val stringProvider: StringProvider,
@@ -47,10 +47,7 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
         )
     }
 
-    private fun buildMenuItems(
-        vehicleSummary: VehicleSummary,
-        dvlaUrls: DvlaUrls?
-    ): List<OverflowMenuItem> {
+    private fun buildMenuItems(vehicleSummary: VehicleSummary, dvlaUrls: DvlaUrls?): List<OverflowMenuItem> {
         dvlaUrls ?: return emptyList()
         return buildList {
             add(
@@ -109,9 +106,9 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
         )
 
         return when {
-            vehicle.motStatus == MotStatus.VALID && isNotTaxed -> dvlaUrls.reportUntaxedVehicle      // rule 1
+            vehicle.motStatus == MotStatus.VALID && isNotTaxed -> dvlaUrls.reportUntaxedVehicle // rule 1
             vehicle.motStatus == MotStatus.EXPIRED && (isTaxed || isNotTaxed) -> dvlaUrls.reportNoMot // rules 2 & 3
-            else -> null                                                                              // rule 4
+            else -> null // rule 4
         }
     }
 }

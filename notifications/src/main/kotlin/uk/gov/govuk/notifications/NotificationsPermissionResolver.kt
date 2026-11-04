@@ -5,14 +5,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
-import uk.gov.govuk.notifications.data.NotificationsRepo
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @Singleton
-class NotificationsPermissionResolver @Inject constructor(
-    private val repo: NotificationsRepo
-) {
+class NotificationsPermissionResolver @Inject constructor(private val repo: NotificationsRepo) {
     enum class PermissionPath {
         OS_PROMPT,
         SETTINGS,
@@ -20,10 +18,7 @@ class NotificationsPermissionResolver @Inject constructor(
     }
 
     @OptIn(ExperimentalPermissionsApi::class)
-    suspend fun resolve(
-        status: PermissionStatus,
-        sdk: Int = Build.VERSION.SDK_INT
-    ): PermissionPath {
+    suspend fun resolve(status: PermissionStatus, sdk: Int = Build.VERSION.SDK_INT): PermissionPath {
         val isDefault = sdk >= Build.VERSION_CODES.TIRAMISU &&
             !status.isGranted &&
             (!repo.isFirstPermissionRequestCompleted() || status.shouldShowRationale)

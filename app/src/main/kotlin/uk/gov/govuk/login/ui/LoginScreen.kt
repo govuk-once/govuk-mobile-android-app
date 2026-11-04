@@ -100,12 +100,7 @@ internal fun LoginRoute(
 }
 
 @Composable
-private fun LoginScreen(
-    onContinueClick: () -> Unit,
-    termsUrl: String,
-    launchBrowser: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun LoginScreen(onContinueClick: () -> Unit, termsUrl: String, launchBrowser: (String) -> Unit, modifier: Modifier = Modifier) {
     CentreAlignedScreen(
         modifier = modifier,
         screenContent = {
@@ -163,12 +158,7 @@ private fun LoginScreen(
 }
 
 @Composable
-private fun WelcomeText(
-    introText: String = "",
-    linkText: String,
-    url: String,
-    launchBrowser: (String) -> Unit
-) {
+private fun WelcomeText(introText: String = "", linkText: String, url: String, launchBrowser: (String) -> Unit) {
     val altText = "$introText $linkText ${stringResource(R.string.welcome_opens_in_browser)}"
 
     MediumVerticalSpacer()
@@ -197,4 +187,3 @@ internal fun LoginScreenPreview() {
         )
     }
 }
-
