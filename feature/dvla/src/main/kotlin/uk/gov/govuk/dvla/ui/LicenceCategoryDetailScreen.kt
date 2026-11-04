@@ -24,6 +24,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
@@ -103,7 +105,7 @@ internal fun LicenceCategoryDetailScreen(
                 Spacer(Modifier.height(48.dp))
                 SectionHeadingLabel(title3 = stringResource(R.string.licence_category_detail_restrictions_header))
                 detail.restrictions.forEachIndexed { index, restriction ->
-                    if (index > 0) Spacer(Modifier.height(4.dp))
+                    if (index > 0) Spacer(Modifier.height(GovUkTheme.spacing.medium))
                     RestrictionRow(restriction = restriction)
                 }
             }
@@ -144,7 +146,7 @@ private fun CategoryBadge(category: LicenceCategoryUiModel) {
                 )
             }
 
-            VerticalDivider(color = GovUkTheme.colourScheme.strokes.fixedContainer)
+            VerticalDivider(color = GovUkTheme.colourScheme.strokes.listDivider)
         }
 
         Box(
@@ -180,16 +182,18 @@ private fun RestrictionRow(restriction: LicenceCategoryRestrictionUiModel) {
         restriction.code,
         restriction.description
     )
+    val codeStyle = GovUkTheme.typography.bodyBold.toSpanStyle()
 
-    Row(
+    BodyRegularLabel(
+        text = buildAnnotatedString {
+            withStyle(codeStyle) { append(restriction.code) }
+            append(" ")
+            append(restriction.description)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .clearAndSetSemantics { contentDescription = altText }
-    ) {
-        BodyBoldLabel(text = restriction.code)
-        Spacer(Modifier.width(4.dp)) // no 4dp token
-        BodyRegularLabel(text = restriction.description, modifier = Modifier.weight(1f))
-    }
+    )
 }
 
 @PreviewLightDark
