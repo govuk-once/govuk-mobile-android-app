@@ -21,10 +21,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun DeviceOfflineScreen(
-    onTryAgain: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun DeviceOfflineScreen(onTryAgain: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier
             .fillMaxWidth()

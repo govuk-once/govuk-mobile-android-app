@@ -32,10 +32,7 @@ import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun SpecificationsIcons(
-    uiModels: List<SpecificationIconUiModel>,
-    modifier: Modifier = Modifier
-) {
+fun SpecificationsIcons(uiModels: List<SpecificationIconUiModel>, modifier: Modifier = Modifier) {
     var shouldShowVertical by remember { mutableStateOf(false) }
 
     if (shouldShowVertical) {
@@ -84,11 +81,7 @@ fun SpecificationsIcons(
 }
 
 @Composable
-private fun Modifier.getModifier(
-    index: Int,
-    maxIndex: Int,
-    isHorizontal: Boolean
-): Modifier {
+private fun Modifier.getModifier(index: Int, maxIndex: Int, isHorizontal: Boolean): Modifier {
     val firstCorners = if (index == 0) GovUkTheme.numbers.cornerAndroidList else 0.dp
     val lastCorners =
         if (index == maxIndex) GovUkTheme.numbers.cornerAndroidList else 0.dp
@@ -102,11 +95,7 @@ private fun Modifier.getModifier(
 }
 
 @Composable
-private fun HorizontalSpecificationItem(
-    uiModel: SpecificationIconUiModel,
-    modifier: Modifier = Modifier,
-    onTruncatedText: () -> Unit
-) {
+private fun HorizontalSpecificationItem(uiModel: SpecificationIconUiModel, modifier: Modifier = Modifier, onTruncatedText: () -> Unit) {
     Column(
         modifier = modifier
             .background(GovUkTheme.colourScheme.surfaces.listAlt)
@@ -139,10 +128,7 @@ private fun HorizontalSpecificationItem(
 }
 
 @Composable
-private fun VerticalSpecificationItem(
-    uiModel: SpecificationIconUiModel,
-    modifier: Modifier = Modifier
-) {
+private fun VerticalSpecificationItem(uiModel: SpecificationIconUiModel, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .background(GovUkTheme.colourScheme.surfaces.listAlt)
