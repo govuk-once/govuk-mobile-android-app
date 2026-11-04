@@ -140,6 +140,7 @@ internal fun ChatRoute(
                     canRetry = it.canRetry,
                     onPageView = onPageView,
                     onRetry = { viewModel.clearConversation() },
+                    launchBrowser = launchBrowser,
                     modifier = modifier
                 )
             }

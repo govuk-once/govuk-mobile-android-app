@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.data
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +57,8 @@ class DvlaRepo @Inject constructor(
     internal suspend fun linkAccount(token: String): Result<Unit> {
         val result = try {
             safeAuthApiCall({ api.linkDvlaIdentity(token) }, authRepo)
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             Result.Error()
         }

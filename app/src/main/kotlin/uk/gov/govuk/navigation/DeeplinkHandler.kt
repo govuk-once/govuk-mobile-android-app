@@ -18,7 +18,8 @@ import uk.gov.govuk.settings.navigation.settingsDeepLinks
 import uk.gov.govuk.topics.navigation.TopicsDeepLinksProvider
 import uk.gov.govuk.topics.navigation.navigateToTopic
 import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
-import uk.gov.govuk.travelalerts.navigation.travelAlertsDeepLinks
+import uk.gov.govuk.topics.ui.model.TRAVEL_ABROAD_TOPIC_REF
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
 import javax.inject.Inject
 import kotlin.collections.get
@@ -45,8 +46,6 @@ internal class DeeplinkHandler @Inject constructor(
             putAll(homeDeepLinks)
             putAll(settingsDeepLinks)
             putAll(messagesDeepLinks)
-            putAll(travelAlertsDeepLinks)
-
             if (flagRepo.isChatEnabled()) {
                 putAll(chatDeepLinks)
             }
@@ -79,6 +78,11 @@ internal class DeeplinkHandler @Inject constructor(
             }
 
             if (interceptMessagesDetailDeeplink(it, navController)) {
+                deepLink = null
+                return
+            }
+
+            if (interceptTravelAlertsEditDeeplink(it, navController)) {
                 deepLink = null
                 return
             }
@@ -169,6 +173,20 @@ internal class DeeplinkHandler @Inject constructor(
     private fun Uri.getQueryParameterIgnoreCase(name: String): String? {
         val actualKey = queryParameterNames.firstOrNull { it.equals(name, ignoreCase = true) }
         return actualKey?.let { getQueryParameter(it) }
+    }
+
+    private fun interceptTravelAlertsEditDeeplink(uri: Uri, navController: NavController): Boolean {
+        if (uri.path != "/travelalerts/edit") return false
+
+        navController.navigate(HOME_GRAPH_ROUTE) {
+            popUpTo(0) { inclusive = true }
+        }
+        navController.navigateToTopic(TRAVEL_ABROAD_TOPIC_REF)
+        navController.navigate(EDIT_COUNTRIES_ROUTE) {
+            launchSingleTop = true
+        }
+        analyticsClient.deepLinkEvent(true, uri.toString())
+        return true
     }
 
     private fun interceptMessagesDetailDeeplink(uri: Uri, navController: NavController): Boolean {

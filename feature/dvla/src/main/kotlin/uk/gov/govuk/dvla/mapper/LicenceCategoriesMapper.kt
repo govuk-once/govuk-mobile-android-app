@@ -86,8 +86,8 @@ internal class LicenceCategoriesMapper @Inject constructor(
     }
 
     // catalog of every category we display - order is the order on screen as per GOVUKAPP-4152
-    private val allCategoryGroups: List<LicenceCategoryGroupUiModel>
-        get() = listOf(
+    private val allCategoryGroups: List<LicenceCategoryGroupUiModel> by lazy {
+        listOf(
             // mopeds
             LicenceCategoryGroupUiModel(
                 stringProvider.getString(R.string.categories_group_mopeds),
@@ -165,6 +165,7 @@ internal class LicenceCategoriesMapper @Inject constructor(
                 )
             )
         )
+    }
 
     private fun DvlaUrls.toFurtherInformationLinks() = listOf(
         LicenceCategoryLinkUiModel(

@@ -49,6 +49,7 @@ fun NavGraphBuilder.loginGraph(
                             navController.navigate(USER_API_ERROR_ROUTE)
                     }
                 },
+                launchBrowser = launchBrowser,
                 modifier = modifier
             )
         }

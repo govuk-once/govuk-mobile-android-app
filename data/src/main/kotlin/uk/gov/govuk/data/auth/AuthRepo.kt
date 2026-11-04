@@ -2,6 +2,7 @@ package uk.gov.govuk.data.auth
 
 import android.content.Intent
 import android.os.Build
+import kotlinx.coroutines.CancellationException
 import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
@@ -290,6 +291,8 @@ class AuthRepo @Inject constructor(
                         clientId = BuildConfig.AUTH_CLIENT_ID
                     )
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (_: Exception) {
                 // Ignore API failure
             }

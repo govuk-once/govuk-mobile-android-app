@@ -75,6 +75,7 @@ fun EditCountriesScreen(
                 is EditCountriesViewModel.NavigationEvent.ToNotificationsOptIn -> {
                     navController.navigate("$NOTIFICATIONS_RATIONALE_ROUTE/${event.slug}?$ORIGIN_ARG=$ORIGIN_EDIT")
                 }
+                is EditCountriesViewModel.NavigationEvent.PopBack -> onBack()
             }
         }
     }
@@ -170,6 +171,15 @@ private fun EditCountriesLoaded(
         if (state.selectedSlug != null && selectedSlug.value == null) {
             selectedSlug.value = state.selectedSlug
             onConsentResultHandled()
+        }
+    }
+
+    // Dismiss sheet when unfollowed country is removed from the list
+    LaunchedEffect(state.countries) {
+        val slug = selectedSlug.value ?: return@LaunchedEffect
+        if (state.countries.none { it.slug == slug }) {
+            sheetState.hide()
+            selectedSlug.value = null
         }
     }
 
@@ -302,7 +312,7 @@ private fun EditCountriesError(
 
 @Composable
 @PreviewLightDark
-private fun EditCountriesLoadingPreview() {
+internal fun EditCountriesLoadingPreview() {
     GovUkTheme {
         LoadingScreen()
     }
@@ -310,7 +320,7 @@ private fun EditCountriesLoadingPreview() {
 
 @Composable
 @PreviewLightDark
-private fun EditCountriesErrorPreview() {
+internal fun EditCountriesErrorPreview() {
     GovUkTheme {
         EditCountriesError(onRetry = {})
     }
@@ -318,7 +328,7 @@ private fun EditCountriesErrorPreview() {
 
 @Composable
 @PreviewLightDark
-private fun EditCountriesLoadedPreview() {
+internal fun EditCountriesLoadedPreview() {
     val countries = listOf(
         Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf()),
         Country("Fiji", "fiji", "2023-01-01T00:00:00Z", listOf()),
