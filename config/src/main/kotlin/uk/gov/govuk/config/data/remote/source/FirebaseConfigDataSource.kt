@@ -10,9 +10,7 @@ import uk.gov.govuk.config.BuildConfig
 import uk.gov.govuk.config.R
 
 @Singleton
-class FirebaseConfigDataSource @Inject constructor(
-    private val firebaseRemoteConfig: FirebaseRemoteConfig
-) {
+class FirebaseConfigDataSource @Inject constructor(private val firebaseRemoteConfig: FirebaseRemoteConfig) {
 
     private val remoteConfigSettings = remoteConfigSettings {
         fetchTimeoutInSeconds = 15L

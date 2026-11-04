@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.analytics.AnalyticsClient
@@ -9,7 +10,6 @@ import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.mapper.LicenceCategoriesMapper
 import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
-import javax.inject.Inject
 
 internal sealed interface LicenceCategoriesUiState {
     data class Success(val categories: LicenceCategoriesUiModel) : LicenceCategoriesUiState
