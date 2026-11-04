@@ -23,9 +23,7 @@ enum class AnalyticsEnabledState {
 }
 
 @Singleton
-class AnalyticsDataStore @Inject constructor(
-    @param:Named("analytics_prefs") private val dataStore: DataStore<Preferences>
-) {
+class AnalyticsDataStore @Inject constructor(@param:Named("analytics_prefs") private val dataStore: DataStore<Preferences>) {
 
     companion object {
         internal const val ANALYTICS_ENABLED_KEY = "analytics_enabled"

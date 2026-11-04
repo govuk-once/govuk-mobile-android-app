@@ -1,5 +1,7 @@
 package uk.gov.govuk.data.identity
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,16 +11,11 @@ import uk.gov.govuk.data.identity.model.IdentityState
 import uk.gov.govuk.data.identity.model.LinkedService
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.identity.remote.IdentityApi
-import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.data.model.Result
-import javax.inject.Inject
-import javax.inject.Singleton
+import uk.gov.govuk.data.remote.safeAuthApiCall
 
 @Singleton
-class IdentityRepo @Inject constructor(
-    private val api: IdentityApi,
-    private val authRepo: AuthRepo
-) {
+class IdentityRepo @Inject constructor(private val api: IdentityApi, private val authRepo: AuthRepo) {
 
     private val _state = MutableStateFlow<IdentityState>(IdentityState.Checking)
     val state = _state.asStateFlow()
@@ -47,8 +44,11 @@ class IdentityRepo @Inject constructor(
             when (state) {
                 is IdentityState.Checking -> ServiceLinkStatus.CHECKING
                 is IdentityState.Success -> {
-                    if (state.services.contains(service)) ServiceLinkStatus.LINKED
-                    else ServiceLinkStatus.UNLINKED
+                    if (state.services.contains(service)) {
+                        ServiceLinkStatus.LINKED
+                    } else {
+                        ServiceLinkStatus.UNLINKED
+                    }
                 }
                 is IdentityState.Error -> ServiceLinkStatus.ERROR
             }
@@ -56,13 +56,11 @@ class IdentityRepo @Inject constructor(
     }
 
     // one-off check
-    fun currentStatusOf(service: LinkedService): ServiceLinkStatus {
-        return when (val state = _state.value) {
-            is IdentityState.Checking -> ServiceLinkStatus.CHECKING
-            is IdentityState.Success -> {
-                if (state.services.contains(service)) ServiceLinkStatus.LINKED else ServiceLinkStatus.UNLINKED
-            }
-            is IdentityState.Error -> ServiceLinkStatus.UNLINKED
+    fun currentStatusOf(service: LinkedService): ServiceLinkStatus = when (val state = _state.value) {
+        is IdentityState.Checking -> ServiceLinkStatus.CHECKING
+        is IdentityState.Success -> {
+            if (state.services.contains(service)) ServiceLinkStatus.LINKED else ServiceLinkStatus.UNLINKED
         }
+        is IdentityState.Error -> ServiceLinkStatus.UNLINKED
     }
 }

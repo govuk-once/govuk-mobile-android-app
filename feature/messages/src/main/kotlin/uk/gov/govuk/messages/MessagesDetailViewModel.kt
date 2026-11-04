@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,23 +15,21 @@ import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.messages.data.model.Notification
 import uk.gov.govuk.messages.data.model.UpdateNotificationRequestBody
 import uk.gov.govuk.messages.navigation.MESSAGES_DETAIL_ID_ARG
-import javax.inject.Inject
 
 internal sealed class MessagesDetailUiState {
-    data object Default: MessagesDetailUiState()
-    data object Loading: MessagesDetailUiState()
-    data class Loaded(val message: Notification, val showDeleteConfirmation: Boolean): MessagesDetailUiState()
-    data object Error: MessagesDetailUiState()
-    data object NoInternet: MessagesDetailUiState()
+    data object Default : MessagesDetailUiState()
+    data object Loading : MessagesDetailUiState()
+    data class Loaded(val message: Notification, val showDeleteConfirmation: Boolean) : MessagesDetailUiState()
+    data object Error : MessagesDetailUiState()
+    data object NoInternet : MessagesDetailUiState()
 }
-
 
 @HiltViewModel
 internal class MessagesDetailViewModel @Inject constructor(
     private val messagesRepo: MessagesRepo,
     private val analyticsClient: AnalyticsClient,
     private val savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "MessagesDetailScreen"
@@ -39,7 +38,8 @@ internal class MessagesDetailViewModel @Inject constructor(
     }
 
     private val _uiState: MutableStateFlow<MessagesDetailUiState> = MutableStateFlow(
-        MessagesDetailUiState.Default)
+        MessagesDetailUiState.Default
+    )
     val uiState = _uiState.asStateFlow()
 
     fun onPageView() {
@@ -95,7 +95,7 @@ internal class MessagesDetailViewModel @Inject constructor(
                 _uiState.value = MessagesDetailUiState.Loading
                 val result = messagesRepo.getSingleMessage(id)
 
-                _uiState.value = when(result) {
+                _uiState.value = when (result) {
                     is Result.Success -> {
                         val notification = result.value
                         if (notification != null) {
@@ -111,7 +111,6 @@ internal class MessagesDetailViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
     private fun markUnreadIfNecessary(message: Notification) {

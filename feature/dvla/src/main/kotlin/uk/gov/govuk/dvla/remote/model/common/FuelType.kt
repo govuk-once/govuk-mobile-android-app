@@ -1,7 +1,6 @@
 package uk.gov.govuk.dvla.remote.model.common
 
 import com.google.gson.annotations.SerializedName
-import uk.gov.govuk.dvla.R
 
 enum class FuelType {
     @SerializedName("PETROL")

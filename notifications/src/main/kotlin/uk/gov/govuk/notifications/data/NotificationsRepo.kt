@@ -1,12 +1,12 @@
 package uk.gov.govuk.notifications.data
 
-import uk.gov.govuk.data.user.UserRepo
-import uk.gov.govuk.notifications.NotificationsProvider
-import uk.gov.govuk.notifications.data.local.NotificationsDataStore
-import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.data.user.model.ConsentStatus
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.data.model.Result
+import uk.gov.govuk.data.user.UserRepo
+import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.notifications.NotificationsProvider
+import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
 @Singleton
 class NotificationsRepo @Inject constructor(
@@ -40,9 +40,7 @@ class NotificationsRepo @Inject constructor(
         notificationsProvider.logout()
     }
 
-    suspend fun requestPermission(): Boolean {
-        return notificationsProvider.requestPermission()
-    }
+    suspend fun requestPermission(): Boolean = notificationsProvider.requestPermission()
 
     fun permissionGranted() = notificationsProvider.permissionGranted()
 
@@ -56,23 +54,15 @@ class NotificationsRepo @Inject constructor(
         notificationsProvider.removeConsent()
     }
 
-    suspend fun sendConsent(): Result<Unit> {
-        return userRepo.updateNotifications(ConsentStatus.ACCEPTED)
-    }
+    suspend fun sendConsent(): Result<Unit> = userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
-    suspend fun sendRemoveConsent(): Result<Unit> {
-        return userRepo.updateNotifications(ConsentStatus.DENIED)
-    }
+    suspend fun sendRemoveConsent(): Result<Unit> = userRepo.updateNotifications(ConsentStatus.DENIED)
 
-    suspend fun isNotificationsOnboardingCompleted() =
-        notificationsDataStore.isNotificationsOnboardingCompleted()
+    suspend fun isNotificationsOnboardingCompleted() = notificationsDataStore.isNotificationsOnboardingCompleted()
 
-    suspend fun notificationsOnboardingCompleted() =
-        notificationsDataStore.notificationsOnboardingCompleted()
+    suspend fun notificationsOnboardingCompleted() = notificationsDataStore.notificationsOnboardingCompleted()
 
-    suspend fun isFirstPermissionRequestCompleted() =
-        notificationsDataStore.isFirstPermissionRequestCompleted()
+    suspend fun isFirstPermissionRequestCompleted() = notificationsDataStore.isFirstPermissionRequestCompleted()
 
-    suspend fun firstPermissionRequestCompleted() =
-        notificationsDataStore.firstPermissionRequestCompleted()
+    suspend fun firstPermissionRequestCompleted() = notificationsDataStore.firstPermissionRequestCompleted()
 }

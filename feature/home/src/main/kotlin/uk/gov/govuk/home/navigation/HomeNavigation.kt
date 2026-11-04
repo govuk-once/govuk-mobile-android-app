@@ -43,7 +43,7 @@ fun NavGraphBuilder.homeGraph(
                 } else {
                     null
                 }
-            },
+            }
         ) {
             HomeRoute(
                 widgets = widgets,

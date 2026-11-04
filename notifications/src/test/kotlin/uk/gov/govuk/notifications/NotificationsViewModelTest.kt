@@ -14,9 +14,9 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -135,7 +135,6 @@ class NotificationsViewModelTest {
 
     @Test
     fun `Given Not now button click, then log analytics`() {
-
         viewModel.onNotNowClick("Title")
 
         runTest {

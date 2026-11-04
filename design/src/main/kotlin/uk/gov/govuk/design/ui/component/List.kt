@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -279,9 +278,8 @@ fun ToggleListItem(
     isFirst: Boolean = true,
     isLast: Boolean = true,
     backgroundOverride: Color? = null,
-    enabled: Boolean = true,
+    enabled: Boolean = true
 ) {
-
     val status = stringResource(if (checked) R.string.on_button else R.string.off_button)
     val altText = "$title, $status"
 
@@ -427,7 +425,6 @@ fun IconListItem(
                         )
                     }
                 }
-
             }
         }
 
@@ -512,7 +509,7 @@ fun StatusListItem(
                     ) {
                         Icon(
                             painter = icon,
-                            contentDescription = null,  // decorative icon
+                            contentDescription = null, // decorative icon
                             tint = tint
                         )
                     }
@@ -573,7 +570,7 @@ fun CardListItem(
     isLast: Boolean = true,
     drawDivider: Boolean = true,
     background: Color = GovUkTheme.colourScheme.surfaces.list,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val cornerRadius = 12.dp
     Column(
@@ -665,19 +662,15 @@ fun CountdownBarListItem(
 
 sealed class CountListState {
     enum class IndicatorState {
-        DIM, FULL
+        DIM,
+        FULL
     }
-    data object Loading: CountListState()
-    data class Idle(val count: Int, val indicatorState: IndicatorState): CountListState()
+    data object Loading : CountListState()
+    data class Idle(val count: Int, val indicatorState: IndicatorState) : CountListState()
 }
 
 @Composable
-fun CountListItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    state: CountListState,
-    onClick: (() -> Unit)? = null,
-) {
+fun CountListItem(modifier: Modifier = Modifier, title: String, state: CountListState, onClick: (() -> Unit)? = null) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val isClickable = onClick != null && state != CountListState.Loading
@@ -690,7 +683,8 @@ fun CountListItem(
         interactionSource = interactionSource,
         background = colours.background
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -738,28 +732,26 @@ fun CountListItem(
 }
 
 @Composable
-private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): ListItemColours {
-    return if (isFocused && isClickable) {
-        val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
+private fun resolveListItemColours(isFocused: Boolean, isClickable: Boolean): ListItemColours = if (isFocused && isClickable) {
+    val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
 
-        ListItemColours(
-            background = GovUkTheme.colourScheme.surfaces.focused,
-            content = focusedTextColour,
-            contentSecondary = focusedTextColour,
-            contentTertiary = focusedTextColour,
-            link = focusedTextColour,
-            linkPrimary = focusedTextColour
-        )
-    } else {
-        ListItemColours(
-            background = GovUkTheme.colourScheme.surfaces.list,
-            content = GovUkTheme.colourScheme.textAndIcons.primary,
-            contentSecondary = GovUkTheme.colourScheme.textAndIcons.secondary,
-            contentTertiary = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
-            link = GovUkTheme.colourScheme.textAndIcons.link,
-            linkPrimary = GovUkTheme.colourScheme.textAndIcons.linkPrimary
-        )
-    }
+    ListItemColours(
+        background = GovUkTheme.colourScheme.surfaces.focused,
+        content = focusedTextColour,
+        contentSecondary = focusedTextColour,
+        contentTertiary = focusedTextColour,
+        link = focusedTextColour,
+        linkPrimary = focusedTextColour
+    )
+} else {
+    ListItemColours(
+        background = GovUkTheme.colourScheme.surfaces.list,
+        content = GovUkTheme.colourScheme.textAndIcons.primary,
+        contentSecondary = GovUkTheme.colourScheme.textAndIcons.secondary,
+        contentTertiary = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+        link = GovUkTheme.colourScheme.textAndIcons.link,
+        linkPrimary = GovUkTheme.colourScheme.textAndIcons.linkPrimary
+    )
 }
 
 @Preview
@@ -806,7 +798,8 @@ private fun InternalLinkListItemButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
-            style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+            style = InternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {}
+        )
     }
 }
 
@@ -816,7 +809,8 @@ private fun InternalLinkListItemShortButtonPreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
-            style = InternalLinkListItemStyle.ShortButton(R.drawable.ic_more, "Alt text") {})
+            style = InternalLinkListItemStyle.ShortButton(R.drawable.ic_more, "Alt text") {}
+        )
     }
 }
 
@@ -826,7 +820,8 @@ private fun InternalLinkListItemTrailingIconPreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
-            style = InternalLinkListItemStyle.TrailingIcon(R.drawable.ic_more))
+            style = InternalLinkListItemStyle.TrailingIcon(R.drawable.ic_more)
+        )
     }
 }
 
@@ -836,7 +831,8 @@ private fun InternalLinkListItemSimplePreview() {
     GovUkTheme {
         InternalLinkListItem(
             AccessibleString("Title"),
-            style = InternalLinkListItemStyle.Simple)
+            style = InternalLinkListItemStyle.Simple
+        )
     }
 }
 
@@ -866,8 +862,11 @@ private fun ExternalLinkListItemIconPreview() {
 private fun ExternalLinkListItemButtonPreview() {
     GovUkTheme {
         ExternalLinkListItem(
-            "Title", {}, description = "Description",
-            style = ExternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {})
+            "Title",
+            {},
+            description = "Description",
+            style = ExternalLinkListItemStyle.Button(R.drawable.ic_cancel_round, "Alt text") {}
+        )
     }
 }
 
@@ -932,8 +931,24 @@ private fun AddressListItemPreview() {
 private fun CountListItemPreview() {
     GovUkTheme {
         Column {
-            CountListItem(title = "Test Idle Indicator Full Indicator", state = CountListState.Idle(42, CountListState.IndicatorState.FULL), onClick = {})
-            CountListItem(title = "Test Idle Indicator Dim Indicator", state = CountListState.Idle(0, CountListState.IndicatorState.DIM), onClick = {})
+            CountListItem(
+                title = "Test Idle Indicator Full Indicator",
+                state = CountListState.Idle(
+                    42,
+                    CountListState.IndicatorState.FULL
+                ),
+                onClick = {
+                }
+            )
+            CountListItem(
+                title = "Test Idle Indicator Dim Indicator",
+                state = CountListState.Idle(
+                    0,
+                    CountListState.IndicatorState.DIM
+                ),
+                onClick = {
+                }
+            )
             CountListItem(title = "Test Loading", state = CountListState.Loading, onClick = {})
         }
     }
