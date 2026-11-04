@@ -11,10 +11,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @Composable
-internal fun DrivingCategoriesSection(
-    onClick: (text: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun DrivingCategoriesSection(onClick: (text: String) -> Unit, modifier: Modifier = Modifier) {
     val buttonText = stringResource(R.string.driving_categories_button_text)
 
     TitledSection(

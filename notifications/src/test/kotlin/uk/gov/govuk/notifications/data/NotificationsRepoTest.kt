@@ -212,7 +212,7 @@ class NotificationsRepoTest {
 
             coVerify(exactly = 1) { notificationsRepo.notificationsOnboardingCompleted() }
             notificationsRepo.firstPermissionRequestCompleted()
-            coVerify { notificationsDataStore.firstPermissionRequestCompleted()}
+            coVerify { notificationsDataStore.firstPermissionRequestCompleted() }
         }
     }
 
@@ -221,7 +221,6 @@ class NotificationsRepoTest {
         coEvery { notificationsDataStore.isFirstPermissionRequestCompleted() } returns false
 
         runTest {
-
             assertFalse(notificationsRepo.isFirstPermissionRequestCompleted())
         }
     }

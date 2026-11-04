@@ -30,10 +30,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.login.BiometricSettingsViewModel
 
 @Composable
-internal fun BiometricSettingsRoute(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun BiometricSettingsRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val viewModel: BiometricSettingsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 

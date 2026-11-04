@@ -8,8 +8,5 @@ import uk.gov.govuk.search.domain.SearchConfig
 
 interface SearchApi {
     @GET(SearchConfig.SEARCH_PATH)
-    suspend fun getSearchResults(
-        @Query("q") searchTerm: String,
-        @Query("count") count: Int
-    ): Response<SearchResponse>
+    suspend fun getSearchResults(@Query("q") searchTerm: String, @Query("count") count: Int): Response<SearchResponse>
 }

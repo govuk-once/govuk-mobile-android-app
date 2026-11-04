@@ -25,11 +25,7 @@ import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.ui.model.TopicUi.TopicContent
 
 @Composable
-internal fun AllPopularPagesRoute(
-    onBack: () -> Unit,
-    onClick: (url: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun AllPopularPagesRoute(onBack: () -> Unit, onClick: (url: String) -> Unit, modifier: Modifier = Modifier) {
     val viewModel: AllViewModel = hiltViewModel()
     val popularPages by viewModel.popularPages.collectAsState()
 
