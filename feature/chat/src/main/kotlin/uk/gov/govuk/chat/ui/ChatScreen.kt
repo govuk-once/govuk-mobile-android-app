@@ -736,7 +736,7 @@ private fun clickEvents() = UiEvents(
 
 @PreviewLightDark
 @Composable
-fun ChatScreenPreview() {
+internal fun ChatScreenPreview() {
     GovUkTheme {
         ChatScreen(
             uiState = ChatUiState.Default(isLoading = false),
