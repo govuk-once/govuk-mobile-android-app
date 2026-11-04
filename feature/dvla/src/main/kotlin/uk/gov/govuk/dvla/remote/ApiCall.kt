@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.remote
 
 import com.google.gson.Gson
+import kotlinx.coroutines.CancellationException
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
@@ -42,6 +43,8 @@ internal suspend fun safeLicenceApiCall(
 
             else -> LicenceDetailsResult.Failure(Result.ServiceNotResponding(code))
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: AuthenticationException) {
         LicenceDetailsResult.Failure(Result.AuthError())
     } catch (e: Exception) {
