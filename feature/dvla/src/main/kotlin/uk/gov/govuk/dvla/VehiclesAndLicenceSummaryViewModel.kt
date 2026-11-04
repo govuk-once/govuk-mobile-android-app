@@ -3,6 +3,7 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,15 +14,14 @@ import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
-import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.mapper.LicenceSummaryMapper
+import uk.gov.govuk.dvla.mapper.VehicleSummaryMapper
+import uk.gov.govuk.dvla.ui.model.DrivingView
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.UrlModel
-import uk.gov.govuk.dvla.mapper.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import uk.gov.govuk.govkit.browser.Urls
-import javax.inject.Inject
 
 @HiltViewModel
 internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
@@ -50,8 +50,11 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     ServiceLinkStatus.LINKED -> {
                         val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
                         _uiState.update { current ->
-                            if (current is UiState.Default) current.copy(drivingView = drivingView)
-                            else UiState.Default(drivingView = drivingView)
+                            if (current is UiState.Default) {
+                                current.copy(drivingView = drivingView)
+                            } else {
+                                UiState.Default(drivingView = drivingView)
+                            }
                         }
                         fetchLicenceDetails()
                         fetchVehicles()
@@ -141,7 +144,9 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             _uiState.update { state ->
                 if (state is UiState.Default) {
                     state.copy(drivingView = drivingView)
-                } else state
+                } else {
+                    state
+                }
             }
         }
     }

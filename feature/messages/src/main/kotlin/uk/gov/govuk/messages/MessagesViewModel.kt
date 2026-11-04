@@ -3,6 +3,9 @@ package uk.gov.govuk.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -10,24 +13,19 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.messages.data.model.MessageGroups
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
 
 internal sealed class MessagesUiState {
-    data object Default: MessagesUiState()
-    data object Loading: MessagesUiState()
+    data object Default : MessagesUiState()
+    data object Loading : MessagesUiState()
     data object Empty : MessagesUiState()
-    data object Error: MessagesUiState()
-    data object NoInternet: MessagesUiState()
-    data class Loaded(val notifications: MessageGroups): MessagesUiState()
+    data object Error : MessagesUiState()
+    data object NoInternet : MessagesUiState()
+    data class Loaded(val notifications: MessageGroups) : MessagesUiState()
 }
 
 @HiltViewModel
-internal class MessagesViewModel @Inject constructor(
-    private val messagesRepo: MessagesRepo,
-    private val analyticsClient: AnalyticsClient
-): ViewModel() {
+internal class MessagesViewModel @Inject constructor(private val messagesRepo: MessagesRepo, private val analyticsClient: AnalyticsClient) :
+    ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "MessagesScreen"

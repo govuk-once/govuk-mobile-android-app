@@ -12,10 +12,7 @@ import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun ChatErrorPageWithRetry(
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun ChatErrorPageWithRetry(onRetry: () -> Unit, modifier: Modifier = Modifier) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
         subText = listOf(
@@ -33,10 +30,7 @@ internal fun ChatErrorPageWithRetry(
 }
 
 @Composable
-internal fun ChatErrorPageNoRetry(
-    launchBrowser: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun ChatErrorPageNoRetry(launchBrowser: (String) -> Unit, modifier: Modifier = Modifier) {
     ErrorPage(
         headerText = stringResource(id = R.string.error_page_header),
         subText = listOf(stringResource(id = R.string.error_page_sub_text)),
@@ -49,10 +43,7 @@ internal fun ChatErrorPageNoRetry(
 }
 
 @Composable
-private fun AdditionalText(
-    launchBrowser: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun AdditionalText(launchBrowser: (String) -> Unit, modifier: Modifier = Modifier) {
     val intro = stringResource(id = R.string.error_page_additional_text_intro)
     val linkText = stringResource(id = R.string.error_page_additional_text_link_text)
     val outro = stringResource(id = R.string.error_page_additional_text_outro)

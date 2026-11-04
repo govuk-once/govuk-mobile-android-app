@@ -5,10 +5,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import uk.gov.govuk.design.ui.component.CountdownBarListItem
 import uk.gov.govuk.design.ui.component.StatusListItem
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.ui.model.StatusStyle
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 
 @Composable
 internal fun StatusUiItem(
@@ -59,7 +59,7 @@ private fun StatusRow(
     statusUiModel: StatusUiModel.StatusRow,
     modifier: Modifier = Modifier,
     isLast: Boolean,
-    background: Color,
+    background: Color
 ) {
     StatusListItem(
         modifier = modifier,
@@ -107,12 +107,7 @@ private fun CountdownRow(
 }
 
 @Composable
-private fun InfoRow(
-    statusUiModel: StatusUiModel.InfoRow,
-    modifier: Modifier = Modifier,
-    isLast: Boolean,
-    background: Color
-) {
+private fun InfoRow(statusUiModel: StatusUiModel.InfoRow, modifier: Modifier = Modifier, isLast: Boolean, background: Color) {
     InfoStatusItem(
         title = statusUiModel.infoRowUi.title,
         modifier = modifier,
@@ -147,10 +142,7 @@ private fun LinkRow(
 }
 
 @Composable
-private fun Style(
-    launchBrowser: (text: String, url: UrlModel) -> Unit,
-    style: StatusStyle
-) {
+private fun Style(launchBrowser: (text: String, url: UrlModel) -> Unit, style: StatusStyle) {
     when (val style = style) {
         is StatusStyle.ActionButton ->
             StatusButton(

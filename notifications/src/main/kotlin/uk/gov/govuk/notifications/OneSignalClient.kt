@@ -4,15 +4,12 @@ import android.content.Context
 import com.onesignal.OneSignal
 import com.onesignal.notifications.INotificationClickEvent
 import com.onesignal.notifications.INotificationClickListener
-import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
 
 @Singleton
-class OneSignalClient @Inject constructor(
-    override val context: Context,
-    private val launcher: DeepLinkLauncher
-) : NotificationsProvider {
+class OneSignalClient @Inject constructor(override val context: Context, private val launcher: DeepLinkLauncher) : NotificationsProvider {
 
     override fun initialise() {
         OneSignal.consentRequired = true

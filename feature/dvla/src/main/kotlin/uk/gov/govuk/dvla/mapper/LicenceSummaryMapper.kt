@@ -1,5 +1,7 @@
 package uk.gov.govuk.dvla.mapper
 
+import java.time.LocalDate
+import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
@@ -25,12 +27,8 @@ import uk.gov.govuk.dvla.util.isToday
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.govkit.browser.Urls
-import java.time.LocalDate
-import javax.inject.Inject
 
-internal class LicenceSummaryMapper @Inject constructor(
-    private val stringProvider: StringProvider
-) {
+internal class LicenceSummaryMapper @Inject constructor(private val stringProvider: StringProvider) {
     private companion object {
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
     }
@@ -67,8 +65,7 @@ internal class LicenceSummaryMapper @Inject constructor(
         )
     }
 
-    internal fun notAvailableUrl(dvlaUrls: DvlaUrls?) =
-        UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
+    internal fun notAvailableUrl(dvlaUrls: DvlaUrls?) = UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
     private fun getDrivingRecordUrl(status: LicenceStatus, dvlaUrls: DvlaUrls?): String? {
         if (status != LicenceStatus.VALID) return null
@@ -81,11 +78,7 @@ internal class LicenceSummaryMapper @Inject constructor(
         ?: emptyList()
 
     // Only reached for VALID/EXPIRED - toUiModel() short-circuits every other status to NotAvailable
-    private fun getLicenceStatusUiModel(
-        status: LicenceStatus,
-        expiryDate: LocalDate?,
-        dvlaUrls: DvlaUrls?
-    ) = when (status) {
+    private fun getLicenceStatusUiModel(status: LicenceStatus, expiryDate: LocalDate?, dvlaUrls: DvlaUrls?) = when (status) {
         LicenceStatus.EXPIRED -> getExpired(expiryDate, dvlaUrls)
         else -> {
             if (expiryDate.isInThePast()) {
@@ -102,12 +95,14 @@ internal class LicenceSummaryMapper @Inject constructor(
         val expiryDate = expiryDate?.toSummaryDisplayFormat()
         return StatusUiModel.StatusRow(
             statusRowUi = StatusRowUiModel(
-                description = AccessibleString(displayText = expiryDate?.let {
-                    stringProvider.resolveSummaryDescription(
-                        R.string.valid_until,
-                        expiryDate
-                    )
-                } ?: run { stringProvider.getString(R.string.valid) }),
+                description = AccessibleString(
+                    displayText = expiryDate?.let {
+                        stringProvider.resolveSummaryDescription(
+                            R.string.valid_until,
+                            expiryDate
+                        )
+                    } ?: run { stringProvider.getString(R.string.valid) }
+                ),
                 iconStyle = StatusListItemIconStyle.Success
             )
         )
@@ -138,17 +133,16 @@ internal class LicenceSummaryMapper @Inject constructor(
         )
     }
 
-    private fun getExpiringBottomText(expiryDate: LocalDate) =
-        if (expiryDate.isToday()) {
-            stringProvider.getString(R.string.today)
-        } else {
-            val numberOfDaysFromNow = expiryDate.getNumberOfDaysFromNow()
-            stringProvider.getQuantityString(
-                R.plurals.expiring_status_days_left,
-                numberOfDaysFromNow,
-                numberOfDaysFromNow
-            )
-        }
+    private fun getExpiringBottomText(expiryDate: LocalDate) = if (expiryDate.isToday()) {
+        stringProvider.getString(R.string.today)
+    } else {
+        val numberOfDaysFromNow = expiryDate.getNumberOfDaysFromNow()
+        stringProvider.getQuantityString(
+            R.plurals.expiring_status_days_left,
+            numberOfDaysFromNow,
+            numberOfDaysFromNow
+        )
+    }
 
     private fun getExpired(expiryDate: LocalDate?, dvlaUrls: DvlaUrls?): StatusUiModel {
         val expiryDate = expiryDate?.toSummaryDisplayFormat() ?: ""
@@ -219,12 +213,11 @@ internal class LicenceSummaryMapper @Inject constructor(
         }
     }
 
-    private fun getLicenceTypeString(type: LicenceType): String =
-        stringProvider.getString(
-            when (type) {
-                LicenceType.FULL -> R.string.licence_type_full
-                LicenceType.PROVISIONAL -> R.string.licence_type_provisional
-                LicenceType.UNKNOWN -> R.string.value_unknown
-            }
-        )
+    private fun getLicenceTypeString(type: LicenceType): String = stringProvider.getString(
+        when (type) {
+            LicenceType.FULL -> R.string.licence_type_full
+            LicenceType.PROVISIONAL -> R.string.licence_type_provisional
+            LicenceType.UNKNOWN -> R.string.value_unknown
+        }
+    )
 }

@@ -4,9 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class GovUkNumbers(
-    val cornerAndroidList: Dp
-)
+data class GovUkNumbers(val cornerAndroidList: Dp)
 
 internal val Numbers = GovUkNumbers(
     cornerAndroidList = 12.dp

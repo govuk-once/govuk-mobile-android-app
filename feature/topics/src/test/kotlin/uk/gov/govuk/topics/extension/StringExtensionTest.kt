@@ -3,16 +3,15 @@ package uk.gov.govuk.topics.extension
 import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
-import uk.gov.govuk.topics.R
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import uk.gov.govuk.topics.R
 
 class StringExtensionTest {
     private val context = mockk<Context>(relaxed = true)
 
     @Test
     fun `Given a topic reference, When mapping to topic name, then return correct topic name`() {
-
         every { context.getString(R.string.benefits) } returns "Benefits"
         every { context.getString(R.string.business) } returns "Business"
         every { context.getString(R.string.care) } returns "Care"
