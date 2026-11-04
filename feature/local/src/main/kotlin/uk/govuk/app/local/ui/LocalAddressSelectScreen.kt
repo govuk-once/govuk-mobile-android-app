@@ -126,11 +126,7 @@ private fun LocalAddressSelectScreen(
 }
 
 @Composable
-private fun RadioButtonGroup(
-    radioOptions: List<Address>,
-    onSlugChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun RadioButtonGroup(radioOptions: List<Address>, onSlugChange: (String) -> Unit, modifier: Modifier = Modifier) {
     val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf("") }
 
     Column(modifier.selectableGroup()) {
@@ -187,11 +183,7 @@ private fun RadioDivider(
 }
 
 @Composable
-private fun BottomNavBar(
-    selectedSlug: String,
-    onSlugSelect: (String, String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun BottomNavBar(selectedSlug: String, onSlugSelect: (String, String) -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
         val buttonText = stringResource(R.string.local_select_address_confirm)
 

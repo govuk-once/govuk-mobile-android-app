@@ -59,8 +59,7 @@ internal fun NotificationsPermissionRoute(
                             primaryButton = Button(
                                 text = primaryText,
                                 onClick = {
-                                    notificationsViewModel.onAllowNotificationsClick(primaryText)
-                                    {
+                                    notificationsViewModel.onAllowNotificationsClick(primaryText) {
                                         notificationsPermissionCompleted()
                                     }
                                 }

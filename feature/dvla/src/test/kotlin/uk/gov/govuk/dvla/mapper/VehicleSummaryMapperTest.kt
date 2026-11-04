@@ -27,11 +27,7 @@ class VehicleSummaryMapperTest {
         every { stringProvider.getString(any<Int>(), *anyVararg()) } returns ""
     }
 
-    private fun makeVehicle(
-        model: String? = null,
-        sornStart: LocalDate? = null,
-        taxStatus: TaxStatus = TaxStatus.UNKNOWN
-    ) = VehicleSummary(
+    private fun makeVehicle(model: String? = null, sornStart: LocalDate? = null, taxStatus: TaxStatus = TaxStatus.UNKNOWN) = VehicleSummary(
         vehicleId = 156487251,
         registration = "AA19 AAA",
         make = "FORD",

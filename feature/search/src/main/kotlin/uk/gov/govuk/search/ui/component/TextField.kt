@@ -100,7 +100,7 @@ fun SearchField(
                 onClick = {
                     actions.onSearchTermChange(TextFieldValue(""))
                     actions.onClear()
-                },
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,

@@ -209,11 +209,7 @@ private fun LocalLookupScreen(
 }
 
 @Composable
-private fun BottomNavBar(
-    postcode: String,
-    onPostcodeLookup: (String, String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun BottomNavBar(postcode: String, onPostcodeLookup: (String, String) -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
         val buttonText = stringResource(R.string.local_confirm_button)
         FixedPrimaryButton(

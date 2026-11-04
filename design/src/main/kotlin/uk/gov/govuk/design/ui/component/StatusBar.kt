@@ -17,11 +17,7 @@ import androidx.core.view.WindowCompat
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun StatusBar(
-    hideBackground: Boolean,
-    useDarkIcons: Boolean,
-    modifier: Modifier = Modifier
-) {
+fun StatusBar(hideBackground: Boolean, useDarkIcons: Boolean, modifier: Modifier = Modifier) {
     val localView = LocalView.current
     val window = (localView.context as Activity).window
 
@@ -41,10 +37,7 @@ fun StatusBar(
 }
 
 @Composable
-fun FullScreenWrapper(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
+fun FullScreenWrapper(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Column(modifier = modifier.fillMaxSize()) {
         StatusBar(
             hideBackground = true,

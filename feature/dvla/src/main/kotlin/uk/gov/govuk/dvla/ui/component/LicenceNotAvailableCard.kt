@@ -20,10 +20,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @Composable
-internal fun LicenceNotAvailableCard(
-    onClick: (text: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun LicenceNotAvailableCard(onClick: (text: String) -> Unit, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth(),
