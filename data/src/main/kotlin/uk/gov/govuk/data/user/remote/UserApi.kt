@@ -18,7 +18,5 @@ interface UserApi {
     suspend fun getUserInfo(): Response<User>
 
     @PATCH(NOTIFICATIONS_PATH)
-    suspend fun updateNotifications(
-        @Body requestBody: UpdateNotificationsRequest
-    ): Response<Unit>
+    suspend fun updateNotifications(@Body requestBody: UpdateNotificationsRequest): Response<Unit>
 }

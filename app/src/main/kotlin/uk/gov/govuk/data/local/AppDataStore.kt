@@ -13,9 +13,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 @Singleton
-internal class AppDataStore @Inject constructor(
-    @param:Named("app_prefs") private val dataStore: DataStore<Preferences>
-) {
+internal class AppDataStore @Inject constructor(@param:Named("app_prefs") private val dataStore: DataStore<Preferences>) {
     companion object {
         internal const val SKIPPED_BIOMETRICS_KEY = "skipped_biometrics"
         internal const val TOPIC_SELECTION_COMPLETED_KEY = "topic_selection_completed"
