@@ -96,29 +96,25 @@ fun DoubleButtonGroup(
         HorizontalButtonGroup(
             primaryButton = primaryButton,
             secondaryButton = secondaryButton,
-            modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium),
+            modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium)
         )
     } else {
         VerticalButtonGroup(
             primaryButton = primaryButton,
             secondaryButton = secondaryButton,
-            modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium),
+            modifier = modifier.padding(horizontal = GovUkTheme.spacing.medium)
         )
     }
 }
 
 @Composable
-private fun isWindowHeightCompact() : Boolean {
+private fun isWindowHeightCompact(): Boolean {
     val windowAdaptiveInfo = currentWindowAdaptiveInfo()
     return !windowAdaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
 }
 
 @Composable
-private fun VerticalButtonGroup(
-    primaryButton: Button,
-    secondaryButton: Button,
-    modifier: Modifier = Modifier
-) {
+private fun VerticalButtonGroup(primaryButton: Button, secondaryButton: Button, modifier: Modifier = Modifier) {
     Column(modifier) {
         if (primaryButton.isDestructive) {
             DestructiveButton(
@@ -147,12 +143,9 @@ private fun VerticalButtonGroup(
 }
 
 @Composable
-private fun HorizontalButtonGroup(
-    primaryButton: Button,
-    secondaryButton: Button,
-    modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier.fillMaxWidth(),
+private fun HorizontalButtonGroup(primaryButton: Button, secondaryButton: Button, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         if (primaryButton.isDestructive) {
@@ -181,7 +174,8 @@ private fun HorizontalButtonGroup(
 }
 
 enum class ConnectedButton {
-    FIRST, SECOND
+    FIRST,
+    SECOND
 }
 
 private const val FONT_SCALE_THRESHOLD = 2.0
@@ -229,9 +223,10 @@ private fun HorizontalConnectedButtonGroup(
     modifier: Modifier = Modifier,
     colours: ButtonColours
 ) {
-    Row(modifier = modifier
-        .fillMaxWidth()
-        .height(IntrinsicSize.Min),
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         ConnectedButton(
@@ -296,8 +291,7 @@ private fun VerticalConnectedButtonGroup(
 
 @Preview
 @Composable
-private fun FixedPrimaryButtonPreview()
-{
+private fun FixedPrimaryButtonPreview() {
     GovUkTheme {
         FixedPrimaryButton(
             text = "Primary",
@@ -308,8 +302,7 @@ private fun FixedPrimaryButtonPreview()
 
 @Preview
 @Composable
-private fun FixedSecondaryButtonPreview()
-{
+private fun FixedSecondaryButtonPreview() {
     GovUkTheme {
         FixedSecondaryButton(
             text = "Primary",
@@ -320,8 +313,7 @@ private fun FixedSecondaryButtonPreview()
 
 @Preview
 @Composable
-private fun VerticalButtonGroupPreview()
-{
+private fun VerticalButtonGroupPreview() {
     GovUkTheme {
         FixedDoubleButtonGroup(
             primaryButton = Button("Primary", {}),
@@ -333,8 +325,7 @@ private fun VerticalButtonGroupPreview()
 
 @Preview
 @Composable
-private fun HorizontalButtonGroupPreview()
-{
+private fun HorizontalButtonGroupPreview() {
     GovUkTheme {
         FixedDoubleButtonGroup(
             primaryButton = Button("Primary", {}),
@@ -346,8 +337,7 @@ private fun HorizontalButtonGroupPreview()
 
 @Preview
 @Composable
-private fun VerticalDestructiveButtonGroupPreview()
-{
+private fun VerticalDestructiveButtonGroupPreview() {
     val primaryButton = Button("Primary", {}, true)
     GovUkTheme {
         FixedDoubleButtonGroup(
@@ -360,8 +350,7 @@ private fun VerticalDestructiveButtonGroupPreview()
 
 @Preview
 @Composable
-private fun HorizontalDestructiveButtonGroupPreview()
-{
+private fun HorizontalDestructiveButtonGroupPreview() {
     val primaryButton = Button("Primary", {}, true)
     GovUkTheme {
         FixedDoubleButtonGroup(
@@ -374,8 +363,7 @@ private fun HorizontalDestructiveButtonGroupPreview()
 
 @Preview
 @Composable
-private fun HorizontalConnectedButtonGroupPreview()
-{
+private fun HorizontalConnectedButtonGroupPreview() {
     GovUkTheme {
         HorizontalConnectedButtonGroup(
             firstText = "First",
@@ -393,8 +381,7 @@ private fun HorizontalConnectedButtonGroupPreview()
 
 @Preview
 @Composable
-private fun VerticalConnectedButtonGroupPreview()
-{
+private fun VerticalConnectedButtonGroupPreview() {
     GovUkTheme {
         VerticalConnectedButtonGroup(
             firstText = "First",

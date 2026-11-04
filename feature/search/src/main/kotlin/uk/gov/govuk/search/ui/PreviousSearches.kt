@@ -106,12 +106,7 @@ internal fun PreviousSearches(
 }
 
 @Composable
-private fun Header(
-    focusRequester: FocusRequester,
-    onRemoveAll: () -> Unit,
-    altText: String,
-    modifier: Modifier = Modifier
-) {
+private fun Header(focusRequester: FocusRequester, onRemoveAll: () -> Unit, altText: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val title = stringResource(R.string.previous_searches_heading)
 
@@ -119,7 +114,7 @@ private fun Header(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                top = GovUkTheme.spacing.small,
+                top = GovUkTheme.spacing.small
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -160,19 +155,14 @@ private fun Header(
                     .semantics {
                         contentDescription = context.getString(R.string.content_desc_delete_all)
                     },
-                color = textColor,
+                color = textColor
             )
         }
     }
 }
 
 @Composable
-private fun PreviousSearch(
-    searchTerm: String,
-    onClick: (String) -> Unit,
-    onRemove: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun PreviousSearch(searchTerm: String, onClick: (String) -> Unit, onRemove: (String) -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -245,11 +235,7 @@ private fun PreviousSearch(
 }
 
 @Composable
-private fun RemoveAllConfirmationDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun RemoveAllConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

@@ -4,9 +4,7 @@ import com.google.gson.annotations.SerializedName
 import uk.gov.govuk.dvla.remote.model.common.MotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus
 
-data class CustomerVehiclesResponse(
-    @SerializedName("customerVehicles") val customerVehicles: List<VehicleSummary>
-)
+data class CustomerVehiclesResponse(@SerializedName("customerVehicles") val customerVehicles: List<VehicleSummary>)
 
 data class VehicleSummary(
     @SerializedName("vehicleId") val vehicleId: Int,

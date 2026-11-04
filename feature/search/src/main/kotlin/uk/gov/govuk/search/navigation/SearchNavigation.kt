@@ -14,11 +14,7 @@ const val SEARCH_ROUTE = "search_route"
 
 val searchDeepLinks = mapOf("/search" to listOf(SEARCH_ROUTE))
 
-fun NavGraphBuilder.searchGraph(
-    navController: NavHostController,
-    launchBrowser: (url: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun NavGraphBuilder.searchGraph(navController: NavHostController, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
     navigation(
         route = SEARCH_GRAPH_ROUTE,
         startDestination = SEARCH_ROUTE

@@ -10,9 +10,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 
 @Singleton
-class LoginDataStore @Inject constructor(
-    @param:Named("login_prefs") private val dataStore: DataStore<Preferences>
-) {
+class LoginDataStore @Inject constructor(@param:Named("login_prefs") private val dataStore: DataStore<Preferences>) {
     companion object {
         internal const val REFRESH_TOKEN_EXPIRY_KEY = "refresh_token_expiry"
         internal const val REFRESH_TOKEN_ISSUED_AT_DATE_KEY = "refresh_token_issued_at_date"

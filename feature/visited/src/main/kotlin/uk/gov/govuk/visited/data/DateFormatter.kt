@@ -9,6 +9,4 @@ fun localDateFormatter(millis: Long): String {
     return LocalDateTime.ofEpochSecond(millis, 0, ZoneOffset.UTC).format(formatter)
 }
 
-fun capitaliseMonth(month: String): String {
-    return month.lowercase().replaceFirstChar(Char::titlecaseChar)
-}
+fun capitaliseMonth(month: String): String = month.lowercase().replaceFirstChar(Char::titlecaseChar)

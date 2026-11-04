@@ -1,8 +1,8 @@
 package uk.gov.govuk.govkit.date
 
+import java.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.time.Instant
 
 class InstantExtTest {
 
