@@ -162,11 +162,7 @@ private fun BottomNavBar(
 }
 
 @Composable
-private fun RadioButtonGroup(
-    radioOptions: List<LocalAuthority>,
-    onSlugChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun RadioButtonGroup(radioOptions: List<LocalAuthority>, onSlugChange: (String) -> Unit, modifier: Modifier = Modifier) {
     val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf("") }
 
     Column(modifier.selectableGroup()) {
