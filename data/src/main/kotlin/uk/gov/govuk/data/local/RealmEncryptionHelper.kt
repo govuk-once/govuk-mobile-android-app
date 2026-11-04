@@ -3,9 +3,6 @@ package uk.gov.govuk.data.local
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -15,11 +12,12 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Singleton
-class RealmEncryptionHelper @Inject constructor(
-    private val dataStore: RealmDataStore
-) {
+class RealmEncryptionHelper @Inject constructor(private val dataStore: RealmDataStore) {
 
     private companion object {
         private const val KEYSTORE_KEY_ALIAS = "realm_key"
@@ -31,33 +29,27 @@ class RealmEncryptionHelper @Inject constructor(
         keyStore.load(null)
     }
 
-    suspend fun getRealmKey(
-        dispatcher: CoroutineDispatcher = Dispatchers.IO
-    ): ByteArray {
-        return withContext(dispatcher) {
-            val encryptedRealmKey = dataStore.getRealmKey()
-            val realmIv = dataStore.getRealmIv()
+    suspend fun getRealmKey(dispatcher: CoroutineDispatcher = Dispatchers.IO): ByteArray = withContext(dispatcher) {
+        val encryptedRealmKey = dataStore.getRealmKey()
+        val realmIv = dataStore.getRealmIv()
 
-            if (encryptedRealmKey != null && realmIv != null &&
-                keyStore.containsAlias(KEYSTORE_KEY_ALIAS)
-            ) {
-                decryptRealmKey(
-                    encryptedKeyString = encryptedRealmKey,
-                    ivString = realmIv
-                ).encoded
-            } else {
-                val keystoreKey = createKeystoreKey()
-                val realmEncryptionKey = createRealmEncryptionKey()
-                encryptAndSaveRealmKey(realmEncryptionKey, keystoreKey)
-                realmEncryptionKey
-            }
+        if (encryptedRealmKey != null &&
+            realmIv != null &&
+            keyStore.containsAlias(KEYSTORE_KEY_ALIAS)
+        ) {
+            decryptRealmKey(
+                encryptedKeyString = encryptedRealmKey,
+                ivString = realmIv
+            ).encoded
+        } else {
+            val keystoreKey = createKeystoreKey()
+            val realmEncryptionKey = createRealmEncryptionKey()
+            encryptAndSaveRealmKey(realmEncryptionKey, keystoreKey)
+            realmEncryptionKey
         }
     }
 
-    private fun decryptRealmKey(
-        encryptedKeyString: String,
-        ivString: String
-    ): SecretKey {
+    private fun decryptRealmKey(encryptedKeyString: String, ivString: String): SecretKey {
         val encryptedKey = Base64.decode(encryptedKeyString, Base64.DEFAULT)
         val iv = Base64.decode(ivString, Base64.DEFAULT)
 

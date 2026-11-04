@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -167,11 +166,7 @@ internal fun ActionMenu(
 }
 
 @Composable
-private fun CloseMenuItem(
-    isTalkBackActive: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun CloseMenuItem(isTalkBackActive: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     if (isTalkBackActive) {
         val closeText = stringResource(R.string.action_close)
         HorizontalDivider()
@@ -284,14 +279,14 @@ private fun MenuItem(
     enabled: Boolean = true,
     colours: MenuItemColors = MenuDefaults.itemColors().copy(
         textColor = GovUkTheme.colourScheme.textAndIcons.primary,
-        trailingIconColor = GovUkTheme.colourScheme.textAndIcons.primary,
+        trailingIconColor = GovUkTheme.colourScheme.textAndIcons.primary
     )
 ) {
     DropdownMenuItem(
         text = {
             Text(
                 text = buttonText,
-                style = GovUkTheme.typography.bodyRegular,
+                style = GovUkTheme.typography.bodyRegular
             )
         },
         onClick = onClick,
@@ -299,7 +294,7 @@ private fun MenuItem(
         trailingIcon = {
             Icon(
                 painter = painterResource(icon),
-                contentDescription = null,
+                contentDescription = null
             )
         },
         enabled = enabled,
@@ -308,10 +303,7 @@ private fun MenuItem(
 }
 
 @Composable
-private fun ActionIconButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun ActionIconButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier

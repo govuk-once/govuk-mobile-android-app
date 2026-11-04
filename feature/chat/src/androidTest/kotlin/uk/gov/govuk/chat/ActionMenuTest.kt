@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlin.random.Random
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,7 +17,6 @@ import uk.gov.govuk.chat.ui.ChatScreen
 import uk.gov.govuk.chat.ui.UiEvents
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
 class ActionMenuTest {
@@ -93,10 +93,7 @@ class ActionMenuTest {
         composeTestRule.onNodeWithText(closeText).assertDoesNotExist()
     }
 
-    private fun setupChatScreen(
-        isTalkBackActive: Boolean = Random.nextBoolean(),
-        hasConversation: Boolean = Random.nextBoolean()
-    ) {
+    private fun setupChatScreen(isTalkBackActive: Boolean = Random.nextBoolean(), hasConversation: Boolean = Random.nextBoolean()) {
         composeTestRule.setContent {
             GovUkTheme {
                 ChatScreen(
@@ -132,7 +129,5 @@ class ActionMenuTest {
         composeTestRule.onNodeWithContentDescription(moreOptionsText).performClick()
     }
 
-    private fun getString(@StringRes id: Int): String {
-        return InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
-    }
+    private fun getString(@StringRes id: Int): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 }

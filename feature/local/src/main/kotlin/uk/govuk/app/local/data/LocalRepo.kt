@@ -1,5 +1,7 @@
 package uk.govuk.app.local.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -14,14 +16,9 @@ import uk.govuk.app.local.domain.model.Address
 import uk.govuk.app.local.domain.model.LocalAuthority
 import uk.govuk.app.local.domain.toAddress
 import uk.govuk.app.local.domain.toLocalAuthority
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class LocalRepo @Inject constructor(
-    private val localApi: LocalApi,
-    private val localDataSource: LocalDataSource
-) {
+internal class LocalRepo @Inject constructor(private val localApi: LocalApi, private val localDataSource: LocalDataSource) {
     private val mutex = Mutex()
 
     val localAuthority = localDataSource.localAuthority.map {
@@ -40,9 +37,7 @@ internal class LocalRepo @Inject constructor(
     val localAuthorities: List<LocalAuthority>
         get() = _localAuthorities.toList()
 
-    suspend fun fetchLocalAuthority(
-        postcode: String
-    ): Result<LocalAuthorityResult> {
+    suspend fun fetchLocalAuthority(postcode: String): Result<LocalAuthorityResult> {
         mutex.withLock {
             val result = safeLocalApiCall { localApi.fromPostcode(postcode) }
             if (result is Result.Success) {
@@ -57,9 +52,7 @@ internal class LocalRepo @Inject constructor(
         }
     }
 
-    private suspend fun cacheAddresses(
-        addresses: List<RemoteAddress>
-    ) {
+    private suspend fun cacheAddresses(addresses: List<RemoteAddress>) {
         val slugs = addresses.distinctBy { it.slug }.map { it.slug }
 
         val localAuthorities = mutableListOf<RemoteLocalAuthority>()
