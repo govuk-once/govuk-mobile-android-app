@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutBoundsHolder
 import androidx.compose.ui.layout.layoutBounds
 import androidx.compose.ui.layout.onVisibilityChanged
@@ -49,8 +52,8 @@ internal fun HomeRoute(
     widgets: List<@Composable (Modifier) -> Unit>,
     homeWidgets: List<HomeWidget>?,
     modifier: Modifier = Modifier,
-    headerWidget: (@Composable (Modifier) -> Unit)? = null
-) {
+    headerWidget: (@Composable (Modifier) -> Unit)? = null,
+    ) {
     val viewModel: HomeViewModel = hiltViewModel()
 
     HomeScreen(
@@ -77,6 +80,7 @@ private fun HomeScreen(
                 .background(GovUkTheme.colourScheme.surfaces.homeHeader)
                 .padding(horizontal = GovUkTheme.spacing.medium)
         ) {
+
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -97,6 +101,7 @@ private fun HomeScreen(
                 }
             }
 
+
             if (headerWidget != null) {
                 headerWidget(Modifier.fillMaxWidth())
                 MediumVerticalSpacer()
@@ -107,7 +112,7 @@ private fun HomeScreen(
         val viewport = remember { LayoutBoundsHolder() }
         var showIcon by remember { mutableStateOf(false) }
 
-        LazyColumn(
+        LazyColumn (
             modifier = Modifier
                 .layoutBounds(viewport)
                 .padding(horizontal = GovUkTheme.spacing.medium),
@@ -115,11 +120,9 @@ private fun HomeScreen(
         ) {
             items(widgets) { widget ->
                 LargeVerticalSpacer()
-                widget(
-                    Modifier
-                        .fillMaxWidth()
-                        .animateItem()
-                )
+                widget(Modifier
+                    .fillMaxWidth()
+                    .animateItem())
             }
             item {
                 LargeVerticalSpacer()

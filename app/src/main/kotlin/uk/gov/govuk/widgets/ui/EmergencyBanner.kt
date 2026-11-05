@@ -2,8 +2,8 @@ package uk.gov.govuk.widgets.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
+import uk.gov.govuk.config.data.remote.model.EmergencyBanner
 import uk.gov.govuk.design.ui.component.HomeBannerCard
 import uk.gov.govuk.design.ui.model.EmergencyBannerUiType
 

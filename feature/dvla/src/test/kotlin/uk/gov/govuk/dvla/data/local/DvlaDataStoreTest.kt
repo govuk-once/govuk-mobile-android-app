@@ -5,8 +5,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import java.io.File
-import kotlin.io.path.createTempDirectory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -19,8 +17,10 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import uk.gov.govuk.dvla.data.local.DvlaDataStore.Companion.SELECTED_DRIVING_VIEW
 import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.data.local.DvlaDataStore.Companion.SELECTED_DRIVING_VIEW
+import java.io.File
+import kotlin.io.path.createTempDirectory
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DvlaDataStoreTest {
@@ -46,33 +46,36 @@ class DvlaDataStoreTest {
     }
 
     @Test
-    fun `Given the data store is empty, then getSelectedDrivingView returns null`() = runTest(dispatcher) {
-        val dvlaDatastore = DvlaDataStore(dataStore)
+    fun `Given the data store is empty, then getSelectedDrivingView returns null`() =
+        runTest(dispatcher) {
+            val dvlaDatastore = DvlaDataStore(dataStore)
 
-        assertNull(dvlaDatastore.getSelectedDrivingView())
-    }
-
-    @Test
-    fun `Given the selected driving view is vehicles, then getSelectedDrivingView returns vehicles`() = runTest(dispatcher) {
-        dataStore.edit { prefs ->
-            prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
+            assertNull(dvlaDatastore.getSelectedDrivingView())
         }
 
-        val dvlaDatastore = DvlaDataStore(dataStore)
-
-        assertTrue(dvlaDatastore.getSelectedDrivingView() == DrivingView.VEHICLES)
-    }
-
     @Test
-    fun `Given the selected driving view is not in the DrivingView enum, then getSelectedDrivingView returns null`() = runTest(dispatcher) {
-        dataStore.edit { prefs ->
-            prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "NOT_IN_ENUM"
+    fun `Given the selected driving view is vehicles, then getSelectedDrivingView returns vehicles`() =
+        runTest(dispatcher) {
+            dataStore.edit { prefs ->
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
+            }
+
+            val dvlaDatastore = DvlaDataStore(dataStore)
+
+            assertTrue(dvlaDatastore.getSelectedDrivingView() == DrivingView.VEHICLES)
         }
 
-        val dvlaDatastore = DvlaDataStore(dataStore)
+    @Test
+    fun `Given the selected driving view is not in the DrivingView enum, then getSelectedDrivingView returns null`() =
+        runTest(dispatcher) {
+            dataStore.edit { prefs ->
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "NOT_IN_ENUM"
+            }
 
-        assertNull(dvlaDatastore.getSelectedDrivingView())
-    }
+            val dvlaDatastore = DvlaDataStore(dataStore)
+
+            assertNull(dvlaDatastore.getSelectedDrivingView())
+        }
 
     @Test
     fun `Given the setSelectedDrivingView is called with vehicles, then the selected driving view in the data store is vehicles`() =
@@ -85,17 +88,18 @@ class DvlaDataStoreTest {
         }
 
     @Test
-    fun `Given the data store is cleared, when clear, then the data store is cleared`() = runTest(dispatcher) {
-        val dvlaDatastore = DvlaDataStore(dataStore)
+    fun `Given the data store is cleared, when clear, then the data store is cleared`() =
+        runTest(dispatcher) {
+            val dvlaDatastore = DvlaDataStore(dataStore)
 
-        dataStore.edit { prefs ->
-            prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
+            dataStore.edit { prefs ->
+                prefs[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = "VEHICLES"
+            }
+
+            assertTrue(dataStore.data.first().asMap().isNotEmpty())
+
+            dvlaDatastore.clear()
+
+            assertTrue(dataStore.data.first().asMap().isEmpty())
         }
-
-        assertTrue(dataStore.data.first().asMap().isNotEmpty())
-
-        dvlaDatastore.clear()
-
-        assertTrue(dataStore.data.first().asMap().isEmpty())
-    }
 }
