@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,13 +24,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import uk.gov.govuk.design.ui.component.BodyBoldLabel
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.NonTappableCard
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.model.HeaderActionStyle
@@ -41,7 +43,11 @@ import uk.gov.govuk.visited.VisitedViewModel
 import uk.gov.govuk.visited.ui.model.VisitedUi
 
 @Composable
-internal fun VisitedRoute(onBack: () -> Unit, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
+internal fun VisitedRoute(
+    onBack: () -> Unit,
+    launchBrowser: (url: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: VisitedViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -93,6 +99,7 @@ private fun VisitedScreen(
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.screenBackground)
     ) {
+
         ChildPageHeader(
             text = title,
             dismissStyle = HeaderDismissStyle.Back(onBack),
@@ -122,7 +129,9 @@ private fun VisitedScreen(
 }
 
 @Composable
-private fun NoVisitedItems(modifier: Modifier = Modifier) {
+private fun NoVisitedItems(
+    modifier: Modifier = Modifier
+) {
     MediumVerticalSpacer()
 
     NonTappableCard(
@@ -197,7 +206,11 @@ private fun ShowVisitedItems(
 }
 
 @Composable
-private fun RemoveAllConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+private fun RemoveAllConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),

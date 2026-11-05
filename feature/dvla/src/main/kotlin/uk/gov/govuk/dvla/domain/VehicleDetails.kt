@@ -1,8 +1,8 @@
 package uk.gov.govuk.dvla.domain
 
-import java.time.LocalDate
 import uk.gov.govuk.data.extension.toLocalDateOrNull
 import uk.gov.govuk.dvla.remote.model.CustomerVehicleDetails
+import java.time.LocalDate
 
 data class VehicleDetails(
     val summary: VehicleSummary,
@@ -18,27 +18,29 @@ data class VehicleDetails(
     val keeperFullAddress: String?
 )
 
-internal fun CustomerVehicleDetails.toDomainModel(): VehicleDetails = VehicleDetails(
-    summary = VehicleSummary(
-        vehicleId = this.vehicleId,
-        registration = this.registrationNumber,
-        make = this.make,
-        model = this.model,
-        taxStatus = this.taxStatus.toDomain(),
-        taxExpiryDate = this.taxedUntil.toLocalDateOrNull(),
-        motStatus = this.motStatus.toDomain(),
-        motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
-        sornStart = this.sornStart.toLocalDateOrNull(),
-        currentLicencePaymentMethod = this.currentLicencePaymentMethod
-    ),
-    dateOfFirstRegistration = this.dateOfFirstRegistration.toLocalDateOrNull(),
-    fuelType = this.fuelType.toDomain(),
-    colour = this.colour.toDomain(),
-    secondaryColour = this.secondaryColour.toDomain(),
-    engineCapacity = this.engineCapacity,
-    exhaustEmissionsCo2 = this.exhaustEmissionsCo2,
-    keeperTitle = this.keeperTitle,
-    keeperFirstNames = this.keeperFirstNames,
-    keeperLastName = this.keeperLastName,
-    keeperFullAddress = this.keeperFullAddress
-)
+internal fun CustomerVehicleDetails.toDomainModel(): VehicleDetails {
+    return VehicleDetails(
+        summary = VehicleSummary(
+            vehicleId = this.vehicleId,
+            registration = this.registrationNumber,
+            make = this.make,
+            model = this.model,
+            taxStatus = this.taxStatus.toDomain(),
+            taxExpiryDate = this.taxedUntil.toLocalDateOrNull(),
+            motStatus = this.motStatus.toDomain(),
+            motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
+            sornStart = this.sornStart.toLocalDateOrNull(),
+            currentLicencePaymentMethod = this.currentLicencePaymentMethod
+        ),
+        dateOfFirstRegistration = this.dateOfFirstRegistration.toLocalDateOrNull(),
+        fuelType = this.fuelType.toDomain(),
+        colour = this.colour.toDomain(),
+        secondaryColour = this.secondaryColour.toDomain(),
+        engineCapacity = this.engineCapacity,
+        exhaustEmissionsCo2 = this.exhaustEmissionsCo2,
+        keeperTitle = this.keeperTitle,
+        keeperFirstNames = this.keeperFirstNames,
+        keeperLastName = this.keeperLastName,
+        keeperFullAddress = this.keeperFullAddress
+    )
+}

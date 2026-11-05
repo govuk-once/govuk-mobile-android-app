@@ -5,16 +5,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.ModalHeader
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -24,7 +28,10 @@ import uk.gov.govuk.topics.ui.component.TopicSelectionCard
 import uk.gov.govuk.topics.ui.model.TopicItemUi
 
 @Composable
-internal fun EditTopicsRoute(onDone: () -> Unit, modifier: Modifier = Modifier) {
+internal fun EditTopicsRoute(
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: EditTopicsViewModel = hiltViewModel()
     val topics by viewModel.topics.collectAsState()
 

@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.model.Button
@@ -48,7 +48,7 @@ internal fun LocalAuthoritySelectRoute(
     onLocalAuthoritySelected: () -> Unit,
     onSelectByAddress: () -> Unit,
     postcode: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: LocalSelectViewModel = hiltViewModel()
 
@@ -58,8 +58,7 @@ internal fun LocalAuthoritySelectRoute(
         onCancel = onCancel,
         onSelectByAddress = { buttonText ->
             viewModel.onSelectByAddressButtonClick(buttonText)
-            onSelectByAddress()
-        },
+            onSelectByAddress() },
         onSlugSelect = { buttonText, slug ->
             viewModel.updateLocalAuthority(buttonText, slug)
             onLocalAuthoritySelected()
@@ -162,7 +161,11 @@ private fun BottomNavBar(
 }
 
 @Composable
-private fun RadioButtonGroup(radioOptions: List<LocalAuthority>, onSlugChange: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun RadioButtonGroup(
+    radioOptions: List<LocalAuthority>,
+    onSlugChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf("") }
 
     Column(modifier.selectableGroup()) {
@@ -180,7 +183,7 @@ private fun RadioButtonGroup(radioOptions: List<LocalAuthority>, onSlugChange: (
                         },
                         role = Role.RadioButton
                     ),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(
                     selected = (localAuthority.slug == selectedOption),
@@ -207,6 +210,7 @@ private fun RadioButtonGroup(radioOptions: List<LocalAuthority>, onSlugChange: (
     }
 }
 
+
 @Composable
 private fun RadioDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
@@ -225,7 +229,7 @@ internal fun LocalAuthoritySelectScreenPreview() {
             onPageView = {},
             onCancel = {},
             onSelectByAddress = {},
-            onSlugSelect = { _, _ -> },
+            onSlugSelect = { _, _ ->},
             postcode = "E18QS",
             localAuthorities = listOf(
                 LocalAuthority(
