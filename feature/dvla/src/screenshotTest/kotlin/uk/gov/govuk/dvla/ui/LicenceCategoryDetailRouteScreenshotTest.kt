@@ -12,4 +12,11 @@ internal class LicenceCategoryDetailRouteScreenshotTest {
     fun LicenceCategoryDetailScreenScreenshots() {
         LicenceCategoryDetailScreenPreview()
     }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun LicenceCategoryDetailNoIconScreenScreenshots() {
+        LicenceCategoryDetailScreenNoIconPreview()
+    }
 }

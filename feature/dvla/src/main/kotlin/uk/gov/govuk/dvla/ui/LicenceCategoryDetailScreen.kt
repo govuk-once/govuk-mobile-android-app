@@ -226,7 +226,7 @@ internal fun LicenceCategoryDetailScreenPreview() {
 
 @PreviewLightDark
 @Composable
-private fun LicenceCategoryDetailScreenNoIconPreview() {
+internal fun LicenceCategoryDetailScreenNoIconPreview() {
     GovUkTheme {
         Box(modifier = Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
             LicenceCategoryDetailScreen(
