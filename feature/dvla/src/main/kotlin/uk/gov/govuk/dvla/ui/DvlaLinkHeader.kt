@@ -12,7 +12,10 @@ import uk.gov.govuk.dvla.DvlaLinkWidgetViewModel
 import uk.gov.govuk.dvla.ui.component.DvlaLinkCard
 
 @Composable
-fun DvlaLinkHeader(onActionClick: () -> Unit, modifier: Modifier = Modifier) {
+fun DvlaLinkHeader(
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: DvlaLinkWidgetViewModel = hiltViewModel()
     val state by viewModel.dvlaState.collectAsState(initial = ServiceLinkStatus.CHECKING)
 

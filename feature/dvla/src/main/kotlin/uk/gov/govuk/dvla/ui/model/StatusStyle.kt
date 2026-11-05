@@ -10,5 +10,7 @@ internal sealed interface StatusStyle {
         val isPrimary: Boolean = true
     ) : StatusStyle
 
-    data class Caption(val text: AccessibleString) : StatusStyle
+    data class Caption(
+        val text: AccessibleString,
+    ) : StatusStyle
 }

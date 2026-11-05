@@ -87,7 +87,7 @@ internal fun Sources(
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.icon),
                 modifier = Modifier
-                    .padding(end = GovUkTheme.spacing.small)
+                    .padding(end = GovUkTheme.spacing.small),
             )
 
             BodyBoldLabel(

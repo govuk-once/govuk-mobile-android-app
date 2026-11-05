@@ -4,7 +4,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.net.UnknownHostException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -28,6 +27,7 @@ import uk.gov.govuk.search.data.remote.model.AutocompleteResponse
 import uk.gov.govuk.search.data.remote.model.SearchResponse
 import uk.gov.govuk.search.data.remote.model.SearchResult
 import uk.gov.govuk.search.domain.SearchConfig
+import java.net.UnknownHostException
 
 @RunWith(Enclosed::class)
 class SearchRepoTest {
@@ -103,7 +103,7 @@ class SearchRepoTest {
             coEvery {
                 searchApi.getSearchResults(any(), any())
             } returns response
-            every { response.isSuccessful } returns true
+            every {  response.isSuccessful } returns true
             every { response.code() } returns 200
             every { response.body() } returns responseWithOneSearchResult
 
@@ -120,7 +120,7 @@ class SearchRepoTest {
             coEvery {
                 searchApi.getSearchResults(any(), any())
             } returns response
-            every { response.isSuccessful } returns true
+            every {  response.isSuccessful } returns true
             every { response.code() } returns 200
             every { response.body() } returns responseWithNoSearchResults
 

@@ -24,7 +24,9 @@ const val TOPICS_EDIT_ROUTE = "topics_edit_route"
 const val TOPICS_ALL_STEP_BY_STEPS_ROUTE = "topics_all_step_by_steps_route"
 const val TOPICS_ALL_POPULAR_PAGES_ROUTE = "topics_all_popular_pages_route"
 
-fun NavGraphBuilder.topicSelectionGraph(topicSelectionCompleted: () -> Unit) {
+fun NavGraphBuilder.topicSelectionGraph(
+    topicSelectionCompleted: () -> Unit,
+) {
     navigation(
         route = TOPIC_SELECTION_GRAPH_ROUTE,
         startDestination = TOPIC_SELECTION_ROUTE
@@ -58,7 +60,7 @@ fun NavGraphBuilder.topicsGraph(
             "$TOPIC_ROUTE$topicPath",
             arguments = listOf(
                 navArgument(TOPIC_REF_ARG) { type = NavType.StringType },
-                navArgument(TOPIC_SUBTOPIC_ARG) { type = NavType.BoolType }
+                navArgument(TOPIC_SUBTOPIC_ARG) { type = NavType.BoolType },
             )
         ) { backStackEntry ->
 
@@ -79,16 +81,16 @@ fun NavGraphBuilder.topicsGraph(
         }
         composable(TOPICS_ALL_STEP_BY_STEPS_ROUTE) {
             AllStepByStepRoute(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.popBackStack()},
                 onClick = { url ->
                     launchBrowser(url)
-                },
+                 },
                 modifier = modifier
             )
         }
         composable(TOPICS_ALL_POPULAR_PAGES_ROUTE) {
             AllPopularPagesRoute(
-                onBack = { navController.popBackStack() },
+                onBack = { navController.popBackStack()},
                 onClick = { url ->
                     launchBrowser(url)
                 },

@@ -45,7 +45,7 @@ internal fun NotificationsOnboardingRoute(
                         text = primaryText,
                         onClick = {
                             notificationsViewModel.onGiveConsentClick(primaryText) { notificationsOnboardingCompleted() }
-                        }
+                        },
                     ),
                     secondaryButton = Button(
                         text = secondaryText,
@@ -71,7 +71,8 @@ internal fun NotificationsOnboardingRoute(
                     primaryButton = Button(
                         text = primaryText,
                         onClick = {
-                            notificationsViewModel.onAllowNotificationsClick(primaryText) { notificationsOnboardingCompleted() }
+                            notificationsViewModel.onAllowNotificationsClick(primaryText)
+                            { notificationsOnboardingCompleted() }
                         }
                     ),
                     secondaryButton = Button(

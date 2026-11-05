@@ -78,7 +78,10 @@ internal fun OverflowMenu(
 }
 
 @Composable
-private fun OverflowMenuItemRow(title: AccessibleString, onClick: () -> Unit) {
+private fun OverflowMenuItemRow(
+    title: AccessibleString,
+    onClick: () -> Unit
+) {
     DropdownMenuItem(
         text = {
             BodyRegularLabel(

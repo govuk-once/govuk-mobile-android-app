@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,14 +15,15 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result.Success
 import uk.govuk.app.local.data.LocalRepo
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult
+import javax.inject.Inject
 
 internal sealed class LocalUiState {
-    data class Error(@StringRes val message: Int) : LocalUiState()
+    data class Error(@StringRes val message: Int): LocalUiState()
 }
 
 sealed class NavigationEvent {
-    data object LocalAuthoritySelected : NavigationEvent()
-    data class Addresses(val postcode: String) : NavigationEvent()
+    data object LocalAuthoritySelected: NavigationEvent()
+    data class Addresses(val postcode: String): NavigationEvent()
 }
 
 @HiltViewModel
@@ -31,7 +31,7 @@ internal class LocalLookupViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val localRepo: LocalRepo,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+): ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "LocalLookupScreen"
@@ -65,10 +65,12 @@ internal class LocalLookupViewModel @Inject constructor(
     }
 
     fun onPostcodeChange() {
-        _uiState.value = null
+         _uiState.value = null
     }
 
-    private fun toApiPostcode(str: String): String = str.filter { !it.isWhitespace() }.uppercase()
+    private fun toApiPostcode(str: String): String {
+        return str.filter { !it.isWhitespace() }.uppercase()
+    }
 
     private fun fetchPostcodeLookupResult(postcode: String) {
         if (postcode.isBlank()) {
@@ -90,7 +92,10 @@ internal class LocalLookupViewModel @Inject constructor(
         return LocalUiState.Error(errorMessage)
     }
 
-    private suspend fun emitErrorOrNavigate(result: LocalAuthorityResult, postcode: String = "") {
+    private suspend fun emitErrorOrNavigate(
+        result: LocalAuthorityResult,
+        postcode: String = ""
+    ) {
         when (result) {
             is LocalAuthorityResult.LocalAuthority -> _navigationEvent.emit(NavigationEvent.LocalAuthoritySelected)
             is LocalAuthorityResult.Addresses -> _navigationEvent.emit(NavigationEvent.Addresses(postcode))
