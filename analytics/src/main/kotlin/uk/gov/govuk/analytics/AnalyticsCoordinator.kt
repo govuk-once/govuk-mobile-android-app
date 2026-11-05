@@ -27,7 +27,10 @@ class AnalyticsCoordinator @Inject constructor(
         }
     }
 
-    override fun logEvent(name: String, parameters: Map<String, Any>) {
+    override fun logEvent(
+        name: String,
+        parameters: Map<String, Any>
+    ) {
         firebaseAnalyticsClient.logEvent(
             name,
             parameters
@@ -39,7 +42,11 @@ class AnalyticsCoordinator @Inject constructor(
         )
     }
 
-    override fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
+    override fun logEcommerceEvent(
+        event: String,
+        ecommerceEvent: EcommerceEvent,
+        selectedItemIndex: Int?
+    ) {
         firebaseAnalyticsClient.logEcommerceEvent(
             event,
             ecommerceEvent,
