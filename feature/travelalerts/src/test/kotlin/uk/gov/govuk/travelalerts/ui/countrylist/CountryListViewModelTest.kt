@@ -18,8 +18,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.govkit.browser.Urls
+import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
@@ -346,21 +346,20 @@ class CountryListViewModelTest {
     }
 
     @Test
-    fun `Given Get notifications tapped and permissions granted, when request fails, then navigation event is emitted with error flag set`() =
-        runTest {
-            every { notificationsRepo.permissionGranted() } returns true
-            val events = mutableListOf<CountryListViewModel.NavigationEvent>()
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-                viewModel.navigationEvent.collect { events.add(it) }
-            }
-
-            coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
-            viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
-
-            assertEquals(1, events.size)
-            val event = events.first() as CountryListViewModel.NavigationEvent.NavigateToTopic
-            assertTrue(event.error)
+    fun `Given Get notifications tapped and permissions granted, when request fails, then navigation event is emitted with error flag set`() = runTest {
+        every { notificationsRepo.permissionGranted() } returns true
+        val events = mutableListOf<CountryListViewModel.NavigationEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
         }
+
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Error()
+        viewModel.onGetNotificationsClick(TravelAlertsFixtures.mockCountries.first(), "Get notifications")
+
+        assertEquals(1, events.size)
+        val event = events.first() as CountryListViewModel.NavigationEvent.NavigateToTopic
+        assertTrue(event.error)
+    }
 
     @Test
     fun `Given Get notifications tapped and permissions not granted, then navigates to rationale`() = runTest {

@@ -8,51 +8,71 @@ import androidx.compose.ui.Modifier
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun ExtraSmallHorizontalSpacer(modifier: Modifier = Modifier) {
+fun ExtraSmallHorizontalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.width(GovUkTheme.spacing.extraSmall))
 }
 
 @Composable
-fun ExtraSmallVerticalSpacer(modifier: Modifier = Modifier) {
+fun ExtraSmallVerticalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.height(GovUkTheme.spacing.extraSmall))
 }
 
 @Composable
-fun SmallHorizontalSpacer(modifier: Modifier = Modifier) {
+fun SmallHorizontalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.width(GovUkTheme.spacing.small))
 }
 
 @Composable
-fun SmallVerticalSpacer(modifier: Modifier = Modifier) {
+fun SmallVerticalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.height(GovUkTheme.spacing.small))
 }
 
 @Composable
-fun MediumHorizontalSpacer(modifier: Modifier = Modifier) {
+fun MediumHorizontalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.width(GovUkTheme.spacing.medium))
 }
 
 @Composable
-fun MediumVerticalSpacer(modifier: Modifier = Modifier) {
+fun MediumVerticalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.height(GovUkTheme.spacing.medium))
 }
 
 @Composable
-fun LargeHorizontalSpacer(modifier: Modifier = Modifier) {
+fun LargeHorizontalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.width(GovUkTheme.spacing.large))
 }
 
 @Composable
-fun LargeVerticalSpacer(modifier: Modifier = Modifier) {
+fun LargeVerticalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.height(GovUkTheme.spacing.large))
 }
 
 @Composable
-fun ExtraLargeHorizontalSpacer(modifier: Modifier = Modifier) {
+fun ExtraLargeHorizontalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.width(GovUkTheme.spacing.extraLarge))
 }
 
 @Composable
-fun ExtraLargeVerticalSpacer(modifier: Modifier = Modifier) {
+fun ExtraLargeVerticalSpacer(
+    modifier: Modifier = Modifier
+) {
     Spacer(modifier.height(GovUkTheme.spacing.extraLarge))
 }

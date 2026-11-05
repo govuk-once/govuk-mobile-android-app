@@ -1,16 +1,16 @@
 package uk.gov.govuk.visited
 
+import uk.gov.govuk.visited.data.VisitedRepo
+import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
 import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
-import uk.gov.govuk.visited.data.VisitedRepo
-import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
 
 @Singleton
 internal class VisitedClient @Inject constructor(
     private val visitedRepo: VisitedRepo,
     private val visitedLocalDataSource: VisitedLocalDataSource
-) : Visited {
+): Visited {
     override suspend fun visitableItemClick(title: String, url: String) {
         upsertVisitedItem(title, url)
     }

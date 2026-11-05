@@ -7,7 +7,6 @@ data class UpdateNotificationRequestBody(
 ) {
     enum class Status {
         READ,
-
         @SerializedName("MARKED_AS_UNREAD")
         UNREAD
     }

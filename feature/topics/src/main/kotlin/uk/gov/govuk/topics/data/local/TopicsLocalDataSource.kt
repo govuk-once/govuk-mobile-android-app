@@ -1,8 +1,6 @@
 package uk.gov.govuk.topics.data.local
 
 import io.realm.kotlin.ext.query
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +10,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import uk.gov.govuk.topics.data.local.model.LocalTopicItem
 import uk.gov.govuk.topics.data.remote.model.RemoteTopicItem
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class TopicsLocalDataSource @Inject constructor(
@@ -23,7 +23,10 @@ internal class TopicsLocalDataSource @Inject constructor(
         emitAll(realmProvider.open().query<LocalTopicItem>().asFlow().map { it.list })
     }
 
-    suspend fun sync(remoteTopics: List<RemoteTopicItem>, dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+    suspend fun sync(
+        remoteTopics: List<RemoteTopicItem>,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
+    ) {
         withContext(dispatcher) {
             val localTopics = realmProvider.open().query<LocalTopicItem>().find().toList()
             val topicsToDelete =
@@ -63,7 +66,9 @@ internal class TopicsLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun hasTopics(): Boolean = realmProvider.open().query<LocalTopicItem>().find().toList().isNotEmpty()
+    suspend fun hasTopics(): Boolean {
+        return realmProvider.open().query<LocalTopicItem>().find().toList().isNotEmpty()
+    }
 
     suspend fun toggleSelection(ref: String, isSelected: Boolean) {
         realmProvider.open().write {
@@ -82,7 +87,9 @@ internal class TopicsLocalDataSource @Inject constructor(
         }
     }
 
-    internal suspend fun isTopicsCustomised(): Boolean = topicsDataStore.isTopicsCustomised()
+    internal suspend fun isTopicsCustomised(): Boolean {
+        return topicsDataStore.isTopicsCustomised()
+    }
 
     internal suspend fun topicsCustomised() {
         topicsDataStore.topicsCustomised()

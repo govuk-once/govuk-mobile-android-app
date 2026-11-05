@@ -1,7 +1,5 @@
 package uk.gov.govuk.search.data
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.remote.safeApiCall
@@ -11,6 +9,8 @@ import uk.gov.govuk.search.data.remote.SearchApi
 import uk.gov.govuk.search.data.remote.model.AutocompleteResponse
 import uk.gov.govuk.search.data.remote.model.SearchResponse
 import uk.gov.govuk.search.domain.SearchConfig
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class SearchRepo @Inject constructor(
@@ -31,14 +31,19 @@ internal class SearchRepo @Inject constructor(
         localDataSource.removeAllPreviousSearches()
     }
 
-    suspend fun performSearch(searchTerm: String, count: Int = SearchConfig.DEFAULT_RESULTS_PER_PAGE): Result<SearchResponse> {
+    suspend fun performSearch(
+        searchTerm: String, count: Int = SearchConfig.DEFAULT_RESULTS_PER_PAGE
+    ): Result<SearchResponse> {
         localDataSource.insertOrUpdatePreviousSearch(searchTerm)
         return safeApiCall { searchApi.getSearchResults(searchTerm, count) }
     }
 
-    suspend fun performLookup(searchTerm: String): Result<AutocompleteResponse> = safeApiCall { autocompleteApi.getSuggestions(searchTerm) }
+    suspend fun performLookup(searchTerm: String): Result<AutocompleteResponse> {
+        return safeApiCall { autocompleteApi.getSuggestions(searchTerm) }
+    }
 
     suspend fun clear() {
         localDataSource.clear()
     }
 }
+
