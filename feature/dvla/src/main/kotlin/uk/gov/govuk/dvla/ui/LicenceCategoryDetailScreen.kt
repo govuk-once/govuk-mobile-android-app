@@ -198,7 +198,7 @@ private fun RestrictionRow(restriction: LicenceCategoryRestrictionUiModel) {
 
 @PreviewLightDark
 @Composable
-private fun LicenceCategoryDetailScreenPreview() {
+internal fun LicenceCategoryDetailScreenPreview() {
     GovUkTheme {
         Box(modifier = Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
             LicenceCategoryDetailScreen(
