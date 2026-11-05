@@ -8,5 +8,7 @@ import uk.gov.govuk.search.domain.SearchConfig
 
 interface AutocompleteApi {
     @GET(SearchConfig.AUTOCOMPLETE_PATH)
-    suspend fun getSuggestions(@Query("q") searchTerm: String): Response<AutocompleteResponse>
+    suspend fun getSuggestions(
+        @Query("q") searchTerm: String
+    ): Response<AutocompleteResponse>
 }

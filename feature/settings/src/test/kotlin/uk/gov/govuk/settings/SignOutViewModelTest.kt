@@ -136,6 +136,6 @@ class SignOutViewModelTest {
             authRepo.clear()
         }
 
-        coVerify(exactly = 0) { analyticsClient.disable() }
+        coVerify (exactly = 0) { analyticsClient.disable() }
     }
 }

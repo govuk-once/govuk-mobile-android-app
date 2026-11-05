@@ -22,7 +22,12 @@ val messagesDeepLinks = mapOf(
     "/notificationcentre/detail" to listOf(MESSAGES_DETAIL_ROUTE)
 )
 
-fun NavGraphBuilder.messagesGraph(navController: NavController, launchBrowser: (url: String) -> Unit, modifier: Modifier) {
+fun NavGraphBuilder.messagesGraph(
+    navController: NavController,
+    launchBrowser: (url: String) -> Unit,
+    modifier: Modifier
+) {
+
     navigation(
         route = MESSAGES_GRAPH_ROUTE,
         startDestination = MESSAGES_GRAPH_START_DESTINATION
@@ -31,18 +36,16 @@ fun NavGraphBuilder.messagesGraph(navController: NavController, launchBrowser: (
             MESSAGES_ROUTE
         ) {
             MessagesRoute(modifier, onBack = {
-                navController.popBackStack()
+              navController.popBackStack()
             }, onTapNotification = {
                 navController.navigateToMessagesDetail(it)
             })
         }
 
-        composable(
-            "$MESSAGES_DETAIL_ROUTE/{$MESSAGES_DETAIL_ID_ARG}",
+        composable("$MESSAGES_DETAIL_ROUTE/{$MESSAGES_DETAIL_ID_ARG}",
             arguments = listOf(
-                navArgument(MESSAGES_DETAIL_ID_ARG) { type = NavType.StringType }
-            )
-        ) {
+                navArgument(MESSAGES_DETAIL_ID_ARG) { type = NavType.StringType },
+            )) {
             MessagesDetailRoute(modifier, onBack = {
                 navController.popBackStack()
             }, launchBrowser = launchBrowser)

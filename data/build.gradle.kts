@@ -36,6 +36,7 @@ android {
         }
     }
 
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -56,13 +57,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() +
-                ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() +
-                ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*"
         )
     }
 }

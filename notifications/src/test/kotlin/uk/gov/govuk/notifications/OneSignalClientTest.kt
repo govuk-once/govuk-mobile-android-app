@@ -102,7 +102,7 @@ class OneSignalClientTest {
 
     @Test
     fun `Given we have a notifications client, when consent given is called and One Signal consent is true, then consent given returns true`() {
-        every { OneSignal.consentGiven } returns true
+        every {OneSignal.consentGiven} returns true
 
         runTest {
             assertTrue(notificationsProvider.consentGiven())
@@ -111,7 +111,7 @@ class OneSignalClientTest {
 
     @Test
     fun `Given we have a notifications client, when consent given is called and One Signal consent is false, then consent given returns false`() {
-        every { OneSignal.consentGiven } returns false
+        every {OneSignal.consentGiven} returns false
 
         runTest {
             assertFalse(notificationsProvider.consentGiven())
@@ -157,10 +157,11 @@ class OneSignalClientTest {
 
             verify(exactly = 1) {
                 OneSignal.Notifications.addClickListener(any())
-                deepLinkLauncher.launchDeepLink("https://gov.uk")
-            }
+                deepLinkLauncher.launchDeepLink("https://gov.uk")            }
         }
     }
+
+
 
     @Test
     fun `Given a notification click without a deep link, then the launcher is not called`() {

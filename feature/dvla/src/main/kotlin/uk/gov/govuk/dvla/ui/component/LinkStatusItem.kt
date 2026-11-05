@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import kotlin.Unit
 import uk.gov.govuk.design.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
@@ -31,6 +30,7 @@ import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import kotlin.Unit
 
 @Composable
 internal fun LinkStatusItem(
@@ -42,6 +42,7 @@ internal fun LinkStatusItem(
     isLast: Boolean = false,
     background: Color = GovUkTheme.colourScheme.surfaces.list
 ) {
+
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 

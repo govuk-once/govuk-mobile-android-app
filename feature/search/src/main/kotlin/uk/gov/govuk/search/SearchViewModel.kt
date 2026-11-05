@@ -3,8 +3,6 @@ package uk.gov.govuk.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.UUID
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,13 +19,15 @@ import uk.gov.govuk.search.data.remote.model.SearchResult
 import uk.gov.govuk.search.domain.SearchConfig
 import uk.gov.govuk.search.domain.StringUtils
 import uk.gov.govuk.visited.Visited
+import java.util.UUID
+import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val visited: Visited,
-    private val searchRepo: SearchRepo
-) : ViewModel() {
+    private val searchRepo: SearchRepo,
+): ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "SearchScreen"
@@ -35,6 +35,7 @@ internal class SearchViewModel @Inject constructor(
         private const val TITLE = "Search"
         private const val LIST_NAME = "Search"
         private const val LIST_ID = "search_results"
+
     }
 
     private val _uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
@@ -122,7 +123,12 @@ internal class SearchViewModel @Inject constructor(
         )
     }
 
-    fun onSearchResultClicked(term: String, result: SearchResult, index: Int, count: Int) {
+    fun onSearchResultClicked(
+        term: String,
+        result: SearchResult,
+        index: Int,
+        count: Int
+    ) {
         analyticsClient.searchResultClick(text = result.title, url = result.link)
         analyticsClient.selectItemEvent(
             ecommerceEvent = EcommerceEvent(

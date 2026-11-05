@@ -16,10 +16,14 @@ interface ChatApi {
     // Headers are added via interceptor in ChatModule.kt
 
     @POST("conversation")
-    suspend fun startConversation(@Body requestBody: ConversationQuestionRequest): Response<AnsweredQuestion>
+    suspend fun startConversation(
+        @Body requestBody: ConversationQuestionRequest
+    ): Response<AnsweredQuestion>
 
     @GET("conversation/{conversationId}")
-    suspend fun getConversation(@Path("conversationId") conversationId: String): Response<Conversation>
+    suspend fun getConversation(
+        @Path("conversationId") conversationId: String
+    ): Response<Conversation>
 
     @PUT("conversation/{conversationId}")
     suspend fun updateConversation(
@@ -28,7 +32,10 @@ interface ChatApi {
     ): Response<AnsweredQuestion>
 
     @GET("conversation/{conversationId}/questions/{questionId}/answer")
-    suspend fun getAnswer(@Path("conversationId") conversationId: String, @Path("questionId") questionId: String): Response<Answer>
+    suspend fun getAnswer(
+        @Path("conversationId") conversationId: String,
+        @Path("questionId") questionId: String
+    ): Response<Answer>
 
     @POST("conversation/{conversationId}/answers/{answerId}/feedback")
     suspend fun giveFeedback(
