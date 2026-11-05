@@ -92,17 +92,22 @@ fun Modifier.talkBackText(vararg textParts: String?): Modifier {
  * Sets a custom content description if the provided [altText] is not null
  */
 @Composable
-fun Modifier.withAltText(altText: String?): Modifier = altText?.let {
-    clearAndSetSemantics {
-        contentDescription = it
-    }
-} ?: this
+fun Modifier.withAltText(altText: String?): Modifier =
+    altText?.let {
+        clearAndSetSemantics {
+            contentDescription = it
+        }
+    } ?: this
 
 /**
  * Modifier that handles long press without triggering "double tap to activate" TalkBack announcement
  * (caused when using combinedClickable)
  */
-fun Modifier.longClickWithAltText(altText: String, actionLabel: String, onLongClick: () -> Unit): Modifier = this
+fun Modifier.longClickWithAltText(
+    altText: String,
+    actionLabel: String,
+    onLongClick: () -> Unit
+): Modifier = this
     .pointerInput(Unit) {
         detectTapGestures(onLongPress = { onLongClick() })
     }

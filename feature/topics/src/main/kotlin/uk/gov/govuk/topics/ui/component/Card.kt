@@ -33,7 +33,13 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.topics.R
 
 @Composable
-fun TopicSelectionCard(@DrawableRes icon: Int, title: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun TopicSelectionCard(
+    @DrawableRes icon: Int,
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -73,6 +79,7 @@ fun TopicSelectionCard(@DrawableRes icon: Int, title: String, isSelected: Boolea
                 .padding(GovUkTheme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             if (isSelected) {
                 Box(
                     modifier = Modifier
@@ -138,3 +145,4 @@ internal fun TopicSelectionCardUnselectedPreview() {
         )
     }
 }
+

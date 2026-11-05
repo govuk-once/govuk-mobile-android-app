@@ -2,8 +2,6 @@ package uk.gov.govuk.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
-import javax.inject.Inject
-import javax.inject.Singleton
 import uk.gov.govuk.analytics.navigation.ANALYTICS_GRAPH_ROUTE
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -13,9 +11,14 @@ import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_ONBOARDING_GRAPH_ROUTE
 import uk.gov.govuk.terms.navigation.TERMS_GRAPH_ROUTE
 import uk.gov.govuk.topics.navigation.TOPIC_SELECTION_GRAPH_ROUTE
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
-internal class AppNavigation @Inject constructor(private val authRepo: AuthRepo, private val deeplinkHandler: DeeplinkHandler) {
+internal class AppNavigation @Inject constructor(
+    private val authRepo: AuthRepo,
+    private val deeplinkHandler: DeeplinkHandler,
+) {
     fun setOnLaunchBrowser(onLaunchBrowser: (String) -> Unit) {
         deeplinkHandler.onLaunchBrowser = onLaunchBrowser
     }

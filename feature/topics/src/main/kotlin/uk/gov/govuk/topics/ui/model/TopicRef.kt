@@ -4,7 +4,11 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import uk.gov.govuk.topics.R
 
-internal enum class TopicRef(val ref: String, @StringRes val titleResId: Int, @DrawableRes val iconResId: Int) {
+internal enum class TopicRef(
+    val ref: String,
+    @StringRes val titleResId: Int,
+    @DrawableRes val iconResId: Int
+) {
     BENEFITS("benefits", R.string.benefits, R.drawable.ic_topic_benefits),
     BUSINESS("business", R.string.business, R.drawable.ic_topic_business),
     CARE("care", R.string.care, R.drawable.ic_topic_care),
@@ -18,7 +22,9 @@ internal enum class TopicRef(val ref: String, @StringRes val titleResId: Int, @D
     TRAVEL_ABROAD("travel-abroad", R.string.travel_abroad, R.drawable.ic_topic_travel);
 
     companion object {
-        fun fromString(ref: String?): TopicRef? = entries.find { it.ref == ref }
+        fun fromString(ref: String?): TopicRef? {
+            return entries.find { it.ref == ref }
+        }
     }
 }
 

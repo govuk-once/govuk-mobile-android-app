@@ -6,21 +6,39 @@ import androidx.compose.ui.graphics.Color
 sealed interface ExternalLinkListItemStyle {
     data object Default : ExternalLinkListItemStyle
     data object Icon : ExternalLinkListItemStyle
-    data class Button(@param:DrawableRes val icon: Int, val altText: String, val onClick: () -> Unit) : ExternalLinkListItemStyle
+    data class Button(
+        @param:DrawableRes val icon: Int,
+        val altText: String,
+        val onClick: () -> Unit
+    ) : ExternalLinkListItemStyle
 }
 
 sealed interface InternalLinkListItemStyle {
     data object Default : InternalLinkListItemStyle
-    data object Simple : InternalLinkListItemStyle
-    data class Status(val status: String) : InternalLinkListItemStyle
+    data object Simple: InternalLinkListItemStyle
+    data class Status(
+        val status: String
+    ) : InternalLinkListItemStyle
 
-    data class Info(val info: AccessibleString) : InternalLinkListItemStyle
+    data class Info(
+        val info: AccessibleString
+    ) : InternalLinkListItemStyle
 
-    data class Button(@param:DrawableRes val icon: Int, val altText: String, val onClick: () -> Unit) : InternalLinkListItemStyle
+    data class Button(
+        @param:DrawableRes val icon: Int,
+        val altText: String,
+        val onClick: () -> Unit
+    ) : InternalLinkListItemStyle
 
-    data class ShortButton(@param:DrawableRes val icon: Int, val altText: String, val onClick: () -> Unit) : InternalLinkListItemStyle
+    data class ShortButton(
+        @param:DrawableRes val icon: Int,
+        val altText: String,
+        val onClick: () -> Unit
+    ) : InternalLinkListItemStyle
 
-    data class TrailingIcon(@param:DrawableRes val icon: Int) : InternalLinkListItemStyle
+    data class TrailingIcon(
+        @param:DrawableRes val icon: Int
+    ) : InternalLinkListItemStyle
 }
 
 sealed interface IconListItemStyle {
@@ -36,7 +54,10 @@ sealed interface StatusListItemIconStyle {
 sealed interface InternalLinkListItemModel {
     val title: AccessibleString
 
-    data class Info(override val title: AccessibleString, val info: AccessibleString) : InternalLinkListItemModel
+    data class Info(
+        override val title: AccessibleString,
+        val info: AccessibleString
+    ) : InternalLinkListItemModel
 }
 
 internal data class ListItemColours(

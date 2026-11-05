@@ -30,7 +30,7 @@ internal fun VehicleDetailsHeader(
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColour: Color = GovUkTheme.colourScheme.surfaces.background,
-    actionColour: Color = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+    actionColour: Color = GovUkTheme.colourScheme.textAndIcons.linkSecondary,
 ) {
     Row(
         modifier = modifier
@@ -46,7 +46,7 @@ internal fun VehicleDetailsHeader(
             defaultContentColour = actionColour
         )
 
-        if (menuItems.isNotEmpty()) {
+        if (menuItems.isNotEmpty()){
             Spacer(Modifier.weight(1f))
 
             OverflowMenu(

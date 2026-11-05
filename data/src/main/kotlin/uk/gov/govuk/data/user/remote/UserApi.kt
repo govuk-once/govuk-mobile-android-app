@@ -4,8 +4,8 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
-import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 import uk.gov.govuk.data.user.model.User
+import uk.gov.govuk.data.user.model.UpdateNotificationsRequest
 
 interface UserApi {
     private companion object {
@@ -18,5 +18,7 @@ interface UserApi {
     suspend fun getUserInfo(): Response<User>
 
     @PATCH(NOTIFICATIONS_PATH)
-    suspend fun updateNotifications(@Body requestBody: UpdateNotificationsRequest): Response<Unit>
+    suspend fun updateNotifications(
+        @Body requestBody: UpdateNotificationsRequest
+    ): Response<Unit>
 }

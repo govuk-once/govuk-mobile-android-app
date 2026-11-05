@@ -3,7 +3,6 @@ package uk.gov.govuk.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -13,14 +12,18 @@ import uk.gov.govuk.data.auth.ErrorEvent
 import uk.gov.govuk.data.auth.ErrorEvent.UnableToSignOutError
 import uk.gov.govuk.settings.NavigationEvent.Error
 import uk.gov.govuk.settings.NavigationEvent.Success
+import javax.inject.Inject
 
 sealed class NavigationEvent {
-    data object Success : NavigationEvent()
-    data class Error(val error: ErrorEvent) : NavigationEvent()
+    data object Success: NavigationEvent()
+    data class Error(val error: ErrorEvent): NavigationEvent()
 }
 
 @HiltViewModel
-class SignOutViewModel @Inject constructor(private val authRepo: AuthRepo, private val analyticsClient: AnalyticsClient) : ViewModel() {
+class SignOutViewModel @Inject constructor(
+    private val authRepo: AuthRepo,
+    private val analyticsClient: AnalyticsClient
+): ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
     val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
