@@ -1,10 +1,10 @@
 package uk.gov.govuk.analytics
 
 import com.qualtrics.digital.TargetingResult
+import javax.inject.Inject
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
-import javax.inject.Inject
 
 class AnalyticsCoordinator @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
@@ -27,10 +27,7 @@ class AnalyticsCoordinator @Inject constructor(
         }
     }
 
-    override fun logEvent(
-        name: String,
-        parameters: Map<String, Any>
-    ) {
+    override fun logEvent(name: String, parameters: Map<String, Any>) {
         firebaseAnalyticsClient.logEvent(
             name,
             parameters
@@ -42,11 +39,7 @@ class AnalyticsCoordinator @Inject constructor(
         )
     }
 
-    override fun logEcommerceEvent(
-        event: String,
-        ecommerceEvent: EcommerceEvent,
-        selectedItemIndex: Int?
-    ) {
+    override fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
         firebaseAnalyticsClient.logEcommerceEvent(
             event,
             ecommerceEvent,
