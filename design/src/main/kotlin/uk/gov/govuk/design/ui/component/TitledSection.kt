@@ -11,7 +11,12 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun TitledSection(title: String, description: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun TitledSection(
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         Title3BoldLabel(
             text = title,

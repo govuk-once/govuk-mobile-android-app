@@ -12,12 +12,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
-import javax.inject.Singleton
 import uk.gov.govuk.data.crypto.CryptoProvider
 import uk.gov.govuk.data.crypto.TinkClient
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.data.user.UserRepoImpl
+import javax.inject.Named
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -25,29 +25,36 @@ internal class DataModule {
 
     @Provides
     @Singleton
-    fun provideUserRepo(userRepo: UserRepoImpl): UserRepo = userRepo
+    fun provideUserRepo(userRepo: UserRepoImpl): UserRepo {
+        return userRepo
+    }
 
     @Singleton
     @Provides
     @Named("database_prefs")
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        corruptionHandler = ReplaceFileCorruptionHandler(
-            produceNewData = { emptyPreferences() }
-        ),
-        produceFile = { context.preferencesDataStoreFile("database_preferences") }
-    )
+    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = { context.preferencesDataStoreFile("database_preferences") }
+        )
+    }
 
     @Singleton
     @Provides
     @Named("token_prefs")
-    fun provideTokenPreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        corruptionHandler = ReplaceFileCorruptionHandler(
-            produceNewData = { emptyPreferences() }
-        ),
-        produceFile = { context.preferencesDataStoreFile("token_preferences") }
-    )
+    fun provideTokenPreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = { context.preferencesDataStoreFile("token_preferences") }
+        )
+    }
 
     @Singleton
     @Provides
-    fun provideCryptoProvider(@ApplicationContext context: Context): CryptoProvider = TinkClient(context)
+    fun provideCryptoProvider(@ApplicationContext context: Context): CryptoProvider =
+        TinkClient(context)
 }

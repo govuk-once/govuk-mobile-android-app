@@ -22,10 +22,12 @@ internal class LoginModule {
     @Singleton
     @Provides
     @Named("login_prefs")
-    fun provideLoginDataStore(@ApplicationContext context: Context): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        corruptionHandler = ReplaceFileCorruptionHandler(
-            produceNewData = { emptyPreferences() }
-        ),
-        produceFile = { context.preferencesDataStoreFile("login_prefs") }
-    )
+    fun provideLoginDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = { context.preferencesDataStoreFile("login_prefs") }
+        )
+    }
 }

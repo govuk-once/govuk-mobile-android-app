@@ -11,9 +11,11 @@ fun String.toSpacedString(): String {
 /**
  * Prevents Talkback from announcing addresses like "1 St John" as "First John".
  */
-fun String.toAccessibleStreetName(): String = this
-    .replace("1 St ", "1, St ", ignoreCase = true)
-    .replace("1 St. ", "1, St. ", ignoreCase = true)
+fun String.toAccessibleStreetName(): String {
+    return this
+        .replace("1 St ", "1, St ", ignoreCase = true)
+        .replace("1 St. ", "1, St. ", ignoreCase = true)
+}
 
 internal fun String?.isDirectDebit() = this == "Direct Debit"
 

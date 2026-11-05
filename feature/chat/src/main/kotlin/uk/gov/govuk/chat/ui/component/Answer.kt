@@ -26,7 +26,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
@@ -34,6 +33,7 @@ import uk.gov.govuk.chat.parser.PlainTextExtractor
 import uk.gov.govuk.design.markdown.MarkdownParser
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import kotlin.math.roundToInt
 
 @Composable
 internal fun Answer(
@@ -79,9 +79,7 @@ internal fun Answer(
                                     }
                                 )
                             }
-                    } else {
-                        Modifier
-                    }
+                    } else Modifier
                 )
         ) {
             MediumVerticalSpacer()

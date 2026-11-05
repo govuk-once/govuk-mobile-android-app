@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 
 @Composable
-internal fun AnimateIcon(visible: Boolean, icon: @Composable () -> Unit, modifier: Modifier = Modifier) {
+internal fun AnimateIcon(
+    visible: Boolean,
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val animationSpeed = 300
 
     val animateIn: FiniteAnimationSpec<Float> = tween(

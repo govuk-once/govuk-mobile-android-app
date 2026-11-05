@@ -3,10 +3,10 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.analytics.AnalyticsClient
+import javax.inject.Inject
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.mapper.CheckVehicleDetailsMapper

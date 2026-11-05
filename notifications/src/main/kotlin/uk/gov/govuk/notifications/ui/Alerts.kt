@@ -28,19 +28,17 @@ fun NotificationsSettingsAlert(
     val notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
     val alertTitle =
         stringResource(
-            id = if (notificationsEnabled) {
+            id = if (notificationsEnabled)
                 R.string.notifications_alert_title_off
-            } else {
+            else
                 R.string.notifications_alert_title_on
-            }
         )
     val alertMessage =
         stringResource(
-            id = if (notificationsEnabled) {
+            id = if (notificationsEnabled)
                 R.string.notifications_alert_message_off
-            } else {
+            else
                 R.string.notifications_alert_message_on
-            }
         )
 
     AlertDialog(
@@ -85,7 +83,9 @@ fun NotificationsSettingsAlert(
     )
 }
 
-fun openDeviceNotificationsSettings(context: Context) {
+fun openDeviceNotificationsSettings(
+    context: Context
+) {
     Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)

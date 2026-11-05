@@ -25,7 +25,11 @@ import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.ui.model.TopicUi.TopicContent
 
 @Composable
-internal fun AllStepByStepRoute(onBack: () -> Unit, onClick: (url: String) -> Unit, modifier: Modifier = Modifier) {
+internal fun AllStepByStepRoute(
+    onBack: () -> Unit,
+    onClick: (url: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: AllViewModel = hiltViewModel()
     val stepBySteps by viewModel.stepBySteps.collectAsState()
 

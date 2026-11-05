@@ -3,8 +3,6 @@ package uk.gov.govuk.visited
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -12,6 +10,8 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.visited.data.VisitedRepo
 import uk.gov.govuk.visited.data.transformVisitedItems
 import uk.gov.govuk.visited.ui.model.VisitedUi
+import java.time.LocalDate
+import javax.inject.Inject
 
 internal sealed interface VisitedWidgetUiState {
     data class Visited(val items: List<VisitedUi>) : VisitedWidgetUiState
@@ -42,7 +42,9 @@ internal class VisitedWidgetViewModel @Inject constructor(
         }
     }
 
-    private fun Map<String, List<VisitedUi>>.getTopThree(): List<VisitedUi> = this.values.flatten().take(3)
+    private fun Map<String, List<VisitedUi>>.getTopThree(): List<VisitedUi> {
+        return this.values.flatten().take(3)
+    }
 
     fun onVisitedItemClicked(title: String, url: String) {
         viewModelScope.launch {

@@ -2,18 +2,20 @@ package uk.gov.govuk.search.data.local
 
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
-import java.util.Calendar
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import uk.gov.govuk.search.data.local.model.LocalSearchItem
 import uk.gov.govuk.search.domain.SearchConfig
+import java.util.Calendar
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
-internal class SearchLocalDataSource @Inject constructor(private val realmProvider: SearchRealmProvider) {
+internal class SearchLocalDataSource @Inject constructor(
+    private val realmProvider: SearchRealmProvider,
+) {
 
     val previousSearches: Flow<List<LocalSearchItem>> = flow {
         emitAll(
