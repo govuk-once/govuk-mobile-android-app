@@ -7,7 +7,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-internal class AnalyticsViewModel @Inject constructor(private val analyticsClient: AnalyticsClient) : ViewModel() {
+internal class AnalyticsViewModel @Inject constructor(
+    private val analyticsClient: AnalyticsClient
+) : ViewModel() {
 
     fun onConsentGranted() {
         viewModelScope.launch {
