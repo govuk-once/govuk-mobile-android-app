@@ -103,6 +103,7 @@ class LocalSelectViewModelTest {
         assert(actual[1] == localAuthorityZ)
     }
 
+
     @Test
     fun `Given addresses, then sort by address`() {
         val addressZ = Address("Z Test Street, AB1C1DE", "slug-one", "Slug One")

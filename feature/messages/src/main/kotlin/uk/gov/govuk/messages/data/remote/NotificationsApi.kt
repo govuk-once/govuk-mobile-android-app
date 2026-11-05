@@ -9,11 +9,11 @@ import retrofit2.http.Path
 import uk.gov.govuk.messages.data.model.Notification
 import uk.gov.govuk.messages.data.model.UpdateNotificationRequestBody
 
+
 interface NotificationsApi {
     companion object {
         private const val NOTIFICATIONS_PATH = "/app/uns/v1/notifications"
     }
-
     @GET(NOTIFICATIONS_PATH)
     suspend fun getNotifications(): Response<List<Notification>>
 
@@ -21,10 +21,7 @@ interface NotificationsApi {
     suspend fun getSingleNotification(@Path("notificationId") notificationId: String): Response<Notification?>
 
     @PATCH("$NOTIFICATIONS_PATH/{notificationId}/status")
-    suspend fun updateNotification(
-        @Path("notificationId") notificationId: String,
-        @Body body: UpdateNotificationRequestBody
-    ): Response<Unit>
+    suspend fun updateNotification(@Path("notificationId") notificationId: String, @Body body: UpdateNotificationRequestBody): Response<Unit>
 
     @DELETE("$NOTIFICATIONS_PATH/{notificationId}")
     suspend fun deleteNotification(@Path("notificationId") notificationId: String): Response<Unit>

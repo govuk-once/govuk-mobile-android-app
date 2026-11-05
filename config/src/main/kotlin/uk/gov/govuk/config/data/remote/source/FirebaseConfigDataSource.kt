@@ -2,15 +2,17 @@ package uk.gov.govuk.config.data.remote.source
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import uk.gov.govuk.config.BuildConfig
 import uk.gov.govuk.config.R
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
-class FirebaseConfigDataSource @Inject constructor(private val firebaseRemoteConfig: FirebaseRemoteConfig) {
+class FirebaseConfigDataSource @Inject constructor(
+    private val firebaseRemoteConfig: FirebaseRemoteConfig
+) {
 
     private val remoteConfigSettings = remoteConfigSettings {
         fetchTimeoutInSeconds = 15L
@@ -43,26 +45,32 @@ class FirebaseConfigDataSource @Inject constructor(private val firebaseRemoteCon
         applyConfigSettings()
     }
 
-    suspend fun fetch(): Boolean = try {
-        firebaseRemoteConfig.fetch().await()
-        true
-    } catch (e: CancellationException) {
-        throw e
-    } catch (_: Exception) {
-        false
+    suspend fun fetch(): Boolean {
+        return try {
+            firebaseRemoteConfig.fetch().await()
+            true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            false
+        }
     }
 
-    suspend fun activate(): Boolean = try {
-        firebaseRemoteConfig.activate().await()
-    } catch (e: CancellationException) {
-        throw e
-    } catch (_: Exception) {
-        false
+    suspend fun activate(): Boolean {
+        return try {
+            firebaseRemoteConfig.activate().await()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            false
+        }
     }
 
-    suspend fun fetchAndActivate(): Boolean = if (fetch()) {
-        activate()
-    } else {
-        false
+    suspend fun fetchAndActivate(): Boolean {
+        return if (fetch()) {
+            activate()
+        } else {
+            false
+        }
     }
 }

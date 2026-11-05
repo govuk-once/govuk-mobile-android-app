@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import java.net.UnknownHostException
 import kotlinx.coroutines.test.runTest
 import okhttp3.Headers
 import org.junit.Assert.assertEquals
@@ -20,6 +19,8 @@ import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
 import uk.gov.govuk.data.model.Result
+import java.net.UnknownHostException
+import kotlin.String
 
 class GovUkConfigDataSourceTest {
 
@@ -69,7 +70,7 @@ class GovUkConfigDataSourceTest {
             reportNoMot = "https://www.gov.uk/report-no-mot",
             compareLicenceCategories = "https://www.gov.uk/compare-categories",
             vehicleWeightExplained = "https://www.gov.uk/vehicle-weigh-explained",
-            addLicenceCategories = "https://www.gov.uk/add-categories"
+            addLicenceCategories = "https://www.gov.uk/add-categories",
         )
 
         val config = Config(
@@ -93,8 +94,7 @@ class GovUkConfigDataSourceTest {
         coEvery { contentApi.getContent(url = any()) } returns Response.success(contentResponse.toString())
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
-        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns
-            TermsAndConditionsTimestamp(remoteTimestamp)
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
 
         val result = dataSource.fetchConfig()
         assertTrue(result is Result.Success)
@@ -188,8 +188,7 @@ class GovUkConfigDataSourceTest {
         coEvery { contentApi.getContent(any()) } returns Response.success("{}")
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
-        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns
-            TermsAndConditionsTimestamp(remoteTimestamp)
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
 
         val result = dataSource.fetchConfig() as Result.Success
 
@@ -256,8 +255,7 @@ class GovUkConfigDataSourceTest {
         coEvery { contentApi.getContent(url = any()) } returns Response.success("{}")
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
-        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns
-            TermsAndConditionsTimestamp(remoteTimestamp)
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
 
         val result = dataSource.fetchConfig() as Result.Success
 
@@ -293,8 +291,7 @@ class GovUkConfigDataSourceTest {
         coEvery { contentApi.getContent(url = null) } returns Response.success("{}")
         coEvery { signatureValidator.isValidSignature(any(), any()) } returns true
         coEvery { gson.fromJson(any<String>(), ConfigResponse::class.java) } returns ConfigResponse(config, "sig")
-        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns
-            TermsAndConditionsTimestamp(remoteTimestamp)
+        coEvery { gson.fromJson(any<String>(), TermsAndConditionsTimestamp::class.java) } returns TermsAndConditionsTimestamp(remoteTimestamp)
 
         assertTrue(dataSource.fetchConfig() is Result.Error)
     }
