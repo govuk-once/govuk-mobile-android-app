@@ -1,5 +1,6 @@
 package uk.gov.govuk.messages.ui
 
+import uk.gov.govuk.govkit.date.toRelativeDateTime
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,7 +54,6 @@ import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.govkit.date.toRelativeDateTime
 import uk.gov.govuk.messages.MessagesDetailUiState
 import uk.gov.govuk.messages.MessagesDetailViewModel
 import uk.gov.govuk.messages.R
@@ -62,7 +62,9 @@ import uk.gov.govuk.messages.data.model.NotificationFixtures.Companion.mockNotif
 import uk.gov.govuk.messages.ui.component.Markdown
 
 @Composable
-internal fun MessagesDetailRoute(modifier: Modifier = Modifier, onBack: () -> Unit, launchBrowser: (url: String) -> Unit) {
+internal fun MessagesDetailRoute(
+    modifier: Modifier = Modifier, onBack: () -> Unit, launchBrowser: (url: String) -> Unit
+) {
     val viewModel: MessagesDetailViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -74,8 +76,8 @@ internal fun MessagesDetailRoute(modifier: Modifier = Modifier, onBack: () -> Un
     ) {
         MessagesDetailScreen(
             {
-                viewModel.onPageView()
-            },
+            viewModel.onPageView()
+        },
             uiState,
             actions = MessagesDetailActions(
                 onBack = onBack,
@@ -99,8 +101,7 @@ internal fun MessagesDetailRoute(modifier: Modifier = Modifier, onBack: () -> Un
                 }
             ),
             showDeleteConfirmation = (uiState as? MessagesDetailUiState.Loaded)?.showDeleteConfirmation
-                ?: false
-        )
+                ?: false)
     }
 }
 
@@ -110,7 +111,7 @@ private class MessagesDetailActions(
     val onTapDelete: () -> Unit,
     val onCancelDelete: () -> Unit,
     val onConfirmDelete: () -> Unit,
-    val launchBrowser: (url: String) -> Unit
+    val launchBrowser: (url: String) -> Unit,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,8 +153,7 @@ private fun MessagesDetailScreen(
                 is MessagesDetailUiState.NoInternet -> MessagesScreenNoInternet()
                 is MessagesDetailUiState.Error -> MessagesScreenError()
                 is MessagesDetailUiState.Loaded -> MessagesDetailScreenLoaded(
-                    state.message,
-                    actions.launchBrowser
+                    state.message, actions.launchBrowser
                 )
                 else -> {}
             }
@@ -185,7 +185,7 @@ private fun Header(
                 .height(64.dp)
                 .padding(end = GovUkTheme.spacing.medium)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 onClick = onBack
@@ -208,7 +208,7 @@ private fun Header(
                 Icon(
                     painterResource(id = R.drawable.ic_mark_unread),
                     stringResource(R.string.mark_as_unread),
-                    tint = actionColour
+                    tint = actionColour,
                 )
             }
 
@@ -221,7 +221,7 @@ private fun Header(
                 Icon(
                     painterResource(id = R.drawable.ic_delete_notification),
                     stringResource(R.string.delete_notification),
-                    tint = actionColour
+                    tint = actionColour,
                 )
             }
         }
@@ -241,13 +241,15 @@ private fun MessagesDetailScreenLoading() {
                 .semantics {
                     text = AnnotatedString(loadingContentDescription)
                 },
-            color = GovUkTheme.colourScheme.surfaces.primary
+            color = GovUkTheme.colourScheme.surfaces.primary,
         )
     }
 }
 
 @Composable
-private fun MessagesDetailScreenLoaded(message: Notification, launchBrowser: (url: String) -> Unit) {
+private fun MessagesDetailScreenLoaded(
+    message: Notification, launchBrowser: (url: String) -> Unit
+) {
     val headerContentDescription = stringResource(
         R.string.notification_detail_header_content_description,
         message.date.toRelativeDateTime(),
@@ -257,8 +259,7 @@ private fun MessagesDetailScreenLoaded(message: Notification, launchBrowser: (ur
     Column(
         modifier = Modifier
             .padding(
-                horizontal = GovUkTheme.spacing.medium,
-                vertical = GovUkTheme.spacing.medium
+                horizontal = GovUkTheme.spacing.medium, vertical = GovUkTheme.spacing.medium
             )
             .verticalScroll(
                 rememberScrollState()
@@ -273,8 +274,7 @@ private fun MessagesDetailScreenLoaded(message: Notification, launchBrowser: (ur
                 .clearAndSetSemantics {
                     heading()
                     contentDescription = headerContentDescription
-                }
-        ) {
+                }) {
             BodyRegularLabel(
                 message.date.toRelativeDateTime(),
                 Modifier.padding(bottom = 4.dp),
@@ -283,15 +283,14 @@ private fun MessagesDetailScreenLoaded(message: Notification, launchBrowser: (ur
 
             BodyBoldLabel(
                 message.metadata.sender.displayName,
-                color = GovUkTheme.colourScheme.textAndIcons.primary
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
             )
         }
 
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
-        ) {
+        Column(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)) {
+
             Title1BoldLabel(
                 message.messageTitle ?: message.title,
                 Modifier.padding(top = 24.dp, bottom = 24.dp),
@@ -299,11 +298,9 @@ private fun MessagesDetailScreenLoaded(message: Notification, launchBrowser: (ur
             )
 
             Markdown(
-                message.messageBody ?: message.body,
-                onLinkClick = { url ->
+                message.messageBody ?: message.body, onLinkClick = { url ->
                     launchBrowser(url)
-                }
-            )
+                })
         }
     }
 }
@@ -348,6 +345,7 @@ internal fun MessagesDetailLoadingPreview() {
             MessagesDetailActions({}, {}, {}, {}, {}, {}),
             false
         )
+
     }
 }
 
@@ -361,6 +359,7 @@ internal fun MessagesDetailErrorPreview() {
             MessagesDetailActions({}, {}, {}, {}, {}, {}),
             false
         )
+
     }
 }
 

@@ -37,47 +37,31 @@ data class ShareCode(
     @SerializedName("documentReference")
     val documentReference: String,
 
-    // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
     @SerializedName("created")
-    val createdAt: String,
+    val createdAt: String, // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
 
-    // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
     @SerializedName("expiry")
-    val expiresAt: String,
+    val expiresAt: String, // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
 
     @SerializedName("status")
     val activationStatus: ShareCodeActivationStatus?,
 
-    // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
     @SerializedName("redeemed")
-    val redeemedAt: String?,
+    val redeemedAt: String?, // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
 
-    // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
     @SerializedName("cancelled")
-    val cancelledAt: String?
+    val cancelledAt: String? // ISO 8601 YYYY-MM-DDTHH:mm:ss.SSSZ
 )
 
 enum class ShareCodeValidity {
-    @SerializedName("cancelled")
-    CANCELLED,
-
-    @SerializedName("expired")
-    EXPIRED,
-
-    @SerializedName("valid")
-    VALID,
-
-    @SerializedName("redeemed")
-    REDEEMED,
-
-    @SerializedName("invalid")
-    INVALID
+    @SerializedName("cancelled") CANCELLED,
+    @SerializedName("expired") EXPIRED,
+    @SerializedName("valid") VALID,
+    @SerializedName("redeemed") REDEEMED,
+    @SerializedName("invalid") INVALID
 }
 
 enum class ShareCodeActivationStatus {
-    @SerializedName("active")
-    ACTIVE,
-
-    @SerializedName("inactive")
-    INACTIVE
+    @SerializedName("active") ACTIVE,
+    @SerializedName("inactive") INACTIVE
 }

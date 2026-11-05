@@ -4,8 +4,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
-import java.net.UnknownHostException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -26,8 +24,10 @@ import uk.gov.govuk.topics.data.remote.model.RemoteTopic
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic.RemoteTopicContent
 import uk.gov.govuk.topics.data.remote.model.RemoteTopicItem
 import uk.gov.govuk.topics.domain.model.TopicItem
+import java.io.IOException
+import java.net.UnknownHostException
 
-class TopicsRepoTest {
+class TopicsRepoTest{
 
     private val topicsApi = mockk<TopicsApi>(relaxed = true)
     private val localDataSource = mockk<TopicsLocalDataSource>(relaxed = true)
@@ -129,7 +129,7 @@ class TopicsRepoTest {
 
             val expected = listOf(
                 TopicItem("ref1", "title1", "desc1", true),
-                TopicItem("ref2", "title2", "desc2", false)
+                TopicItem("ref2", "title2", "desc2", false),
             )
 
             assertEquals(expected, topics.first())
@@ -195,7 +195,7 @@ class TopicsRepoTest {
         runTest {
             repo.toggleSelection("ref", true)
 
-            coVerify {
+            coVerify{
                 localDataSource.toggleSelection("ref", true)
             }
         }
@@ -208,7 +208,7 @@ class TopicsRepoTest {
         runTest {
             repo.selectAll(listOf("ref1", "ref2"))
 
-            coVerify {
+            coVerify{
                 localDataSource.selectAll(listOf("ref1", "ref2"))
             }
         }

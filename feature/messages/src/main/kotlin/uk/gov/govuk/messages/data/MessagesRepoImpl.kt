@@ -1,9 +1,5 @@
 package uk.gov.govuk.messages.data
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.auth.AuthRepo
@@ -13,10 +9,15 @@ import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.messages.data.di.MessagesScope
 import uk.gov.govuk.messages.data.model.Message
+import uk.gov.govuk.messages.data.model.Notification
 import uk.gov.govuk.messages.data.model.UpdateNotificationRequestBody
 import uk.gov.govuk.messages.data.remote.NotificationsApi
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DateProviderImpl : DateProvider {
+class DateProviderImpl: DateProvider {
     override val date: Instant
         get() = Instant.now()
 }
@@ -30,7 +31,8 @@ internal class MessagesRepoImpl @Inject constructor(
 ) : MessagesRepo {
 
     data class CacheEntry<T>(val value: T, val lastUpdated: Instant = Instant.now()) {
-        fun hasExpired(now: Instant): Boolean = now.isAfter(lastUpdated.plus(30, ChronoUnit.SECONDS))
+        fun hasExpired(now: Instant): Boolean =
+            now.isAfter(lastUpdated.plus(30, ChronoUnit.SECONDS))
     }
 
     private var notifications: CacheEntry<List<Message>>? = null
@@ -89,11 +91,9 @@ internal class MessagesRepoImpl @Inject constructor(
                 UpdateNotificationRequestBody.Status.UNREAD -> "DELIVERED"
             }
 
-            CacheEntry(
-                nots.value.map {
-                    if (it.id == messageId) it.copy(status = statusString) else it
-                }
-            )
+            CacheEntry(nots.value.map {
+                if (it.id == messageId) it.copy(status = statusString) else it
+            })
         }
 
         scope.launch {

@@ -5,9 +5,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -26,9 +23,12 @@ import uk.gov.govuk.visited.VisitedWidgetUiState
 import uk.gov.govuk.visited.VisitedWidgetViewModel
 import uk.gov.govuk.visited.domain.model.VisitedItemUi
 import uk.gov.govuk.visited.ui.model.VisitedUi
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class VisitedWidgetViewModelTest {
+class VisitedViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val visitedRepo = mockk<VisitedRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
