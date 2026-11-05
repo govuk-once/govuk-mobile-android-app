@@ -27,7 +27,10 @@ class AnalyticsCoordinator @Inject constructor(
         }
     }
 
-    override fun logEvent(name: String, parameters: Map<String, Any>) {
+    override fun logEvent(
+        name: String,
+        parameters: Map<String, Any>
+    ) {
         firebaseAnalyticsClient.logEvent(
             name,
             parameters
@@ -39,7 +42,11 @@ class AnalyticsCoordinator @Inject constructor(
         )
     }
 
-    override fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
+    override fun logEcommerceEvent(
+        event: String,
+        ecommerceEvent: EcommerceEvent,
+        selectedItemIndex: Int?
+    ) {
         firebaseAnalyticsClient.logEcommerceEvent(
             event,
             ecommerceEvent,
@@ -52,7 +59,9 @@ class AnalyticsCoordinator @Inject constructor(
         )
     }
 
-    private fun onSurveyShown(results: Map<String, TargetingResult>) {
+    private fun onSurveyShown(
+        results: Map<String, TargetingResult>
+    ) {
         results.forEach { (targetingId, result) ->
             if (result.passed()) {
                 val parameters = mapOf<String, Any>(
@@ -70,7 +79,9 @@ class AnalyticsCoordinator @Inject constructor(
         }
     }
 
-    private fun onSurveyClosed(targetingIds: List<String>) {
+    private fun onSurveyClosed(
+        targetingIds: List<String>
+    ) {
         if (analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED) {
             targetingIds.forEach { targetingId ->
                 val parameters = mapOf<String, Any>(
