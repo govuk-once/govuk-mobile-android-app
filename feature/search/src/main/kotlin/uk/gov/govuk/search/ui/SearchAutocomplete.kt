@@ -52,7 +52,12 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.search.R
 
 @Composable
-internal fun SearchAutocomplete(searchTerm: String, suggestions: List<String>, onSearch: (String) -> Unit, modifier: Modifier = Modifier) {
+internal fun SearchAutocomplete(
+    searchTerm: String,
+    suggestions: List<String>,
+    onSearch: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val focusRequester = remember { FocusRequester() }
 
     if (suggestions.isNotEmpty()) {
@@ -174,10 +179,13 @@ private fun highlightSearchTerms(
     return highlightVariants(suggestionWords, mappedVariants, marker, textColor)
 }
 
-private fun mapSuggestionVariants(suggestionWords: List<String>, parsedSuggestions: Array<String>): Map<String, ArrayList<String>> {
+private fun mapSuggestionVariants(
+    suggestionWords: List<String>,
+    parsedSuggestions: Array<String>
+): Map<String, ArrayList<String>> {
     val mappedVariants = emptyMap<String, ArrayList<String>>().toMutableMap()
 
-    suggestionWords.forEachIndexed { index, suggestionWord ->
+    suggestionWords.forEachIndexed  { index, suggestionWord ->
         val variants = ArrayList<String>()
 
         parsedSuggestions.forEach { parsedSuggestion ->
@@ -195,7 +203,10 @@ private fun mapSuggestionVariants(suggestionWords: List<String>, parsedSuggestio
     return mappedVariants
 }
 
-private fun mergeSuggestionVariants(mappedVariant: Map.Entry<String, ArrayList<String>>, marker: Char): Map<String, ArrayList<String>> {
+private fun mergeSuggestionVariants(
+    mappedVariant: Map.Entry<String, ArrayList<String>>,
+    marker: Char
+): Map<String, ArrayList<String>> {
     var startIndex = mappedVariant.key.length - 1
     var endIndex = 0
 
@@ -203,12 +214,8 @@ private fun mergeSuggestionVariants(mappedVariant: Map.Entry<String, ArrayList<S
         val firstIndex = variant.indexOf(marker)
         val lastIndex = variant.lastIndexOf(marker)
 
-        if (startIndex > firstIndex) {
-            startIndex = firstIndex
-        }
-        if (endIndex < lastIndex) {
-            endIndex = lastIndex
-        }
+        if (startIndex > firstIndex) { startIndex = firstIndex }
+        if (endIndex < lastIndex) { endIndex = lastIndex }
     }
 
     val updatedVariants = ArrayList<String>()
@@ -255,7 +262,7 @@ private fun highlightVariants(
 ): AnnotatedString {
     val transport = FontFamily(
         Font(uk.gov.govuk.design.R.font.transport_bold, FontWeight.Bold),
-        Font(uk.gov.govuk.design.R.font.transport_light, FontWeight.Light)
+        Font(uk.gov.govuk.design.R.font.transport_light, FontWeight.Light),
     )
 
     val normalStyle = SpanStyle(
@@ -263,7 +270,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Bold,
-        color = textColor
+        color = textColor,
     )
 
     val highlightStyle = SpanStyle(
@@ -271,7 +278,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Light,
-        color = textColor
+        color = textColor,
     )
 
     return buildAnnotatedString {

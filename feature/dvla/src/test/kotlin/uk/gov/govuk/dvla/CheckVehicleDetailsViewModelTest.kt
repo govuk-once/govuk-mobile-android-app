@@ -34,11 +34,7 @@ class CheckVehicleDetailsViewModelTest {
         every { mapper.toUiModel(enquiry, any()) } returns vehicleDetails
 
         viewModel = CheckVehicleDetailsViewModel(
-            analyticsClient,
-            mapper,
-            savedStateHandle,
-            dvlaRepo,
-            configRepo
+            analyticsClient, mapper, savedStateHandle, dvlaRepo, configRepo
         )
     }
 
@@ -52,11 +48,7 @@ class CheckVehicleDetailsViewModelTest {
         every { dvlaRepo.getCachedVehicleEnquiryDetails(regNumber) } returns null
 
         viewModel = CheckVehicleDetailsViewModel(
-            analyticsClient,
-            mapper,
-            savedStateHandle,
-            dvlaRepo,
-            configRepo
+            analyticsClient, mapper, savedStateHandle, dvlaRepo, configRepo
         )
 
         assertEquals(CheckVehicleDetailsUiState.Error(regNumber), viewModel.uiState.value)
@@ -67,11 +59,7 @@ class CheckVehicleDetailsViewModelTest {
         every { dvlaRepo.getCachedVehicleEnquiryDetails("") } returns null
 
         viewModel = CheckVehicleDetailsViewModel(
-            analyticsClient,
-            mapper,
-            SavedStateHandle(),
-            dvlaRepo,
-            configRepo
+            analyticsClient, mapper, SavedStateHandle(), dvlaRepo, configRepo
         )
 
         assertEquals(CheckVehicleDetailsUiState.Error(""), viewModel.uiState.value)

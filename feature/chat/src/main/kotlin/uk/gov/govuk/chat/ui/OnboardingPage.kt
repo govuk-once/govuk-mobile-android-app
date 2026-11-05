@@ -78,11 +78,9 @@ internal fun OnboardingPage(
                     LottieAnimation(
                         composition = animationComposition,
                         progress = {
-                            if (animationsEnabled) {
+                            if (animationsEnabled)
                                 animationState.progress
-                            } else {
-                                1f
-                            }
+                            else 1f
                         }
                     )
                 }

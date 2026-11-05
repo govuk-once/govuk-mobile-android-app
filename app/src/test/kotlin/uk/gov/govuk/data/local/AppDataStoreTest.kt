@@ -5,9 +5,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import java.io.File
-import kotlin.io.path.createTempDirectory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -24,6 +23,8 @@ import org.junit.Test
 import uk.gov.govuk.data.local.AppDataStore.Companion.SKIPPED_BIOMETRICS_KEY
 import uk.gov.govuk.data.local.AppDataStore.Companion.SUPPRESSED_HOME_WIDGETS
 import uk.gov.govuk.data.local.AppDataStore.Companion.TOPIC_SELECTION_COMPLETED_KEY
+import java.io.File
+import kotlin.io.path.createTempDirectory
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppDataStoreTest {

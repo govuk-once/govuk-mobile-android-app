@@ -74,7 +74,7 @@ class TopicSelectionViewModelTest {
                 title = "Travel",
                 description = "description",
                 isSelected = false
-            )
+            ),
         )
 
         val viewModel = TopicSelectionViewModel(topicsRepo, analyticsClient)
@@ -117,7 +117,7 @@ class TopicSelectionViewModelTest {
             assertFalse(result.topics[1].isSelected)
             assertTrue(result.isDoneEnabled)
 
-            verify {
+            verify{
                 analyticsClient.buttonFunction(
                     text = "Benefits",
                     section = "Topics",
@@ -160,7 +160,7 @@ class TopicSelectionViewModelTest {
             assertFalse(result.topics[1].isSelected)
             assertFalse(result.isDoneEnabled)
 
-            verify {
+            verify{
                 analyticsClient.buttonFunction(
                     text = "Benefits",
                     section = "Topics",
@@ -227,7 +227,7 @@ class TopicSelectionViewModelTest {
             analyticsClient.buttonClick(
                 text = "Done"
             )
-            topicsRepo.selectAll(listOf("ref1", "ref2"))
+            topicsRepo.selectAll(listOf("ref1","ref2"))
             topicsRepo.topicsCustomised()
         }
     }

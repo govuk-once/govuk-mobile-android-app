@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +52,7 @@ fun NotificationsPreferenceBottomSheet(
     onGetNotifications: () -> Unit
 ) {
     ModalBottomSheet(
-        onDismissRequest = if (!isSaving) onDismiss else ({}),
+        onDismissRequest = if (!isSaving) onDismiss else ({} ),
         sheetState = sheetState,
         containerColor = GovUkTheme.colourScheme.surfaces.surfaceModal,
         contentColor = GovUkTheme.colourScheme.textAndIcons.primary,
@@ -133,6 +134,7 @@ private fun NotificationsPreferenceBottomSheetContent(
 
             MediumVerticalSpacer()
         }
+
 
         FixedContainerDivider()
 
