@@ -20,7 +20,9 @@ object GovUkTheme {
 }
 
 @Composable
-fun GovUkTheme(content: @Composable () -> Unit) {
+fun GovUkTheme(
+    content: @Composable () -> Unit
+) {
     val colorScheme = if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
 
     CompositionLocalProvider(

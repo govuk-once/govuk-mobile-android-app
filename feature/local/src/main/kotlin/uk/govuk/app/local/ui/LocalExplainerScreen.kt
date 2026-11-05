@@ -27,7 +27,11 @@ import uk.govuk.app.local.LocalExplainerViewModel
 import uk.govuk.app.local.R
 
 @Composable
-internal fun LocalExplainerRoute(onBack: () -> Unit, onContinue: () -> Unit, modifier: Modifier = Modifier) {
+internal fun LocalExplainerRoute(
+    onBack: () -> Unit,
+    onContinue: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: LocalExplainerViewModel = hiltViewModel()
 
     LocalExplainerScreen(
@@ -54,7 +58,7 @@ private fun LocalExplainerScreen(
 
     Column(modifier) {
         LocalFullScreenHeader(
-            onBack = onBack
+            onBack = onBack,
         )
         CentreAlignedScreen(
             screenContent = {
@@ -87,7 +91,7 @@ private fun LocalExplainerScreen(
                 val buttonText = stringResource(R.string.local_continue_button)
                 FixedPrimaryButton(
                     text = buttonText,
-                    onClick = { onContinueClick(buttonText) }
+                    onClick = { onContinueClick(buttonText) },
                 )
             }
         )

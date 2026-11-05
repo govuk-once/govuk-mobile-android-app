@@ -21,8 +21,8 @@ import uk.gov.govuk.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.component.ToggleListItem
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
@@ -30,7 +30,10 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.login.BiometricSettingsViewModel
 
 @Composable
-internal fun BiometricSettingsRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
+internal fun BiometricSettingsRoute(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: BiometricSettingsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 

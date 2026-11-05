@@ -31,13 +31,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -109,8 +109,8 @@ internal fun CheckVehicleSheet(
             onCancel()
         },
         modifier = modifier.semantics {
-            paneTitle = sheetTitle
-        },
+                paneTitle = sheetTitle
+            },
         sheetState = sheetState,
         shape = SheetShape,
         containerColor = GovUkTheme.colourScheme.surfaces.bottomSheet,
@@ -203,7 +203,10 @@ private fun CheckVehicleSheetContent(
 }
 
 @Composable
-private fun CheckVehicleSheetLabel(state: CheckVehicleSheetState, modifier: Modifier = Modifier) {
+private fun CheckVehicleSheetLabel(
+    state: CheckVehicleSheetState,
+    modifier: Modifier = Modifier
+) {
     val isError = state is CheckVehicleSheetState.Error
 
     val text = when (state) {
