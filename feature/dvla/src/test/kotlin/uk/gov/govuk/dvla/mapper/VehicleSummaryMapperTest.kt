@@ -2,7 +2,6 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -14,6 +13,7 @@ import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
+import java.time.LocalDate
 
 class VehicleSummaryMapperTest {
 
@@ -27,7 +27,11 @@ class VehicleSummaryMapperTest {
         every { stringProvider.getString(any<Int>(), *anyVararg()) } returns ""
     }
 
-    private fun makeVehicle(model: String? = null, sornStart: LocalDate? = null, taxStatus: TaxStatus = TaxStatus.UNKNOWN) = VehicleSummary(
+    private fun makeVehicle(
+        model: String? = null,
+        sornStart: LocalDate? = null,
+        taxStatus: TaxStatus = TaxStatus.UNKNOWN
+    ) = VehicleSummary(
         vehicleId = 156487251,
         registration = "AA19 AAA",
         make = "FORD",

@@ -4,32 +4,36 @@ import uk.gov.govuk.analytics.data.local.model.EcommerceEvent.Item
 
 const val HOME_BANNERS = "home_banners"
 
-fun HomeWidget.toAnalyticsItem(): Item? = when (this) {
-    is HomeWidget.Banner -> Item(
-        itemId = emergencyBanner.id,
-        itemName = emergencyBanner.title ?: "",
-        itemCategory = emergencyBanner.javaClass.simpleName,
-        locationId = emergencyBanner.link?.url ?: ""
-    )
-    is HomeWidget.Chat -> Item(
-        itemId = chatBanner.id,
-        itemName = chatBanner.title,
-        itemCategory = chatBanner.javaClass.simpleName,
-        locationId = chatBanner.link.url
-    )
-    is HomeWidget.Promo -> Item(
-        itemId = promoBanner.id,
-        itemName = promoBanner.title,
-        itemCategory = promoBanner.javaClass.simpleName,
-        locationId = promoBanner.link.url
-    )
-    is HomeWidget.QuarterlyFeedback -> Item(
-        itemId = quarterlySurvey.id,
-        itemName = quarterlySurvey.title,
-        itemCategory = quarterlySurvey.javaClass.simpleName,
-        locationId = ""
-    )
-    else -> null
+fun HomeWidget.toAnalyticsItem() : Item? {
+    return when (this) {
+        is HomeWidget.Banner -> Item(
+            itemId = emergencyBanner.id,
+            itemName = emergencyBanner.title ?: "",
+            itemCategory = emergencyBanner.javaClass.simpleName,
+            locationId = emergencyBanner.link?.url ?: ""
+        )
+        is HomeWidget.Chat -> Item(
+            itemId = chatBanner.id,
+            itemName = chatBanner.title,
+            itemCategory = chatBanner.javaClass.simpleName,
+            locationId = chatBanner.link.url
+        )
+        is HomeWidget.Promo -> Item(
+            itemId = promoBanner.id,
+            itemName = promoBanner.title,
+            itemCategory = promoBanner.javaClass.simpleName,
+            locationId = promoBanner.link.url
+        )
+        is HomeWidget.QuarterlyFeedback -> Item(
+            itemId = quarterlySurvey.id,
+            itemName = quarterlySurvey.title,
+            itemCategory = quarterlySurvey.javaClass.simpleName,
+            locationId = ""
+        )
+        else -> null
+    }
 }
 
-fun List<HomeWidget>.toAnalyticsItems(): List<Item> = this.mapNotNull { it.toAnalyticsItem() }
+fun List<HomeWidget>.toAnalyticsItems() : List<Item> {
+    return this.mapNotNull { it.toAnalyticsItem() }
+}

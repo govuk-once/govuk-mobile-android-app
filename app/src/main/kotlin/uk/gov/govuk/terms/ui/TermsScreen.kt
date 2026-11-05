@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -95,17 +96,14 @@ private fun TermsScreen(
             if (shouldShowLogo) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_terms),
-                    contentDescription = null
+                    contentDescription = null,
                 )
                 MediumVerticalSpacer()
             }
 
             LargeTitleBoldLabel(
-                text = if (isUpdated) {
-                    stringResource(R.string.terms_updated_title)
-                } else {
-                    stringResource(R.string.terms_new_user_title)
-                },
+                text = if (isUpdated) stringResource(R.string.terms_updated_title)
+                    else stringResource(R.string.terms_new_user_title),
                 modifier = Modifier.semantics { heading() },
                 color = GovUkTheme.colourScheme.textAndIcons.primary,
                 textAlign = TextAlign.Center
@@ -154,7 +152,11 @@ private fun TermsScreen(
 }
 
 @Composable
-private fun DenialDialog(onDismiss: () -> Unit, onSignOut: () -> Unit, modifier: Modifier = Modifier) {
+private fun DenialDialog(
+    onDismiss: () -> Unit,
+    onSignOut: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList),
@@ -194,13 +196,13 @@ private fun DenialDialog(onDismiss: () -> Unit, onSignOut: () -> Unit, modifier:
 @Composable
 internal fun TermsNewUserPreview() {
     GovUkTheme {
-        TermsScreen(
-            isUpdated = false,
-            onAccept = { },
-            onTerms = { },
-            onPrivacyPolicy = { },
-            onSignOut = { }
-        )
+            TermsScreen(
+                isUpdated = false,
+                onAccept = { },
+                onTerms = { },
+                onPrivacyPolicy = { },
+                onSignOut = { }
+            )
     }
 }
 

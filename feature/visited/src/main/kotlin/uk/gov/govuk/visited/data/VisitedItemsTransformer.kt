@@ -1,11 +1,11 @@
 package uk.gov.govuk.visited.data
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import uk.gov.govuk.visited.SectionTitles
 import uk.gov.govuk.visited.domain.model.VisitedItemUi
 import uk.gov.govuk.visited.ui.model.VisitedUi
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 fun transformVisitedItems(
     visitedItems: List<VisitedItemUi>,

@@ -8,8 +8,10 @@ enum class LicenceType {
     UNKNOWN
 }
 
-internal fun RemoteLicenceType?.toDomain(): LicenceType = when (this) {
-    RemoteLicenceType.PROVISIONAL -> LicenceType.PROVISIONAL
-    RemoteLicenceType.FULL -> LicenceType.FULL
-    else -> LicenceType.UNKNOWN
+internal fun RemoteLicenceType?.toDomain(): LicenceType {
+    return when (this) {
+        RemoteLicenceType.PROVISIONAL -> LicenceType.PROVISIONAL
+        RemoteLicenceType.FULL -> LicenceType.FULL
+        else -> LicenceType.UNKNOWN
+    }
 }
