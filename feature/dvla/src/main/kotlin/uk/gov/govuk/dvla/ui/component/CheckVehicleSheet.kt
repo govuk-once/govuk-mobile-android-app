@@ -344,31 +344,31 @@ private fun RegistrationInput(
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetEmptyPreview() {
+internal fun CheckVehicleSheetEmptyPreview() {
     SheetPreview(CheckVehicleSheetState.Input())
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetTypingPreview() {
+internal fun CheckVehicleSheetTypingPreview() {
     SheetPreview(CheckVehicleSheetState.Input("AB12"))
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetCompletePreview() {
+internal fun CheckVehicleSheetCompletePreview() {
     SheetPreview(CheckVehicleSheetState.Input("AB12CDE"))
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetLoadingPreview() {
+internal fun CheckVehicleSheetLoadingPreview() {
     SheetPreview(CheckVehicleSheetState.Loading("AB12CDE"))
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetSearchUnavailablePreview() {
+internal fun CheckVehicleSheetSearchUnavailablePreview() {
     SheetPreview(
         CheckVehicleSheetState.Error(
             regNumber = "AB12CDE",
@@ -379,7 +379,7 @@ private fun CheckVehicleSheetSearchUnavailablePreview() {
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetNotFoundPreview() {
+internal fun CheckVehicleSheetNotFoundPreview() {
     SheetPreview(
         CheckVehicleSheetState.Error(
             regNumber = "AB12CDE",
@@ -389,7 +389,7 @@ private fun CheckVehicleSheetNotFoundPreview() {
 }
 
 @Composable
-private fun SheetPreview(state: CheckVehicleSheetState) {
+internal fun SheetPreview(state: CheckVehicleSheetState) {
     GovUkTheme {
         Box(
             modifier = Modifier
