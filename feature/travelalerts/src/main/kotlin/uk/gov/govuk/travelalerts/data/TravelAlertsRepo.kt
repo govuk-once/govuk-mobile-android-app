@@ -1,9 +1,9 @@
 package uk.gov.govuk.travelalerts.data
 
-import java.time.Instant
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
+import java.time.Instant
 
 interface DateProvider {
     val date: Instant

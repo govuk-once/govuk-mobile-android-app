@@ -2,17 +2,12 @@ package uk.gov.govuk.data.auth
 
 import android.content.Intent
 import android.os.Build
+import kotlinx.coroutines.CancellationException
 import android.util.Base64
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.FragmentActivity
-import java.nio.charset.StandardCharsets
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import net.openid.appauth.AuthorizationException
@@ -31,6 +26,11 @@ import uk.gov.govuk.data.BuildConfig
 import uk.gov.govuk.data.auth.model.Tokens
 import uk.gov.govuk.data.crypto.CryptoProvider
 import uk.gov.govuk.data.remote.AuthApi
+import java.nio.charset.StandardCharsets
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class AuthRepo @Inject constructor(
@@ -112,17 +112,22 @@ class AuthRepo @Inject constructor(
         return performTokenRequest(tokenRequest, refreshToken)
     }
 
-    private suspend fun performTokenRequest(tokenRequest: TokenRequest, refreshToken: String? = null): Boolean {
+    private suspend fun performTokenRequest(
+        tokenRequest: TokenRequest,
+        refreshToken: String? = null
+    ): Boolean {
         val attestationToken = attestationProvider.getToken()
-        val clientAuth = object : ClientAuthentication {
-            override fun getRequestHeaders(clientId: String): MutableMap<String, String> = attestationToken?.let {
-                mutableMapOf("X-Attestation-Token" to it)
-            } ?: mutableMapOf()
+        val clientAuth = object: ClientAuthentication {
+            override fun getRequestHeaders(clientId: String): MutableMap<String, String> =
+                attestationToken?.let {
+                    mutableMapOf("X-Attestation-Token" to it)
+                } ?: mutableMapOf()
 
-            override fun getRequestParameters(clientId: String): MutableMap<String, String> = mutableMapOf(
-                "client_id" to clientId,
-                "scope" to "openid%20email"
-            )
+            override fun getRequestParameters(clientId: String): MutableMap<String, String> =
+                mutableMapOf(
+                    "client_id" to clientId,
+                    "scope" to "openid%20email"
+                )
         }
 
         return suspendCoroutine { continuation ->
@@ -194,15 +199,17 @@ class AuthRepo @Inject constructor(
         title: String,
         subtitle: String? = null,
         description: String? = null
-    ): RetrievalEvent = secureStore.retrieveWithAuthentication(
-        key = arrayOf(REFRESH_TOKEN_KEY),
-        authPromptConfig = AuthenticatorPromptConfiguration(
-            title = title,
-            subTitle = subtitle,
-            description = description
-        ),
-        context = activity
-    )
+    ): RetrievalEvent {
+        return secureStore.retrieveWithAuthentication(
+            key = arrayOf(REFRESH_TOKEN_KEY),
+            authPromptConfig = AuthenticatorPromptConfiguration(
+                title = title,
+                subTitle = subtitle,
+                description = description
+            ),
+            context = activity
+        )
+    }
 
     fun isAuthenticationEnabled(androidVersion: Int = Build.VERSION.SDK_INT): Boolean {
         val authenticators = if (androidVersion > Build.VERSION_CODES.Q) {
@@ -214,11 +221,17 @@ class AuthRepo @Inject constructor(
         return biometricManager.canAuthenticate(authenticators) == BiometricManager.BIOMETRIC_SUCCESS
     }
 
-    fun isUserSessionActive(): Boolean = tokens.accessToken.isNotBlank()
+    fun isUserSessionActive(): Boolean {
+        return tokens.accessToken.isNotBlank()
+    }
 
-    fun getAccessToken(): String = tokens.accessToken
+    fun getAccessToken(): String {
+        return tokens.accessToken
+    }
 
-    fun isUserSignedIn(): Boolean = secureStore.exists(REFRESH_TOKEN_KEY)
+    fun isUserSignedIn(): Boolean {
+        return secureStore.exists(REFRESH_TOKEN_KEY)
+    }
 
     suspend fun isDifferentUser(): Boolean {
         val newSubId = getSubId()
@@ -227,9 +240,11 @@ class AuthRepo @Inject constructor(
         return !currentSubId.isNullOrBlank() && currentSubId != newSubId
     }
 
-    private suspend fun getDecryptedSubId(): String? = tokenRepo.getSubId()?.let { encryptedSubId ->
-        val result = cryptoProvider.decrypt(encryptedSubId)
-        result.getOrNull()?.toString(StandardCharsets.UTF_8)
+    private suspend fun getDecryptedSubId(): String? {
+        return tokenRepo.getSubId()?.let { encryptedSubId ->
+            val result = cryptoProvider.decrypt(encryptedSubId)
+            result.getOrNull()?.toString(StandardCharsets.UTF_8)
+        }
     }
 
     private suspend fun encryptAndSaveSubId(subId: String) {
@@ -239,9 +254,13 @@ class AuthRepo @Inject constructor(
         }
     }
 
-    fun getUserEmail(): String = getIdTokenProperty("email")
+    fun getUserEmail(): String {
+        return getIdTokenProperty("email")
+    }
 
-    fun getIdTokenIssuedAtDate(): Long? = getIdTokenProperty("iat").toLongOrNull()
+    fun getIdTokenIssuedAtDate(): Long? {
+        return getIdTokenProperty("iat").toLongOrNull()
+    }
 
     /**
      * 'The sub attribute is a unique user identifier within each user pool' ~ AWS Cognito docs
@@ -255,9 +274,7 @@ class AuthRepo @Inject constructor(
                 val payload = String(Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP))
                 val json = JSONObject(payload)
                 return json.getString(name)
-            } else {
-                ""
-            }
+            } else ""
         } catch (_: Exception) {
             ""
         }

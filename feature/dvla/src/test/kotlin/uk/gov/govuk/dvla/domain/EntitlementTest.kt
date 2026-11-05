@@ -4,8 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
 import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 
 class EntitlementTest {

@@ -7,7 +7,10 @@ import uk.gov.govuk.R
 import uk.gov.govuk.design.ui.component.QuarterlyFeedbackCard
 
 @Composable
-fun QuarterlyFeedbackBanner(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
+fun QuarterlyFeedbackBanner(
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val body = stringResource(R.string.quarterly_feedback_body)
     val title = stringResource(R.string.quarterly_feedback_title)
     val trigger = stringResource(R.string.quarterly_feedback_trigger)

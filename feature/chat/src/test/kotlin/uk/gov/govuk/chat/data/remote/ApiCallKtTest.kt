@@ -3,9 +3,6 @@ package uk.gov.govuk.chat.data.remote
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.net.UnknownHostException
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
@@ -21,6 +18,9 @@ import uk.gov.govuk.chat.data.remote.ChatResult.Success
 import uk.gov.govuk.chat.data.remote.ChatResult.ValidationError
 import uk.gov.govuk.chat.data.remote.model.Answer
 import uk.gov.govuk.data.auth.AuthRepo
+import java.net.UnknownHostException
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ApiCallKtTest {
     private val apiCall = mockk<suspend () -> Response<Answer>>(relaxed = true)

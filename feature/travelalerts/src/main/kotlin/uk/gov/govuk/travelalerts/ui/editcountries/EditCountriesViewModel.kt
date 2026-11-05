@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,6 +17,7 @@ import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
 import uk.gov.govuk.travelalerts.data.model.Subgroup
 import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
+import javax.inject.Inject
 
 @HiltViewModel
 class EditCountriesViewModel @Inject constructor(
@@ -200,16 +200,8 @@ class EditCountriesViewModel @Inject constructor(
                 }
                 val followError = savedStateHandle.get<Boolean>(SHOW_ERROR_ARG) == true
                 if (followError) savedStateHandle[SHOW_ERROR_ARG] = false
-                val devicePermissionGranted =
-                    ((_uiState.value as? State.Loaded)?.devicePermissionGranted) ?: notificationsRepo.permissionGranted()
-                _uiState.value =
-                    State.Loaded(
-                        followed,
-                        groupsResult.value,
-                        selectedSlug = selectedSlug,
-                        devicePermissionGranted = devicePermissionGranted,
-                        followError = followError
-                    )
+                val devicePermissionGranted = ((_uiState.value as? State.Loaded)?.devicePermissionGranted) ?: notificationsRepo.permissionGranted()
+                _uiState.value = State.Loaded(followed, groupsResult.value, selectedSlug = selectedSlug, devicePermissionGranted = devicePermissionGranted, followError = followError)
             } else {
                 _uiState.value = State.Error
             }

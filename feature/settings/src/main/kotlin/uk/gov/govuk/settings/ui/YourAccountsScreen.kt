@@ -48,6 +48,7 @@ internal fun YourAccountsRoute(
     modifier: Modifier = Modifier,
     viewModel: YourAccountsViewModel = hiltViewModel()
 ) {
+
     val accounts by viewModel.linkedAccounts.collectAsStateWithLifecycle()
     val accountsUiState by viewModel.accountsUiState.collectAsStateWithLifecycle()
 
@@ -83,6 +84,7 @@ private fun YourAccountsScreen(
     onUnlinkCancelled: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     var accountToUnlink by remember { mutableStateOf<LinkedAccountUiModel?>(null) }
 
     when (accountsUiState) {
@@ -135,7 +137,11 @@ private fun YourAccountsScreen(
 }
 
 @Composable
-private fun AccountsContainer(onBack: () -> Unit, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+private fun AccountsContainer(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -170,7 +176,7 @@ private fun AccountsListContent(
         Column(modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
             if (accounts.isEmpty()) {
                 NonTappableCard(
-                    body = stringResource(R.string.your_accounts_empty_state_body)
+                    body = stringResource(R.string.your_accounts_empty_state_body),
                 )
             } else {
                 accounts.forEach { account ->
@@ -240,8 +246,12 @@ private fun RemoveAccountDialog(
     )
 }
 
+
 @Composable
-internal fun RemoveAccountErrorScreen(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+internal fun RemoveAccountErrorScreen(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     ErrorPage(
         headerText = stringResource(R.string.remove_account_error_page_header),
         subText = listOf(stringResource(R.string.remove_account_error_page_sub_text)),

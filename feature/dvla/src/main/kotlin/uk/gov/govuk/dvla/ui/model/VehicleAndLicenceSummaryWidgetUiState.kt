@@ -11,8 +11,7 @@ internal sealed interface UiState {
 }
 
 enum class DrivingView {
-    VEHICLES,
-    LICENCE
+    VEHICLES, LICENCE
 }
 
 internal sealed interface VehiclesSummaryUiState {

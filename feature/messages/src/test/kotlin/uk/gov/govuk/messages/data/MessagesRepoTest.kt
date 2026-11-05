@@ -4,11 +4,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -25,6 +20,11 @@ import uk.gov.govuk.messages.data.model.Notification
 import uk.gov.govuk.messages.data.model.UpdateNotificationRequestBody
 import uk.gov.govuk.messages.data.remote.NotificationsApi
 import uk.gov.govuk.messages.fixtures.MessagesFixtures.Companion.mockMessages
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class MessagesRepoTest {
 
@@ -88,7 +88,7 @@ class MessagesRepoTest {
             api.getNotifications()
         }
 
-        every { mockDateProvider.date } returns Instant.now().plus(60, ChronoUnit.SECONDS)
+        every { mockDateProvider.date } returns Instant.now().plus(60,ChronoUnit.SECONDS)
         messagesRepo.getMessages()
 
         coVerify(exactly = 2) {
@@ -159,7 +159,7 @@ class MessagesRepoTest {
 
         // Warm cache
         messagesRepo.getMessages()
-        every { mockDateProvider.date } returns Instant.now().plus(60, ChronoUnit.SECONDS)
+        every { mockDateProvider.date } returns Instant.now().plus(60,ChronoUnit.SECONDS)
 
         messagesRepo.getSingleMessage("1")
 
@@ -216,6 +216,7 @@ class MessagesRepoTest {
     fun `Update notification makes API call for read`() = runTest {
         messagesRepo.updateMessage("1", UpdateNotificationRequestBody.Status.READ)
 
+
         coVerify(exactly = 1) {
             api.updateNotification("1", UpdateNotificationRequestBody(UpdateNotificationRequestBody.Status.READ))
         }
@@ -224,6 +225,7 @@ class MessagesRepoTest {
     @Test
     fun `Update notification makes API call for unread`() = runTest {
         messagesRepo.updateMessage("1", UpdateNotificationRequestBody.Status.UNREAD)
+
 
         coVerify(exactly = 1) {
             api.updateNotification("1", UpdateNotificationRequestBody(UpdateNotificationRequestBody.Status.UNREAD))
@@ -270,6 +272,7 @@ class MessagesRepoTest {
     @Test
     fun `Delete notification makes API call for read`() = runTest {
         messagesRepo.deleteMessage("1")
+
 
         coVerify(exactly = 1) {
             api.deleteNotification("1")

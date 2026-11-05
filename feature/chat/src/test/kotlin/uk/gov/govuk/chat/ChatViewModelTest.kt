@@ -6,10 +6,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -37,6 +33,10 @@ import uk.gov.govuk.chat.data.remote.model.Source
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChatViewModelTest {
@@ -103,29 +103,29 @@ class ChatViewModelTest {
         val conversation = Conversation(
             id = "123",
             answeredQuestions =
-            listOf(
-                AnsweredQuestion(
-                    "abc",
-                    uk.gov.govuk.chat.data.remote.model.Answer(
-                        "",
-                        "",
-                        null,
-                        null,
-                        "Answer 1",
-                        "",
-                        listOf(
-                            Source(
-                                "url",
-                                "title"
+                listOf(
+                    AnsweredQuestion(
+                        "abc",
+                        uk.gov.govuk.chat.data.remote.model.Answer(
+                            "",
+                            "",
+                            null,
+                            null,
+                            "Answer 1",
+                            "",
+                            listOf(
+                                Source(
+                                    "url",
+                                    "title"
+                                )
                             )
-                        )
-                    ),
-                    "",
-                    "",
-                    "Question 1"
+                        ),
+                        "",
+                        "",
+                        "Question 1"
 
-                )
-            ),
+                    )
+                ),
             "",
             null
         )
@@ -283,6 +283,7 @@ class ChatViewModelTest {
             "Question 1"
         )
 
+
         coEvery { chatRepo.askQuestion(any()) } coAnswers {
             delay(100)
             ChatResult.Success(question)
@@ -432,7 +433,7 @@ class ChatViewModelTest {
 
         val finalState = uiStates.last()
 
-        assertEquals(ChatUiState.Error(false), finalState)
+        assertEquals(ChatUiState.Error(false),finalState)
 
         coVerify(exactly = 0) {
             chatRepo.getAnswer(any(), any(), any())
@@ -835,7 +836,8 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun `onResume does not load conversation if chat intro not seen`() = runTest {
+    fun `onResume does not load conversation if chat intro not seen`()
+        = runTest {
         every { chatRepo.isChatIntroSeen } returns flowOf(false)
         coEvery { chatRepo.getConversation() } returns null
 

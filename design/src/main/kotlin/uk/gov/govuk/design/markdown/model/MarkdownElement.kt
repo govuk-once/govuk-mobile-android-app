@@ -11,15 +11,31 @@ sealed class MarkdownElement {
     /** Plain text representation for copy/paste and screen readers */
     abstract val plainText: String
 
-    data class Heading(override val id: String, val level: Int, val content: List<InlineContent>, override val plainText: String) :
-        MarkdownElement()
+    data class Heading(
+        override val id: String,
+        val level: Int,
+        val content: List<InlineContent>,
+        override val plainText: String
+    ) : MarkdownElement()
 
-    data class Paragraph(override val id: String, val content: List<InlineContent>, override val plainText: String) : MarkdownElement()
+    data class Paragraph(
+        override val id: String,
+        val content: List<InlineContent>,
+        override val plainText: String
+    ) : MarkdownElement()
 
-    data class CodeBlock(override val id: String, val code: String, val language: String?, override val plainText: String) :
-        MarkdownElement()
+    data class CodeBlock(
+        override val id: String,
+        val code: String,
+        val language: String?,
+        override val plainText: String
+    ) : MarkdownElement()
 
-    data class BlockQuote(override val id: String, val content: List<InlineContent>, override val plainText: String) : MarkdownElement()
+    data class BlockQuote(
+        override val id: String,
+        val content: List<InlineContent>,
+        override val plainText: String
+    ) : MarkdownElement()
 
     data class ListItem(
         override val id: String,
@@ -30,7 +46,10 @@ sealed class MarkdownElement {
         override val plainText: String
     ) : MarkdownElement()
 
-    data class ThematicBreak(override val id: String, override val plainText: String = "---") : MarkdownElement()
+    data class ThematicBreak(
+        override val id: String,
+        override val plainText: String = "---"
+    ) : MarkdownElement()
 }
 
 /**
@@ -41,6 +60,10 @@ sealed class InlineContent {
     data class Emphasis(val content: List<InlineContent>) : InlineContent()
     data class StrongEmphasis(val content: List<InlineContent>) : InlineContent()
     data class Code(val code: String) : InlineContent()
-    data class Link(val content: List<InlineContent>, val url: String, val title: String?) : InlineContent()
+    data class Link(
+        val content: List<InlineContent>,
+        val url: String,
+        val title: String?
+    ) : InlineContent()
     data class LineBreak(val isSoft: Boolean) : InlineContent()
 }

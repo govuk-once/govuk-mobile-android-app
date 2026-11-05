@@ -4,8 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlin.String
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,6 +17,8 @@ import uk.gov.govuk.topics.navigation.TOPIC_REF_ARG
 import uk.gov.govuk.topics.navigation.TOPIC_SUBTOPIC_ARG
 import uk.gov.govuk.topics.ui.model.TopicUi
 import uk.gov.govuk.visited.Visited
+import javax.inject.Inject
+import kotlin.String
 
 @HiltViewModel
 internal class TopicViewModel @Inject constructor(
@@ -26,7 +26,7 @@ internal class TopicViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val visited: Visited,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+): ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "TopicScreen"
@@ -81,7 +81,10 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    fun onPageView(topicUi: TopicUi? = null, title: String) {
+    fun onPageView(
+        topicUi: TopicUi? = null,
+        title: String
+    ) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = title,
@@ -93,7 +96,14 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    fun onContentClick(title: String, section: String, text: String, url: String, selectedItemIndex: Int, totalItemCount: Int) {
+    fun onContentClick(
+        title: String,
+        section: String,
+        text: String,
+        url: String,
+        selectedItemIndex: Int,
+        totalItemCount: Int
+    ) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -115,7 +125,10 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    fun onSeeAllClick(section: String, text: String) {
+    fun onSeeAllClick(
+        section: String,
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -123,7 +136,11 @@ internal class TopicViewModel @Inject constructor(
         )
     }
 
-    fun onSubtopicClick(text: String, selectedItemIndex: Int, totalItemCount: Int) {
+    fun onSubtopicClick(
+        text: String,
+        selectedItemIndex: Int,
+        totalItemCount: Int
+    ) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -165,11 +182,14 @@ internal class TopicViewModel @Inject constructor(
         )
     }
 
-    private fun sendViewItemListEvent(topicUi: TopicUi, title: String) {
+    private fun sendViewItemListEvent(
+        topicUi: TopicUi,
+        title: String
+    ) {
         val topicItems = listOf(
             topicUi.popularPages to POPULAR_PAGES_TITLE,
             topicUi.stepBySteps to STEP_BY_STEPS_TITLE,
-            topicUi.services to SERVICES_TITLE
+            topicUi.services to SERVICES_TITLE,
         ).flatMap { (items, category) ->
             items.map { item ->
                 EcommerceEvent.Item(

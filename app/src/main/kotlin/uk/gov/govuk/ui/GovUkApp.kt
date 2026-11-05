@@ -84,12 +84,12 @@ import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.loginGraph
-import uk.gov.govuk.messages.navigation.MESSAGES_GRAPH_ROUTE
-import uk.gov.govuk.messages.navigation.MESSAGES_ROUTE
-import uk.gov.govuk.messages.navigation.messagesGraph
-import uk.gov.govuk.messages.navigation.navigateToMessages
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.navigation.TopLevelDestination
+import uk.gov.govuk.messages.navigation.MESSAGES_GRAPH_ROUTE
+import uk.gov.govuk.messages.navigation.MESSAGES_ROUTE
+import uk.gov.govuk.messages.navigation.navigateToMessages
+import uk.gov.govuk.messages.navigation.messagesGraph
 import uk.gov.govuk.notifications.navigation.notificationsGraph
 import uk.gov.govuk.search.navigation.SEARCH_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.searchGraph
@@ -213,17 +213,17 @@ private fun BottomNavScaffold(
     val currentRoute = navBackStackEntry?.destination?.route
 
     // status & system nav bars flags
-    val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE &&
-        currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
+    val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE
+            && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
     val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
     val isLicenceCategoriesRoute = currentRoute == LICENCE_CATEGORIES_ROUTE
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
-        currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
-        isMessagesDetailRoute
+            currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
+            isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
-        currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
+            currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
     val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute || isLicenceCategoriesRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
@@ -285,8 +285,7 @@ private fun BottomNavScaffold(
             Column {
                 StatusBar(
                     hideBackground = hideStatusBarBackground,
-                    useDarkIcons = useDarkIcons
-                )
+                    useDarkIcons = useDarkIcons)
                 GovUkNavHost(
                     intentFlow = intentFlow,
                     viewModel = viewModel,
@@ -319,7 +318,10 @@ private fun BottomNavScaffold(
 }
 
 @Composable
-private fun HandleOnResumeNavigation(navController: () -> NavHostController, viewModel: AppViewModel) {
+private fun HandleOnResumeNavigation(
+    navController: () -> NavHostController,
+    viewModel: AppViewModel
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
 
@@ -341,7 +343,11 @@ private fun HandleOnResumeNavigation(navController: () -> NavHostController, vie
 }
 
 @Composable
-private fun BottomNav(isChatEnabled: Boolean, navController: NavHostController, onTabClick: (String) -> Unit) {
+private fun BottomNav(
+    isChatEnabled: Boolean,
+    navController: NavHostController,
+    onTabClick: (String) -> Unit
+) {
     val topLevelDestinations = remember(isChatEnabled) {
         TopLevelDestination.values(isChatEnabled)
     }
@@ -353,9 +359,9 @@ private fun BottomNav(isChatEnabled: Boolean, navController: NavHostController, 
     val selectedIndex = remember(topLevelDestinations, currentRoute, currentParentRoute) {
         topLevelDestinations.indexOfFirst { topLevelDestination ->
             topLevelDestination.route == currentParentRoute ||
-                topLevelDestination.associatedRoutes.any {
-                    currentRoute?.startsWith(it) == true
-                }
+                    topLevelDestination.associatedRoutes.any {
+                        currentRoute?.startsWith(it) == true
+                    }
         }
     }
 
@@ -409,7 +415,7 @@ private fun BottomNav(isChatEnabled: Boolean, navController: NavHostController, 
                                 selectedTextColor = GovUkTheme.colourScheme.textAndIcons.link,
                                 indicatorColor = GovUkTheme.colourScheme.surfaces.primary,
                                 unselectedIconColor = GovUkTheme.colourScheme.textAndIcons.secondary,
-                                unselectedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary
+                                unselectedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary,
                             )
                     )
                 }
@@ -582,9 +588,7 @@ private fun GovUkNavHost(
                             modifier = modifier
                         )
                     }
-                } else {
-                    null
-                },
+                } else null,
                 transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
             )
             topicsGraph(
@@ -644,8 +648,7 @@ private fun GovUkNavHost(
             )
             searchGraph(
                 navController,
-                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } }
-            )
+                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } })
             visitedGraph(
                 navController = navController,
                 launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
@@ -692,15 +695,14 @@ private fun GovUkNavHost(
                 navController = navController,
                 launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
                 appVersion = BuildConfig.VERSION_NAME_USER_FACING,
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
             )
         }
 
         messagesGraph(
             navController,
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-            modifier = Modifier.padding(paddingValues)
-        )
+            modifier = Modifier.padding(paddingValues))
         settingsGraph(
             navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
@@ -756,7 +758,9 @@ private fun GovUkNavHost(
 }
 
 @Composable
-private fun BrowserNotFoundAlert(onDismiss: () -> Unit) {
+private fun BrowserNotFoundAlert(
+    onDismiss: () -> Unit
+) {
     InfoAlert(
         title = R.string.browser_not_found_alert_title,
         message = R.string.browser_not_found_alert_message,
@@ -764,3 +768,5 @@ private fun BrowserNotFoundAlert(onDismiss: () -> Unit) {
         onDismiss = onDismiss
     )
 }
+
+

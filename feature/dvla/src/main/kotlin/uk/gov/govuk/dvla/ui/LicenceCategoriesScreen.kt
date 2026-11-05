@@ -94,7 +94,11 @@ internal fun LicenceCategoriesScreen(
 }
 
 @Composable
-private fun CategorySection(title: String, groups: List<LicenceCategoryGroupUiModel>, onInfoClick: (code: String) -> Unit) {
+private fun CategorySection(
+    title: String,
+    groups: List<LicenceCategoryGroupUiModel>,
+    onInfoClick: (code: String) -> Unit
+) {
     if (groups.isEmpty()) return
 
     SectionHeadingLabel(title3 = title)
@@ -109,7 +113,10 @@ private fun CategorySection(title: String, groups: List<LicenceCategoryGroupUiMo
 }
 
 @Composable
-private fun CategoryGroup(group: LicenceCategoryGroupUiModel, onInfoClick: (code: String) -> Unit) {
+private fun CategoryGroup(
+    group: LicenceCategoryGroupUiModel,
+    onInfoClick: (code: String) -> Unit
+) {
     BodyBoldLabel(text = group.title, modifier = Modifier.semantics { heading() })
 
     SmallVerticalSpacer()
@@ -124,7 +131,10 @@ private fun CategoryGroup(group: LicenceCategoryGroupUiModel, onInfoClick: (code
 }
 
 @Composable
-private fun FurtherInformation(links: List<LicenceCategoryLinkUiModel>, onLinkClick: (text: String, url: String) -> Unit) {
+private fun FurtherInformation(
+    links: List<LicenceCategoryLinkUiModel>,
+    onLinkClick: (text: String, url: String) -> Unit
+) {
     if (links.isEmpty()) return
 
     SectionHeadingLabel(title3 = stringResource(R.string.licence_categories_further_information_header))

@@ -12,8 +12,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +46,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Subgroup
+import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.travelalerts.navigation.EDIT_NOTIFICATIONS_ENABLED_KEY
 import uk.gov.govuk.travelalerts.navigation.EDIT_OPT_IN_ERROR_KEY
 import uk.gov.govuk.travelalerts.navigation.EDIT_REOPEN_SLUG_KEY
@@ -292,7 +293,10 @@ private fun EditCountriesLoaded(
 }
 
 @Composable
-private fun EditCountriesError(onRetry: () -> Unit, modifier: Modifier = Modifier) {
+private fun EditCountriesError(
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     ErrorPage(
         headerText = stringResource(R.string.country_list_error_title),
         subText = listOf(stringResource(R.string.country_list_error_description)),
@@ -329,7 +333,7 @@ internal fun EditCountriesLoadedPreview() {
         Country("Bosnia and Herzegovina", "bosnia-and-herzegovina", "2022-01-01T00:00:00Z", listOf()),
         Country("Fiji", "fiji", "2023-01-01T00:00:00Z", listOf()),
         Country("Italy", "italy", "2024-01-01T00:00:00Z", listOf()),
-        Country("St Helena, Ascension and Tristan da Cunha", "st-helena", "2025-01-01T00:00:00Z", listOf())
+        Country("St Helena, Ascension and Tristan da Cunha", "st-helena", "2025-01-01T00:00:00Z", listOf()),
     )
 
     val state = EditCountriesViewModel.State.Loaded(

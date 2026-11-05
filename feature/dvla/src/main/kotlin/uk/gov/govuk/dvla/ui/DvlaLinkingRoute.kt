@@ -37,6 +37,7 @@ internal fun DvlaLinkingRoute(
     onWebFlowClosed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     val viewModel: DvlaViewModel = hiltViewModel()
     val authUrlToLaunch by viewModel.authUrlToLaunch.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -130,7 +131,10 @@ internal fun DvlaLinkingRoute(
 }
 
 @Composable
-private fun DvlaLoadingScreen(title: String, modifier: Modifier = Modifier) {
+private fun DvlaLoadingScreen(
+    title: String,
+    modifier: Modifier = Modifier
+) {
     BookendConnectingScreen(
         title = title,
         modifier = modifier
@@ -138,7 +142,11 @@ private fun DvlaLoadingScreen(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun DvlaLinkSuccessScreen(onPageView: (String) -> Unit, onContinue: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun DvlaLinkSuccessScreen(
+    onPageView: (String) -> Unit,
+    onContinue: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val title = stringResource(R.string.link_dvla_success_title)
     val buttonText = stringResource(R.string.link_dvla_success_button)
 
@@ -162,7 +170,12 @@ private fun DvlaLinkSuccessScreen(onPageView: (String) -> Unit, onContinue: (Str
 }
 
 @Composable
-private fun DvlaOfflineScreen(onPageView: (String) -> Unit, onTryAgain: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun DvlaOfflineScreen(
+    onPageView: (String) -> Unit,
+    onTryAgain: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+
     val title = stringResource(uk.gov.govuk.design.R.string.device_offline_title)
     val buttonText = stringResource(uk.gov.govuk.design.R.string.device_offline_button_title)
 

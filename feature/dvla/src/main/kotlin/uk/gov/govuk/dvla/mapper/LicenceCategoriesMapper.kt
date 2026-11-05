@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.mapper
 
-import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.Entitlement
@@ -10,8 +9,11 @@ import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryLinkUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.util.StringProvider
+import javax.inject.Inject
 
-internal class LicenceCategoriesMapper @Inject constructor(private val stringProvider: StringProvider) {
+internal class LicenceCategoriesMapper @Inject constructor(
+    private val stringProvider: StringProvider
+) {
     fun toUiModel(entitlements: List<Entitlement>, dvlaUrls: DvlaUrls?) = LicenceCategoriesUiModel(
         canDrive = entitlements.toGroups(EntitlementType.FULL),
         provisionallyDrive = entitlements.toGroups(EntitlementType.PROVISIONAL),

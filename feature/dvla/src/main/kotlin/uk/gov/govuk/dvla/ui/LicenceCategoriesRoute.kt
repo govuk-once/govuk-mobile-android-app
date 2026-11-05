@@ -15,7 +15,11 @@ import uk.gov.govuk.dvla.LicenceCategoriesUiState
 import uk.gov.govuk.dvla.LicenceCategoriesViewModel
 
 @Composable
-internal fun LicenceCategoriesRoute(launchBrowser: (String) -> Unit, onBack: () -> Unit, modifier: Modifier = Modifier) {
+internal fun LicenceCategoriesRoute(
+    launchBrowser: (String) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: LicenceCategoriesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -49,7 +53,10 @@ internal fun LicenceCategoriesRoute(launchBrowser: (String) -> Unit, onBack: () 
 }
 
 @Composable
-private fun LicenceCategoriesError(onBack: () -> Unit, modifier: Modifier = Modifier) {
+private fun LicenceCategoriesError(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.safeDrawingPadding().fillMaxWidth()) {
         FullScreenHeader(dismissStyle = HeaderDismissStyle.Back(onBack))
 
