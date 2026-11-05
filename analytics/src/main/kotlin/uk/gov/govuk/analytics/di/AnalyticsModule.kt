@@ -34,11 +34,15 @@ internal abstract class AnalyticsModule {
 
     @Binds
     @Singleton
-    abstract fun bindAnalyticsCoordinator(analyticsCoordinator: AnalyticsCoordinator): AnalyticsCoordinatorInterface
+    abstract fun bindAnalyticsCoordinator(
+        analyticsCoordinator: AnalyticsCoordinator
+    ): AnalyticsCoordinatorInterface
 
     @Binds
     @Singleton
-    abstract fun bindActivityProvider(activityProvider: ActivityProvider): ActivityProviderInterface
+    abstract fun bindActivityProvider(
+        activityProvider: ActivityProvider
+    ): ActivityProviderInterface
 
     companion object {
         @Provides
@@ -60,7 +64,9 @@ internal abstract class AnalyticsModule {
         @Singleton
         @Provides
         @Named("analytics_prefs")
-        fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        fun providePreferencesDataStore(
+            @ApplicationContext context: Context
+        ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),

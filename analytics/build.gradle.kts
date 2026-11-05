@@ -16,10 +16,12 @@ if (githubPropertiesFile.exists()) {
     githubPropertiesFile.reader().use { githubProperties.load(it) }
 }
 
-fun getQualtricsId(key: String, useLocal: Boolean = true): String =
-    (if (useLocal) githubProperties.getProperty(key)?.takeIf { it.isNotBlank() } else null)
-        ?: System.getenv(key)?.takeIf { it.isNotBlank() }
-        ?: ""
+fun getQualtricsId(
+    key: String,
+    useLocal: Boolean = true
+): String = (if (useLocal) githubProperties.getProperty(key)?.takeIf { it.isNotBlank() } else null)
+    ?: System.getenv(key)?.takeIf { it.isNotBlank() }
+    ?: ""
 
 android {
     namespace = "uk.gov.govuk.analytics"
