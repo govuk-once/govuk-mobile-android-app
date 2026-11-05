@@ -14,7 +14,9 @@ const val FIREBASE_SESSION_ID = "fb_session_id" // sessionId
  * that the caller always has an available, best-effort value.
  */
 @Singleton
-class FirebaseIdentifiers @Inject constructor(private val firebaseAnalytics: FirebaseAnalytics) {
+class FirebaseIdentifiers @Inject constructor(
+    private val firebaseAnalytics: FirebaseAnalytics
+) {
     @Volatile
     var userPseudoId: String? = null
         private set
