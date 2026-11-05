@@ -5,9 +5,6 @@ import io.mockk.mockk
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -16,6 +13,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.visited.data.model.VisitedItem
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class VisitedLocalDataSourceTest {
     private val realmProvider = mockk<VisitedRealmProvider>(relaxed = true)

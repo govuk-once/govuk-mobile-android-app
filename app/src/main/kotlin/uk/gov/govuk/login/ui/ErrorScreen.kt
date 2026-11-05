@@ -10,7 +10,10 @@ import uk.gov.govuk.design.ui.component.error.ErrorPage
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun ErrorRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
+internal fun ErrorRoute(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     ErrorScreen(
         onBack = { onBack() },
         modifier = modifier
@@ -18,7 +21,10 @@ internal fun ErrorRoute(onBack: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ErrorScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
+private fun ErrorScreen(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     ErrorPage(
         headerText = stringResource(R.string.login_sign_in_error_header),
         subText = listOf(stringResource(R.string.login_sign_in_error_sub_text)),

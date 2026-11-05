@@ -21,7 +21,11 @@ import uk.gov.govuk.design.ui.model.HeaderActionStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-internal fun OnboardingPageOneRoute(onClick: () -> Unit, onCancel: () -> Unit, modifier: Modifier = Modifier) {
+internal fun OnboardingPageOneRoute(
+    onClick: () -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val viewModel: ChatViewModel = hiltViewModel()
     val cancelText = stringResource(id = R.string.onboarding_page_cancel_text)
     val continueText = stringResource(id = R.string.onboarding_page_one_button)
@@ -53,7 +57,12 @@ internal fun OnboardingPageOneRoute(onClick: () -> Unit, onCancel: () -> Unit, m
 }
 
 @Composable
-private fun OnboardingPageOneScreen(onPageView: () -> Unit, onClick: () -> Unit, onCancel: () -> Unit, modifier: Modifier = Modifier) {
+private fun OnboardingPageOneScreen(
+    onPageView: () -> Unit,
+    onClick: () -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     BackHandler(onBack = onCancel)
 
     RunOnceLaunchedEffect {
@@ -104,3 +113,4 @@ internal fun OnboardingPageOnePreview() {
         )
     }
 }
+

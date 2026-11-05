@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:filename")
-
 package uk.gov.govuk.govkit.browser
 
 import android.content.ActivityNotFoundException
@@ -28,14 +26,18 @@ fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivity
     }
 }
 
-sealed class BrowserActivityLauncher(val launcher: ManagedActivityResultLauncher<Intent, ActivityResult>) {
+sealed class BrowserActivityLauncher(
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
     abstract fun launch(url: String, onError: () -> Unit)
 
     open fun launchPartial(context: Context, url: String, onError: () -> Unit) {
         launch(url, onError)
     }
 
-    internal class External(launcher: ManagedActivityResultLauncher<Intent, ActivityResult>) : BrowserActivityLauncher(launcher) {
+    internal class External(
+        launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    ) : BrowserActivityLauncher(launcher) {
         override fun launch(url: String, onError: () -> Unit) {
             try {
                 Intent(Intent.ACTION_VIEW).run {
@@ -48,7 +50,9 @@ sealed class BrowserActivityLauncher(val launcher: ManagedActivityResultLauncher
         }
     }
 
-    internal class InApp(launcher: ManagedActivityResultLauncher<Intent, ActivityResult>) : BrowserActivityLauncher(launcher) {
+    internal class InApp(
+        launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    ) : BrowserActivityLauncher(launcher) {
         override fun launch(url: String, onError: () -> Unit) {
             try {
                 CustomTabsIntent.Builder().build().run {

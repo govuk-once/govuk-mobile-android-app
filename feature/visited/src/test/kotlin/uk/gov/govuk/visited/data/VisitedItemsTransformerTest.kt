@@ -1,12 +1,12 @@
 package uk.gov.govuk.visited.data
 
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import uk.gov.govuk.visited.SectionTitles
 import uk.gov.govuk.visited.domain.model.VisitedItemUi
 import uk.gov.govuk.visited.ui.model.VisitedUi
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class VisitedItemsTransformerTest {
     @Test

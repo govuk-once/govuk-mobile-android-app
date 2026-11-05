@@ -20,4 +20,5 @@ class DefaultSearchFeatureTest {
             coVerify { searchRepo.clear() }
         }
     }
+
 }

@@ -55,4 +55,6 @@ fun ShareCode.toDomainModel() = CheckCodeDetails(
 
 fun SingleShareCodeResponse.toDomainModel(): CheckCodeDetails = this.shareCode.toDomainModel()
 
-fun MultiShareCodeResponse.toDomainModel(): List<CheckCodeDetails> = this.shareCodes.map { it.toDomainModel() }
+
+fun MultiShareCodeResponse.toDomainModel(): List<CheckCodeDetails> =
+    this.shareCodes.map { it.toDomainModel() }
