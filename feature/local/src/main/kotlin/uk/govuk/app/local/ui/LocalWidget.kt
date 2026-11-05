@@ -137,7 +137,7 @@ private fun NoLocalAuthorityCard(
 
 @Preview (showBackground = true)
 @Composable
-private fun NoLocalAuthorityPreview() {
+internal fun NoLocalAuthorityPreview() {
     GovUkTheme {
         NoLocalAuthorityCard(
             onClick = { }
@@ -147,7 +147,7 @@ private fun NoLocalAuthorityPreview() {
 
 @Preview (showBackground = true)
 @Composable
-private fun UnitaryLocalAuthorityPreview() {
+internal fun UnitaryLocalAuthorityPreview() {
     GovUkTheme {
         LocalAuthorityCard(
             localAuthority = LocalAuthority(
@@ -164,7 +164,7 @@ private fun UnitaryLocalAuthorityPreview() {
 
 @Preview (showBackground = true)
 @Composable
-private fun TwoTierLocalAuthorityPreview() {
+internal fun TwoTierLocalAuthorityPreview() {
     GovUkTheme {
         LocalAuthorityCard(
             localAuthority = LocalAuthority(

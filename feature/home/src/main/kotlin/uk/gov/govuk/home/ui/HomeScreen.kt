@@ -169,7 +169,7 @@ private fun HomeScreen(
 
 @PreviewLightDark
 @Composable
-private fun HomePreview() {
+internal fun HomePreview() {
     GovUkTheme {
         HomeScreen(listOf(), {}, Modifier)
     }
