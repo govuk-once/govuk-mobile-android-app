@@ -1,10 +1,10 @@
 package uk.gov.govuk.dvla.util
 
-import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.LocalDate
 
 class DateExtensionTest {
 

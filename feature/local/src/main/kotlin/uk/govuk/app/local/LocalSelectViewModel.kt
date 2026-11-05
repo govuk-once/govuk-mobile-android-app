@@ -3,14 +3,16 @@ package uk.govuk.app.local
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.govuk.app.local.data.LocalRepo
+import javax.inject.Inject
 
 @HiltViewModel
-internal class LocalSelectViewModel @Inject constructor(private val analyticsClient: AnalyticsClient, private val localRepo: LocalRepo) :
-    ViewModel() {
+internal class LocalSelectViewModel @Inject constructor(
+    private val analyticsClient: AnalyticsClient,
+    private val localRepo: LocalRepo,
+): ViewModel() {
     companion object {
         private const val SELECT_BY_LOCAL_AUTHORITY_SCREEN_CLASS = "LocalAuthoritySelectScreen"
         private const val SELECT_BY_ADDRESS_SCREEN_CLASS = "LocalAddressSelectScreen"

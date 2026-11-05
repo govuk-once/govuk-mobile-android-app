@@ -3,7 +3,6 @@ package uk.gov.govuk.visited.data
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -11,6 +10,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import uk.gov.govuk.visited.data.model.VisitedItem
 import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
+import java.time.LocalDate
 
 class VisitedRepoTest {
     private val localDataSource = mockk<VisitedLocalDataSource>(relaxed = true)

@@ -3,7 +3,6 @@ package uk.gov.govuk.travelalerts.ui.widget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,19 +12,23 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.govkit.date.toRelativeDate
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
+import javax.inject.Inject
 
 @HiltViewModel
 class TravelAlertsWidgetViewModel @Inject constructor(
     private val travelAlertsRepo: TravelAlertsRepo,
     private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
-    data class UiState(val content: State = State.Loading, val followError: Boolean = false)
+    data class UiState(
+        val content: State = State.Loading,
+        val followError: Boolean = false
+    )
 
     sealed class State {
-        data object Loading : State()
-        data class Loaded(val rows: List<LoadedRow>) : State()
-        data object Empty : State()
-        data object Error : State()
+        data object Loading: State()
+        data class Loaded(val rows: List<LoadedRow>): State()
+        data object Empty: State()
+        data object Error: State()
     }
 
     data class LoadedRow(val headline: String, val subtitle: String, val link: String, val url: String)
