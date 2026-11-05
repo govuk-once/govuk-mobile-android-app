@@ -33,16 +33,16 @@ class AnalyticsRepoTest {
 
     @Test
     fun `Given analytics are enabled, then return enabled`() {
-        every { dataStore.analyticsEnabledState } returns ENABLED
+        every { dataStore.analyticsEnabledState  } returns ENABLED
 
-        assertEquals(ENABLED, analyticsRepo.analyticsEnabledState)
+        assertEquals(ENABLED, analyticsRepo.analyticsEnabledState )
     }
 
     @Test
     fun `Given analytics are disabled, then return disabled`() {
-        every { dataStore.analyticsEnabledState } returns DISABLED
+        every { dataStore.analyticsEnabledState  } returns DISABLED
 
-        assertEquals(DISABLED, analyticsRepo.analyticsEnabledState)
+        assertEquals(DISABLED, analyticsRepo.analyticsEnabledState )
     }
 
     @Test
