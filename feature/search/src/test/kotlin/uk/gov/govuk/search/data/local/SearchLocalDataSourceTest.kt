@@ -164,7 +164,7 @@ class SearchLocalDataSourceTest {
             LocalSearchItem().apply {
                 searchTerm = "dog"
                 timestamp = 0
-            }
+            },
         )
 
         runTest {

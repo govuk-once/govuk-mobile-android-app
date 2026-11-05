@@ -2,7 +2,6 @@ package uk.gov.govuk.data.remote
 
 import io.mockk.every
 import io.mockk.mockk
-import java.net.UnknownHostException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -13,6 +12,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.AuthError
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
+import java.net.UnknownHostException
 
 class SafeApiCallTest {
 

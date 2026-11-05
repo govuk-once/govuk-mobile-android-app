@@ -20,7 +20,11 @@ import uk.gov.govuk.visited.VisitedWidgetViewModel
 import uk.gov.govuk.visited.ui.model.VisitedUi
 
 @Composable
-fun VisitedWidget(onSeeAllClick: (String) -> Unit, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
+fun VisitedWidget(
+    onSeeAllClick: (String) -> Unit,
+    launchBrowser: (url: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: VisitedWidgetViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,7 +50,9 @@ fun VisitedWidget(onSeeAllClick: (String) -> Unit, launchBrowser: (url: String) 
 }
 
 @Composable
-private fun NoVisitedItems(modifier: Modifier = Modifier) {
+private fun NoVisitedItems(
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         SectionHeadingLabel(title3 = stringResource(R.string.visited_items_title))
         NonTappableCard(
@@ -106,9 +112,7 @@ internal fun VisitedItemsPreview() {
     )
     GovUkTheme {
         VisitedItems(
-            items,
-            {},
-            { _, _ -> }
+            items, {}, { _, _ -> }
         )
     }
 }

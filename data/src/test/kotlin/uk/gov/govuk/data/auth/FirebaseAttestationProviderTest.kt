@@ -7,11 +7,11 @@ import com.google.firebase.appcheck.AppCheckToken
 import com.google.firebase.appcheck.FirebaseAppCheck
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.io.IOException
 
 class FirebaseAttestationProviderTest {
 
