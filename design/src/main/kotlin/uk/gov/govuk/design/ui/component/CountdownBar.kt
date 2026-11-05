@@ -14,7 +14,10 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun CountdownBar(percentage: Float, modifier: Modifier = Modifier) {
+fun CountdownBar(
+    percentage: Float,
+    modifier: Modifier = Modifier
+) {
     val barHeight = 12.dp
 
     Row(
