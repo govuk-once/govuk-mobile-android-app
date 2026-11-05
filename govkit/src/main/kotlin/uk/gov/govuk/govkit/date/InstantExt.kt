@@ -30,7 +30,7 @@ fun Instant.toRelativeDate(now: Instant = Instant.now(), lowercase: Boolean = fa
     val daysAgo = ChronoUnit.DAYS.between(zonedSelf.toLocalDate(), today.toLocalDate())
 
     return when {
-        isToday -> DateTimeFormatter.ofPattern(if (lowercase) "'today,' h:mma" else "'Today,' h:mma", Locale.getDefault())
+        isToday -> DateTimeFormatter.ofPattern(if (lowercase) "'today,' h:mma" else "'Today,' h:mma" , Locale.getDefault())
             .withZone(london)
             .format(this)
             .replace("AM", "am")

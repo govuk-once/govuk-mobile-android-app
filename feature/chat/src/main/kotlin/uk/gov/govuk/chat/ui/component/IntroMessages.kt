@@ -72,10 +72,10 @@ internal fun IntroMessages(
             AnimatedVisibility(
                 visible = messageVisible,
                 enter =
-                fadeIn(
-                    animationSpec = tween(durationMillis = animationDuration),
-                    initialAlpha = 0f
-                ) +
+                    fadeIn(
+                        animationSpec = tween(durationMillis = animationDuration),
+                        initialAlpha = 0f
+                    ) +
                     slideInVertically(
                         animationSpec = tween(durationMillis = animationDuration),
                         initialOffsetY = { 16 }
@@ -102,7 +102,9 @@ internal fun IntroMessages(
 }
 
 @Composable
-private fun Message(modifier: Modifier = Modifier) {
+private fun Message(
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -208,7 +210,12 @@ private fun ExampleQuestions(
 }
 
 @Composable
-private fun ExampleQuestion(text: String, prompt: String, onClick: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun ExampleQuestion(
+    text: String,
+    prompt: String,
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     GovUkOutlinedCard(
         onClick = { onClick(text) },
         backgroundColour = GovUkTheme.colourScheme.surfaces.cardDefault,

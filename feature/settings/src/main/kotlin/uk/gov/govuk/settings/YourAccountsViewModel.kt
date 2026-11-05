@@ -2,8 +2,8 @@ package uk.gov.govuk.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import uk.gov.govuk.data.model.Result.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.settings.domain.LinkedAccountsRepo
 import uk.gov.govuk.settings.ui.model.LinkedAccountUiModel
+import javax.inject.Inject
 
 @HiltViewModel
 internal class YourAccountsViewModel @Inject constructor(

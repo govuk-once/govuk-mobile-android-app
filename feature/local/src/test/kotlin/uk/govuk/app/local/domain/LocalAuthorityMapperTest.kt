@@ -22,7 +22,7 @@ class LocalAuthorityMapperTest {
                 name = "parent name",
                 homePageUrl = "parent url",
                 tier = "parent tier",
-                slug = "parent slug"
+                slug = "parent slug",
             )
         )
 
@@ -118,4 +118,5 @@ class LocalAuthorityMapperTest {
 
         assertEquals(expected, remoteAddress.toAddress())
     }
+
 }

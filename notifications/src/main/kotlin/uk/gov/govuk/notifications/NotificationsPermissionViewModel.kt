@@ -8,28 +8,31 @@ import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.notifications.data.NotificationsRepo
+import javax.inject.Inject
 
 @HiltViewModel
-class NotificationsPermissionViewModel @Inject constructor(private val notificationsRepo: NotificationsRepo) : ViewModel() {
+class NotificationsPermissionViewModel @Inject constructor(
+    private val notificationsRepo: NotificationsRepo
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<NotificationsUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
 
     @OptIn(ExperimentalPermissionsApi::class)
-    fun updateUiState(status: PermissionStatus, androidVersion: Int = Build.VERSION.SDK_INT) {
+    fun updateUiState(
+        status: PermissionStatus,
+        androidVersion: Int = Build.VERSION.SDK_INT
+    ) {
         viewModelScope.launch {
             val androidVersionIsGreaterThanTwelve = androidVersion >= Build.VERSION_CODES.TIRAMISU
             _uiState.value = if (androidVersionIsGreaterThanTwelve) {
                 if (!status.isGranted &&
-                    (
-                        !notificationsRepo.isFirstPermissionRequestCompleted() ||
-                            status.shouldShowRationale
-                        )
+                    (!notificationsRepo.isFirstPermissionRequestCompleted() ||
+                            status.shouldShowRationale)
                 ) {
                     NotificationsUiState.Default
                 } else {

@@ -52,27 +52,37 @@ import uk.gov.govuk.dvla.R
 
 private const val EXAMPLE_REG = "ABC"
 
-private data class SearchVehicleListItemColours(val background: Color, val text: Color, val iconBackground: Color, val icon: Color)
+private data class SearchVehicleListItemColours(
+    val background: Color,
+    val text: Color,
+    val iconBackground: Color,
+    val icon: Color
+)
 
 @Composable
-private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehicleListItemColours = if (isFocused) {
-    SearchVehicleListItemColours(
-        background = GovUkTheme.colourScheme.surfaces.focused,
-        text = GovUkTheme.colourScheme.textAndIcons.focused,
-        iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
-        icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-    )
-} else {
-    SearchVehicleListItemColours(
-        background = GovUkTheme.colourScheme.surfaces.list,
-        text = GovUkTheme.colourScheme.textAndIcons.primary,
-        iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
-        icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-    )
+private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehicleListItemColours {
+    return if (isFocused) {
+        SearchVehicleListItemColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            text = GovUkTheme.colourScheme.textAndIcons.focused,
+            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+        )
+    } else {
+        SearchVehicleListItemColours(
+            background = GovUkTheme.colourScheme.surfaces.list,
+            text = GovUkTheme.colourScheme.textAndIcons.primary,
+            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+        )
+    }
 }
 
 @Composable
-fun CheckVehicleWidget(onVehicleFound: (regNumber: String) -> Unit, modifier: Modifier = Modifier) {
+fun CheckVehicleWidget(
+    onVehicleFound: (regNumber: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: CheckVehicleWidgetViewModel = hiltViewModel()
     val sheetState by viewModel.sheetState.collectAsState()
     var showSheet by rememberSaveable { mutableStateOf(false) }
@@ -142,7 +152,11 @@ fun CheckVehicleWidget(onVehicleFound: (regNumber: String) -> Unit, modifier: Mo
 }
 
 @Composable
-fun CheckVehicleCard(prompt: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun CheckVehicleCard(
+    prompt: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
