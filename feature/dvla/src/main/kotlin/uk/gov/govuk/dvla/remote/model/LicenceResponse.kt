@@ -5,7 +5,9 @@ import uk.gov.govuk.dvla.remote.model.common.EntitlementType
 import uk.gov.govuk.dvla.remote.model.common.LicenceStatus
 import uk.gov.govuk.dvla.remote.model.common.LicenceType
 
-data class LicenceResponse(@SerializedName("customerDrivingLicence") val drivingLicence: DrivingLicence)
+data class LicenceResponse(
+    @SerializedName("customerDrivingLicence") val drivingLicence: DrivingLicence
+)
 
 data class DrivingLicence(
     @SerializedName("licenceType") val licenceType: LicenceType,

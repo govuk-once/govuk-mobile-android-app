@@ -50,7 +50,10 @@ internal fun StatusButton(
 }
 
 @Composable
-internal fun Caption(text: AccessibleString, modifier: Modifier = Modifier) {
+internal fun Caption(
+    text: AccessibleString,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
         MediumVerticalSpacer()
 

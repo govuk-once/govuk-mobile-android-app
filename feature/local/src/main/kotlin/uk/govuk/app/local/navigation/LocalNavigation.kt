@@ -35,7 +35,7 @@ fun NavGraphBuilder.localGraph(
             LocalExplainerRoute(
                 onBack = { navController.popBackStack() },
                 onContinue = { navController.navigateToLocalEdit() },
-                modifier = modifier
+                modifier = modifier,
             )
         }
         composable(LOCAL_LOOKUP_ROUTE) {
@@ -54,10 +54,10 @@ fun NavGraphBuilder.localGraph(
             arguments = listOf(
                 navArgument("postcode") {
                     type = NavType.StringType
-                }
+                },
             )
         ) { backStackEntry ->
-            val postcode = backStackEntry.arguments?.getString("postcode") ?: ""
+                val postcode = backStackEntry.arguments?.getString("postcode") ?: ""
             LocalAuthoritySelectRoute(
                 onBack = { navController.popBackStack() },
                 onCancel = onCancel,

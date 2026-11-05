@@ -34,7 +34,10 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.login.BiometricViewModel
 
 @Composable
-internal fun BiometricRoute(onCompleted: () -> Unit, modifier: Modifier = Modifier) {
+internal fun BiometricRoute(
+    onCompleted: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: BiometricViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -111,7 +114,9 @@ private fun BiometricScreen(
 }
 
 @Composable
-private fun IconRow(modifier: Modifier = Modifier) {
+private fun IconRow(
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier.height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically

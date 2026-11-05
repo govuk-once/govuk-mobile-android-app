@@ -14,7 +14,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepoImpl @Inject constructor(private val userApi: UserApi, private val authRepo: AuthRepo) : UserRepo {
+class UserRepoImpl @Inject constructor(
+    private val userApi: UserApi,
+    private val authRepo: AuthRepo
+) : UserRepo {
 
     private var user: User? = null
 
@@ -29,7 +32,9 @@ class UserRepoImpl @Inject constructor(private val userApi: UserApi, private val
         return result
     }
 
-    override suspend fun updateNotifications(consentStatus: ConsentStatus) = safeAuthApiCall(apiCall = {
+    override suspend fun updateNotifications(
+        consentStatus: ConsentStatus
+    ) = safeAuthApiCall(apiCall = {
         userApi.updateNotifications(
             UpdateNotificationsRequest(consentStatus)
         )

@@ -10,7 +10,9 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-class TokenDataStore @Inject constructor(@param:Named("token_prefs") private val dataStore: DataStore<Preferences>) {
+class TokenDataStore @Inject constructor(
+    @param:Named("token_prefs") private val dataStore: DataStore<Preferences>
+) {
     companion object {
         internal const val SUB_ID_KEY = "sub_id"
     }
