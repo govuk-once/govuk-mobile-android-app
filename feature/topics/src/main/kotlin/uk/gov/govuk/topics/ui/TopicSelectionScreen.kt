@@ -27,7 +27,11 @@ import uk.gov.govuk.topics.TopicSelectionViewModel
 import uk.gov.govuk.topics.ui.component.TopicSelectionCard
 
 @Composable
-internal fun TopicSelectionRoute(onDone: () -> Unit, onSkip: () -> Unit, modifier: Modifier = Modifier) {
+internal fun TopicSelectionRoute(
+    onDone: () -> Unit,
+    onSkip: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: TopicSelectionViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -82,7 +86,7 @@ private fun TopicSelectionScreen(
             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
         ) {
             BodyRegularLabel(
-                text = stringResource(R.string.topic_selection_description)
+                text = stringResource(R.string.topic_selection_description),
             )
 
             // loop over topics and add dynamically, has been changed from LazyColumn to overcome its
