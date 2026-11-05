@@ -5,10 +5,10 @@ import android.os.Parcelable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.perf.FirebasePerformance
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import java.io.Serializable
 import javax.inject.Inject
 import javax.inject.Singleton
-import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 
 @Singleton
 class FirebaseAnalyticsClient @Inject constructor(
@@ -40,7 +40,11 @@ class FirebaseAnalyticsClient @Inject constructor(
         firebaseIdentifiers.refresh()
     }
 
-    fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
+    fun logEcommerceEvent(
+        event: String,
+        ecommerceEvent: EcommerceEvent,
+        selectedItemIndex: Int? = null
+    ) {
         val bundle = Bundle()
 
         identifierParameters().forEach { (key, value) ->

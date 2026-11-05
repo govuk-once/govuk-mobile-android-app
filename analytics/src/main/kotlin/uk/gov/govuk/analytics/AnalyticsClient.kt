@@ -1,9 +1,6 @@
 package uk.gov.govuk.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
-import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -12,6 +9,9 @@ import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.analytics.extension.redactPii
+import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class AnalyticsClient @Inject constructor(
@@ -22,9 +22,13 @@ class AnalyticsClient @Inject constructor(
 
     lateinit var isUserSessionActive: () -> Boolean
 
-    fun isAnalyticsConsentRequired(): Boolean = analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.NOT_SET
+    fun isAnalyticsConsentRequired(): Boolean {
+        return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.NOT_SET
+    }
 
-    fun isAnalyticsEnabled(): Boolean = analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
+    fun isAnalyticsEnabled(): Boolean {
+        return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
+    }
 
     val isAnalyticsEnabledFlow: Flow<Boolean>
         get() = analyticsRepo.analyticsEnabledStateFlow
@@ -59,7 +63,12 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun screenViewWithType(screenClass: String, screenName: String, title: String, type: String) {
+    fun screenViewWithType(
+        screenClass: String,
+        screenName: String,
+        title: String,
+        type: String
+    ) {
         logEvent(
             FirebaseAnalytics.Event.SCREEN_VIEW,
             parametersWithLanguage(
@@ -73,7 +82,12 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun buttonClick(text: String, url: String? = null, external: Boolean = false, section: String? = null) {
+    fun buttonClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
         navigation(
             text = text,
             type = "Button",
@@ -83,7 +97,12 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun cardClick(text: String, url: String? = null, external: Boolean = false, section: String? = null) {
+    fun cardClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
         navigation(
             text = text,
             type = "trigger card",
@@ -93,7 +112,10 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun iconClick(type: String, external: Boolean = false) {
+    fun iconClick(
+        type: String,
+        external: Boolean = false
+    ) {
         navigation(
             text = "N/A",
             type = type,
@@ -105,7 +127,12 @@ class AnalyticsClient @Inject constructor(
         navigation(text = text, type = "Tab")
     }
 
-    fun widgetClick(text: String, url: String? = null, external: Boolean, section: String) {
+    fun widgetClick(
+        text: String,
+        url: String? = null,
+        external: Boolean,
+        section: String,
+    ) {
         navigation(
             text = text,
             type = "Widget",
@@ -115,7 +142,10 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun suppressWidgetClick(text: String, section: String) {
+    fun suppressWidgetClick(
+        text: String,
+        section: String
+    ) {
         function(
             text = text,
             type = "Widget",
@@ -124,7 +154,11 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun widgetFunction(text: String, section: String, action: String) {
+    fun widgetFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
         function(
             text = text,
             type = "Widget",
@@ -133,7 +167,12 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun menuItemClick(text: String, url: String? = null, external: Boolean = false, section: String? = null) {
+    fun menuItemClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
         navigation(
             text = text,
             type = "menu",
@@ -166,34 +205,25 @@ class AnalyticsClient @Inject constructor(
     }
 
     fun messagesMarkUnread() {
-        logEvent("MessagesMarkUnread", mapOf())
+        logEvent("MessagesMarkUnread",  mapOf())
     }
 
-    fun messagesDelete() {
-        logEvent(
-            "MessagesDelete",
-            mapOf(
-                "action" to "tap"
-            )
-        )
+    fun messagesDelete()  {
+        logEvent("MessagesDelete",   mapOf(
+            "action" to "tap"
+        ))
     }
 
     fun messagesConfirmDelete() {
-        logEvent(
-            "MessagesDelete",
-            mapOf(
-                "action" to "confirm"
-            )
-        )
+        logEvent("MessagesDelete", mapOf(
+            "action" to "confirm"
+        ))
     }
 
     fun messagesCancelDelete() {
-        logEvent(
-            "MessagesDelete",
-            mapOf(
-                "action" to "cancel"
-            )
-        )
+        logEvent("MessagesDelete", mapOf(
+            "action" to "cancel"
+        ))
     }
 
     fun messagesNotFound() {
@@ -247,7 +277,12 @@ class AnalyticsClient @Inject constructor(
         navigation(text = text, type = "SettingsItem", url = url, external = external)
     }
 
-    fun accountCardClick(text: String, url: String? = null, external: Boolean = false, section: String? = null) {
+    fun accountCardClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
         navigation(
             text = text,
             type = "Account card",
@@ -266,7 +301,11 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun buttonFunction(text: String, section: String, action: String) {
+    fun buttonFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
         function(
             text = text,
             type = "Button",
@@ -275,7 +314,11 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun menuItemFunction(text: String, section: String, action: String) {
+    fun menuItemFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
         function(
             text = text,
             type = "Menu",
@@ -325,10 +368,16 @@ class AnalyticsClient @Inject constructor(
         logEvent(name, params)
     }
 
-    private fun navigation(text: String? = null, type: String, url: String? = null, external: Boolean = false, section: String? = null) {
+    private fun navigation(
+        text: String? = null,
+        type: String,
+        url: String? = null,
+        external: Boolean = false,
+        section: String? = null
+    ) {
         val parameters = mutableMapOf(
             "type" to type,
-            "external" to external
+            "external" to external,
         )
 
         text?.let {
@@ -361,8 +410,9 @@ class AnalyticsClient @Inject constructor(
         logEvent(event.eventName, mapOf())
     }
 
-    private fun parametersWithLanguage(parameters: Map<String, Any>): Map<String, Any> =
-        parameters + Pair("language", Locale.getDefault().language)
+    private fun parametersWithLanguage(parameters: Map<String, Any>): Map<String, Any> {
+        return parameters + Pair("language", Locale.getDefault().language)
+    }
 
     fun notificationsRationaleView(origin: String) {
         logEvent("notifications_rationale_view", mapOf("origin" to origin))
