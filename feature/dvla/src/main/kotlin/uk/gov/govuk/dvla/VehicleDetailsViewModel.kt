@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +16,7 @@ import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.govkit.browser.Urls
+import javax.inject.Inject
 
 internal sealed interface VehicleDetailsUiState {
     data object Loading : VehicleDetailsUiState

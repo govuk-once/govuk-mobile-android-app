@@ -67,7 +67,10 @@ fun CentreAlignedScreen(
 }
 
 @Composable
-fun LoadingScreen(modifier: Modifier = Modifier, accessibilityText: String = "") {
+fun LoadingScreen(
+    modifier: Modifier = Modifier,
+    accessibilityText: String = ""
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -77,7 +80,8 @@ fun LoadingScreen(modifier: Modifier = Modifier, accessibilityText: String = "")
                 .size(36.dp)
                 .semantics {
                     contentDescription = accessibilityText
-                },
+                }
+            ,
             color = GovUkTheme.colourScheme.surfaces.primary
         )
     }
@@ -99,6 +103,7 @@ fun BookendToWebScreen(
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
     ) {
+
         IconButton(
             onClick = onClose,
             modifier = Modifier.padding(
@@ -160,7 +165,10 @@ fun BookendToWebScreen(
 }
 
 @Composable
-fun BookendConnectingScreen(title: String, modifier: Modifier = Modifier) {
+fun BookendConnectingScreen(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -169,6 +177,7 @@ fun BookendConnectingScreen(title: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         CircularProgressIndicator(
             modifier = Modifier
                 .size(40.dp),
@@ -187,7 +196,12 @@ fun BookendConnectingScreen(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AccountConnectionSuccessScreen(title: String, buttonText: String, onContinue: () -> Unit, modifier: Modifier = Modifier) {
+fun AccountConnectionSuccessScreen(
+    title: String,
+    buttonText: String,
+    onContinue: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -201,6 +215,7 @@ fun AccountConnectionSuccessScreen(title: String, buttonText: String, onContinue
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Icon(
                 painter = painterResource(id = R.drawable.ic_success_round),
                 contentDescription = null,
@@ -212,7 +227,7 @@ fun AccountConnectionSuccessScreen(title: String, buttonText: String, onContinue
             LargeTitleBoldLabel(
                 text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
         Column(

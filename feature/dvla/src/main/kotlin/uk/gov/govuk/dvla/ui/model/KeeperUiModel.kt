@@ -3,7 +3,10 @@ package uk.gov.govuk.dvla.ui.model
 import uk.gov.govuk.dvla.util.toAccessibleStreetName
 import uk.gov.govuk.dvla.util.toSpacedString
 
-data class KeeperUiModel(val name: String, val addressLines: List<String>) {
+data class KeeperUiModel(
+    val name: String,
+    val addressLines: List<String>
+) {
     val formattedAddressLines: List<String>
         get() = addressLines
 

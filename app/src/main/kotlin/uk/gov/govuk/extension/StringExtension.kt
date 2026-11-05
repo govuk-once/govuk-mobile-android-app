@@ -12,11 +12,9 @@ internal fun String.asDeepLinks(urls: List<String>): List<NavDeepLink> {
     val path = this
     val navDeepLinks = mutableListOf<NavDeepLink>()
     urls.forEach {
-        navDeepLinks.add(
-            navDeepLink {
-                uriPattern = "$it$path"
-            }
-        )
+        navDeepLinks.add(navDeepLink {
+            uriPattern = "$it$path"
+        })
     }
     return navDeepLinks
 }

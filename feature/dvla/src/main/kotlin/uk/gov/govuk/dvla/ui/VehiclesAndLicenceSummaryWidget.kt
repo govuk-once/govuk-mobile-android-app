@@ -21,9 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
-import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST as VehiclesButton
-import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 import uk.gov.govuk.design.ui.component.ConnectedButtonGroup
 import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.FootnoteRegularLabel
@@ -31,16 +30,18 @@ import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.ButtonColours
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
-import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
+import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -49,9 +50,10 @@ import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.UiState
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
+import uk.gov.govuk.design.ui.component.ConnectedButton.FIRST as VehiclesButton
+import uk.gov.govuk.design.ui.component.ConnectedButton.SECOND as LicenceButton
 
 @Composable
 fun VehiclesAndLicenceSummaryWidget(
@@ -68,7 +70,7 @@ fun VehiclesAndLicenceSummaryWidget(
         when (val currentState = state) {
             is UiState.Hidden -> {
                 SmallVerticalSpacer()
-                vehiclesFooter() // content to be shown even if not linked (eg check vehicle)
+                vehiclesFooter()    // content to be shown even if not linked (eg check vehicle)
             }
 
             is UiState.Error -> {
@@ -139,6 +141,7 @@ fun VehiclesAndLicenceSummaryWidget(
 
                 when (currentState.drivingView) {
                     DrivingView.VEHICLES -> {
+
                         val addVehicleUrl = viewModel.dvlaUrls?.addVehicle
 
                         VehiclesViewContent(
@@ -172,6 +175,7 @@ fun VehiclesAndLicenceSummaryWidget(
                     }
 
                     DrivingView.LICENCE -> {
+
                         LicenceViewContent(
                             launchBrowser = { text, url ->
                                 launchBrowser(url.urlToOpen)
@@ -271,7 +275,11 @@ private fun LicenceViewContent(
     }
 }
 
-private fun String.copyToClipboard(context: Context, label: String, hapticFeedback: HapticFeedback) {
+private fun String.copyToClipboard(
+    context: Context,
+    label: String,
+    hapticFeedback: HapticFeedback
+) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText(label, this)
     clipboard.setPrimaryClip(clip)
@@ -280,7 +288,9 @@ private fun String.copyToClipboard(context: Context, label: String, hapticFeedba
 }
 
 @Composable
-private fun VehiclesAndLicenceSummaryLoading(modifier: Modifier = Modifier) {
+private fun VehiclesAndLicenceSummaryLoading(
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
         LoaderCard(modifier = Modifier.fillMaxWidth())
         SmallVerticalSpacer()
@@ -288,7 +298,10 @@ private fun VehiclesAndLicenceSummaryLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AccountError(onClick: (text: String) -> Unit, modifier: Modifier = Modifier) {
+private fun AccountError(
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val linkText = stringResource(R.string.account_error_link_text)
     SummaryErrorCard(
         text = AccessibleString(stringResource(R.string.account_error_text)),
@@ -340,7 +353,11 @@ private fun VehiclesSummarySuccess(
 }
 
 @Composable
-private fun VehiclesSummaryEmpty(onAddVehiclesClick: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun VehiclesSummaryEmpty(
+    onAddVehiclesClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+
     val description = stringResource(R.string.add_your_vehicles)
 
     Column(modifier = modifier) {
@@ -360,7 +377,10 @@ private fun VehiclesSummaryEmpty(onAddVehiclesClick: (String) -> Unit, modifier:
 }
 
 @Composable
-private fun VehicleSummaryError(onClick: (text: String) -> Unit, modifier: Modifier = Modifier) {
+private fun VehicleSummaryError(
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val vehicles = stringResource(R.string.vehicles)
     val linkText = stringResource(R.string.vehicles_summary_loading_error_link_text)
     SummaryErrorCard(
@@ -385,7 +405,7 @@ private fun LicenceSummarySuccess(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         LicenceSummaryCard(
             launchBrowser = launchBrowser,
@@ -425,7 +445,10 @@ private fun LicenceSummarySuccess(
 }
 
 @Composable
-private fun LicenceSummaryError(onClick: (text: String) -> Unit, modifier: Modifier = Modifier) {
+private fun LicenceSummaryError(
+    onClick: (text: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val licence = stringResource(R.string.licence)
     val linkText = stringResource(R.string.licence_summary_loading_error_link_text)
     SummaryErrorCard(

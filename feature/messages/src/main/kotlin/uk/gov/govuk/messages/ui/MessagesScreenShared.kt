@@ -30,8 +30,7 @@ internal fun MessagesScreenNoInternet() {
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             Icons.Filled.ErrorOutline,
@@ -141,3 +140,4 @@ internal fun FooterPreview() {
         Footer()
     }
 }
+

@@ -3,7 +3,6 @@ package uk.gov.govuk.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,14 +28,15 @@ import uk.gov.govuk.chat.domain.StringCleaner
 import uk.gov.govuk.chat.ui.model.ChatEntry
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import javax.inject.Inject
 
 private const val CHAT_SUGGESTIONS_LIST_ID = "chat suggestions"
 private const val CHAT_SUGGESTIONS_LIST_NAME = "chat suggestions"
 private const val CHAT_SUGGESTION_ITEM_CATEGORY = "chat_suggestion"
 
 internal sealed class ChatUiState {
-    data object Onboarding : ChatUiState()
-    data class Error(val canRetry: Boolean) : ChatUiState()
+    data object Onboarding: ChatUiState()
+    data class Error(val canRetry: Boolean): ChatUiState()
     data class Default(
         val question: String = "",
         val chatEntries: LinkedHashMap<String, ChatEntry> = linkedMapOf(),
@@ -45,7 +45,7 @@ internal sealed class ChatUiState {
         val displayCharacterWarning: Boolean = false,
         val displayCharacterError: Boolean = false,
         val charactersRemaining: Int = 0
-    ) : ChatUiState()
+    ): ChatUiState()
 }
 
 @HiltViewModel
@@ -54,7 +54,7 @@ internal class ChatViewModel @Inject constructor(
     private val authRepo: AuthRepo,
     private val analyticsClient: AnalyticsClient,
     configRepo: ConfigRepo
-) : ViewModel() {
+): ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
@@ -196,7 +196,11 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    fun onQuestionUpdated(question: String, characterLimit: Int = 300, characterWarningThreshold: Int = 50) {
+    fun onQuestionUpdated(
+        question: String,
+        characterLimit: Int = 300,
+        characterWarningThreshold: Int = 50
+    ) {
         val remainingCharacters = characterLimit - question.length
         val displayCharacterError = remainingCharacters < 0
 
@@ -211,7 +215,11 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    fun onFeedbackGiven(conversationId: String, answerId: String, reaction: String) {
+    fun onFeedbackGiven(
+        conversationId: String,
+        answerId: String,
+        reaction: String
+    ) {
         viewModelScope.launch {
             handleChatResult(
                 chatRepo.giveFeedback(
@@ -350,7 +358,12 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun addChatEntry(questionId: String, question: String, conversationId: String, answerId: String) {
+    private fun addChatEntry(
+        questionId: String,
+        question: String,
+        conversationId: String,
+        answerId: String
+    ) {
         _uiState.updateDefault {
             it.copy(
                 chatEntries = LinkedHashMap(it.chatEntries).apply {
@@ -394,7 +407,9 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private inline fun MutableStateFlow<ChatUiState?>.updateDefault(transform: (Default) -> Default) {
+    private inline fun MutableStateFlow<ChatUiState?>.updateDefault(
+        transform: (Default) -> Default
+    ) {
         update { state ->
             if (state is Default) transform(state) else state
         }

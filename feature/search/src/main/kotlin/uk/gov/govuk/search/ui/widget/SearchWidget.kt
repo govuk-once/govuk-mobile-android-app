@@ -24,7 +24,10 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.search.R
 
 @Composable
-fun SearchWidget(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
+fun SearchWidget(
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val searchBarText = stringResource(R.string.search_bar_text)
 
     Row(
