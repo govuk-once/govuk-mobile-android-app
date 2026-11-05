@@ -119,7 +119,9 @@ private fun AnalyticsConsentScreen(
 }
 
 @Composable
-private fun BulletList(modifier: Modifier = Modifier) {
+private fun BulletList(
+    modifier: Modifier = Modifier
+) {
     Column(modifier) {
         BulletItem(stringResource(R.string.analytics_consent_bullet_1))
         SmallVerticalSpacer()
@@ -132,7 +134,10 @@ private fun BulletList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun BulletItem(text: String, modifier: Modifier = Modifier) {
+private fun BulletItem(
+    text: String,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically

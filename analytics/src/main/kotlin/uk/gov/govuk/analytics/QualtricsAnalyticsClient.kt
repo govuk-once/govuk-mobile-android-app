@@ -61,7 +61,9 @@ class QualtricsAnalyticsClient @Inject constructor(
         isInitialized = true
     }
 
-    fun setOnSurveyClosedListener(listener: (targetingIds: List<String>) -> Unit) {
+    fun setOnSurveyClosedListener(
+        listener: (targetingIds: List<String>) -> Unit
+    ) {
         onSurveyClosedListener = listener
     }
 
@@ -139,7 +141,9 @@ class QualtricsAnalyticsClient @Inject constructor(
         "screen_name", "screen_title", "section", "text", "type", "url"
     )
 
-    private fun setParameters(parameters: Map<String, Any>) {
+    private fun setParameters(
+        parameters: Map<String, Any>
+    ) {
         firebaseIdentifiers.userPseudoId?.let {
             qualtrics.properties.setString(FIREBASE_USER_PSEUDO_ID, it)
         }
