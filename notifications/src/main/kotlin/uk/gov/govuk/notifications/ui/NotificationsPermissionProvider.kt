@@ -12,7 +12,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun notificationsPermissionShouldShowRationale(): Boolean = getNotificationsPermissionStatus().shouldShowRationale
+fun notificationsPermissionShouldShowRationale(): Boolean =
+    getNotificationsPermissionStatus().shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

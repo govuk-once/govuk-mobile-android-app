@@ -13,12 +13,12 @@ import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable

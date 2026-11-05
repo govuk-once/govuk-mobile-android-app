@@ -39,7 +39,11 @@ import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @Composable
-internal fun VehicleDetailsRoute(launchBrowser: (String) -> Unit, onBack: () -> Unit, modifier: Modifier = Modifier) {
+internal fun VehicleDetailsRoute(
+    launchBrowser: (String) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: VehicleDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

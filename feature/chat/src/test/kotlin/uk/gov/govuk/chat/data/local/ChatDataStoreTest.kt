@@ -3,8 +3,6 @@ package uk.gov.govuk.chat.data.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import java.io.File
-import kotlin.io.path.createTempDirectory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -14,6 +12,8 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
+import kotlin.io.path.createTempDirectory
 
 class ChatDataStoreTest {
 

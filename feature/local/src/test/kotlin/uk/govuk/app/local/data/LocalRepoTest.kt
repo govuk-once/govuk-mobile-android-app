@@ -129,92 +129,90 @@ class LocalRepoTest {
     }
 
     @Test
-    fun `Fetch local authority returns addresses but slug lookup fails, cache addresses and local authorities and return result`() =
-        runTest {
-            val remoteAddresses = listOf(
-                RemoteAddress("address 1", "slug 1", "name 1"),
-                RemoteAddress("address 2", "slug 2", "name 2")
-            )
+    fun `Fetch local authority returns addresses but slug lookup fails, cache addresses and local authorities and return result`() = runTest {
+        val remoteAddresses = listOf(
+            RemoteAddress("address 1", "slug 1", "name 1"),
+            RemoteAddress("address 2", "slug 2", "name 2")
+        )
 
-            val remoteLocalAuthority1 = RemoteLocalAuthority(
-                name = "name 1",
-                homePageUrl = "url 1",
-                tier = "tier 1",
-                slug = "slug 1"
-            )
+        val remoteLocalAuthority1 = RemoteLocalAuthority(
+            name = "name 1",
+            homePageUrl = "url 1",
+            tier = "tier 1",
+            slug = "slug 1"
+        )
 
-            coEvery {
-                localApi.fromPostcode(any())
-            } returns apiResponse
+        coEvery {
+            localApi.fromPostcode(any())
+        } returns apiResponse
 
-            every { apiResponse.code() } returns 200
-            every { apiResponse.isSuccessful } returns true
-            every { apiResponse.body() } returns LocalAuthorityResponse(null, remoteAddresses)
+        every { apiResponse.code() } returns 200
+        every { apiResponse.isSuccessful } returns true
+        every { apiResponse.body() } returns LocalAuthorityResponse(null, remoteAddresses)
 
-            coEvery {
-                localApi.fromSlug("slug 1")
-            } returns Response.success(
-                LocalAuthorityResponse(remoteLocalAuthority1, addresses = null)
-            )
-            coEvery {
-                localApi.fromSlug("slug 2")
-            } returns Response.error(404, body)
+        coEvery {
+            localApi.fromSlug("slug 1")
+        } returns Response.success(
+            LocalAuthorityResponse(remoteLocalAuthority1, addresses = null)
+        )
+        coEvery {
+            localApi.fromSlug("slug 2")
+        } returns Response.error(404, body)
 
-            val result = localRepo.fetchLocalAuthority("postcode")
-            val expected = Success(Addresses(remoteAddresses))
+        val result = localRepo.fetchLocalAuthority("postcode")
+        val expected = Success(Addresses(remoteAddresses))
 
-            assertEquals(expected, result)
-            assertEquals(remoteAddresses.map { it.toAddress() }, localRepo.addresses)
-            assertEquals(
-                listOf(remoteLocalAuthority1).map { it.toLocalAuthority() },
-                localRepo.localAuthorities
-            )
-        }
+        assertEquals(expected, result)
+        assertEquals(remoteAddresses.map { it.toAddress() }, localRepo.addresses)
+        assertEquals(
+            listOf(remoteLocalAuthority1).map { it.toLocalAuthority() },
+            localRepo.localAuthorities
+        )
+    }
 
     @Test
-    fun `Fetch local authority returns addresses but slug lookup returns null local authority, cache addresses and local authorities and return result`() =
-        runTest {
-            val remoteAddresses = listOf(
-                RemoteAddress("address 1", "slug 1", "name 1"),
-                RemoteAddress("address 2", "slug 2", "name 2")
-            )
+    fun `Fetch local authority returns addresses but slug lookup returns null local authority, cache addresses and local authorities and return result`() = runTest {
+        val remoteAddresses = listOf(
+            RemoteAddress("address 1", "slug 1", "name 1"),
+            RemoteAddress("address 2", "slug 2", "name 2")
+        )
 
-            val remoteLocalAuthority1 = RemoteLocalAuthority(
-                name = "name 1",
-                homePageUrl = "url 1",
-                tier = "tier 1",
-                slug = "slug 1"
-            )
+        val remoteLocalAuthority1 = RemoteLocalAuthority(
+            name = "name 1",
+            homePageUrl = "url 1",
+            tier = "tier 1",
+            slug = "slug 1"
+        )
 
-            coEvery {
-                localApi.fromPostcode(any())
-            } returns apiResponse
+        coEvery {
+            localApi.fromPostcode(any())
+        } returns apiResponse
 
-            every { apiResponse.code() } returns 200
-            every { apiResponse.isSuccessful } returns true
-            every { apiResponse.body() } returns LocalAuthorityResponse(null, remoteAddresses)
+        every { apiResponse.code() } returns 200
+        every { apiResponse.isSuccessful } returns true
+        every { apiResponse.body() } returns LocalAuthorityResponse(null, remoteAddresses)
 
-            coEvery {
-                localApi.fromSlug("slug 1")
-            } returns Response.success(
-                LocalAuthorityResponse(remoteLocalAuthority1, addresses = null)
-            )
-            coEvery {
-                localApi.fromSlug("slug 2")
-            } returns Response.success(
-                LocalAuthorityResponse(localAuthority = null, addresses = null)
-            )
+        coEvery {
+            localApi.fromSlug("slug 1")
+        } returns Response.success(
+            LocalAuthorityResponse(remoteLocalAuthority1, addresses = null)
+        )
+        coEvery {
+            localApi.fromSlug("slug 2")
+        } returns Response.success(
+            LocalAuthorityResponse(localAuthority = null, addresses = null)
+        )
 
-            val result = localRepo.fetchLocalAuthority("postcode")
-            val expected = Success(Addresses(remoteAddresses))
+        val result = localRepo.fetchLocalAuthority("postcode")
+        val expected = Success(Addresses(remoteAddresses))
 
-            assertEquals(expected, result)
-            assertEquals(remoteAddresses.map { it.toAddress() }, localRepo.addresses)
-            assertEquals(
-                listOf(remoteLocalAuthority1).map { it.toLocalAuthority() },
-                localRepo.localAuthorities
-            )
-        }
+        assertEquals(expected, result)
+        assertEquals(remoteAddresses.map { it.toAddress() }, localRepo.addresses)
+        assertEquals(
+            listOf(remoteLocalAuthority1).map { it.toLocalAuthority() },
+            localRepo.localAuthorities
+        )
+    }
 
     @Test
     fun `Fetch local authority returns an error, return result`() = runTest {
