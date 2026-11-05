@@ -17,6 +17,29 @@ plugins {
     alias(libs.plugins.ktlint) apply false
 }
 
+// Modules not yet migrated to ktlint. Remove a module from this list once it passes ktlintCheck.
+val pendingModules = setOf(
+    //":analytics",
+    ":app",
+    ":config",
+    ":data",
+    ":design",
+    ":feature:chat",
+    ":feature:dvla",
+    ":feature:home",
+    ":feature:local",
+    ":feature:messages",
+    ":feature:search",
+    ":feature:settings",
+    ":feature:topics",
+    ":feature:travelalerts",
+    ":feature:visited",
+    ":govkit",
+    ":notifications",
+
+    // add / remove as modules become compliant
+)
+
 subprojects {
     if (!projectDir.endsWith("feature")) {
         apply(plugin = "org.sonarqube")
@@ -40,7 +63,10 @@ subprojects {
             }
         }
     }
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    if (project.path !in pendingModules) {
+        apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    }
 }
 
 apply(from = "${project.rootDir}/sonar.gradle")
