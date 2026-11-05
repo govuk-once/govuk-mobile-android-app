@@ -2,7 +2,6 @@ package uk.gov.govuk.dvla.domain
 
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -11,6 +10,7 @@ import uk.gov.govuk.dvla.remote.model.common.FuelType as RemoteFuelType
 import uk.gov.govuk.dvla.remote.model.common.MotStatus as RemoteMotStatus
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus as RemoteTaxStatus
 import uk.gov.govuk.dvla.remote.model.common.VehicleColour as RemoteVehicleColour
+import java.time.LocalDate
 
 class VehicleDetailsMapperTest {
 

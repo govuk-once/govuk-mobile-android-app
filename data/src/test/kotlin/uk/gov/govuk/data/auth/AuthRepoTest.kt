@@ -14,9 +14,6 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import kotlin.text.toByteArray
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
@@ -43,6 +40,9 @@ import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Loading
 import uk.gov.govuk.data.auth.AuthRepo.RefreshStatus.Success
 import uk.gov.govuk.data.crypto.CryptoProvider
 import uk.gov.govuk.data.remote.AuthApi
+import java.io.IOException
+import java.nio.charset.StandardCharsets
+import kotlin.text.toByteArray
 
 class AuthRepoTest {
 
@@ -181,11 +181,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = null,
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = null,
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertFalse(authRepo.handleAuthResponse(intent))
@@ -200,11 +200,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = null,
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = null,
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertFalse(authRepo.handleAuthResponse(intent))
@@ -219,11 +219,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = null
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = null
+                )
 
         runTest {
             assertFalse(authRepo.handleAuthResponse(intent))
@@ -238,11 +238,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertTrue(authRepo.handleAuthResponse(intent))
@@ -257,11 +257,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = " "
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = " "
+                )
 
         runTest {
             assertFalse(authRepo.handleAuthResponse(intent))
@@ -276,11 +276,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
         coEvery {
             secureStore.retrieveWithAuthentication(
                 key = arrayOf("refreshToken"),
@@ -307,11 +307,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
         coEvery {
             secureStore.retrieveWithAuthentication(
                 key = arrayOf("refreshToken"),
@@ -337,7 +337,7 @@ class AuthRepoTest {
             biometricManager.canAuthenticate(
                 Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL
             )
-        } returns BIOMETRIC_SUCCESS
+        } returns  BIOMETRIC_SUCCESS
         val androidVersion = Build.VERSION_CODES.R
 
         assertTrue(authRepo.isAuthenticationEnabled(androidVersion))
@@ -349,7 +349,7 @@ class AuthRepoTest {
             biometricManager.canAuthenticate(
                 Authenticators.BIOMETRIC_STRONG
             )
-        } returns BIOMETRIC_SUCCESS
+        } returns  BIOMETRIC_SUCCESS
         val androidVersion = Build.VERSION_CODES.Q
 
         assertTrue(authRepo.isAuthenticationEnabled(androidVersion))
@@ -528,6 +528,7 @@ class AuthRepoTest {
             )
         } returns RetrievalEvent.Success(mapOf("refreshToken" to "token"))
 
+
         every { authService.performTokenRequest(any(), any(), any()) } answers {
             val callback = thirdArg<TokenResponseCallback>()
             callback.onTokenRequestCompleted(null, AuthorizationException.GeneralErrors.NETWORK_ERROR)
@@ -585,11 +586,11 @@ class AuthRepoTest {
         }
 
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = null,
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = null,
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertEquals(Error(), authRepo.refreshTokens(activity, "").last())
@@ -612,11 +613,11 @@ class AuthRepoTest {
         }
 
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = " ",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = " ",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertEquals(Error(), authRepo.refreshTokens(activity, "").last())
@@ -639,11 +640,11 @@ class AuthRepoTest {
         }
 
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = null,
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = null,
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertEquals(Error(), authRepo.refreshTokens(activity, "").last())
@@ -666,11 +667,11 @@ class AuthRepoTest {
         }
 
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = " ",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = " ",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             assertEquals(Error(), authRepo.refreshTokens(activity, "").last())
@@ -693,11 +694,11 @@ class AuthRepoTest {
         }
 
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = null
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = null
+                )
 
         runTest {
             assertEquals(Loading, authRepo.refreshTokens(activity, "").first())
@@ -713,11 +714,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             authRepo.handleAuthResponse(intent)
@@ -753,11 +754,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
         every {
             secureStore.delete("refreshToken")
         } throws SecureStorageError(
@@ -787,11 +788,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
         coEvery {
             authApi.revoke(any(), any())
         } throws IOException()
@@ -819,17 +820,18 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             authRepo.handleAuthResponse(intent)
             assertTrue(authRepo.isUserSessionActive())
         }
     }
+
 
     @Test
     fun `Given a user session is ended, when end user session, then user session is no longer active`() {
@@ -839,11 +841,11 @@ class AuthRepoTest {
             callback.onTokenRequestCompleted(tokenResponse, null)
         }
         every { tokenResponseMapper.map(any()) } returns
-            TokenResponseMapper.Tokens(
-                accessToken = "accessToken",
-                idToken = "idToken",
-                refreshToken = "refreshToken"
-            )
+                TokenResponseMapper.Tokens(
+                    accessToken = "accessToken",
+                    idToken = "idToken",
+                    refreshToken = "refreshToken"
+                )
 
         runTest {
             authRepo.handleAuthResponse(intent)

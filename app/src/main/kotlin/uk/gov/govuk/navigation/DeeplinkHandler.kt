@@ -2,8 +2,6 @@ package uk.gov.govuk.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
-import javax.inject.Inject
-import kotlin.collections.get
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.chatDeepLinks
 import uk.gov.govuk.config.data.flags.FlagRepo
@@ -23,6 +21,8 @@ import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
 import uk.gov.govuk.topics.ui.model.TRAVEL_ABROAD_TOPIC_REF
 import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
+import javax.inject.Inject
+import kotlin.collections.get
 
 internal class DeeplinkHandler @Inject constructor(
     private val flagRepo: FlagRepo,
@@ -72,6 +72,7 @@ internal class DeeplinkHandler @Inject constructor(
         navController: NavController
     ) {
         deepLink?.let {
+
             // check for intercepted routes first
             if (interceptLinkedServiceCallback(it, navController)) {
                 deepLink = null
@@ -140,6 +141,7 @@ internal class DeeplinkHandler @Inject constructor(
             null -> false
         }
     }
+
 
     /** Intercepts the DVLA auth callback */
     private fun handleDvlaCallback(

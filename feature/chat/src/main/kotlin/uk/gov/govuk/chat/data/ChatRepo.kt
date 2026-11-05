@@ -1,8 +1,5 @@
 package uk.gov.govuk.chat.data
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import uk.gov.govuk.chat.data.local.ChatDataStore
@@ -18,6 +15,9 @@ import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
 import uk.gov.govuk.chat.data.remote.safeChatApiCall
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 internal class ChatRepo @Inject constructor(
@@ -95,7 +95,11 @@ internal class ChatRepo @Inject constructor(
         )
     }
 
-    suspend fun getAnswer(conversationId: String, questionId: String, wait: Double? = null): ChatResult<Answer> {
+    suspend fun getAnswer(
+        conversationId: String,
+        questionId: String,
+        wait: Double? = null,
+    ): ChatResult<Answer> {
         val pollInterval = wait ?: configRepo.chatPollIntervalSeconds
 
         while (true) {

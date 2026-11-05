@@ -28,8 +28,8 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.delay
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
+import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.search.R
@@ -40,7 +40,11 @@ import uk.gov.govuk.search.ui.component.SearchField
 import uk.gov.govuk.search.ui.component.SearchFieldActions
 
 @Composable
-internal fun SearchRoute(onBack: () -> Unit, launchBrowser: (url: String) -> Unit, modifier: Modifier = Modifier) {
+internal fun SearchRoute(
+    onBack: () -> Unit,
+    launchBrowser: (url: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: SearchViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -132,7 +136,7 @@ private fun SearchScreen(
         modifier.clickable(
             indication = null,
             interactionSource = interactionSource
-        ) {
+        ){
             keyboard?.hide()
         }
     ) {
@@ -171,6 +175,7 @@ private fun SearchScreen(
                             }
                         }
                         searchTerm = newValue
+
                     },
                     onSearch = { actions.onSearch(searchTerm.text) },
                     onClear = actions.onClear

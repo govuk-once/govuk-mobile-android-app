@@ -41,4 +41,5 @@ interface DvlaApi {
 
     @GET("app/dvla/v1/vehicle-enquiry/{reg}")
     suspend fun lookupVehicleByRegistration(@Path("reg") reg: String): Response<VehicleEnquiryResponse>
+
 }

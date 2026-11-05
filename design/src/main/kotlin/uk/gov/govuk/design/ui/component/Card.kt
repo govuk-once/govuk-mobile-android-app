@@ -99,8 +99,7 @@ fun GovUkOutlinedCard(
     ) {
         Column(
             modifier = Modifier
-                // if onClick is null Talkback announces 'disabled'
-                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)  // if onClick is null Talkback announces 'disabled'
                 .padding(padding)
         ) {
             content()
@@ -147,7 +146,7 @@ fun HomeBannerCard(
                 Row(
                     modifier = Modifier
                         .height(IntrinsicSize.Min),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(
                         modifier = Modifier
@@ -161,7 +160,7 @@ fun HomeBannerCard(
                                 color = textColour,
                                 modifier = Modifier
                                     .padding(start = GovUkTheme.spacing.medium)
-                                    .semantics { heading() }
+                                    .semantics { heading() },
                             )
                         }
 
@@ -252,7 +251,12 @@ fun HomeBannerCard(
 }
 
 @Composable
-fun SearchResultCard(title: String, description: String?, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun SearchResultCard(
+    title: String,
+    description: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     GovUkOutlinedCard(
         modifier = modifier,
         onClick = onClick
@@ -264,7 +268,7 @@ fun SearchResultCard(title: String, description: String?, onClick: () -> Unit, m
             BodyRegularLabel(
                 text = title,
                 modifier = Modifier.weight(1f),
-                color = GovUkTheme.colourScheme.textAndIcons.link
+                color = GovUkTheme.colourScheme.textAndIcons.link,
             )
 
             Icon(
@@ -287,7 +291,12 @@ fun SearchResultCard(title: String, description: String?, onClick: () -> Unit, m
 }
 
 @Composable
-fun QuarterlyFeedbackCard(body: String, title: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun QuarterlyFeedbackCard(
+    body: String,
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(bottom = GovUkTheme.spacing.large)
@@ -308,7 +317,10 @@ fun QuarterlyFeedbackCard(body: String, title: String, onClick: () -> Unit, modi
 }
 
 @Composable
-fun NonTappableCard(body: String, modifier: Modifier = Modifier) {
+fun NonTappableCard(
+    body: String,
+    modifier: Modifier = Modifier
+) {
     BodyRegularLabel(
         text = body,
         modifier = modifier
@@ -344,9 +356,7 @@ fun CentredCardWithIcon(
                         colour = GovUkTheme.colourScheme.strokes.cardDefault,
                         cornerRadius = GovUkTheme.numbers.cornerAndroidList
                     )
-                } else {
-                    Modifier
-                }
+                } else Modifier
             ),
         colors = CardDefaults.cardColors(containerColor = colours.background),
         onClick = onClick,
@@ -400,7 +410,7 @@ fun CentredContentWithIcon(
                 text = title,
                 color = titleColour,
                 modifier = Modifier.clearAndSetSemantics { },
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
 
@@ -411,32 +421,39 @@ fun CentredContentWithIcon(
                 text = description,
                 color = descriptionColour,
                 modifier = Modifier.clearAndSetSemantics { },
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }
 }
 
 @Composable
-private fun resolveCentredCardColours(isFocused: Boolean): CentredCardColours = if (isFocused) {
-    val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
-    CentredCardColours(
-        background = GovUkTheme.colourScheme.surfaces.focused,
-        title = focusedTextColour,
-        description = focusedTextColour,
-        icon = focusedTextColour
-    )
-} else {
-    CentredCardColours(
-        background = GovUkTheme.colourScheme.surfaces.list,
-        title = GovUkTheme.colourScheme.textAndIcons.primary,
-        description = GovUkTheme.colourScheme.textAndIcons.secondary,
-        icon = GovUkTheme.colourScheme.textAndIcons.icon
-    )
+private fun resolveCentredCardColours(isFocused: Boolean): CentredCardColours {
+    return if (isFocused) {
+        val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
+        CentredCardColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            title = focusedTextColour,
+            description = focusedTextColour,
+            icon = focusedTextColour
+        )
+    } else {
+        CentredCardColours(
+            background = GovUkTheme.colourScheme.surfaces.list,
+            title = GovUkTheme.colourScheme.textAndIcons.primary,
+            description = GovUkTheme.colourScheme.textAndIcons.secondary,
+            icon = GovUkTheme.colourScheme.textAndIcons.icon
+        )
+    }
 }
 
 @Composable
-fun NavigationCard(title: String, onClick: () -> Unit, modifier: Modifier = Modifier, description: String? = null) {
+fun NavigationCard(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null
+) {
     val opensInWebBrowser = stringResource(R.string.opens_in_web_browser)
 
     Card(
@@ -480,7 +497,11 @@ fun NavigationCard(title: String, onClick: () -> Unit, modifier: Modifier = Modi
 }
 
 @Composable
-fun FocusableCard(item: CardListItem, modifier: Modifier = Modifier, colourMapper: @Composable (FocusableCardColours) -> Color) {
+fun FocusableCard(
+    item: CardListItem,
+    modifier: Modifier = Modifier,
+    colourMapper: @Composable (FocusableCardColours) -> Color
+) {
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -531,7 +552,12 @@ fun FocusableCard(item: CardListItem, modifier: Modifier = Modifier, colourMappe
 }
 
 @Composable
-fun DrillInCard(title: String, onClick: () -> Unit, modifier: Modifier = Modifier, description: String? = null) {
+fun DrillInCard(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -579,23 +605,25 @@ fun DrillInCard(title: String, onClick: () -> Unit, modifier: Modifier = Modifie
 }
 
 @Composable
-private fun resolveDrillInCardColours(isFocused: Boolean): DrillInCardColours = if (isFocused) {
-    val focusText = GovUkTheme.colourScheme.textAndIcons.focused
-    DrillInCardColours(
-        background = GovUkTheme.colourScheme.surfaces.focused,
-        title = focusText,
-        description = focusText,
-        icon = focusText,
-        stroke = Color.Transparent
-    )
-} else {
-    DrillInCardColours(
-        background = GovUkTheme.colourScheme.surfaces.cardDefault,
-        title = GovUkTheme.colourScheme.textAndIcons.primary,
-        description = GovUkTheme.colourScheme.textAndIcons.secondary,
-        icon = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
-        stroke = GovUkTheme.colourScheme.strokes.cardDefault
-    )
+private fun resolveDrillInCardColours(isFocused: Boolean): DrillInCardColours {
+    return if (isFocused) {
+        val focusText = GovUkTheme.colourScheme.textAndIcons.focused
+        DrillInCardColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            title = focusText,
+            description = focusText,
+            icon = focusText,
+            stroke = Color.Transparent
+        )
+    } else {
+        DrillInCardColours(
+            background = GovUkTheme.colourScheme.surfaces.cardDefault,
+            title = GovUkTheme.colourScheme.textAndIcons.primary,
+            description = GovUkTheme.colourScheme.textAndIcons.secondary,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+            stroke = GovUkTheme.colourScheme.strokes.cardDefault
+        )
+    }
 }
 
 @Composable
@@ -666,7 +694,10 @@ fun AccountConnectionCard(
 }
 
 @Composable
-fun CentredCardWithIcon(icon: @Composable () -> Unit, modifier: Modifier = Modifier) {
+fun CentredCardWithIcon(
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -685,21 +716,18 @@ fun CentredCardWithIcon(icon: @Composable () -> Unit, modifier: Modifier = Modif
 }
 
 @Composable
-fun LoaderCard(modifier: Modifier = Modifier, altText: String? = null) {
+fun LoaderCard(
+    modifier: Modifier = Modifier,
+    altText: String? = null
+) {
     CentredCardWithIcon(
         icon = {
             CircularProgressIndicator(
                 modifier = Modifier
                     .size(30.dp)
-                    .then(
-                        if (altText != null) {
-                            Modifier.clearAndSetSemantics {
-                                contentDescription = altText
-                            }
-                        } else {
-                            Modifier
-                        }
-                    ),
+                    .then(if (altText != null) Modifier.clearAndSetSemantics {
+                        contentDescription = altText
+                    } else Modifier),
                 color = GovUkTheme.colourScheme.textAndIcons.linkPrimary
             )
         },
@@ -774,7 +802,7 @@ private fun SearchResultWithDescriptionPreview() {
         SearchResultCard(
             title = "Card title",
             description = "Description",
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -786,7 +814,7 @@ private fun SearchResultWithoutDescriptionPreview() {
         SearchResultCard(
             title = "Card title",
             description = null,
-            onClick = {}
+            onClick = {},
         )
     }
 }

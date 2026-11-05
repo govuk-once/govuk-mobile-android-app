@@ -9,5 +9,9 @@ interface AuthApi {
 
     @FormUrlEncoded
     @POST("revoke")
-    suspend fun revoke(@Field("token") refreshToken: String, @Field("client_id") clientId: String): Response<Unit>
+    suspend fun revoke(
+        @Field("token") refreshToken: String,
+        @Field("client_id") clientId: String
+    ) : Response<Unit>
+
 }

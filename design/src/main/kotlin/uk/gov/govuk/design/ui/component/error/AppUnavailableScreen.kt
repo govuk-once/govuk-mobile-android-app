@@ -18,7 +18,10 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun AppUnavailableScreen(onGoToGovUkClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AppUnavailableScreen(
+    onGoToGovUkClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier
             .fillMaxWidth()
