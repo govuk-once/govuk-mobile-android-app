@@ -64,7 +64,7 @@ class QualtricsAnalyticsClientTest {
 
     @Test
     fun `Given an initialization call, when qualtrics is already initialized, then the project is not re-initialized`() {
-        val qualtricsAnalyticsClient = mockk< QualtricsAnalyticsClient>(relaxed = true)
+        val qualtricsAnalyticsClient = mockk<QualtricsAnalyticsClient>(relaxed = true)
 
         every { qualtricsAnalyticsClient.isInitialized } returns true
 
