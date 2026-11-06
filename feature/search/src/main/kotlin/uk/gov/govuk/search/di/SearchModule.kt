@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -41,8 +41,8 @@ internal class SearchModule {
         analyticsClient: AnalyticsClient
     ): SearchDatabase {
         val key = roomEncryptionHelper.getKey()
-        val factory = SupportFactory(key, null, false)
-        key.fill(0)
+        System.loadLibrary("sqlcipher")
+        val factory = SupportOpenHelperFactory(key)
         return Room.databaseBuilder(context, SearchDatabase::class.java, "search.db")
             .openHelperFactory(factory)
             .addCallback(SearchMigrationCallback(DefaultRealmSearchReader(encryptionHelper), analyticsClient))

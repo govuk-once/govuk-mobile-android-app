@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.data.local.RoomEncryptionHelper
@@ -32,8 +32,8 @@ internal class VisitedModule {
         analyticsClient: AnalyticsClient
     ): VisitedDatabase {
         val key = roomEncryptionHelper.getKey()
-        val factory = SupportFactory(key, null, false)
-        key.fill(0)
+        System.loadLibrary("sqlcipher")
+        val factory = SupportOpenHelperFactory(key)
         return Room.databaseBuilder(context, VisitedDatabase::class.java, "visited.db")
             .openHelperFactory(factory)
             .addCallback(VisitedMigrationCallback(DefaultRealmVisitedReader(realmEncryptionHelper), analyticsClient))
