@@ -220,4 +220,16 @@
     <string name="licence_categories_link_compare">Compare old and new categories</string>
     <string name="licence_categories_link_weights">Vehicle weights explained</string>
     <string name="licence_categories_link_add_categories">Adding categories to your licence</string>
+    <string name="licence_category_detail_title">Category</string>
+    <string name="licence_category_detail_valid_from">Valid from</string>
+    <string name="licence_category_detail_valid_to">Valid to</string>
+    <string name="licence_category_detail_restrictions_header">Restrictions</string>
+    <string name="licence_category_detail_you_can_drive_header">You can drive</string>
+    <string name="licence_category_detail_expires_today">Expires today</string>
+    <string name="licence_category_detail_restriction_alt_text">%1$s, %2$s</string>
+
+    <plurals name="licence_category_detail_expires_in_days">
+        <item quantity="one">Expires in %d day</item>
+        <item quantity="other">Expires in %d days</item>
+    </plurals>
 </resources>

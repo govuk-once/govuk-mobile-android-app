@@ -13,11 +13,13 @@ import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.dvla.LicenceCategoriesUiState
 import uk.gov.govuk.dvla.LicenceCategoriesViewModel
+import uk.gov.govuk.dvla.domain.EntitlementType
 
 @Composable
 internal fun LicenceCategoriesRoute(
     launchBrowser: (String) -> Unit,
     onBack: () -> Unit,
+    onCategoryInfoClick: (code: String, type: EntitlementType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: LicenceCategoriesViewModel = hiltViewModel()
@@ -28,12 +30,13 @@ internal fun LicenceCategoriesRoute(
             LicenceCategoriesScreen(
                 categories = state.categories,
                 onBack = dropUnlessResumed { onBack() },
+
                 onPageView = { title ->
                     viewModel.onPageView(title)
                 },
-                onCategoryInfoClick = { _ ->
+                onCategoryInfoClick = { code, type ->
                     viewModel.onCategoryInfoClicked()
-                    // TODO open the category detail (separate ticket)
+                    onCategoryInfoClick(code, type)
                 },
                 onFurtherInfoLinkClick = { text, url ->
                     viewModel.onFurtherInfoLinkClicked(text, url)
