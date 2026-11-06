@@ -18,7 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -49,6 +48,7 @@ import uk.gov.govuk.login.LoginViewModel
 internal fun LoginRoute(
     onLoginCompleted: (LoginEvent) -> Unit,
     onError: (ErrorEvent) -> Unit,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
@@ -75,6 +75,7 @@ internal fun LoginRoute(
                 }
             },
             termsUrl = viewModel.termsAndConditionsUrl,
+            launchBrowser = launchBrowser,
             modifier = modifier
         )
     }
@@ -102,6 +103,7 @@ internal fun LoginRoute(
 private fun LoginScreen(
     onContinueClick: () -> Unit,
     termsUrl: String,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     CentreAlignedScreen(
@@ -129,12 +131,14 @@ private fun LoginScreen(
             WelcomeText(
                 introText = stringResource(id = R.string.welcome_terms_accept_intro_text),
                 linkText = stringResource(id = R.string.welcome_terms_link_text),
-                url = termsUrl
+                url = termsUrl,
+                launchBrowser = launchBrowser
             )
 
             WelcomeText(
                 linkText = stringResource(R.string.welcome_privacy_notice_link_text),
-                url = PRIVACY_POLICY_URL
+                url = PRIVACY_POLICY_URL,
+                launchBrowser = launchBrowser
             )
         },
         bottomContent = {
@@ -162,9 +166,9 @@ private fun LoginScreen(
 private fun WelcomeText(
     introText: String = "",
     linkText: String,
-    url: String
+    url: String,
+    launchBrowser: (String) -> Unit
 ) {
-    val uriHandler = LocalUriHandler.current
     val altText = "$introText $linkText ${stringResource(R.string.welcome_opens_in_browser)}"
 
     MediumVerticalSpacer()
@@ -173,7 +177,7 @@ private fun WelcomeText(
         introText = introText,
         outroText = "",
         linkText = linkText,
-        onClick = { uriHandler.openUri(url) },
+        onClick = { launchBrowser(url) },
         altText = altText,
         textColor = GovUkTheme.colourScheme.textAndIcons.primary,
         textAlign = TextAlign.Center,
@@ -188,7 +192,8 @@ internal fun LoginScreenPreview() {
     GovUkTheme {
         LoginScreen(
             onContinueClick = { },
-            termsUrl = "https://terms.gov.uk"
+            termsUrl = "https://terms.gov.uk",
+            launchBrowser = { }
         )
     }
 }

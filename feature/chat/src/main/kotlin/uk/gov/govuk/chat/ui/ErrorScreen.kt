@@ -15,6 +15,7 @@ internal fun ErrorScreen(
     canRetry: Boolean,
     onPageView: (String, String, String) -> Unit,
     onRetry: () -> Unit,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (canRetry) {
@@ -24,13 +25,18 @@ internal fun ErrorScreen(
             modifier
         )
     } else {
-        ErrorScreenNoRetry(onPageView, modifier)
+        ErrorScreenNoRetry(
+            onPageView = onPageView,
+            launchBrowser = launchBrowser,
+            modifier = modifier
+        )
     }
 }
 
 @Composable
 private fun ErrorScreenNoRetry(
     onPageView: (String, String, String) -> Unit,
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     RunOnceLaunchedEffect {
@@ -42,7 +48,8 @@ private fun ErrorScreenNoRetry(
     }
 
     ChatErrorPageNoRetry(
-        modifier
+        launchBrowser = launchBrowser,
+        modifier = modifier
             .windowInsetsPadding(WindowInsets.statusBars)
     )
 }

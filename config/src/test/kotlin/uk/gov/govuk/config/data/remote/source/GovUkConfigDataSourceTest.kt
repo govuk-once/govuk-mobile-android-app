@@ -20,6 +20,7 @@ import uk.gov.govuk.config.data.remote.model.TermsAndConditions
 import uk.gov.govuk.config.data.remote.model.TermsAndConditionsTimestamp
 import uk.gov.govuk.data.model.Result
 import java.net.UnknownHostException
+import kotlin.String
 
 class GovUkConfigDataSourceTest {
 
@@ -66,7 +67,10 @@ class GovUkConfigDataSourceTest {
             buyingUsedCarChecks = "https://www.gov.uk/checks-when-buying-a-used-car",
             reportAbandonedVehicle = "https://www.gov.uk/report-abandoned-vehicle",
             reportUntaxedVehicle = "https://www.gov.uk/report-untaxed-vehicle",
-            reportNoMot = "https://www.gov.uk/report-no-mot"
+            reportNoMot = "https://www.gov.uk/report-no-mot",
+            compareLicenceCategories = "https://www.gov.uk/compare-categories",
+            vehicleWeightExplained = "https://www.gov.uk/vehicle-weigh-explained",
+            addLicenceCategories = "https://www.gov.uk/add-categories",
         )
 
         val config = Config(

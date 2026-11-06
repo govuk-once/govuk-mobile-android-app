@@ -185,7 +185,7 @@ private fun TravelAlertsError() {
 
 @Composable
 @PreviewLightDark
-private fun TravelAlertsLoadingPreview() {
+internal fun TravelAlertsLoadingPreview() {
     GovUkTheme {
         TravelAlertsLoading()
     }
@@ -193,7 +193,7 @@ private fun TravelAlertsLoadingPreview() {
 
 @Composable
 @PreviewLightDark
-fun TravelAlertsWidgetEmptyPreview() {
+internal fun TravelAlertsWidgetEmptyPreview() {
     GovUkTheme {
         TravelAlertsEmpty(onFollowCountry = {})
     }
@@ -201,7 +201,7 @@ fun TravelAlertsWidgetEmptyPreview() {
 
 @Composable
 @PreviewLightDark
-fun TravelAlertsWidgetLoadedPreview() {
+internal fun TravelAlertsWidgetLoadedPreview() {
     GovUkTheme {
         TravelAlertsLoaded(
             rows = listOf(
@@ -215,7 +215,7 @@ fun TravelAlertsWidgetLoadedPreview() {
 
 @Composable
 @PreviewLightDark
-private fun TravelAlertsErrorPreview() {
+internal fun TravelAlertsErrorPreview() {
     GovUkTheme {
         TravelAlertsError()
     }

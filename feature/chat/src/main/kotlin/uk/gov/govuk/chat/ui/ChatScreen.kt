@@ -140,6 +140,7 @@ internal fun ChatRoute(
                     canRetry = it.canRetry,
                     onPageView = onPageView,
                     onRetry = { viewModel.clearConversation() },
+                    launchBrowser = launchBrowser,
                     modifier = modifier
                 )
             }
@@ -736,7 +737,7 @@ private fun clickEvents() = UiEvents(
 
 @PreviewLightDark
 @Composable
-private fun ChatScreenPreview() {
+internal fun ChatScreenPreview() {
     GovUkTheme {
         ChatScreen(
             uiState = ChatUiState.Default(isLoading = false),
