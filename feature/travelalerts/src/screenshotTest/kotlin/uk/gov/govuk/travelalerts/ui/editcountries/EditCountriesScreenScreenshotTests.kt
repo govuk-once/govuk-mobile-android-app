@@ -25,4 +25,11 @@ internal class EditCountriesScreenScreenshotTests {
     fun EditCountriesLoadedScreenshots() {
         EditCountriesLoadedPreview()
     }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun EditCountriesDeviceOfflineScreenshots() {
+        EditCountriesDeviceOfflinePreview()
+    }
 }
