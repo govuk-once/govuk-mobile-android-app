@@ -26,21 +26,22 @@ fun NavGraphBuilder.chatGraph(
     navController: NavHostController,
     launchBrowser: (url: String) -> Unit,
     onAuthError: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     navigation(
         route = CHAT_GRAPH_ROUTE,
         startDestination = CHAT_ROUTE
     ) {
         composable(CHAT_ROUTE) {
-            ChatRoute(
-                onShowOnboarding = {
-                    navController.navigateToOnboardingPageOne()
-                },
-                launchBrowser = launchBrowser,
-                onAuthError = onAuthError,
-                modifier = modifier
-            )
+                ChatRoute(
+                    onShowOnboarding = {
+                        navController.navigateToOnboardingPageOne()
+                    },
+                    launchBrowser = launchBrowser,
+                    onAuthError = onAuthError,
+                    modifier = modifier
+                )
+            }
         }
         composable(CHAT_ONBOARDING_PAGE_1_ROUTE) {
             OnboardingPageOneRoute(
@@ -85,7 +86,6 @@ fun NavGraphBuilder.chatGraph(
                     .windowInsetsPadding(WindowInsets.statusBars)
             )
         }
-    }
 }
 
 private fun popToChatEntryScreen(navController: NavController) {
