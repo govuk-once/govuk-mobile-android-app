@@ -14,7 +14,31 @@ plugins {
     alias(libs.plugins.firebasePerformance) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.sonarqube)
+    alias(libs.plugins.ktlint) apply false
 }
+
+// Modules not yet migrated to ktlint. Remove a module from this list once it passes ktlintCheck.
+val pendingModules = setOf(
+    //":analytics",
+    ":app",
+    ":config",
+    ":data",
+    ":design",
+    ":feature:chat",
+    ":feature:dvla",
+    ":feature:home",
+    ":feature:local",
+    ":feature:messages",
+    ":feature:search",
+    ":feature:settings",
+    ":feature:topics",
+    ":feature:travelalerts",
+    ":feature:visited",
+    ":govkit",
+    ":notifications",
+
+    // add / remove as modules become compliant
+)
 
 subprojects {
     if (!projectDir.endsWith("feature")) {
@@ -38,6 +62,10 @@ subprojects {
                 )
             }
         }
+    }
+
+    if (project.path !in pendingModules) {
+        apply(plugin = "org.jlleitschuh.gradle.ktlint")
     }
 }
 
