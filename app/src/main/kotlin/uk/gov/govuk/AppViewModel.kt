@@ -425,6 +425,7 @@ internal class AppViewModel @Inject constructor(
 
     fun isDvlaLinkEnabled() = flagRepo.isDvlaLinkEnabled()
     fun isTravelAlertsEnabled() = flagRepo.isTravelAlertsEnabled()
+    fun isChatV2Routing() = flagRepo.isChatEnabled() && flagRepo.isChatV2Enabled()
 
     fun onSignOut() {
         notificationsRepo.logout()

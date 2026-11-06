@@ -20,6 +20,7 @@ interface ConfigRepo {
     val isLocalServicesEnabled: Boolean
     val isExternalBrowserEnabled: Boolean
     val isChatEnabled: Boolean
+    val isChatV2Enabled: Boolean
     val chatUrls: ChatUrls
     val refreshTokenExpirySeconds: Long?
     val emergencyBanners: List<EmergencyBanner>?

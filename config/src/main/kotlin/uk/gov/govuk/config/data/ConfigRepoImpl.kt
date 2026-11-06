@@ -87,6 +87,9 @@ class ConfigRepoImpl @Inject constructor(
     override val isChatEnabled: Boolean
         get() = safeConfig.releaseFlags.chat
 
+    override val isChatV2Enabled: Boolean
+        get() = safeConfig.releaseFlags.chatV2
+
     override val chatUrls: ChatUrls
         get() = safeConfig.chatUrls
 
