@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,15 +24,20 @@ import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
+data class ErrorButtonAction(
+    val buttonTitle: String,
+    val onButtonClick: (() -> Unit)?)
+
 @Composable
 fun Error(
+    modifier: Modifier = Modifier,
     title: String,
     description: String,
     buttonTitle: String,
-    onButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    onButtonClick: (() -> Unit)? = null,
     externalLink: Boolean = false,
-    focusRequester: FocusRequester = FocusRequester()
+    focusRequester: FocusRequester = FocusRequester(),
+    icon: Painter? = null
 ) {
     Column(
         modifier = modifier
@@ -40,7 +46,7 @@ fun Error(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_error),
+            painter = icon?: painterResource(id = R.drawable.ic_error),
             contentDescription = null,
             tint = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
             modifier = Modifier
@@ -64,13 +70,15 @@ fun Error(
             textAlign = TextAlign.Center
         )
 
-        MediumVerticalSpacer()
+        onButtonClick?.let {
+            MediumVerticalSpacer()
 
-        SecondaryButton(
-            text = buttonTitle,
-            onClick = { onButtonClick() },
-            externalLink = externalLink
-        )
+            SecondaryButton(
+                text = buttonTitle,
+                onClick = { onButtonClick() },
+                externalLink = externalLink
+            )
+        }
     }
 }
 
@@ -83,6 +91,18 @@ private fun MessagePreview() {
             description = "Description",
             buttonTitle = "Button Title",
             onButtonClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MessagePreviewNoButton() {
+    GovUkTheme {
+        Error(
+            title = "Title",
+            description = "Description",
+            buttonTitle = "Button Title",
         )
     }
 }
