@@ -20,8 +20,6 @@ import uk.govuk.app.local.data.remote.model.LocalAuthorityResult.Addresses
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult.LocalAuthority
 import uk.govuk.app.local.data.remote.model.RemoteAddress
 import uk.govuk.app.local.data.remote.model.RemoteLocalAuthority
-import uk.govuk.app.local.domain.toAddress
-import uk.govuk.app.local.domain.toLocalAuthority
 
 class LocalRepoTest {
     private val localApi = mockk<LocalApi>(relaxed = true)
