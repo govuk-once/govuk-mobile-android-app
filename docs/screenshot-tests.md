@@ -15,6 +15,26 @@ Screenshot tests are **host-side tests** that run on your machine (macOS or Ubun
 
 **Important**: Since tests run on the host machine, they will produce different images on macOS vs Ubuntu due to different system font rendering. Ensure baseline images match the platform they will run on (CI runs on Ubuntu).
 
+## Git LFS
+
+The project uses Git LFS to store screenshot test baseline PNGs (`screenshotTestDebug/`) in [Git LFS](https://git-lfs.com/) to keep the repository size manageable. You must have Git LFS installed and initialized before working with screenshot tests.
+
+### One-time machine setup
+```bash                                                                                                                                                                                                                                                                                                    
+brew install git-lfs
+git lfs install
+```
+Committing updated baselines
+
+After running updateDebugScreenshotTest, the generated PNG files are tracked by LFS automatically (via .gitattributes). Commit them as you would any other file:                                                                                                                                                       
+```bash
+git add .                                                                                                                                                                                                                                                                                                              
+git commit -m "Update screenshot baselines"
+```
+CI
+
+GitHub Actions workflows are already configured with lfs: true in the checkout step — no additional setup is needed in CI.
+
 ## Key Requirements
 
 - **@PreviewLightDark annotation**: All screenshot tests MUST include the `@PreviewLightDark` annotation to ensure both light and dark mode screenshots are captured. This is critical for accessibility and design consistency.
@@ -91,5 +111,5 @@ When adding a new UI component or screen:
    ```bash
    ./gradlew updateDebugScreenshotTest
    ```
-5. Commit both the test code and the baseline images
+5. Commit both the test code and the baseline images — the PNGs are automatically tracked by Git LFS (see [Git LFS](#git-lfs) setup above)
 
