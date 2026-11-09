@@ -56,24 +56,14 @@ sealed class MarkdownElement {
  * Inline content within a block element (supports styling).
  */
 sealed class InlineContent {
-    data class Text(
-        val text: String
-    ) : InlineContent()
-    data class Emphasis(
-        val content: List<InlineContent>
-    ) : InlineContent()
-    data class StrongEmphasis(
-        val content: List<InlineContent>
-    ) : InlineContent()
-    data class Code(
-        val code: String
-    ) : InlineContent()
+    data class Text(val text: String) : InlineContent()
+    data class Emphasis(val content: List<InlineContent>) : InlineContent()
+    data class StrongEmphasis(val content: List<InlineContent>) : InlineContent()
+    data class Code(val code: String) : InlineContent()
     data class Link(
         val content: List<InlineContent>,
         val url: String,
         val title: String?
     ) : InlineContent()
-    data class LineBreak(
-        val isSoft: Boolean
-    ) : InlineContent()
+    data class LineBreak(val isSoft: Boolean) : InlineContent()
 }
