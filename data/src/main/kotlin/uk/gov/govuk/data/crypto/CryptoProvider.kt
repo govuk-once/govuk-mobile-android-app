@@ -1,11 +1,7 @@
 package uk.gov.govuk.data.crypto
 
 interface CryptoProvider {
-    fun encrypt(
-        input: ByteArray
-    ): Result<String>
+    fun encrypt(input: ByteArray): Result<String>
 
-    fun decrypt(
-        inputEncrypted: String
-    ): Result<ByteArray>
+    fun decrypt(inputEncrypted: String): Result<ByteArray>
 }
