@@ -1,6 +1,5 @@
 package uk.gov.govuk.design.markdown
 
-import java.util.UUID
 import org.commonmark.node.BlockQuote
 import org.commonmark.node.BulletList
 import org.commonmark.node.Code
@@ -21,6 +20,7 @@ import org.commonmark.node.ThematicBreak
 import org.commonmark.parser.Parser
 import uk.gov.govuk.design.markdown.model.InlineContent
 import uk.gov.govuk.design.markdown.model.MarkdownElement
+import java.util.UUID
 
 class MarkdownParser {
     private val parser: Parser = Parser.builder().build()
@@ -28,16 +28,12 @@ class MarkdownParser {
     /**
      * Parse markdown string into a list of renderable elements.
      */
-    fun parse(
-        markdown: String
-    ): List<MarkdownElement> {
+    fun parse(markdown: String): List<MarkdownElement> {
         val document = parser.parse(markdown)
         return extractElements(document)
     }
 
-    private fun extractElements(
-        document: Node
-    ): List<MarkdownElement> {
+    private fun extractElements(document: Node): List<MarkdownElement> {
         val elements = mutableListOf<MarkdownElement>()
         var child = document.firstChild
         while (child != null) {
@@ -49,7 +45,7 @@ class MarkdownParser {
 
     private fun extractElement(
         node: Node,
-        elements: MutableList<MarkdownElement>
+        elements: MutableList<MarkdownElement>,
     ) {
         when (node) {
             is Heading -> {
@@ -215,9 +211,7 @@ class MarkdownParser {
         }
     }
 
-    private fun extractInlineContent(
-        block: Node
-    ): List<InlineContent> {
+    private fun extractInlineContent(block: Node): List<InlineContent> {
         val content = mutableListOf<InlineContent>()
         var child = block.firstChild
         while (child != null) {
@@ -227,28 +221,26 @@ class MarkdownParser {
         return content
     }
 
-    private fun nodeToInlineContent(
-        node: Node
-    ): List<InlineContent> = when (node) {
-        is Text -> listOf(InlineContent.Text(node.literal))
-        is Code -> listOf(InlineContent.Code(node.literal))
-        is Emphasis -> listOf(InlineContent.Emphasis(extractChildInlineContent(node)))
-        is StrongEmphasis -> listOf(InlineContent.StrongEmphasis(extractChildInlineContent(node)))
-        is Link -> listOf(
-            InlineContent.Link(
-                content = extractChildInlineContent(node),
-                url = node.destination,
-                title = node.title
+    private fun nodeToInlineContent(node: Node): List<InlineContent> {
+        return when (node) {
+            is Text -> listOf(InlineContent.Text(node.literal))
+            is Code -> listOf(InlineContent.Code(node.literal))
+            is Emphasis -> listOf(InlineContent.Emphasis(extractChildInlineContent(node)))
+            is StrongEmphasis -> listOf(InlineContent.StrongEmphasis(extractChildInlineContent(node)))
+            is Link -> listOf(
+                InlineContent.Link(
+                    content = extractChildInlineContent(node),
+                    url = node.destination,
+                    title = node.title
+                )
             )
-        )
-        is SoftLineBreak -> listOf(InlineContent.LineBreak(isSoft = true))
-        is HardLineBreak -> listOf(InlineContent.LineBreak(isSoft = false))
-        else -> emptyList()
+            is SoftLineBreak -> listOf(InlineContent.LineBreak(isSoft = true))
+            is HardLineBreak -> listOf(InlineContent.LineBreak(isSoft = false))
+            else -> emptyList()
+        }
     }
 
-    private fun extractChildInlineContent(
-        node: Node
-    ): List<InlineContent> {
+    private fun extractChildInlineContent(node: Node): List<InlineContent> {
         val content = mutableListOf<InlineContent>()
         var child = node.firstChild
         while (child != null) {
@@ -258,18 +250,13 @@ class MarkdownParser {
         return content
     }
 
-    private fun extractPlainText(
-        block: Node
-    ): String {
+    private fun extractPlainText(block: Node): String {
         val builder = StringBuilder()
         extractPlainTextRecursive(block, builder)
         return builder.toString()
     }
 
-    private fun extractPlainTextRecursive(
-        node: Node,
-        builder: StringBuilder
-    ) {
+    private fun extractPlainTextRecursive(node: Node, builder: StringBuilder) {
         when (node) {
             is Text -> builder.append(node.literal)
             is Code -> builder.append(node.literal)
