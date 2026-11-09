@@ -80,7 +80,8 @@ fun LoadingScreen(
                 .size(36.dp)
                 .semantics {
                     contentDescription = accessibilityText
-                },
+                }
+            ,
             color = GovUkTheme.colourScheme.surfaces.primary
         )
     }
@@ -102,6 +103,7 @@ fun BookendToWebScreen(
             .fillMaxSize()
             .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
     ) {
+
         IconButton(
             onClick = onClose,
             modifier = Modifier.padding(
@@ -165,7 +167,7 @@ fun BookendToWebScreen(
 @Composable
 fun BookendConnectingScreen(
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -175,6 +177,7 @@ fun BookendConnectingScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         CircularProgressIndicator(
             modifier = Modifier
                 .size(40.dp),
@@ -197,7 +200,7 @@ fun AccountConnectionSuccessScreen(
     title: String,
     buttonText: String,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -212,6 +215,7 @@ fun AccountConnectionSuccessScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Icon(
                 painter = painterResource(id = R.drawable.ic_success_round),
                 contentDescription = null,
@@ -223,7 +227,7 @@ fun AccountConnectionSuccessScreen(
             LargeTitleBoldLabel(
                 text = title,
                 color = GovUkTheme.colourScheme.textAndIcons.primaryInverse,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
         Column(
