@@ -152,7 +152,7 @@ private fun FurtherInformation(
 
 @PreviewLightDark
 @Composable
-private fun LicenceCategoriesScreenPreview() {
+internal fun LicenceCategoriesScreenPreview() {
     GovUkTheme {
         Box(modifier = Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
             LicenceCategoriesScreen(
