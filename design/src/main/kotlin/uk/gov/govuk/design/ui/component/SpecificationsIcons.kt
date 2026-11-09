@@ -92,13 +92,12 @@ private fun Modifier.getModifier(
     val firstCorners = if (index == 0) GovUkTheme.numbers.cornerAndroidList else 0.dp
     val lastCorners =
         if (index == maxIndex) GovUkTheme.numbers.cornerAndroidList else 0.dp
-    return if (isHorizontal) {
+    return if (isHorizontal)
         this
             .clip(RoundedCornerShape(firstCorners, lastCorners, lastCorners, firstCorners))
-    } else {
+    else
         this
             .clip(RoundedCornerShape(firstCorners, firstCorners, lastCorners, lastCorners))
-    }
 }
 
 @Composable
