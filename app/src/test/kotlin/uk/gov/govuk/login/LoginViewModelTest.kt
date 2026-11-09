@@ -6,6 +6,8 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.Date
+import kotlin.test.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -37,8 +39,6 @@ import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.terms.data.TermsRepo
-import java.util.Date
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
