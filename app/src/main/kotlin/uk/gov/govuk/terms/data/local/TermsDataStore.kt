@@ -4,10 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.firstOrNull
 
 @Singleton
 internal class TermsDataStore @Inject constructor(
@@ -17,10 +17,8 @@ internal class TermsDataStore @Inject constructor(
         private const val TERMS_ACCEPTED_DATE_KEY = "terms_accepted_date"
     }
 
-    internal suspend fun getTermsAcceptedDate(): Long? {
-        return dataStore.data.firstOrNull()
-            ?.get(longPreferencesKey(TERMS_ACCEPTED_DATE_KEY))
-    }
+    internal suspend fun getTermsAcceptedDate(): Long? = dataStore.data.firstOrNull()
+        ?.get(longPreferencesKey(TERMS_ACCEPTED_DATE_KEY))
 
     internal suspend fun setTermsAcceptedDate(
         acceptedDate: Long
