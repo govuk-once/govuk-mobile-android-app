@@ -78,11 +78,8 @@ private fun AnalyticsConsentScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = GovUkTheme.spacing.medium)
                 .padding(
-                    top = if (isPortrait) {
-                        GovUkTheme.spacing.extraLarge * 2
-                    } else {
-                        GovUkTheme.spacing.extraLarge
-                    }
+                    top = if (isPortrait) GovUkTheme.spacing.extraLarge * 2
+                    else GovUkTheme.spacing.extraLarge
                 )
         ) {
             LargeTitleBoldLabel(
