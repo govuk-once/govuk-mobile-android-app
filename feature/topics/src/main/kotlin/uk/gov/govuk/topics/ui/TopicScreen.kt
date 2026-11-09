@@ -127,7 +127,7 @@ internal fun TopicRoute(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
-                    content = { OfflineMessage({ viewModel.getTopic() }) }
+                    content = { OfflineMessage(onButtonClick = { viewModel.getTopic() }) }
                 )
 
 
@@ -509,7 +509,7 @@ internal fun ErrorScreenOfflinePreview() {
             topicReference = "benefits",
             onPageView = {},
             onBack = {},
-            content = { OfflineMessage({}) }
+            content = { OfflineMessage(onButtonClick = {}) }
         )
     }
 }
@@ -522,7 +522,7 @@ internal fun ErrorScreenProblemPreview() {
             topicReference = "benefits",
             onPageView = {},
             onBack = {},
-            content = { ProblemMessage({ }) }
+            content = { ProblemMessage(onGoToGovUkClick = { }) }
         )
     }
 }

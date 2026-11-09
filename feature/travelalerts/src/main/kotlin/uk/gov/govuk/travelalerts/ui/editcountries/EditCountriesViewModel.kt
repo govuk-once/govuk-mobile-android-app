@@ -49,6 +49,7 @@ class EditCountriesViewModel @Inject constructor(
             val followError: Boolean = false
         ) : State()
         data object Error : State()
+        data object DeviceOffline : State()
     }
 
     sealed class NavigationEvent {
@@ -202,6 +203,8 @@ class EditCountriesViewModel @Inject constructor(
                 if (followError) savedStateHandle[SHOW_ERROR_ARG] = false
                 val devicePermissionGranted = ((_uiState.value as? State.Loaded)?.devicePermissionGranted) ?: notificationsRepo.permissionGranted()
                 _uiState.value = State.Loaded(followed, groupsResult.value, selectedSlug = selectedSlug, devicePermissionGranted = devicePermissionGranted, followError = followError)
+            } else if (groupsResult is Result.DeviceOffline || countriesResult is Result.DeviceOffline) {
+                _uiState.value = State.DeviceOffline
             } else {
                 _uiState.value = State.Error
             }
