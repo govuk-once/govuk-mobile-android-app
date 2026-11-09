@@ -34,7 +34,7 @@ class LinkedAccountsRepoImplTest {
     @Test
     fun `Given DVLA is linked and flag is enabled, when getLinkedAccounts is called, then return list with DVLA account`() = runTest {
         every { identityRepo.state } returns
-                MutableStateFlow(IdentityState.Success(listOf(LinkedService.DVLA)))
+            MutableStateFlow(IdentityState.Success(listOf(LinkedService.DVLA)))
         every { flagRepo.isDvlaLinkEnabled() } returns true
 
         val accounts = repo.getLinkedAccounts().first()
@@ -47,7 +47,7 @@ class LinkedAccountsRepoImplTest {
     @Test
     fun `Given DVLA is linked but flag is disabled, when getLinkedAccounts is called, then return empty list`() = runTest {
         every { identityRepo.state } returns
-                MutableStateFlow(IdentityState.Success(listOf(LinkedService.DVLA)))
+            MutableStateFlow(IdentityState.Success(listOf(LinkedService.DVLA)))
         every { flagRepo.isDvlaLinkEnabled() } returns false
 
         val accounts = repo.getLinkedAccounts().first()
@@ -58,7 +58,7 @@ class LinkedAccountsRepoImplTest {
     @Test
     fun `Given DVLA is not linked and flag is enabled, when getLinkedAccounts is called, then return empty list`() = runTest {
         every { identityRepo.state } returns
-                MutableStateFlow(IdentityState.Success(emptyList()))
+            MutableStateFlow(IdentityState.Success(emptyList()))
         every { flagRepo.isDvlaLinkEnabled() } returns true
 
         val accounts = repo.getLinkedAccounts().first()
