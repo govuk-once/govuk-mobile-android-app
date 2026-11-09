@@ -12,13 +12,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.ui.GovUkApp
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
@@ -47,8 +47,8 @@ class MainActivity : FragmentActivity() {
             GovUkTheme {
                 Surface(
                     modifier =
-                        Modifier
-                            .fillMaxSize(),
+                    Modifier
+                        .fillMaxSize(),
                     color = GovUkTheme.colourScheme.surfaces.background
                 ) {
                     GovUkApp(_intentFlow, appNavigation)
