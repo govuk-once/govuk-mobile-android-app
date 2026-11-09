@@ -20,8 +20,8 @@ plugins {
 // Modules not yet migrated to ktlint. Remove a module from this list once it passes ktlintCheck.
 val pendingModules = setOf(
     ":analytics",
-    //":app",
-    ":config",
+    ":app",
+    //":config",
     ":data",
     ":design",
     ":feature:chat",

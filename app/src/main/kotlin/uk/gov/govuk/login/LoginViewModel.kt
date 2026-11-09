@@ -5,8 +5,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Date
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -25,12 +23,12 @@ import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.terms.data.TermsRepo
+import java.util.Date
+import javax.inject.Inject
 
 internal sealed class LoginEvent {
     internal data object BiometricLogin : LoginEvent()
-    internal data class WebLogin(
-        val isBiometricsEnabled: Boolean
-    ) : LoginEvent()
+    internal data class WebLogin(val isBiometricsEnabled: Boolean): LoginEvent()
 }
 
 @HiltViewModel
@@ -66,9 +64,7 @@ internal class LoginViewModel @Inject constructor(
         authRepo.authIntent
     }
 
-    fun init(
-        activity: FragmentActivity
-    ) {
+    fun init(activity: FragmentActivity) {
         if (!authRepo.isUserSignedIn()) {
             return
         }
@@ -104,9 +100,7 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onAuthResponse(
-        data: Intent?
-    ) {
+    fun onAuthResponse(data: Intent?) {
         viewModelScope.launch {
             _isLoading.value = true
             val result = authRepo.handleAuthResponse(data)
@@ -116,8 +110,8 @@ internal class LoginViewModel @Inject constructor(
                 termsRepo.termsAccepted()
                 _loginCompleted.emit(
                     LoginEvent.WebLogin(
-                        isBiometricsEnabled = authRepo.isAuthenticationEnabled() &&
-                            !appRepo.hasSkippedBiometrics()
+                        isBiometricsEnabled = authRepo.isAuthenticationEnabled()
+                                && !appRepo.hasSkippedBiometrics()
                     )
                 )
             } else {
@@ -141,9 +135,7 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun logUserInitFailure(
-        message: String
-    ) {
+    private fun logUserInitFailure(message: String) {
         analyticsClient.logException(RuntimeException("Hello UDP error - $message"))
     }
 
