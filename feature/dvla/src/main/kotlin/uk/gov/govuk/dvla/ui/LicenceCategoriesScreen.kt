@@ -30,6 +30,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.domain.EntitlementType
 import uk.gov.govuk.dvla.ui.component.CategoryListItem
 import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
@@ -41,7 +42,7 @@ internal fun LicenceCategoriesScreen(
     categories: LicenceCategoriesUiModel,
     onBack: () -> Unit,
     onPageView: (title: String) -> Unit,
-    onCategoryInfoClick: (code: String) -> Unit,
+    onCategoryInfoClick: (code: String, type: EntitlementType) -> Unit,
     onFurtherInfoLinkClick: (text: String, url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -74,13 +75,13 @@ internal fun LicenceCategoriesScreen(
             CategorySection(
                 title = stringResource(R.string.licence_categories_can_drive_header),
                 groups = categories.canDrive,
-                onInfoClick = onCategoryInfoClick
+                onInfoClick = { code -> onCategoryInfoClick(code, EntitlementType.FULL) }
             )
 
             CategorySection(
                 title = stringResource(R.string.licence_categories_provisionally_drive_header),
                 groups = categories.provisionallyDrive,
-                onInfoClick = onCategoryInfoClick
+                onInfoClick = { code -> onCategoryInfoClick(code, EntitlementType.PROVISIONAL) }
             )
 
             FurtherInformation(
@@ -191,7 +192,7 @@ internal fun LicenceCategoriesScreenPreview() {
                 ),
                 onBack = {},
                 onPageView = {},
-                onCategoryInfoClick = {},
+                onCategoryInfoClick = { _, _ -> },
                 onFurtherInfoLinkClick = { _, _ -> }
             )
         }

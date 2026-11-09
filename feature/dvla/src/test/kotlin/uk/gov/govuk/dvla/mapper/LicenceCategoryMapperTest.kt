@@ -3,14 +3,18 @@ package uk.gov.govuk.dvla.mapper
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.Entitlement
 import uk.gov.govuk.dvla.domain.EntitlementType
+import uk.gov.govuk.dvla.domain.Restriction
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryLinkUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryRestrictionUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
 
@@ -77,7 +81,7 @@ class LicenceCategoriesMapperTest {
     }
 
     @Test
-    fun `Given motorcycle entitlements, then A1 A2 and A are listed in definition order`() {
+    fun `Given motorcycle entitlements, then A, A1 and A2 are listed in definition order`() {
         val result = mapper.toUiModel(listOf(full("A2"), full("A"), full("A1")), dvlaUrls = null)
 
         assertEquals(listOf("A", "A1", "A2"), result.canDrive.codes())
@@ -85,7 +89,8 @@ class LicenceCategoriesMapperTest {
 
     @Test
     fun `Given large vehicle and bus entitlements, then they appear in their own groups`() {
-        val result = mapper.toUiModel(listOf(full("DE"), full("C"), full("CE"), full("D")), dvlaUrls = null)
+        val result =
+            mapper.toUiModel(listOf(full("DE"), full("C"), full("CE"), full("D")), dvlaUrls = null)
 
         assertEquals(listOf("Large vehicles", "Buses"), result.canDrive.map { it.title })
         assertEquals(listOf("C", "CE", "D", "DE"), result.canDrive.codes())
@@ -180,5 +185,66 @@ class LicenceCategoriesMapperTest {
             ),
             result.canDrive.map { it.title }
         )
+    }
+
+    @Test
+    fun `Given an entitlement, when mapped to detail, then the title is its catalogue group`() {
+        assertEquals("Minibuses", mapper.toDetailUiModel(full("D1E"))?.title)
+    }
+
+    @Test
+    fun `Given an entitlement with an icon, when mapped to detail, then the catalogue code and icon are used`() {
+        assertEquals(
+            LicenceCategoryUiModel("D1E", R.drawable.ic_licence_cat_d1e),
+            mapper.toDetailUiModel(full("D1E"))?.category
+        )
+    }
+
+    @Test
+    fun `Given an uppercase other vehicle code, when mapped to detail, then the lowercase display code is used with no icon`() {
+        val result = mapper.toDetailUiModel(full("F"))
+
+        assertEquals("Other vehicles", result?.title)
+        assertEquals(LicenceCategoryUiModel("f"), result?.category)
+    }
+
+    @Test
+    fun `Given a code that is not in the catalogue, when mapped to detail, then the result is null`() {
+        assertNull(mapper.toDetailUiModel(full("ZZ")))
+    }
+
+    @Test
+    fun `Given restrictions, when mapped to detail, then they are mapped in order`() {
+        val entitlement = full("A").copy(
+            restrictions = listOf(
+                Restriction("79(03)", "Restricted to tricycles"),
+                Restriction("70", "Exchange of licence")
+            )
+        )
+
+        assertEquals(
+            listOf(
+                LicenceCategoryRestrictionUiModel("79(03)", "Restricted to tricycles"),
+                LicenceCategoryRestrictionUiModel("70", "Exchange of licence")
+            ),
+            mapper.toDetailUiModel(entitlement)?.restrictions
+        )
+    }
+
+    @Test
+    fun `Given no restrictions, when mapped to detail, then restrictions are empty`() {
+        assertTrue(mapper.toDetailUiModel(full("B"))?.restrictions?.isEmpty() == true)
+    }
+
+    @Test
+    fun `Given a legal literal, when mapped to detail, then it is the you can drive text`() {
+        val entitlement = full("F").copy(categoryLegalLiteral = "Agricultural")
+
+        assertEquals("Agricultural", mapper.toDetailUiModel(entitlement)?.youCanDrive)
+    }
+
+    @Test
+    fun `Given a blank legal literal, when mapped to detail, then you can drive is null`() {
+        assertNull(mapper.toDetailUiModel(full("F").copy(categoryLegalLiteral = " "))?.youCanDrive)
     }
 }
