@@ -12,5 +12,6 @@ interface AuthApi {
     suspend fun revoke(
         @Field("token") refreshToken: String,
         @Field("client_id") clientId: String
-    ): Response<Unit>
+    ) : Response<Unit>
+
 }
