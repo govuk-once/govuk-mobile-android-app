@@ -1,4 +1,4 @@
-package uk.gov.govuk.analytics
+package uk.gov.govuk.analytics;
 
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
