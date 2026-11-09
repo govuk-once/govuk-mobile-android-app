@@ -31,7 +31,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 @Composable
 fun TabHeader(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -125,7 +125,7 @@ private fun Header(
                 modifier = Modifier
                     .height(64.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (hasDismissButton) {
                     TextButton(
@@ -288,7 +288,7 @@ private fun FullScreenHeaderBackNoActionPreview() {
     GovUkTheme {
         FullScreenHeader(
             text = "Child page title",
-            dismissStyle = HeaderDismissStyle.Back {}
+            dismissStyle = HeaderDismissStyle.Back {},
         )
     }
 }
@@ -364,7 +364,7 @@ private fun ChildPageHeaderBackNoActionPreview() {
     GovUkTheme {
         ChildPageHeader(
             text = "Child page title",
-            dismissStyle = HeaderDismissStyle.Back {}
+            dismissStyle = HeaderDismissStyle.Back {},
         )
     }
 }

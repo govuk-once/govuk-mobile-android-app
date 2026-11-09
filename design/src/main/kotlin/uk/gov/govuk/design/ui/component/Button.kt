@@ -66,29 +66,30 @@ data class GovUkButtonColours(
 )
 
 @Composable
-private fun primaryColours(): GovUkButtonColours = GovUkButtonColours(
-    defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
-    defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
-    defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
-    focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
-    focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
-    focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
-    pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryHighlight,
-    pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
-    pressedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeHighlight,
-    disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
-    disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
-)
+private fun primaryColours(): GovUkButtonColours {
+    return GovUkButtonColours(
+        defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimary,
+        defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimary,
+        defaultStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStroke,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
+        focussedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeFocussed,
+        pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryHighlight,
+        pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryHighlight,
+        pressedStrokeColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryStrokeHighlight,
+        disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonPrimaryDisabled,
+        disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonPrimaryDisabled
+    )
+}
 
 sealed interface GovUkButtonState {
     data object Enabled : GovUkButtonState
     data object Disabled : GovUkButtonState
-    data class Loading(
-        val altText: String
-    ) : GovUkButtonState
+    data class Loading(val altText: String) : GovUkButtonState
 }
 
-private fun Boolean.toButtonState(): GovUkButtonState = if (this) GovUkButtonState.Enabled else GovUkButtonState.Disabled
+private fun Boolean.toButtonState(): GovUkButtonState =
+    if (this) GovUkButtonState.Enabled else GovUkButtonState.Disabled
 
 @Composable
 fun PrimaryButton(
@@ -318,11 +319,8 @@ fun ConnectedButton(
     ) {
         Text(
             text = text,
-            style = if (active) {
-                GovUkTheme.typography.bodyBold
-            } else {
-                GovUkTheme.typography.bodyRegular
-            },
+            style = if (active) GovUkTheme.typography.bodyBold else
+                GovUkTheme.typography.bodyRegular,
             textAlign = TextAlign.Center,
             modifier = Modifier.semantics {
                 contentDescription = altText
@@ -341,7 +339,7 @@ private fun BaseButton(
     externalLink: Boolean = false,
     state: GovUkButtonState = GovUkButtonState.Enabled,
     @DrawableRes icon: Int? = null,
-    shape: RoundedCornerShape = RoundedCornerShape(15.dp)
+    shape: RoundedCornerShape = RoundedCornerShape(15.dp),
 ) {
     val enabled = state != GovUkButtonState.Disabled
     val isLoading = state is GovUkButtonState.Loading
@@ -360,13 +358,13 @@ private fun BaseButton(
         containerColor = colours.defaultContainerColour,
         contentColor = colours.defaultContentColour,
         disabledContainerColor = colours.disabledContainerColour,
-        disabledContentColor = colours.disabledContentColour
+        disabledContentColor = colours.disabledContentColour,
     )
 
     stateMappedColours = when {
         isFocused -> stateMappedColours.copy(
             containerColor = colours.focussedContainerColour,
-            contentColor = colours.focussedContentColour
+            contentColor = colours.focussedContentColour,
         )
         isPressed || isHovered -> stateMappedColours.copy(
             containerColor = colours.pressedContainerColour,
@@ -532,7 +530,8 @@ fun DialogButton(
 
 @Preview
 @Composable
-private fun Primary() {
+private fun Primary()
+{
     GovUkTheme {
         PrimaryButton(
             text = "Primary button",
@@ -543,7 +542,8 @@ private fun Primary() {
 
 @Preview
 @Composable
-private fun PrimaryExternalLink() {
+private fun PrimaryExternalLink()
+{
     GovUkTheme {
         PrimaryButton(
             text = "Primary button",
@@ -555,7 +555,8 @@ private fun PrimaryExternalLink() {
 
 @Preview
 @Composable
-private fun PrimaryDisabled() {
+private fun PrimaryDisabled()
+{
     GovUkTheme {
         PrimaryButton(
             text = "Primary button",
@@ -579,7 +580,8 @@ private fun PrimaryLoading() {
 
 @PreviewLightDark
 @Composable
-private fun AccountConnection() {
+private fun AccountConnection()
+{
     GovUkTheme {
         AccountConnectionButton(
             text = "Continue",
@@ -590,7 +592,8 @@ private fun AccountConnection() {
 
 @Preview
 @Composable
-private fun Secondary() {
+private fun Secondary()
+{
     GovUkTheme {
         SecondaryButton(
             text = "Secondary button",
@@ -601,7 +604,8 @@ private fun Secondary() {
 
 @Preview
 @Composable
-private fun SecondaryExternalLink() {
+private fun SecondaryExternalLink()
+{
     GovUkTheme {
         SecondaryButton(
             text = "Secondary button",
@@ -613,7 +617,8 @@ private fun SecondaryExternalLink() {
 
 @Preview
 @Composable
-private fun SecondaryDisabled() {
+private fun SecondaryDisabled()
+{
     GovUkTheme {
         SecondaryButton(
             text = "Secondary button",
@@ -625,7 +630,8 @@ private fun SecondaryDisabled() {
 
 @Preview(showBackground = true)
 @Composable
-private fun Compact() {
+private fun Compact()
+{
     GovUkTheme {
         CompactButton(
             text = "Compact button",
@@ -636,7 +642,8 @@ private fun Compact() {
 
 @Preview(showBackground = true)
 @Composable
-private fun CompactExternalLink() {
+private fun CompactExternalLink()
+{
     GovUkTheme {
         CompactButton(
             text = "Compact button",
@@ -648,7 +655,8 @@ private fun CompactExternalLink() {
 
 @Preview(showBackground = true)
 @Composable
-private fun CompactDisabled() {
+private fun CompactDisabled()
+{
     GovUkTheme {
         CompactButton(
             text = "Compact button",
@@ -672,7 +680,8 @@ private fun CompactPrimaryWithIcon() {
 
 @Preview
 @Composable
-private fun Destructive() {
+private fun Destructive()
+{
     GovUkTheme {
         DestructiveButton(
             text = "Compact button",
@@ -683,7 +692,8 @@ private fun Destructive() {
 
 @Preview
 @Composable
-private fun DestructiveExternalLink() {
+private fun DestructiveExternalLink()
+{
     GovUkTheme {
         DestructiveButton(
             text = "Compact button",
@@ -695,7 +705,8 @@ private fun DestructiveExternalLink() {
 
 @Preview
 @Composable
-private fun DestructiveDisabled() {
+private fun DestructiveDisabled()
+{
     GovUkTheme {
         DestructiveButton(
             text = "Compact button",
@@ -707,7 +718,8 @@ private fun DestructiveDisabled() {
 
 @Preview
 @Composable
-private fun ConnectedActive() {
+private fun ConnectedActive()
+{
     GovUkTheme {
         ConnectedButton(
             text = "Connected button",
@@ -724,7 +736,8 @@ private fun ConnectedActive() {
 
 @Preview
 @Composable
-private fun ConnectedInactive() {
+private fun ConnectedInactive()
+{
     GovUkTheme {
         ConnectedButton(
             text = "Connected button",
@@ -741,7 +754,8 @@ private fun ConnectedInactive() {
 
 @Preview
 @Composable
-private fun Overflow() {
+private fun Overflow()
+{
     GovUkTheme {
         OverflowButton(
             onClick = { }
