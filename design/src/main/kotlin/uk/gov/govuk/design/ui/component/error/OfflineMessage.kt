@@ -34,7 +34,7 @@ private fun OfflineMessagePreview() {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 private fun OfflineMessagePreviewNoTryAgain() {
     GovUkTheme {
