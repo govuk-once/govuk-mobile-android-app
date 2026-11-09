@@ -7,9 +7,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
-fun ListDivider(
-    modifier: Modifier = Modifier
-) {
+fun ListDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier,
         thickness = 1.dp,
@@ -18,9 +16,7 @@ fun ListDivider(
 }
 
 @Composable
-fun FixedContainerDivider(
-    modifier: Modifier = Modifier
-) {
+fun FixedContainerDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier,
         thickness = 1.dp,
