@@ -1,8 +1,8 @@
 package uk.gov.govuk.login.data
 
+import uk.gov.govuk.login.data.local.LoginDataStore
 import javax.inject.Inject
 import javax.inject.Singleton
-import uk.gov.govuk.login.data.local.LoginDataStore
 
 @Singleton
 class LoginRepo @Inject constructor(
@@ -12,9 +12,7 @@ class LoginRepo @Inject constructor(
 
     internal suspend fun getRefreshTokenIssuedAtDate() = loginDataStore.getRefreshTokenIssuedAtDate()
 
-    internal suspend fun setRefreshTokenIssuedAtDate(
-        issuedAtDate: Long
-    ) {
+    internal suspend fun setRefreshTokenIssuedAtDate(issuedAtDate: Long) {
         loginDataStore.setRefreshTokenIssuedAtDate(issuedAtDate)
     }
 
