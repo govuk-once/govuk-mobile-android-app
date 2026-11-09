@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
@@ -26,7 +27,6 @@ import uk.gov.govuk.data.BuildConfig
 import uk.gov.govuk.data.auth.AttestationProvider
 import uk.gov.govuk.data.auth.FirebaseAttestationProvider
 import uk.gov.govuk.data.remote.AuthApi
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -34,13 +34,13 @@ class AuthModule {
 
     @Singleton
     @Provides
-    fun provideAttestationProvider(): AttestationProvider {
-        return FirebaseAttestationProvider(Firebase.appCheck)
-    }
+    fun provideAttestationProvider(): AttestationProvider = FirebaseAttestationProvider(Firebase.appCheck)
 
     @Singleton
     @Provides
-    fun provideSecureStore(@ApplicationContext context: Context): SecureStore {
+    fun provideSecureStore(
+        @ApplicationContext context: Context
+    ): SecureStore {
         val secureStore = SharedPrefsStore()
         secureStore.init(
             context,
@@ -51,28 +51,28 @@ class AuthModule {
 
     @Singleton
     @Provides
-    fun provideBiometricManager(@ApplicationContext context: Context): BiometricManager {
-        return BiometricManager.from(context)
-    }
+    fun provideBiometricManager(
+        @ApplicationContext context: Context
+    ): BiometricManager = BiometricManager.from(context)
 
     @Singleton
     @Provides
-    fun provideAuthService(@ApplicationContext context: Context): AuthorizationService {
-        return AuthorizationService(context)
-    }
+    fun provideAuthService(
+        @ApplicationContext context: Context
+    ): AuthorizationService = AuthorizationService(context)
 
     @Singleton
     @Provides
-    fun provideAuthServiceConfig(): AuthorizationServiceConfiguration {
-        return AuthorizationServiceConfiguration(
-            "${BuildConfig.AUTH_BASE_URL}${BuildConfig.AUTHORIZE_ENDPOINT}".toUri(),
-            "${BuildConfig.TOKEN_BASE_URL}${BuildConfig.TOKEN_ENDPOINT}".toUri()
-        )
-    }
+    fun provideAuthServiceConfig(): AuthorizationServiceConfiguration = AuthorizationServiceConfiguration(
+        "${BuildConfig.AUTH_BASE_URL}${BuildConfig.AUTHORIZE_ENDPOINT}".toUri(),
+        "${BuildConfig.TOKEN_BASE_URL}${BuildConfig.TOKEN_ENDPOINT}".toUri()
+    )
 
     @Singleton
     @Provides
-    fun provideAuthRequest(authConfig: AuthorizationServiceConfiguration): AuthorizationRequest {
+    fun provideAuthRequest(
+        authConfig: AuthorizationServiceConfiguration
+    ): AuthorizationRequest {
         val authRequestBuilder = AuthorizationRequest.Builder(
             authConfig,
             BuildConfig.AUTH_CLIENT_ID,
@@ -87,7 +87,9 @@ class AuthModule {
 
     @Singleton
     @Provides
-    fun provideTokenRequestBuilder(authConfig: AuthorizationServiceConfiguration): TokenRequest.Builder {
+    fun provideTokenRequestBuilder(
+        authConfig: AuthorizationServiceConfiguration
+    ): TokenRequest.Builder {
         val tokenRequestBuilder = TokenRequest.Builder(
             authConfig,
             BuildConfig.AUTH_CLIENT_ID
@@ -99,11 +101,9 @@ class AuthModule {
 
     @Provides
     @Singleton
-    fun providesAuthApi(): AuthApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.TOKEN_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(AuthApi::class.java)
-    }
+    fun providesAuthApi(): AuthApi = Retrofit.Builder()
+        .baseUrl(BuildConfig.TOKEN_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(AuthApi::class.java)
 }

@@ -21,8 +21,8 @@ plugins {
 val pendingModules = setOf(
     ":analytics",
     ":app",
-    //":config",
-    ":data",
+    ":config",
+    //":data",
     ":design",
     ":feature:chat",
     ":feature:dvla",
