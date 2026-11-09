@@ -67,7 +67,6 @@ private val BlackAlpha60 = Color(0x99000000)
 private val BlackAlpha75 = Color(0x4B000000)
 private val BlackLighter95 = Color(0xFFF3F3F3)
 
-
 private val White = Color(0xFFFFFFFF)
 private val WhiteAlpha30 = Color(0x4DFFFFFF)
 private val WhiteAlpha50 = Color(0x80FFFFFF)
@@ -247,7 +246,7 @@ data class GovUkColourScheme(
         val cardCarousel: Color,
         val iconSeparator: Color,
         val registrationPlate: Color,
-        val bottomSheet: Color,
+        val bottomSheet: Color
     )
 }
 
