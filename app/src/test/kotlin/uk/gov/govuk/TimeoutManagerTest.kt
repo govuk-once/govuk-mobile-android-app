@@ -1,5 +1,6 @@
 package uk.gov.govuk
 
+import kotlin.test.assertFalse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -11,7 +12,6 @@ import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertFalse
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimeoutManagerTest {
@@ -93,5 +93,4 @@ class TimeoutManagerTest {
             assertTrue(timedOut)
         }
     }
-
 }
