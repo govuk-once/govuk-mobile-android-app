@@ -1,6 +1,5 @@
 package uk.gov.govuk.data.remote
 
-import java.net.UnknownHostException
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import retrofit2.Response
@@ -10,33 +9,34 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.ServiceNotResponding
 import uk.gov.govuk.data.model.Result.Success
+import java.net.UnknownHostException
 
-suspend fun <T> safeApiCall(
-    apiCall: suspend () -> Response<T>
-): Result<T> = try {
-    val response = apiCall()
-    val body = response.body()
-    val code = response.code()
+suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
+    return try {
+        val response = apiCall()
+        val body = response.body()
+        val code = response.code()
 
-    if (response.isSuccessful) {
-        when {
-            code == 204 -> {
-                @Suppress("UNCHECKED_CAST")
-                Success(Unit as T)
+        if (response.isSuccessful) {
+            when {
+                code == 204 -> {
+                    @Suppress("UNCHECKED_CAST")
+                    Success(Unit as T)
+                }
+                response.isSuccessful && body != null -> Success(body)
+                else -> Error()
             }
-            response.isSuccessful && body != null -> Success(body)
+        } else {
+            ServiceNotResponding(code)
+        }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        when (e) {
+            is AuthenticationException -> AuthError()
+            is UnknownHostException -> DeviceOffline()
+            is HttpException -> ServiceNotResponding(e.code())
             else -> Error()
         }
-    } else {
-        ServiceNotResponding(code)
-    }
-} catch (e: CancellationException) {
-    throw e
-} catch (e: Exception) {
-    when (e) {
-        is AuthenticationException -> AuthError()
-        is UnknownHostException -> DeviceOffline()
-        is HttpException -> ServiceNotResponding(e.code())
-        else -> Error()
     }
 }
