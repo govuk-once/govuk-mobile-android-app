@@ -22,12 +22,12 @@ internal class TermsModule {
     @Singleton
     @Provides
     @Named("terms_prefs")
-    fun provideTermsDataStore(
-        @ApplicationContext context: Context
-    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        corruptionHandler = ReplaceFileCorruptionHandler(
-            produceNewData = { emptyPreferences() }
-        ),
-        produceFile = { context.preferencesDataStoreFile("terms_prefs") }
-    )
+    fun provideTermsDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = { context.preferencesDataStoreFile("terms_prefs") }
+        )
+    }
 }
