@@ -222,7 +222,7 @@ private fun RadioDivider(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun LocalAuthoritySelectScreenPreview() {
+internal fun LocalAuthoritySelectScreenPreview() {
     GovUkTheme {
         LocalAuthoritySelectScreen(
             onBack = {},

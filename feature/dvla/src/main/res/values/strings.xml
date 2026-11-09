@@ -115,6 +115,9 @@
     <string name="driving_record_title">Driving record</string>
     <string name="driving_record_description">Vehicles you can drive, offences and penalty points</string>
     <string name="driving_record_link_text">Your driving record</string>
+    <string name="driving_categories_title">You can drive</string>
+    <string name="driving_categories_description">Vehicles you’re permitted to drive</string>
+    <string name="driving_categories_button_text">Categories</string>
     <string name="account_error_text">Driver and vehicles account information is not working</string>
     <string name="account_error_sub_text">Try again later, or</string>
     <string name="account_error_link_text">go to the GOV.UK website.</string>
@@ -185,6 +188,7 @@
     <string name="not_stated">Not stated</string>
     <!-- Vehicle Details end -->
 
+    <!-- Check vehicle -->
     <string name="check_vehicle_title">Check vehicle details</string>
     <string name="check_vehicle_description">Tax and MOT information for any vehicle</string>
     <string name="check_vehicle_search_prompt">Search for a vehicle</string>
@@ -196,4 +200,36 @@
     <string name="check_vehicle_number_plate_not_found">Number plate not found</string>
     <string name="check_vehicle_loading_alt_text">Getting vehicle details</string>
     <string name="search_vehicle_content_desc">Search for another vehicle</string>
+
+    <!-- Categories -->
+    <string name="licence_categories_title">Categories</string>
+    <string name="licence_categories_intro">Your licence categories and codes show which vehicles you can drive and any restrictions or requirements. Check each category for restrictions and expiry dates.</string>
+    <string name="licence_categories_can_drive_header">You can drive</string>
+    <string name="licence_categories_provisionally_drive_header">You can provisionally drive</string>
+    <string name="licence_categories_further_information_header">Further information</string>
+    <string name="licence_category_alt_text">Category %1$s</string>
+    <string name="categories_group_mopeds">Mopeds</string>
+    <string name="categories_group_motorcycles">Motorcycles</string>
+    <string name="categories_group_light_vehicles">Light vehicles and quad bikes</string>
+    <string name="categories_group_cars">Cars</string>
+    <string name="categories_group_medium_vehicles">Medium-sized vehicles</string>
+    <string name="categories_group_large_vehicles">Large vehicles</string>
+    <string name="categories_group_minibuses">Minibuses</string>
+    <string name="categories_group_buses">Buses</string>
+    <string name="categories_group_other_vehicles">Other vehicles</string>
+    <string name="licence_categories_link_compare">Compare old and new categories</string>
+    <string name="licence_categories_link_weights">Vehicle weights explained</string>
+    <string name="licence_categories_link_add_categories">Adding categories to your licence</string>
+    <string name="licence_category_detail_title">Category</string>
+    <string name="licence_category_detail_valid_from">Valid from</string>
+    <string name="licence_category_detail_valid_to">Valid to</string>
+    <string name="licence_category_detail_restrictions_header">Restrictions</string>
+    <string name="licence_category_detail_you_can_drive_header">You can drive</string>
+    <string name="licence_category_detail_expires_today">Expires today</string>
+    <string name="licence_category_detail_restriction_alt_text">%1$s, %2$s</string>
+
+    <plurals name="licence_category_detail_expires_in_days">
+        <item quantity="one">Expires in %d day</item>
+        <item quantity="other">Expires in %d days</item>
+    </plurals>
 </resources>

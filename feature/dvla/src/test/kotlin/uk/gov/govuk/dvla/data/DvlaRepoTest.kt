@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -315,6 +316,35 @@ class DvlaRepoTest {
 
             val result = repo.lookupVehicleByRegistration("AB12CDE") as Result.Success
 
-            assertSame(result.value, repo.findVehicleEnquiryDetails("AB12CDE"))
+            assertSame(result.value, repo.getCachedVehicleEnquiryDetails("AB12CDE"))
+        }
+
+    @Test
+    fun `Given no licence has been fetched, when getCachedLicenceDetails is called, then return null`() {
+        assertNull(repo.getCachedLicenceDetails())
+    }
+
+    @Test
+    fun `Given a successful licence fetch, when getCachedLicenceDetails is called, then return the details`() =
+        runTest {
+            coEvery { api.getDrivingLicence() } returns
+                    Response.success(mockk<LicenceResponse>(relaxed = true))
+
+            val result = repo.getLicenceDetails() as LicenceDetailsResult.Success
+
+            assertSame(result.details, repo.getCachedLicenceDetails())
+        }
+
+    @Test
+    fun `Given a cached licence, when clear is called, then the cache is cleared`() =
+        runTest {
+            coEvery { api.getDrivingLicence() } returns
+                    Response.success(mockk<LicenceResponse>(relaxed = true))
+            coEvery { dvlaDataStore.clear() } returns Unit
+
+            repo.getLicenceDetails()
+            repo.clear()
+
+            assertNull(repo.getCachedLicenceDetails())
         }
 }

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.realm)
     alias(libs.plugins.kover)
+    alias(libs.plugins.screenshot)
 }
 
 val privacyPolicyUrl: String by project
@@ -25,11 +26,13 @@ android {
 
         buildConfigField("String", "CHAT_BASE_URL", "\"https://t4l83ued82.execute-api.eu-west-2.amazonaws.com/staging/\"")
         buildConfigField("String", "PRIVACY_POLICY_URL", privacyPolicyUrl)
+        buildConfigField("Boolean", "ANIMATED_FEEDBACK_ENABLED", "true")
     }
 
     buildTypes {
         release {
             buildConfigField("String", "CHAT_BASE_URL", "\"https://9olgmwodf3.execute-api.eu-west-2.amazonaws.com/production/\"")
+            buildConfigField("Boolean", "ANIMATED_FEEDBACK_ENABLED", "false")
         }
     }
 
@@ -47,6 +50,8 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -81,4 +86,9 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     testImplementation(kotlin("test"))
+
+    screenshotTestImplementation(libs.screenshot.validation.api) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+    }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

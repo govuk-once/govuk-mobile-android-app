@@ -49,7 +49,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
-import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.FootnoteRegularLabelTrailingLink
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
@@ -58,7 +57,9 @@ import uk.gov.govuk.design.ui.component.MediumHorizontalSpacer
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
-import uk.gov.govuk.design.ui.component.error.ErrorPage
+import uk.gov.govuk.design.ui.component.error.OfflineMessage
+import uk.gov.govuk.design.ui.component.error.ProblemMessage
+import uk.gov.govuk.design.ui.component.error.ProblemMessageWithRetry
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -128,7 +129,8 @@ fun CountryListScreen(
 
         when (val state = uiState) {
             is CountryListViewModel.State.Loading -> LoadingScreen()
-            is CountryListViewModel.State.Error -> CountryListError(onRetry = viewModel::onRetry)
+            is CountryListViewModel.State.Error ->CountryListError(onRetry = viewModel::onRetry)
+            is CountryListViewModel.State.DeviceOffline -> CountryListDeviceOffline(onRetry = viewModel::onRetry)
             is CountryListViewModel.State.Loaded -> CountryListLoaded(
                 countries = state.countries,
                 searchQuery = state.searchQuery,
@@ -315,24 +317,20 @@ private fun CountrySearchBar(
 @Composable
 private fun CountryListError(
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    ErrorPage(
-        headerText = stringResource(R.string.country_list_error_title),
-        subText = listOf(stringResource(R.string.country_list_error_description)),
-        modifier = modifier,
-        footerContent = {
-            FixedPrimaryButton(
-                text = stringResource(R.string.country_list_error_retry),
-                onClick = onRetry
-            )
-        }
-    )
+    ProblemMessageWithRetry(onButtonClick = onRetry)
+}
+
+@Composable
+private fun CountryListDeviceOffline(
+    onRetry: () -> Unit
+) {
+    OfflineMessage(onButtonClick = onRetry)
 }
 
 @Composable
 @PreviewLightDark
-private fun CountryListLoadingPreview() {
+internal fun CountryListLoadingPreview() {
     GovUkTheme {
         Column(Modifier.fillMaxSize()) {
             CountryListHeader(onClose = {})
@@ -343,7 +341,7 @@ private fun CountryListLoadingPreview() {
 
 @Composable
 @PreviewLightDark
-private fun CountryListErrorPreview() {
+internal fun CountryListErrorPreview() {
     GovUkTheme {
         Column(Modifier.fillMaxSize()) {
             CountryListHeader(onClose = {})
@@ -354,7 +352,18 @@ private fun CountryListErrorPreview() {
 
 @Composable
 @PreviewLightDark
-private fun CountryListLoadedPreview() {
+internal fun CountryListDeviceOfflinePreview() {
+    GovUkTheme {
+        Column(Modifier.fillMaxSize()) {
+            CountryListHeader(onClose = {})
+            CountryListDeviceOffline(onRetry = {})
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+internal fun CountryListLoadedPreview() {
     val countries = listOf(
         Country("Afghanistan", "afghanistan", "2022-01-01T00:00:00Z", listOf()),
         Country("Albania", "albania", "2023-01-01T00:00:00Z", listOf()),
@@ -382,7 +391,7 @@ private fun CountryListLoadedPreview() {
 
 @Composable
 @PreviewLightDark
-private fun CountryListLoadedEmptyPreview() {
+internal fun CountryListLoadedEmptyPreview() {
     GovUkTheme {
         Column(
             Modifier.fillMaxSize(),

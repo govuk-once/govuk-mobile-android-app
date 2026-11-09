@@ -65,9 +65,13 @@ import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.component.error.DeviceOfflineScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
+import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORIES_ROUTE
+import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORY_DETAIL_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
+import uk.gov.govuk.dvla.navigation.navigateToDrivingCategories
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLinkIntro
+import uk.gov.govuk.dvla.navigation.navigateToLicenceCategoryDetail
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
@@ -215,13 +219,16 @@ private fun BottomNavScaffold(
             && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
     val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
+    val isLicenceCategoriesRoute = currentRoute == LICENCE_CATEGORIES_ROUTE
+    val isLicenceCategoryDetailRoute = currentRoute?.startsWith(LICENCE_CATEGORY_DETAIL_ROUTE) == true
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
             currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
-    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute) && !isSystemInDarkTheme()
+    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute ||
+            isLicenceCategoriesRoute || isLicenceCategoryDetailRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -615,6 +622,7 @@ private fun GovUkNavHost(
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
+                                onDrivingCategoriesClick = { navController.navigateToDrivingCategories() },
 
                                 // Commenting out for 1.11 DVLA private beta release
 
@@ -688,6 +696,9 @@ private fun GovUkNavHost(
                 },
                 onVehicleFound = { regNumber ->
                     navController.navigateToVehicleDetailsByRegistration(regNumber)
+                },
+                onCategoryInfoClick = { code, type ->
+                    navController.navigateToLicenceCategoryDetail(code, type)
                 }
             )
             travelAlertsGraph(

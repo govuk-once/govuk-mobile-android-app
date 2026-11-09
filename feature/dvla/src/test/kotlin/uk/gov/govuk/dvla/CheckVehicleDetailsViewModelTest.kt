@@ -30,7 +30,7 @@ class CheckVehicleDetailsViewModelTest {
     fun setup() {
         val enquiry = mockk<VehicleEnquiryDetails>()
 
-        every { dvlaRepo.findVehicleEnquiryDetails(regNumber) } returns enquiry
+        every { dvlaRepo.getCachedVehicleEnquiryDetails(regNumber) } returns enquiry
         every { mapper.toUiModel(enquiry, any()) } returns vehicleDetails
 
         viewModel = CheckVehicleDetailsViewModel(
@@ -45,7 +45,7 @@ class CheckVehicleDetailsViewModelTest {
 
     @Test
     fun `Given no cached vehicle result, when viewModel created, then state is Error with the registration number`() {
-        every { dvlaRepo.findVehicleEnquiryDetails(regNumber) } returns null
+        every { dvlaRepo.getCachedVehicleEnquiryDetails(regNumber) } returns null
 
         viewModel = CheckVehicleDetailsViewModel(
             analyticsClient, mapper, savedStateHandle, dvlaRepo, configRepo
@@ -56,7 +56,7 @@ class CheckVehicleDetailsViewModelTest {
 
     @Test
     fun `Given no registration nav argument, when viewModel created, then state is Error with empty registration`() {
-        every { dvlaRepo.findVehicleEnquiryDetails("") } returns null
+        every { dvlaRepo.getCachedVehicleEnquiryDetails("") } returns null
 
         viewModel = CheckVehicleDetailsViewModel(
             analyticsClient, mapper, SavedStateHandle(), dvlaRepo, configRepo

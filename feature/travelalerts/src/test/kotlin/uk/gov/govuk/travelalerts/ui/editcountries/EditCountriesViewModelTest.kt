@@ -7,6 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -21,6 +22,7 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
+import uk.gov.govuk.travelalerts.data.model.Group
 import uk.gov.govuk.travelalerts.data.model.Subgroup
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
 import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
@@ -136,13 +138,13 @@ class EditCountriesViewModelTest {
     }
 
     @Test
-    fun `Given page view, when device offline, then state is Error`() = runTest {
+    fun `Given page view, when device offline, then state is DeviceOffline`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.DeviceOffline()
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is EditCountriesViewModel.State.Error)
+        assertTrue(viewModel.uiState.value is EditCountriesViewModel.State.DeviceOffline)
     }
 
     @Test
@@ -322,6 +324,26 @@ class EditCountriesViewModelTest {
     }
 
     @Test
+    fun `Given unfollow country succeeds and no countries remain, then PopBack navigation event is emitted`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.unfollowCountry("france") } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        val events = mutableListOf<EditCountriesViewModel.NavigationEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
+
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(emptyList())
+        viewModel.unfollowCountry("france")
+
+        advanceUntilIdle()
+        assertEquals(1, events.size)
+        assertTrue(events.first() is EditCountriesViewModel.NavigationEvent.PopBack)
+    }
+
+    @Test
     fun `Given unfollow country fails, then isUnfollowing is false and unfollowError is true`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
@@ -471,6 +493,50 @@ class EditCountriesViewModelTest {
 
         val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
         assertEquals(Subgroup.NONE, state.groups.find { it.group == "france" }?.subgroup)
+    }
+
+    @Test
+    fun `Given onOptInResult for newly followed country with notifications enabled, then country appears in list`() = runTest {
+        val initialGroups = listOf(
+            TravelAlertsFixtures.mockGroups[0], // france
+            TravelAlertsFixtures.mockGroups[1]  // germany
+        )
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(initialGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        // Simulate repo cache updated by followCountry() before returning to this screen
+        val updatedGroups = initialGroups + Group(namespace = "travel", group = "spain", subgroup = Subgroup.INSTANT)
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(updatedGroups)
+        viewModel.onOptInResult("spain", error = false, notificationsEnabled = true)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(listOf("France", "Germany", "Spain"), state.countries.map { it.name })
+        assertEquals(Subgroup.INSTANT, state.groups.find { it.group == "spain" }?.subgroup)
+        // selectedSlug must be null for new follows so the options bottom sheet does not pop open
+        assertEquals(null, state.selectedSlug)
+    }
+
+    @Test
+    fun `Given onOptInResult for newly followed country with notifications disabled, then country appears in list with NONE subgroup`() = runTest {
+        val initialGroups = listOf(
+            TravelAlertsFixtures.mockGroups[0], // france
+            TravelAlertsFixtures.mockGroups[1]  // germany
+        )
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(initialGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        // Simulate repo cache updated by followCountry() before returning to this screen
+        val updatedGroups = initialGroups + Group(namespace = "travel", group = "spain", subgroup = Subgroup.NONE)
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(updatedGroups)
+        viewModel.onOptInResult("spain", error = false, notificationsEnabled = false)
+
+        val state = viewModel.uiState.value as EditCountriesViewModel.State.Loaded
+        assertEquals(listOf("France", "Germany", "Spain"), state.countries.map { it.name })
+        assertEquals(Subgroup.NONE, state.groups.find { it.group == "spain" }?.subgroup)
+        // selectedSlug must be null for new follows so the options bottom sheet does not pop open
+        assertEquals(null, state.selectedSlug)
     }
 
     @Test

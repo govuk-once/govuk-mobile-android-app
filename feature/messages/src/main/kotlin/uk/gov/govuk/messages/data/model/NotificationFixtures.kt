@@ -8,7 +8,7 @@ class NotificationFixtures {
     companion object {
         val mockNotifications: MessageGroups
             get() {
-                val referenceDate = LocalDateTime.now()
+                val referenceDate = LocalDateTime.parse("2026-01-15T10:30:00")
                     .atOffset(ZoneOffset.ofHours(1))
 
                 val metadata = Notification.Metadata(

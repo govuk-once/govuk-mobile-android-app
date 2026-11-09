@@ -114,7 +114,7 @@ fun SearchField(
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchHeaderPreview() {
+internal fun SearchHeaderPreview() {
     GovUkTheme {
         Box(Modifier.background(GovUkTheme.colourScheme.surfaces.homeHeader)) {
             SearchField(

@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -9,9 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import uk.gov.govuk.dvla.DvlaViewModel
+import uk.gov.govuk.dvla.domain.EntitlementType
 import uk.gov.govuk.dvla.ui.CheckVehicleDetailsRoute
 import uk.gov.govuk.dvla.ui.DvlaLinkIntroScreen
 import uk.gov.govuk.dvla.ui.DvlaLinkingRoute
+import uk.gov.govuk.dvla.ui.LicenceCategoriesRoute
+import uk.gov.govuk.dvla.ui.LicenceCategoryDetailRoute
 import uk.gov.govuk.dvla.ui.VehicleDetailsRoute
 
 const val DVLA_GRAPH_ROUTE = "dvla_graph_route"
@@ -20,9 +24,13 @@ const val DVLA_LINK_ROUTE = "dvla_link_route"
 const val DVLA_DEEP_LINK_PATH = "/callback/dvla/auth"
 const val VEHICLE_DETAILS_ROUTE = "vehicle_details_route"
 const val VEHICLE_SEARCH_RESULT_ROUTE = "vehicle_search_result_route"
+const val LICENCE_CATEGORIES_ROUTE = "licence_categories_route"
+const val LICENCE_CATEGORY_DETAIL_ROUTE = "licence_category_detail_route"
 const val ARG_DVLA_TOKEN = "token"
 const val ARG_VEHICLE_ID = "vehicle_id"
 const val ARG_REG_NUMBER = "registration_number"
+const val ARG_CATEGORY_CODE = "category_code"
+const val ARG_ENTITLEMENT_TYPE = "entitlement_type"
 
 fun NavGraphBuilder.dvlaGraph(
     onBack: () -> Unit,
@@ -33,6 +41,7 @@ fun NavGraphBuilder.dvlaGraph(
     onLinkComplete: () -> Unit,
     onUnlinkComplete: () -> Unit,
     onVehicleFound: (String) -> Unit,
+    onCategoryInfoClick: (code: String, type: EntitlementType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -105,6 +114,30 @@ fun NavGraphBuilder.dvlaGraph(
                 onVehicleFound = onVehicleFound
             )
         }
+
+        composable(route = LICENCE_CATEGORIES_ROUTE) {
+            LicenceCategoriesRoute(
+                launchBrowser = launchBrowser,
+                onBack = onBack,
+                onCategoryInfoClick = onCategoryInfoClick,
+                modifier = modifier
+            )
+        }
+
+        composable(
+            route = "$LICENCE_CATEGORY_DETAIL_ROUTE/{$ARG_CATEGORY_CODE}/{$ARG_ENTITLEMENT_TYPE}",
+            arguments = listOf(
+                navArgument(ARG_CATEGORY_CODE) { type = NavType.StringType },
+                navArgument(ARG_ENTITLEMENT_TYPE) { type = NavType.StringType }
+            ),
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) }
+        ) {
+            LicenceCategoryDetailRoute(
+                onBack = onBack,
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -126,4 +159,12 @@ fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
             inclusive = true
         }
     }
+}
+
+fun NavController.navigateToDrivingCategories() {
+    navigate(LICENCE_CATEGORIES_ROUTE)
+}
+
+fun NavController.navigateToLicenceCategoryDetail(code: String, type: EntitlementType) {
+    navigate("$LICENCE_CATEGORY_DETAIL_ROUTE/$code/${type.name}")
 }

@@ -1,5 +1,6 @@
 package uk.gov.govuk.data.remote
 
+import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import retrofit2.Response
 import uk.gov.govuk.data.model.Result
@@ -28,6 +29,8 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Result<T> {
         } else {
             ServiceNotResponding(code)
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         when (e) {
             is AuthenticationException -> AuthError()

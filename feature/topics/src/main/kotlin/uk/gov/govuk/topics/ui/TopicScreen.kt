@@ -127,7 +127,7 @@ internal fun TopicRoute(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
-                    content = { OfflineMessage({ viewModel.getTopic() }) }
+                    content = { OfflineMessage(onButtonClick = { viewModel.getTopic() }) }
                 )
 
 
@@ -503,33 +503,33 @@ private fun TopicLoadingScreen(
 
 @Preview
 @Composable
-private fun ErrorScreenOfflinePreview() {
+internal fun ErrorScreenOfflinePreview() {
     GovUkTheme {
         ErrorScreen(
             topicReference = "benefits",
             onPageView = {},
             onBack = {},
-            content = { OfflineMessage({}) }
+            content = { OfflineMessage(onButtonClick = {}) }
         )
     }
 }
 
 @Preview
 @Composable
-private fun ErrorScreenProblemPreview() {
+internal fun ErrorScreenProblemPreview() {
     GovUkTheme {
         ErrorScreen(
             topicReference = "benefits",
             onPageView = {},
             onBack = {},
-            content = { ProblemMessage({ }) }
+            content = { ProblemMessage(onGoToGovUkClick = { }) }
         )
     }
 }
 
 @Preview
 @Composable
-private fun TopicLoadingScreenPreview() {
+internal fun TopicLoadingScreenPreview() {
     GovUkTheme {
         TopicLoadingScreen(
             topicReference = "benefits",

@@ -80,6 +80,7 @@ fun NavGraphBuilder.chatGraph(
                 onBack = {
                     navController.navigateToOnboardingPageTwo()
                 },
+                launchBrowser = launchBrowser,
                 modifier = modifier
                     .windowInsetsPadding(WindowInsets.statusBars)
             )

@@ -207,6 +207,7 @@ fun ExternalLinkListItem(
     description: String? = null,
     isFirst: Boolean = true,
     isLast: Boolean = true,
+    background: Color = GovUkTheme.colourScheme.surfaces.list,
     style: ExternalLinkListItemStyle = ExternalLinkListItemStyle.Default
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -218,7 +219,7 @@ fun ExternalLinkListItem(
         modifier = modifier,
         onClick = onClick,
         interactionSource = interactionSource,
-        background = colours.background,
+        background = if (isFocused) colours.background else background,
         isFirst = isFirst,
         isLast = isLast
     ) {
