@@ -3,6 +3,9 @@ package uk.gov.govuk.data.local
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -12,9 +15,6 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Singleton
 class RealmEncryptionHelper @Inject constructor(
@@ -33,23 +33,24 @@ class RealmEncryptionHelper @Inject constructor(
 
     suspend fun getRealmKey(
         dispatcher: CoroutineDispatcher = Dispatchers.IO
-    ): ByteArray = withContext(dispatcher) {
-        val encryptedRealmKey = dataStore.getRealmKey()
-        val realmIv = dataStore.getRealmIv()
+    ): ByteArray {
+        return withContext(dispatcher) {
+            val encryptedRealmKey = dataStore.getRealmKey()
+            val realmIv = dataStore.getRealmIv()
 
-        if (encryptedRealmKey != null &&
-            realmIv != null &&
-            keyStore.containsAlias(KEYSTORE_KEY_ALIAS)
-        ) {
-            decryptRealmKey(
-                encryptedKeyString = encryptedRealmKey,
-                ivString = realmIv
-            ).encoded
-        } else {
-            val keystoreKey = createKeystoreKey()
-            val realmEncryptionKey = createRealmEncryptionKey()
-            encryptAndSaveRealmKey(realmEncryptionKey, keystoreKey)
-            realmEncryptionKey
+            if (encryptedRealmKey != null && realmIv != null &&
+                keyStore.containsAlias(KEYSTORE_KEY_ALIAS)
+            ) {
+                decryptRealmKey(
+                    encryptedKeyString = encryptedRealmKey,
+                    ivString = realmIv
+                ).encoded
+            } else {
+                val keystoreKey = createKeystoreKey()
+                val realmEncryptionKey = createRealmEncryptionKey()
+                encryptAndSaveRealmKey(realmEncryptionKey, keystoreKey)
+                realmEncryptionKey
+            }
         }
     }
 
@@ -94,10 +95,7 @@ class RealmEncryptionHelper @Inject constructor(
         return key
     }
 
-    private suspend fun encryptAndSaveRealmKey(
-        realmKey: ByteArray,
-        keystoreKey: SecretKey
-    ) {
+    private suspend fun encryptAndSaveRealmKey(realmKey: ByteArray, keystoreKey: SecretKey) {
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, keystoreKey)
 
