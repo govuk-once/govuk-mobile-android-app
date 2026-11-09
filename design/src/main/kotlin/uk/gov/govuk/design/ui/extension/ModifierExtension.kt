@@ -20,10 +20,7 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.R
 
 @Composable
-fun Modifier.drawBottomStroke(
-    colour: Color?,
-    cornerRadius: Dp
-): Modifier {
+fun Modifier.drawBottomStroke(colour: Color?, cornerRadius: Dp): Modifier {
     colour ?: return this
 
     val strokeWidth = 3.dp
@@ -73,9 +70,7 @@ fun Modifier.drawBottomStroke(
 }
 
 @Composable
-fun Modifier.talkBackText(
-    vararg textParts: String?
-): Modifier {
+fun Modifier.talkBackText(vararg textParts: String?): Modifier {
     val description = textParts
         .filterNot { it.isNullOrBlank() }
         .joinToString(". ")
@@ -97,13 +92,12 @@ fun Modifier.talkBackText(
  * Sets a custom content description if the provided [altText] is not null
  */
 @Composable
-fun Modifier.withAltText(
-    altText: String?
-): Modifier = altText?.let {
-    clearAndSetSemantics {
-        contentDescription = it
-    }
-} ?: this
+fun Modifier.withAltText(altText: String?): Modifier =
+    altText?.let {
+        clearAndSetSemantics {
+            contentDescription = it
+        }
+    } ?: this
 
 /**
  * Modifier that handles long press without triggering "double tap to activate" TalkBack announcement
