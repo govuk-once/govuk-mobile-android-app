@@ -1,8 +1,8 @@
 package uk.gov.govuk.data.auth
 
-import uk.gov.govuk.data.auth.local.TokenDataStore
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.data.auth.local.TokenDataStore
 
 @Singleton
 class TokenRepo @Inject constructor(
