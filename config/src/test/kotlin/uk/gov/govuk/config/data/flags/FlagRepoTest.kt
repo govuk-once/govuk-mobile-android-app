@@ -480,7 +480,6 @@ class FlagRepoTest {
         assertTrue(flagRepo.isMessagesEnabled())
     }
 
-
     // Travel Alerts
 
     @Test
