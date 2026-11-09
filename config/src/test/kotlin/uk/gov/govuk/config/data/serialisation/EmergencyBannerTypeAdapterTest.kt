@@ -4,12 +4,12 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import java.io.StringReader
+import java.io.StringWriter
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.config.data.remote.model.EmergencyBannerType
-import java.io.StringReader
-import java.io.StringWriter
 
 class EmergencyBannerTypeAdapterTest {
 
