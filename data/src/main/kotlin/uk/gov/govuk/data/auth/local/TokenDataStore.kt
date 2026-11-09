@@ -21,9 +21,7 @@ class TokenDataStore @Inject constructor(
         return dataStore.data.firstOrNull()?.get(stringPreferencesKey(SUB_ID_KEY))
     }
 
-    internal suspend fun saveSubId(
-        subId: String
-    ) {
+    internal suspend fun saveSubId(subId: String) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(SUB_ID_KEY)] = subId
         }

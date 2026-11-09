@@ -23,9 +23,7 @@ class RealmDataStore @Inject constructor(
         return dataStore.data.firstOrNull()?.get(stringPreferencesKey(REALM_KEY))
     }
 
-    internal suspend fun saveRealmKey(
-        key: String
-    ) {
+    internal suspend fun saveRealmKey(key: String) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(REALM_KEY)] = key
         }
@@ -35,9 +33,7 @@ class RealmDataStore @Inject constructor(
         return dataStore.data.firstOrNull()?.get(stringPreferencesKey(REALM_IV))
     }
 
-    internal suspend fun saveRealmIv(
-        iv: String
-    ) {
+    internal suspend fun saveRealmIv(iv: String) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(REALM_IV)] = iv
         }
