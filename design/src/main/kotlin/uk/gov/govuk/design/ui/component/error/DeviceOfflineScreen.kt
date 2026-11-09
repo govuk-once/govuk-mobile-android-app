@@ -54,7 +54,7 @@ fun DeviceOfflineScreen(
 
         FixedPrimaryButton(
             text = stringResource(R.string.device_offline_button_title),
-            onClick = onTryAgain,
+            onClick = onTryAgain
         )
     }
 }
