@@ -307,7 +307,7 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    if (item == chatEntries.last() && BuildConfig.ANIMATED_FEEDBACK_ENABLED) {
+                    if (item == chatEntries.last()) {
                         AnimatedFeedback(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
