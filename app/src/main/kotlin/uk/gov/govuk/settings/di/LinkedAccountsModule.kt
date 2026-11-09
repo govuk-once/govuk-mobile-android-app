@@ -14,7 +14,5 @@ internal object LinkedAccountsModule {
     @Provides
     fun provideLinkedAccountsRepo(
         repo: LinkedAccountsRepoImpl
-    ): LinkedAccountsRepo {
-        return repo
-    }
+    ): LinkedAccountsRepo = repo
 }

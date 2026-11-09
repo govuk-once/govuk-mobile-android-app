@@ -23,7 +23,6 @@ class AppRepoTest {
         coEvery { appDataStore.hasSkippedBiometrics() } returns false
 
         runTest {
-
             assertFalse(repo.hasSkippedBiometrics())
         }
     }
@@ -68,7 +67,6 @@ class AppRepoTest {
         coEvery { appDataStore.isTopicSelectionCompleted() } returns false
 
         runTest {
-
             assertFalse(repo.isTopicSelectionCompleted())
         }
     }
