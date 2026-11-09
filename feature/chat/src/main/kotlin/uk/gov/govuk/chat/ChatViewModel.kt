@@ -3,6 +3,7 @@ package uk.gov.govuk.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,15 +29,16 @@ import uk.gov.govuk.chat.domain.StringCleaner
 import uk.gov.govuk.chat.ui.model.ChatEntry
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import javax.inject.Inject
 
 private const val CHAT_SUGGESTIONS_LIST_ID = "chat suggestions"
 private const val CHAT_SUGGESTIONS_LIST_NAME = "chat suggestions"
 private const val CHAT_SUGGESTION_ITEM_CATEGORY = "chat_suggestion"
 
 internal sealed class ChatUiState {
-    data object Onboarding: ChatUiState()
-    data class Error(val canRetry: Boolean): ChatUiState()
+    data object Onboarding : ChatUiState()
+    data class Error(
+        val canRetry: Boolean
+    ) : ChatUiState()
     data class Default(
         val question: String = "",
         val chatEntries: LinkedHashMap<String, ChatEntry> = linkedMapOf(),
@@ -45,7 +47,7 @@ internal sealed class ChatUiState {
         val displayCharacterWarning: Boolean = false,
         val displayCharacterError: Boolean = false,
         val charactersRemaining: Int = 0
-    ): ChatUiState()
+    ) : ChatUiState()
 }
 
 @HiltViewModel
@@ -54,7 +56,7 @@ internal class ChatViewModel @Inject constructor(
     private val authRepo: AuthRepo,
     private val analyticsClient: AnalyticsClient,
     configRepo: ConfigRepo
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
@@ -169,7 +171,9 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    fun onSubmit(question: String) {
+    fun onSubmit(
+        question: String
+    ) {
         if (askQuestionJob?.isActive == true) return
 
         val isPiiError = StringCleaner.includesPII(question)
@@ -233,7 +237,11 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    fun onPageView(screenClass: String, screenName: String, title: String) {
+    fun onPageView(
+        screenClass: String,
+        screenName: String,
+        title: String
+    ) {
         analyticsClient.screenView(
             screenClass = screenClass,
             screenName = screenName,
@@ -241,11 +249,18 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
-    fun onNavigationActionItemClicked(text: String, url: String) {
+    fun onNavigationActionItemClicked(
+        text: String,
+        url: String
+    ) {
         onExternalButtonClick(text, url)
     }
 
-    fun onFunctionActionItemClicked(text: String, section: String, action: String) {
+    fun onFunctionActionItemClicked(
+        text: String,
+        section: String,
+        action: String
+    ) {
         analyticsClient.buttonFunction(
             text = text,
             section = section,
@@ -271,7 +286,10 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    fun onExampleQuestionSelected(question: String, index: Int) {
+    fun onExampleQuestionSelected(
+        question: String,
+        index: Int
+    ) {
         analyticsClient.chat(type = "suggestion", section = "chat")
 
         analyticsClient.selectItemEvent(
@@ -285,20 +303,28 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
-    private fun chatSuggestionItem(question: String) = EcommerceEvent.Item(
+    private fun chatSuggestionItem(
+        question: String
+    ) = EcommerceEvent.Item(
         itemName = question,
         itemCategory = CHAT_SUGGESTION_ITEM_CATEGORY,
         locationId = ""
     )
 
-    fun onButtonClicked(text: String, section: String) {
+    fun onButtonClicked(
+        text: String,
+        section: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             section = section
         )
     }
 
-    fun onMarkdownLinkClicked(text: String, url: String) {
+    fun onMarkdownLinkClicked(
+        text: String,
+        url: String
+    ) {
         analyticsClient.chatMarkdownLinkClick(text = text, url = url)
     }
 
@@ -310,15 +336,24 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
-    fun onPrivacyPolicyView(text: String, url: String) {
+    fun onPrivacyPolicyView(
+        text: String,
+        url: String
+    ) {
         onExternalButtonClick(text, url)
     }
 
-    fun onTermsView(text: String, url: String) {
+    fun onTermsView(
+        text: String,
+        url: String
+    ) {
         onExternalButtonClick(text, url)
     }
 
-    private fun onExternalButtonClick(text: String, url: String) {
+    private fun onExternalButtonClick(
+        text: String,
+        url: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -326,11 +361,18 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
-    fun onFeedbackClick(text: String, action: String, questionId: String) {
+    fun onFeedbackClick(
+        text: String,
+        action: String,
+        questionId: String
+    ) {
         analyticsClient.chatFeedback(text = text, action = action, questionId = questionId)
     }
 
-    private suspend fun getAnswer(conversationId: String, questionId: String) {
+    private suspend fun getAnswer(
+        conversationId: String,
+        questionId: String
+    ) {
         handleChatResult(
             chatRepo.getAnswer(
                 conversationId = conversationId,
@@ -343,7 +385,10 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private suspend fun <T> handleChatResult(chatResult: ChatResult<T>, onSuccess: suspend (T) -> Unit) {
+    private suspend fun <T> handleChatResult(
+        chatResult: ChatResult<T>,
+        onSuccess: suspend (T) -> Unit
+    ) {
         when (chatResult) {
             is Success -> onSuccess(chatResult.value)
             is ValidationError -> _uiState.updateDefault {
@@ -383,7 +428,10 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun updateChatEntry(questionId: String, answer: Answer?) {
+    private fun updateChatEntry(
+        questionId: String,
+        answer: Answer?
+    ) {
         if (answer != null) {
             (_uiState.value as Default).chatEntries[questionId]?.let { chatEntry ->
                 chatEntry.answer = answer.message
@@ -395,7 +443,10 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun updateFeedbackReaction(answerId: String, reaction: String) {
+    private fun updateFeedbackReaction(
+        answerId: String,
+        reaction: String
+    ) {
         _uiState.updateDefault { state ->
             val entry = state.chatEntries.entries.firstOrNull { it.value.answerId == answerId }
                 ?: return@updateDefault state

@@ -98,7 +98,9 @@ class ExampleQuestionsFocusOrderTest {
         )
     }
 
-    private fun setupChatScreen(onSubmit: (String) -> Unit = { }) {
+    private fun setupChatScreen(
+        onSubmit: (String) -> Unit = { }
+    ) {
         composeTestRule.setContent {
             GovUkTheme {
                 ChatScreen(
@@ -130,7 +132,7 @@ class ExampleQuestionsFocusOrderTest {
         }
     }
 
-    private fun getString(@StringRes id: Int): String {
-        return InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
-    }
+    private fun getString(
+        @StringRes id: Int
+    ): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 }

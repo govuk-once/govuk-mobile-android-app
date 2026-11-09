@@ -18,7 +18,7 @@ fun ToggleSwitch(
     onCheckedChange: (Boolean) -> Unit,
     testDescription: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     Switch(
         checked = checked,
