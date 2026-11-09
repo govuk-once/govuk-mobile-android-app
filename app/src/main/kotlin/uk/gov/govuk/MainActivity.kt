@@ -12,13 +12,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.navigation.AppNavigation
 import uk.gov.govuk.ui.GovUkApp
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
@@ -30,9 +30,7 @@ class MainActivity : FragmentActivity() {
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     internal val intentFlow = _intentFlow.asSharedFlow()
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -47,8 +45,8 @@ class MainActivity : FragmentActivity() {
             GovUkTheme {
                 Surface(
                     modifier =
-                    Modifier
-                        .fillMaxSize(),
+                        Modifier
+                            .fillMaxSize(),
                     color = GovUkTheme.colourScheme.surfaces.background
                 ) {
                     GovUkApp(_intentFlow, appNavigation)
@@ -57,16 +55,12 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    override fun onNewIntent(
-        intent: Intent
-    ) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         _intentFlow.tryEmit(intent)
     }
 
-    private fun emitIntent(
-        savedInstanceState: Bundle?
-    ) {
+    private fun emitIntent(savedInstanceState: Bundle?) {
         // Only emit intent when app launched from cold so deep links only ever run once
         savedInstanceState ?: run {
             _intentFlow.tryEmit(intent)
