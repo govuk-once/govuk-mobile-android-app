@@ -1,10 +1,10 @@
 package uk.gov.govuk.analytics
 
 import com.qualtrics.digital.TargetingResult
-import javax.inject.Inject
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
+import javax.inject.Inject
 
 class AnalyticsCoordinator @Inject constructor(
     private val analyticsRepo: AnalyticsRepo,
@@ -59,9 +59,7 @@ class AnalyticsCoordinator @Inject constructor(
         )
     }
 
-    private fun onSurveyShown(
-        results: Map<String, TargetingResult>
-    ) {
+    private fun onSurveyShown(results: Map<String, TargetingResult>) {
         results.forEach { (targetingId, result) ->
             if (result.passed()) {
                 val parameters = mapOf<String, Any>(
@@ -79,9 +77,7 @@ class AnalyticsCoordinator @Inject constructor(
         }
     }
 
-    private fun onSurveyClosed(
-        targetingIds: List<String>
-    ) {
+    private fun onSurveyClosed(targetingIds: List<String>) {
         if (analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED) {
             targetingIds.forEach { targetingId ->
                 val parameters = mapOf<String, Any>(
