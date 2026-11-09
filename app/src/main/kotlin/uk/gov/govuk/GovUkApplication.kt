@@ -2,18 +2,16 @@ package uk.gov.govuk
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import uk.gov.govuk.analytics.ActivityProviderInterface
 import uk.gov.govuk.analytics.AnalyticsCoordinatorInterface
 import uk.gov.govuk.notifications.NotificationsProvider
+import javax.inject.Inject
 
 @HiltAndroidApp
-class GovUkApplication : Application() {
+class GovUkApplication: Application() {
 
     @Inject lateinit var notificationsProvider: NotificationsProvider
-
     @Inject lateinit var analyticsProvider: AnalyticsCoordinatorInterface
-
     @Inject lateinit var activityProvider: ActivityProviderInterface
 
     override fun onCreate() {
