@@ -10,7 +10,5 @@ class TokenRepo @Inject constructor(
 ) {
     internal suspend fun getSubId() = tokenDataStore.getSubId()
 
-    internal suspend fun saveSubId(
-        subId: String
-    ) = tokenDataStore.saveSubId(subId)
+    internal suspend fun saveSubId(subId: String) = tokenDataStore.saveSubId(subId)
 }
