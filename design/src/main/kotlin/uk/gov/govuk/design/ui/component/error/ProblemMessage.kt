@@ -15,7 +15,6 @@ fun ProblemMessage(
     description: String? = null,
     focusRequester: FocusRequester = FocusRequester()
 ) {
-
     Error(
         modifier = modifier,
         title = stringResource(R.string.problem_title),
