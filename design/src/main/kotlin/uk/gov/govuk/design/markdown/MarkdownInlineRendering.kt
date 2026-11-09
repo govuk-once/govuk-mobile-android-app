@@ -16,20 +16,24 @@ data class ContentSegment(
     val linkUrl: String? = null
 )
 
-fun hasLinks(content: List<InlineContent>): Boolean {
-    return content.any { inline ->
-        when (inline) {
-            is InlineContent.Link -> true
-            is InlineContent.Emphasis -> hasLinks(inline.content)
-            is InlineContent.StrongEmphasis -> hasLinks(inline.content)
-            else -> false
-        }
+fun hasLinks(
+    content: List<InlineContent>
+): Boolean = content.any { inline ->
+    when (inline) {
+        is InlineContent.Link -> true
+        is InlineContent.Emphasis -> hasLinks(inline.content)
+        is InlineContent.StrongEmphasis -> hasLinks(inline.content)
+        else -> false
     }
 }
 
-fun collectLinks(content: List<InlineContent>): List<String> {
+fun collectLinks(
+    content: List<InlineContent>
+): List<String> {
     val links = mutableListOf<String>()
-    fun collect(items: List<InlineContent>) {
+    fun collect(
+        items: List<InlineContent>
+    ) {
         for (item in items) {
             when (item) {
                 is InlineContent.Link -> {
@@ -118,7 +122,10 @@ fun splitIntoSegments(
         }
     }
 
-    fun processContent(items: List<InlineContent>, inheritedStyles: List<SpanStyle> = emptyList()) {
+    fun processContent(
+        items: List<InlineContent>,
+        inheritedStyles: List<SpanStyle> = emptyList()
+    ) {
         for (item in items) {
             when (item) {
                 is InlineContent.Text -> {
