@@ -2,7 +2,6 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -20,6 +19,7 @@ import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
+import java.time.LocalDate
 
 class CheckVehicleDetailsMapperTest {
 
@@ -65,11 +65,9 @@ class CheckVehicleDetailsMapperTest {
         exhaustEmissionsCo2 = 199
     )
 
-    private fun menuUrls(
-        taxStatus: TaxStatus,
-        motStatus: MotStatus
-    ) = mapper.toUiModel(makeEnquiry(taxStatus = taxStatus, motStatus = motStatus), dvlaUrls)
-        .menuItems.map { (it.action as MenuAction.WebLink).url }
+    private fun menuUrls(taxStatus: TaxStatus, motStatus: MotStatus) =
+        mapper.toUiModel(makeEnquiry(taxStatus = taxStatus, motStatus = motStatus), dvlaUrls)
+            .menuItems.map { (it.action as MenuAction.WebLink).url }
 
     @Test
     fun `When mapped, then make and registration are set and model and keeper are omitted`() {

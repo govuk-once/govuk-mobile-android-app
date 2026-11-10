@@ -3,7 +3,6 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,14 +13,15 @@ import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
-import uk.gov.govuk.dvla.mapper.LicenceSummaryMapper
-import uk.gov.govuk.dvla.mapper.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.DrivingView
+import uk.gov.govuk.dvla.mapper.LicenceSummaryMapper
 import uk.gov.govuk.dvla.ui.model.LicenceSummaryUiState
 import uk.gov.govuk.dvla.ui.model.UiState
 import uk.gov.govuk.dvla.ui.model.UrlModel
+import uk.gov.govuk.dvla.mapper.VehicleSummaryMapper
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 import uk.gov.govuk.govkit.browser.Urls
+import javax.inject.Inject
 
 @HiltViewModel
 internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
@@ -50,11 +50,8 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
                     ServiceLinkStatus.LINKED -> {
                         val drivingView = dvlaRepo.getSelectedDrivingView() ?: DrivingView.VEHICLES
                         _uiState.update { current ->
-                            if (current is UiState.Default) {
-                                current.copy(drivingView = drivingView)
-                            } else {
-                                UiState.Default(drivingView = drivingView)
-                            }
+                            if (current is UiState.Default) current.copy(drivingView = drivingView)
+                            else UiState.Default(drivingView = drivingView)
                         }
                         fetchLicenceDetails()
                         fetchVehicles()
@@ -87,10 +84,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onAddVehiclesClicked(
-        text: String,
-        url: String
-    ) {
+    fun onAddVehiclesClicked(text: String, url: String) {
         analyticsClient.accountCardClick(
             text = text,
             url = url,
@@ -99,10 +93,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onAddAnotherVehicleClicked(
-        text: String,
-        url: String
-    ) {
+    fun onAddAnotherVehicleClicked(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -111,19 +102,14 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onButtonClicked(
-        text: String
-    ) {
+    fun onButtonClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
             section = SECTION_DRIVING
         )
     }
 
-    fun onExternalButtonClicked(
-        text: String,
-        url: String
-    ) {
+    fun onExternalButtonClicked(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -132,10 +118,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onMenuItemClicked(
-        text: String,
-        url: String
-    ) {
+    fun onMenuItemClicked(text: String, url: String) {
         analyticsClient.menuItemClick(
             text = text,
             external = true,
@@ -152,17 +135,13 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    private fun setSelectedDrivingView(
-        drivingView: DrivingView
-    ) {
+    private fun setSelectedDrivingView(drivingView: DrivingView) {
         viewModelScope.launch {
             dvlaRepo.setSelectedDrivingView(drivingView = drivingView)
             _uiState.update { state ->
                 if (state is UiState.Default) {
                     state.copy(drivingView = drivingView)
-                } else {
-                    state
-                }
+                } else state
             }
         }
     }
@@ -207,17 +186,13 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun updateVehiclesState(
-        newState: VehiclesSummaryUiState
-    ) {
+    private fun updateVehiclesState(newState: VehiclesSummaryUiState) {
         _uiState.update { state ->
             if (state is UiState.Default) state.copy(vehiclesState = newState) else state
         }
     }
 
-    private fun updateLicenceState(
-        newState: LicenceSummaryUiState
-    ) {
+    private fun updateLicenceState(newState: LicenceSummaryUiState) {
         _uiState.update { state ->
             if (state is UiState.Default) state.copy(licenceState = newState) else state
         }
