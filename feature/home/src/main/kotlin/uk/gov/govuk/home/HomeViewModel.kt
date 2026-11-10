@@ -3,7 +3,6 @@ package uk.gov.govuk.home
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.config.data.local.model.HOME_BANNERS
 import uk.gov.govuk.config.data.local.model.HomeWidget
@@ -31,9 +30,6 @@ internal class HomeViewModel @Inject constructor(
             screenName = SCREEN_NAME,
             title = TITLE
         )
-
-        // TODO - Android A/A test 10-26 - remove when the test has finished
-        analyticsClient.abTestEvent(AbTestEvent.HOME_ACTIVATION_10_26)
     }
 
     fun onHomeWidgetsView(
