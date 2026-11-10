@@ -155,9 +155,7 @@ private fun CodeBlockItem(
                 .then(
                     if (accessibilityText != null) {
                         Modifier.semantics { contentDescription = accessibilityText }
-                    } else {
-                        Modifier
-                    }
+                    } else Modifier
                 )
         )
     }
@@ -334,3 +332,4 @@ private fun Modifier.withLinkAccessibility(
         contentDescription = accessibilityText
     }
 }
+

@@ -72,10 +72,10 @@ internal fun IntroMessages(
             AnimatedVisibility(
                 visible = messageVisible,
                 enter =
-                fadeIn(
-                    animationSpec = tween(durationMillis = animationDuration),
-                    initialAlpha = 0f
-                ) +
+                    fadeIn(
+                        animationSpec = tween(durationMillis = animationDuration),
+                        initialAlpha = 0f
+                    ) +
                     slideInVertically(
                         animationSpec = tween(durationMillis = animationDuration),
                         initialOffsetY = { 16 }
