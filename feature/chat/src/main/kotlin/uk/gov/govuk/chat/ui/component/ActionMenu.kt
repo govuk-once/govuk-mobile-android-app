@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -283,14 +284,14 @@ private fun MenuItem(
     enabled: Boolean = true,
     colours: MenuItemColors = MenuDefaults.itemColors().copy(
         textColor = GovUkTheme.colourScheme.textAndIcons.primary,
-        trailingIconColor = GovUkTheme.colourScheme.textAndIcons.primary
+        trailingIconColor = GovUkTheme.colourScheme.textAndIcons.primary,
     )
 ) {
     DropdownMenuItem(
         text = {
             Text(
                 text = buttonText,
-                style = GovUkTheme.typography.bodyRegular
+                style = GovUkTheme.typography.bodyRegular,
             )
         },
         onClick = onClick,
@@ -298,7 +299,7 @@ private fun MenuItem(
         trailingIcon = {
             Icon(
                 painter = painterResource(icon),
-                contentDescription = null
+                contentDescription = null,
             )
         },
         enabled = enabled,
