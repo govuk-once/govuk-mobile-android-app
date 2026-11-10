@@ -5,13 +5,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Singleton
 internal class ChatDataStore @Inject constructor(
@@ -33,11 +33,11 @@ internal class ChatDataStore @Inject constructor(
         }
     }
 
-    internal suspend fun conversationId(): String? = dataStore.data.firstOrNull()?.get(stringPreferencesKey(CONVERSATION_ID_KEY))
+    internal suspend fun conversationId(): String? {
+        return dataStore.data.firstOrNull()?.get(stringPreferencesKey(CONVERSATION_ID_KEY))
+    }
 
-    internal suspend fun saveConversationId(
-        id: String
-    ) {
+    internal suspend fun saveConversationId(id: String) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(CONVERSATION_ID_KEY)] = id
         }

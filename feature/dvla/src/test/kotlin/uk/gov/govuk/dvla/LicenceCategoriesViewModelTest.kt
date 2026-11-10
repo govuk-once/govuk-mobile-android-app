@@ -36,7 +36,10 @@ class LicenceCategoriesViewModelTest {
         every { categoriesMapper.toUiModel(entitlements, dvlaUrls) } returns categories
 
         viewModel = LicenceCategoriesViewModel(
-            analyticsClient, categoriesMapper, dvlaRepo, configRepo
+            analyticsClient,
+            categoriesMapper,
+            dvlaRepo,
+            configRepo
         )
     }
 
@@ -51,7 +54,10 @@ class LicenceCategoriesViewModelTest {
         every { categoriesMapper.toUiModel(entitlements, null) } returns categories
 
         viewModel = LicenceCategoriesViewModel(
-            analyticsClient, categoriesMapper, dvlaRepo, configRepo
+            analyticsClient,
+            categoriesMapper,
+            dvlaRepo,
+            configRepo
         )
 
         assertEquals(LicenceCategoriesUiState.Success(categories), viewModel.uiState.value)
@@ -101,7 +107,10 @@ class LicenceCategoriesViewModelTest {
         every { dvlaRepo.getCachedLicenceDetails() } returns null
 
         viewModel = LicenceCategoriesViewModel(
-            analyticsClient, categoriesMapper, dvlaRepo, configRepo
+            analyticsClient,
+            categoriesMapper,
+            dvlaRepo,
+            configRepo
         )
 
         assertEquals(LicenceCategoriesUiState.Error, viewModel.uiState.value)
