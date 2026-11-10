@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter
 
 class NotificationFixtures {
     companion object {
+        @Suppress("ktlint:standard:max-line-length")
         val mockNotifications: MessageGroups
             get() {
                 val referenceDate = LocalDateTime.parse("2026-01-15T10:30:00")
@@ -34,7 +35,11 @@ class NotificationFixtures {
                             metadata = metadata
                         ),
                         Notification(
-                            "3", "Test 3", "Body 3", "READ", referenceDate.minusDays(2).format(
+                            "3",
+                            "Test 3",
+                            "Body 3",
+                            "READ",
+                            referenceDate.minusDays(2).format(
                                 DateTimeFormatter.ISO_DATE_TIME
                             ),
                             metadata = metadata

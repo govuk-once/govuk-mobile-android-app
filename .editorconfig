@@ -1,0 +1,20 @@
+root = true
+
+[*.{kt,kts}]
+# 1. Tells ktlint to follow Android Studio
+ktlint_code_style = android_studio
+
+# 2. Globally sets the line length to the Android industry standard
+max_line_length = 140
+
+# 3. Tells ktlint to ignore line lengths if the line contains backticks (``)
+ktlint_ignore_back_ticked_identifier = true
+
+# 4. Globally whitelists PascalCase for Composable and Preview functions
+ktlint_function_naming_ignore_when_annotated_with = Composable,Preview
+
+# 5. Use multiline format when the constructor has ≥ 1 parameter
+ktlint_class_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 1
+
+# 6. Forces ALL function/method parameters to multiline even when they fit on one line.
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 1

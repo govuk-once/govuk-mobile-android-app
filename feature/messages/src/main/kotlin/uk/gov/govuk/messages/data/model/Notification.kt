@@ -3,7 +3,10 @@ package uk.gov.govuk.messages.data.model
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
 
-data class MessageGroups(val recent: List<Message>, val older: List<Message>)
+data class MessageGroups(
+    val recent: List<Message>,
+    val older: List<Message>
+)
 
 typealias Message = Notification
 
@@ -28,18 +31,17 @@ data class Notification(
 
     data class Metadata(
         @SerializedName("Sender")
-        val sender: Sender) {
+        val sender: Sender
+    ) {
         data class Sender(
             @SerializedName("DisplayName")
-            val displayName: String)
+            val displayName: String
+        )
     }
-
 
     val date: Instant
         get() = Instant.parse(rawDate)
 
     val isUnread: Boolean
         get() = status != "READ"
-
-
 }
