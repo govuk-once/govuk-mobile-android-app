@@ -34,9 +34,9 @@ import uk.gov.govuk.design.ui.component.DrillInCard
 import uk.gov.govuk.design.ui.component.FocusableCard
 import uk.gov.govuk.design.ui.component.IconListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
@@ -65,25 +65,28 @@ internal fun TopicRoute(
     onSubtopic: (ref: String) -> Unit,
     modifier: Modifier = Modifier,
     /** Generic slot for the app module to inject self-managed content into (for example DVLA linking) */
-    headerContent: @Composable () -> Unit = {},
+    headerContent: @Composable () -> Unit = {}
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
-    Box(modifier
-        .fillMaxSize()
-        .background(GovUkTheme.colourScheme.surfaces.screenBackground)
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(GovUkTheme.colourScheme.surfaces.screenBackground)
     ) {
         uiState?.let {
             when (it) {
                 is TopicUiState.Default -> {
                     TopicScreen(
                         topic = it.topicUi,
-                        onPageView = { title -> viewModel.onPageView(
-                            topicUi = it.topicUi,
-                            title = title
-                        ) },
+                        onPageView = { title ->
+                            viewModel.onPageView(
+                                topicUi = it.topicUi,
+                                title = title
+                            )
+                        },
                         onBack = onBack,
                         onExternalLink = { section, text, url, selectedItemIndex, totalItemCount ->
                             viewModel.onContentClick(
@@ -130,14 +133,14 @@ internal fun TopicRoute(
                     content = { OfflineMessage(onButtonClick = { viewModel.getTopic() }) }
                 )
 
-
                 is TopicUiState.Error.Service -> ErrorScreen(
                     topicReference = it.topicReference,
                     onPageView = { title -> viewModel.onPageView(title = title) },
                     onBack = onBack,
                     content = {
                         ProblemMessage(
-                            onGoToGovUkClick = { launchBrowser(Urls.GOV_UK_HOME) })
+                            onGoToGovUkClick = { launchBrowser(Urls.GOV_UK_HOME) }
+                        )
                     }
                 )
 
@@ -147,14 +150,15 @@ internal fun TopicRoute(
                     onBack = onBack,
                     content = {
                         ProblemMessage(
-                            onGoToGovUkClick = { launchBrowser(Urls.GOV_UK_HOME) })
+                            onGoToGovUkClick = { launchBrowser(Urls.GOV_UK_HOME) }
+                        )
                     }
                 )
 
                 is TopicUiState.Loading -> {
                     TopicLoadingScreen(
                         topicReference = it.topicReference,
-                        onBack = onBack,
+                        onBack = onBack
                     )
                 }
             }
@@ -181,12 +185,16 @@ private fun TopicScreen(
     val subtopicsIndex = servicesIndex + topic.services.size
 
     val totalItemCount = topic.popularPages.size +
-            topic.stepBySteps.size +
-            topic.services.size +
-            topic.subtopics.size
+        topic.stepBySteps.size +
+        topic.services.size +
+        topic.subtopics.size
 
     val onExternalLinkClick: (section: String, text: String, url: String, selectedItemIndex: Int) -> Unit = {
-            section, text, url, selectedItemIndex ->
+            section,
+            text,
+            url,
+            selectedItemIndex
+        ->
         onExternalLink(section, text, url, selectedItemIndex, totalItemCount)
     }
     RunOnceLaunchedEffect {
@@ -198,7 +206,6 @@ private fun TopicScreen(
             .fillMaxWidth()
             .background(GovUkTheme.colourScheme.surfaces.screenBackground)
     ) {
-
         ChildPageHeader(
             dismissStyle = HeaderDismissStyle.Back(onBack)
         )
@@ -289,7 +296,7 @@ private fun HorizontalScrollView(
     startIndex: Int,
     onExternalLink: (section: String, text: String, url: String, selectedItemIndex: Int) -> Unit,
     onPopularPagesSeeAll: (section: String, text: String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val fontScale = LocalDensity.current.fontScale
     val isFontScaledUp = fontScale > 1.0f
@@ -302,7 +309,10 @@ private fun HorizontalScrollView(
             title = topic.title,
             onClick = {
                 onExternalLink(
-                    section, topic.title, topic.url, startIndex + index
+                    section,
+                    topic.title,
+                    topic.url,
+                    startIndex + index
                 )
             }
         )
@@ -330,7 +340,9 @@ private fun HorizontalScrollView(
                     onPopularPagesSeeAll(section, seeAllButton)
                 }
             )
-        } else null
+        } else {
+            null
+        }
     )
 
     if (isFontScaledUp) {
@@ -354,7 +366,7 @@ private fun HorizontalScrollView(
             LazyRow(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(horizontal = GovUkTheme.spacing.medium),
+                    .padding(horizontal = GovUkTheme.spacing.medium)
             ) {
                 itemsIndexed(cards) { index, item ->
                     FocusableCard(
@@ -399,9 +411,11 @@ private fun LazyListScope.contentItems(
                                 sectionTitle,
                                 seeAllButton
                             )
-                        },
+                        }
                     )
-                } else null
+                } else {
+                    null
+                }
             )
         }
         itemsIndexed(contentItems) { index, content ->
@@ -427,7 +441,7 @@ private fun LazyListScope.subtopics(
     startIndex: Int,
     subtopics: List<TopicUi.Subtopic>,
     section: TopicUi.Section,
-    onClick: (text: String, ref: String, selectedItemIndex: Int) -> Unit,
+    onClick: (text: String, ref: String, selectedItemIndex: Int) -> Unit
 ) {
     if (subtopics.isNotEmpty()) {
         item {
