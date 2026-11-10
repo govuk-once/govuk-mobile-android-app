@@ -10,10 +10,10 @@ interface LocalApi {
     @GET("api/local-authority")
     suspend fun fromPostcode(
         @Query("postcode") postcode: String
-    ) : Response<LocalAuthorityResponse>
+    ): Response<LocalAuthorityResponse>
 
     @GET("api/local-authority/{slug}")
     suspend fun fromSlug(
         @Path("slug") slug: String
-    ) : Response<LocalAuthorityResponse>
+    ): Response<LocalAuthorityResponse>
 }
