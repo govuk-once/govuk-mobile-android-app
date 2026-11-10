@@ -1,10 +1,10 @@
 package uk.gov.govuk.messages.fixtures
 
-import uk.gov.govuk.messages.data.model.Notification
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import uk.gov.govuk.messages.data.model.Notification
 
 class MessagesFixtures {
     companion object {
