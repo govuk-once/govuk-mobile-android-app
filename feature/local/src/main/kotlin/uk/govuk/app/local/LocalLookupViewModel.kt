@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,18 +15,15 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result.Success
 import uk.govuk.app.local.data.LocalRepo
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult
+import javax.inject.Inject
 
 internal sealed class LocalUiState {
-    data class Error(
-        @StringRes val message: Int
-    ) : LocalUiState()
+    data class Error(@StringRes val message: Int): LocalUiState()
 }
 
 sealed class NavigationEvent {
-    data object LocalAuthoritySelected : NavigationEvent()
-    data class Addresses(
-        val postcode: String
-    ) : NavigationEvent()
+    data object LocalAuthoritySelected: NavigationEvent()
+    data class Addresses(val postcode: String): NavigationEvent()
 }
 
 @HiltViewModel
@@ -35,7 +31,7 @@ internal class LocalLookupViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val localRepo: LocalRepo,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+): ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "LocalLookupScreen"
@@ -49,9 +45,7 @@ internal class LocalLookupViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
     val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
 
-    fun onPageView(
-        title: String = TITLE
-    ) {
+    fun onPageView(title: String = TITLE) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = SCREEN_NAME,
@@ -59,10 +53,7 @@ internal class LocalLookupViewModel @Inject constructor(
         )
     }
 
-    fun onSearchPostcode(
-        buttonText: String,
-        postcode: String
-    ) {
+    fun onSearchPostcode(buttonText: String, postcode: String) {
         analyticsClient.buttonClick(
             text = buttonText,
             section = SECTION
@@ -74,16 +65,14 @@ internal class LocalLookupViewModel @Inject constructor(
     }
 
     fun onPostcodeChange() {
-        _uiState.value = null
+         _uiState.value = null
     }
 
-    private fun toApiPostcode(
-        str: String
-    ): String = str.filter { !it.isWhitespace() }.uppercase()
+    private fun toApiPostcode(str: String): String {
+        return str.filter { !it.isWhitespace() }.uppercase()
+    }
 
-    private fun fetchPostcodeLookupResult(
-        postcode: String
-    ) {
+    private fun fetchPostcodeLookupResult(postcode: String) {
         if (postcode.isBlank()) {
             _uiState.value = createAndLogError(R.string.local_no_postcode_message)
         } else {
@@ -98,9 +87,7 @@ internal class LocalLookupViewModel @Inject constructor(
         }
     }
 
-    private fun createAndLogError(
-        @StringRes errorMessage: Int
-    ): LocalUiState.Error {
+    private fun createAndLogError(@StringRes errorMessage: Int): LocalUiState.Error {
         onPageView(context.getString(errorMessage))
         return LocalUiState.Error(errorMessage)
     }
