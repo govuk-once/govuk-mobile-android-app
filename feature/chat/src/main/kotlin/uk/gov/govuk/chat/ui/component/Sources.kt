@@ -87,7 +87,7 @@ internal fun Sources(
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(GovUkTheme.colourScheme.textAndIcons.icon),
                 modifier = Modifier
-                    .padding(end = GovUkTheme.spacing.small)
+                    .padding(end = GovUkTheme.spacing.small),
             )
 
             BodyBoldLabel(
@@ -161,9 +161,7 @@ internal fun Sources(
 }
 
 @Composable
-private fun ChatDivider(
-    modifier: Modifier = Modifier
-) {
+private fun ChatDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         thickness = 1.dp,
         color = GovUkTheme.colourScheme.strokes.chatDivider,
