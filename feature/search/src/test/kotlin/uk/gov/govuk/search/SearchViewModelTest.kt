@@ -291,7 +291,7 @@ class SearchViewModelTest {
         @Test
         fun `Given a search with a result, then emit performing search state`() {
             coEvery { repository.performSearch(searchTerm) } coAnswers {
-                suspendCancellableCoroutine {  }
+                suspendCancellableCoroutine { }
             }
 
             val viewModel = SearchViewModel(analyticsClient, visited, repository)
