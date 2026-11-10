@@ -185,7 +185,7 @@ private fun mapSuggestionVariants(
 ): Map<String, ArrayList<String>> {
     val mappedVariants = emptyMap<String, ArrayList<String>>().toMutableMap()
 
-    suggestionWords.forEachIndexed  { index, suggestionWord ->
+    suggestionWords.forEachIndexed { index, suggestionWord ->
         val variants = ArrayList<String>()
 
         parsedSuggestions.forEach { parsedSuggestion ->
@@ -214,8 +214,12 @@ private fun mergeSuggestionVariants(
         val firstIndex = variant.indexOf(marker)
         val lastIndex = variant.lastIndexOf(marker)
 
-        if (startIndex > firstIndex) { startIndex = firstIndex }
-        if (endIndex < lastIndex) { endIndex = lastIndex }
+        if (startIndex > firstIndex) {
+            startIndex = firstIndex
+        }
+        if (endIndex < lastIndex) {
+            endIndex = lastIndex
+        }
     }
 
     val updatedVariants = ArrayList<String>()
@@ -262,7 +266,7 @@ private fun highlightVariants(
 ): AnnotatedString {
     val transport = FontFamily(
         Font(uk.gov.govuk.design.R.font.transport_bold, FontWeight.Bold),
-        Font(uk.gov.govuk.design.R.font.transport_light, FontWeight.Light),
+        Font(uk.gov.govuk.design.R.font.transport_light, FontWeight.Light)
     )
 
     val normalStyle = SpanStyle(
@@ -270,7 +274,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Bold,
-        color = textColor,
+        color = textColor
     )
 
     val highlightStyle = SpanStyle(
@@ -278,7 +282,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Light,
-        color = textColor,
+        color = textColor
     )
 
     return buildAnnotatedString {
