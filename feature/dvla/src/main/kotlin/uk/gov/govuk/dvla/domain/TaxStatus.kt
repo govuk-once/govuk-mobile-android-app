@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.domain
 
 import uk.gov.govuk.dvla.remote.model.common.TaxStatus as RemoteTaxStatus
 
+
 enum class TaxStatus {
     NOT_TAXED_FOR_ON_ROAD_USE,
     SORN,
