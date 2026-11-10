@@ -48,6 +48,7 @@ internal fun SearchResults(
             searchResults.size
         )
 
+
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         state = listState
@@ -82,6 +83,7 @@ internal fun SearchResults(
             MediumVerticalSpacer()
         }
     }
+
 
     LaunchedEffect(searchTerm) {
         // We only want to trigger scroll and focus if we have a new search (rather than orientation change)
