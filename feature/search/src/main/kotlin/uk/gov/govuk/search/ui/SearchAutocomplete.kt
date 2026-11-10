@@ -154,11 +154,7 @@ internal fun SearchAutocomplete(
 }
 
 @Composable
-private fun highlightSearchTerms(
-    suggestion: String,
-    searchTerm: String,
-    textColor: Color
-): AnnotatedString {
+private fun highlightSearchTerms(suggestion: String, searchTerm: String, textColor: Color): AnnotatedString {
     val suggestionWords = suggestion.split(" ")
     val searchTermWords = searchTerm.split(" ")
     val marker = '|'
@@ -185,7 +181,7 @@ private fun mapSuggestionVariants(
 ): Map<String, ArrayList<String>> {
     val mappedVariants = emptyMap<String, ArrayList<String>>().toMutableMap()
 
-    suggestionWords.forEachIndexed { index, suggestionWord ->
+    suggestionWords.forEachIndexed  { index, suggestionWord ->
         val variants = ArrayList<String>()
 
         parsedSuggestions.forEach { parsedSuggestion ->
@@ -214,12 +210,8 @@ private fun mergeSuggestionVariants(
         val firstIndex = variant.indexOf(marker)
         val lastIndex = variant.lastIndexOf(marker)
 
-        if (startIndex > firstIndex) {
-            startIndex = firstIndex
-        }
-        if (endIndex < lastIndex) {
-            endIndex = lastIndex
-        }
+        if (startIndex > firstIndex) { startIndex = firstIndex }
+        if (endIndex < lastIndex) { endIndex = lastIndex }
     }
 
     val updatedVariants = ArrayList<String>()
@@ -232,10 +224,7 @@ private fun mergeSuggestionVariants(
     return mapOf(mappedVariant.key to updatedVariants)
 }
 
-private fun fixMultipleMarkers(
-    mappedVariants: ArrayList<String>,
-    marker: Char
-) {
+private fun fixMultipleMarkers(mappedVariants: ArrayList<String>, marker: Char) {
     mappedVariants.forEachIndexed { index, suggestion ->
         if (suggestion.split(marker).size > 3) {
             var startIndex = suggestion.indexOf(marker)
@@ -266,7 +255,7 @@ private fun highlightVariants(
 ): AnnotatedString {
     val transport = FontFamily(
         Font(uk.gov.govuk.design.R.font.transport_bold, FontWeight.Bold),
-        Font(uk.gov.govuk.design.R.font.transport_light, FontWeight.Light)
+        Font(uk.gov.govuk.design.R.font.transport_light, FontWeight.Light),
     )
 
     val normalStyle = SpanStyle(
@@ -274,7 +263,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Bold,
-        color = textColor
+        color = textColor,
     )
 
     val highlightStyle = SpanStyle(
@@ -282,7 +271,7 @@ private fun highlightVariants(
         fontSize = 17.sp,
         letterSpacing = 0.sp,
         fontWeight = FontWeight.Light,
-        color = textColor
+        color = textColor,
     )
 
     return buildAnnotatedString {

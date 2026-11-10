@@ -6,11 +6,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import uk.gov.govuk.govkit.browser.DeviceInfo
+import uk.gov.govuk.govkit.browser.getHelpAndFeedbackUrl
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_PERMISSION_ROUTE
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
-import uk.gov.govuk.govkit.browser.DeviceInfo
-import uk.gov.govuk.govkit.browser.getHelpAndFeedbackUrl
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
 import uk.gov.govuk.settings.ui.OpenSourceLicensesScreen
@@ -134,7 +134,7 @@ fun NavGraphBuilder.signOutGraph(
             )
         }
         composable(
-            route = SIGN_OUT_ERROR_ROUTE,
+            route = SIGN_OUT_ERROR_ROUTE
         ) {
             SignOutErrorRoute(
                 onBack = { navController.navigate(SETTINGS_ROUTE) },
@@ -147,4 +147,3 @@ fun NavGraphBuilder.signOutGraph(
 fun NavController.navigateToErrorScreen() {
     navigate(SIGN_OUT_ERROR_ROUTE)
 }
-
