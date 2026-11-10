@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,7 +51,7 @@ fun NotificationsPreferenceBottomSheet(
     onGetNotifications: () -> Unit
 ) {
     ModalBottomSheet(
-        onDismissRequest = if (!isSaving) onDismiss else ({} ),
+        onDismissRequest = if (!isSaving) onDismiss else ({}),
         sheetState = sheetState,
         containerColor = GovUkTheme.colourScheme.surfaces.surfaceModal,
         contentColor = GovUkTheme.colourScheme.textAndIcons.primary,
@@ -135,7 +134,6 @@ private fun NotificationsPreferenceBottomSheetContent(
             MediumVerticalSpacer()
         }
 
-
         FixedContainerDivider()
 
         Column(
@@ -176,7 +174,9 @@ private fun NotificationsPreferenceBottomSheetContent(
 }
 
 @Composable
-private fun DragHandle(modifier: Modifier = Modifier) {
+private fun DragHandle(
+    modifier: Modifier = Modifier
+) {
     val dragHandleDesc = stringResource(uk.gov.govuk.design.R.string.content_desc_drag_handle)
     Box(
         modifier = modifier
