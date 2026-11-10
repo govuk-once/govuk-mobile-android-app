@@ -3,10 +3,10 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.analytics.AnalyticsClient
+import javax.inject.Inject
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.mapper.CheckVehicleDetailsMapper
@@ -14,12 +14,8 @@ import uk.gov.govuk.dvla.navigation.ARG_REG_NUMBER
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 internal sealed interface CheckVehicleDetailsUiState {
-    data class Success(
-        val details: VehicleDetailsUiModel
-    ) : CheckVehicleDetailsUiState
-    data class Error(
-        val regNumber: String
-    ) : CheckVehicleDetailsUiState
+    data class Success(val details: VehicleDetailsUiModel) : CheckVehicleDetailsUiState
+    data class Error(val regNumber: String) : CheckVehicleDetailsUiState
 }
 
 @HiltViewModel
@@ -75,10 +71,7 @@ internal class CheckVehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onMenuItemClicked(
-        text: String,
-        url: String
-    ) {
+    fun onMenuItemClicked(text: String, url: String) {
         analyticsClient.menuItemClick(
             text = text,
             external = true,
@@ -87,11 +80,7 @@ internal class CheckVehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onExternalButtonClicked(
-        text: String,
-        url: String,
-        section: String
-    ) {
+    fun onExternalButtonClicked(text: String, url: String, section: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
