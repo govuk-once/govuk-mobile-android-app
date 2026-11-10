@@ -3,15 +3,15 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
-import javax.inject.Inject
+import uk.gov.govuk.dvla.data.DvlaRepo
 
 internal sealed interface CheckVehicleSheetState {
     val regNumber: String
@@ -158,7 +158,4 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
     }
 }
 
-private fun Char.isAllowedRegNumberChar(): Boolean =
-    this in 'A'..'Z' || this in '0'..'9' || this == ' '
-
-
+private fun Char.isAllowedRegNumberChar(): Boolean = this in 'A'..'Z' || this in '0'..'9' || this == ' '

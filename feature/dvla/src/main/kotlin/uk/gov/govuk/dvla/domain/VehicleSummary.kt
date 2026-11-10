@@ -1,7 +1,7 @@
 package uk.gov.govuk.dvla.domain
 
-import uk.gov.govuk.data.extension.toLocalDateOrNull
 import java.time.LocalDate
+import uk.gov.govuk.data.extension.toLocalDateOrNull
 import uk.gov.govuk.dvla.remote.model.VehicleSummary as RemoteVehicleSummary
 
 data class VehicleSummary(
@@ -17,18 +17,15 @@ data class VehicleSummary(
     val currentLicencePaymentMethod: String?
 )
 
-internal fun RemoteVehicleSummary.toDomainModel(): VehicleSummary {
-    return VehicleSummary(
-        vehicleId = this.vehicleId,
-        registration = this.registrationNumber,
-        make = this.make,
-        model = this.model,
-        taxStatus = this.taxStatus.toDomain(),
-        taxExpiryDate = this.taxedUntil.toLocalDateOrNull(),
-        motStatus = this.motStatus.toDomain(),
-        motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
-        sornStart = this.sornStart.toLocalDateOrNull(),
-        currentLicencePaymentMethod = this.currentLicencePaymentMethod
-    )
-}
-
+internal fun RemoteVehicleSummary.toDomainModel(): VehicleSummary = VehicleSummary(
+    vehicleId = this.vehicleId,
+    registration = this.registrationNumber,
+    make = this.make,
+    model = this.model,
+    taxStatus = this.taxStatus.toDomain(),
+    taxExpiryDate = this.taxedUntil.toLocalDateOrNull(),
+    motStatus = this.motStatus.toDomain(),
+    motExpiryDate = this.motExpiryDate.toLocalDateOrNull(),
+    sornStart = this.sornStart.toLocalDateOrNull(),
+    currentLicencePaymentMethod = this.currentLicencePaymentMethod
+)
