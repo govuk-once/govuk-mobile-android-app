@@ -5,7 +5,9 @@ import uk.gov.govuk.dvla.domain.VehicleColour
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.util.StringProvider
 
-internal fun VehicleDetails.getVehicleColour(stringProvider: StringProvider): String {
+internal fun VehicleDetails.getVehicleColour(
+    stringProvider: StringProvider
+): String {
     val colourRes = stringProvider.getString(this.colour.getResource())
 
     return when (this.secondaryColour) {

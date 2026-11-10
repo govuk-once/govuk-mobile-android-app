@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,12 +17,15 @@ import uk.gov.govuk.dvla.navigation.ARG_VEHICLE_ID
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.govkit.browser.Urls
-import javax.inject.Inject
 
 internal sealed interface VehicleDetailsUiState {
     data object Loading : VehicleDetailsUiState
-    data class Success(val details: VehicleDetailsUiModel) : VehicleDetailsUiState
-    data class Error(val fallbackUrl: UrlModel) : VehicleDetailsUiState
+    data class Success(
+        val details: VehicleDetailsUiModel
+    ) : VehicleDetailsUiState
+    data class Error(
+        val fallbackUrl: UrlModel
+    ) : VehicleDetailsUiState
 }
 
 @HiltViewModel
@@ -48,7 +52,9 @@ internal class VehicleDetailsViewModel @Inject constructor(
         fetchVehicleDetails()
     }
 
-    fun onPageView(title: String) {
+    fun onPageView(
+        title: String
+    ) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = title,
@@ -56,7 +62,11 @@ internal class VehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onExternalButtonClicked(text: String, url: String, section: String) {
+    fun onExternalButtonClicked(
+        text: String,
+        url: String,
+        section: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -65,7 +75,10 @@ internal class VehicleDetailsViewModel @Inject constructor(
         )
     }
 
-    fun onMenuItemClicked(text: String, url: String) {
+    fun onMenuItemClicked(
+        text: String,
+        url: String
+    ) {
         analyticsClient.menuItemClick(
             text = text,
             external = true,

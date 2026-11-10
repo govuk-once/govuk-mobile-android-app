@@ -23,7 +23,7 @@ class StringCleanerTest {
             val emailAddresses = listOf(
                 "test@gmail.com",
                 "test@localhost",
-                "test.user@yahoo.co.uk"
+                "test.user@yahoo.co.uk",
             )
 
             emailAddresses.forEach { emailAddress ->
@@ -38,7 +38,7 @@ class StringCleanerTest {
                 1234567890123,
                 12345678901234,
                 123456789012345,
-                1234567890123456
+                1234567890123456,
             )
 
             creditCardNumbers.forEach { creditCardNumber ->
@@ -93,7 +93,7 @@ class StringCleanerTest {
                 "+1-123-4567890",
                 "+(123)-123-4567",
                 "+1.123.4567890",
-                "+(123).123.4567"
+                "+(123).123.4567",
             )
 
             phoneNumbers.forEach { phoneNumber ->

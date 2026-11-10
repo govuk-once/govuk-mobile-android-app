@@ -4,7 +4,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -21,6 +20,7 @@ import uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import kotlin.test.assertTrue
 
 class ChatRepoTest {
 
@@ -163,7 +163,7 @@ class ChatRepoTest {
 
     @Test
     fun `Give feedback calls API with reaction and returns success`() = runTest {
-        coEvery { chatApi.giveFeedback(any(), any(), any()) } returns feedbackResponse
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
         every { feedbackResponse.isSuccessful } returns true
         every { feedbackResponse.code() } returns 201
         every { feedbackResponse.body() } returns Unit
@@ -182,7 +182,7 @@ class ChatRepoTest {
 
     @Test
     fun `Give feedback returns success when feedback has already been given`() = runTest {
-        coEvery { chatApi.giveFeedback(any(), any(), any()) } returns feedbackResponse
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
         every { feedbackResponse.isSuccessful } returns false
         every { feedbackResponse.code() } returns 409
 
@@ -193,7 +193,7 @@ class ChatRepoTest {
 
     @Test
     fun `Give feedback returns error when API returns an error`() = runTest {
-        coEvery { chatApi.giveFeedback(any(), any(), any()) } returns feedbackResponse
+        coEvery { chatApi.giveFeedback(any(), any(), any() )} returns feedbackResponse
         every { feedbackResponse.isSuccessful } returns false
         every { feedbackResponse.code() } returns 404
 
