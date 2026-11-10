@@ -149,15 +149,11 @@ fun NavController.navigateToDvlaLink() {
     navigate(DVLA_LINK_ROUTE)
 }
 
-fun NavController.navigateToVehicleDetails(
-    vehicleId: Int
-) {
+fun NavController.navigateToVehicleDetails(vehicleId: Int) {
     navigate("$VEHICLE_DETAILS_ROUTE/$vehicleId")
 }
 
-fun NavController.navigateToVehicleDetailsByRegistration(
-    regNumber: String
-) {
+fun NavController.navigateToVehicleDetailsByRegistration(regNumber: String) {
     navigate("$VEHICLE_SEARCH_RESULT_ROUTE/$regNumber") {
         popUpTo("$VEHICLE_SEARCH_RESULT_ROUTE/{$ARG_REG_NUMBER}") {
             inclusive = true
@@ -169,9 +165,6 @@ fun NavController.navigateToDrivingCategories() {
     navigate(LICENCE_CATEGORIES_ROUTE)
 }
 
-fun NavController.navigateToLicenceCategoryDetail(
-    code: String,
-    type: EntitlementType
-) {
+fun NavController.navigateToLicenceCategoryDetail(code: String, type: EntitlementType) {
     navigate("$LICENCE_CATEGORY_DETAIL_ROUTE/$code/${type.name}")
 }
