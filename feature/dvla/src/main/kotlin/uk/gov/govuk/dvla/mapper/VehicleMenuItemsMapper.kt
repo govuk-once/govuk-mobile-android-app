@@ -1,12 +1,12 @@
 package uk.gov.govuk.dvla.mapper
 
-import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.util.StringProvider
+import javax.inject.Inject
 
 internal class VehicleMenuItemsMapper @Inject constructor(
     private val stringProvider: StringProvider
