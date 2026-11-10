@@ -1,8 +1,8 @@
 package uk.gov.govuk.topics.extension
 
 import android.content.Context
-import uk.gov.govuk.topics.ui.model.TopicRef
 import java.util.Locale
+import uk.gov.govuk.topics.ui.model.TopicRef
 
 /**
  * Maps a topic reference to a topic name and returns it.
