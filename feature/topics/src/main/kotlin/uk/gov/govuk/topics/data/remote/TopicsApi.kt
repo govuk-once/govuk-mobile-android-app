@@ -11,7 +11,5 @@ internal interface TopicsApi {
     suspend fun getTopics(): Response<List<RemoteTopicItem>>
 
     @GET("{ref}")
-    suspend fun getTopic(
-        @Path("ref") ref: String
-    ): Response<RemoteTopic>
+    suspend fun getTopic(@Path("ref") ref: String): Response<RemoteTopic>
 }

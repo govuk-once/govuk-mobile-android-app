@@ -1,9 +1,9 @@
 package uk.gov.govuk.topics
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 import uk.gov.govuk.topics.data.TopicsRepo
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class DefaultTopicsFeature @Inject constructor(
@@ -22,7 +22,9 @@ internal class DefaultTopicsFeature @Inject constructor(
         topicsRepo.clear()
     }
 
-    override suspend fun hasTopics(): Boolean = topicsRepo.hasTopics()
+    override suspend fun hasTopics(): Boolean {
+        return topicsRepo.hasTopics()
+    }
 
     private suspend fun getTopicsReferences() = topicsRepo.topics.firstOrNull()?.map { it.ref }
 }

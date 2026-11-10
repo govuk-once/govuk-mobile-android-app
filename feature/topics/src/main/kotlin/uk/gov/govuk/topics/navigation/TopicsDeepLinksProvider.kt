@@ -1,8 +1,8 @@
 package uk.gov.govuk.topics.navigation
 
+import uk.gov.govuk.topics.TopicsFeature
 import javax.inject.Inject
 import javax.inject.Singleton
-import uk.gov.govuk.topics.TopicsFeature
 
 @Singleton
 class TopicsDeepLinksProvider @Inject constructor(

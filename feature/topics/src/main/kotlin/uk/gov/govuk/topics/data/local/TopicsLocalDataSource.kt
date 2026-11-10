@@ -1,8 +1,6 @@
 package uk.gov.govuk.topics.data.local
 
 import io.realm.kotlin.ext.query
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +10,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import uk.gov.govuk.topics.data.local.model.LocalTopicItem
 import uk.gov.govuk.topics.data.remote.model.RemoteTopicItem
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class TopicsLocalDataSource @Inject constructor(
@@ -66,12 +66,11 @@ internal class TopicsLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun hasTopics(): Boolean = realmProvider.open().query<LocalTopicItem>().find().toList().isNotEmpty()
+    suspend fun hasTopics(): Boolean {
+        return realmProvider.open().query<LocalTopicItem>().find().toList().isNotEmpty()
+    }
 
-    suspend fun toggleSelection(
-        ref: String,
-        isSelected: Boolean
-    ) {
+    suspend fun toggleSelection(ref: String, isSelected: Boolean) {
         realmProvider.open().write {
             query<LocalTopicItem>("ref = $0", ref).first().find()?.apply {
                 this.isSelected = isSelected
@@ -79,9 +78,7 @@ internal class TopicsLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun selectAll(
-        refs: List<String>
-    ) {
+    suspend fun selectAll(refs: List<String>) {
         realmProvider.open().write {
             val topics = query<LocalTopicItem>("ref IN $0", refs).find()
             topics.forEach { topic ->
@@ -90,7 +87,9 @@ internal class TopicsLocalDataSource @Inject constructor(
         }
     }
 
-    internal suspend fun isTopicsCustomised(): Boolean = topicsDataStore.isTopicsCustomised()
+    internal suspend fun isTopicsCustomised(): Boolean {
+        return topicsDataStore.isTopicsCustomised()
+    }
 
     internal suspend fun topicsCustomised() {
         topicsDataStore.topicsCustomised()

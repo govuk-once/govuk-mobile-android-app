@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,7 +18,6 @@ import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
 import uk.gov.govuk.travelalerts.data.model.Subgroup
 import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
-import javax.inject.Inject
 
 @HiltViewModel
 class EditCountriesViewModel @Inject constructor(
@@ -53,7 +53,9 @@ class EditCountriesViewModel @Inject constructor(
     }
 
     sealed class NavigationEvent {
-        data class ToNotificationsOptIn(val slug: String) : NavigationEvent()
+        data class ToNotificationsOptIn(
+            val slug: String
+        ) : NavigationEvent()
         data object PopBack : NavigationEvent()
     }
 
@@ -89,11 +91,16 @@ class EditCountriesViewModel @Inject constructor(
         fetchFollowedCountries()
     }
 
-    private fun updateLoaded(block: State.Loaded.() -> State.Loaded) {
+    private fun updateLoaded(
+        block: State.Loaded.() -> State.Loaded
+    ) {
         (_uiState.value as? State.Loaded)?.let { _uiState.value = it.block() }
     }
 
-    fun toggleNotifications(slug: String, enabled: Boolean) {
+    fun toggleNotifications(
+        slug: String,
+        enabled: Boolean
+    ) {
         viewModelScope.launch {
             if (enabled && !notificationsRepo.permissionGranted()) {
                 selectedSlug = slug
@@ -123,7 +130,9 @@ class EditCountriesViewModel @Inject constructor(
         }
     }
 
-    fun unfollowCountry(slug: String) {
+    fun unfollowCountry(
+        slug: String
+    ) {
         val countryName = (_uiState.value as? State.Loaded)?.countries?.find { it.slug == slug }?.name
         countryName?.let {
             analyticsClient.toggleFunction(text = it, section = SECTION, action = UNFOLLOW_ACTION)
@@ -139,7 +148,11 @@ class EditCountriesViewModel @Inject constructor(
         }
     }
 
-    fun onOptInResult(slug: String, error: Boolean, notificationsEnabled: Boolean = false) {
+    fun onOptInResult(
+        slug: String,
+        error: Boolean,
+        notificationsEnabled: Boolean = false
+    ) {
         if (error) {
             selectedSlug = slug
             updateLoaded { copy(toggleError = true) }
@@ -164,7 +177,9 @@ class EditCountriesViewModel @Inject constructor(
         }
     }
 
-    fun notificationsEnabled(slug: String): Boolean {
+    fun notificationsEnabled(
+        slug: String
+    ): Boolean {
         val loaded = _uiState.value as? State.Loaded ?: return false
         val subgroup = loaded.groups.find { it.group == slug }?.subgroup
         return subgroup == Subgroup.INSTANT && loaded.devicePermissionGranted
@@ -201,8 +216,16 @@ class EditCountriesViewModel @Inject constructor(
                 }
                 val followError = savedStateHandle.get<Boolean>(SHOW_ERROR_ARG) == true
                 if (followError) savedStateHandle[SHOW_ERROR_ARG] = false
-                val devicePermissionGranted = ((_uiState.value as? State.Loaded)?.devicePermissionGranted) ?: notificationsRepo.permissionGranted()
-                _uiState.value = State.Loaded(followed, groupsResult.value, selectedSlug = selectedSlug, devicePermissionGranted = devicePermissionGranted, followError = followError)
+                val devicePermissionGranted =
+                    ((_uiState.value as? State.Loaded)?.devicePermissionGranted) ?: notificationsRepo.permissionGranted()
+                _uiState.value =
+                    State.Loaded(
+                        followed,
+                        groupsResult.value,
+                        selectedSlug = selectedSlug,
+                        devicePermissionGranted = devicePermissionGranted,
+                        followError = followError
+                    )
             } else if (groupsResult is Result.DeviceOffline || countriesResult is Result.DeviceOffline) {
                 _uiState.value = State.DeviceOffline
             } else {
