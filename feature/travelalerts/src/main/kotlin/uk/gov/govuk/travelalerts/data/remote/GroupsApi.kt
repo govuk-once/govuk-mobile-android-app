@@ -16,7 +16,5 @@ interface GroupsApi {
     suspend fun getGroups(): Response<List<Group>>
 
     @POST(GROUPS_PATH)
-    suspend fun subscribeToGroups(
-        @Body subscriptions: List<SubscriptionRequest>
-    ): Response<Unit>
+    suspend fun subscribeToGroups(@Body subscriptions: List<SubscriptionRequest>): Response<Unit>
 }

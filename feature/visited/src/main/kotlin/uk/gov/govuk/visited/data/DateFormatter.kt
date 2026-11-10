@@ -4,11 +4,13 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-fun localDateFormatter(millis: Long): String {
+fun localDateFormatter(
+    millis: Long
+): String {
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d LLLL")
     return LocalDateTime.ofEpochSecond(millis, 0, ZoneOffset.UTC).format(formatter)
 }
 
-fun capitaliseMonth(month: String): String {
-    return month.lowercase().replaceFirstChar(Char::titlecaseChar)
-}
+fun capitaliseMonth(
+    month: String
+): String = month.lowercase().replaceFirstChar(Char::titlecaseChar)

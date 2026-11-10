@@ -3,7 +3,6 @@ package uk.gov.govuk.travelalerts.ui.widget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,6 +12,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.govkit.date.toRelativeDate
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
+import javax.inject.Inject
 
 @HiltViewModel
 class TravelAlertsWidgetViewModel @Inject constructor(
@@ -25,20 +25,13 @@ class TravelAlertsWidgetViewModel @Inject constructor(
     )
 
     sealed class State {
-        data object Loading : State()
-        data class Loaded(
-            val rows: List<LoadedRow>
-        ) : State()
-        data object Empty : State()
-        data object Error : State()
+        data object Loading: State()
+        data class Loaded(val rows: List<LoadedRow>): State()
+        data object Empty: State()
+        data object Error: State()
     }
 
-    data class LoadedRow(
-        val headline: String,
-        val subtitle: String,
-        val link: String,
-        val url: String
-    )
+    data class LoadedRow(val headline: String, val subtitle: String, val link: String, val url: String)
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -51,9 +44,7 @@ class TravelAlertsWidgetViewModel @Inject constructor(
         _uiState.update { it.copy(followError = false) }
     }
 
-    fun onFollowCountryClick(
-        text: String
-    ) {
+    fun onFollowCountryClick(text: String) {
         analyticsClient.widgetClick(
             text = text,
             external = false,
@@ -61,9 +52,7 @@ class TravelAlertsWidgetViewModel @Inject constructor(
         )
     }
 
-    fun onRowClick(
-        row: LoadedRow
-    ) {
+    fun onRowClick(row: LoadedRow) {
         analyticsClient.widgetClick(
             text = row.headline,
             url = row.url,

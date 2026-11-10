@@ -1,13 +1,16 @@
 package uk.gov.govuk.visited.data
 
-import uk.gov.govuk.visited.SectionTitles
-import uk.gov.govuk.visited.domain.model.VisitedItemUi
-import uk.gov.govuk.visited.ui.model.VisitedUi
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import uk.gov.govuk.visited.SectionTitles
+import uk.gov.govuk.visited.domain.model.VisitedItemUi
+import uk.gov.govuk.visited.ui.model.VisitedUi
 
-fun transformVisitedItems(visitedItems: List<VisitedItemUi>, todaysDate: LocalDate): Map<String, List<VisitedUi>> {
+fun transformVisitedItems(
+    visitedItems: List<VisitedItemUi>,
+    todaysDate: LocalDate
+): Map<String, List<VisitedUi>> {
     fun VisitedItemUi.toLocalDate() = LocalDateTime.ofEpochSecond(this.lastVisited, 0, ZoneOffset.UTC).toLocalDate()
 
     val todaysItems = visitedItems.filter { it.toLocalDate().isEqual(todaysDate) }
@@ -24,7 +27,9 @@ fun transformVisitedItems(visitedItems: List<VisitedItemUi>, todaysDate: LocalDa
     fun VisitedItemUi.previousMonthKey() = "${capitaliseMonth(toLocalDate().month.name)} ${toLocalDate().year}"
     val groupedPreviousMonthsItems = previousMonthsItems.groupBy { it.previousMonthKey() }
 
-    fun toVisitedUi(items: List<VisitedItemUi>): List<VisitedUi> = items.map {
+    fun toVisitedUi(
+        items: List<VisitedItemUi>
+    ): List<VisitedUi> = items.map {
         VisitedUi(
             title = it.title,
             url = it.url,

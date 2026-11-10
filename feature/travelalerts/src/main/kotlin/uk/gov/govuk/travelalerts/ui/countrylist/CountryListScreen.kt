@@ -26,10 +26,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +58,7 @@ import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.component.error.OfflineMessage
+import uk.gov.govuk.design.ui.component.error.ProblemMessage
 import uk.gov.govuk.design.ui.component.error.ProblemMessageWithRetry
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle
@@ -128,7 +129,7 @@ fun CountryListScreen(
 
         when (val state = uiState) {
             is CountryListViewModel.State.Loading -> LoadingScreen()
-            is CountryListViewModel.State.Error -> CountryListError(onRetry = viewModel::onRetry)
+            is CountryListViewModel.State.Error ->CountryListError(onRetry = viewModel::onRetry)
             is CountryListViewModel.State.DeviceOffline -> CountryListDeviceOffline(onRetry = viewModel::onRetry)
             is CountryListViewModel.State.Loaded -> CountryListLoaded(
                 countries = state.countries,
@@ -158,10 +159,7 @@ fun CountryListScreen(
 }
 
 @Composable
-private fun CountryListHeader(
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun CountryListHeader(onClose: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -247,8 +245,7 @@ private fun CountryListLoaded(
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium).fillMaxWidth(),
             isLinkUnderlined = true,
             textAlign = TextAlign.Center,
-            onClick = onClickFooter
-        )
+            onClick = onClickFooter)
     }
 }
 
@@ -319,7 +316,7 @@ private fun CountrySearchBar(
 
 @Composable
 private fun CountryListError(
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
 ) {
     ProblemMessageWithRetry(onButtonClick = onRetry)
 }
@@ -372,7 +369,7 @@ internal fun CountryListLoadedPreview() {
         Country("Albania", "albania", "2023-01-01T00:00:00Z", listOf()),
         Country("Algeria", "algeria", "2024-01-01T00:00:00Z", listOf()),
         Country("Andorra", "andorra", "2025-01-01T00:00:00Z", listOf()),
-        Country("Anguilla", "anguilla", "2026-01-01T00:00:00Z", listOf())
+        Country("Anguilla", "anguilla", "2026-01-01T00:00:00Z", listOf()),
     )
     GovUkTheme {
         Column(
