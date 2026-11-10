@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:filename")
-
 package uk.gov.govuk.govkit.browser
 
 import android.content.ActivityNotFoundException
@@ -16,9 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.core.net.toUri
 
 @Composable
-fun rememberBrowserLauncher(
-    shouldShowExternalBrowser: Boolean
-): BrowserActivityLauncher {
+fun rememberBrowserLauncher(shouldShowExternalBrowser: Boolean): BrowserActivityLauncher {
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     return remember(launcher) {
@@ -33,26 +29,16 @@ fun rememberBrowserLauncher(
 sealed class BrowserActivityLauncher(
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
-    abstract fun launch(
-        url: String,
-        onError: () -> Unit
-    )
+    abstract fun launch(url: String, onError: () -> Unit)
 
-    open fun launchPartial(
-        context: Context,
-        url: String,
-        onError: () -> Unit
-    ) {
+    open fun launchPartial(context: Context, url: String, onError: () -> Unit) {
         launch(url, onError)
     }
 
     internal class External(
         launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
     ) : BrowserActivityLauncher(launcher) {
-        override fun launch(
-            url: String,
-            onError: () -> Unit
-        ) {
+        override fun launch(url: String, onError: () -> Unit) {
             try {
                 Intent(Intent.ACTION_VIEW).run {
                     data = url.toUri()
@@ -67,10 +53,7 @@ sealed class BrowserActivityLauncher(
     internal class InApp(
         launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
     ) : BrowserActivityLauncher(launcher) {
-        override fun launch(
-            url: String,
-            onError: () -> Unit
-        ) {
+        override fun launch(url: String, onError: () -> Unit) {
             try {
                 CustomTabsIntent.Builder().build().run {
                     intent.data = url.toUri()
@@ -81,11 +64,7 @@ sealed class BrowserActivityLauncher(
             }
         }
 
-        override fun launchPartial(
-            context: Context,
-            url: String,
-            onError: () -> Unit
-        ) {
+        override fun launchPartial(context: Context, url: String, onError: () -> Unit) {
             try {
                 context.getPartialCustomTabsIntent().run {
                     intent.data = url.toUri()

@@ -8,8 +8,8 @@ import androidx.core.app.ActivityCompat
 fun notificationsPermissionShouldShowRationale(
     activity: Activity,
     androidVersion: Int = Build.VERSION.SDK_INT
-) = androidVersion >= Build.VERSION_CODES.TIRAMISU
-        && ActivityCompat.shouldShowRequestPermissionRationale(
-    activity,
-    Manifest.permission.POST_NOTIFICATIONS
-)
+) = androidVersion >= Build.VERSION_CODES.TIRAMISU &&
+    ActivityCompat.shouldShowRequestPermissionRationale(
+        activity,
+        Manifest.permission.POST_NOTIFICATIONS
+    )
