@@ -15,6 +15,6 @@ fun getHelpAndFeedbackUrl(
 ): String {
     val deviceString = "${deviceInfo.manufacturer} ${deviceInfo.model} ${deviceInfo.osVersion}"
     return "${Urls.HELP_AND_FEEDBACK_URL}?" +
-            "app_version=$appVersion&" +
-            "phone=${URLEncoder.encode(deviceString, "UTF-8")}"
+        "app_version=$appVersion&" +
+        "phone=${URLEncoder.encode(deviceString, "UTF-8")}"
 }
