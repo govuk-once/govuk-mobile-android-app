@@ -3,7 +3,6 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import uk.gov.govuk.analytics.AnalyticsClient
@@ -13,11 +12,10 @@ import uk.gov.govuk.dvla.mapper.LicenceCategoriesMapper
 import uk.gov.govuk.dvla.navigation.ARG_CATEGORY_CODE
 import uk.gov.govuk.dvla.navigation.ARG_ENTITLEMENT_TYPE
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryDetailUiModel
+import javax.inject.Inject
 
 internal sealed interface LicenceCategoryDetailUiState {
-    data class Success(
-        val detail: LicenceCategoryDetailUiModel
-    ) : LicenceCategoryDetailUiState
+    data class Success(val detail: LicenceCategoryDetailUiModel) : LicenceCategoryDetailUiState
     data object Error : LicenceCategoryDetailUiState
 }
 
@@ -57,9 +55,7 @@ internal class LicenceCategoryDetailViewModel @Inject constructor(
         return LicenceCategoryDetailUiState.Success(categoryDetail)
     }
 
-    fun onPageView(
-        title: String
-    ) {
+    fun onPageView(title: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = title,

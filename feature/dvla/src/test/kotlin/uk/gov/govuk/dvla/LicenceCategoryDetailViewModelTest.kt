@@ -38,15 +38,13 @@ class LicenceCategoryDetailViewModelTest {
         viewModel = createViewModel()
     }
 
-    private fun createViewModel(
-        code: String? = "A",
-        type: String? = "FULL"
-    ) = LicenceCategoryDetailViewModel(
-        SavedStateHandle(mapOf(ARG_CATEGORY_CODE to code, ARG_ENTITLEMENT_TYPE to type)),
-        analyticsClient,
-        categoriesMapper,
-        dvlaRepo
-    )
+    private fun createViewModel(code: String? = "A", type: String? = "FULL") =
+        LicenceCategoryDetailViewModel(
+            SavedStateHandle(mapOf(ARG_CATEGORY_CODE to code, ARG_ENTITLEMENT_TYPE to type)),
+            analyticsClient,
+            categoriesMapper,
+            dvlaRepo
+        )
 
     @Test
     fun `Given a cached licence with entitlement, when viewModel is created, then state is Success with the mapped licence category detail`() {

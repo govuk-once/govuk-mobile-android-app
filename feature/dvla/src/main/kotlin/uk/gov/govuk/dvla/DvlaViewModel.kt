@@ -1,12 +1,9 @@
 package uk.gov.govuk.dvla
 
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -18,6 +15,9 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.dvla.linking.data.LinkingRepo
 import uk.gov.govuk.dvla.navigation.ARG_DVLA_TOKEN
+import javax.inject.Inject
+import javax.inject.Named
+import androidx.core.net.toUri
 
 @HiltViewModel
 internal class DvlaViewModel @Inject constructor(
@@ -101,18 +101,14 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
-    private fun launchAuthUrl(
-        token: String
-    ) {
+    private fun launchAuthUrl(token: String) {
         val authUrl = dvlaAuthUrl.toUri().buildUpon()
             .appendQueryParameter("token", token)
             .build()
         _authUrlToLaunch.value = authUrl.toString()
     }
 
-    fun onIntroPageView(
-        screenTitle: String
-    ) {
+    fun onIntroPageView(screenTitle: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS_INTRO,
             screenName = screenTitle,
@@ -121,9 +117,7 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
-    fun onLinkSuccessPageView(
-        screenTitle: String
-    ) {
+    fun onLinkSuccessPageView(screenTitle: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS_SUCCESS,
             screenName = screenTitle,
@@ -135,9 +129,7 @@ internal class DvlaViewModel @Inject constructor(
         analyticsClient.iconClick(type = NAV_TYPE_CLOSE)
     }
 
-    fun onIntroContinueClicked(
-        text: String
-    ) {
+    fun onIntroContinueClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -145,9 +137,7 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
-    fun onSuccessContinueClicked(
-        text: String
-    ) {
+    fun onSuccessContinueClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -159,9 +149,7 @@ internal class DvlaViewModel @Inject constructor(
         }
     }
 
-    fun onErrorOtherPageView(
-        screenTitle: String
-    ) {
+    fun onErrorOtherPageView(screenTitle: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS_ERROR_OTHER,
             screenName = screenTitle,
@@ -169,9 +157,7 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
-    fun onErrorBackToDrivingClicked(
-        text: String
-    ) {
+    fun onErrorBackToDrivingClicked(text: String) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -179,10 +165,7 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
-    fun onErrorVisitGovUkClicked(
-        text: String,
-        url: String
-    ) {
+    fun onErrorVisitGovUkClicked(text: String, url: String) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -191,9 +174,7 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
-    fun onOfflinePageView(
-        screenTitle: String
-    ) {
+    fun onOfflinePageView(screenTitle: String) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS_ERROR_OFFLINE,
             screenName = screenTitle,
@@ -201,9 +182,7 @@ internal class DvlaViewModel @Inject constructor(
         )
     }
 
-    fun onOfflineTryAgainClicked(
-        buttonText: String
-    ) {
+    fun onOfflineTryAgainClicked(buttonText: String) {
         analyticsClient.buttonClick(
             text = buttonText,
             external = false,
@@ -215,18 +194,14 @@ internal class DvlaViewModel @Inject constructor(
         _authUrlToLaunch.value = null
     }
 
-    fun handleAuthRedirect(
-        token: String
-    ) {
+    fun handleAuthRedirect(token: String) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading.Linking
             linkDvlaAccount(token)
         }
     }
 
-    private suspend fun linkDvlaAccount(
-        token: String
-    ) {
+    private suspend fun linkDvlaAccount(token: String) {
         when (dvlaRepo.linkAccount(token)) {
             is Result.Success -> _uiState.value = UiState.Success
             is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline

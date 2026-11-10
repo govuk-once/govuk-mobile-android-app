@@ -1,8 +1,8 @@
 package uk.gov.govuk.dvla.domain
 
-import java.time.LocalDate
 import uk.gov.govuk.data.extension.toLocalDateOrNull
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import java.time.LocalDate
 
 data class LicenceDetails(
     val licenceType: LicenceType,

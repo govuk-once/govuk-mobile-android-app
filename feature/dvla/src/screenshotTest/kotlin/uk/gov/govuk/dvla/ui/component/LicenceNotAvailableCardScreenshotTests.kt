@@ -12,3 +12,4 @@ internal class LicenceNotAvailableCardScreenshotTests {
         LicenceNotAvailableCardPreview()
     }
 }
+
