@@ -153,7 +153,7 @@ private class SettingsActions(
     val onHelpClick: () -> Unit,
     val onAccessibilityStatementClick: () -> Unit,
     val onLicenseClick: () -> Unit,
-    val onTermsAndConditionsClick: () -> Unit,
+    val onTermsAndConditionsClick: () -> Unit
 )
 
 @Composable
@@ -191,7 +191,6 @@ private fun SettingsScreen(
             }
 
             MediumVerticalSpacer()
-
 
             if (uiState.messageRowState != MessageRowState.Gone) {
                 val accessibilityText = mapMessageToAccessibilityText(uiState.messageRowState)
@@ -236,7 +235,9 @@ private fun SettingsScreen(
 }
 
 @Composable
-private fun mapMessageToCountRowState(messageRowState: MessageRowState): CountListState = when (messageRowState) {
+private fun mapMessageToCountRowState(
+    messageRowState: MessageRowState
+): CountListState = when (messageRowState) {
     is MessageRowState.Loaded -> CountListState.Idle(
         messageRowState.unreadCount,
         if (messageRowState.unreadCount > 0) {
@@ -251,12 +252,15 @@ private fun mapMessageToCountRowState(messageRowState: MessageRowState): CountLi
 }
 
 @Composable
-private fun mapMessageToAccessibilityText(messageRowState: MessageRowState): AnnotatedString {
+private fun mapMessageToAccessibilityText(
+    messageRowState: MessageRowState
+): AnnotatedString {
     val base = stringResource(R.string.messages_title)
     var text = base
 
-    if (messageRowState is MessageRowState.Loaded
-        && messageRowState.unreadCount > 0) {
+    if (messageRowState is MessageRowState.Loaded &&
+        messageRowState.unreadCount > 0
+    ) {
         text = stringResource(
             R.string.messages_a11y_label_unread_suffix,
             base,
@@ -326,9 +330,8 @@ private fun YourAccounts(
         onClick = onYourAccountsClick,
         modifier = modifier,
         isFirst = true,
-        isLast = true,
+        isLast = true
     )
-
 }
 
 @Composable
@@ -387,7 +390,11 @@ private fun Notifications(
     val context = LocalContext.current
     fun getStatus() = if (NotificationManagerCompat.from(context)
             .areNotificationsEnabled()
-    ) R.string.on_button else R.string.off_button
+    ) {
+        R.string.on_button
+    } else {
+        R.string.off_button
+    }
 
     var status by remember { mutableIntStateOf(getStatus()) }
 
@@ -456,7 +463,7 @@ private fun PrivacyPolicy(
         onClick = onPrivacyPolicyClick,
         modifier = modifier,
         isFirst = true,
-        isLast = false,
+        isLast = false
     )
 }
 
@@ -470,7 +477,7 @@ private fun AccessibilityStatement(
         onClick = onAccessibilityStatementClick,
         modifier = modifier,
         isFirst = false,
-        isLast = false,
+        isLast = false
     )
 }
 
@@ -484,7 +491,7 @@ private fun OpenSourceLicenses(
         onClick = onLicenseClick,
         modifier = modifier,
         isFirst = false,
-        isLast = false,
+        isLast = false
     )
 }
 
@@ -498,7 +505,7 @@ private fun TermsAndConditions(
         onClick = onLicenseClick,
         modifier = modifier,
         isFirst = false,
-        isLast = true,
+        isLast = true
     )
 }
 
