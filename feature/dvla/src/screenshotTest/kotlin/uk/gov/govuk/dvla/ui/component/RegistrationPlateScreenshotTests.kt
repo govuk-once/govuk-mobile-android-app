@@ -12,4 +12,3 @@ internal class RegistrationPlateScreenshotTests {
         RegistrationPlatePreview()
     }
 }
-

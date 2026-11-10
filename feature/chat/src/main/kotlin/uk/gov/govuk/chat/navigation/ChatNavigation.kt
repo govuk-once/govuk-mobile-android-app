@@ -88,9 +88,7 @@ fun NavGraphBuilder.chatGraph(
     }
 }
 
-private fun popToChatEntryScreen(
-    navController: NavController
-) {
+private fun popToChatEntryScreen(navController: NavController) {
     navController.popBackStack(route = "chat_route", inclusive = true)
 }
 

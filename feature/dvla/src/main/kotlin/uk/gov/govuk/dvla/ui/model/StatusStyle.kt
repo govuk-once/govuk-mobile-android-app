@@ -11,6 +11,6 @@ internal sealed interface StatusStyle {
     ) : StatusStyle
 
     data class Caption(
-        val text: AccessibleString,
+        val text: AccessibleString
     ) : StatusStyle
 }

@@ -8,6 +8,10 @@ data class OverflowMenuItem(
 )
 
 sealed interface MenuAction {
-    data class WebLink(val url: String) : MenuAction
-    data class ClipboardCopy(val textToCopy: String) : MenuAction
+    data class WebLink(
+        val url: String
+    ) : MenuAction
+    data class ClipboardCopy(
+        val textToCopy: String
+    ) : MenuAction
 }
