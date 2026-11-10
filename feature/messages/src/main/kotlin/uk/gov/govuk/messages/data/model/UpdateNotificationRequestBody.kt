@@ -2,12 +2,9 @@ package uk.gov.govuk.messages.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class UpdateNotificationRequestBody(
-    @SerializedName("Status") val status: Status
-) {
+data class UpdateNotificationRequestBody(@SerializedName("Status") val status: Status) {
     enum class Status {
         READ,
-
         @SerializedName("MARKED_AS_UNREAD")
         UNREAD
     }

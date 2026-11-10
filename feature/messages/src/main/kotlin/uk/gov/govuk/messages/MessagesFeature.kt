@@ -11,7 +11,6 @@ interface MessagesFeature {
     /**
      * Marks a notification as read by its ID.
      */
-    suspend fun markAsRead(
-        messageId: String
-    )
+    suspend fun markAsRead(messageId: String)
+
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import uk.gov.govuk.messages.R
 import uk.gov.govuk.design.markdown.MarkdownParser
 import uk.gov.govuk.design.markdown.appendInlineContent
 import uk.gov.govuk.design.markdown.collectLinks
@@ -39,7 +40,6 @@ import uk.gov.govuk.design.markdown.model.InlineContent
 import uk.gov.govuk.design.markdown.model.MarkdownElement
 import uk.gov.govuk.design.markdown.splitIntoSegments
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.messages.R
 
 @Composable
 internal fun Markdown(
@@ -82,15 +82,15 @@ private fun MarkdownElementItem(
 }
 
 @Composable
-private fun headingStyle(
-    level: Int
-): TextStyle = when (level) {
-    1 -> GovUkTheme.typography.titleLargeBold
-    2 -> GovUkTheme.typography.title1Bold
-    3 -> GovUkTheme.typography.title2Bold
-    4 -> GovUkTheme.typography.title3Bold
-    5 -> GovUkTheme.typography.subheadlineBold
-    else -> GovUkTheme.typography.captionBold
+private fun headingStyle(level: Int): TextStyle {
+    return when (level) {
+        1 -> GovUkTheme.typography.titleLargeBold
+        2 -> GovUkTheme.typography.title1Bold
+        3 -> GovUkTheme.typography.title2Bold
+        4 -> GovUkTheme.typography.title3Bold
+        5 -> GovUkTheme.typography.subheadlineBold
+        else -> GovUkTheme.typography.captionBold
+    }
 }
 
 @Composable
@@ -131,9 +131,7 @@ private fun ParagraphItem(
 }
 
 @Composable
-private fun CodeBlockItem(
-    codeBlock: MarkdownElement.CodeBlock
-) {
+private fun CodeBlockItem(codeBlock: MarkdownElement.CodeBlock) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = GovUkTheme.colourScheme.surfaces.cardMsgHeader,

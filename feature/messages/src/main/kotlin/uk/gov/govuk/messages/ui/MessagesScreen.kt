@@ -1,5 +1,6 @@
 package uk.gov.govuk.messages.ui
 
+import uk.gov.govuk.govkit.date.toRelativeDate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,27 +39,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import uk.gov.govuk.messages.data.model.Notification
+import uk.gov.govuk.messages.data.model.MessageGroups
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
+import uk.gov.govuk.design.ui.component.FootnoteRegularLabel
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title
 import uk.gov.govuk.design.ui.component.Title3SemiBoldLabel
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.govkit.date.toRelativeDate
 import uk.gov.govuk.messages.MessagesUiState
 import uk.gov.govuk.messages.MessagesViewModel
 import uk.gov.govuk.messages.R
-import uk.gov.govuk.messages.data.model.MessageGroups
-import uk.gov.govuk.messages.data.model.Notification
 import uk.gov.govuk.messages.data.model.NotificationFixtures.Companion.mockNotifications
 
 @Composable
 internal fun MessagesRoute(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
-    onTapNotification: (Notification) -> Unit
-) {
+    onTapNotification: (Notification) -> Unit) {
     val viewModel: MessagesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -107,7 +107,7 @@ private fun MessagesScreen(
             is MessagesUiState.NoInternet -> MessagesScreenNoInternet()
             is MessagesUiState.Loaded -> MessagesScreenLoaded(
                 state.notifications,
-                onTapNotification
+                onTapNotification,
             )
             else -> {}
         }
@@ -141,7 +141,7 @@ private fun MessagesScreenEmpty() {
         Modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
             Modifier
@@ -161,6 +161,8 @@ private fun MessagesScreenEmpty() {
         Footer()
     }
 }
+
+
 
 @Composable
 private fun MessagesScreenLoaded(
@@ -206,9 +208,7 @@ private fun MessagesScreenLoaded(
 }
 
 @Composable
-private fun NotificationSectionHeader(
-    title: String
-) {
+private fun NotificationSectionHeader(title: String) {
     Title3SemiBoldLabel(
         title,
         Modifier.padding(top = 28.dp, bottom = 16.dp)
@@ -233,6 +233,7 @@ private fun NotificationRow(
         titleStyle = GovUkTheme.typography.bodyRegular
         subtitleStyle = GovUkTheme.typography.subheadlineRegular
         indicatorColor = GovUkTheme.colourScheme.surfaces.msgRead
+
     }
 
     Row(
@@ -241,12 +242,13 @@ private fun NotificationRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(GovUkTheme.colourScheme.surfaces.list)
-            .clickable { onTapRow(message) }
+            .clickable {  onTapRow(message) }
             .semantics(mergeDescendants = true) {
                 role = Role.Button
-            },
-        verticalAlignment = Alignment.CenterVertically
+            }, 
+            verticalAlignment = Alignment.CenterVertically
     ) {
+
         // zIndex modifier is used to set the order the views are
         // ready by the screen-reader.
         // Feels like a hack, but it's in the docs
@@ -284,10 +286,9 @@ private fun NotificationRow(
             Text(
                 message.date.toRelativeDate(),
                 color = GovUkTheme.colourScheme.textAndIcons.secondary,
-                style = subtitleStyle,
+                style = subtitleStyle ,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+                overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -297,6 +298,7 @@ private fun NotificationRow(
 internal fun MessagesLoadingPreview() {
     GovUkTheme {
         MessagesScreen({}, MessagesUiState.Loading, {}) { }
+
     }
 }
 
@@ -317,6 +319,7 @@ internal fun MessagesLoadedPreview() {
             MessagesUiState.Loaded(mockNotifications),
             { }
         ) { }
+
     }
 }
 
