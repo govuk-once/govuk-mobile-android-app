@@ -425,12 +425,13 @@ private fun LicenceSummarySuccess(
             )
         }
 
-        LargeVerticalSpacer()
-
-        DrivingCategoriesSection(
-            onClick = onCategoriesClick,
-            modifier = Modifier.fillMaxWidth()
-        )
+        // commenting out for 1.13 private beta release
+//        LargeVerticalSpacer()
+//
+//        DrivingCategoriesSection(
+//            onClick = onCategoriesClick,
+//            modifier = Modifier.fillMaxWidth()
+//        )
 
         licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
             LargeVerticalSpacer()
