@@ -424,7 +424,7 @@ private fun AnimatedFeedback(
 
     // Set when the survey is tapped
     var surveyLinkClicked by rememberSaveable(chatEntry.id) {
-        mutableStateOf(false)
+        mutableStateOf(chatEntry.feedbackReaction != null)
     }
 
     val positiveReaction = stringResource(R.string.chat_feedback_api_post_reaction_positive)
