@@ -60,22 +60,22 @@ private data class SearchVehicleListItemColours(
 )
 
 @Composable
-private fun resolveSearchVehicleListItemColours(
-    isFocused: Boolean
-): SearchVehicleListItemColours = if (isFocused) {
-    SearchVehicleListItemColours(
-        background = GovUkTheme.colourScheme.surfaces.focused,
-        text = GovUkTheme.colourScheme.textAndIcons.focused,
-        iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
-        icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-    )
-} else {
-    SearchVehicleListItemColours(
-        background = GovUkTheme.colourScheme.surfaces.list,
-        text = GovUkTheme.colourScheme.textAndIcons.primary,
-        iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
-        icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-    )
+private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehicleListItemColours {
+    return if (isFocused) {
+        SearchVehicleListItemColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            text = GovUkTheme.colourScheme.textAndIcons.focused,
+            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+        )
+    } else {
+        SearchVehicleListItemColours(
+            background = GovUkTheme.colourScheme.surfaces.list,
+            text = GovUkTheme.colourScheme.textAndIcons.primary,
+            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+        )
+    }
 }
 
 @Composable

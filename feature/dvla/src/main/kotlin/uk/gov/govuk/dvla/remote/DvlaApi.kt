@@ -16,9 +16,7 @@ import uk.gov.govuk.dvla.remote.model.VehicleEnquiryResponse
 interface DvlaApi {
 
     @POST("app/udp/v1/identity/dvla")
-    suspend fun linkDvlaIdentity(
-        @Header("x-linking-token") id: String
-    ): Response<Unit>
+    suspend fun linkDvlaIdentity(@Header("x-linking-token") id: String): Response<Unit>
 
     @DELETE("app/udp/v1/identity/dvla")
     suspend fun deleteDvlaIdentity(): Response<Unit>
@@ -30,9 +28,7 @@ interface DvlaApi {
     suspend fun getCustomerVehicles(): Response<CustomerVehiclesResponse>
 
     @GET("app/dvla/v1/customer/vehicle/{id}")
-    suspend fun getVehicleDetails(
-        @Path("id") vehicleId: Int
-    ): Response<CustomerVehicleDetailsResponse>
+    suspend fun getVehicleDetails(@Path("id") vehicleId: Int): Response<CustomerVehicleDetailsResponse>
 
     @POST("app/dvla/v1/share-code")
     suspend fun createShareCode(): Response<SingleShareCodeResponse>
@@ -41,12 +37,9 @@ interface DvlaApi {
     suspend fun getShareCodes(): Response<MultiShareCodeResponse>
 
     @POST("app/dvla/v1/share-code/{id}/cancel")
-    suspend fun cancelShareCode(
-        @Path("id") tokenId: String
-    ): Response<SingleShareCodeResponse>
+    suspend fun cancelShareCode(@Path("id") tokenId: String): Response<SingleShareCodeResponse>
 
     @GET("app/dvla/v1/vehicle-enquiry/{reg}")
-    suspend fun lookupVehicleByRegistration(
-        @Path("reg") reg: String
-    ): Response<VehicleEnquiryResponse>
+    suspend fun lookupVehicleByRegistration(@Path("reg") reg: String): Response<VehicleEnquiryResponse>
+
 }

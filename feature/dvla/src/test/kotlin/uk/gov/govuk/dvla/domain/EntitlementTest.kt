@@ -2,11 +2,11 @@ package uk.gov.govuk.dvla.domain
 
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import java.time.LocalDate
+import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
 import uk.gov.govuk.dvla.remote.model.Restriction as RemoteRestriction
 import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 
@@ -94,11 +94,10 @@ class EntitlementTest {
         assertEquals(emptyList<Restriction>(), entitlement.restrictions)
     }
 
-    private fun createResponse(
-        vararg entitlements: RemoteEntitlement
-    ) = mockk<LicenceResponse>(relaxed = true) {
-        every { drivingLicence.entitlements } returns entitlements.toList()
-    }
+    private fun createResponse(vararg entitlements: RemoteEntitlement) =
+        mockk<LicenceResponse>(relaxed = true) {
+            every { drivingLicence.entitlements } returns entitlements.toList()
+        }
 
     private fun createEntitlement(
         categoryCode: String? = "B",

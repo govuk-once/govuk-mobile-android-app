@@ -3,12 +3,12 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.dvla.data.DvlaRepo
+import javax.inject.Inject
 
 @HiltViewModel
 internal class DvlaLinkWidgetViewModel @Inject constructor(
@@ -32,9 +32,7 @@ internal class DvlaLinkWidgetViewModel @Inject constructor(
         }
     }
 
-    fun onLinkCardClicked(
-        text: String
-    ) {
+    fun onLinkCardClicked(text: String) {
         analyticsClient.cardClick(
             text = text,
             external = false,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -61,7 +62,8 @@ internal fun LicenceCategoryDetailScreen(
             .fillMaxWidth()
             .background(GovUkTheme.colourScheme.surfaces.background)
             .safeDrawingPadding()
-    ) {
+    )
+    {
         FullScreenHeader(dismissStyle = HeaderDismissStyle.Back(onBack))
 
         Column(
@@ -121,9 +123,7 @@ internal fun LicenceCategoryDetailScreen(
 }
 
 @Composable
-private fun CategoryBadge(
-    category: LicenceCategoryUiModel
-) {
+private fun CategoryBadge(category: LicenceCategoryUiModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,10 +161,7 @@ private fun CategoryBadge(
 }
 
 @Composable
-private fun ValidityRow(
-    label: String,
-    date: String
-) {
+private fun ValidityRow(label: String, date: String) {
     ListDivider(Modifier.fillMaxWidth())
 
     Row(
@@ -179,9 +176,7 @@ private fun ValidityRow(
 }
 
 @Composable
-private fun RestrictionRow(
-    restriction: LicenceCategoryRestrictionUiModel
-) {
+private fun RestrictionRow(restriction: LicenceCategoryRestrictionUiModel) {
     val altText = stringResource(
         R.string.licence_category_detail_restriction_alt_text,
         restriction.code,

@@ -15,8 +15,9 @@ internal fun DvlaLinkCard(
     onActionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     when (state) {
-        ServiceLinkStatus.LINKED -> Unit // draw nothing if linked (Summary widget will be shown)
+        ServiceLinkStatus.LINKED -> Unit  // draw nothing if linked (Summary widget will be shown)
 
         ServiceLinkStatus.UNLINKED -> {
             val title = stringResource(R.string.link_dvla_account_title)
