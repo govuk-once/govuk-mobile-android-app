@@ -35,7 +35,11 @@ class NotificationFixtures {
                             metadata = metadata
                         ),
                         Notification(
-                            "3", "Test 3", "Body 3", "READ", referenceDate.minusDays(2).format(
+                            "3",
+                            "Test 3",
+                            "Body 3",
+                            "READ",
+                            referenceDate.minusDays(2).format(
                                 DateTimeFormatter.ISO_DATE_TIME
                             ),
                             metadata = metadata
