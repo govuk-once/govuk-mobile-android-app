@@ -31,7 +31,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
+            
             buildConfigField("String", "DVLA_AUTH_URL", "\"https://driver-and-vehicles-account.service.gov.uk/govuk-app\"")
             buildConfigField("String", "LINKING_BASE_URL", "\"https://em5hkfc46k.execute-api.eu-west-2.amazonaws.com/production/linking/\"")
         }
