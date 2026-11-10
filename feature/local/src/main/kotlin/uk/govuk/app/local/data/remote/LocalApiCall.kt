@@ -1,5 +1,6 @@
 package uk.govuk.app.local.data.remote
 
+import java.net.UnknownHostException
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import retrofit2.Response
@@ -15,38 +16,35 @@ import uk.govuk.app.local.data.remote.model.LocalAuthorityResult.InvalidPostcode
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult.LocalAuthority
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult.PostcodeEmptyOrNull
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult.PostcodeNotFound
-import java.net.UnknownHostException
 
 internal suspend fun safeLocalApiCall(
     apiCall: suspend () -> Response<LocalAuthorityResponse>
-): Result<LocalAuthorityResult> {
-    return try {
-        val response = apiCall()
-        val body = response.body()
-        val code = response.code()
+): Result<LocalAuthorityResult> = try {
+    val response = apiCall()
+    val body = response.body()
+    val code = response.code()
 
-        if (response.isSuccessful && body != null) {
-            when {
-                body.localAuthority != null -> Success(LocalAuthority(body.localAuthority))
-                body.addresses != null -> Success(Addresses(body.addresses))
-                else -> Error()
-            }
-        } else {
-                when (code) {
-                    400 -> Success(InvalidPostcode)
-                    404 -> Success(PostcodeNotFound)
-                    418 -> Success(PostcodeEmptyOrNull)
-                    429 -> Success(ApiNotResponding)
-                    else -> Error()
-                }
-        }
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Exception) {
-        when (e) {
-            is UnknownHostException -> Success(DeviceNotConnected)
-            is HttpException -> Success(ApiNotResponding)
+    if (response.isSuccessful && body != null) {
+        when {
+            body.localAuthority != null -> Success(LocalAuthority(body.localAuthority))
+            body.addresses != null -> Success(Addresses(body.addresses))
             else -> Error()
         }
+    } else {
+        when (code) {
+            400 -> Success(InvalidPostcode)
+            404 -> Success(PostcodeNotFound)
+            418 -> Success(PostcodeEmptyOrNull)
+            429 -> Success(ApiNotResponding)
+            else -> Error()
+        }
+    }
+} catch (e: CancellationException) {
+    throw e
+} catch (e: Exception) {
+    when (e) {
+        is UnknownHostException -> Success(DeviceNotConnected)
+        is HttpException -> Success(ApiNotResponding)
+        else -> Error()
     }
 }
