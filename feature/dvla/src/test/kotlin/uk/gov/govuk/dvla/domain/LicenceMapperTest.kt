@@ -2,26 +2,26 @@ package uk.gov.govuk.dvla.domain
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
-import java.time.LocalDate
+import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 import uk.gov.govuk.dvla.remote.model.common.LicenceStatus as RemoteLicenceStatus
 import uk.gov.govuk.dvla.remote.model.common.LicenceType as RemoteLicenceType
-import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
-import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 
 class LicenceMapperTest {
     @Test
     fun `Given fully populated LicenceResponse, when mapped to domain model, it maps all fields correctly`() {
         val networkResponse = mockk<LicenceResponse>(relaxed = true) {
-            every { drivingLicence.licenceType} returns RemoteLicenceType.FULL
+            every { drivingLicence.licenceType } returns RemoteLicenceType.FULL
             every { drivingLicence.drivingLicenceNumber } returns "DECER607085K99AE"
             every { drivingLicence.driverTitle } returns "Ms"
             every { drivingLicence.driverFirstNames } returns "Anna Ornella"
             every { drivingLicence.driverLastName } returns "Arenö"
-            every { drivingLicence.driverFullAddress  } returns "29 Orchard Drive\nMilton Keynes\nPA98 J83"
+            every { drivingLicence.driverFullAddress } returns "29 Orchard Drive\nMilton Keynes\nPA98 J83"
             every { drivingLicence.licenceStatus } returns RemoteLicenceStatus.VALID
             every { drivingLicence.tokenValidToDate } returns "2035-05-01"
             every { drivingLicence.entitlements } returns listOf(

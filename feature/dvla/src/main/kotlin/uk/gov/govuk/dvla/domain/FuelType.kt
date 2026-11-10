@@ -17,19 +17,18 @@ enum class FuelType {
     OTHER
 }
 
-internal fun RemoteFuelType?.toDomain(): FuelType =
-    when (this) {
-        RemoteFuelType.PETROL -> FuelType.PETROL
-        RemoteFuelType.DIESEL -> FuelType.DIESEL
-        RemoteFuelType.ELECTRICITY -> FuelType.ELECTRICITY
-        RemoteFuelType.STEAM -> FuelType.STEAM
-        RemoteFuelType.GAS -> FuelType.GAS
-        RemoteFuelType.PETROL_GAS -> FuelType.PETROL_GAS
-        RemoteFuelType.GAS_BI_FUEL -> FuelType.GAS_BI_FUEL
-        RemoteFuelType.HYBRID_ELECTRIC -> FuelType.HYBRID_ELECTRIC
-        RemoteFuelType.GAS_DIESEL -> FuelType.GAS_DIESEL
-        RemoteFuelType.FUEL_CELLS -> FuelType.FUEL_CELLS
-        RemoteFuelType.ELECTRIC_DIESEL -> FuelType.ELECTRIC_DIESEL
-        RemoteFuelType.OTHER -> FuelType.OTHER
-        else -> FuelType.OTHER
-    }
+internal fun RemoteFuelType?.toDomain(): FuelType = when (this) {
+    RemoteFuelType.PETROL -> FuelType.PETROL
+    RemoteFuelType.DIESEL -> FuelType.DIESEL
+    RemoteFuelType.ELECTRICITY -> FuelType.ELECTRICITY
+    RemoteFuelType.STEAM -> FuelType.STEAM
+    RemoteFuelType.GAS -> FuelType.GAS
+    RemoteFuelType.PETROL_GAS -> FuelType.PETROL_GAS
+    RemoteFuelType.GAS_BI_FUEL -> FuelType.GAS_BI_FUEL
+    RemoteFuelType.HYBRID_ELECTRIC -> FuelType.HYBRID_ELECTRIC
+    RemoteFuelType.GAS_DIESEL -> FuelType.GAS_DIESEL
+    RemoteFuelType.FUEL_CELLS -> FuelType.FUEL_CELLS
+    RemoteFuelType.ELECTRIC_DIESEL -> FuelType.ELECTRIC_DIESEL
+    RemoteFuelType.OTHER -> FuelType.OTHER
+    else -> FuelType.OTHER
+}
