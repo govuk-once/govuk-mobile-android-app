@@ -47,3 +47,4 @@ internal class CheckVehicleSheetScreenshotTests {
         CheckVehicleSheetNotFoundPreview()
     }
 }
+
