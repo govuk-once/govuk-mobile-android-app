@@ -5,13 +5,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import uk.gov.govuk.topics.TopicsCategory
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
 @Singleton
 internal class TopicsDataStore @Inject constructor(
@@ -23,9 +23,7 @@ internal class TopicsDataStore @Inject constructor(
         internal const val SELECTED_CATEGORY = "selected_category"
     }
 
-    internal suspend fun isTopicsCustomised(): Boolean {
-        return dataStore.data.firstOrNull()?.get(booleanPreferencesKey(TOPICS_CUSTOMISED)) == true
-    }
+    internal suspend fun isTopicsCustomised(): Boolean = dataStore.data.firstOrNull()?.get(booleanPreferencesKey(TOPICS_CUSTOMISED)) == true
 
     internal suspend fun topicsCustomised() {
         dataStore.edit { preferences ->
@@ -38,13 +36,15 @@ internal class TopicsDataStore @Inject constructor(
         runCatching { TopicsCategory.valueOf(savedValue) }.getOrDefault(TopicsCategory.YOUR)
     }
 
-    internal suspend fun setSelectedCategory(category: TopicsCategory) {
+    internal suspend fun setSelectedCategory(
+        category: TopicsCategory
+    ) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(SELECTED_CATEGORY)] = category.name
         }
     }
 
     internal suspend fun clear() {
-       dataStore.edit { preferences -> preferences.clear() }
+        dataStore.edit { preferences -> preferences.clear() }
     }
 }

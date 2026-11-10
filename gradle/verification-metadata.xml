@@ -16,12 +16,14 @@
          <trust file=".*\.pom" regex="true"/>
       </trusted-artifacts>
       <trusted-keys>
+         <trusted-key id="03C123038C20AAE9E286C857479D601F3A7B5C1A" group="com.github.ajalt.clikt"/>
          <trusted-key id="04543577D6A9CC626239C50C7ECBD740FF06AEB5">
             <trusting group="org.glassfish.jaxb"/>
             <trusting group="org.jvnet.staxex"/>
             <trusting group="^com[.]sun($|([.].*))" regex="true"/>
          </trusted-key>
          <trusted-key id="0785B3EFF60B1B1BEA94E0BB7C25280EAE63EBE5" group="org.apache.httpcomponents"/>
+         <trusted-key id="09939C73246B4BA7444CAA453D002DBC5EA9615F" group="dev.drewhamilton.poko"/>
          <trusted-key id="0CC641C3A62453AB390066C4A41F13C999945293" group="commons-logging" name="commons-logging"/>
          <trusted-key id="0D35D3F60078655126908E8AF3D1600878E85A3D" group="io.netty"/>
          <trusted-key id="0E225917414670F4442C250DFD533C07C264648F">
@@ -71,6 +73,7 @@
             <trusting group="org.apache.commons"/>
          </trusted-key>
          <trusted-key id="2E3A1AFFE42B5F53AF19F780BCF4173966770193" group="org.jetbrains" name="annotations"/>
+         <trusted-key id="2E92113263FC31C74CCBAAB20E91C2DE43B72BB1" group="org.ec4j.core"/>
          <trusted-key id="3051D45031E13516A6E8FAFF280D66A55F5316C5" group="org.bitbucket.b_c" name="jose4j"/>
          <trusted-key id="31BAE2E51D95E0F8AD9B7BCC40A3C4432BD7308C" group="com.googlecode.juniversalchardet" name="juniversalchardet"/>
          <trusted-key id="32118CF76C9EC5D918E54967CA80D1F0EB6CA4BA">
@@ -86,6 +89,7 @@
          <trusted-key id="475F3B8E59E6E63AA78067482C7B12F2A511E325" group="org.slf4j"/>
          <trusted-key id="4791825BDEA86EB9286A2ACE88BB19A33A18445F" group="net.ltgt.gradle.incap" name="incap"/>
          <trusted-key id="47BF592261CD1A8A69B703B4E0CB7823CFD00FBF" group="com.jakewharton.android.repackaged" name="dalvik-dx"/>
+         <trusted-key id="47EB6836245D2D40E89DFB4136D4E9618F3ADAB5" group="io.github.oshai"/>
          <trusted-key id="47FF105DF431FF5416B821FEAECDB81D38EA9C89" group="org.commonmark"/>
          <trusted-key id="4BF79B8259007B566D2FCE82296CD27F60EED12C" group="com.google.crypto.tink" name="tink"/>
          <trusted-key id="4DB1A49729B053CAF015CEE9A6ADFC93EF34893E" group="org.hamcrest"/>
@@ -100,7 +104,10 @@
          <trusted-key id="54A26BFDC7ECDD39BA4C123AC3BAB45F4AF71FAB" group="io.opencensus" name="opencensus-proto"/>
          <trusted-key id="5897253BEA3046AEEA95A067E93671C7272B7B3F" group="org.jdom" name="jdom2"/>
          <trusted-key id="600EA202B1EC682F4A788E5AAC7A514BC9F9BB70" group="io.opencensus"/>
-         <trusted-key id="60200AC4AE761F1614D6C46766D68DAA073BE985" group="org.slf4j"/>
+         <trusted-key id="60200AC4AE761F1614D6C46766D68DAA073BE985">
+            <trusting group="ch.qos.logback"/>
+            <trusting group="org.slf4j"/>
+         </trusted-key>
          <trusted-key id="64B9B09F164AA0BF88742EB61188B69F6D6259CA" group="com.google.accompanist" name="accompanist-permissions"/>
          <trusted-key id="694621A7227D8D5289699830ABE9F3126BB741C1" group="^com[.]google($|([.].*))" regex="true"/>
          <trusted-key id="696B6199A2A9D8C29CE78CC0D041CAD2E452550F" group="com.google.protobuf"/>
@@ -127,6 +134,7 @@
             <trusting group="org.codehaus.mojo"/>
             <trusting group="org.codehaus.plexus"/>
          </trusted-key>
+         <trusted-key id="8569C95CADC508B09FE90F3002216ED811210DAA" group="io.github.detekt.sarif4k"/>
          <trusted-key id="8756C4F765C9AC3CB6B85D62379CE192D401AB61" group="org.jetbrains.intellij.deps" name="trove4j"/>
          <trusted-key id="88BE34F94BDB2B5357044E2E3A387D43964143E3">
             <trusting group="org.apache.maven"/>
@@ -158,6 +166,7 @@
          <trusted-key id="A6D6C97108B8585F91B158748671A8DF71296252" group="^com[.]squareup($|([.].*))" regex="true"/>
          <trusted-key id="A7892505CF1A58076453E52D7999BEFBA1039E8B" group="net.bytebuddy"/>
          <trusted-key id="AA70C7C433D501636392EC02153E7A3C2B4E5118" group="org.eclipse.ee4j" name="project"/>
+         <trusted-key id="ADBC987D1A7B91DB6B0AAA81995EFBF4A3D20BEB" group="com.pinterest.ktlint"/>
          <trusted-key id="AF7512AF66FE4004D84DEC8A04C8C902FEFB1A01" group="io.mockk"/>
          <trusted-key id="B02335AA54CCF21E52BBF9ABD9C565AA72BA2FDD" group="io.grpc"/>
          <trusted-key id="B192D66D920C7211339B8F12609B27E33807FEE1" group="com.onesignal"/>
@@ -175,6 +184,7 @@
             <trusting group="org.apache.ivy" name="ivy" version="2.5.2"/>
          </trusted-key>
          <trusted-key id="CFBE6E7934FB211224EE1C2B0C0A9468268C79AE" group="org.jetbrains"/>
+         <trusted-key id="DBD5E1CF4A7FF3D8CA7459D8C020E96222A31FB3" group="net.swiftzer.semver" name="semver" version="1.1.1"/>
          <trusted-key id="DBD744ACE7ADE6AA50DD591F66B50994442D2D40" group="^com[.]squareup($|([.].*))" regex="true"/>
          <trusted-key id="E04FCA076C716DA6773565EAC0E2EB10E7B60FAD" group="com.mikepenz"/>
          <trusted-key id="E5138A8E9F2E7E42D38B14D99AEE152CDCCEBFCB" group="io.github.hakky54"/>
@@ -8167,6 +8177,14 @@
       <component group="org.jetbrains.kotlinx.kover" name="org.jetbrains.kotlinx.kover.gradle.plugin" version="0.9.3">
          <artifact name="org.jetbrains.kotlinx.kover.gradle.plugin-0.9.3.pom">
             <sha256 value="62d3d7e40cdaf535584b4010865acabbdde6871122bdd0318cdbcc0c63edfa99" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jlleitschuh.gradle" name="ktlint-gradle" version="14.2.0">
+         <artifact name="ktlint-gradle-14.2.0.jar">
+            <sha256 value="58cc481b07bbadd75fd7e73cec34b5773c29d1633c256f2a23e6e678047278dc" origin="Generated by Gradle" reason="Artifact is not signed"/>
+         </artifact>
+         <artifact name="ktlint-gradle-14.2.0.module">
+            <sha256 value="782d173e11496d2414f05190c864f78775f02adb06899cec2feef6d0b7b077b4" origin="Generated by Gradle" reason="Artifact is not signed"/>
          </artifact>
       </component>
       <component group="org.jspecify" name="jspecify" version="1.0.0">
