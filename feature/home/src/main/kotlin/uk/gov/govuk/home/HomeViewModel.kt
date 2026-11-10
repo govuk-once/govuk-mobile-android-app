@@ -2,18 +2,18 @@ package uk.gov.govuk.home
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.config.data.local.model.HOME_BANNERS
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.local.model.toAnalyticsItems
-import javax.inject.Inject
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "HomeScreen"
