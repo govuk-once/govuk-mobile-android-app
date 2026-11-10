@@ -6,7 +6,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlin.test.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -22,13 +21,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.messages.MessagesDetailUiState
 import uk.gov.govuk.messages.MessagesDetailViewModel
-import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.messages.data.model.UpdateNotificationRequestBody
 import uk.gov.govuk.messages.fixtures.MessagesFixtures.Companion.mockMessages
 import uk.gov.govuk.messages.navigation.MESSAGES_DETAIL_ID_ARG
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MessagesDetailViewModelTest {
@@ -51,6 +51,7 @@ class MessagesDetailViewModelTest {
         )
 
         every { savedStateHandle.get<String>(MESSAGES_DETAIL_ID_ARG) } returns "1"
+
     }
 
     @After
@@ -121,7 +122,6 @@ class MessagesDetailViewModelTest {
             assertTrue(states.last() is MessagesDetailUiState.NoInternet)
         }
     }
-
     @Test
     fun `Given view appears, when request fails, transitions to Error`() {
         runTest {
@@ -205,6 +205,7 @@ class MessagesDetailViewModelTest {
 
             advanceUntilIdle()
 
+
             coVerify(exactly = 0) {
                 messagesRepo.updateMessage("1", UpdateNotificationRequestBody.Status.READ)
             }
@@ -226,6 +227,7 @@ class MessagesDetailViewModelTest {
             viewModel.onPageView()
 
             advanceUntilIdle()
+
 
             coVerify(exactly = 1) {
                 messagesRepo.updateMessage("1", UpdateNotificationRequestBody.Status.READ)
