@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,7 +18,6 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.NotificationsPermissionResolver
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
-import javax.inject.Inject
 
 @HiltViewModel
 class NotificationsRationaleViewModel @Inject constructor(
@@ -58,7 +58,8 @@ class NotificationsRationaleViewModel @Inject constructor(
     }
 
     enum class Origin {
-        FOLLOW, EDIT
+        FOLLOW,
+        EDIT
     }
 
     private enum class Pending { NONE, OS_PROMPT, SETTINGS }
@@ -224,7 +225,11 @@ class NotificationsRationaleViewModel @Inject constructor(
                 }
                 Origin.EDIT -> {
                     when (travelAlertsRepo.toggleNotifications(selectedCountrySlug!!, enabled = granted)) {
-                        is Result.Success -> NavigationEvent.ReturnToEdit(selectedCountrySlug!!, error = false, notificationsEnabled = granted)
+                        is Result.Success -> NavigationEvent.ReturnToEdit(
+                            selectedCountrySlug!!,
+                            error = false,
+                            notificationsEnabled = granted
+                        )
                         else -> NavigationEvent.ReturnToEdit(selectedCountrySlug!!, error = true, notificationsEnabled = false)
                     }
                 }

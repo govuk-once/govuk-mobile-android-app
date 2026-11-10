@@ -101,7 +101,8 @@ private fun TravelAlertsEmpty(
         description = stringResource(R.string.empty_description),
         paddingValues = PaddingValues(
             horizontal = GovUkTheme.spacing.extraLarge,
-            vertical = GovUkTheme.spacing.extraLarge)
+            vertical = GovUkTheme.spacing.extraLarge
+        )
     )
 }
 

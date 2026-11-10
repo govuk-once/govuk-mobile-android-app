@@ -4,6 +4,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -18,10 +22,6 @@ import uk.gov.govuk.travelalerts.data.model.SubscriptionRequest
 import uk.gov.govuk.travelalerts.data.remote.GroupsApi
 import uk.gov.govuk.travelalerts.data.remote.TravelApi
 import uk.gov.govuk.travelalerts.fixtures.TravelAlertsFixtures
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class TravelAlertsRepoTest {
 
@@ -46,7 +46,7 @@ class TravelAlertsRepoTest {
     }
 
     // Get Groups
-    
+
     @Test
     fun `Get groups performs API call`() = runTest {
         travelAlertsRepo.getGroups()

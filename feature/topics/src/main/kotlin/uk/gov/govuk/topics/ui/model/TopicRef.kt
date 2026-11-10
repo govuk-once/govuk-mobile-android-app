@@ -22,9 +22,9 @@ internal enum class TopicRef(
     TRAVEL_ABROAD("travel-abroad", R.string.travel_abroad, R.drawable.ic_topic_travel);
 
     companion object {
-        fun fromString(
-            ref: String?
-        ): TopicRef? = entries.find { it.ref == ref }
+        fun fromString(ref: String?): TopicRef? {
+            return entries.find { it.ref == ref }
+        }
     }
 }
 
