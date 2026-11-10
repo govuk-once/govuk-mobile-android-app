@@ -53,7 +53,7 @@ internal fun LocalLookupRoute(
     onCancel: () -> Unit,
     onLocalAuthoritySelected: () -> Unit,
     onAddresses: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: LocalLookupViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -194,7 +194,7 @@ private fun LocalLookupScreen(
                     unfocusedIndicatorColor = GovUkTheme.colourScheme.textAndIcons.secondary,
                     unfocusedLabelColor = GovUkTheme.colourScheme.textAndIcons.secondary,
                     unfocusedPlaceholderColor = GovUkTheme.colourScheme.textAndIcons.secondary,
-                    unfocusedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary
+                    unfocusedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary,
                 )
             )
             LargeVerticalSpacer()
@@ -219,7 +219,7 @@ private fun BottomNavBar(
         FixedPrimaryButton(
             text = buttonText,
             onClick = { onPostcodeLookup(buttonText, postcode) },
-            enabled = postcode.isNotBlank()
+            enabled = postcode.isNotBlank(),
         )
     }
 }

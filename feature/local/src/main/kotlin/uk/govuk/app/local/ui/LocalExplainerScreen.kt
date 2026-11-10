@@ -58,7 +58,7 @@ private fun LocalExplainerScreen(
 
     Column(modifier) {
         LocalFullScreenHeader(
-            onBack = onBack
+            onBack = onBack,
         )
         CentreAlignedScreen(
             screenContent = {
@@ -91,7 +91,7 @@ private fun LocalExplainerScreen(
                 val buttonText = stringResource(R.string.local_continue_button)
                 FixedPrimaryButton(
                     text = buttonText,
-                    onClick = { onContinueClick(buttonText) }
+                    onClick = { onContinueClick(buttonText) },
                 )
             }
         )
