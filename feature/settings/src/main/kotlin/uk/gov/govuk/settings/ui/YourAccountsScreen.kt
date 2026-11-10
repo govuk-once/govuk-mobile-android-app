@@ -48,7 +48,6 @@ internal fun YourAccountsRoute(
     modifier: Modifier = Modifier,
     viewModel: YourAccountsViewModel = hiltViewModel()
 ) {
-
     val accounts by viewModel.linkedAccounts.collectAsStateWithLifecycle()
     val accountsUiState by viewModel.accountsUiState.collectAsStateWithLifecycle()
 
@@ -84,7 +83,6 @@ private fun YourAccountsScreen(
     onUnlinkCancelled: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     var accountToUnlink by remember { mutableStateOf<LinkedAccountUiModel?>(null) }
 
     when (accountsUiState) {
@@ -176,7 +174,7 @@ private fun AccountsListContent(
         Column(modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)) {
             if (accounts.isEmpty()) {
                 NonTappableCard(
-                    body = stringResource(R.string.your_accounts_empty_state_body),
+                    body = stringResource(R.string.your_accounts_empty_state_body)
                 )
             } else {
                 accounts.forEach { account ->
@@ -245,7 +243,6 @@ private fun RemoveAccountDialog(
         containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
 }
-
 
 @Composable
 internal fun RemoveAccountErrorScreen(

@@ -1,7 +1,8 @@
 package uk.gov.govuk.search
 
-import java.util.UUID
 import uk.gov.govuk.search.data.remote.model.SearchResult
+import java.util.UUID
+
 
 internal data class SearchUiState(
     val previousSearches: List<String> = emptyList(),
@@ -23,18 +24,10 @@ internal data class SearchUiState(
     internal sealed class Error(
         val uuid: UUID
     ) {
-        internal class Empty(
-            uuid: UUID,
-            val searchTerm: String
-        ) : Error(uuid)
+        internal class Empty(uuid: UUID, val searchTerm: String) : Error(uuid)
 
-        internal class Offline(
-            uuid: UUID,
-            val searchTerm: String
-        ) : Error(uuid)
+        internal class Offline(uuid: UUID, val searchTerm: String) : Error(uuid)
 
-        internal class ServiceError(
-            uuid: UUID
-        ) : Error(uuid)
+        internal class ServiceError(uuid: UUID) : Error(uuid)
     }
 }

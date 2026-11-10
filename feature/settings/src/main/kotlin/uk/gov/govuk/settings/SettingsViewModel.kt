@@ -3,6 +3,7 @@ package uk.gov.govuk.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,12 +12,12 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
-import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
 import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
@@ -26,7 +27,6 @@ import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
 import uk.gov.govuk.settings.BuildConfig.SIGN_OUT_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
-import javax.inject.Inject
 
 internal data class SettingsUiState(
     val userEmail: String,
@@ -38,9 +38,11 @@ internal data class SettingsUiState(
 )
 
 internal sealed class MessageRowState {
-    internal data object Gone: MessageRowState()
-    internal data object Loading: MessageRowState()
-    internal data class Loaded(val unreadCount: Int): MessageRowState()
+    internal data object Gone : MessageRowState()
+    internal data object Loading : MessageRowState()
+    internal data class Loaded(
+        val unreadCount: Int
+    ) : MessageRowState()
 }
 
 @HiltViewModel
@@ -50,7 +52,7 @@ internal class SettingsViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val configRepo: ConfigRepo,
     private val messagesFeature: MessagesFeature
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "SettingsScreen"
@@ -72,7 +74,6 @@ internal class SettingsViewModel @Inject constructor(
             messageRowState = MessageRowState.Loading
         )
     }
-
 
     fun loadMessages() {
         if (flagRepo.isMessagesEnabled()) {
@@ -116,7 +117,9 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
-    fun onYourAccountsClick(text: String) {
+    fun onYourAccountsClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             external = false,
@@ -169,7 +172,9 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
-    fun onBiometricsClick(text: String) {
+    fun onBiometricsClick(
+        text: String
+    ) {
         analyticsClient.settingsItemClick(
             text = text,
             external = false
@@ -183,7 +188,9 @@ internal class SettingsViewModel @Inject constructor(
         )
     }
 
-    fun onAnalyticsConsentChanged(enabled: Boolean) {
+    fun onAnalyticsConsentChanged(
+        enabled: Boolean
+    ) {
         viewModelScope.launch {
             if (enabled) {
                 analyticsClient.enable()
@@ -197,12 +204,13 @@ internal class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onButtonClick(text: String) {
+    fun onButtonClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(text)
     }
 
     fun onMessagesClick() {
         analyticsClient.settingsItemClick(MESSAGES_EVENT, external = false)
-
     }
 }

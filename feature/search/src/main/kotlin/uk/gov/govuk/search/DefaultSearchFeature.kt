@@ -1,13 +1,14 @@
 package uk.gov.govuk.search
 
-import javax.inject.Inject
 import uk.gov.govuk.search.data.SearchRepo
+import javax.inject.Inject
 
 internal class DefaultSearchFeature @Inject constructor(
     private val searchRepo: SearchRepo
-) : SearchFeature {
+): SearchFeature {
 
     override suspend fun clear() {
         searchRepo.clear()
     }
+
 }

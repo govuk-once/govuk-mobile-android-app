@@ -23,7 +23,8 @@ internal fun SignOutErrorRoute(
         onPageView = { viewModel.onErrorPageView() },
         onBackClick = { text ->
             viewModel.onBack(text)
-            onBack() },
+            onBack()
+        },
         modifier = modifier
     )
 }
