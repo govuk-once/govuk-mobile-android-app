@@ -2,6 +2,7 @@ package uk.govuk.app.local.data.remote
 
 import io.mockk.coEvery
 import io.mockk.mockk
+import java.net.UnknownHostException
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.mockwebserver.MockWebServer
@@ -11,11 +12,10 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.model.Result
-import uk.govuk.app.local.data.remote.model.RemoteAddress
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResponse
 import uk.govuk.app.local.data.remote.model.LocalAuthorityResult
+import uk.govuk.app.local.data.remote.model.RemoteAddress
 import uk.govuk.app.local.data.remote.model.RemoteLocalAuthority
-import java.net.UnknownHostException
 
 class LocalApiCallTest {
     private val localApi = mockk<LocalApi>(relaxed = true)
