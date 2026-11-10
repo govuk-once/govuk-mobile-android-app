@@ -3,16 +3,16 @@ package uk.govuk.app.local
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.govuk.app.local.data.LocalRepo
+import javax.inject.Inject
 
 @HiltViewModel
 internal class LocalConfirmationViewModel @Inject constructor(
     private val localRepo: LocalRepo,
     private val analyticsClient: AnalyticsClient
-) : ViewModel() {
+): ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "LocalConfirmationScreen"
@@ -31,9 +31,7 @@ internal class LocalConfirmationViewModel @Inject constructor(
         )
     }
 
-    fun onDone(
-        text: String
-    ) {
+    fun onDone(text: String) {
         analyticsClient.buttonClick(
             text = text,
             section = SECTION
