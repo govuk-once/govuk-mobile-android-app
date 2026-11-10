@@ -3,6 +3,8 @@ package uk.gov.govuk.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,15 +21,13 @@ import uk.gov.govuk.search.data.remote.model.SearchResult
 import uk.gov.govuk.search.domain.SearchConfig
 import uk.gov.govuk.search.domain.StringUtils
 import uk.gov.govuk.visited.Visited
-import java.util.UUID
-import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient,
     private val visited: Visited,
-    private val searchRepo: SearchRepo,
-): ViewModel() {
+    private val searchRepo: SearchRepo
+) : ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "SearchScreen"
@@ -35,7 +35,6 @@ internal class SearchViewModel @Inject constructor(
         private const val TITLE = "Search"
         private const val LIST_NAME = "Search"
         private const val LIST_ID = "search_results"
-
     }
 
     private val _uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
@@ -59,7 +58,9 @@ internal class SearchViewModel @Inject constructor(
         )
     }
 
-    private fun fetchAutocompleteSuggestions(searchTerm: String) {
+    private fun fetchAutocompleteSuggestions(
+        searchTerm: String
+    ) {
         viewModelScope.launch {
             val result = searchRepo.performLookup(searchTerm)
             if (result is Success) {
@@ -68,12 +69,16 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onSearch(searchTerm: String) {
+    fun onSearch(
+        searchTerm: String
+    ) {
         fetchSearchResults(searchTerm)
         analyticsClient.search(searchTerm)
     }
 
-    private fun fetchSearchResults(searchTerm: String) {
+    private fun fetchSearchResults(
+        searchTerm: String
+    ) {
         val trimmedSearchTerm = searchTerm.trim()
 
         if (trimmedSearchTerm.isNotEmpty()) {
@@ -105,7 +110,10 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun sendResultsAnalytics(term: String, results: List<SearchResult>) {
+    private fun sendResultsAnalytics(
+        term: String,
+        results: List<SearchResult>
+    ) {
         analyticsClient.viewItemListEvent(
             ecommerceEvent = EcommerceEvent(
                 itemListName = LIST_NAME,
@@ -164,13 +172,17 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onRemovePreviousSearch(searchTerm: String) {
+    fun onRemovePreviousSearch(
+        searchTerm: String
+    ) {
         viewModelScope.launch {
             searchRepo.removePreviousSearch(searchTerm)
         }
     }
 
-    fun onAutocomplete(searchTerm: String) {
+    fun onAutocomplete(
+        searchTerm: String
+    ) {
         if (searchTerm.length >= SearchConfig.AUTOCOMPLETE_MIN_LENGTH) {
             fetchAutocompleteSuggestions(searchTerm)
         } else {
@@ -178,12 +190,16 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onAutocompleteResultClick(searchTerm: String) {
+    fun onAutocompleteResultClick(
+        searchTerm: String
+    ) {
         fetchSearchResults(searchTerm)
         analyticsClient.autocomplete(searchTerm)
     }
 
-    fun onPreviousSearchClick(searchTerm: String) {
+    fun onPreviousSearchClick(
+        searchTerm: String
+    ) {
         fetchSearchResults(searchTerm)
         analyticsClient.history(searchTerm)
     }
