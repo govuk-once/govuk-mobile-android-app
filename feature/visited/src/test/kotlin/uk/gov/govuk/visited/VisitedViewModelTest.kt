@@ -6,6 +6,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -24,9 +27,6 @@ import uk.gov.govuk.visited.data.localDateFormatter
 import uk.gov.govuk.visited.data.store.VisitedLocalDataSource
 import uk.gov.govuk.visited.domain.model.VisitedItemUi
 import uk.gov.govuk.visited.ui.model.VisitedUi
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class VisitedViewModelTest {

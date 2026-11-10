@@ -3,7 +3,6 @@ package uk.gov.govuk.travelalerts.ui.countrylist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,6 +14,7 @@ import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
+import javax.inject.Inject
 
 @HiltViewModel
 class CountryListViewModel @Inject constructor(
@@ -47,12 +47,8 @@ class CountryListViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     sealed class NavigationEvent {
-        data class NavigateToTopic(
-            val error: Boolean = false
-        ) : NavigationEvent()
-        data class NavigateToNotificationsRationale(
-            val countrySlug: String
-        ) : NavigationEvent()
+        data class NavigateToTopic(val error: Boolean = false) : NavigationEvent()
+        data class NavigateToNotificationsRationale(val countrySlug: String) : NavigationEvent()
     }
 
     private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
@@ -60,9 +56,7 @@ class CountryListViewModel @Inject constructor(
 
     private var allCountries: List<Country> = emptyList()
 
-    private fun updateLoaded(
-        block: State.Loaded.() -> State.Loaded
-    ) {
+    private fun updateLoaded(block: State.Loaded.() -> State.Loaded) {
         (_uiState.value as? State.Loaded)?.let { _uiState.value = it.block() }
     }
 
@@ -93,19 +87,13 @@ class CountryListViewModel @Inject constructor(
                         _uiState.value = State.Loaded(allCountries)
                     }
                 }
-                is Result.DeviceOffline -> {
-                    _uiState.value = State.DeviceOffline
-                }
-                else -> {
-                    _uiState.value = State.Error
-                }
+                is Result.DeviceOffline -> { _uiState.value = State.DeviceOffline }
+                else -> { _uiState.value = State.Error }
             }
         }
     }
 
-    fun onCountrySelected(
-        country: Country
-    ) {
+    fun onCountrySelected(country: Country) {
         analyticsClient.toggleFunction(text = country.name, section = SECTION, action = "Add")
         val currentState = _uiState.value
         if (currentState is State.Loaded && currentState.searchQuery.isNotEmpty()) {
@@ -118,10 +106,7 @@ class CountryListViewModel @Inject constructor(
         updateLoaded { copy(selectedCountry = null) }
     }
 
-    fun onNotNowNotifications(
-        country: Country,
-        text: String
-    ) {
+    fun onNotNowNotifications(country: Country, text: String) {
         analyticsClient.widgetClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             updateLoaded { copy(isSaving = true) }
@@ -138,10 +123,7 @@ class CountryListViewModel @Inject constructor(
         }
     }
 
-    fun onGetNotificationsClick(
-        country: Country,
-        text: String
-    ) {
+    fun onGetNotificationsClick(country: Country, text: String) {
         analyticsClient.widgetClick(text = text, external = false, section = SECTION)
         if (notificationsRepo.permissionGranted()) {
             notificationsRepo.giveConsent()
@@ -173,9 +155,7 @@ class CountryListViewModel @Inject constructor(
         }
     }
 
-    fun onHelpAndFeedbackClick(
-        text: String
-    ) {
+    fun onHelpAndFeedbackClick(text: String) {
         analyticsClient.buttonClick(
             text = text,
             url = Urls.HELP_AND_FEEDBACK_URL,
@@ -184,9 +164,7 @@ class CountryListViewModel @Inject constructor(
         )
     }
 
-    fun onSearchQueryChange(
-        query: String
-    ) {
+    fun onSearchQueryChange(query: String) {
         val q = query.lowercase().trim()
         val filtered = if (q.isEmpty()) {
             allCountries
