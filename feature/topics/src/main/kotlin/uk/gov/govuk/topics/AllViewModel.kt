@@ -3,7 +3,6 @@ package uk.gov.govuk.topics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,13 +13,14 @@ import uk.gov.govuk.topics.data.TopicsRepo
 import uk.gov.govuk.topics.extension.toTopicContent
 import uk.gov.govuk.topics.ui.model.TopicUi.TopicContent
 import uk.gov.govuk.visited.Visited
+import javax.inject.Inject
 
 @HiltViewModel
 internal class AllViewModel @Inject constructor(
     topicsRepo: TopicsRepo,
     private val analyticsClient: AnalyticsClient,
     private val visited: Visited
-) : ViewModel() {
+): ViewModel() {
 
     companion object {
         private const val POPULAR_SCREEN_CLASS = "AllPopularPagesScreen"
@@ -130,7 +130,7 @@ internal class AllViewModel @Inject constructor(
 
         if (topicContentItems.isNotEmpty()) {
             topicItems = listOf(
-                topicContentItems to screenTitle
+                topicContentItems to screenTitle,
             ).flatMap { (items, category) ->
                 items.map { item ->
                     EcommerceEvent.Item(
