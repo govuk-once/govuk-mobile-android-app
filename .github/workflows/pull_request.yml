@@ -44,6 +44,9 @@ jobs:
             235aa3fe-7605-4337-ab29-b32c0085d539 > CI_ACCESS_USERNAME
             16eca8c9-cccf-448b-a731-b32c0085e7ed > CI_ACCESS_TOKEN
 
+      - name: Ktlint
+        run: ./gradlew ktlintCheck
+
       - name: Lint
         run: ./gradlew lint
 
