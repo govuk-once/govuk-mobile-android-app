@@ -67,6 +67,8 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORIES_ROUTE
 import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORY_DETAIL_ROUTE
+import uk.gov.govuk.dvla.navigation.VEHICLE_DETAILS_ROUTE
+import uk.gov.govuk.dvla.navigation.VEHICLE_SEARCH_RESULT_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDrivingCategories
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
@@ -221,6 +223,8 @@ private fun BottomNavScaffold(
     val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
     val isLicenceCategoriesRoute = currentRoute == LICENCE_CATEGORIES_ROUTE
     val isLicenceCategoryDetailRoute = currentRoute?.startsWith(LICENCE_CATEGORY_DETAIL_ROUTE) == true
+    val isVehicleDetailsRoute = currentRoute?.startsWith(VEHICLE_DETAILS_ROUTE) == true
+    val isVehicleSearchResultRoute = currentRoute?.startsWith(VEHICLE_SEARCH_RESULT_ROUTE) == true
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
             currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
@@ -228,7 +232,7 @@ private fun BottomNavScaffold(
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
             currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
     val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute ||
-            isLicenceCategoriesRoute || isLicenceCategoryDetailRoute) && !isSystemInDarkTheme()
+            isLicenceCategoriesRoute || isLicenceCategoryDetailRoute || isVehicleDetailsRoute || isVehicleSearchResultRoute) && !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
