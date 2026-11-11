@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,11 +23,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -52,6 +56,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.CheckVehicleError
 import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.model.CheckVehicleClearIconColours
 
 private val SheetShape = RoundedCornerShape(topStart = 33.dp, topEnd = 33.dp)
 
@@ -262,9 +267,12 @@ private fun RegistrationInput(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier
 ) {
-    val clearDescription = stringResource(
-        R.string.check_vehicle_clear_registration
-    )
+
+    val clearDescription = stringResource(R.string.check_vehicle_clear_registration)
+
+    val clearInteractionSource = remember { MutableInteractionSource() }
+    val isClearFocused by clearInteractionSource.collectIsFocusedAsState()
+    val clearColours = resolveClearIconColours(isFocused = isClearFocused)
 
     BasicTextField(
         value = registration,
@@ -307,15 +315,15 @@ private fun RegistrationInput(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
+                        .clip(CircleShape)
+                        .background(clearColours.background)
                         .semantics {
                             contentDescription = clearDescription
                             role = Role.Button
                         }
                         .clickable(
                             enabled = enabled && registration.isNotEmpty(),
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            },
+                            interactionSource = clearInteractionSource,
                             indication = null,
                             onClick = onClear
                         ),
@@ -323,15 +331,13 @@ private fun RegistrationInput(
                 ) {
                     if (registration.isNotEmpty()) {
                         Icon(
-                            painter = painterResource(
-                                uk.gov.govuk.design.R.drawable.ic_cancel_round
-                            ),
+                            painter = painterResource(uk.gov.govuk.design.R.drawable.ic_cancel_round),
                             contentDescription = null,
-                            tint = GovUkTheme.colourScheme.textAndIcons.primary,
+                            tint = clearColours.icon,
                             modifier = Modifier
                                 .size(20.dp)
                                 .background(
-                                    color = GovUkTheme.colourScheme.surfaces.list,
+                                    color = clearColours.iconBackground,
                                     shape = CircleShape
                                 )
                         )
@@ -340,6 +346,23 @@ private fun RegistrationInput(
             }
         }
     )
+}
+
+@Composable
+private fun resolveClearIconColours(isFocused: Boolean): CheckVehicleClearIconColours {
+    return if (isFocused) {
+        CheckVehicleClearIconColours(
+            background = GovUkTheme.colourScheme.surfaces.focused,
+            icon = GovUkTheme.colourScheme.textAndIcons.focused,
+            iconBackground = GovUkTheme.colourScheme.surfaces.focused
+        )
+    } else {
+        CheckVehicleClearIconColours(
+            background = Color.Transparent,
+            icon = GovUkTheme.colourScheme.textAndIcons.primary,
+            iconBackground = GovUkTheme.colourScheme.surfaces.list
+        )
+    }
 }
 
 @PreviewLightDark
