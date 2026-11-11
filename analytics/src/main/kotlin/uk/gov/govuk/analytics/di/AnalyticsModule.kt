@@ -21,12 +21,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
+import javax.inject.Singleton
 import uk.gov.govuk.analytics.ActivityProvider
 import uk.gov.govuk.analytics.ActivityProviderInterface
 import uk.gov.govuk.analytics.AnalyticsCoordinator
 import uk.gov.govuk.analytics.AnalyticsCoordinatorInterface
-import javax.inject.Named
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -64,13 +64,13 @@ internal abstract class AnalyticsModule {
         @Singleton
         @Provides
         @Named("analytics_prefs")
-        fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-            return PreferenceDataStoreFactory.create(
-                corruptionHandler = ReplaceFileCorruptionHandler(
-                    produceNewData = { emptyPreferences() }
-                ),
-                produceFile = { context.preferencesDataStoreFile("analytics_preferences") }
-            )
-        }
+        fun providePreferencesDataStore(
+            @ApplicationContext context: Context
+        ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = { context.preferencesDataStoreFile("analytics_preferences") }
+        )
     }
 }
