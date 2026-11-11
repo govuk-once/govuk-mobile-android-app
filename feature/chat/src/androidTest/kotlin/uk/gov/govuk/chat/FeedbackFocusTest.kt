@@ -171,7 +171,7 @@ class FeedbackFocusTest {
                 isImeVisible = false,
                 uiEvents = UiEvents(
                     onQuestionUpdated = { _ -> },
-                    onSubmit = { _ -> },
+                    onSubmit = { _, _ -> },
                     onClear = { },
                     onFeedbackClick = { _, _, _ -> },
                     onFeedbackGiven = { _, _, reaction -> feedbackReaction = reaction }

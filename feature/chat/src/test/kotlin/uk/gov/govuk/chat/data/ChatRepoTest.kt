@@ -78,6 +78,33 @@ class ChatRepoTest {
     }
 
     @Test
+    fun `Ask suggested prompt question updates existing conversation with suggested prompt flag`() = runTest {
+        coEvery { dataStore.conversationId() } returns "123"
+
+        chatRepo.askQuestion("question", isSuggestedPrompt = true)
+
+        coVerify {
+            chatApi.updateConversation(
+                "123",
+                ConversationQuestionRequest("question", isSuggestedPrompt = true)
+            )
+        }
+    }
+
+    @Test
+    fun `Ask suggested prompt question creates a new conversation with suggested prompt flag`() = runTest {
+        coEvery { dataStore.conversationId() } returns null
+
+        chatRepo.askQuestion("question", isSuggestedPrompt = true)
+
+        coVerify {
+            chatApi.startConversation(
+                ConversationQuestionRequest("question", isSuggestedPrompt = true)
+            )
+        }
+    }
+
+    @Test
     fun `Ask question creates a new conversation and persists id`() = runTest {
         coEvery { dataStore.conversationId() } returns null
         coEvery { chatApi.startConversation(any()) } returns questionResponse

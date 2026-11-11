@@ -586,6 +586,20 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `Manually submitted question is not flagged as a suggested prompt`() = runTest {
+        viewModel.onSubmit("Question")
+
+        coVerify { chatRepo.askQuestion("Question", false) }
+    }
+
+    @Test
+    fun `Suggested prompt question is flagged as a suggested prompt`() = runTest {
+        viewModel.onSubmit("Question", isSuggestedPrompt = true)
+
+        coVerify { chatRepo.askQuestion("Question", true) }
+    }
+
+    @Test
     fun `setChatIntroSeen calls repo and updates uiState`() = runTest {
         val uiStates = mutableListOf<ChatUiState?>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {

@@ -93,7 +93,7 @@ internal class AnalyticsEvents(
 
 internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
-    val onSubmit: (String) -> Unit,
+    val onSubmit: (question: String, isSuggestedPrompt: Boolean) -> Unit,
     val onClear: () -> Unit,
     val onFeedbackGiven: (String, String, String) -> Unit,
     val onFeedbackClick: (String, String, String) -> Unit
@@ -169,8 +169,8 @@ internal fun ChatRoute(
                         onQuestionUpdated = { question ->
                             viewModel.onQuestionUpdated(question)
                         },
-                        onSubmit = { question ->
-                            viewModel.onSubmit(question)
+                        onSubmit = { question, isSuggestedPrompt ->
+                            viewModel.onSubmit(question, isSuggestedPrompt)
                         },
                         onClear = {
                             viewModel.clearConversation()
@@ -274,7 +274,7 @@ internal fun ChatScreen(
                         isLoading = uiState.isLoading,
                         onExampleQuestionsViewed = analyticsEvents.onExampleQuestionsViewed,
                         onExampleQuestionClicked = { question, index ->
-                            uiEvents.onSubmit(question)
+                            uiEvents.onSubmit(question, true)
                             analyticsEvents.onExampleQuestionSelected(question, index)
                         },
                         chatExampleQuestions = chatExampleQuestions
@@ -347,7 +347,7 @@ internal fun ChatScreen(
                     onClear = uiEvents.onClear,
                     onQuestionUpdated = uiEvents.onQuestionUpdated,
                     onSubmit = { question ->
-                        uiEvents.onSubmit(question)
+                        uiEvents.onSubmit(question, false)
                         analyticsEvents.onQuestionSubmit()
                     },
                     chatUrls = chatUrls,
@@ -729,7 +729,7 @@ private fun analyticsEvents() = AnalyticsEvents(
 
 private fun clickEvents() = UiEvents(
     onQuestionUpdated = { _ -> },
-    onSubmit = { _ -> },
+    onSubmit = { _, _ -> },
     onClear = { },
     onFeedbackGiven = { _, _, _ -> },
     onFeedbackClick = { _, _, _ -> }

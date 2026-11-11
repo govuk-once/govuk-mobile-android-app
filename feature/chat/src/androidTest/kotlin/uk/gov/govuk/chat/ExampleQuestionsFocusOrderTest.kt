@@ -80,7 +80,11 @@ class ExampleQuestionsFocusOrderTest {
     @Test
     fun tapping_an_example_question_submits_that_question_and_no_other() {
         var submittedQuestion: String? = null
-        setupChatScreen(onSubmit = { submittedQuestion = it })
+        var submittedAsSuggestedPrompt: Boolean? = null
+        setupChatScreen(onSubmit = { question, isSuggestedPrompt ->
+            submittedQuestion = question
+            submittedAsSuggestedPrompt = isSuggestedPrompt
+        })
         waitForExampleQuestionsToAppear()
 
         val tappedQuestion = questions[1]
@@ -89,6 +93,7 @@ class ExampleQuestionsFocusOrderTest {
             .performClick()
 
         assertEquals(tappedQuestion, submittedQuestion)
+        assertEquals(true, submittedAsSuggestedPrompt)
     }
 
     private fun waitForExampleQuestionsToAppear() {
@@ -98,7 +103,7 @@ class ExampleQuestionsFocusOrderTest {
         )
     }
 
-    private fun setupChatScreen(onSubmit: (String) -> Unit = { }) {
+    private fun setupChatScreen(onSubmit: (String, Boolean) -> Unit = { _, _ -> }) {
         composeTestRule.setContent {
             GovUkTheme {
                 ChatScreen(
