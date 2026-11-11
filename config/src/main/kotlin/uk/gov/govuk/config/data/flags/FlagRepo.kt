@@ -123,8 +123,7 @@ class FlagRepo @Inject constructor(
         return isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isTravelAlertsEnabled,
-//            remoteFlag = configRepo.isTravelAlertsEnabled
-            remoteFlag = false // Always off for prod builds!!!
+            remoteFlag = configRepo.isTravelAlertsEnabled
         )
     }
 
