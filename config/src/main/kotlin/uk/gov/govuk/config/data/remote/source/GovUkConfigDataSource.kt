@@ -1,6 +1,9 @@
 package uk.gov.govuk.config.data.remote.source
 
 import com.google.gson.Gson
+import java.net.UnknownHostException
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CancellationException
 import uk.gov.govuk.config.SignatureValidator
 import uk.gov.govuk.config.data.remote.ConfigApi
@@ -13,9 +16,6 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
-import java.net.UnknownHostException
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class GovUkConfigDataSource @Inject constructor(
@@ -57,7 +57,7 @@ class GovUkConfigDataSource @Inject constructor(
                     } else {
                         Error()
                     }
-               } ?: Error()
+                } ?: Error()
             } else {
                 Error()
             }
