@@ -24,4 +24,6 @@ class DebugFlags @Inject constructor() {
     /** If isFlexEnabled is false it will be ignored */
     internal val isDvlaLinkEnabled: Boolean? = true
     internal val isQuarterlySurveyEnabled: Boolean? = true
+
+    internal val isChatV2Enabled: Boolean = false
 }

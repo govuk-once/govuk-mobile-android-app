@@ -56,6 +56,7 @@ import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
+import uk.gov.govuk.chatv2.navigation.chatV2Graph
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
 import uk.gov.govuk.design.ui.component.InfoAlert
@@ -314,7 +315,8 @@ private fun BottomNavScaffold(
                         viewModel.onSuppressWidgetClick(id, text, section)
                     },
                     shouldShowExternalBrowser = uiState.shouldShowExternalBrowser,
-                    paddingValues = paddingValues
+                    paddingValues = paddingValues,
+                    isChatV2Routing = uiState.isChatEnabled && viewModel.isChatV2Routing()
                 )
                 HandleOnResumeNavigation(
                     navController = { navController },
@@ -442,7 +444,8 @@ private fun GovUkNavHost(
     onWidgetClick: (text: String, url: String?) -> Unit,
     onSuppressWidgetClick: (id: String, text: String) -> Unit,
     shouldShowExternalBrowser: Boolean,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    isChatV2Routing: Boolean = false
 ) {
     val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser)
     val externalLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
@@ -738,10 +741,23 @@ private fun GovUkNavHost(
             navController = navController
         )
 
-        chatGraph(
+        fun chatGraphSelector(
+            isV2: Boolean,
+            navController: NavHostController,
+            modifier: Modifier = Modifier,
+            onAuthError: () -> Unit,
+            launchBrowser: (String) -> Unit
+        ) = if (isV2) {
+            chatV2Graph(navController, launchBrowser, onAuthError, modifier)
+        } else {
+            chatGraph(navController, launchBrowser, onAuthError, modifier)
+        }
+
+        chatGraphSelector(
+            isV2 = isChatV2Routing,
             navController = navController,
-            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
             onAuthError = { appNavigation.onSignOut(navController) },
+            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
             modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding(),
                 start = paddingValues.calculateStartPadding(layoutDirection),

@@ -144,6 +144,7 @@ dependencies {
     implementation(projects.data)
     implementation(projects.govkit)
     implementation(projects.feature.chat)
+    implementation(projects.feature.chatv2)
     implementation(projects.feature.home)
     implementation(projects.feature.local)
     implementation(projects.feature.messages)
