@@ -1,8 +1,8 @@
 package uk.gov.govuk.data
 
-import uk.gov.govuk.data.local.AppDataStore
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.data.local.AppDataStore
 
 @Singleton
 internal class AppRepo @Inject constructor(
@@ -20,7 +20,9 @@ internal class AppRepo @Inject constructor(
 
     internal val suppressedHomeWidgets = appDataStore.suppressedHomeWidgets
 
-    internal suspend fun suppressHomeWidget(id: String) = appDataStore.suppressHomeWidget(id)
+    internal suspend fun suppressHomeWidget(
+        id: String
+    ) = appDataStore.suppressHomeWidget(id)
 
     internal suspend fun clear() = appDataStore.clear()
 }

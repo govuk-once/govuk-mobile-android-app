@@ -19,7 +19,6 @@ class LoginRepoTest {
         coEvery { loginDataStore.getRefreshTokenExpiryDate() } returns null
 
         runTest {
-
             assertNull(repo.getRefreshTokenExpiryDate())
         }
     }
@@ -31,7 +30,6 @@ class LoginRepoTest {
         coEvery { loginDataStore.getRefreshTokenExpiryDate() } returns 12345L
 
         runTest {
-
             assertEquals(12345L, repo.getRefreshTokenExpiryDate())
         }
     }
@@ -43,7 +41,6 @@ class LoginRepoTest {
         coEvery { loginDataStore.getRefreshTokenIssuedAtDate() } returns null
 
         runTest {
-
             assertNull(repo.getRefreshTokenIssuedAtDate())
         }
     }
@@ -55,7 +52,6 @@ class LoginRepoTest {
         coEvery { loginDataStore.getRefreshTokenIssuedAtDate() } returns 12345L
 
         runTest {
-
             assertEquals(12345L, repo.getRefreshTokenIssuedAtDate())
         }
     }
