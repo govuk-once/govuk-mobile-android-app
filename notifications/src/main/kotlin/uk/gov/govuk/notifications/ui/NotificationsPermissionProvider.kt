@@ -12,12 +12,13 @@ import com.google.accompanist.permissions.shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun notificationsPermissionShouldShowRationale(): Boolean =
-    getNotificationsPermissionStatus().shouldShowRationale
+fun notificationsPermissionShouldShowRationale(): Boolean = getNotificationsPermissionStatus().shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun getNotificationsPermissionStatus(androidVersion: Int = Build.VERSION.SDK_INT): PermissionStatus {
+fun getNotificationsPermissionStatus(
+    androidVersion: Int = Build.VERSION.SDK_INT
+): PermissionStatus {
     if (androidVersion >= Build.VERSION_CODES.TIRAMISU) {
         return rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS).status
     }

@@ -3,11 +3,11 @@ package uk.gov.govuk.notifications
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.notifications.data.NotificationsRepo
-import javax.inject.Inject
 
 @HiltViewModel
 internal open class NotificationsViewModel @Inject constructor(
@@ -29,7 +29,10 @@ internal open class NotificationsViewModel @Inject constructor(
         )
     }
 
-    internal fun onAllowNotificationsClick(text: String, onCompleted: () -> Unit) {
+    internal fun onAllowNotificationsClick(
+        text: String,
+        onCompleted: () -> Unit
+    ) {
         viewModelScope.launch {
             notificationsRepo.firstPermissionRequestCompleted()
             notificationsRepo.giveConsent()
@@ -41,13 +44,18 @@ internal open class NotificationsViewModel @Inject constructor(
         )
     }
 
-    internal fun onNotNowClick(text: String) {
+    internal fun onNotNowClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text
         )
     }
 
-    internal fun onGiveConsentClick(text: String, onCompleted: () -> Unit) {
+    internal fun onGiveConsentClick(
+        text: String,
+        onCompleted: () -> Unit
+    ) {
         viewModelScope.launch {
             if (flagRepo.isFlexEnabled()) {
                 // TODO: awaiting failure requirements for sendConsent()
@@ -62,14 +70,19 @@ internal open class NotificationsViewModel @Inject constructor(
         )
     }
 
-    internal fun onTurnOffNotificationsClick(text: String) {
+    internal fun onTurnOffNotificationsClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             external = true
         )
     }
 
-    internal fun onPrivacyPolicyClick(text: String, url: String) {
+    internal fun onPrivacyPolicyClick(
+        text: String,
+        url: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             url = url,
@@ -77,7 +90,9 @@ internal open class NotificationsViewModel @Inject constructor(
         )
     }
 
-    internal fun onContinueButtonClick(text: String) {
+    internal fun onContinueButtonClick(
+        text: String
+    ) {
         viewModelScope.launch {
             if (flagRepo.isFlexEnabled()) {
                 // TODO: awaiting failure requirements for sendRemoveConsent()
@@ -89,7 +104,9 @@ internal open class NotificationsViewModel @Inject constructor(
         analyticsClient.buttonClick(text)
     }
 
-    internal fun onCancelButtonClick(text: String) {
+    internal fun onCancelButtonClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(text)
     }
 }

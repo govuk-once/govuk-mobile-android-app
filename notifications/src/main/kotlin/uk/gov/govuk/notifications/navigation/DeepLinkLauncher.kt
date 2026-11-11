@@ -10,7 +10,9 @@ import javax.inject.Singleton
 class DeepLinkLauncher @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
-    fun launchDeepLink(uri: String) {
+    fun launchDeepLink(
+        uri: String
+    ) {
         if (uri.isBlank()) {
             return
         }
