@@ -55,6 +55,9 @@ import uk.gov.govuk.BuildConfig
 import uk.gov.govuk.R
 import uk.gov.govuk.analytics.navigation.analyticsGraph
 import uk.gov.govuk.chat.navigation.CHAT_GRAPH_ROUTE
+import uk.gov.govuk.chat.navigation.CHAT_ONBOARDING_PAGE_1_ROUTE
+import uk.gov.govuk.chat.navigation.CHAT_ONBOARDING_PAGE_2_ROUTE
+import uk.gov.govuk.chat.navigation.CHAT_ONBOARDING_PAGE_3_ROUTE
 import uk.gov.govuk.chat.navigation.chatGraph
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.design.ui.component.FullScreenWrapper
@@ -128,7 +131,10 @@ private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
 /** Routes where the bottom nav bar should be hidden */
 private val HIDE_BOTTOM_NAV_ROUTES = setOf(
     COUNTRY_LIST_ROUTE,
-    NOTIFICATIONS_RATIONALE_ROUTE
+    NOTIFICATIONS_RATIONALE_ROUTE,
+    CHAT_ONBOARDING_PAGE_1_ROUTE,
+    CHAT_ONBOARDING_PAGE_2_ROUTE,
+    CHAT_ONBOARDING_PAGE_3_ROUTE
 )
 
 @Composable

@@ -16,9 +16,9 @@ import uk.gov.govuk.chat.ui.OnboardingPageTwoRoute
 
 const val CHAT_GRAPH_ROUTE = "chat_graph_route"
 const val CHAT_ROUTE = "chat_route"
-private const val CHAT_ONBOARDING_PAGE_1_ROUTE = "chat_onboarding_1_route"
-private const val CHAT_ONBOARDING_PAGE_2_ROUTE = "chat_onboarding_2_route"
-private const val CHAT_ONBOARDING_PAGE_3_ROUTE = "chat_onboarding_3_route"
+const val CHAT_ONBOARDING_PAGE_1_ROUTE = "chat_onboarding_1_route"
+const val CHAT_ONBOARDING_PAGE_2_ROUTE = "chat_onboarding_2_route"
+const val CHAT_ONBOARDING_PAGE_3_ROUTE = "chat_onboarding_3_route"
 
 val chatDeepLinks = mapOf("/chat" to listOf(CHAT_ROUTE))
 
