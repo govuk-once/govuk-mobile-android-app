@@ -3,36 +3,24 @@ package uk.gov.govuk.travelalerts.ui.widget
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
-import uk.gov.govuk.design.ui.component.BodyBoldLabel
-import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.CentredCardWithIcon
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
-import uk.gov.govuk.design.ui.component.ExtraLargeVerticalSpacer
-import uk.gov.govuk.design.ui.component.ExtraSmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.LoaderCard
-import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.error.ProblemMessageWithRetry
@@ -103,7 +91,9 @@ private fun TravelAlertsLoading() {
 }
 
 @Composable
-private fun TravelAlertsEmpty(onFollowCountry: () -> Unit) {
+private fun TravelAlertsEmpty(
+    onFollowCountry: () -> Unit
+) {
     CentredCardWithIcon(
         onClick = onFollowCountry,
         icon = uk.gov.govuk.design.R.drawable.ic_add,
@@ -111,7 +101,8 @@ private fun TravelAlertsEmpty(onFollowCountry: () -> Unit) {
         description = stringResource(R.string.empty_description),
         paddingValues = PaddingValues(
             horizontal = GovUkTheme.spacing.extraLarge,
-            vertical = GovUkTheme.spacing.extraLarge)
+            vertical = GovUkTheme.spacing.extraLarge
+        )
     )
 }
 

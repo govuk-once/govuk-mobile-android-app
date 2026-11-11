@@ -1,5 +1,9 @@
 package uk.gov.govuk.travelalerts.data
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
@@ -10,12 +14,8 @@ import uk.gov.govuk.travelalerts.data.model.Subgroup
 import uk.gov.govuk.travelalerts.data.model.SubscriptionRequest
 import uk.gov.govuk.travelalerts.data.remote.GroupsApi
 import uk.gov.govuk.travelalerts.data.remote.TravelApi
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 
-class DateProviderImpl: DateProvider {
+class DateProviderImpl : DateProvider {
     override val date: Instant
         get() = Instant.now()
 }
@@ -28,9 +28,13 @@ internal class TravelAlertsRepoImpl @Inject constructor(
     private val dateProvider: DateProvider
 ) : TravelAlertsRepo {
 
-    data class CacheEntry<T>(val value: T, val lastUpdated: Instant = Instant.now()) {
-        fun hasExpired(now: Instant): Boolean =
-            now.isAfter(lastUpdated.plus(300, ChronoUnit.SECONDS))
+    data class CacheEntry<T>(
+        val value: T,
+        val lastUpdated: Instant = Instant.now()
+    ) {
+        fun hasExpired(
+            now: Instant
+        ): Boolean = now.isAfter(lastUpdated.plus(300, ChronoUnit.SECONDS))
     }
 
     private var groups: CacheEntry<List<Group>>? = null
@@ -72,9 +76,15 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         return res
     }
 
-    override suspend fun followCountry(slug: String, notificationsEnabled: Boolean): Result<Unit> {
-        val (leaveSubgroup, joinSubgroup) = if (notificationsEnabled) Subgroup.NONE to Subgroup.INSTANT
-                                            else Subgroup.INSTANT to Subgroup.NONE
+    override suspend fun followCountry(
+        slug: String,
+        notificationsEnabled: Boolean
+    ): Result<Unit> {
+        val (leaveSubgroup, joinSubgroup) = if (notificationsEnabled) {
+            Subgroup.NONE to Subgroup.INSTANT
+        } else {
+            Subgroup.INSTANT to Subgroup.NONE
+        }
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
@@ -106,9 +116,15 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         return result
     }
 
-    override suspend fun toggleNotifications(slug: String, enabled: Boolean): Result<Unit> {
-        val (leaveSubgroup, joinSubgroup) = if (enabled) Subgroup.NONE to Subgroup.INSTANT
-                                            else Subgroup.INSTANT to Subgroup.NONE
+    override suspend fun toggleNotifications(
+        slug: String,
+        enabled: Boolean
+    ): Result<Unit> {
+        val (leaveSubgroup, joinSubgroup) = if (enabled) {
+            Subgroup.NONE to Subgroup.INSTANT
+        } else {
+            Subgroup.INSTANT to Subgroup.NONE
+        }
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
@@ -133,7 +149,9 @@ internal class TravelAlertsRepoImpl @Inject constructor(
         return result
     }
 
-    override suspend fun unfollowCountry(slug: String): Result<Unit> {
+    override suspend fun unfollowCountry(
+        slug: String
+    ): Result<Unit> {
         val result = safeAuthApiCall(apiCall = {
             groupsApi.subscribeToGroups(
                 listOf(
