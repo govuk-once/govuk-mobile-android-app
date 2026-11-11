@@ -739,6 +739,13 @@ private fun GovUkNavHost(
             navController = navController,
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
             onAuthError = { appNavigation.onSignOut(navController) },
+            onCancelOnboarding = {
+                navController.navigate(TopLevelDestination.Home.route) {
+                    popUpTo(CHAT_GRAPH_ROUTE) { inclusive = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
             modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding(),
                 start = paddingValues.calculateStartPadding(layoutDirection),

@@ -26,6 +26,7 @@ fun NavGraphBuilder.chatGraph(
     navController: NavHostController,
     launchBrowser: (url: String) -> Unit,
     onAuthError: () -> Unit,
+    onCancelOnboarding: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -48,7 +49,7 @@ fun NavGraphBuilder.chatGraph(
                     navController.navigateToOnboardingPageTwo()
                 },
                 onCancel = {
-                    popToChatEntryScreen(navController)
+                    onCancelOnboarding()
                 },
                 modifier = modifier
                     .windowInsetsPadding(WindowInsets.statusBars)
@@ -60,7 +61,7 @@ fun NavGraphBuilder.chatGraph(
                     navController.navigateToOnboardingPageThree()
                 },
                 onCancel = {
-                    popToChatEntryScreen(navController)
+                    onCancelOnboarding()
                 },
                 onBack = {
                     navController.navigateToOnboardingPageOne()
@@ -75,7 +76,7 @@ fun NavGraphBuilder.chatGraph(
                     navController.navigateToChat()
                 },
                 onCancel = {
-                    popToChatEntryScreen(navController)
+                    onCancelOnboarding()
                 },
                 onBack = {
                     navController.navigateToOnboardingPageTwo()
@@ -86,10 +87,6 @@ fun NavGraphBuilder.chatGraph(
             )
         }
     }
-}
-
-private fun popToChatEntryScreen(navController: NavController) {
-    navController.popBackStack(route = "chat_route", inclusive = true)
 }
 
 fun NavController.navigateToChat() {
