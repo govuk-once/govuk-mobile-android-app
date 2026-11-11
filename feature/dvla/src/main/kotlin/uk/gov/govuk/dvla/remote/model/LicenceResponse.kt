@@ -23,5 +23,14 @@ data class DrivingLicence(
 
 data class Entitlement(
     @SerializedName("categoryCode") val categoryCode: String?,
-    @SerializedName("categoryType") val categoryType: EntitlementType?
+    @SerializedName("categoryType") val categoryType: EntitlementType?,
+    @SerializedName("fromDate") val fromDate: String?,
+    @SerializedName("expiryDate") val expiryDate: String?,
+    @SerializedName("restrictions") val restrictions: List<Restriction>?,
+    @SerializedName("categoryLegalLiteral") val categoryLegalLiteral: String?
+)
+
+data class Restriction(
+    @SerializedName("restrictionCode") val restrictionCode: String?,
+    @SerializedName("restrictionLiteral") val restrictionLiteral: String?
 )

@@ -135,8 +135,8 @@ class QualtricsAnalyticsClient @Inject constructor(
      */
     private val analyticsParameterKeys = listOf(
         "action", "external", "item_list_id", "item_list_name",
-        "language", "qualtrics_targeting_id", "screen_class", "screen_name",
-        "screen_title", "section", "text", "type", "url"
+        "language", "qualtrics_targeting_id", "questionId", "screen_class",
+        "screen_name", "screen_title", "section", "text", "type", "url"
     )
 
     private fun setParameters(parameters: Map<String, Any>) {

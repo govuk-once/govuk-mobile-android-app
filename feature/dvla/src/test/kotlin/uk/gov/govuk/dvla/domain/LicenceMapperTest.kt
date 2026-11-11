@@ -25,8 +25,22 @@ class LicenceMapperTest {
             every { drivingLicence.licenceStatus } returns RemoteLicenceStatus.VALID
             every { drivingLicence.tokenValidToDate } returns "2035-05-01"
             every { drivingLicence.entitlements } returns listOf(
-                RemoteEntitlement("B", RemoteEntitlementType.FULL),
-                RemoteEntitlement("A", RemoteEntitlementType.PROVISIONAL)
+                RemoteEntitlement(
+                    categoryCode = "B",
+                    categoryType = RemoteEntitlementType.FULL,
+                    fromDate = null,
+                    expiryDate = null,
+                    restrictions = null,
+                    categoryLegalLiteral = null
+                ),
+                RemoteEntitlement(
+                    categoryCode = "A",
+                    categoryType = RemoteEntitlementType.PROVISIONAL,
+                    fromDate = null,
+                    expiryDate = null,
+                    restrictions = null,
+                    categoryLegalLiteral = null
+                )
             )
         }
 

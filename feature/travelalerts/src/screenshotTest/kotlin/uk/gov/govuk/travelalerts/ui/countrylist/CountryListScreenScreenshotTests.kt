@@ -32,4 +32,11 @@ internal class CountryListScreenScreenshotTests {
     fun CountryListLoadedEmptyScreenshots() {
         CountryListLoadedEmptyPreview()
     }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun CountryListDeviceOfflineScreenshots() {
+        CountryListDeviceOfflinePreview()
+    }
 }

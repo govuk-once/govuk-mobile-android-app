@@ -4,7 +4,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.config.data.local.model.HomeWidget
 import uk.gov.govuk.config.data.remote.model.ChatBanner
@@ -29,18 +28,6 @@ class HomeViewModelTest {
                 screenName = "Homepage",
                 title = "Homepage"
             )
-        }
-    }
-
-    // TODO - Android A/A test 10-26 - remove when the test has finished
-    @Test
-    fun `Given a page view, then log AB test activation`() {
-        val viewModel = HomeViewModel(analyticsClient)
-
-        viewModel.onPageView(emptyList())
-
-        verify {
-            analyticsClient.abTestEvent(AbTestEvent.HOME_ACTIVATION_10_26)
         }
     }
 

@@ -33,12 +33,12 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.ChildPageHeader
-import uk.gov.govuk.design.ui.component.FixedPrimaryButton
 import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.LargeVerticalSpacer
 import uk.gov.govuk.design.ui.component.LoadingScreen
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.error.ErrorPage
+import uk.gov.govuk.design.ui.component.error.OfflineMessage
+import uk.gov.govuk.design.ui.component.error.ProblemMessageWithRetry
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.model.InternalLinkListItemStyle.TrailingIcon
@@ -46,7 +46,6 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
 import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Subgroup
-import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.travelalerts.navigation.EDIT_NOTIFICATIONS_ENABLED_KEY
 import uk.gov.govuk.travelalerts.navigation.EDIT_OPT_IN_ERROR_KEY
 import uk.gov.govuk.travelalerts.navigation.EDIT_REOPEN_SLUG_KEY
@@ -121,6 +120,7 @@ fun EditCountriesScreen(
         when (val state = uiState) {
             is EditCountriesViewModel.State.Loading -> LoadingScreen()
             is EditCountriesViewModel.State.Error -> EditCountriesError(onRetry = viewModel::onRetry)
+            is EditCountriesViewModel.State.DeviceOffline -> EditCountriesDeviceOffline(onRetry = viewModel::onRetry)
             is EditCountriesViewModel.State.Loaded -> {
                 EditCountriesLoaded(
                     state = state,
@@ -295,21 +295,16 @@ private fun EditCountriesLoaded(
 @Composable
 private fun EditCountriesError(
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    ErrorPage(
-        headerText = stringResource(R.string.country_list_error_title),
-        subText = listOf(stringResource(R.string.country_list_error_description)),
-        modifier = modifier,
-        footerContent = {
-            FixedPrimaryButton(
-                text = stringResource(R.string.country_list_error_retry),
-                onClick = onRetry
-            )
-        }
-    )
+    ProblemMessageWithRetry(onButtonClick = onRetry)
 }
 
+@Composable
+private fun EditCountriesDeviceOffline(
+    onRetry: () -> Unit
+) {
+    OfflineMessage(onButtonClick = onRetry)
+}
 @Composable
 @PreviewLightDark
 internal fun EditCountriesLoadingPreview() {
@@ -323,6 +318,14 @@ internal fun EditCountriesLoadingPreview() {
 internal fun EditCountriesErrorPreview() {
     GovUkTheme {
         EditCountriesError(onRetry = {})
+    }
+}
+
+@Composable
+@PreviewLightDark
+internal fun EditCountriesDeviceOfflinePreview() {
+    GovUkTheme {
+        EditCountriesDeviceOffline(onRetry = {})
     }
 }
 

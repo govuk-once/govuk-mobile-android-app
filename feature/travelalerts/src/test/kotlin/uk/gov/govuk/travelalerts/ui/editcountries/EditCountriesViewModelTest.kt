@@ -138,13 +138,13 @@ class EditCountriesViewModelTest {
     }
 
     @Test
-    fun `Given page view, when device offline, then state is Error`() = runTest {
+    fun `Given page view, when device offline, then state is DeviceOffline`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.DeviceOffline()
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is EditCountriesViewModel.State.Error)
+        assertTrue(viewModel.uiState.value is EditCountriesViewModel.State.DeviceOffline)
     }
 
     @Test

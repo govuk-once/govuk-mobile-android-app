@@ -17,12 +17,30 @@ fun ProblemMessage(
 ) {
 
     Error(
+        modifier = modifier,
         title = stringResource(R.string.problem_title),
         description = description ?: stringResource(R.string.problem_description),
         buttonTitle = stringResource(R.string.go_to_the_gov_uk_website),
         onButtonClick = onGoToGovUkClick,
-        modifier = modifier,
         externalLink = true,
+        focusRequester = focusRequester
+    )
+}
+
+@Composable
+fun ProblemMessageWithRetry(
+    modifier: Modifier = Modifier,
+    onButtonClick: (() -> Unit)? = null,
+    description: String? = null,
+    focusRequester: FocusRequester = FocusRequester()
+) {
+
+    Error(
+        modifier = modifier,
+        title = stringResource(R.string.problem_title),
+        description = description ?: stringResource(R.string.problem_description),
+        buttonTitle = stringResource(R.string.try_again),
+        onButtonClick = onButtonClick,
         focusRequester = focusRequester
     )
 }
@@ -31,6 +49,14 @@ fun ProblemMessage(
 @Composable
 private fun ProblemMessagePreview() {
     GovUkTheme {
-        ProblemMessage({})
+        ProblemMessage(onGoToGovUkClick = {})
+    }
+}
+
+@Preview
+@Composable
+private fun ProblemMessageWithRetryPreview() {
+    GovUkTheme {
+        ProblemMessageWithRetry(onButtonClick = {})
     }
 }
