@@ -141,7 +141,8 @@ internal class AppViewModel @Inject constructor(
                     _uiState.value = AppUiState.Default(
                         shouldDisplayRecommendUpdate = flagRepo.isRecommendUpdate(BuildConfig.VERSION_NAME),
                         shouldShowExternalBrowser = flagRepo.isExternalBrowserEnabled(),
-                        isChatEnabled = flagRepo.isChatEnabled()
+                        isChatEnabled = flagRepo.isChatEnabled(),
+                        isChatV2Enabled = flagRepo.isChatV2Enabled()
                     )
 
                     combine(
@@ -425,7 +426,6 @@ internal class AppViewModel @Inject constructor(
 
     fun isDvlaLinkEnabled() = flagRepo.isDvlaLinkEnabled()
     fun isTravelAlertsEnabled() = flagRepo.isTravelAlertsEnabled()
-    fun isChatV2Routing() = flagRepo.isChatEnabled() && flagRepo.isChatV2Enabled()
 
     fun onSignOut() {
         notificationsRepo.logout()

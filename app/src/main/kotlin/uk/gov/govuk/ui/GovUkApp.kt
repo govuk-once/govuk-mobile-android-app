@@ -305,7 +305,7 @@ private fun BottomNavScaffold(
                     },
                     shouldShowExternalBrowser = uiState.shouldShowExternalBrowser,
                     paddingValues = paddingValues,
-                    isChatV2Routing = uiState.isChatEnabled && viewModel.isChatV2Routing()
+                    isChatV2Enabled = uiState.isChatV2Enabled
                 )
                 HandleOnResumeNavigation(
                     navController = { navController },
@@ -434,7 +434,7 @@ private fun GovUkNavHost(
     onSuppressWidgetClick: (id: String, text: String) -> Unit,
     shouldShowExternalBrowser: Boolean,
     paddingValues: PaddingValues,
-    isChatV2Routing: Boolean = false
+    isChatV2Enabled: Boolean = false
 ) {
     val browserLauncher = rememberBrowserLauncher(shouldShowExternalBrowser)
     val externalLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
@@ -728,30 +728,32 @@ private fun GovUkNavHost(
             navController = navController
         )
 
-        fun chatGraphSelector(
-            isV2: Boolean,
-            navController: NavHostController,
-            modifier: Modifier = Modifier,
-            onAuthError: () -> Unit,
-            launchBrowser: (String) -> Unit
-        ) = if (isV2) {
-            chatV2Graph(navController, launchBrowser, onAuthError, modifier)
-        } else {
-            chatGraph(navController, launchBrowser, onAuthError, modifier)
+        val chatModifier = Modifier.padding(
+            top = paddingValues.calculateTopPadding(),
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            bottom = imeBottomPadding,
+            end = paddingValues.calculateEndPadding(layoutDirection)
+        )
+        val onChatAuthError = { appNavigation.onSignOut(navController) }
+        val launchChatBrowser: (String) -> Unit = { url ->
+            browserLauncher.launch(url) { showBrowserNotFoundAlert = true }
         }
 
-        chatGraphSelector(
-            isV2 = isChatV2Routing,
-            navController = navController,
-            onAuthError = { appNavigation.onSignOut(navController) },
-            launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
-                start = paddingValues.calculateStartPadding(layoutDirection),
-                bottom = imeBottomPadding,
-                end = paddingValues.calculateEndPadding(layoutDirection)
+        if (isChatV2Enabled) {
+            chatV2Graph(
+                navController = navController,
+                launchBrowser = launchChatBrowser,
+                onAuthError = onChatAuthError,
+                modifier = chatModifier
             )
-        )
+        } else {
+            chatGraph(
+                navController = navController,
+                launchBrowser = launchChatBrowser,
+                onAuthError = onChatAuthError,
+                modifier = chatModifier
+            )
+        }
     }
 
     if (showDeepLinkNotFoundAlert) {

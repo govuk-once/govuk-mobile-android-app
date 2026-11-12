@@ -25,5 +25,5 @@ class DebugFlags @Inject constructor() {
     internal val isDvlaLinkEnabled: Boolean? = true
     internal val isQuarterlySurveyEnabled: Boolean? = true
 
-    internal val isChatV2Enabled: Boolean = false
+    internal val isChatV2Enabled: Boolean? = false
 }

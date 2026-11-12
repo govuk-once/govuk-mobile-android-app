@@ -5,6 +5,7 @@ internal sealed class AppUiState {
         val shouldDisplayRecommendUpdate: Boolean = false,
         val shouldShowExternalBrowser: Boolean = false,
         val isChatEnabled: Boolean = false,
+        val isChatV2Enabled: Boolean = false
     ) : AppUiState()
 
     internal data object Loading : AppUiState()

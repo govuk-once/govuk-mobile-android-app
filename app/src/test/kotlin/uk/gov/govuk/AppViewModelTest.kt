@@ -806,6 +806,32 @@ class AppViewModelTest {
     }
 
     @Test
+    fun `Given chat v2 flag is true, When init, then chat v2 is enabled`() = runTest {
+        every { flagRepo.isChatV2Enabled() } returns true
+
+        val viewModel = AppViewModel(
+            timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature, context
+        )
+
+        val uiState = viewModel.uiState.first() as AppUiState.Default
+        assertTrue(uiState.isChatV2Enabled)
+    }
+
+    @Test
+    fun `Given chat v2 flag is false, When init, then chat v2 is not enabled`() = runTest {
+        every { flagRepo.isChatV2Enabled() } returns false
+
+        val viewModel = AppViewModel(
+            timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature, context
+        )
+
+        val uiState = viewModel.uiState.first() as AppUiState.Default
+        assertFalse(uiState.isChatV2Enabled)
+    }
+
+    @Test
     fun `Given analytics is enabled, when analytics consent completed, then refresh remote config`() = runTest(dispatcher) {
         val navEvent = async(UnconfinedTestDispatcher(testScheduler)) { viewModel.navigationEvent.first() }
         every { analyticsClient.isAnalyticsEnabled() } returns true
