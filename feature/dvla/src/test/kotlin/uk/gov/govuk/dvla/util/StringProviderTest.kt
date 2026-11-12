@@ -5,10 +5,16 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import uk.gov.govuk.dvla.R
+import java.time.LocalDate
 
 class StringProviderTest {
 
     private val stringProvider = mockk<StringProvider>()
+
+    private companion object {
+        const val TODAY_RES = 1
+        const val DAYS_RES = 2
+    }
 
     @Test
     fun `resolveSummaryDescription returns Unknown when resId is null`() {
@@ -34,5 +40,26 @@ class StringProviderTest {
 
         val result = stringProvider.resolveSummaryDescription(resId = resId, dateArg = null)
         assertEquals("Expired", result)
+    }
+
+    @Test
+    fun `Given today, when resolveDaysUntil called, then the today string is returned`() {
+        every { stringProvider.getString(TODAY_RES) } returns "Today"
+
+        assertEquals("Today", stringProvider.resolveDaysUntil(LocalDate.now(), TODAY_RES, DAYS_RES))
+    }
+
+    @Test
+    fun `Given tomorrow, when resolveDaysUntil called, then the plural is resolved with 1`() {
+        every { stringProvider.getQuantityString(DAYS_RES, 1, 1) } returns "1 day"
+
+        assertEquals("1 day", stringProvider.resolveDaysUntil(LocalDate.now().plusDays(1), TODAY_RES, DAYS_RES))
+    }
+
+    @Test
+    fun `Given a future date, when resolveDaysUntil called, then the plural is resolved with the day count`() {
+        every { stringProvider.getQuantityString(DAYS_RES, 10, 10) } returns "10 days"
+
+        assertEquals("10 days", stringProvider.resolveDaysUntil(LocalDate.now().plusDays(10), TODAY_RES, DAYS_RES))
     }
 }

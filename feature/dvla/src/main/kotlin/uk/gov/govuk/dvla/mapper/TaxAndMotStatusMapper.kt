@@ -21,7 +21,7 @@ import uk.gov.govuk.dvla.util.insertRegistration
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
 import uk.gov.govuk.dvla.util.isDirectDebit
 import uk.gov.govuk.dvla.util.isInTheFuture
-import uk.gov.govuk.dvla.util.isToday
+import uk.gov.govuk.dvla.util.resolveDaysUntil
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import java.time.LocalDate
@@ -181,16 +181,11 @@ internal class TaxAndMotStatusMapper @Inject constructor(
 
     private fun getExpiringBottomText(expiryDate: LocalDate) =
         AccessibleString(
-            displayText = if (expiryDate.isToday()) {
-                stringProvider.getString(R.string.today)
-            } else {
-                val numberOfDaysFromNow = expiryDate.getNumberOfDaysFromNow()
-                stringProvider.getQuantityString(
-                    R.plurals.expiring_status_days_left,
-                    numberOfDaysFromNow,
-                    numberOfDaysFromNow
-                )
-            }
+            displayText = stringProvider.resolveDaysUntil(
+                expiryDate,
+                R.string.today,
+                R.plurals.expiring_status_days_left
+            )
         )
 
     /* Tax specific functions START */

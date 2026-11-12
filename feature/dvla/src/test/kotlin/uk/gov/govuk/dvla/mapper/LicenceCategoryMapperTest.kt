@@ -17,6 +17,7 @@ import uk.gov.govuk.dvla.ui.model.LicenceCategoryRestrictionUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
+import java.time.LocalDate
 
 class LicenceCategoriesMapperTest {
 
@@ -188,12 +189,12 @@ class LicenceCategoriesMapperTest {
     }
 
     @Test
-    fun `Given an entitlement, when mapped to detail, then the title is its catalogue group`() {
+    fun `Given an entitlement, when mapped to UI model, then the title is its catalogue group`() {
         assertEquals("Minibuses", mapper.toDetailUiModel(full("D1E"))?.title)
     }
 
     @Test
-    fun `Given an entitlement with an icon, when mapped to detail, then the catalogue code and icon are used`() {
+    fun `Given an entitlement with an icon, when mapped to UI model, then the catalogue code and icon are used`() {
         assertEquals(
             LicenceCategoryUiModel("D1E", R.drawable.ic_licence_cat_d1e),
             mapper.toDetailUiModel(full("D1E"))?.category
@@ -201,7 +202,7 @@ class LicenceCategoriesMapperTest {
     }
 
     @Test
-    fun `Given an uppercase other vehicle code, when mapped to detail, then the lowercase display code is used with no icon`() {
+    fun `Given an uppercase other vehicle code, when mapped to UI model, then the lowercase display code is used with no icon`() {
         val result = mapper.toDetailUiModel(full("F"))
 
         assertEquals("Other vehicles", result?.title)
@@ -209,12 +210,12 @@ class LicenceCategoriesMapperTest {
     }
 
     @Test
-    fun `Given a code that is not in the catalogue, when mapped to detail, then the result is null`() {
+    fun `Given a code that is not in the catalogue, when mapped to UI model, then the result is null`() {
         assertNull(mapper.toDetailUiModel(full("ZZ")))
     }
 
     @Test
-    fun `Given restrictions, when mapped to detail, then they are mapped in order`() {
+    fun `Given restrictions, when mapped to UI model, then they are mapped in order`() {
         val entitlement = full("A").copy(
             restrictions = listOf(
                 Restriction("79(03)", "Restricted to tricycles"),
@@ -232,19 +233,79 @@ class LicenceCategoriesMapperTest {
     }
 
     @Test
-    fun `Given no restrictions, when mapped to detail, then restrictions are empty`() {
+    fun `Given no restrictions, when mapped to UI model, then restrictions are empty`() {
         assertTrue(mapper.toDetailUiModel(full("B"))?.restrictions?.isEmpty() == true)
     }
 
     @Test
-    fun `Given a legal literal, when mapped to detail, then it is the you can drive text`() {
+    fun `Given a legal literal, when mapped to UI model, then it is the you can drive text`() {
         val entitlement = full("F").copy(categoryLegalLiteral = "Agricultural")
 
         assertEquals("Agricultural", mapper.toDetailUiModel(entitlement)?.youCanDrive)
     }
 
     @Test
-    fun `Given a blank legal literal, when mapped to detail, then you can drive is null`() {
+    fun `Given a blank legal literal, when mapped to UI model, then you can drive is null`() {
         assertNull(mapper.toDetailUiModel(full("F").copy(categoryLegalLiteral = " "))?.youCanDrive)
+    }
+
+    @Test
+    fun `Given from and expiry dates, when mapped to UI model, then they are correctly formatted`() {
+        val entitlement = full("B").copy(
+            fromDate = LocalDate.of(1990, 12, 21),
+            expiryDate = LocalDate.of(2043, 5, 23)
+        )
+
+        val result = mapper.toDetailUiModel(entitlement)
+
+        assertEquals("21 December 1990", result?.validFrom)
+        assertEquals("23 May 2043", result?.validTo)
+    }
+
+    @Test
+    fun `Given no dates, when mapped to UI model, then dates and expiry indicator are null`() {
+        val result = mapper.toDetailUiModel(full("B"))
+
+        assertNull(result?.validFrom)
+        assertNull(result?.validTo)
+        assertNull(result?.expiryIndicator)
+    }
+
+    @Test
+    fun `Given expiry is today, when mapped to UI model, then the indicator says expires today`() {
+        every { stringProvider.getString(R.string.licence_category_detail_expires_today) } returns "Expires today"
+
+        val result = mapper.toDetailUiModel(full("B").copy(expiryDate = LocalDate.now()))
+
+        assertEquals("Expires today", result?.expiryIndicator)
+    }
+
+    @Test
+    fun `Given expiry is in 1 day, when mapped to UI model, then the indicator uses the day count`() {
+        every {
+            stringProvider.getQuantityString(R.plurals.licence_category_detail_expires_in_days, 1, 1)
+        } returns "Expires in 1 day"
+
+        val result = mapper.toDetailUiModel(full("B").copy(expiryDate = LocalDate.now().plusDays(1)))
+
+        assertEquals("Expires in 1 day", result?.expiryIndicator)
+    }
+
+    @Test
+    fun `Given expiry is in 60 days, when mapped to UI model, then the indicator is shown`() {
+        every {
+            stringProvider.getQuantityString(R.plurals.licence_category_detail_expires_in_days, 60, 60)
+        } returns "Expires in 60 days"
+
+        val result = mapper.toDetailUiModel(full("B").copy(expiryDate = LocalDate.now().plusDays(60)))
+
+        assertEquals("Expires in 60 days", result?.expiryIndicator)
+    }
+
+    @Test
+    fun `Given expiry is in 61 days, when mapped to UI model, then there is no indicator`() {
+        val result = mapper.toDetailUiModel(full("B").copy(expiryDate = LocalDate.now().plusDays(61)))
+
+        assertNull(result?.expiryIndicator)
     }
 }
