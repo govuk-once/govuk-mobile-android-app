@@ -3,6 +3,7 @@ package uk.gov.govuk.terms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -11,7 +12,6 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.BuildConfig
 import uk.gov.govuk.terms.data.TermsAcceptanceState
 import uk.gov.govuk.terms.data.TermsRepo
-import javax.inject.Inject
 
 internal sealed class TermsUiState {
 
@@ -19,9 +19,9 @@ internal sealed class TermsUiState {
         val termsUrl: String,
         val privacyPolicyUrl: String,
         val isUpdated: Boolean
-    ): TermsUiState()
+    ) : TermsUiState()
 
-    data object Error: TermsUiState()
+    data object Error : TermsUiState()
 }
 
 @HiltViewModel

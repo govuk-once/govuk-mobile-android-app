@@ -2,6 +2,8 @@ package uk.gov.govuk.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
+import javax.inject.Inject
+import kotlin.collections.get
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.chat.navigation.chatDeepLinks
 import uk.gov.govuk.config.data.flags.FlagRepo
@@ -21,8 +23,6 @@ import uk.gov.govuk.topics.ui.model.DRIVING_TOPIC_REF
 import uk.gov.govuk.topics.ui.model.TRAVEL_ABROAD_TOPIC_REF
 import uk.gov.govuk.travelalerts.navigation.EDIT_COUNTRIES_ROUTE
 import uk.gov.govuk.visited.navigation.visitedDeepLinks
-import javax.inject.Inject
-import kotlin.collections.get
 
 internal class DeeplinkHandler @Inject constructor(
     private val flagRepo: FlagRepo,
@@ -68,9 +68,10 @@ internal class DeeplinkHandler @Inject constructor(
     var onDeeplinkNotFound: (() -> Unit)? = null
     var onNotificationRead: ((String) -> Unit)? = null
 
-    fun handleDeeplink(navController: NavController) {
+    fun handleDeeplink(
+        navController: NavController
+    ) {
         deepLink?.let {
-
             // check for intercepted routes first
             if (interceptLinkedServiceCallback(it, navController)) {
                 deepLink = null
@@ -119,7 +120,10 @@ internal class DeeplinkHandler @Inject constructor(
     }
 
     /** Intercepts /callback/{service}/auth routes */
-    private fun interceptLinkedServiceCallback(uri: Uri, navController: NavController): Boolean {
+    private fun interceptLinkedServiceCallback(
+        uri: Uri,
+        navController: NavController
+    ): Boolean {
         val segments = uri.pathSegments
 
         // prevent accidentally handling longer paths
@@ -137,9 +141,11 @@ internal class DeeplinkHandler @Inject constructor(
         }
     }
 
-
     /** Intercepts the DVLA auth callback */
-    private fun handleDvlaCallback(uri: Uri, navController: NavController): Boolean {
+    private fun handleDvlaCallback(
+        uri: Uri,
+        navController: NavController
+    ): Boolean {
         if (uri.path != DVLA_DEEP_LINK_PATH) return false
 
         val token = uri.getQueryParameter(ARG_DVLA_TOKEN)
@@ -170,12 +176,17 @@ internal class DeeplinkHandler @Inject constructor(
     }
 
     /** Matches a query parameter name case-insensitively, since callback URLs are outside our control */
-    private fun Uri.getQueryParameterIgnoreCase(name: String): String? {
+    private fun Uri.getQueryParameterIgnoreCase(
+        name: String
+    ): String? {
         val actualKey = queryParameterNames.firstOrNull { it.equals(name, ignoreCase = true) }
         return actualKey?.let { getQueryParameter(it) }
     }
 
-    private fun interceptTravelAlertsEditDeeplink(uri: Uri, navController: NavController): Boolean {
+    private fun interceptTravelAlertsEditDeeplink(
+        uri: Uri,
+        navController: NavController
+    ): Boolean {
         if (uri.path != "/travelalerts/edit") return false
 
         navController.navigate(HOME_GRAPH_ROUTE) {
@@ -189,7 +200,10 @@ internal class DeeplinkHandler @Inject constructor(
         return true
     }
 
-    private fun interceptMessagesDetailDeeplink(uri: Uri, navController: NavController): Boolean {
+    private fun interceptMessagesDetailDeeplink(
+        uri: Uri,
+        navController: NavController
+    ): Boolean {
         if (uri.path != "/notificationcentre/detail") return false
 
         var handled = false

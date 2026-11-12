@@ -17,7 +17,6 @@ sealed interface HeaderActionStyle {
         val onClick: () -> Unit,
         val altText: String? = null
     ) : HeaderActionStyle
-
 }
 
 sealed class HeaderDismissStyle {
@@ -27,12 +26,16 @@ sealed class HeaderDismissStyle {
         val altText: Int,
         val onClick: () -> Unit
     ) : HeaderDismissStyle()
-    class Close(onClick: () -> Unit) : DismissButton(
+    class Close(
+        onClick: () -> Unit
+    ) : DismissButton(
         icon = Icons.Filled.Close,
         altText = R.string.content_desc_close,
         onClick = onClick
     )
-    class Back(onClick: () -> Unit) : DismissButton(
+    class Back(
+        onClick: () -> Unit
+    ) : DismissButton(
         icon = Icons.AutoMirrored.Filled.ArrowBack,
         altText = R.string.content_desc_back,
         onClick = onClick

@@ -99,7 +99,8 @@ fun GovUkOutlinedCard(
     ) {
         Column(
             modifier = Modifier
-                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)  // if onClick is null Talkback announces 'disabled'
+                // if onClick is null Talkback announces 'disabled'
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
                 .padding(padding)
         ) {
             content()
@@ -146,7 +147,7 @@ fun HomeBannerCard(
                 Row(
                     modifier = Modifier
                         .height(IntrinsicSize.Min),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         modifier = Modifier
@@ -160,7 +161,7 @@ fun HomeBannerCard(
                                 color = textColour,
                                 modifier = Modifier
                                     .padding(start = GovUkTheme.spacing.medium)
-                                    .semantics { heading() },
+                                    .semantics { heading() }
                             )
                         }
 
@@ -268,7 +269,7 @@ fun SearchResultCard(
             BodyRegularLabel(
                 text = title,
                 modifier = Modifier.weight(1f),
-                color = GovUkTheme.colourScheme.textAndIcons.link,
+                color = GovUkTheme.colourScheme.textAndIcons.link
             )
 
             Icon(
@@ -355,7 +356,9 @@ fun CentredCardWithIcon(
                         colour = GovUkTheme.colourScheme.strokes.cardDefault,
                         cornerRadius = GovUkTheme.numbers.cornerAndroidList
                     )
-                } else Modifier
+                } else {
+                    Modifier
+                }
             ),
         colors = CardDefaults.cardColors(containerColor = colours.background),
         onClick = onClick,
@@ -409,7 +412,7 @@ fun CentredContentWithIcon(
                 text = title,
                 color = titleColour,
                 modifier = Modifier.clearAndSetSemantics { },
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -420,30 +423,30 @@ fun CentredContentWithIcon(
                 text = description,
                 color = descriptionColour,
                 modifier = Modifier.clearAndSetSemantics { },
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
         }
     }
 }
 
 @Composable
-private fun resolveCentredCardColours(isFocused: Boolean): CentredCardColours {
-    return if (isFocused) {
-        val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
-        CentredCardColours(
-            background = GovUkTheme.colourScheme.surfaces.focused,
-            title = focusedTextColour,
-            description = focusedTextColour,
-            icon = focusedTextColour
-        )
-    } else {
-        CentredCardColours(
-            background = GovUkTheme.colourScheme.surfaces.list,
-            title = GovUkTheme.colourScheme.textAndIcons.primary,
-            description = GovUkTheme.colourScheme.textAndIcons.secondary,
-            icon = GovUkTheme.colourScheme.textAndIcons.icon
-        )
-    }
+private fun resolveCentredCardColours(
+    isFocused: Boolean
+): CentredCardColours = if (isFocused) {
+    val focusedTextColour = GovUkTheme.colourScheme.textAndIcons.focused
+    CentredCardColours(
+        background = GovUkTheme.colourScheme.surfaces.focused,
+        title = focusedTextColour,
+        description = focusedTextColour,
+        icon = focusedTextColour
+    )
+} else {
+    CentredCardColours(
+        background = GovUkTheme.colourScheme.surfaces.list,
+        title = GovUkTheme.colourScheme.textAndIcons.primary,
+        description = GovUkTheme.colourScheme.textAndIcons.secondary,
+        icon = GovUkTheme.colourScheme.textAndIcons.icon
+    )
 }
 
 @Composable
@@ -604,25 +607,25 @@ fun DrillInCard(
 }
 
 @Composable
-private fun resolveDrillInCardColours(isFocused: Boolean): DrillInCardColours {
-    return if (isFocused) {
-        val focusText = GovUkTheme.colourScheme.textAndIcons.focused
-        DrillInCardColours(
-            background = GovUkTheme.colourScheme.surfaces.focused,
-            title = focusText,
-            description = focusText,
-            icon = focusText,
-            stroke = Color.Transparent
-        )
-    } else {
-        DrillInCardColours(
-            background = GovUkTheme.colourScheme.surfaces.cardDefault,
-            title = GovUkTheme.colourScheme.textAndIcons.primary,
-            description = GovUkTheme.colourScheme.textAndIcons.secondary,
-            icon = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
-            stroke = GovUkTheme.colourScheme.strokes.cardDefault
-        )
-    }
+private fun resolveDrillInCardColours(
+    isFocused: Boolean
+): DrillInCardColours = if (isFocused) {
+    val focusText = GovUkTheme.colourScheme.textAndIcons.focused
+    DrillInCardColours(
+        background = GovUkTheme.colourScheme.surfaces.focused,
+        title = focusText,
+        description = focusText,
+        icon = focusText,
+        stroke = Color.Transparent
+    )
+} else {
+    DrillInCardColours(
+        background = GovUkTheme.colourScheme.surfaces.cardDefault,
+        title = GovUkTheme.colourScheme.textAndIcons.primary,
+        description = GovUkTheme.colourScheme.textAndIcons.secondary,
+        icon = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
+        stroke = GovUkTheme.colourScheme.strokes.cardDefault
+    )
 }
 
 @Composable
@@ -724,9 +727,15 @@ fun LoaderCard(
             CircularProgressIndicator(
                 modifier = Modifier
                     .size(30.dp)
-                    .then(if (altText != null) Modifier.clearAndSetSemantics {
-                        contentDescription = altText
-                    } else Modifier),
+                    .then(
+                        if (altText != null) {
+                            Modifier.clearAndSetSemantics {
+                                contentDescription = altText
+                            }
+                        } else {
+                            Modifier
+                        }
+                    ),
                 color = GovUkTheme.colourScheme.textAndIcons.linkPrimary
             )
         },
@@ -801,7 +810,7 @@ private fun SearchResultWithDescriptionPreview() {
         SearchResultCard(
             title = "Card title",
             description = "Description",
-            onClick = {},
+            onClick = {}
         )
     }
 }
@@ -813,7 +822,7 @@ private fun SearchResultWithoutDescriptionPreview() {
         SearchResultCard(
             title = "Card title",
             description = null,
-            onClick = {},
+            onClick = {}
         )
     }
 }

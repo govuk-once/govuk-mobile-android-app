@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:filename")
+
 package uk.gov.govuk.design.ui.model
 
 data class SectionHeadingLabelButton(
