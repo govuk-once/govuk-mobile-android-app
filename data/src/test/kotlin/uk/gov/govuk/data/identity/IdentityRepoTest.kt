@@ -18,7 +18,6 @@ import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.data.identity.remote.IdentityApi
 import uk.gov.govuk.data.identity.remote.IdentityResponse
 
-
 class IdentityRepoTest {
 
     private val api = mockk<IdentityApi>()

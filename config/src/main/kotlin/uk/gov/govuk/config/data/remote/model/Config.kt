@@ -16,5 +16,5 @@ data class Config(
     @SerializedName("chatBanner_v2") var chatBanner: ChatBanner?,
     @SerializedName("termsAndConditions") var termsAndConditions: TermsAndConditions?,
     @SerializedName("dvlaUrls") val dvlaUrls: DvlaUrls?,
-    @SerializedName("promoBanners") var promoBanners: List<PromoBanner>?,
+    @SerializedName("promoBanners") var promoBanners: List<PromoBanner>?
 )
