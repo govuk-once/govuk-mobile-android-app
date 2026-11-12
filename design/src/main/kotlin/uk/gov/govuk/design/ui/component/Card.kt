@@ -349,7 +349,6 @@ fun CentredCardWithIcon(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .talkBackText(title, description)
             .then(
                 if (drawBottomStroke) {
                     Modifier.drawBottomStroke(
