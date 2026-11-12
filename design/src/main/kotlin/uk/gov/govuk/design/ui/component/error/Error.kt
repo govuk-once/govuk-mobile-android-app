@@ -26,7 +26,8 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 data class ErrorButtonAction(
     val buttonTitle: String,
-    val onButtonClick: (() -> Unit)?)
+    val onButtonClick: (() -> Unit)?
+)
 
 @Composable
 fun Error(
@@ -46,7 +47,7 @@ fun Error(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            painter = icon?: painterResource(id = R.drawable.ic_error),
+            painter = icon ?: painterResource(id = R.drawable.ic_error),
             contentDescription = null,
             tint = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
             modifier = Modifier
@@ -102,7 +103,7 @@ private fun MessagePreviewNoButton() {
         Error(
             title = "Title",
             description = "Description",
-            buttonTitle = "Button Title",
+            buttonTitle = "Button Title"
         )
     }
 }
