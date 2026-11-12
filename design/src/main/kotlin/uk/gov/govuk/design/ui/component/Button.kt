@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.ButtonDefaults.textButtonColors
@@ -818,5 +821,37 @@ private fun Overflow()
         OverflowButton(
             onClick = { }
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun HeaderDismiss()
+{
+    GovUkTheme {
+        Box(Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
+            HeaderDismissButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                altText = "Back",
+                onClick = { },
+                defaultContentColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun HeaderIcon()
+{
+    GovUkTheme {
+        Box(Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
+            HeaderIconButton(
+                icon = Icons.Filled.Search,
+                altText = "Search",
+                onClick = { },
+                defaultContentColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
+        }
     }
 }
