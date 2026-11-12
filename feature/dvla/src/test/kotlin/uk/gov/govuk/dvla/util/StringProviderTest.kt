@@ -2,10 +2,10 @@ package uk.gov.govuk.dvla.util
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import uk.gov.govuk.dvla.R
-import java.time.LocalDate
 
 class StringProviderTest {
 

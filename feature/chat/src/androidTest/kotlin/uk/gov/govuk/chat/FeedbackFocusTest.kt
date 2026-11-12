@@ -123,17 +123,23 @@ class FeedbackFocusTest {
         composeTestRule.onNodeWithText(thankYouText).assertIsNotFocused()
     }
 
-    private fun tapIcon(contentDescription: String) {
+    private fun tapIcon(
+        contentDescription: String
+    ) {
         composeTestRule.waitUntilExactlyOneExists(hasContentDescription(contentDescription))
         composeTestRule.onNodeWithContentDescription(contentDescription).performClick()
     }
 
-    private fun setupChatScreen(isAnalyticsEnabled: Boolean) {
+    private fun setupChatScreen(
+        isAnalyticsEnabled: Boolean
+    ) {
         composeTestRule.setContent { ChatScreenContent(isAnalyticsEnabled) }
     }
 
     @Composable
-    private fun ChatScreenContent(isAnalyticsEnabled: Boolean) {
+    private fun ChatScreenContent(
+        isAnalyticsEnabled: Boolean
+    ) {
         var feedbackReaction by rememberSaveable { mutableStateOf<String?>(null) }
 
         // Already answered and not animating, so the feedback icons are shown straight away
@@ -180,7 +186,7 @@ class FeedbackFocusTest {
         }
     }
 
-    private fun getString(@StringRes id: Int): String {
-        return InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
-    }
+    private fun getString(
+        @StringRes id: Int
+    ): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 }
