@@ -23,12 +23,17 @@ class EmergencyBannerTypeAdapter : TypeAdapter<EmergencyBannerType>() {
             name
         }
 
-    override fun read(reader: JsonReader): EmergencyBannerType {
+    override fun read(
+        reader: JsonReader
+    ): EmergencyBannerType {
         val typeString = reader.nextString()
         return bannerTypeMap[typeString] ?: EmergencyBannerType.INFORMATION // default to INFORMATION
     }
 
-    override fun write(out: JsonWriter, value: EmergencyBannerType) {
+    override fun write(
+        out: JsonWriter,
+        value: EmergencyBannerType
+    ) {
         val errorMessage =
             "Internal Error: Missing serialized name for enum constant ${value.name}."
         val entry = bannerTypeMap.entries.find { it.value == value }

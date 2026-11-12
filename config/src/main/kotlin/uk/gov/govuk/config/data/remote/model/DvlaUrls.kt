@@ -28,6 +28,6 @@ data class DvlaUrls(
     @SerializedName("reportNoMot") val reportNoMot: String,
     @SerializedName("compareOldNewLicenceCategories") val compareLicenceCategories: String,
     @SerializedName("vehicleWeightExplained") val vehicleWeightExplained: String,
-    @SerializedName("addCategoriesToLicence") val addLicenceCategories: String,
+    @SerializedName("addCategoriesToLicence") val addLicenceCategories: String
 
-    )
+)
