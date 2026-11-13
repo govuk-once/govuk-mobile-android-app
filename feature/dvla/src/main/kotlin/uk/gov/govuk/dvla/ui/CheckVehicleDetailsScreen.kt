@@ -1,25 +1,25 @@
 package uk.gov.govuk.dvla.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
-import uk.gov.govuk.dvla.ui.component.CheckVehicleDetailsHeader
-import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
-import uk.gov.govuk.dvla.ui.model.UrlModel
-import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
-import androidx.compose.foundation.background
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.InternalLinkListItemModel
-import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dvla.ui.model.MenuAction
-import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.design.ui.model.SpecificationIconUiModel
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
+import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
+import uk.gov.govuk.dvla.ui.component.CheckVehicleDetailsHeader
 import uk.gov.govuk.dvla.ui.model.InfoRowUiModel
+import uk.gov.govuk.dvla.ui.model.MenuAction
+import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
+import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
+import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 
 @Composable
 internal fun CheckVehicleDetailsScreen(
