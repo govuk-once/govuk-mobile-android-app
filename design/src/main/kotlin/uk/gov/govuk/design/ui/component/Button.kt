@@ -16,10 +16,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.ButtonDefaults.textButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults.iconButtonColors
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -498,6 +505,60 @@ fun OverflowButton(
 }
 
 @Composable
+fun HeaderDismissButton(
+    icon: ImageVector,
+    altText: String,
+    onClick: () -> Unit,
+    defaultContentColour: Color,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (containerColour, contentColour) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to defaultContentColour
+    }
+
+    TextButton(
+        onClick = onClick,
+        modifier = modifier,
+        interactionSource = interactionSource,
+        colors = textButtonColors(containerColor = containerColour)
+    ) {
+        Icon(imageVector = icon, contentDescription = altText, tint = contentColour)
+    }
+}
+
+@Composable
+fun HeaderIconButton(
+    icon: ImageVector,
+    altText: String,
+    onClick: () -> Unit,
+    defaultContentColour: Color,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val (containerColour, contentColour) = if (isFocused) {
+        GovUkTheme.colourScheme.surfaces.focused to GovUkTheme.colourScheme.textAndIcons.focused
+    } else {
+        Color.Transparent to defaultContentColour
+    }
+
+    IconButton(
+        onClick = onClick,
+        modifier = modifier,
+        interactionSource = interactionSource,
+        colors = iconButtonColors(containerColor = containerColour)
+    ) {
+        Icon(imageVector = icon, contentDescription = altText, tint = contentColour)
+    }
+}
+
+@Composable
 fun DialogButton(
     text: String,
     onClick: () -> Unit,
@@ -746,5 +807,37 @@ private fun Overflow() {
         OverflowButton(
             onClick = { }
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun HeaderDismiss()
+{
+    GovUkTheme {
+        Box(Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
+            HeaderDismissButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                altText = "Back",
+                onClick = { },
+                defaultContentColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun HeaderIcon()
+{
+    GovUkTheme {
+        Box(Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
+            HeaderIconButton(
+                icon = Icons.Filled.Search,
+                altText = "Search",
+                onClick = { },
+                defaultContentColour = GovUkTheme.colourScheme.textAndIcons.linkSecondary
+            )
+        }
     }
 }

@@ -9,17 +9,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import uk.gov.govuk.design.ui.component.HeaderDismissButton
+import uk.gov.govuk.design.ui.component.HeaderIconButton
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
@@ -44,23 +44,21 @@ internal fun CheckVehicleDetailsHeader(
             .background(backgroundColour),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextButton(onClick = onClose) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = stringResource(DesignR.string.content_desc_close),
-                tint = actionColour
-            )
-        }
+        HeaderDismissButton(
+            icon = Icons.Filled.Close,
+            altText = stringResource(DesignR.string.content_desc_close),
+            onClick = onClose,
+            defaultContentColour = actionColour
+        )
 
         Spacer(Modifier.weight(1f))
 
-        IconButton(onClick = onSearch) {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = stringResource(R.string.search_vehicle_content_desc),
-                tint = actionColour
-            )
-        }
+        HeaderIconButton(
+            icon = Icons.Filled.Search,
+            altText = stringResource(R.string.search_vehicle_content_desc),
+            onClick = onSearch,
+            defaultContentColour = actionColour
+        )
 
         if (menuItems.isNotEmpty()) {
             OverflowMenu(
@@ -68,13 +66,12 @@ internal fun CheckVehicleDetailsHeader(
                 menuItems = menuItems,
                 onMenuItemClick = onMenuItemClick,
                 overflowButton = { onClick ->
-                    IconButton(onClick = onClick) {
-                        Icon(
-                            painter = painterResource(DesignR.drawable.ic_more),
-                            contentDescription = stringResource(R.string.more_options_alt_text),
-                            tint = actionColour
-                        )
-                    }
+                    HeaderIconButton(
+                        icon = ImageVector.vectorResource(DesignR.drawable.ic_more),
+                        altText = stringResource(R.string.more_options_alt_text),
+                        onClick = onClick,
+                        defaultContentColour = actionColour
+                    )
                 }
             )
         }

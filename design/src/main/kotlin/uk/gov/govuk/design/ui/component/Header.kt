@@ -128,15 +128,12 @@ private fun Header(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (hasDismissButton) {
-                    TextButton(
-                        onClick = dismissStyle.onClick
-                    ) {
-                        Icon(
-                            imageVector = dismissStyle.icon,
-                            contentDescription = stringResource(dismissStyle.altText),
-                            tint = actionColour
-                        )
-                    }
+                    HeaderDismissButton(
+                        icon = dismissStyle.icon,
+                        altText = stringResource(dismissStyle.altText),
+                        onClick = dismissStyle.onClick,
+                        defaultContentColour = actionColour
+                    )
                 }
                 when (actionStyle) {
                     is HeaderActionStyle.TextActionButton -> {
