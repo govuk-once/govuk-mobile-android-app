@@ -23,7 +23,7 @@ datastorePreferences = "1.2.1"
 googlePlayServices = "4.4.4"
 crashlytics = "3.0.6"
 
-oneSignal = "5.4.1"
+oneSignal = "5.11.0"
 aboutLibraries = "12.2.4"
 retrofit = "3.0.0"
 
