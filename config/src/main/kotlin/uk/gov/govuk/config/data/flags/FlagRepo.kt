@@ -96,7 +96,7 @@ class FlagRepo @Inject constructor(
     }
 
     fun isChatV2Enabled(): Boolean {
-        return isEnabled(
+        return isChatEnabled() && isEnabled(
             debugEnabled = debugEnabled,
             debugFlag = debugFlags.isChatV2Enabled,
             remoteFlag = configRepo.isChatV2Enabled

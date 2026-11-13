@@ -346,6 +346,40 @@ class FlagRepoTest {
         assertFalse(flagRepo.isChatEnabled())
     }
 
+    // Chat V2
+    @Test
+    fun `Given a release build and chat is disabled, When chat v2 is enabled, then return false`() {
+        every { configRepo.isChatEnabled } returns false
+        every { configRepo.isChatV2Enabled } returns true
+
+        assertFalse(flagRepo.isChatV2Enabled())
+    }
+
+    @Test
+    fun `Given a release build and chat is enabled, When chat v2 is disabled, then return false`() {
+        every { configRepo.isChatEnabled } returns true
+        every { configRepo.isChatV2Enabled } returns false
+
+        assertFalse(flagRepo.isChatV2Enabled())
+    }
+
+    @Test
+    fun `Given a release build and chat is enabled, When chat v2 is enabled, then return true`() {
+        every { configRepo.isChatEnabled } returns true
+        every { configRepo.isChatV2Enabled } returns true
+
+        assertTrue(flagRepo.isChatV2Enabled())
+    }
+
+    @Test
+    fun `Given a release build and chat is enabled, When debug chat v2 is enabled and remote is disabled, then return false`() {
+        every { configRepo.isChatEnabled } returns true
+        every { debugFlags.isChatV2Enabled } returns true
+        every { configRepo.isChatV2Enabled } returns false
+
+        assertFalse(flagRepo.isChatV2Enabled())
+    }
+
     @Test
     fun `Given flex is enabled, When is flex enabled, then return true`() {
         every { configRepo.isFlexEnabled } returns true
