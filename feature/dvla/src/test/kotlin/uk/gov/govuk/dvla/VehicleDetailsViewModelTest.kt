@@ -51,18 +51,17 @@ class VehicleDetailsViewModelTest {
     }
 
     @Test
-    fun `Given screen title, when onPageView is called, then track screen view`() =
-        runTest(dispatcher) {
-            viewModel.onPageView("title")
+    fun `Given screen title, when onPageView is called, then track screen view`() = runTest(dispatcher) {
+        viewModel.onPageView("title")
 
-            verify {
-                analyticsClient.screenView(
-                    screenClass = "VehicleDetailsScreen",
-                    screenName = "title",
-                    title = "title"
-                )
-            }
+        verify {
+            analyticsClient.screenView(
+                screenClass = "VehicleDetailsScreen",
+                screenName = "title",
+                title = "title"
+            )
         }
+    }
 
     @Test
     fun `When onExternalButtonClicked is called, then analytics event is fired with correct parameters`() = runTest(dispatcher) {
@@ -96,19 +95,18 @@ class VehicleDetailsViewModelTest {
     }
 
     @Test
-    fun `Given vehicle details api returns success, when viewModel initialised, then state becomes Success`() =
-        runTest(dispatcher) {
-            val vehicleDetails = mockk<VehicleDetails>()
-            val uiModel = mockk<VehicleDetailsUiModel>()
-            coEvery { dvlaRepo.getVehicleDetails(156487251) } returns Result.Success(vehicleDetails)
-            every { mapper.toUiModel(vehicleDetails, any()) } returns uiModel
+    fun `Given vehicle details api returns success, when viewModel initialised, then state becomes Success`() = runTest(dispatcher) {
+        val vehicleDetails = mockk<VehicleDetails>()
+        val uiModel = mockk<VehicleDetailsUiModel>()
+        coEvery { dvlaRepo.getVehicleDetails(156487251) } returns Result.Success(vehicleDetails)
+        every { mapper.toUiModel(vehicleDetails, any()) } returns uiModel
 
-            val initialisedViewModel = viewModel
-            advanceUntilIdle()
+        val initialisedViewModel = viewModel
+        advanceUntilIdle()
 
-            coVerify(exactly = 1) { dvlaRepo.getVehicleDetails(156487251) }
-            assertEquals(VehicleDetailsUiState.Success(uiModel), initialisedViewModel.uiState.value)
-        }
+        coVerify(exactly = 1) { dvlaRepo.getVehicleDetails(156487251) }
+        assertEquals(VehicleDetailsUiState.Success(uiModel), initialisedViewModel.uiState.value)
+    }
 
     @Test
     fun `Given vehicle details api returns error, when dvla urls is null and viewModel initialised, then state becomes Error`() =
@@ -135,18 +133,17 @@ class VehicleDetailsViewModelTest {
         }
 
     @Test
-    fun `Given no vehicleId in savedStateHandle, when viewModel initialised, then getVehicleDetails is not called`() =
-        runTest(dispatcher) {
-            val emptySavedStateHandle = SavedStateHandle()
-            val localViewModel = VehicleDetailsViewModel(
-                emptySavedStateHandle,
-                dvlaRepo,
-                analyticsClient,
-                mapper,
-                configRepo
-            )
-            advanceUntilIdle()
+    fun `Given no vehicleId in savedStateHandle, when viewModel initialised, then getVehicleDetails is not called`() = runTest(dispatcher) {
+        val emptySavedStateHandle = SavedStateHandle()
+        val localViewModel = VehicleDetailsViewModel(
+            emptySavedStateHandle,
+            dvlaRepo,
+            analyticsClient,
+            mapper,
+            configRepo
+        )
+        advanceUntilIdle()
 
-            coVerify(exactly = 0) { dvlaRepo.getVehicleDetails(any()) }
-        }
+        coVerify(exactly = 0) { dvlaRepo.getVehicleDetails(any()) }
+    }
 }

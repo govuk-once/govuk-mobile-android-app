@@ -33,7 +33,6 @@ internal fun DvlaLinkIntroScreen(
             .background(GovUkTheme.colourScheme.surfaces.fullScreenLinkAccount)
             .safeDrawingPadding()
     ) {
-
         BookendToWebScreen(
             title = screenTitle,
             description = description,
@@ -44,7 +43,7 @@ internal fun DvlaLinkIntroScreen(
             actionMessage = stringResource(R.string.link_dvla_intro_action_message),
             buttonText = continueButtonText,
             onClose = onClose,
-            onContinue = { onContinue(continueButtonText) },
+            onContinue = { onContinue(continueButtonText) }
         )
     }
 }

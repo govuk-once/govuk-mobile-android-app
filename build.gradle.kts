@@ -25,7 +25,7 @@ val pendingModules = setOf(
     //":data",
     //":design",
     //":feature:chat",
-    ":feature:dvla",
+    //":feature:dvla",
     ":feature:home",
     ":feature:local",
     ":feature:messages",
