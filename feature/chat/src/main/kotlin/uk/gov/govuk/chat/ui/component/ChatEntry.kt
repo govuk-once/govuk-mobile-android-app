@@ -122,7 +122,9 @@ private fun AnimatedChatEntry(
             liveRegion = LiveRegionMode.Polite
             contentDescription = answerReceivedText
         }
-    } else Modifier
+    } else {
+        Modifier
+    }
 
     Column(modifier = modifier) {
         if (showSending) Sending()
@@ -132,14 +134,14 @@ private fun AnimatedChatEntry(
             AnimatedVisibility(
                 visible = showAnswer,
                 enter =
-                    fadeIn(
+                fadeIn(
+                    animationSpec = tween(durationMillis = animationDuration),
+                    initialAlpha = 0f
+                ) +
+                    slideInVertically(
                         animationSpec = tween(durationMillis = animationDuration),
-                        initialAlpha = 0f
-                    ) +
-                        slideInVertically(
-                            animationSpec = tween(durationMillis = animationDuration),
-                            initialOffsetY = { 16 }
-                        )
+                        initialOffsetY = { 16 }
+                    )
             ) {
                 Answer(
                     answer = chatEntry.answer,
@@ -151,13 +153,15 @@ private fun AnimatedChatEntry(
                 )
             }
         } else {
-            if (showAnswer) Answer(
-                answer = chatEntry.answer,
-                sources = chatEntry.sources,
-                onMarkdownLinkClicked = onMarkdownLinkClicked,
-                onSourcesExpanded = onSourcesExpanded,
-                onCopyText = onCopyText
-            )
+            if (showAnswer) {
+                Answer(
+                    answer = chatEntry.answer,
+                    sources = chatEntry.sources,
+                    onMarkdownLinkClicked = onMarkdownLinkClicked,
+                    onSourcesExpanded = onSourcesExpanded,
+                    onCopyText = onCopyText
+                )
+            }
         }
     }
 }

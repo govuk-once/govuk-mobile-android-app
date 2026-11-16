@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -41,8 +42,6 @@ import uk.gov.govuk.terms.data.TermsRepo
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.visited.Visited
 import uk.govuk.app.local.LocalFeature
-import javax.inject.Inject
-
 
 @HiltViewModel
 internal class AppViewModel @Inject constructor(
@@ -73,7 +72,8 @@ internal class AppViewModel @Inject constructor(
     internal val homeWidgets = _homeWidgets.asStateFlow()
 
     enum class TimeoutEvent {
-        WARNING, TIMEOUT
+        WARNING,
+        TIMEOUT
     }
 
     private val _timeOutEvent = Channel<TimeoutEvent>(Channel.CONFLATED)
@@ -131,7 +131,9 @@ internal class AppViewModel @Inject constructor(
                                         identityRepo.getLinkedServices()
                                     }
                                 }
-                            } else null
+                            } else {
+                                null
+                            }
 
                         initTopics.await()
                         checkDvlaLinkStatus?.await()
@@ -253,7 +255,8 @@ internal class AppViewModel @Inject constructor(
                 configRepo.chatBanner?.let { chatBanner ->
                     if (isChatEnabled() &&
                         shouldDisplayChatBanner &&
-                        !suppressedWidgets.contains(chatBanner.id)) {
+                        !suppressedWidgets.contains(chatBanner.id)
+                    ) {
                         widgets.add(HomeWidget.Chat(chatBanner))
                     }
                 }
@@ -321,18 +324,25 @@ internal class AppViewModel @Inject constructor(
         )
     }
 
-    fun onTabClick(text: String) {
+    fun onTabClick(
+        text: String
+    ) {
         analyticsClient.tabClick(text)
     }
 
-    fun onDeepLinkReceived(hasDeepLink: Boolean, url: String) {
+    fun onDeepLinkReceived(
+        hasDeepLink: Boolean,
+        url: String
+    ) {
         analyticsClient.deepLinkEvent(
             hasDeepLink,
             url
         )
     }
 
-    fun onBannerClick(url: String) {
+    fun onBannerClick(
+        url: String
+    ) {
         val items = homeWidgets.value?.toAnalyticsItems() ?: emptyList()
 
         if (items.isNotEmpty()) {
@@ -348,7 +358,9 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    fun onNotificationRead(notificationId: String) {
+    fun onNotificationRead(
+        notificationId: String
+    ) {
         viewModelScope.launch { messagesFeature.markAsRead(notificationId) }
     }
 
@@ -376,29 +388,25 @@ internal class AppViewModel @Inject constructor(
         }
     }
 
-    private suspend fun isTermsAcceptanceRequired() =
-        termsRepo.getTermsAcceptanceState() !is TermsAcceptanceState.Accepted
+    private suspend fun isTermsAcceptanceRequired() = termsRepo.getTermsAcceptanceState() !is TermsAcceptanceState.Accepted
 
-    private fun isAnalyticsConsentRequired() =
-        analyticsClient.isAnalyticsConsentRequired()
+    private fun isAnalyticsConsentRequired() = analyticsClient.isAnalyticsConsentRequired()
 
-    private suspend fun isTopicSelectionRequired() =
-        flagRepo.isTopicsEnabled() &&
-                !appRepo.isTopicSelectionCompleted() &&
-                topicsFeature.hasTopics()
+    private suspend fun isTopicSelectionRequired() = flagRepo.isTopicsEnabled() &&
+        !appRepo.isTopicSelectionCompleted() &&
+        topicsFeature.hasTopics()
 
-    private suspend fun isNotificationsOnboardingRequired() =
-        flagRepo.isNotificationsEnabled() &&
-                !notificationsRepo.isNotificationsOnboardingCompleted()
+    private suspend fun isNotificationsOnboardingRequired() = flagRepo.isNotificationsEnabled() &&
+        !notificationsRepo.isNotificationsOnboardingCompleted()
 
-    private suspend fun isNotificationsConsentRequired() =
-        flagRepo.isNotificationsEnabled() &&
-                notificationsRepo.isNotificationsOnboardingCompleted() &&
-                notificationsRepo.permissionGranted() &&
-                !notificationsRepo.consentGiven()
+    private suspend fun isNotificationsConsentRequired() = flagRepo.isNotificationsEnabled() &&
+        notificationsRepo.isNotificationsOnboardingCompleted() &&
+        notificationsRepo.permissionGranted() &&
+        !notificationsRepo.consentGiven()
 
-
-    fun onResume(currentRoute: String?) {
+    fun onResume(
+        currentRoute: String?
+    ) {
         viewModelScope.launch {
             if (!authRepo.isUserSessionActive()) {
                 _navigationEvent.trySend(NavigationEvent.NavigateToLogin)
@@ -424,7 +432,9 @@ internal class AppViewModel @Inject constructor(
         notificationsRepo.logout()
     }
 
-    private suspend fun handleNotificationsOnResume(currentRoute: String?) {
+    private suspend fun handleNotificationsOnResume(
+        currentRoute: String?
+    ) {
         if (!notificationsRepo.permissionGranted()) {
             if (flagRepo.isFlexEnabled()) {
                 // TODO: awaiting failure requirements for sendRemoveConsent()
