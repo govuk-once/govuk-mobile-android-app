@@ -11,12 +11,21 @@
   <string name="local_postcode_use_description">
     We only use your postcode to find out what your local council is.
     It’s not saved or shared anywhere.
-    You can enter a different postcode at any time on the app home page.
+    You can remove or change it at any time.
   </string>
   <string name="local_widget_title">Your local services</string>
   <string name="local_widget_description">Add a link to your local council’s website</string>
   <string name="local_edit_button">Edit</string>
   <string name="local_edit_button_alt_text">Edit your local council</string>
+  <string name="local_change_button">Change</string>
+  <string name="local_change_button_alt_text">Change your local council</string>
+  <string name="local_remove_button">Remove</string>
+  <string name="local_remove_button_alt_text">Remove your local council</string>
+  <string name="local_close_menu">Close menu</string>
+  <string name="local_remove_dialog_title_unitary">Remove council?</string>
+  <string name="local_remove_dialog_title_two_tier">Remove councils?</string>
+  <string name="local_remove_dialog_description_unitary">You can add it again at any time from the homepage</string>
+  <string name="local_remove_dialog_description_two_tier">You can add them again at any time from the homepage</string>
   <string name="local_child_authority_description">District, borough and city councils are usually responsible for services like rubbish, council tax and housing</string>
     <string name="local_two_tier_title">Services in your area are provided by 2 local councils</string>
   <string name="local_parent_authority_description">County councils are usually responsible for services like education, social care and transport</string>
