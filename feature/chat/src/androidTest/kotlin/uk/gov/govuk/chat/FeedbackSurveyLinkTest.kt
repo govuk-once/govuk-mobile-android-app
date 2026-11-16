@@ -53,7 +53,9 @@ class FeedbackSurveyLinkTest {
         composeTestRule.onNodeWithText(negativeLinkText).assertDoesNotExist()
     }
 
-    private fun setupScreenWithExistingFeedback(reaction: String) {
+    private fun setupScreenWithExistingFeedback(
+        reaction: String
+    ) {
         val chatEntry = ChatEntry(
             id = "questionId",
             question = "How do I renew my passport?",
@@ -99,7 +101,7 @@ class FeedbackSurveyLinkTest {
         }
     }
 
-    private fun getString(@StringRes id: Int): String {
-        return InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
-    }
+    private fun getString(
+        @StringRes id: Int
+    ): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 }
