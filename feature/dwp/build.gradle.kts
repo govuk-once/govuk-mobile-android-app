@@ -18,10 +18,16 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "PAYMENTS_BASE_URL", "\"http://payment.localhost:8080/\"")
+        buildConfigField("String", "PERSONAL_BASE_URL", "\"http://personal.localhost:8080/\"")
     }
 
     buildTypes {
         release {
+            buildConfigField("String", "PAYMENTS_BASE_URL", "\"\"")
+            buildConfigField("String", "PERSONAL_BASE_URL", "\"\"")
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -74,4 +80,5 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(kotlin("test"))
 }
