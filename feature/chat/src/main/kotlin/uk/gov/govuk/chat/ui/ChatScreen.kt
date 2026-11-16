@@ -63,7 +63,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.ChatViewModel
 import uk.gov.govuk.chat.R
@@ -71,6 +70,7 @@ import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.chat.ui.component.ChatEntry
 import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
+import uk.gov.govuk.chat.ui.model.ChatEntry as ChatEntryModel
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.InfoAlert
@@ -78,7 +78,6 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.chat.ui.model.ChatEntry as ChatEntryModel
 
 internal class AnalyticsEvents(
     val onPageView: (String, String, String) -> Unit,
@@ -496,19 +495,19 @@ private fun AnimatedFeedback(
     AnimatedVisibility(
         visible = showFeedback,
         enter =
-            fadeIn(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION),
-                initialAlpha = 0f
-            ) + slideInVertically(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION),
-                initialOffsetY = { 16 }
-            ),
+        fadeIn(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION),
+            initialAlpha = 0f
+        ) + slideInVertically(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION),
+            initialOffsetY = { 16 }
+        ),
         exit =
-            fadeOut(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION)
-            ) + slideOutVertically(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION)
-            ),
+        fadeOut(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
+        ) + slideOutVertically(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
+        ),
         modifier = modifier
     ) {
         when (feedbackSelection) {
@@ -643,7 +642,7 @@ private fun FeedbackLink(
         Icon(
             painter = painterResource(icon),
             contentDescription = contentDescription,
-            tint = GovUkTheme.colourScheme.textAndIcons.secondary,
+            tint = GovUkTheme.colourScheme.textAndIcons.secondary
         )
 
         SmallHorizontalSpacer()
@@ -719,7 +718,7 @@ private fun isTalkBackEnabled(): Boolean {
 private fun analyticsEvents() = AnalyticsEvents(
     onPageView = { _, _, _ -> },
     onFunctionActionItemClicked = { _, _, _ -> },
-    onNavigationActionItemClicked = { _, _ ->  },
+    onNavigationActionItemClicked = { _, _ -> },
     onQuestionSubmit = { },
     onMarkdownLinkClicked = { _, _ -> },
     onSourcesExpanded = { },
@@ -750,4 +749,3 @@ internal fun ChatScreenPreview() {
         )
     }
 }
-

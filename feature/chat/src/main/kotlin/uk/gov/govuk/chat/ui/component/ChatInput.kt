@@ -46,12 +46,12 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import kotlin.math.abs
 
 @Composable
 internal fun ChatInput(
@@ -132,9 +132,10 @@ internal fun ChatInput(
                                     onClick = {
                                         onSubmit(uiState.question)
                                     },
-                                    enabled = uiState.question.isNotBlank()
-                                            && !uiState.displayCharacterError
-                                            && !uiState.isPiiError && !uiState.isLoading
+                                    enabled = uiState.question.isNotBlank() &&
+                                        !uiState.displayCharacterError &&
+                                        !uiState.isPiiError &&
+                                        !uiState.isLoading
                                 )
                             }
                         )
@@ -168,9 +169,7 @@ internal fun ChatInput(
 private fun focusedWithInput(
     isFocused: Boolean,
     uiState: ChatUiState.Default
-): Boolean {
-    return isFocused && uiState.question.isNotEmpty()
-}
+): Boolean = isFocused && uiState.question.isNotEmpty()
 
 @Composable
 private fun PlaceholderText(
@@ -239,7 +238,7 @@ private fun SubmitIconButton(
         ) {
             Icon(
                 painter = painterResource(R.drawable.outline_arrow_upward_24),
-                contentDescription = stringResource(id = R.string.button_alt),
+                contentDescription = stringResource(id = R.string.button_alt)
             )
         }
     }

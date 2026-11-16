@@ -17,11 +17,10 @@ import uk.gov.govuk.dvla.ui.model.StatusStyle
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.util.StringProvider
-import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
 import uk.gov.govuk.dvla.util.isInThePast
-import uk.gov.govuk.dvla.util.isToday
+import uk.gov.govuk.dvla.util.resolveDaysUntil
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 import uk.gov.govuk.govkit.browser.Urls
@@ -139,16 +138,11 @@ internal class LicenceSummaryMapper @Inject constructor(
     }
 
     private fun getExpiringBottomText(expiryDate: LocalDate) =
-        if (expiryDate.isToday()) {
-            stringProvider.getString(R.string.today)
-        } else {
-            val numberOfDaysFromNow = expiryDate.getNumberOfDaysFromNow()
-            stringProvider.getQuantityString(
-                R.plurals.expiring_status_days_left,
-                numberOfDaysFromNow,
-                numberOfDaysFromNow
-            )
-        }
+        stringProvider.resolveDaysUntil(
+            expiryDate,
+            R.string.today,
+            R.plurals.expiring_status_days_left
+        )
 
     private fun getExpired(expiryDate: LocalDate?, dvlaUrls: DvlaUrls?): StatusUiModel {
         val expiryDate = expiryDate?.toSummaryDisplayFormat() ?: ""

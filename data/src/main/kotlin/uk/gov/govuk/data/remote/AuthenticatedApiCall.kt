@@ -28,6 +28,4 @@ suspend fun <T> withAuthRetry(
 suspend fun <T> safeAuthApiCall(
     apiCall: suspend () -> Response<T>,
     authRepo: AuthRepo
-): Result<T> {
-    return safeApiCall { withAuthRetry(apiCall, authRepo) }
-}
+): Result<T> = safeApiCall { withAuthRetry(apiCall, authRepo) }

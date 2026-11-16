@@ -9,5 +9,7 @@ interface UserRepo {
     val notifications: Notifications?
 
     suspend fun initUser(): Result<User>
-    suspend fun updateNotifications(consentStatus: ConsentStatus): Result<Unit>
+    suspend fun updateNotifications(
+        consentStatus: ConsentStatus
+    ): Result<Unit>
 }
