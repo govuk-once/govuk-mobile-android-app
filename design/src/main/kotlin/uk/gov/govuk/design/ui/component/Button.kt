@@ -375,10 +375,12 @@ private fun BaseButton(
             containerColor = colours.focussedContainerColour,
             contentColor = colours.focussedContentColour
         )
+
         isPressed || isHovered -> stateMappedColours.copy(
             containerColor = colours.pressedContainerColour,
             contentColor = colours.pressedContentColour
         )
+
         else -> stateMappedColours
     }
 
@@ -812,8 +814,7 @@ private fun Overflow() {
 
 @PreviewLightDark
 @Composable
-private fun HeaderDismiss()
-{
+private fun HeaderDismiss() {
     GovUkTheme {
         Box(Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
             HeaderDismissButton(
@@ -828,8 +829,7 @@ private fun HeaderDismiss()
 
 @PreviewLightDark
 @Composable
-private fun HeaderIcon()
-{
+private fun HeaderIcon() {
     GovUkTheme {
         Box(Modifier.background(GovUkTheme.colourScheme.surfaces.background)) {
             HeaderIconButton(
