@@ -403,22 +403,29 @@ private fun BottomNav(
             ) {
                 topLevelDestinations.forEachIndexed { index, destination ->
                     val tabText = stringResource(destination.stringResId)
+                    val isSelected = index == selectedIndex
 
                     NavigationBarItem(
-                        selected = index == selectedIndex,
+                        selected = isSelected,
                         onClick = {
                             onTabClick(tabText)
 
-                            navController.navigate(destination.route) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
-                                popUpTo(TopLevelDestination.Home.route) {
-                                    saveState = true
-                                }
+                            if (isSelected && destination is TopLevelDestination.Home) {
+                                // pop everything above "home_route" — works at any depth
+                                navController.popBackStack(HOME_GRAPH_START_DESTINATION, inclusive = false)
+                            } else {
+                                // Settings/Chat: existing save/restore behavior, unchanged
+                                navController.navigate(destination.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    popUpTo(TopLevelDestination.Home.route) {
+                                        saveState = true
+                                    }
 
-                                launchSingleTop = true
-                                restoreState = true
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = {
