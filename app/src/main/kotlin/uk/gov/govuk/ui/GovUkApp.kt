@@ -279,7 +279,7 @@ private fun BottomNavScaffold(
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         bottomBar = {
-            BottomNav(uiState.isChatEnabled, navController) { tabText ->
+            BottomNav(uiState.isChatEnabled, navController, appNavigation) { tabText ->
                 viewModel.onTabClick(tabText)
             }
         },
@@ -368,6 +368,7 @@ private fun HandleOnResumeNavigation(
 private fun BottomNav(
     isChatEnabled: Boolean,
     navController: NavHostController,
+    appNavigation: AppNavigation,
     onTabClick: (String) -> Unit
 ) {
     val topLevelDestinations = remember(isChatEnabled) {
@@ -412,7 +413,7 @@ private fun BottomNav(
 
                             if (isSelected && destination is TopLevelDestination.Home) {
                                 // pop everything above "home_route" — works at any depth
-                                navController.popBackStack(HOME_GRAPH_START_DESTINATION, inclusive = false)
+                                appNavigation.onHomeTabReselected(navController)
                             } else {
                                 // Settings/Chat: existing save/restore behavior, unchanged
                                 navController.navigate(destination.route) {
