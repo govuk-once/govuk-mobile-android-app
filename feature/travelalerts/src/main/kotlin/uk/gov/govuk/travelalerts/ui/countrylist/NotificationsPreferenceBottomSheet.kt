@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +33,7 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.FixedContainerDivider
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
-import uk.gov.govuk.design.ui.component.SecondaryButton
+import uk.gov.govuk.design.ui.component.GroupedSecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.Title3BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -166,7 +165,7 @@ private fun NotificationsPreferenceBottomSheetContent(
 
             Spacer(modifier = Modifier.height(GovUkTheme.spacing.medium))
 
-            SecondaryButton(
+            GroupedSecondaryButton(
                 text = stringResource(R.string.follow_country_notification_not_now),
                 onClick = onNotNow,
                 enabled = !isSaving

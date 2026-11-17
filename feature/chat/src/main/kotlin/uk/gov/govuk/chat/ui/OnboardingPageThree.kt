@@ -3,12 +3,10 @@ package uk.gov.govuk.chat.ui
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,11 +24,11 @@ import uk.gov.govuk.chat.R
 import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.BodyRegularLabelTrailingLink
+import uk.gov.govuk.design.ui.component.DoubleButtonGroup
 import uk.gov.govuk.design.ui.component.FullScreenHeader
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.PrimaryButton
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
-import uk.gov.govuk.design.ui.component.SecondaryButton
+import uk.gov.govuk.design.ui.model.Button
 import uk.gov.govuk.design.ui.model.HeaderDismissStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
@@ -197,25 +195,16 @@ private fun Buttons(
     onCancel: () -> Unit,
     modifier: Modifier
 ) {
-    PrimaryButton(
-        text = stringResource(id = R.string.onboarding_page_three_button),
-        onClick = onClick,
-        modifier = modifier
-            .padding(horizontal = GovUkTheme.spacing.medium)
-            .background(GovUkTheme.colourScheme.surfaces.fixedContainer),
-        enabled = true,
-        externalLink = false
-    )
-
-    SecondaryButton(
-        text = stringResource(id = R.string.onboarding_page_three_decline_button),
-        onClick = onCancel,
-        modifier = modifier
-            .padding(
-                start = GovUkTheme.spacing.medium,
-                end = GovUkTheme.spacing.medium,
-                top = GovUkTheme.spacing.medium
-            )
+    DoubleButtonGroup(
+        Button(
+            stringResource(id = R.string.onboarding_page_three_button),
+            onClick
+        ),
+        Button(
+            stringResource(id = R.string.onboarding_page_three_decline_button),
+            onCancel
+        ),
+        modifier
     )
 }
 

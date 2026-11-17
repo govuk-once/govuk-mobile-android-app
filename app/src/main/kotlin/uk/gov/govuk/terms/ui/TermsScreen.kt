@@ -26,9 +26,9 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CentreAlignedScreen
 import uk.gov.govuk.design.ui.component.DialogButton
 import uk.gov.govuk.design.ui.component.FixedDoubleButtonGroup
+import uk.gov.govuk.design.ui.component.GroupedSecondaryButton
 import uk.gov.govuk.design.ui.component.LargeTitleBoldLabel
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
-import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.component.error.AppUnavailableScreen
 import uk.gov.govuk.design.ui.model.Button
@@ -113,7 +113,7 @@ private fun TermsScreen(
 
             MediumVerticalSpacer()
 
-            SecondaryButton(
+            GroupedSecondaryButton(
                 stringResource(R.string.terms_and_conditions),
                 onClick = onTerms,
                 externalLink = true
@@ -121,7 +121,7 @@ private fun TermsScreen(
 
             SmallVerticalSpacer()
 
-            SecondaryButton(
+            GroupedSecondaryButton(
                 stringResource(R.string.terms_privacy_notice),
                 onClick = onPrivacyPolicy,
                 externalLink = true

@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import uk.gov.govuk.design.ui.component.CalloutRegularLabel
+import uk.gov.govuk.design.ui.component.GroupedSecondaryButton
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.PrimaryButton
-import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
@@ -34,7 +34,7 @@ internal fun StatusButton(
                 modifier = Modifier.withAltText(text.altText)
             )
         } else {
-            SecondaryButton(
+            GroupedSecondaryButton(
                 text = text.displayText,
                 onClick = onClick,
                 modifier = Modifier.withAltText(text.altText)

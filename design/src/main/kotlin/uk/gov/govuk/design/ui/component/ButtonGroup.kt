@@ -55,7 +55,7 @@ fun FixedSecondaryButton(
     Column(modifier.fillMaxWidth()) {
         FixedContainerDivider()
         MediumVerticalSpacer()
-        SecondaryButton(
+        GroupedSecondaryButton(
             text = text,
             onClick = onClick,
             modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium),
@@ -136,7 +136,7 @@ private fun VerticalButtonGroup(
             )
         }
         MediumVerticalSpacer()
-        SecondaryButton(
+        GroupedSecondaryButton(
             text = secondaryButton.text,
             onClick = secondaryButton.onClick,
             modifier = Modifier.fillMaxWidth(),
@@ -172,7 +172,7 @@ private fun HorizontalButtonGroup(
             )
         }
         MediumHorizontalSpacer()
-        SecondaryButton(
+        GroupedSecondaryButton(
             text = secondaryButton.text,
             onClick = secondaryButton.onClick,
             modifier = Modifier.weight(0.5f),

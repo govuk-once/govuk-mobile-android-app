@@ -24,11 +24,6 @@ import uk.gov.govuk.design.ui.component.SecondaryButton
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
-data class ErrorButtonAction(
-    val buttonTitle: String,
-    val onButtonClick: (() -> Unit)?
-)
-
 @Composable
 fun Error(
     modifier: Modifier = Modifier,

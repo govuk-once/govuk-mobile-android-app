@@ -182,6 +182,39 @@ fun SecondaryButton(
     val colours = GovUkButtonColours(
         defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondary,
         defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondary,
+        defaultBorderColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondary,
+        focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
+        focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
+        pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryHighlight,
+        pressedContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryHighlight,
+        pressedBorderColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryHighlight,
+        disabledContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryDisabled,
+        disabledContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondaryDisabled
+    )
+
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        colours = colours,
+        textStyle = GovUkTheme.typography.bodyRegular,
+        modifier = modifier.fillMaxWidth(),
+        state = enabled.toButtonState(),
+        externalLink = externalLink,
+        shape = RoundedCornerShape(15.dp)
+    )
+}
+
+@Composable
+fun GroupedSecondaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    externalLink: Boolean = false
+) {
+    val colours = GovUkButtonColours(
+        defaultContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondary,
+        defaultContentColour = GovUkTheme.colourScheme.textAndIcons.buttonSecondary,
         focussedContainerColour = GovUkTheme.colourScheme.surfaces.focused,
         focussedContentColour = GovUkTheme.colourScheme.textAndIcons.focused,
         pressedContainerColour = GovUkTheme.colourScheme.surfaces.buttonSecondaryHighlight,
@@ -679,6 +712,41 @@ private fun SecondaryExternalLink() {
 private fun SecondaryDisabled() {
     GovUkTheme {
         SecondaryButton(
+            text = "Secondary button",
+            onClick = { },
+            enabled = false
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun GroupedSecondary() {
+    GovUkTheme {
+        GroupedSecondaryButton(
+            text = "Secondary button",
+            onClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun GroupedSecondaryExternalLink() {
+    GovUkTheme {
+        GroupedSecondaryButton(
+            text = "Secondary button",
+            onClick = { },
+            externalLink = true
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun GroupedSecondaryDisabled() {
+    GovUkTheme {
+        GroupedSecondaryButton(
             text = "Secondary button",
             onClick = { },
             enabled = false
