@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.role
@@ -58,7 +59,6 @@ import uk.gov.govuk.dvla.CheckVehicleError
 import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.CheckVehicleClearIconColours
-import androidx.compose.ui.semantics.isTraversalGroup
 
 private val SheetShape = RoundedCornerShape(topStart = 33.dp, topEnd = 33.dp)
 
@@ -353,20 +353,20 @@ private fun RegistrationInput(
 }
 
 @Composable
-private fun resolveClearIconColours(isFocused: Boolean): CheckVehicleClearIconColours {
-    return if (isFocused) {
-        CheckVehicleClearIconColours(
-            background = GovUkTheme.colourScheme.surfaces.focused,
-            icon = GovUkTheme.colourScheme.textAndIcons.focused,
-            iconBackground = GovUkTheme.colourScheme.surfaces.focused
-        )
-    } else {
-        CheckVehicleClearIconColours(
-            background = Color.Transparent,
-            icon = GovUkTheme.colourScheme.textAndIcons.primary,
-            iconBackground = GovUkTheme.colourScheme.surfaces.list
-        )
-    }
+private fun resolveClearIconColours(
+    isFocused: Boolean
+): CheckVehicleClearIconColours = if (isFocused) {
+    CheckVehicleClearIconColours(
+        background = GovUkTheme.colourScheme.surfaces.focused,
+        icon = GovUkTheme.colourScheme.textAndIcons.focused,
+        iconBackground = GovUkTheme.colourScheme.surfaces.focused
+    )
+} else {
+    CheckVehicleClearIconColours(
+        background = Color.Transparent,
+        icon = GovUkTheme.colourScheme.textAndIcons.primary,
+        iconBackground = GovUkTheme.colourScheme.surfaces.list
+    )
 }
 
 @PreviewLightDark
