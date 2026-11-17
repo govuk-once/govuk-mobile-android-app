@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,6 +58,7 @@ import uk.gov.govuk.dvla.CheckVehicleError
 import uk.gov.govuk.dvla.CheckVehicleSheetState
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.CheckVehicleClearIconColours
+import androidx.compose.ui.semantics.isTraversalGroup
 
 private val SheetShape = RoundedCornerShape(topStart = 33.dp, topEnd = 33.dp)
 
@@ -114,8 +116,9 @@ internal fun CheckVehicleSheet(
             onCancel()
         },
         modifier = modifier.semantics {
-                paneTitle = sheetTitle
-            },
+            paneTitle = sheetTitle
+            isTraversalGroup = true
+        },
         sheetState = sheetState,
         shape = SheetShape,
         containerColor = GovUkTheme.colourScheme.surfaces.bottomSheet,
@@ -267,85 +270,86 @@ private fun RegistrationInput(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier
 ) {
-
     val clearDescription = stringResource(R.string.check_vehicle_clear_registration)
 
     val clearInteractionSource = remember { MutableInteractionSource() }
     val isClearFocused by clearInteractionSource.collectIsFocusedAsState()
     val clearColours = resolveClearIconColours(isFocused = isClearFocused)
 
-    BasicTextField(
-        value = registration,
-        onValueChange = onRegistrationChange,
-        modifier = modifier
-            .focusRequester(focusRequester),
-        enabled = enabled,
-        singleLine = true,
-        textStyle = GovUkTheme.typography.registrationPlateLarge.copy(
-            color = GovUkTheme.colourScheme.textAndIcons.primary,
-            textAlign = TextAlign.Center
-        ),
-        cursorBrush = SolidColor(
-            GovUkTheme.colourScheme.textAndIcons.primary
-        ),
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Characters,
-            keyboardType = KeyboardType.Ascii,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                onSubmit()
-            }
-        ),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        BasicTextField(
+            value = registration,
+            onValueChange = onRegistrationChange,
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester),
+            enabled = enabled,
+            singleLine = true,
+            textStyle = GovUkTheme.typography.registrationPlateLarge.copy(
+                color = GovUkTheme.colourScheme.textAndIcons.primary,
+                textAlign = TextAlign.Center
+            ),
+            cursorBrush = SolidColor(
+                GovUkTheme.colourScheme.textAndIcons.primary
+            ),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Characters,
+                keyboardType = KeyboardType.Ascii,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onSubmit() }
+            ),
+            decorationBox = { innerTextField ->
                 Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 36.dp, top = 12.dp, bottom = 12.dp),
+                    modifier = Modifier.padding(start = 36.dp, top = 12.dp, bottom = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     innerTextField()
                 }
-
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(clearColours.background)
-                        .semantics {
-                            contentDescription = clearDescription
-                            role = Role.Button
-                        }
-                        .clickable(
-                            enabled = enabled && registration.isNotEmpty(),
-                            interactionSource = clearInteractionSource,
-                            indication = null,
-                            onClick = onClear
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (registration.isNotEmpty()) {
-                        Icon(
-                            painter = painterResource(uk.gov.govuk.design.R.drawable.ic_cancel_round),
-                            contentDescription = null,
-                            tint = clearColours.icon,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .background(
-                                    color = clearColours.iconBackground,
-                                    shape = CircleShape
-                                )
-                        )
-                    }
-                }
             }
+        )
+
+        if (registration.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(clearColours.background)
+                    .semantics {
+                        contentDescription = clearDescription
+                        role = Role.Button
+                    }
+                    .clickable(
+                        enabled = enabled,
+                        interactionSource = clearInteractionSource,
+                        indication = null,
+                        onClick = {
+                            onClear()
+                            focusRequester.requestFocus()
+                        }
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(uk.gov.govuk.design.R.drawable.ic_cancel_round),
+                    contentDescription = null,
+                    tint = clearColours.icon,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .background(
+                            color = clearColours.iconBackground,
+                            shape = CircleShape
+                        )
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.size(36.dp))
         }
-    )
+    }
 }
 
 @Composable
