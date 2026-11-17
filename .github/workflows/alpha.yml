@@ -60,6 +60,9 @@ jobs:
         run: |
           echo $ALPHA_KEYSTORE | base64 -di > alpha.jks
 
+      - name: Ktlint
+        run: ./gradlew ktlintCheck
+
       - name: Lint
         run: ./gradlew lint
 

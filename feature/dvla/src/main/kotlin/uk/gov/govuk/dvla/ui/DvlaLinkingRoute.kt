@@ -37,7 +37,6 @@ internal fun DvlaLinkingRoute(
     onWebFlowClosed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     val viewModel: DvlaViewModel = hiltViewModel()
     val authUrlToLaunch by viewModel.authUrlToLaunch.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -175,7 +174,6 @@ private fun DvlaOfflineScreen(
     onTryAgain: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     val title = stringResource(uk.gov.govuk.design.R.string.device_offline_title)
     val buttonText = stringResource(uk.gov.govuk.design.R.string.device_offline_button_title)
 

@@ -5,13 +5,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import java.util.Locale
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.data.AnalyticsRepo
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
-import java.util.Locale
 
 class AnalyticsCoordinatorTest {
     private val analyticsRepo = mockk<AnalyticsRepo>(relaxed = true)
@@ -32,40 +32,43 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
-    fun `Given analytics consent has been given, when initialize is called, then call the Firebase enable and Qualtrics initialize functions`() = runTest {
-        every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.ENABLED
+    fun `Given analytics consent has been given, when initialize is called, then call the Firebase enable and Qualtrics initialize functions`() =
+        runTest {
+            every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.ENABLED
 
-        analyticsCoordinator.initialize()
+            analyticsCoordinator.initialize()
 
-        verify(exactly = 1) {
-            firebaseAnalyticClient.enable()
-            qualtricsAnalyticsClient.initialize()
+            verify(exactly = 1) {
+                firebaseAnalyticClient.enable()
+                qualtricsAnalyticsClient.initialize()
+            }
         }
-    }
 
     @Test
-    fun `Given analytics consent has not been given, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() = runTest {
-        every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.NOT_SET
+    fun `Given analytics consent has not been given, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() =
+        runTest {
+            every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.NOT_SET
 
-        analyticsCoordinator.initialize()
+            analyticsCoordinator.initialize()
 
-        verify(exactly = 0) {
-            firebaseAnalyticClient.enable()
-            qualtricsAnalyticsClient.initialize()
+            verify(exactly = 0) {
+                firebaseAnalyticClient.enable()
+                qualtricsAnalyticsClient.initialize()
+            }
         }
-    }
 
     @Test
-    fun `Given analytics consent has been disabled, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() = runTest {
-        every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.DISABLED
+    fun `Given analytics consent has been disabled, when initialize is called, then do not call the Firebase enable and Qualtrics initialize functions`() =
+        runTest {
+            every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.DISABLED
 
-        analyticsCoordinator.initialize()
+            analyticsCoordinator.initialize()
 
-        verify(exactly = 0) {
-            firebaseAnalyticClient.enable()
-            qualtricsAnalyticsClient.initialize()
+            verify(exactly = 0) {
+                firebaseAnalyticClient.enable()
+                qualtricsAnalyticsClient.initialize()
+            }
         }
-    }
 
     @Test
     fun `Given analytics consent has been given, when initialize is called, then register a survey closed listener`() = runTest {
@@ -79,35 +82,36 @@ class AnalyticsCoordinatorTest {
     }
 
     @Test
-    fun `Given a survey was closed, when the survey closed listener fires, then log a qualtrics_survey_closed event for each targeting id`() = runTest {
-        every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.ENABLED
+    fun `Given a survey was closed, when the survey closed listener fires, then log a qualtrics_survey_closed event for each targeting id`() =
+        runTest {
+            every { analyticsRepo.analyticsEnabledState } returns AnalyticsEnabledState.ENABLED
 
-        val listenerSlot = slot<(List<String>) -> Unit>()
-        every { qualtricsAnalyticsClient.setOnSurveyClosedListener(capture(listenerSlot)) } returns Unit
+            val listenerSlot = slot<(List<String>) -> Unit>()
+            every { qualtricsAnalyticsClient.setOnSurveyClosedListener(capture(listenerSlot)) } returns Unit
 
-        analyticsCoordinator.initialize()
-        listenerSlot.captured.invoke(listOf("survey_one", "survey_two"))
+            analyticsCoordinator.initialize()
+            listenerSlot.captured.invoke(listOf("survey_one", "survey_two"))
 
-        verify {
-            firebaseAnalyticClient.logEvent(
-                "qualtrics_survey_closed",
-                mapOf<String, Any>("qualtrics_targeting_id" to "survey_one")
+            verify {
+                firebaseAnalyticClient.logEvent(
+                    "qualtrics_survey_closed",
+                    mapOf<String, Any>("qualtrics_targeting_id" to "survey_one")
 
-            )
-            qualtricsAnalyticsClient.logEvent(
-                "qualtrics_survey_closed",
-                mapOf<String, Any>("qualtrics_targeting_id" to "survey_one")
-            )
-            firebaseAnalyticClient.logEvent(
-                "qualtrics_survey_closed",
-                mapOf<String, Any>("qualtrics_targeting_id" to "survey_two")
-            )
-            qualtricsAnalyticsClient.logEvent(
-                "qualtrics_survey_closed",
-                mapOf<String, Any>("qualtrics_targeting_id" to "survey_two")
-            )
+                )
+                qualtricsAnalyticsClient.logEvent(
+                    "qualtrics_survey_closed",
+                    mapOf<String, Any>("qualtrics_targeting_id" to "survey_one")
+                )
+                firebaseAnalyticClient.logEvent(
+                    "qualtrics_survey_closed",
+                    mapOf<String, Any>("qualtrics_targeting_id" to "survey_two")
+                )
+                qualtricsAnalyticsClient.logEvent(
+                    "qualtrics_survey_closed",
+                    mapOf<String, Any>("qualtrics_targeting_id" to "survey_two")
+                )
+            }
         }
-    }
 
     @Test
     fun `Given a survey was shown, when the survey show callback fires, then log a qualtrics_survey_shown event for each passed targeting id`() {
