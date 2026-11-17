@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -128,15 +127,12 @@ private fun Header(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (hasDismissButton) {
-                    TextButton(
-                        onClick = dismissStyle.onClick
-                    ) {
-                        Icon(
-                            imageVector = dismissStyle.icon,
-                            contentDescription = stringResource(dismissStyle.altText),
-                            tint = actionColour
-                        )
-                    }
+                    HeaderDismissButton(
+                        icon = dismissStyle.icon,
+                        altText = stringResource(dismissStyle.altText),
+                        onClick = dismissStyle.onClick,
+                        defaultContentColour = actionColour
+                    )
                 }
                 when (actionStyle) {
                     is HeaderActionStyle.TextActionButton -> {

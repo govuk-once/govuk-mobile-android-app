@@ -1,5 +1,7 @@
 package uk.gov.govuk.dvla.mapper
 
+import java.time.LocalDate
+import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.model.StatusListItemIconStyle
@@ -15,7 +17,6 @@ import uk.gov.govuk.dvla.ui.model.StatusStyle
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
 import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.util.StringProvider
-import uk.gov.govuk.dvla.util.getNumberOfDaysFromNow
 import uk.gov.govuk.dvla.util.getNumberOfDaysWithinDayRangeAsPercentage
 import uk.gov.govuk.dvla.util.insertRegistration
 import uk.gov.govuk.dvla.util.isDateWithinDayRange
@@ -24,8 +25,6 @@ import uk.gov.govuk.dvla.util.isInTheFuture
 import uk.gov.govuk.dvla.util.resolveDaysUntil
 import uk.gov.govuk.dvla.util.resolveSummaryDescription
 import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
-import java.time.LocalDate
-import javax.inject.Inject
 
 internal class TaxAndMotStatusMapper @Inject constructor(
     private val stringProvider: StringProvider
@@ -35,7 +34,10 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         const val UPPER_RANGE_OF_MOT_EXPIRY_DAYS = 28
     }
 
-    fun getMotStatus(vehicle: VehicleSummary, dvlaUrls: DvlaUrls?): StatusUiModel {
+    fun getMotStatus(
+        vehicle: VehicleSummary,
+        dvlaUrls: DvlaUrls?
+    ): StatusUiModel {
         val expiryDate = vehicle.motExpiryDate
         return when (vehicle.motStatus) {
             MotStatus.VALID -> {
@@ -121,33 +123,41 @@ internal class TaxAndMotStatusMapper @Inject constructor(
     fun getMotStatusEnquiry(
         vehicle: VehicleSummary,
         dvlaUrls: DvlaUrls?
-    ): StatusUiModel =
-        when (vehicle.motStatus) {
-            MotStatus.VALID -> getValid(getMotStatusTitle(), vehicle.motExpiryDate)
-            else -> getMotStatus(vehicle, dvlaUrls)
-        }
+    ): StatusUiModel = when (vehicle.motStatus) {
+        MotStatus.VALID -> getValid(getMotStatusTitle(), vehicle.motExpiryDate)
+        else -> getMotStatus(vehicle, dvlaUrls)
+    }
 
-    private fun getValid(title: AccessibleString, expiryDate: LocalDate?): StatusUiModel {
+    private fun getValid(
+        title: AccessibleString,
+        expiryDate: LocalDate?
+    ): StatusUiModel {
         val resources =
             Triple(R.string.valid_until, R.string.valid, StatusListItemIconStyle.Success)
         return getStatusRow(title, expiryDate, resources)
     }
 
-    private fun getExpiringTopText(expiryDate: String) = AccessibleString(
+    private fun getExpiringTopText(
+        expiryDate: String
+    ) = AccessibleString(
         displayText = stringProvider.resolveSummaryDescription(
             R.string.expiring_status_date,
             expiryDate
         )
     )
 
-    private fun getExpiringDirectDebitTopText(expiryDate: String) = AccessibleString(
+    private fun getExpiringDirectDebitTopText(
+        expiryDate: String
+    ) = AccessibleString(
         displayText = stringProvider.resolveSummaryDescription(
             R.string.expiring_direct_debit_status_date,
             expiryDate
         )
     )
 
-    private fun getUnknown(title: AccessibleString) = StatusUiModel.StatusRow(
+    private fun getUnknown(
+        title: AccessibleString
+    ) = StatusUiModel.StatusRow(
         statusRowUi = StatusRowUiModel(
             title = title,
             description = AccessibleString(stringProvider.getString(R.string.status_unknown)),
@@ -179,18 +189,22 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     }
 
-    private fun getExpiringBottomText(expiryDate: LocalDate) =
-        AccessibleString(
-            displayText = stringProvider.resolveDaysUntil(
-                expiryDate,
-                R.string.today,
-                R.plurals.expiring_status_days_left
-            )
+    private fun getExpiringBottomText(
+        expiryDate: LocalDate
+    ) = AccessibleString(
+        displayText = stringProvider.resolveDaysUntil(
+            expiryDate,
+            R.string.today,
+            R.plurals.expiring_status_days_left
         )
+    )
 
     /* Tax specific functions START */
 
-    private fun getTaxExpiring(expiryDate: LocalDate, dvlaUrls: DvlaUrls?): StatusUiModel {
+    private fun getTaxExpiring(
+        expiryDate: LocalDate,
+        dvlaUrls: DvlaUrls?
+    ): StatusUiModel {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return StatusUiModel.CountdownRow(
             countdownBarUi = StatusCountdownUiModel(
@@ -203,14 +217,15 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     }
 
-    private fun getRenewTaxStyle(dvlaUrls: DvlaUrls?) =
-        dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
-            StatusStyle.ActionButton(
-                text = AccessibleString(stringProvider.getString(R.string.renew_tax_button)),
-                url = UrlModel(taxVehicleUrl),
-                caption = AccessibleString(stringProvider.getString(R.string.renew_tax_button_caption))
-            )
-        }
+    private fun getRenewTaxStyle(
+        dvlaUrls: DvlaUrls?
+    ) = dvlaUrls?.taxVehicle?.let { taxVehicleUrl ->
+        StatusStyle.ActionButton(
+            text = AccessibleString(stringProvider.getString(R.string.renew_tax_button)),
+            url = UrlModel(taxVehicleUrl),
+            caption = AccessibleString(stringProvider.getString(R.string.renew_tax_button_caption))
+        )
+    }
 
     private fun getTaxExpiringDirectDebit(
         expiryDate: LocalDate,
@@ -228,22 +243,24 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     }
 
-    private fun LocalDate.asPercentageOfDaysLeftForTax() =
-        this.getNumberOfDaysWithinDayRangeAsPercentage(
-            UPPER_RANGE_OF_TAX_EXPIRY_DAYS
+    private fun LocalDate.asPercentageOfDaysLeftForTax() = this.getNumberOfDaysWithinDayRangeAsPercentage(
+        UPPER_RANGE_OF_TAX_EXPIRY_DAYS
+    )
+
+    private fun getExpiringDirectDebitStyle(
+        dvlaUrls: DvlaUrls?
+    ) = dvlaUrls?.manageTaxPayment?.let { manageTaxPaymentUrl ->
+        StatusStyle.ActionButton(
+            text = AccessibleString(stringProvider.getString(R.string.manage_payment_button)),
+            caption = AccessibleString(stringProvider.getString(R.string.manage_payment_button_caption)),
+            url = UrlModel(manageTaxPaymentUrl),
+            isPrimary = false
         )
+    }
 
-    private fun getExpiringDirectDebitStyle(dvlaUrls: DvlaUrls?) =
-        dvlaUrls?.manageTaxPayment?.let { manageTaxPaymentUrl ->
-            StatusStyle.ActionButton(
-                text = AccessibleString(stringProvider.getString(R.string.manage_payment_button)),
-                caption = AccessibleString(stringProvider.getString(R.string.manage_payment_button_caption)),
-                url = UrlModel(manageTaxPaymentUrl),
-                isPrimary = false
-            )
-        }
-
-    private fun getUntaxed(dvlaUrls: DvlaUrls?) = StatusUiModel.StatusRow(
+    private fun getUntaxed(
+        dvlaUrls: DvlaUrls?
+    ) = StatusUiModel.StatusRow(
         statusRowUi = StatusRowUiModel(
             title = getTaxStatusTitle(),
             description = AccessibleString(
@@ -264,7 +281,9 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     )
 
-    private fun getSorn(sornStart: LocalDate?): StatusUiModel {
+    private fun getSorn(
+        sornStart: LocalDate?
+    ): StatusUiModel {
         val subtitle = if (sornStart.isInTheFuture()) {
             AccessibleString(
                 stringProvider.resolveSummaryDescription(
@@ -296,7 +315,9 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     )
 
-    private fun getTaxStatusUnknown(url: String) = StatusUiModel.LinkRow(
+    private fun getTaxStatusUnknown(
+        url: String
+    ) = StatusUiModel.LinkRow(
         linkRowUi = LinkRowUiModel(
             title = getTaxStatusTitle(),
             text = AccessibleString(stringProvider.getString(R.string.tax_status_unknown)),
@@ -308,7 +329,9 @@ internal class TaxAndMotStatusMapper @Inject constructor(
 
     /* MOT specific functions START */
 
-    private fun getMotExpiring(expiryDate: LocalDate): StatusUiModel {
+    private fun getMotExpiring(
+        expiryDate: LocalDate
+    ): StatusUiModel {
         val formattedExpiryDate = expiryDate.toSummaryDisplayFormat()
         return StatusUiModel.CountdownRow(
             countdownBarUi = StatusCountdownUiModel(
@@ -326,7 +349,9 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     }
 
-    private fun getMotExpired(expiryDate: LocalDate?): StatusUiModel {
+    private fun getMotExpired(
+        expiryDate: LocalDate?
+    ): StatusUiModel {
         val resources =
             Triple(R.string.expired_on, R.string.expired, StatusListItemIconStyle.Warning)
         return getStatusRow(getMotStatusTitle(), expiryDate, resources)
@@ -337,12 +362,14 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         altText = stringProvider.getString(R.string.acronym_mot_alt_text)
     )
 
-    private fun LocalDate.asPercentageOfDaysLeftForMot() =
-        this.getNumberOfDaysWithinDayRangeAsPercentage(
-            UPPER_RANGE_OF_MOT_EXPIRY_DAYS
-        )
+    private fun LocalDate.asPercentageOfDaysLeftForMot() = this.getNumberOfDaysWithinDayRangeAsPercentage(
+        UPPER_RANGE_OF_MOT_EXPIRY_DAYS
+    )
 
-    private fun getNoMotDetailsHeld(url: String, registration: String): StatusUiModel {
+    private fun getNoMotDetailsHeld(
+        url: String,
+        registration: String
+    ): StatusUiModel {
         val formattedUrl = url.insertRegistration(registration)
         return StatusUiModel.LinkRow(
             linkRowUi = LinkRowUiModel(
@@ -353,7 +380,9 @@ internal class TaxAndMotStatusMapper @Inject constructor(
         )
     }
 
-    private fun getNoMotResultsReturned(url: String) = StatusUiModel.LinkRow(
+    private fun getNoMotResultsReturned(
+        url: String
+    ) = StatusUiModel.LinkRow(
         linkRowUi = LinkRowUiModel(
             title = getMotStatusTitle(),
             text = AccessibleString(

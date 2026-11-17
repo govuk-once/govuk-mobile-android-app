@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -17,7 +18,6 @@ import uk.gov.govuk.dvla.ui.model.LicenceCategoryRestrictionUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
-import java.time.LocalDate
 
 class LicenceCategoriesMapperTest {
 
@@ -40,11 +40,14 @@ class LicenceCategoriesMapperTest {
         every { stringProvider.getString(R.string.licence_categories_link_add_categories) } returns "Add"
     }
 
-    private fun full(code: String) = Entitlement(code, EntitlementType.FULL)
-    private fun provisional(code: String) = Entitlement(code, EntitlementType.PROVISIONAL)
+    private fun full(
+        code: String
+    ) = Entitlement(code, EntitlementType.FULL)
+    private fun provisional(
+        code: String
+    ) = Entitlement(code, EntitlementType.PROVISIONAL)
 
-    private fun List<LicenceCategoryGroupUiModel>.codes() =
-        flatMap { group -> group.categories.map { it.code } }
+    private fun List<LicenceCategoryGroupUiModel>.codes() = flatMap { group -> group.categories.map { it.code } }
 
     @Test
     fun `Given full entitlements, then they appear under can drive with the group title`() {
