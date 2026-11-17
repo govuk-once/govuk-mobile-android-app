@@ -5,12 +5,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 @Singleton
 internal class AppDataStore @Inject constructor(
@@ -22,10 +22,8 @@ internal class AppDataStore @Inject constructor(
         internal const val SUPPRESSED_HOME_WIDGETS = "suppressed_home_widgets"
     }
 
-    internal suspend fun hasSkippedBiometrics(): Boolean {
-        return dataStore.data.firstOrNull()
-            ?.get(booleanPreferencesKey(SKIPPED_BIOMETRICS_KEY)) == true
-    }
+    internal suspend fun hasSkippedBiometrics(): Boolean = dataStore.data.firstOrNull()
+        ?.get(booleanPreferencesKey(SKIPPED_BIOMETRICS_KEY)) == true
 
     internal suspend fun skipBiometrics() {
         dataStore.edit { prefs ->
@@ -39,10 +37,8 @@ internal class AppDataStore @Inject constructor(
         }
     }
 
-    internal suspend fun isTopicSelectionCompleted(): Boolean {
-        return dataStore.data.firstOrNull()
-            ?.get(booleanPreferencesKey(TOPIC_SELECTION_COMPLETED_KEY)) == true
-    }
+    internal suspend fun isTopicSelectionCompleted(): Boolean = dataStore.data.firstOrNull()
+        ?.get(booleanPreferencesKey(TOPIC_SELECTION_COMPLETED_KEY)) == true
 
     internal suspend fun topicSelectionCompleted() {
         dataStore.edit { prefs ->
@@ -56,7 +52,9 @@ internal class AppDataStore @Inject constructor(
         }
         .distinctUntilChanged()
 
-    internal suspend fun suppressHomeWidget(id: String) {
+    internal suspend fun suppressHomeWidget(
+        id: String
+    ) {
         val mutableWidgets = getSuppressedHomeWidgets()?.toMutableSet() ?: mutableSetOf()
         mutableWidgets.add(id)
         dataStore.edit { prefs -> prefs[stringSetPreferencesKey(SUPPRESSED_HOME_WIDGETS)] = mutableWidgets.toSet() }

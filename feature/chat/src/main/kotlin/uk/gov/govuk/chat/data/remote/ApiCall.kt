@@ -10,36 +10,34 @@ internal suspend fun <T> safeChatApiCall(
     apiCall: suspend () -> Response<T>,
     authRepo: AuthRepo,
     onAlreadyGiven: (() -> T)? = null
-): ChatResult<T> {
-    return try {
-        val response = withAuthRetry(apiCall, authRepo)
-        val body = response.body()
-        val code = response.code()
+): ChatResult<T> = try {
+    val response = withAuthRetry(apiCall, authRepo)
+    val body = response.body()
+    val code = response.code()
 
-        when {
-            response.isSuccessful -> {
-                when {
-                    code == 202 -> ChatResult.AwaitingAnswer()
-                    body != null -> ChatResult.Success(body)
-                    else -> ChatResult.Error()
-                }
-            }
-
-            else -> {
-                when {
-                    code == 404 -> ChatResult.NotFound()
-                    code == 409 && onAlreadyGiven != null -> ChatResult.Success(onAlreadyGiven())
-                    code == 422 -> ChatResult.ValidationError()
-                    code == 429 -> ChatResult.RateLimitExceeded()
-                    else -> ChatResult.Error()
-                }
+    when {
+        response.isSuccessful -> {
+            when {
+                code == 202 -> ChatResult.AwaitingAnswer()
+                body != null -> ChatResult.Success(body)
+                else -> ChatResult.Error()
             }
         }
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: AuthenticationException) {
-        ChatResult.AuthError()
-    } catch (e: Exception) {
-        ChatResult.DeviceOffline()
+
+        else -> {
+            when {
+                code == 404 -> ChatResult.NotFound()
+                code == 409 && onAlreadyGiven != null -> ChatResult.Success(onAlreadyGiven())
+                code == 422 -> ChatResult.ValidationError()
+                code == 429 -> ChatResult.RateLimitExceeded()
+                else -> ChatResult.Error()
+            }
+        }
     }
+} catch (e: CancellationException) {
+    throw e
+} catch (e: AuthenticationException) {
+    ChatResult.AuthError()
+} catch (e: Exception) {
+    ChatResult.DeviceOffline()
 }
