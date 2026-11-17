@@ -226,7 +226,7 @@ private fun BottomNavBar(
 
 @Preview
 @Composable
-private fun LocalEntryScreenPreview() {
+internal fun LocalEntryScreenPreview() {
     GovUkTheme {
         LocalLookupScreen(
             onBack = {},

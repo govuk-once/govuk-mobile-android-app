@@ -1,5 +1,8 @@
 package uk.gov.govuk.dvla.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +16,7 @@ import uk.gov.govuk.data.remote.safeAuthApiCall
 import uk.gov.govuk.dvla.data.local.DvlaDataStore
 import uk.gov.govuk.dvla.di.CoroutineScopeIo
 import uk.gov.govuk.dvla.domain.CheckCodeDetails
+import uk.gov.govuk.dvla.domain.LicenceDetails
 import uk.gov.govuk.dvla.domain.LicenceDetailsResult
 import uk.gov.govuk.dvla.domain.VehicleDetails
 import uk.gov.govuk.dvla.domain.VehicleEnquiryDetails
@@ -21,8 +25,6 @@ import uk.gov.govuk.dvla.domain.toDomainModel
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.remote.safeLicenceApiCall
 import uk.gov.govuk.dvla.ui.model.DrivingView
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class DvlaRepo @Inject constructor(
@@ -33,6 +35,7 @@ class DvlaRepo @Inject constructor(
     private val identityRepo: IdentityRepo
 ) {
     private var lastVehicleEnquiry: Pair<String, VehicleEnquiryDetails>? = null
+    private var lastLicenceDetails: LicenceDetails? = null
 
     val linkState: Flow<ServiceLinkStatus> = identityRepo.linkStatusOf(LinkedService.DVLA)
 
@@ -43,16 +46,23 @@ class DvlaRepo @Inject constructor(
 
     internal suspend fun getSelectedDrivingView(): DrivingView? = dvlaDataStore.getSelectedDrivingView()
 
-    internal suspend fun setSelectedDrivingView(drivingView: DrivingView) = dvlaDataStore.setSelectedDrivingView(drivingView)
+    internal suspend fun setSelectedDrivingView(
+        drivingView: DrivingView
+    ) = dvlaDataStore.setSelectedDrivingView(drivingView)
 
     suspend fun clear() {
         lastVehicleEnquiry = null
+        lastLicenceDetails = null
         dvlaDataStore.clear()
     }
 
-    internal suspend fun linkAccount(token: String): Result<Unit> {
+    internal suspend fun linkAccount(
+        token: String
+    ): Result<Unit> {
         val result = try {
             safeAuthApiCall({ api.linkDvlaIdentity(token) }, authRepo)
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             Result.Error()
         }
@@ -66,48 +76,56 @@ class DvlaRepo @Inject constructor(
 
     suspend fun unlinkAccount(): Result<Unit> {
         val deferredResult = externalScope.async {
-                val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
-                if (result is Result.Success) {
-                    clear()
-                    identityRepo.getLinkedServices() // sync linked services state
-                }
-                result
+            val result = safeAuthApiCall({ api.deleteDvlaIdentity() }, authRepo)
+            if (result is Result.Success) {
+                clear()
+                identityRepo.getLinkedServices() // sync linked services state
             }
+            result
+        }
         return deferredResult.await()
     }
 
-
-    internal suspend fun getLicenceDetails(): LicenceDetailsResult =
-        safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
-
-    internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> =
-        safeAuthApiCall({ api.getCustomerVehicles() }, authRepo)
-            .map { it.customerVehicles.map { vehicle -> vehicle.toDomainModel() } }
-
-    internal suspend fun getVehicleDetails(vehicleId: Int): Result<VehicleDetails> =
-        safeAuthApiCall({ api.getVehicleDetails(vehicleId) }, authRepo)
-            .map { it.customerVehicleDetails.toDomainModel() }
-
-    internal suspend fun createCheckCode(): Result<CheckCodeDetails> =
-        safeAuthApiCall({ api.createShareCode() }, authRepo)
-            .map { it.toDomainModel() }
-
-    internal suspend fun getCheckCodes(): Result<List<CheckCodeDetails>> =
-        safeAuthApiCall({ api.getShareCodes() }, authRepo)
-            .map { it.toDomainModel() }
-
-    internal suspend fun cancelCheckCode(tokenId: String): Result<CheckCodeDetails> =
-        safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
-            .map { it.toDomainModel() }
-
-    internal suspend fun lookupVehicleByRegistration(reg: String): Result<VehicleEnquiryDetails> =
-        safeAuthApiCall({ api.lookupVehicleByRegistration(reg) }, authRepo)
-            .map { it.toDomainModel() }
-            .also { result ->
-                if (result is Result.Success) lastVehicleEnquiry = reg to result.value
+    internal suspend fun getLicenceDetails(): LicenceDetailsResult = safeLicenceApiCall({ api.getDrivingLicence() }, authRepo)
+        .also { result ->
+            lastLicenceDetails = when (result) {
+                is LicenceDetailsResult.Success -> result.details
+                else -> null
             }
+        }
+
+    /** Licence from the most recent successful [getLicenceDetails] */
+    internal fun getCachedLicenceDetails(): LicenceDetails? = lastLicenceDetails
+
+    internal suspend fun getCustomerVehicles(): Result<List<VehicleSummary>> = safeAuthApiCall({ api.getCustomerVehicles() }, authRepo)
+        .map { it.customerVehicles.map { vehicle -> vehicle.toDomainModel() } }
+
+    internal suspend fun getVehicleDetails(
+        vehicleId: Int
+    ): Result<VehicleDetails> = safeAuthApiCall({ api.getVehicleDetails(vehicleId) }, authRepo)
+        .map { it.customerVehicleDetails.toDomainModel() }
+
+    internal suspend fun createCheckCode(): Result<CheckCodeDetails> = safeAuthApiCall({ api.createShareCode() }, authRepo)
+        .map { it.toDomainModel() }
+
+    internal suspend fun getCheckCodes(): Result<List<CheckCodeDetails>> = safeAuthApiCall({ api.getShareCodes() }, authRepo)
+        .map { it.toDomainModel() }
+
+    internal suspend fun cancelCheckCode(
+        tokenId: String
+    ): Result<CheckCodeDetails> = safeAuthApiCall({ api.cancelShareCode(tokenId) }, authRepo)
+        .map { it.toDomainModel() }
+
+    internal suspend fun lookupVehicleByRegistration(
+        reg: String
+    ): Result<VehicleEnquiryDetails> = safeAuthApiCall({ api.lookupVehicleByRegistration(reg) }, authRepo)
+        .map { it.toDomainModel() }
+        .also { result ->
+            if (result is Result.Success) lastVehicleEnquiry = reg to result.value
+        }
 
     /** Details from the most recent successful [lookupVehicleByRegistration]  */
-    internal fun findVehicleEnquiryDetails(reg: String): VehicleEnquiryDetails? =
-        lastVehicleEnquiry?.takeIf { it.first == reg }?.second
+    internal fun getCachedVehicleEnquiryDetails(
+        reg: String
+    ): VehicleEnquiryDetails? = lastVehicleEnquiry?.takeIf { it.first == reg }?.second
 }

@@ -31,13 +31,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -109,8 +109,8 @@ internal fun CheckVehicleSheet(
             onCancel()
         },
         modifier = modifier.semantics {
-                paneTitle = sheetTitle
-            },
+            paneTitle = sheetTitle
+        },
         sheetState = sheetState,
         shape = SheetShape,
         containerColor = GovUkTheme.colourScheme.surfaces.bottomSheet,
@@ -344,31 +344,31 @@ private fun RegistrationInput(
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetEmptyPreview() {
+internal fun CheckVehicleSheetEmptyPreview() {
     SheetPreview(CheckVehicleSheetState.Input())
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetTypingPreview() {
+internal fun CheckVehicleSheetTypingPreview() {
     SheetPreview(CheckVehicleSheetState.Input("AB12"))
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetCompletePreview() {
+internal fun CheckVehicleSheetCompletePreview() {
     SheetPreview(CheckVehicleSheetState.Input("AB12CDE"))
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetLoadingPreview() {
+internal fun CheckVehicleSheetLoadingPreview() {
     SheetPreview(CheckVehicleSheetState.Loading("AB12CDE"))
 }
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetSearchUnavailablePreview() {
+internal fun CheckVehicleSheetSearchUnavailablePreview() {
     SheetPreview(
         CheckVehicleSheetState.Error(
             regNumber = "AB12CDE",
@@ -379,7 +379,7 @@ private fun CheckVehicleSheetSearchUnavailablePreview() {
 
 @PreviewLightDark
 @Composable
-private fun CheckVehicleSheetNotFoundPreview() {
+internal fun CheckVehicleSheetNotFoundPreview() {
     SheetPreview(
         CheckVehicleSheetState.Error(
             regNumber = "AB12CDE",
@@ -389,7 +389,9 @@ private fun CheckVehicleSheetNotFoundPreview() {
 }
 
 @Composable
-private fun SheetPreview(state: CheckVehicleSheetState) {
+internal fun SheetPreview(
+    state: CheckVehicleSheetState
+) {
     GovUkTheme {
         Box(
             modifier = Modifier

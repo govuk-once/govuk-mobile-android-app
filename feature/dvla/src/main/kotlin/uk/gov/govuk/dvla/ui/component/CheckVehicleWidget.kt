@@ -60,22 +60,22 @@ private data class SearchVehicleListItemColours(
 )
 
 @Composable
-private fun resolveSearchVehicleListItemColours(isFocused: Boolean): SearchVehicleListItemColours {
-    return if (isFocused) {
-        SearchVehicleListItemColours(
-            background = GovUkTheme.colourScheme.surfaces.focused,
-            text = GovUkTheme.colourScheme.textAndIcons.focused,
-            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
-            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-        )
-    } else {
-        SearchVehicleListItemColours(
-            background = GovUkTheme.colourScheme.surfaces.list,
-            text = GovUkTheme.colourScheme.textAndIcons.primary,
-            iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
-            icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
-        )
-    }
+private fun resolveSearchVehicleListItemColours(
+    isFocused: Boolean
+): SearchVehicleListItemColours = if (isFocused) {
+    SearchVehicleListItemColours(
+        background = GovUkTheme.colourScheme.surfaces.focused,
+        text = GovUkTheme.colourScheme.textAndIcons.focused,
+        iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+        icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+    )
+} else {
+    SearchVehicleListItemColours(
+        background = GovUkTheme.colourScheme.surfaces.list,
+        text = GovUkTheme.colourScheme.textAndIcons.primary,
+        iconBackground = GovUkTheme.colourScheme.surfaces.searchIcon,
+        icon = GovUkTheme.colourScheme.textAndIcons.iconPrimary
+    )
 }
 
 @Composable
@@ -219,7 +219,7 @@ fun CheckVehicleCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun CheckAVehicleWidgetPreview() {
+internal fun CheckAVehicleWidgetPreview() {
     GovUkTheme {
         CheckVehicleWidget({})
     }
@@ -227,7 +227,7 @@ private fun CheckAVehicleWidgetPreview() {
 
 @PreviewLightDark
 @Composable
-private fun SearchVehicleCardPreview() {
+internal fun SearchVehicleCardPreview() {
     GovUkTheme {
         CheckVehicleCard(
             prompt = "Search for a vehicle",

@@ -56,7 +56,7 @@ private fun SignOutErrorScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun SignOutErrorScreenPreview() {
+internal fun SignOutErrorScreenPreview() {
     GovUkTheme {
         SignOutErrorScreen(
             onPageView = { },

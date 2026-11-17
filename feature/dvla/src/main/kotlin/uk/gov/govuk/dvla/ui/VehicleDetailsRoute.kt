@@ -170,7 +170,7 @@ private fun ErrorScreen(
 
 @Preview
 @Composable
-private fun VehicleDetailsScreenPreview() {
+internal fun VehicleDetailsScreenPreview() {
     val taxStatus = StatusUiModel.StatusRow(
         StatusRowUiModel(
             AccessibleString("Tax"),
@@ -224,7 +224,7 @@ private fun VehicleDetailsScreenPreview() {
 
 @PreviewLightDark
 @Composable
-private fun ErrorScreenPreview() {
+internal fun ErrorScreenPreview() {
     GovUkTheme {
         ErrorScreen(
             onBack = {},

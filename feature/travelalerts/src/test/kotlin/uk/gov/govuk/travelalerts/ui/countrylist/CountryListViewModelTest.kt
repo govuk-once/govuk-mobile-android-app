@@ -89,12 +89,12 @@ class CountryListViewModelTest {
     }
 
     @Test
-    fun `Given page view, when device offline, then state is Error`() = runTest {
+    fun `Given page view, when device offline, then state is DeviceOffline`() = runTest {
         coEvery { travelAlertsRepo.getCountries() } returns Result.DeviceOffline()
 
         viewModel.onPageView()
 
-        assertTrue(viewModel.uiState.value is CountryListViewModel.State.Error)
+        assertTrue(viewModel.uiState.value is CountryListViewModel.State.DeviceOffline)
     }
 
     @Test

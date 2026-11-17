@@ -35,6 +35,7 @@ import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.design.ui.component.MediumVerticalSpacer
 import uk.gov.govuk.design.ui.component.SectionHeadingLabel
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
+import uk.gov.govuk.design.ui.component.error.ProblemMessageWithRetry
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.travelalerts.R
@@ -151,41 +152,13 @@ private fun TravelAlertsError() {
         isLast = true,
         drawDivider = false
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = GovUkTheme.spacing.medium),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ExtraLargeVerticalSpacer()
-
-            Icon(
-                painter = painterResource(id = uk.gov.govuk.design.R.drawable.ic_error),
-                contentDescription = null,
-                tint = GovUkTheme.colourScheme.textAndIcons.iconTertiary,
-                modifier = Modifier
-                    .size(32.dp)
-            )
-
-            MediumVerticalSpacer()
-
-            BodyBoldLabel(
-                text = stringResource(R.string.country_list_error_title),
-                textAlign = TextAlign.Center
-            )
-
-            ExtraSmallVerticalSpacer()
-
-            BodyRegularLabel(stringResource(R.string.country_list_error_description), textAlign = TextAlign.Center)
-
-            ExtraLargeVerticalSpacer()
-        }
+        ProblemMessageWithRetry(description = stringResource(R.string.country_list_error_description))
     }
 }
 
 @Composable
 @PreviewLightDark
-private fun TravelAlertsLoadingPreview() {
+internal fun TravelAlertsLoadingPreview() {
     GovUkTheme {
         TravelAlertsLoading()
     }
@@ -193,7 +166,7 @@ private fun TravelAlertsLoadingPreview() {
 
 @Composable
 @PreviewLightDark
-fun TravelAlertsWidgetEmptyPreview() {
+internal fun TravelAlertsWidgetEmptyPreview() {
     GovUkTheme {
         TravelAlertsEmpty(onFollowCountry = {})
     }
@@ -201,7 +174,7 @@ fun TravelAlertsWidgetEmptyPreview() {
 
 @Composable
 @PreviewLightDark
-fun TravelAlertsWidgetLoadedPreview() {
+internal fun TravelAlertsWidgetLoadedPreview() {
     GovUkTheme {
         TravelAlertsLoaded(
             rows = listOf(
@@ -215,7 +188,7 @@ fun TravelAlertsWidgetLoadedPreview() {
 
 @Composable
 @PreviewLightDark
-private fun TravelAlertsErrorPreview() {
+internal fun TravelAlertsErrorPreview() {
     GovUkTheme {
         TravelAlertsError()
     }

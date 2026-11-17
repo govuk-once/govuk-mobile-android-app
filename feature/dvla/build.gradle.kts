@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kover)
+    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -30,7 +31,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            
+
             buildConfigField("String", "DVLA_AUTH_URL", "\"https://driver-and-vehicles-account.service.gov.uk/govuk-app\"")
             buildConfigField("String", "LINKING_BASE_URL", "\"https://em5hkfc46k.execute-api.eu-west-2.amazonaws.com/production/linking/\"")
         }
@@ -49,6 +50,8 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -80,4 +83,9 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    screenshotTestImplementation(libs.screenshot.validation.api) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+    }
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

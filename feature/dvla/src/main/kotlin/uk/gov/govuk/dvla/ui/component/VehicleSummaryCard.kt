@@ -13,12 +13,12 @@ import uk.gov.govuk.design.ui.component.InternalLinkListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
 import uk.gov.govuk.design.ui.component.Title3RegularLabel
 import uk.gov.govuk.design.ui.model.AccessibleString
-import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.StatusRowUiModel
 import uk.gov.govuk.dvla.ui.model.StatusUiModel
+import uk.gov.govuk.dvla.ui.model.UrlModel
 import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 
 @Composable
@@ -103,7 +103,7 @@ internal fun VehicleSummaryHeader(
 
 @PreviewLightDark
 @Composable
-private fun RegistrationPlatePreview() {
+internal fun VehicleSummaryRegistrationPlatePreview() {
     GovUkTheme {
         RegistrationPlate(registration = "FH08 PDH")
     }
@@ -111,7 +111,7 @@ private fun RegistrationPlatePreview() {
 
 @PreviewLightDark
 @Composable
-private fun VehicleHeaderPreview() {
+internal fun VehicleHeaderPreview() {
     GovUkTheme {
         VehicleSummaryHeader(
             registration = "FH08 PDH",
@@ -125,7 +125,7 @@ private fun VehicleHeaderPreview() {
 
 @PreviewLightDark
 @Composable
-private fun VehicleSummaryCardPreview() {
+internal fun VehicleSummaryCardPreview() {
     val taxStatus = StatusUiModel.StatusRow(
         StatusRowUiModel(
             AccessibleString("Tax"),

@@ -40,6 +40,7 @@ class CountryListViewModel @Inject constructor(
             val isSaving: Boolean = false
         ) : State()
         data object Error : State()
+        data object DeviceOffline : State()
     }
 
     private val _uiState: MutableStateFlow<State> = MutableStateFlow(State.Loading)
@@ -86,7 +87,8 @@ class CountryListViewModel @Inject constructor(
                         _uiState.value = State.Loaded(allCountries)
                     }
                 }
-                else -> _uiState.value = State.Error
+                is Result.DeviceOffline -> { _uiState.value = State.DeviceOffline }
+                else -> { _uiState.value = State.Error }
             }
         }
     }

@@ -122,7 +122,7 @@ fun TopicSelectionCard(
 
 @PreviewLightDark
 @Composable
-private fun TopicSelectionCardSelectedPreview() {
+internal fun TopicSelectionCardSelectedPreview() {
     GovUkTheme {
         TopicSelectionCard(
             icon = R.drawable.ic_topic_benefits,
@@ -135,7 +135,7 @@ private fun TopicSelectionCardSelectedPreview() {
 
 @PreviewLightDark
 @Composable
-private fun TopicSelectionCardUnselectedPreview() {
+internal fun TopicSelectionCardUnselectedPreview() {
     GovUkTheme {
         TopicSelectionCard(
             icon = R.drawable.ic_topic_benefits,

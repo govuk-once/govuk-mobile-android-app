@@ -2,7 +2,6 @@ package uk.gov.govuk.chat.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import uk.gov.govuk.chat.R
@@ -35,6 +34,7 @@ internal fun ChatErrorPageWithRetry(
 
 @Composable
 internal fun ChatErrorPageNoRetry(
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ErrorPage(
@@ -43,13 +43,14 @@ internal fun ChatErrorPageNoRetry(
         modifier = modifier,
         additionalContent = {
             MediumVerticalSpacer()
-            AdditionalText()
+            AdditionalText(launchBrowser = launchBrowser)
         }
     )
 }
 
 @Composable
 private fun AdditionalText(
+    launchBrowser: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val intro = stringResource(id = R.string.error_page_additional_text_intro)
@@ -57,13 +58,12 @@ private fun AdditionalText(
     val outro = stringResource(id = R.string.error_page_additional_text_outro)
     val url = stringResource(id = R.string.error_page_additional_text_url)
     val altText = "$intro $linkText ${stringResource(R.string.sources_open_in_text)} $outro"
-    val uriHandler = LocalUriHandler.current
 
     BodyRegularLabelTrailingLink(
         introText = intro,
         outroText = " $outro",
         linkText = linkText,
-        onClick = { uriHandler.openUri(url) },
+        onClick = { launchBrowser(url) },
         altText = altText,
         modifier = modifier,
         textColor = GovUkTheme.colourScheme.textAndIcons.primary,

@@ -12,6 +12,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
+import javax.inject.Qualifier
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,10 +23,6 @@ import uk.gov.govuk.dvla.BuildConfig
 import uk.gov.govuk.dvla.remote.DvlaApi
 import uk.gov.govuk.dvla.util.StringProvider
 import uk.gov.govuk.dvla.util.StringProviderImpl
-
-import javax.inject.Named
-import javax.inject.Qualifier
-import javax.inject.Singleton
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
@@ -37,23 +36,19 @@ internal object DvlaModule {
     @Singleton
     fun providesDvlaApi(
         @Named("FlexRetrofit") retrofit: Retrofit
-    ): DvlaApi {
-        return retrofit.create(DvlaApi::class.java)
-    }
+    ): DvlaApi = retrofit.create(DvlaApi::class.java)
 
     @Provides
     @Singleton
     @Named("dvla_prefs")
     fun provideDvlaDataStore(
         @ApplicationContext context: Context
-    ): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            produceFile = { context.preferencesDataStoreFile("dvla_prefs") }
-        )
-    }
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler(
+            produceNewData = { emptyPreferences() }
+        ),
+        produceFile = { context.preferencesDataStoreFile("dvla_prefs") }
+    )
 
     @Provides
     @Named("dvla_auth_url")
@@ -63,14 +58,10 @@ internal object DvlaModule {
     @Singleton
     fun provideStringProvider(
         @ApplicationContext context: Context
-    ): StringProvider {
-        return StringProviderImpl(context)
-    }
+    ): StringProvider = StringProviderImpl(context)
 
     @Singleton
     @Provides
     @CoroutineScopeIo
-    fun providesCoroutineScopeIo(): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    }
+    fun providesCoroutineScopeIo(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 }

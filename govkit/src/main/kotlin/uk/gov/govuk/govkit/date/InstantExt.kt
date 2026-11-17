@@ -22,8 +22,6 @@ private val london = ZoneId.of("Europe/London")
  * @param lowercase whether the Today and Yesterday branches are lowercased; defaults to false
  */
 fun Instant.toRelativeDate(now: Instant = Instant.now(), lowercase: Boolean = false): String {
-    fun String.maybeLower() = if (lowercase) this.lowercase() else this
-
     val zonedSelf = atZone(london)
     val today = now.atZone(london)
 
@@ -32,13 +30,12 @@ fun Instant.toRelativeDate(now: Instant = Instant.now(), lowercase: Boolean = fa
     val daysAgo = ChronoUnit.DAYS.between(zonedSelf.toLocalDate(), today.toLocalDate())
 
     return when {
-        isToday -> DateTimeFormatter.ofPattern("'Today,' h:mma", Locale.getDefault())
+        isToday -> DateTimeFormatter.ofPattern(if (lowercase) "'today,' h:mma" else "'Today,' h:mma" , Locale.getDefault())
             .withZone(london)
             .format(this)
             .replace("AM", "am")
             .replace("PM", "pm")
-            .maybeLower()
-        isYesterday -> "Yesterday".maybeLower()
+        isYesterday -> if (lowercase) "yesterday" else "Yesterday"
         daysAgo < 7 -> zonedSelf.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         else -> DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault())
             .withZone(london)

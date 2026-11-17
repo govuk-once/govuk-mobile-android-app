@@ -533,7 +533,7 @@ private fun SignOut(
 
 @PreviewLightDark
 @Composable
-private fun ManageLoginPreview() {
+internal fun ManageLoginPreview() {
     GovUkTheme {
         ManageLogin(
             userEmail = "user@example.com",

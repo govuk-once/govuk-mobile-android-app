@@ -1,6 +1,7 @@
 package uk.gov.govuk.dvla.remote.model
 
 import com.google.gson.annotations.SerializedName
+import uk.gov.govuk.dvla.remote.model.common.EntitlementType
 import uk.gov.govuk.dvla.remote.model.common.LicenceStatus
 import uk.gov.govuk.dvla.remote.model.common.LicenceType
 
@@ -16,5 +17,20 @@ data class DrivingLicence(
     @SerializedName("driverLastName") val driverLastName: String?,
     @SerializedName("driverFullAddress") val driverFullAddress: String?,
     @SerializedName("tokenValidToDate") val tokenValidToDate: String?,
-    @SerializedName("licenceStatus") val licenceStatus: LicenceStatus
+    @SerializedName("licenceStatus") val licenceStatus: LicenceStatus,
+    @SerializedName("entitlements") val entitlements: List<Entitlement>?
+)
+
+data class Entitlement(
+    @SerializedName("categoryCode") val categoryCode: String?,
+    @SerializedName("categoryType") val categoryType: EntitlementType?,
+    @SerializedName("fromDate") val fromDate: String?,
+    @SerializedName("expiryDate") val expiryDate: String?,
+    @SerializedName("restrictions") val restrictions: List<Restriction>?,
+    @SerializedName("categoryLegalLiteral") val categoryLegalLiteral: String?
+)
+
+data class Restriction(
+    @SerializedName("restrictionCode") val restrictionCode: String?,
+    @SerializedName("restrictionLiteral") val restrictionLiteral: String?
 )

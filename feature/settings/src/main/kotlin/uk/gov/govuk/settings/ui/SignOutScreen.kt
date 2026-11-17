@@ -107,7 +107,7 @@ private fun SignOutScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun SignOutPreview() {
+internal fun SignOutPreview() {
     GovUkTheme {
         SignOutScreen(
             onPageView = { },

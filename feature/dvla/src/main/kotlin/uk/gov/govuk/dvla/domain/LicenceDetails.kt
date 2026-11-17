@@ -1,8 +1,8 @@
 package uk.gov.govuk.dvla.domain
 
+import java.time.LocalDate
 import uk.gov.govuk.data.extension.toLocalDateOrNull
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
-import java.time.LocalDate
 
 data class LicenceDetails(
     val licenceType: LicenceType,
@@ -12,7 +12,8 @@ data class LicenceDetails(
     val driverLastName: String,
     val driverFullAddress: String,
     val tokenValidToDate: LocalDate?,
-    val licenceStatus: LicenceStatus
+    val licenceStatus: LicenceStatus,
+    val entitlements: List<Entitlement> = emptyList()
 ) {
     val fullName: String
         get() = listOf(driverTitle, driverFirstNames, driverLastName)
@@ -28,5 +29,8 @@ fun LicenceResponse.toDomainModel() = LicenceDetails(
     driverLastName = this.drivingLicence.driverLastName ?: "",
     driverFullAddress = this.drivingLicence.driverFullAddress ?: "",
     tokenValidToDate = this.drivingLicence.tokenValidToDate.toLocalDateOrNull(),
-    licenceStatus = this.drivingLicence.licenceStatus.toDomain()
+    licenceStatus = this.drivingLicence.licenceStatus.toDomain(),
+    entitlements = this.drivingLicence.entitlements.orEmpty().mapNotNull {
+        it.toDomain()
+    }
 )

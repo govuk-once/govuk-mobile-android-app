@@ -189,7 +189,7 @@ private fun BulletItem(
 
 @Preview
 @Composable
-private fun UnitaryLocalAuthorityPreview() {
+internal fun UnitaryAuthorityLocalConfirmationPreview() {
     GovUkTheme {
         LocalConfirmationScreen(
             onBack = { },
@@ -207,7 +207,7 @@ private fun UnitaryLocalAuthorityPreview() {
 
 @Preview
 @Composable
-private fun TwoTierLocalAuthorityPreview() {
+internal fun TwoTierAuthorityLocalConfirmationPreview() {
     GovUkTheme {
         LocalConfirmationScreen(
             onBack = { },

@@ -24,7 +24,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 internal fun OnboardingPageOneRoute(
     onClick: () -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val cancelText = stringResource(id = R.string.onboarding_page_cancel_text)
@@ -104,7 +104,7 @@ private fun OnboardingPageOneScreen(
 
 @PreviewLightDark
 @Composable
-private fun OnboardingPageOnePreview() {
+internal fun OnboardingPageOnePreview() {
     GovUkTheme {
         OnboardingPageOneScreen(
             onPageView = {},
@@ -113,4 +113,3 @@ private fun OnboardingPageOnePreview() {
         )
     }
 }
-
