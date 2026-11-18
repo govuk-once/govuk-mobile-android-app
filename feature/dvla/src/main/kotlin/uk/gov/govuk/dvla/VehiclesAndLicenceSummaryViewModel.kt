@@ -174,7 +174,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             val newState = when (val result = dvlaRepo.getLicenceDetails()) {
                 is LicenceDetailsResult.Success -> licenceMapper.toUiModel(result.details, dvlaUrls)
 
-                is LicenceDetailsResult.NotFound,
+                is LicenceDetailsResult.NotFound -> LicenceSummaryUiState.NoLicence
                 is LicenceDetailsResult.NotAvailableForEnquiry ->
                     LicenceSummaryUiState.NotAvailable(licenceMapper.notAvailableUrl(dvlaUrls))
 

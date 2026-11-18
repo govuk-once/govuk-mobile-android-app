@@ -35,6 +35,7 @@ internal sealed interface LicenceSummaryUiState {
     data class NotAvailable(
         val url: UrlModel
     ) : LicenceSummaryUiState
+    data object NoLicence : LicenceSummaryUiState
     data class Error(
         val fallbackUrl: UrlModel
     ) : LicenceSummaryUiState

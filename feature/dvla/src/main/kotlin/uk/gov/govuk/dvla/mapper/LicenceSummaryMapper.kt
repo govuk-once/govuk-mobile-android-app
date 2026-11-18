@@ -32,12 +32,22 @@ internal class LicenceSummaryMapper @Inject constructor(
 ) {
     private companion object {
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
+
+        val NO_LICENCE_STATUSES = setOf(
+            LicenceStatus.SURRENDERED_VOLUNTARILY,
+            LicenceStatus.SURRENDERED_FOR_MEDICAL_REASONS,
+            LicenceStatus.EXCHANGED
+        )
     }
 
     fun toUiModel(
         details: LicenceDetails,
         dvlaUrls: DvlaUrls?
     ): LicenceSummaryUiState {
+        if (details.licenceStatus in NO_LICENCE_STATUSES) {
+            return LicenceSummaryUiState.NoLicence
+        }
+
         if (details.licenceStatus != LicenceStatus.VALID && details.licenceStatus != LicenceStatus.EXPIRED) {
             return LicenceSummaryUiState.NotAvailable(notAvailableUrl(dvlaUrls))
         }
