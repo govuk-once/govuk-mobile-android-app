@@ -10,7 +10,7 @@ internal fun RemoteLocalAuthority.toLocalAuthority(): LocalAuthority = LocalAuth
     name = this.name,
     url = this.homePageUrl,
     slug = this.slug,
-    parent = this.parent ?.let { parent ->
+    parent = this.parent?.let { parent ->
         LocalAuthority(
             name = parent.name,
             url = parent.homePageUrl,
@@ -23,7 +23,7 @@ internal fun StoredLocalAuthority.toLocalAuthority(): LocalAuthority = LocalAuth
     name = this.name,
     url = this.url,
     slug = this.slug,
-    parent = this.parent ?.let { parent ->
+    parent = this.parent?.let { parent ->
         LocalAuthority(
             name = parent.name,
             url = parent.url,
