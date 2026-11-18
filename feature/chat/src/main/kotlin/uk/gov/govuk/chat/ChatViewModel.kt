@@ -184,7 +184,7 @@ internal class ChatViewModel @Inject constructor(
             askQuestionJob = viewModelScope.launch {
                 _uiState.updateDefault { it.copy(isLoading = true) }
 
-                handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
+                handleChatResult(chatRepo.askQuestion(question.trim(), isSuggestedPrompt)) { answeredQuestion ->
                     addChatEntry(
                         questionId = answeredQuestion.id,
                         question = answeredQuestion.message,

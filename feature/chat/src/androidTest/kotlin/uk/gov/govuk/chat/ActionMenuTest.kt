@@ -117,7 +117,7 @@ class ActionMenuTest {
                     chatExampleQuestions = emptyList(),
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },
-                        onSubmit = { _ -> },
+                        onSubmit = { _, _ -> },
                         onClear = { },
                         onFeedbackClick = { _, _, _ -> },
                         onFeedbackGiven = { _, _, _ -> }
