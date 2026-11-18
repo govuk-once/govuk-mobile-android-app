@@ -273,7 +273,6 @@ internal fun ChatScreen(
                         isLoading = uiState.isLoading,
                         onExampleQuestionsViewed = analyticsEvents.onExampleQuestionsViewed,
                         onExampleQuestionClicked = { question, index ->
-                            uiEvents.onSubmit(question)
                             analyticsEvents.onExampleQuestionSelected(question, index)
                         },
                         chatExampleQuestions = chatExampleQuestions

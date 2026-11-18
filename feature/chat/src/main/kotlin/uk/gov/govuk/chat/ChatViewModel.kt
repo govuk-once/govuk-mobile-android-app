@@ -173,8 +173,8 @@ internal class ChatViewModel @Inject constructor(
 
     fun onSubmit(
         question: String
-    ) {
-        if (askQuestionJob?.isActive == true) return
+    ): Boolean {
+        if (askQuestionJob?.isActive == true) return false
 
         val isPiiError = StringCleaner.includesPII(question)
         _uiState.updateDefault { it.copy(isPiiError = isPiiError) }
@@ -198,6 +198,8 @@ internal class ChatViewModel @Inject constructor(
                 }
             }
         }
+
+        return !isPiiError
     }
 
     fun onQuestionUpdated(
@@ -290,6 +292,9 @@ internal class ChatViewModel @Inject constructor(
         question: String,
         index: Int
     ) {
+        // Ignore repeated or rapid taps whilst a question is already being submitted
+        if (!onSubmit(question)) return
+
         analyticsClient.chat(type = "suggestion", section = "chat")
 
         analyticsClient.selectItemEvent(

@@ -972,6 +972,59 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `When an example question is selected, then submit it and log analytics`() = runTest {
+        viewModel.onExampleQuestionSelected("Question", 0)
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Question") }
+        verify(exactly = 1) { analyticsClient.chat(type = "suggestion", section = "chat") }
+        verify(exactly = 1) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
+    fun `When the same example question is tapped multiple times, then only submit and log it once`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onExampleQuestionSelected("Question", 0)
+        viewModel.onExampleQuestionSelected("Question", 0)
+        viewModel.onExampleQuestionSelected("Question", 0)
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Question") }
+        verify(exactly = 1) { analyticsClient.chat(type = "suggestion", section = "chat") }
+        verify(exactly = 1) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
+    fun `When different example questions are tapped rapidly, then only submit the first`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onExampleQuestionSelected("Question one", 0)
+        viewModel.onExampleQuestionSelected("Question two", 1)
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Question one") }
+        coVerify(exactly = 0) { chatRepo.askQuestion("Question two") }
+        verify(exactly = 1) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
+    fun `When an example question contains PII, then do not log select item analytics`() = runTest {
+        viewModel.onExampleQuestionSelected("test@email.com", 0)
+
+        coVerify(exactly = 0) { chatRepo.askQuestion(any()) }
+        verify(exactly = 0) { analyticsClient.chat(type = "suggestion", section = "chat") }
+        verify(exactly = 0) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
     fun `onSubmit allows a new question once the previous one has completed`() = runTest {
         val firstQuestion = AnsweredQuestion(
             "abc",
