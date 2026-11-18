@@ -29,6 +29,20 @@ internal class LocalWidgetScreenshotTests {
     @PreviewTest
     @PreviewLightDark
     @Composable
+    fun EditMenuScreenshots() {
+        EditMenuPreview()
+    }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun EditMenuTalkBackScreenshots() {
+        EditMenuTalkBackPreview()
+    }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
     fun UnitaryRemoveConfirmationDialogScreenshots() {
         UnitaryRemoveConfirmationDialogPreview()
     }

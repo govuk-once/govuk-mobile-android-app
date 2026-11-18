@@ -2,11 +2,14 @@ package uk.govuk.app.local.ui
 
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -189,27 +192,42 @@ private fun EditMenu(
         containerColor = GovUkTheme.colourScheme.surfaces.actionMenu,
         offset = DpOffset(x = 0.dp, y = GovUkTheme.spacing.extraSmall)
     ) {
-        val changeText = stringResource(R.string.local_change_button)
-        EditMenuItem(
-            text = changeText,
-            altText = stringResource(R.string.local_change_button_alt_text),
-            onClick = { onChangeClick(changeText) }
+        EditMenuItems(
+            isTalkBackOn = isTalkBackOn,
+            onDismiss = onDismiss,
+            onChangeClick = onChangeClick,
+            onRemoveClick = onRemoveClick
         )
+    }
+}
 
+@Composable
+private fun EditMenuItems(
+    isTalkBackOn: Boolean,
+    onDismiss: () -> Unit,
+    onChangeClick: (String) -> Unit,
+    onRemoveClick: () -> Unit
+) {
+    val changeText = stringResource(R.string.local_change_button)
+    EditMenuItem(
+        text = changeText,
+        altText = stringResource(R.string.local_change_button_alt_text),
+        onClick = { onChangeClick(changeText) }
+    )
+
+    EditMenuItem(
+        text = stringResource(R.string.local_remove_button),
+        altText = stringResource(R.string.local_remove_button_alt_text),
+        onClick = onRemoveClick,
+        textColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+    )
+
+    if (isTalkBackOn) {
+        HorizontalDivider()
         EditMenuItem(
-            text = stringResource(R.string.local_remove_button),
-            altText = stringResource(R.string.local_remove_button_alt_text),
-            onClick = onRemoveClick,
-            textColour = GovUkTheme.colourScheme.textAndIcons.buttonDestructive
+            text = stringResource(R.string.local_close_menu),
+            onClick = onDismiss
         )
-
-        if (isTalkBackOn) {
-            HorizontalDivider()
-            EditMenuItem(
-                text = stringResource(R.string.local_close_menu),
-                onClick = onDismiss
-            )
-        }
     }
 }
 
@@ -384,6 +402,41 @@ internal fun TwoTierLocalAuthorityPreview() {
             onChangeClick = { },
             onRemoveConfirmClick = { },
             launchBrowser = {}
+        )
+    }
+}
+
+@Preview (showBackground = true)
+@Composable
+internal fun EditMenuPreview() {
+    GovUkTheme {
+        EditMenuItemsPreview(isTalkBackOn = false)
+    }
+}
+
+@Preview (showBackground = true)
+@Composable
+internal fun EditMenuTalkBackPreview() {
+    GovUkTheme {
+        EditMenuItemsPreview(isTalkBackOn = true)
+    }
+}
+
+@Composable
+private fun EditMenuItemsPreview(isTalkBackOn: Boolean) {
+    Column(
+        modifier = Modifier
+            .width(IntrinsicSize.Max)
+            .background(
+                color = GovUkTheme.colourScheme.surfaces.actionMenu,
+                shape = RoundedCornerShape(GovUkTheme.numbers.cornerAndroidList)
+            )
+    ) {
+        EditMenuItems(
+            isTalkBackOn = isTalkBackOn,
+            onDismiss = { },
+            onChangeClick = { },
+            onRemoveClick = { }
         )
     }
 }
