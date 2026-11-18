@@ -62,26 +62,3 @@ internal fun LicenceStatusCard(
         }
     }
 }
-
-@PreviewLightDark
-@Composable
-internal fun LicenceStatusCardPreview() {
-    GovUkTheme {
-        LicenceStatusCard(
-            title = "No licence",
-            description = "You do not hold a driving licence issued in England, Scotland or Wales"
-        )
-    }
-}
-
-@PreviewLightDark
-@Composable
-internal fun LicenceStatusCardWithLinkPreview() {
-    GovUkTheme {
-        LicenceStatusCard(
-            title = "Not available",
-            description = "Check your account to see your licence status and restrictions that apply to you",
-            linkText = "Driver and vehicles account"
-        )
-    }
-}

@@ -113,15 +113,26 @@ class LicenceSummaryMapperTest {
     }
 
     @Test
-    fun `Given licence status is exchanged, then result is NotAvailable with the driver details url`() {
+    fun `Given licence status is exchanged, then result is NoLicence`() {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXCHANGED), dvlaUrls)
-        assertTrue(result is LicenceSummaryUiState.NotAvailable)
-        assertEquals(dvlaUrls.driverDetails, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
+        assertEquals(LicenceSummaryUiState.NoLicence, result)
+    }
+
+    @Test
+    fun `Given licence status is surrendered voluntarily, then result is NoLicence`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.SURRENDERED_VOLUNTARILY), dvlaUrls)
+        assertEquals(LicenceSummaryUiState.NoLicence, result)
+    }
+
+    @Test
+    fun `Given licence status is surrendered for medical reasons, then result is NoLicence`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.SURRENDERED_FOR_MEDICAL_REASONS), dvlaUrls)
+        assertEquals(LicenceSummaryUiState.NoLicence, result)
     }
 
     @Test
     fun `Given licence status is not available and dvlaUrls is null, then NotAvailable falls back to the GOV_UK url`() {
-        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.EXCHANGED), dvlaUrls = null)
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED), dvlaUrls = null)
         assertTrue(result is LicenceSummaryUiState.NotAvailable)
         assertEquals(Urls.GOV_UK_HOME, (result as LicenceSummaryUiState.NotAvailable).url.originalUrl)
     }
