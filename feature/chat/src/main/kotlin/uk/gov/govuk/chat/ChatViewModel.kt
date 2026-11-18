@@ -172,7 +172,8 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onSubmit(
-        question: String
+        question: String,
+        isSuggestedPrompt: Boolean = false
     ) {
         if (askQuestionJob?.isActive == true) return
 

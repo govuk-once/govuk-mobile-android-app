@@ -46,7 +46,8 @@ internal class ChatRepo @Inject constructor(
     }
 
     suspend fun askQuestion(
-        question: String
+        question: String,
+        isSuggestedPrompt: Boolean = false
     ): ChatResult<AnsweredQuestion> {
         val conversationId = dataStore.conversationId()
         return if (conversationId != null) {
@@ -60,7 +61,8 @@ internal class ChatRepo @Inject constructor(
     }
 
     private suspend fun startConversation(
-        question: String
+        question: String,
+        isSuggestedPrompt: Boolean = false
     ): ChatResult<AnsweredQuestion> {
         val requestBody = ConversationQuestionRequest(
             userQuestion = question
@@ -78,7 +80,8 @@ internal class ChatRepo @Inject constructor(
 
     private suspend fun updateConversation(
         conversationId: String,
-        question: String
+        question: String,
+        isSuggestedPrompt: Boolean = false
     ): ChatResult<AnsweredQuestion> {
         val requestBody = ConversationQuestionRequest(
             userQuestion = question

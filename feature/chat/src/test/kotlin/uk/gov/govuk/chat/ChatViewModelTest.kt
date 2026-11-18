@@ -512,6 +512,30 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `Submit with suggestedPrompt passes isSuggestedPrompt true to repo`() = runTest {
+        coEvery { chatRepo.askQuestion(any(), any()) } coAnswers {
+            delay(100)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("Question", isSuggestedPrompt = true)
+
+        coVerify { chatRepo.askQuestion("Question", isSuggestedPrompt = true) }
+    }
+
+    @Test
+    fun `Submit without suggestedPrompt passes isSuggestedPrompt false to repo`() = runTest {
+        coEvery { chatRepo.askQuestion(any(), any()) } coAnswers {
+            delay(100)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("Question")
+
+        coVerify { chatRepo.askQuestion("Question", isSuggestedPrompt = false) }
+    }
+
+    @Test
     fun `Question updated emits no errors or warnings`() = runTest {
         viewModel.onQuestionUpdated("abc", 10, 5)
 
