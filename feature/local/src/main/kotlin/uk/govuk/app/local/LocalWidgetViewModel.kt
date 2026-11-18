@@ -24,7 +24,7 @@ internal sealed class LocalWidgetUiState {
 internal class LocalWidgetViewModel @Inject constructor(
     private val localRepo: LocalRepo,
     private val analyticsClient: AnalyticsClient
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private const val EDIT_SECTION = "Homescreen"
@@ -47,7 +47,9 @@ internal class LocalWidgetViewModel @Inject constructor(
         }
     }
 
-    fun onEditClick(text: String) {
+    fun onEditClick(
+        text: String
+    ) {
         analyticsClient.buttonFunction(
             text = text,
             section = EDIT_SECTION,
@@ -55,14 +57,18 @@ internal class LocalWidgetViewModel @Inject constructor(
         )
     }
 
-    fun onChangeClick(text: String) {
+    fun onChangeClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             section = SECTION
         )
     }
 
-    fun onRemoveConfirmClick(text: String) {
+    fun onRemoveConfirmClick(
+        text: String
+    ) {
         analyticsClient.buttonFunction(
             text = text,
             section = SECTION,

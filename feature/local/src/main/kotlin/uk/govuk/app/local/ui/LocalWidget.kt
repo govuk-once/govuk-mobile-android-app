@@ -406,7 +406,7 @@ internal fun TwoTierLocalAuthorityPreview() {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun EditMenuPreview() {
     GovUkTheme {
@@ -414,7 +414,7 @@ internal fun EditMenuPreview() {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun EditMenuTalkBackPreview() {
     GovUkTheme {
@@ -423,7 +423,9 @@ internal fun EditMenuTalkBackPreview() {
 }
 
 @Composable
-private fun EditMenuItemsPreview(isTalkBackOn: Boolean) {
+private fun EditMenuItemsPreview(
+    isTalkBackOn: Boolean
+) {
     Column(
         modifier = Modifier
             .width(IntrinsicSize.Max)
@@ -441,7 +443,7 @@ private fun EditMenuItemsPreview(isTalkBackOn: Boolean) {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun UnitaryRemoveConfirmationDialogPreview() {
     GovUkTheme {
@@ -453,7 +455,7 @@ internal fun UnitaryRemoveConfirmationDialogPreview() {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun TwoTierRemoveConfirmationDialogPreview() {
     GovUkTheme {
