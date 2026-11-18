@@ -61,6 +61,7 @@ internal class AppViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val dvlaRepo: DvlaRepo,
     private val identityRepo: IdentityRepo,
+    private val dwpLinkRepository: uk.gov.govuk.dwp.data.AuthRepo,
     private val messagesFeature: MessagesFeature,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -202,6 +203,7 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
                 dvlaRepo.clear()
+                dwpLinkRepository.clear()
             }
 
             // check dvla link state after login
@@ -427,7 +429,6 @@ internal class AppViewModel @Inject constructor(
 
     fun isDvlaLinkEnabled() = flagRepo.isDvlaLinkEnabled()
     fun isTravelAlertsEnabled() = flagRepo.isTravelAlertsEnabled()
-    fun isDwpLinkEnabled() = flagRepo.isDwpLinkEnabled()
 
     fun onSignOut() {
         notificationsRepo.logout()

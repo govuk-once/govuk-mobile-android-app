@@ -18,6 +18,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // Placeholder only: replace when we confirm the authentication URL.
+        buildConfigField("String", "DWP_AUTH_URL", "\"https://dwp-auth/sign-in\"")
     }
 
     buildTypes {

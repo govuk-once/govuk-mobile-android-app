@@ -79,6 +79,9 @@ import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
+import uk.gov.govuk.dwp.navigation.DWP_GRAPH_ROUTE
+import uk.gov.govuk.dwp.navigation.dwpGraph
+import uk.gov.govuk.dwp.navigation.navigateToDwpLinkIntro
 import uk.gov.govuk.dwp.ui.DwpLinkHeader
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
@@ -123,12 +126,14 @@ import uk.govuk.app.local.navigation.localGraph
 private val TRANSPARENT_STATUS_BAR_ROUTES = setOf(
     CHAT_GRAPH_ROUTE,
     DVLA_GRAPH_ROUTE,
+    DWP_GRAPH_ROUTE,
     COUNTRY_LIST_ROUTE
 )
 
 /** Routes that draw system nav bar, add any routes that draw system nav bar here */
 private val EDGE_TO_EDGE_BOTTOM_ROUTES = setOf(
-    DVLA_GRAPH_ROUTE
+    DVLA_GRAPH_ROUTE,
+    DWP_GRAPH_ROUTE
 )
 
 /** Routes where the bottom nav bar should be hidden */
@@ -659,6 +664,13 @@ private fun GovUkNavHost(
                             }
                         }
 
+                        topicRef.isBenefitsTopic() -> {
+                            DwpLinkHeader(
+                                onActionClick = { navController.navigateToDwpLinkIntro() },
+                                modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)
+                            )
+                        }
+
                         topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled() -> {
                             Column(
                                 modifier = Modifier
@@ -674,16 +686,6 @@ private fun GovUkNavHost(
                                     onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
                                     onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
                                 )
-                            }
-                        }
-
-                        topicRef.isBenefitsTopic() && viewModel.isDwpLinkEnabled() -> {
-                            Column(
-                                modifier = Modifier
-                                    .padding(horizontal = GovUkTheme.spacing.medium),
-                                verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
-                            ) {
-                                DwpLinkHeader()
                             }
                         }
                     }
@@ -710,6 +712,9 @@ private fun GovUkNavHost(
                 modifier = Modifier.padding(paddingValues)
             )
 
+            dwpGraph(
+                onClose = { navController.popBackStack(DWP_GRAPH_ROUTE, inclusive = true) }
+            )
             dvlaGraph(
                 onBack = {
                     navController.popBackStack()
