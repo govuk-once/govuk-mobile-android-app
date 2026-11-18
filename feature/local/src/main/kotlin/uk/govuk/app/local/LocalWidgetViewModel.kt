@@ -7,6 +7,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.govuk.app.local.LocalWidgetUiState.LocalAuthoritySelected
 import uk.govuk.app.local.LocalWidgetUiState.NoLocalAuthority
 import uk.govuk.app.local.data.LocalRepo
@@ -21,8 +22,15 @@ internal sealed class LocalWidgetUiState {
 
 @HiltViewModel
 internal class LocalWidgetViewModel @Inject constructor(
-    localRepo: LocalRepo
+    private val localRepo: LocalRepo,
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
+
+    companion object {
+        private const val EDIT_SECTION = "Homescreen"
+        private const val ACTION_EDIT = "Edit"
+        private const val ACTION_REMOVE = "Remove"
+    }
 
     private val _uiState: MutableStateFlow<LocalWidgetUiState?> = MutableStateFlow(null)
     val uiState = _uiState.asStateFlow()
@@ -36,6 +44,38 @@ internal class LocalWidgetViewModel @Inject constructor(
                     _uiState.value = NoLocalAuthority
                 }
             }
+        }
+    }
+
+    fun onEditClick(
+        text: String
+    ) {
+        analyticsClient.buttonFunction(
+            text = text,
+            section = EDIT_SECTION,
+            action = ACTION_EDIT
+        )
+    }
+
+    fun onChangeClick(
+        text: String
+    ) {
+        analyticsClient.buttonClick(
+            text = text,
+            section = SECTION
+        )
+    }
+
+    fun onRemoveConfirmClick(
+        text: String
+    ) {
+        analyticsClient.buttonFunction(
+            text = text,
+            section = SECTION,
+            action = ACTION_REMOVE
+        )
+        viewModelScope.launch {
+            localRepo.clear()
         }
     }
 }
