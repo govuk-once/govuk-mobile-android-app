@@ -5,8 +5,10 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import java.io.File
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
+import kotlin.io.path.createTempDirectory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -17,8 +19,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.data.auth.local.TokenDataStore.Companion.SUB_ID_KEY
-import java.io.File
-import kotlin.io.path.createTempDirectory
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TokenDataStoreTest {

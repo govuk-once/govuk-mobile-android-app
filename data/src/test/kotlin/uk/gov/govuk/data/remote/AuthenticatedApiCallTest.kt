@@ -4,6 +4,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import java.net.UnknownHostException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -11,7 +12,6 @@ import org.junit.Test
 import retrofit2.Response
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.model.Result
-import java.net.UnknownHostException
 
 class AuthenticatedApiCallTest {
     private val apiCall = mockk<suspend () -> Response<String>>(relaxed = true)

@@ -5,10 +5,10 @@ import android.os.Parcelable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.perf.FirebasePerformance
-import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import java.io.Serializable
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 
 @Singleton
 class FirebaseAnalyticsClient @Inject constructor(
@@ -30,7 +30,10 @@ class FirebaseAnalyticsClient @Inject constructor(
         firebasePerformance.isPerformanceCollectionEnabled = false
     }
 
-    fun logEvent(name: String, parameters: Map<String, Any>) {
+    fun logEvent(
+        name: String,
+        parameters: Map<String, Any>
+    ) {
         val updatedParameters = mutableMapOf<String, Any>()
 
         updatedParameters.putAll(parameters)
@@ -40,7 +43,11 @@ class FirebaseAnalyticsClient @Inject constructor(
         firebaseIdentifiers.refresh()
     }
 
-    fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int? = null) {
+    fun logEcommerceEvent(
+        event: String,
+        ecommerceEvent: EcommerceEvent,
+        selectedItemIndex: Int? = null
+    ) {
         val bundle = Bundle()
 
         identifierParameters().forEach { (key, value) ->
@@ -83,15 +90,22 @@ class FirebaseAnalyticsClient @Inject constructor(
         return parameters
     }
 
-    fun setUserProperty(name: String, value: String) {
+    fun setUserProperty(
+        name: String,
+        value: String
+    ) {
         firebaseAnalytics.setUserProperty(name, value)
     }
 
-    fun logException(exception: Exception) {
+    fun logException(
+        exception: Exception
+    ) {
         firebaseCrashlytics.recordException(exception)
     }
 
-    private fun mapToBundle(map: Map<String, Any>): Bundle {
+    private fun mapToBundle(
+        map: Map<String, Any>
+    ): Bundle {
         val bundle = Bundle()
         for ((key, value) in map) {
             when (value) {

@@ -51,9 +51,11 @@ private fun LicenceCategoriesError(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier
-        .safeDrawingPadding()
-        .fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .safeDrawingPadding()
+            .fillMaxWidth()
+    ) {
         FullScreenHeader(dismissStyle = HeaderDismissStyle.Back(onBack))
         // TODO tbc in separate ticket, awaiting requirements
     }

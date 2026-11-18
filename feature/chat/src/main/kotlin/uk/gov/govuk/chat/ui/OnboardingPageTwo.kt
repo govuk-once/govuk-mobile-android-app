@@ -25,7 +25,7 @@ internal fun OnboardingPageTwoRoute(
     onClick: () -> Unit,
     onCancel: () -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val cancelText = stringResource(id = R.string.onboarding_page_cancel_text)
@@ -128,4 +128,3 @@ internal fun OnboardingPageTwoPreview() {
         )
     }
 }
-

@@ -6,11 +6,11 @@ import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
 import uk.gov.govuk.dvla.remote.model.LicenceResponse
+import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 import uk.gov.govuk.dvla.remote.model.common.LicenceStatus as RemoteLicenceStatus
 import uk.gov.govuk.dvla.remote.model.common.LicenceType as RemoteLicenceType
-import uk.gov.govuk.dvla.remote.model.Entitlement as RemoteEntitlement
-import uk.gov.govuk.dvla.remote.model.common.EntitlementType as RemoteEntitlementType
 
 class LicenceMapperTest {
     @Test

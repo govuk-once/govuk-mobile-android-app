@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.mapper
 
+import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.dvla.R
@@ -12,14 +13,16 @@ import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
 import uk.gov.govuk.dvla.ui.model.VehicleDetailsUiModel
 import uk.gov.govuk.dvla.util.StringProvider
-import javax.inject.Inject
 
 internal class CheckVehicleDetailsMapper @Inject constructor(
     private val stringProvider: StringProvider,
     private val taxAndMotStatusMapper: TaxAndMotStatusMapper,
     private val specificationsMapper: SpecificationsMapper
 ) {
-    fun toUiModel(vehicle: VehicleEnquiryDetails, dvlaUrls: DvlaUrls?): VehicleDetailsUiModel {
+    fun toUiModel(
+        vehicle: VehicleEnquiryDetails,
+        dvlaUrls: DvlaUrls?
+    ): VehicleDetailsUiModel {
         val vehicleDetails = vehicle.toVehicleDetails()
         return VehicleDetailsUiModel(
             make = vehicleDetails.summary.make,
@@ -100,7 +103,10 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
      * If taxStatus is ‘Untaxed’, ‘SORN’, or ‘Not taxed for on road use’, and motStatus is ‘Not valid’, link to Report a vehicle with no MOT (this seems like the more serious crime, as the vehicle might be unsafe)
      * In all other scenarios, don’t include this button at all
      */
-    private fun getReportOnTheRoadUrl(vehicle: VehicleSummary, dvlaUrls: DvlaUrls): String? {
+    private fun getReportOnTheRoadUrl(
+        vehicle: VehicleSummary,
+        dvlaUrls: DvlaUrls
+    ): String? {
         val isTaxed = vehicle.taxStatus == TaxStatus.TAXED
         val isNotTaxed = vehicle.taxStatus in setOf(
             TaxStatus.UNTAXED,
@@ -109,9 +115,9 @@ internal class CheckVehicleDetailsMapper @Inject constructor(
         )
 
         return when {
-            vehicle.motStatus == MotStatus.VALID && isNotTaxed -> dvlaUrls.reportUntaxedVehicle      // rule 1
+            vehicle.motStatus == MotStatus.VALID && isNotTaxed -> dvlaUrls.reportUntaxedVehicle // rule 1
             vehicle.motStatus == MotStatus.EXPIRED && (isTaxed || isNotTaxed) -> dvlaUrls.reportNoMot // rules 2 & 3
-            else -> null                                                                              // rule 4
+            else -> null // rule 4
         }
     }
 }
