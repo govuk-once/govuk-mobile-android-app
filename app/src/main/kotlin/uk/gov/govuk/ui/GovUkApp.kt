@@ -79,7 +79,7 @@ import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
 import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
-import uk.gov.govuk.dwp.ui.DwpLinkHeader
+import uk.gov.govuk.dwp.ui.dwpLinkHeader
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -683,7 +683,7 @@ private fun GovUkNavHost(
                                     .padding(horizontal = GovUkTheme.spacing.medium),
                                 verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                             ) {
-                                DwpLinkHeader()
+                                dwpLinkHeader()
                             }
                         }
                     }
