@@ -3,7 +3,6 @@ package uk.gov.govuk.travelalerts.ui.widget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,6 +13,7 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.govkit.date.toRelativeDate
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 import uk.gov.govuk.travelalerts.data.model.Country
+import javax.inject.Inject
 
 @HiltViewModel
 class TravelAlertsWidgetViewModel @Inject constructor(
