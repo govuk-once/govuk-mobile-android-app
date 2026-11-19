@@ -18,9 +18,9 @@
   <string name="local_edit_button">Edit</string>
   <string name="local_edit_button_alt_text">Edit your local council</string>
   <string name="local_change_button">Change</string>
-  <string name="local_change_button_alt_text">Change your local council</string>
+  <string name="local_change_button_alt_text">Change council</string>
   <string name="local_remove_button">Remove</string>
-  <string name="local_remove_button_alt_text">Remove your local council</string>
+  <string name="local_remove_button_alt_text">Remove council</string>
   <string name="local_close_menu">Close menu</string>
   <string name="local_remove_dialog_title_unitary">Remove council?</string>
   <string name="local_remove_dialog_title_two_tier">Remove councils?</string>
