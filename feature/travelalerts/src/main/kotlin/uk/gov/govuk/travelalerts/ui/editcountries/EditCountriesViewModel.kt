@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,7 +19,6 @@ import uk.gov.govuk.travelalerts.data.model.Country
 import uk.gov.govuk.travelalerts.data.model.Group
 import uk.gov.govuk.travelalerts.data.model.Subgroup
 import uk.gov.govuk.travelalerts.navigation.SHOW_ERROR_ARG
-import javax.inject.Inject
 
 @HiltViewModel
 class EditCountriesViewModel @Inject constructor(
