@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
@@ -64,8 +65,10 @@ class TravelAlertsWidgetViewModel @Inject constructor(
     fun onPageView() {
         viewModelScope.launch {
             _uiState.update { it.copy(content = State.Loading) }
-            val groupsRes = travelAlertsRepo.getGroups()
-            val countriesRes = travelAlertsRepo.getCountries()
+            val groupsDeferred = async { travelAlertsRepo.getGroups() }
+            val countriesDeferred = async { travelAlertsRepo.getCountries() }
+            val groupsRes = groupsDeferred.await()
+            val countriesRes = countriesDeferred.await()
 
             val content = if (groupsRes is Result.Success && countriesRes is Result.Success) {
                 val countriesBySlug = countriesRes.value.associateBy(Country::slug)

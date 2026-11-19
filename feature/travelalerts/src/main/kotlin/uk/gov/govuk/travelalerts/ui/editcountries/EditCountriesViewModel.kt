@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
@@ -187,8 +188,10 @@ class EditCountriesViewModel @Inject constructor(
             if (!isAlreadyLoaded) {
                 _uiState.value = State.Loading
             }
-            val groupsResult = travelAlertsRepo.getGroups()
-            val countriesResult = travelAlertsRepo.getCountries()
+            val groupsDeferred = async { travelAlertsRepo.getGroups() }
+            val countriesDeferred = async { travelAlertsRepo.getCountries() }
+            val groupsResult = groupsDeferred.await()
+            val countriesResult = countriesDeferred.await()
             if (groupsResult is Result.Success && countriesResult is Result.Success) {
                 allCountries = countriesResult.value
                 val countriesBySlug = countriesResult.value.associateBy(Country::slug)
