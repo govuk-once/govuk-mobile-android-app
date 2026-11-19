@@ -59,10 +59,12 @@ internal class AuthLinkViewModel @Inject constructor(
                         return@launch
                     }
                     launchAuthUrl(result.value.token)
-                    // TODO: Consume authUrlToLaunch in the route, as DVLA does. Until browser
+                    // TODO: Consume authUrlToLaunch in the route, as DVLA does.
                     handleAuthRedirect(TEMPORARY_LINKING_TOKEN)
                 }
+
                 is Result.DeviceOffline -> _uiState.value = UiState.Error.Offline
+
                 else -> _uiState.value = UiState.Error.Other
             }
         }

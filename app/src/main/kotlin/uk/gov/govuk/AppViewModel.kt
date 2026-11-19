@@ -27,12 +27,12 @@ import uk.gov.govuk.config.data.local.model.toAnalyticsItems
 import uk.gov.govuk.config.data.remote.model.QuarterlySurvey
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import uk.gov.govuk.dwp.data.AuthLinkRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dwp.data.AuthLinkRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -156,8 +156,11 @@ internal class AppViewModel @Inject constructor(
                     }.collect()
                 }
             }
+
             is InvalidSignature -> _uiState.value = AppUiState.ForcedUpdate
+
             is DeviceOffline -> _uiState.value = AppUiState.DeviceOffline
+
             else -> _uiState.value = AppUiState.AppUnavailable
         }
     }

@@ -27,7 +27,6 @@ import uk.gov.govuk.dwp.navigation.navigateToDwpLinkIntro
 import uk.gov.govuk.dwp.ui.DwpLinkHeaderContent
 import uk.gov.govuk.dwp.ui.DwpLinkScreen
 
-
 @RunWith(AndroidJUnit4::class)
 class AuthLinkFlowTest {
     @get:Rule
@@ -81,7 +80,9 @@ class AuthLinkFlowTest {
     @Test
     fun closeReturnsToBenefitsWithoutLinking() {
         launch()
-        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(uk.gov.govuk.design.R.string.content_desc_close)).performClick()
+        composeTestRule.onNodeWithContentDescription(
+            composeTestRule.activity.getString(uk.gov.govuk.design.R.string.content_desc_close)
+        ).performClick()
         composeTestRule.onNodeWithText("Add payment information").assertIsDisplayed()
         assertEquals(0, submissions)
     }
