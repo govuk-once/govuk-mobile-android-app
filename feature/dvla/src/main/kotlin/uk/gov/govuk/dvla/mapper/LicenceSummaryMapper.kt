@@ -34,6 +34,7 @@ internal class LicenceSummaryMapper @Inject constructor(
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
 
         val NO_LICENCE_STATUSES = setOf(
+            LicenceStatus.SURRENDERED,
             LicenceStatus.SURRENDERED_VOLUNTARILY,
             LicenceStatus.SURRENDERED_FOR_MEDICAL_REASONS,
             LicenceStatus.EXCHANGED
