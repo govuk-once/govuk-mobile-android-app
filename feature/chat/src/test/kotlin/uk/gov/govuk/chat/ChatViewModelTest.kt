@@ -302,7 +302,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
-        assertEquals(0, loadingState.chatEntries.size)
+        assertEquals("First Question", loadingState.chatEntries.values.single().question)
 
         val finalState = uiStates.last() as ChatUiState.Default
         val chatEntries = finalState.chatEntries
@@ -363,7 +363,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
-        assertEquals(0, loadingState.chatEntries.size)
+        assertEquals("First Question", loadingState.chatEntries.values.single().question)
 
         val finalState = uiStates.last() as ChatUiState.Default
         val chatEntries = finalState.chatEntries
@@ -396,7 +396,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
-        assertEquals(0, loadingState.chatEntries.size)
+        assertEquals("First Question", loadingState.chatEntries.values.single().question)
 
         val finalState = uiStates.last() as ChatUiState.Default
 
@@ -428,7 +428,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
-        assertEquals(0, loadingState.chatEntries.size)
+        assertEquals("First Question", loadingState.chatEntries.values.single().question)
 
         val finalState = uiStates.last()
 
@@ -481,7 +481,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
-        assertEquals(0, loadingState.chatEntries.size)
+        assertEquals("First Question", loadingState.chatEntries.values.single().question)
 
         val finalState = uiStates.last()
 
@@ -509,6 +509,106 @@ class ChatViewModelTest {
         advanceUntilIdle()
 
         assertTrue(authError)
+    }
+
+    @Test
+    fun `Submit shows the question before the api responds`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("  First Question  ")
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+        val chatEntry = uiState.chatEntries.values.single()
+
+        assertTrue(uiState.isLoading)
+        assertEquals("First Question", chatEntry.question)
+        assertEquals("", chatEntry.answer)
+    }
+
+    @Test
+    fun `Submit replaces the placeholder question once the api responds`() = runTest {
+        val question = AnsweredQuestion(
+            "abc",
+            Answer(
+                "",
+                "",
+                null,
+                null,
+                "",
+                "",
+                null
+            ),
+            "conversation",
+            "",
+            "First Question"
+        )
+
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(100)
+            ChatResult.Success(question)
+        }
+        coEvery { chatRepo.getAnswer(any(), any(), any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(Answer("", "", null, null, "Answer 1", "", null))
+        }
+
+        val uiStates = mutableListOf<ChatUiState?>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.toList(uiStates)
+        }
+
+        viewModel.onSubmit("First Question")
+
+        advanceUntilIdle()
+
+        // The chat should never be empty between the placeholder and real question
+        uiStates.drop(2).forEach { state ->
+            assertEquals(1, (state as ChatUiState.Default).chatEntries.size)
+        }
+
+        val finalState = uiStates.last() as ChatUiState.Default
+        val chatEntry = finalState.chatEntries.values.single()
+
+        assertEquals("abc", chatEntry.id)
+        assertEquals("First Question", chatEntry.question)
+        assertEquals("conversation", chatEntry.conversationId)
+    }
+
+    @Test
+    fun `Submit removes the placeholder question on auth error`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(100)
+            ChatResult.AuthError()
+        }
+
+        viewModel.onSubmit("First Question")
+
+        advanceUntilIdle()
+
+        val finalState = viewModel.uiState.value as ChatUiState.Default
+
+        assertTrue(finalState.chatEntries.isEmpty())
+    }
+
+    @Test
+    fun `onPause removes the placeholder question`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("First Question")
+        viewModel.onPause()
+
+        advanceUntilIdle()
+
+        val finalState = viewModel.uiState.value as ChatUiState.Default
+
+        assertFalse(finalState.isLoading)
+        assertTrue(finalState.chatEntries.isEmpty())
     }
 
     @Test

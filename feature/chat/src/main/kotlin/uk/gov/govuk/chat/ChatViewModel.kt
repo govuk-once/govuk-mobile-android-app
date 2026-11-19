@@ -33,6 +33,7 @@ import uk.gov.govuk.data.auth.AuthRepo
 private const val CHAT_SUGGESTIONS_LIST_ID = "chat suggestions"
 private const val CHAT_SUGGESTIONS_LIST_NAME = "chat suggestions"
 private const val CHAT_SUGGESTION_ITEM_CATEGORY = "chat_suggestion"
+private const val PLACEHOLDER_QUESTION_ID = "placeholder_question"
 
 internal sealed class ChatUiState {
     data object Onboarding : ChatUiState()
@@ -183,18 +184,31 @@ internal class ChatViewModel @Inject constructor(
             askQuestionJob = viewModelScope.launch {
                 _uiState.updateDefault { it.copy(isLoading = true) }
 
-                handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
-                    addChatEntry(
-                        questionId = answeredQuestion.id,
-                        question = answeredQuestion.message,
-                        conversationId = answeredQuestion.conversationId,
-                        answerId = ""
-                    )
-                    onQuestionUpdated("")
-                    getAnswer(
-                        conversationId = answeredQuestion.conversationId,
-                        questionId = answeredQuestion.id
-                    )
+                // Show the question immediately so the user can see it's in flight
+                addChatEntry(
+                    questionId = PLACEHOLDER_QUESTION_ID,
+                    question = question.trim(),
+                    conversationId = "",
+                    answerId = ""
+                )
+
+                try {
+                    handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
+                        addChatEntry(
+                            questionId = answeredQuestion.id,
+                            question = answeredQuestion.message,
+                            conversationId = answeredQuestion.conversationId,
+                            answerId = "",
+                            replacingQuestionId = PLACEHOLDER_QUESTION_ID
+                        )
+                        onQuestionUpdated("")
+                        getAnswer(
+                            conversationId = answeredQuestion.conversationId,
+                            questionId = answeredQuestion.id
+                        )
+                    }
+                } finally {
+                    removePlaceholderChatEntry()
                 }
             }
         }
@@ -412,11 +426,14 @@ internal class ChatViewModel @Inject constructor(
         questionId: String,
         question: String,
         conversationId: String,
-        answerId: String
+        answerId: String,
+        replacingQuestionId: String? = null
     ) {
         _uiState.updateDefault {
             it.copy(
                 chatEntries = LinkedHashMap(it.chatEntries).apply {
+                    // Replace in the same update so the chat is never briefly empty
+                    replacingQuestionId?.let { id -> remove(id) }
                     put(
                         questionId,
                         ChatEntry(
@@ -429,6 +446,15 @@ internal class ChatViewModel @Inject constructor(
                         )
                     )
                 }
+            )
+        }
+    }
+
+    private fun removePlaceholderChatEntry() {
+        _uiState.updateDefault {
+            if (!it.chatEntries.containsKey(PLACEHOLDER_QUESTION_ID)) return@updateDefault it
+            it.copy(
+                chatEntries = LinkedHashMap(it.chatEntries).apply { remove(PLACEHOLDER_QUESTION_ID) }
             )
         }
     }
