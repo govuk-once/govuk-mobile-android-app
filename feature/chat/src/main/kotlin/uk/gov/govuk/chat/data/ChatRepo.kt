@@ -80,12 +80,10 @@ internal class ChatRepo @Inject constructor(
     private suspend fun updateConversation(
         conversationId: String,
         requestBody: ConversationQuestionRequest
-    ): ChatResult<AnsweredQuestion> {
-        return safeChatApiCall(
-            apiCall = { chatApi.updateConversation(conversationId, requestBody) },
-            authRepo = authRepo
-        )
-    }
+    ): ChatResult<AnsweredQuestion> = safeChatApiCall(
+        apiCall = { chatApi.updateConversation(conversationId, requestBody) },
+        authRepo = authRepo
+    )
 
     suspend fun giveFeedback(
         conversationId: String,
