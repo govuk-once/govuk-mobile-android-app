@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 enum class Subgroup {
     @SerializedName("instant")
     INSTANT,
+
     @SerializedName("none")
     NONE
 }

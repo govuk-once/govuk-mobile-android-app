@@ -12,6 +12,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -24,12 +27,11 @@ import uk.gov.govuk.chat.data.ChatRepo
 import uk.gov.govuk.chat.data.remote.ChatApi
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.data.remote.AuthorizationInterceptor
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
-internal class HeaderInterceptor @Inject constructor(): Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
+internal class HeaderInterceptor @Inject constructor() : Interceptor {
+    override fun intercept(
+        chain: Interceptor.Chain
+    ): Response {
         val currentRequest = chain.request().newBuilder()
         currentRequest.addHeader("Content-Type", "application/json")
 
@@ -44,13 +46,15 @@ internal class ChatModule {
 
     @Provides
     @Singleton
-    fun providesChatFeature(chatRepo: ChatRepo): ChatFeature {
-        return DefaultChatFeature(chatRepo)
-    }
+    fun providesChatFeature(
+        chatRepo: ChatRepo
+    ): ChatFeature = DefaultChatFeature(chatRepo)
 
     @Provides
     @Singleton
-    fun providesChatApi(authRepo: AuthRepo): ChatApi {
+    fun providesChatApi(
+        authRepo: AuthRepo
+    ): ChatApi {
         val client = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor())
             .addInterceptor(AuthorizationInterceptor(authRepo))
@@ -67,12 +71,12 @@ internal class ChatModule {
     @Singleton
     @Provides
     @Named("chat_prefs")
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            produceFile = { context.preferencesDataStoreFile("chat_preferences") }
-        )
-    }
+    fun providePreferencesDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler(
+            produceNewData = { emptyPreferences() }
+        ),
+        produceFile = { context.preferencesDataStoreFile("chat_preferences") }
+    )
 }

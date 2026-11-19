@@ -20,39 +20,39 @@ private val gson = Gson()
 internal suspend fun safeLicenceApiCall(
     apiCall: suspend () -> Response<LicenceResponse>,
     authRepo: AuthRepo
-): LicenceDetailsResult {
-    return try {
-        val response = withAuthRetry(apiCall, authRepo)
-        val body = response.body()
-        val code = response.code()
+): LicenceDetailsResult = try {
+    val response = withAuthRetry(apiCall, authRepo)
+    val body = response.body()
+    val code = response.code()
 
-        when {
-            response.isSuccessful -> {
-                if (body != null) {
-                    LicenceDetailsResult.Success(body.toDomainModel())
-                } else {
-                    LicenceDetailsResult.Failure(Result.Error())
-                }
+    when {
+        response.isSuccessful -> {
+            if (body != null) {
+                LicenceDetailsResult.Success(body.toDomainModel())
+            } else {
+                LicenceDetailsResult.Failure(Result.Error())
             }
+        }
 
-            code == 404 -> when (parseDvlaErrorCode(response)) {
-                ERROR_CODE_LICENCE_NOT_FOUND -> LicenceDetailsResult.NotFound
-                ERROR_CODE_LICENCE_NOT_AVAILABLE_FOR_ENQUIRY -> LicenceDetailsResult.NotAvailableForEnquiry
-                else -> LicenceDetailsResult.Failure(Result.ServiceNotResponding(code))
-            }
-
+        code == 404 -> when (parseDvlaErrorCode(response)) {
+            ERROR_CODE_LICENCE_NOT_FOUND -> LicenceDetailsResult.NotFound
+            ERROR_CODE_LICENCE_NOT_AVAILABLE_FOR_ENQUIRY -> LicenceDetailsResult.NotAvailableForEnquiry
             else -> LicenceDetailsResult.Failure(Result.ServiceNotResponding(code))
         }
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: AuthenticationException) {
-        LicenceDetailsResult.Failure(Result.AuthError())
-    } catch (e: Exception) {
-        LicenceDetailsResult.Failure(Result.DeviceOffline())
+
+        else -> LicenceDetailsResult.Failure(Result.ServiceNotResponding(code))
     }
+} catch (e: CancellationException) {
+    throw e
+} catch (e: AuthenticationException) {
+    LicenceDetailsResult.Failure(Result.AuthError())
+} catch (e: Exception) {
+    LicenceDetailsResult.Failure(Result.DeviceOffline())
 }
 
-private fun parseDvlaErrorCode(response: Response<LicenceResponse>): String? {
+private fun parseDvlaErrorCode(
+    response: Response<LicenceResponse>
+): String? {
     val errorBody = response.errorBody() ?: return null
     return runCatching { gson.fromJson(errorBody.charStream(), DvlaErrorResponse::class.java)?.error?.code }.getOrNull()
 }
