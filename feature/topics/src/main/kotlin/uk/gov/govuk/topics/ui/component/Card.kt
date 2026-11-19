@@ -79,7 +79,6 @@ fun TopicSelectionCard(
                 .padding(GovUkTheme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             if (isSelected) {
                 Box(
                     modifier = Modifier
@@ -145,4 +144,3 @@ internal fun TopicSelectionCardUnselectedPreview() {
         )
     }
 }
-

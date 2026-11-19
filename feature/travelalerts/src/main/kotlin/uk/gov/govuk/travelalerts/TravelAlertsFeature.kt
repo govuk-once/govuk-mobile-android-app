@@ -1,4 +1,3 @@
 package uk.gov.govuk.travelalerts
 
-interface TravelAlertsFeature {
-}
+interface TravelAlertsFeature

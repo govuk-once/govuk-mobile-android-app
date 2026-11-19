@@ -86,7 +86,7 @@ private fun TopicSelectionScreen(
             verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
         ) {
             BodyRegularLabel(
-                text = stringResource(R.string.topic_selection_description),
+                text = stringResource(R.string.topic_selection_description)
             )
 
             // loop over topics and add dynamically, has been changed from LazyColumn to overcome its

@@ -125,12 +125,12 @@ class AllViewModelTest {
                         EcommerceEvent.Item(
                             itemName = "title1",
                             itemCategory = "Popular pages",
-                            locationId = "url1",
+                            locationId = "url1"
                         ),
                         EcommerceEvent.Item(
                             itemName = "title2",
                             itemCategory = "Popular pages",
-                            locationId = "url2",
+                            locationId = "url2"
                         )
                     ),
                     totalItemCount = 2
