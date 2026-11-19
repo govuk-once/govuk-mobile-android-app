@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,7 +18,6 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.notifications.NotificationsPermissionResolver
 import uk.gov.govuk.notifications.data.NotificationsRepo
 import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
-import javax.inject.Inject
 
 @HiltViewModel
 class NotificationsRationaleViewModel @Inject constructor(
@@ -47,12 +47,19 @@ class NotificationsRationaleViewModel @Inject constructor(
     }
 
     sealed class NavigationEvent {
-        data class ExitToTopic(val error: Boolean) : NavigationEvent()
-        data class ReturnToEdit(val slug: String, val error: Boolean, val notificationsEnabled: Boolean = false) : NavigationEvent()
+        data class ExitToTopic(
+            val error: Boolean
+        ) : NavigationEvent()
+        data class ReturnToEdit(
+            val slug: String,
+            val error: Boolean,
+            val notificationsEnabled: Boolean = false
+        ) : NavigationEvent()
     }
 
     enum class Origin {
-        FOLLOW, EDIT
+        FOLLOW,
+        EDIT
     }
 
     private enum class Pending { NONE, OS_PROMPT, SETTINGS }
@@ -88,7 +95,10 @@ class NotificationsRationaleViewModel @Inject constructor(
         get() = savedStateHandle.get<Boolean>(KEY_IS_COMPLETING) ?: false
         set(value) = savedStateHandle.set(KEY_IS_COMPLETING, value)
 
-    fun onPageView(countrySlug: String, origin: Origin = Origin.FOLLOW) {
+    fun onPageView(
+        countrySlug: String,
+        origin: Origin = Origin.FOLLOW
+    ) {
         if (_uiState.value != State.Loading) return
         selectedCountrySlug = countrySlug
         this.origin = origin
@@ -96,7 +106,9 @@ class NotificationsRationaleViewModel @Inject constructor(
         analyticsClient.notificationsRationaleView(origin.name)
     }
 
-    private fun setUiState(state: State) {
+    private fun setUiState(
+        state: State
+    ) {
         _uiState.value = state
         val stateName = when (state) {
             State.Loading -> STATE_LOADING
@@ -106,7 +118,10 @@ class NotificationsRationaleViewModel @Inject constructor(
         savedStateHandle[KEY_UI_STATE] = stateName
     }
 
-    fun onNotNow(countrySlug: String, text: String) {
+    fun onNotNow(
+        countrySlug: String,
+        text: String
+    ) {
         analyticsClient.buttonClick(text = text, external = false, section = SECTION)
         viewModelScope.launch {
             setUiState(State.Loading)
@@ -171,11 +186,15 @@ class NotificationsRationaleViewModel @Inject constructor(
         selectedCountrySlug?.let { complete(false) }
     }
 
-    fun onPrivacyLinkClick(text: String) {
+    fun onPrivacyLinkClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(text = text, external = false, section = SECTION)
     }
 
-    fun onResume(countrySlug: String) {
+    fun onResume(
+        countrySlug: String
+    ) {
         // pending == SETTINGS while the dialog is showing AND while the user is in the
         // Settings app. ON_RESUME fires for both rotation and returning from Settings.
         // Guard against the dialog case: if state is Alert, the user hasn't gone to Settings yet.
@@ -190,7 +209,9 @@ class NotificationsRationaleViewModel @Inject constructor(
         }
     }
 
-    private fun complete(granted: Boolean) {
+    private fun complete(
+        granted: Boolean
+    ) {
         if (isCompleting) return
         isCompleting = true
         viewModelScope.launch {
@@ -204,7 +225,11 @@ class NotificationsRationaleViewModel @Inject constructor(
                 }
                 Origin.EDIT -> {
                     when (travelAlertsRepo.toggleNotifications(selectedCountrySlug!!, enabled = granted)) {
-                        is Result.Success -> NavigationEvent.ReturnToEdit(selectedCountrySlug!!, error = false, notificationsEnabled = granted)
+                        is Result.Success -> NavigationEvent.ReturnToEdit(
+                            selectedCountrySlug!!,
+                            error = false,
+                            notificationsEnabled = granted
+                        )
                         else -> NavigationEvent.ReturnToEdit(selectedCountrySlug!!, error = true, notificationsEnabled = false)
                     }
                 }
