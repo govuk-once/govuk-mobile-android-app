@@ -2,6 +2,7 @@ package uk.gov.govuk.dvla.mapper
 
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -18,7 +19,6 @@ import uk.gov.govuk.dvla.domain.VehicleSummary
 import uk.gov.govuk.dvla.ui.model.MenuAction
 import uk.gov.govuk.dvla.ui.model.dvlaUrls
 import uk.gov.govuk.dvla.util.StringProvider
-import java.time.LocalDate
 
 class VehicleDetailsMapperTest {
 
@@ -26,9 +26,9 @@ class VehicleDetailsMapperTest {
     private val taxAndMotStatusMapper = TaxAndMotStatusMapper(stringProvider)
     private val specificationsMapper = SpecificationsMapper(stringProvider)
     private val vehicleMenuItemsMapper = VehicleMenuItemsMapper(stringProvider)
-    private val mapper = VehicleDetailsMapper( taxAndMotStatusMapper, specificationsMapper, vehicleMenuItemsMapper)
+    private val mapper = VehicleDetailsMapper(taxAndMotStatusMapper, specificationsMapper, vehicleMenuItemsMapper)
 
-    private companion object{
+    private companion object {
         const val FUEL_TYPE = "Fuel type"
         const val COLOUR = "Colour"
         const val UNKNOWN = "Unknown"

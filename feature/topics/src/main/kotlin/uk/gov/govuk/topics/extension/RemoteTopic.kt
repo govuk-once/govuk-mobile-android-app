@@ -1,12 +1,12 @@
 package uk.gov.govuk.topics.extension
 
+import kotlin.math.min
 import uk.gov.govuk.topics.R
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic
 import uk.gov.govuk.topics.data.remote.model.RemoteTopic.RemoteTopicContent
 import uk.gov.govuk.topics.ui.model.TopicUi
 import uk.gov.govuk.topics.ui.model.TopicUi.Subtopic
 import uk.gov.govuk.topics.ui.model.TopicUi.TopicContent
-import kotlin.math.min
 
 internal fun RemoteTopic.toTopicUi(
     maxPopularPages: Int,
@@ -25,7 +25,7 @@ internal fun RemoteTopic.toTopicUi(
         displayPopularPagesSeeAll = popularPages.size > maxPopularPages,
         stepBySteps = stepBySteps
             .subList(0, min(stepBySteps.size, maxStepBySteps))
-            .map { it.toTopicContent()},
+            .map { it.toTopicContent() },
         displayStepByStepSeeAll = stepBySteps.size > maxStepBySteps,
         services = content
             .filter { !it.isPopular && !it.isStepByStep }
@@ -51,9 +51,7 @@ internal fun RemoteTopic.toTopicUi(
     )
 }
 
-internal fun RemoteTopicContent.toTopicContent(): TopicContent {
-    return TopicContent(
-        url = this.url,
-        title = this.title
-    )
-}
+internal fun RemoteTopicContent.toTopicContent(): TopicContent = TopicContent(
+    url = this.url,
+    title = this.title
+)

@@ -2,13 +2,13 @@ package uk.govuk.app.local
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import uk.gov.govuk.analytics.AnalyticsClient
 import javax.inject.Inject
+import uk.gov.govuk.analytics.AnalyticsClient
 
 @HiltViewModel
 internal class LocalExplainerViewModel @Inject constructor(
     private val analyticsClient: AnalyticsClient
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "LocalExplainerScreen"
@@ -24,7 +24,9 @@ internal class LocalExplainerViewModel @Inject constructor(
         )
     }
 
-    fun onButtonClick(text: String) {
+    fun onButtonClick(
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             section = SECTION

@@ -6,8 +6,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import uk.gov.govuk.data.auth.ErrorEvent
-import uk.gov.govuk.login.ui.AppUnavailableRoute
 import uk.gov.govuk.login.LoginEvent
+import uk.gov.govuk.login.ui.AppUnavailableRoute
 import uk.gov.govuk.login.ui.BiometricRoute
 import uk.gov.govuk.login.ui.BiometricSettingsRoute
 import uk.gov.govuk.login.ui.ErrorRoute
@@ -33,8 +33,9 @@ fun NavGraphBuilder.loginGraph(
         composable(route = LOGIN_ROUTE) {
             LoginRoute(
                 onLoginCompleted = { loginEvent ->
-                    if (loginEvent is LoginEvent.WebLogin
-                        && loginEvent.isBiometricsEnabled) {
+                    if (loginEvent is LoginEvent.WebLogin &&
+                        loginEvent.isBiometricsEnabled
+                    ) {
                         navController.popBackStack()
                         navController.navigate(BIOMETRIC_ROUTE)
                     } else {
@@ -42,7 +43,7 @@ fun NavGraphBuilder.loginGraph(
                     }
                 },
                 onError = { event ->
-                    when(event) {
+                    when (event) {
                         is ErrorEvent.UnableToSignInError, ErrorEvent.UnableToSignOutError ->
                             navController.navigate(ERROR_ROUTE)
                         is ErrorEvent.UserApiError ->

@@ -3,6 +3,7 @@ package uk.gov.govuk.topics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -10,13 +11,12 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.topics.data.TopicsRepo
 import uk.gov.govuk.topics.extension.toTopicItemUi
 import uk.gov.govuk.topics.ui.model.TopicItemUi
-import javax.inject.Inject
 
 @HiltViewModel
 internal class EditTopicsViewModel @Inject constructor(
     private val topicsRepo: TopicsRepo,
     private val analyticsClient: AnalyticsClient
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         private const val SCREEN_CLASS = "EditTopicsScreen"
@@ -34,7 +34,9 @@ internal class EditTopicsViewModel @Inject constructor(
         }
     }
 
-    fun onPageView(title: String) {
+    fun onPageView(
+        title: String
+    ) {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = SCREEN_NAME,
@@ -42,7 +44,11 @@ internal class EditTopicsViewModel @Inject constructor(
         )
     }
 
-    fun onTopicSelectedChanged(ref: String, title: String, isSelected: Boolean) {
+    fun onTopicSelectedChanged(
+        ref: String,
+        title: String,
+        isSelected: Boolean
+    ) {
         viewModelScope.launch {
             topicsRepo.topicsCustomised()
             topicsRepo.toggleSelection(ref, isSelected)
@@ -50,7 +56,10 @@ internal class EditTopicsViewModel @Inject constructor(
         }
     }
 
-    private fun logTopicToggleFunction(text: String, isSelected: Boolean) {
+    private fun logTopicToggleFunction(
+        text: String,
+        isSelected: Boolean
+    ) {
         val action = if (isSelected) {
             ANALYTICS_TOGGLE_FUNCTION_ACTION_SELECTED
         } else {
