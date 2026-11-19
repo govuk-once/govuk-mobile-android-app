@@ -15,7 +15,7 @@ import uk.gov.govuk.dwp.di.AuthModule.TEMPORARY_LINKING_TOKEN
 import uk.gov.govuk.dwp.linking.data.LinkingRepo
 
 @HiltViewModel
-internal class AuthLinkViewModel @Inject constructor(
+internal class AuthViewModel @Inject constructor(
     private val authLinkRepo: AuthLinkRepo,
     private val linkingRepo: LinkingRepo,
     @param:Named("dwp_auth_url") private val dwpAuthUrl: String
@@ -91,7 +91,7 @@ internal class AuthLinkViewModel @Inject constructor(
     private suspend fun linkDwpAccount(
         token: String
     ) {
-        _uiState.value = when (this@AuthLinkViewModel.authLinkRepo.linkAccount(token)) {
+        _uiState.value = when (this@AuthViewModel.authLinkRepo.linkAccount(token)) {
             is Result.Success -> UiState.Success
             is Result.DeviceOffline -> UiState.Error.Offline
             else -> UiState.Error.Other
