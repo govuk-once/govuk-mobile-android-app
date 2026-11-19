@@ -3,9 +3,11 @@ package uk.gov.govuk.dwp.ui.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.design.ui.component.AccountConnectionCard
+import uk.gov.govuk.dwp.BenefitsViewModel
 import uk.gov.govuk.design.ui.component.LoaderCard
 import uk.gov.govuk.dwp.R
 
@@ -15,6 +17,8 @@ internal fun DwpLinkCard(
     onActionClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val viewModel: BenefitsViewModel = hiltViewModel()
+
     when (state) {
         ServiceLinkStatus.UNLINKED, ServiceLinkStatus.ERROR -> {
             val title = stringResource(R.string.dwp_link_card_title)

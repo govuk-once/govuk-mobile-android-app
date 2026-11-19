@@ -664,13 +664,6 @@ private fun GovUkNavHost(
                             }
                         }
 
-                        topicRef.isBenefitsTopic() -> {
-                            DwpLinkHeader(
-                                onActionClick = { navController.navigateToDwpLinkIntro() },
-                                modifier = Modifier.padding(horizontal = GovUkTheme.spacing.medium)
-                            )
-                        }
-
                         topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled() -> {
                             Column(
                                 modifier = Modifier
@@ -685,6 +678,18 @@ private fun GovUkNavHost(
                                     },
                                     onFollowCountry = { navController.navigate(COUNTRY_LIST_ROUTE) },
                                     onEditCountries = { navController.navigate(EDIT_COUNTRIES_ROUTE) }
+                                )
+                            }
+                        }
+
+                        topicRef.isBenefitsTopic() && viewModel.isDwpLinkEnabled() -> {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = GovUkTheme.spacing.medium),
+                                verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
+                            ) {
+                                DwpLinkHeader(
+                                    onActionClick = { navController.navigateToDwpLinkIntro() }
                                 )
                             }
                         }
