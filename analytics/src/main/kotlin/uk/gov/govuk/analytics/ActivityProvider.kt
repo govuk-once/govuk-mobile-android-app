@@ -8,42 +8,62 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ActivityProvider @Inject constructor() : ActivityProviderInterface, Application.ActivityLifecycleCallbacks {
+class ActivityProvider @Inject constructor() :
+    ActivityProviderInterface,
+    Application.ActivityLifecycleCallbacks {
     private var activityReference = WeakReference<Activity>(null)
     private val onActivityDestroyedListeners = mutableListOf<(Activity) -> Unit>()
 
     override val currentActivity: Activity?
         get() = activityReference.get()
 
-    override fun addOnActivityDestroyedListener(listener: (activity: Activity) -> Unit) {
+    override fun addOnActivityDestroyedListener(
+        listener: (activity: Activity) -> Unit
+    ) {
         onActivityDestroyedListeners.add(listener)
     }
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(
+        activity: Activity,
+        savedInstanceState: Bundle?
+    ) {
         activityReference = WeakReference(activity)
     }
 
-    override fun onActivityStarted(activity: Activity) {
+    override fun onActivityStarted(
+        activity: Activity
+    ) {
         activityReference = WeakReference(activity)
     }
 
-    override fun onActivityResumed(activity: Activity) {
+    override fun onActivityResumed(
+        activity: Activity
+    ) {
         activityReference = WeakReference(activity)
     }
 
-    override fun onActivityPaused(activity: Activity) {
+    override fun onActivityPaused(
+        activity: Activity
+    ) {
         // unimplemented as the referenced activity in this state is still valid
     }
 
-    override fun onActivityStopped(activity: Activity) {
+    override fun onActivityStopped(
+        activity: Activity
+    ) {
         // unimplemented as the referenced activity in this state is still valid
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+    override fun onActivitySaveInstanceState(
+        activity: Activity,
+        outState: Bundle
+    ) {
         // unimplemented as only interested in tracking the activity for UI display
     }
 
-    override fun onActivityDestroyed(activity: Activity) {
+    override fun onActivityDestroyed(
+        activity: Activity
+    ) {
         if (activityReference.get() == activity) {
             activityReference.clear()
         }

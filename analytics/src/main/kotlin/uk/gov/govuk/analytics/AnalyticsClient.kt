@@ -1,6 +1,9 @@
 package uk.gov.govuk.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -9,9 +12,6 @@ import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState
 import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.analytics.extension.redactPii
-import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class AnalyticsClient @Inject constructor(
@@ -22,13 +22,9 @@ class AnalyticsClient @Inject constructor(
 
     lateinit var isUserSessionActive: () -> Boolean
 
-    fun isAnalyticsConsentRequired(): Boolean {
-        return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.NOT_SET
-    }
+    fun isAnalyticsConsentRequired(): Boolean = analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.NOT_SET
 
-    fun isAnalyticsEnabled(): Boolean {
-        return analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
-    }
+    fun isAnalyticsEnabled(): Boolean = analyticsRepo.analyticsEnabledState == AnalyticsEnabledState.ENABLED
 
     val isAnalyticsEnabledFlow: Flow<Boolean>
         get() = analyticsRepo.analyticsEnabledStateFlow
@@ -49,7 +45,12 @@ class AnalyticsClient @Inject constructor(
         analyticsRepo.clear()
     }
 
-    fun screenView(screenClass: String, screenName: String, title: String, format: String? = null) {
+    fun screenView(
+        screenClass: String,
+        screenName: String,
+        title: String,
+        format: String? = null
+    ) {
         logEvent(
             FirebaseAnalytics.Event.SCREEN_VIEW,
             parametersWithLanguage(
@@ -123,7 +124,9 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun tabClick(text: String) {
+    fun tabClick(
+        text: String
+    ) {
         navigation(text = text, type = "Tab")
     }
 
@@ -131,7 +134,7 @@ class AnalyticsClient @Inject constructor(
         text: String,
         url: String? = null,
         external: Boolean,
-        section: String,
+        section: String
     ) {
         navigation(
             text = text,
@@ -182,7 +185,11 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun chat(type: String = "typed", action: String = "Ask Question", section: String? = null) {
+    fun chat(
+        type: String = "typed",
+        action: String = "Ask Question",
+        section: String? = null
+    ) {
         val parameters = mutableMapOf(
             "action" to action,
             "type" to type
@@ -195,7 +202,9 @@ class AnalyticsClient @Inject constructor(
         logEvent("Chat", parameters)
     }
 
-    fun messagesUrlLaunched(url: String) {
+    fun messagesUrlLaunched(
+        url: String
+    ) {
         logEvent(
             "MessagesUrlLaunched",
             mapOf(
@@ -205,44 +214,63 @@ class AnalyticsClient @Inject constructor(
     }
 
     fun messagesMarkUnread() {
-        logEvent("MessagesMarkUnread",  mapOf())
+        logEvent("MessagesMarkUnread", mapOf())
     }
 
-    fun messagesDelete()  {
-        logEvent("MessagesDelete",   mapOf(
-            "action" to "tap"
-        ))
+    fun messagesDelete() {
+        logEvent(
+            "MessagesDelete",
+            mapOf(
+                "action" to "tap"
+            )
+        )
     }
 
     fun messagesConfirmDelete() {
-        logEvent("MessagesDelete", mapOf(
-            "action" to "confirm"
-        ))
+        logEvent(
+            "MessagesDelete",
+            mapOf(
+                "action" to "confirm"
+            )
+        )
     }
 
     fun messagesCancelDelete() {
-        logEvent("MessagesDelete", mapOf(
-            "action" to "cancel"
-        ))
+        logEvent(
+            "MessagesDelete",
+            mapOf(
+                "action" to "cancel"
+            )
+        )
     }
 
     fun messagesNotFound() {
         logEvent("MessagesNotFound", mapOf())
     }
 
-    fun search(searchTerm: String, section: String? = null) {
+    fun search(
+        searchTerm: String,
+        section: String? = null
+    ) {
         redactedEvent(name = "Search", type = "typed", inputString = searchTerm, section = section)
     }
 
-    fun autocomplete(searchTerm: String) {
+    fun autocomplete(
+        searchTerm: String
+    ) {
         redactedEvent(name = "Search", type = "autocomplete", inputString = searchTerm)
     }
 
-    fun history(searchTerm: String) {
+    fun history(
+        searchTerm: String
+    ) {
         redactedEvent(name = "Search", type = "history", inputString = searchTerm)
     }
 
-    fun chatMarkdownLinkClick(text: String, url: String) {
+    fun chatMarkdownLinkClick(
+        text: String,
+        url: String
+    ) {
         // external as these links will be opened in the device browser
         navigation(text = text, type = "ChatMarkdownLink", url = url, external = true)
     }
@@ -251,7 +279,11 @@ class AnalyticsClient @Inject constructor(
         navigation(text = "Chat Question Answer Returned", type = "ChatQuestionAnswerReturned")
     }
 
-    fun chatFeedback(text: String, action: String, questionId: String) {
+    fun chatFeedback(
+        text: String,
+        action: String,
+        questionId: String
+    ) {
         val parameters = mapOf(
             "text" to text,
             "action" to action,
@@ -263,17 +295,27 @@ class AnalyticsClient @Inject constructor(
         logEvent("ChatFeedback", parameters)
     }
 
-    fun searchResultClick(text: String, url: String) {
+    fun searchResultClick(
+        text: String,
+        url: String
+    ) {
         // external as these links will be opened in the device browser
         navigation(text = text, type = "SearchResult", url = url, external = true)
     }
 
-    fun visitedItemClick(text: String, url: String) {
+    fun visitedItemClick(
+        text: String,
+        url: String
+    ) {
         // external as these links will be opened in the device browser
         navigation(text = text, type = "VisitedItem", url = url, external = true)
     }
 
-    fun settingsItemClick(text: String, url: String? = null, external: Boolean = true) {
+    fun settingsItemClick(
+        text: String,
+        url: String? = null,
+        external: Boolean = true
+    ) {
         navigation(text = text, type = "SettingsItem", url = url, external = external)
     }
 
@@ -292,7 +334,11 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun toggleFunction(text: String, section: String, action: String) {
+    fun toggleFunction(
+        text: String,
+        section: String,
+        action: String
+    ) {
         function(
             text = text,
             type = "Toggle",
@@ -331,7 +377,10 @@ class AnalyticsClient @Inject constructor(
         firebaseAnalyticsClient.setUserProperty("topics_customised", "true")
     }
 
-    fun selectItemEvent(ecommerceEvent: EcommerceEvent, selectedItemIndex: Int) {
+    fun selectItemEvent(
+        ecommerceEvent: EcommerceEvent,
+        selectedItemIndex: Int
+    ) {
         logEcommerceEvent(
             event = FirebaseAnalytics.Event.SELECT_ITEM,
             ecommerceEvent = ecommerceEvent,
@@ -339,7 +388,9 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun viewItemListEvent(ecommerceEvent: EcommerceEvent) {
+    fun viewItemListEvent(
+        ecommerceEvent: EcommerceEvent
+    ) {
         logEcommerceEvent(
             event = FirebaseAnalytics.Event.VIEW_ITEM_LIST,
             ecommerceEvent = ecommerceEvent,
@@ -347,7 +398,10 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun deepLinkEvent(hasDeepLink: Boolean, url: String) {
+    fun deepLinkEvent(
+        hasDeepLink: Boolean,
+        url: String
+    ) {
         navigation(
             text = if (hasDeepLink) "Opened" else "Failed",
             type = "DeepLink",
@@ -355,11 +409,18 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
-    fun logException(exception: Exception) {
+    fun logException(
+        exception: Exception
+    ) {
         firebaseAnalyticsClient.logException(exception)
     }
 
-    private fun redactedEvent(name: String, type: String, inputString: String, section: String? = null) {
+    private fun redactedEvent(
+        name: String,
+        type: String,
+        inputString: String,
+        section: String? = null
+    ) {
         val params = mutableMapOf<String, Any>(
             "type" to type,
             "text" to inputString.redactPii()
@@ -377,7 +438,7 @@ class AnalyticsClient @Inject constructor(
     ) {
         val parameters = mutableMapOf(
             "type" to type,
-            "external" to external,
+            "external" to external
         )
 
         text?.let {
@@ -395,7 +456,12 @@ class AnalyticsClient @Inject constructor(
         logEvent("Navigation", parametersWithLanguage(parameters))
     }
 
-    private fun function(text: String, type: String, section: String, action: String) {
+    private fun function(
+        text: String,
+        type: String,
+        section: String,
+        action: String
+    ) {
         val parameters = mapOf(
             "text" to text,
             "type" to type,
@@ -406,33 +472,48 @@ class AnalyticsClient @Inject constructor(
         logEvent("Function", parametersWithLanguage(parameters))
     }
 
-    fun abTestEvent(event: AbTestEvent) {
+    fun abTestEvent(
+        event: AbTestEvent
+    ) {
         logEvent(event.eventName, mapOf())
     }
 
-    private fun parametersWithLanguage(parameters: Map<String, Any>): Map<String, Any> {
-        return parameters + Pair("language", Locale.getDefault().language)
-    }
+    private fun parametersWithLanguage(
+        parameters: Map<String, Any>
+    ): Map<String, Any> = parameters + Pair("language", Locale.getDefault().language)
 
-    fun notificationsRationaleView(origin: String) {
+    fun notificationsRationaleView(
+        origin: String
+    ) {
         logEvent("notifications_rationale_view", mapOf("origin" to origin))
     }
 
-    fun notificationsRationaleSettingsContinue(origin: String) {
+    fun notificationsRationaleSettingsContinue(
+        origin: String
+    ) {
         logEvent("notifications_rationale_settings_continue", mapOf("origin" to origin))
     }
 
-    fun notificationsRationaleSettingsCancel(origin: String) {
+    fun notificationsRationaleSettingsCancel(
+        origin: String
+    ) {
         logEvent("notifications_rationale_settings_cancel", mapOf("origin" to origin))
     }
 
-    private fun logEvent(name: String, parameters: Map<String, Any>) {
+    private fun logEvent(
+        name: String,
+        parameters: Map<String, Any>
+    ) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             analyticsCoordinator.logEvent(name, parameters)
         }
     }
 
-    private fun logEcommerceEvent(event: String, ecommerceEvent: EcommerceEvent, selectedItemIndex: Int?) {
+    private fun logEcommerceEvent(
+        event: String,
+        ecommerceEvent: EcommerceEvent,
+        selectedItemIndex: Int?
+    ) {
         if (isAnalyticsEnabled() && isUserSessionActive()) {
             analyticsCoordinator.logEcommerceEvent(event, ecommerceEvent, selectedItemIndex)
         }
