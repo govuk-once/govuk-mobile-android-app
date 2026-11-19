@@ -7,6 +7,7 @@ import javax.inject.Singleton
 import uk.gov.govuk.analytics.navigation.ANALYTICS_GRAPH_ROUTE
 import uk.gov.govuk.data.auth.AuthRepo
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
+import uk.gov.govuk.home.navigation.HOME_GRAPH_START_DESTINATION
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ON_NEXT_ROUTE
 import uk.gov.govuk.notifications.navigation.NOTIFICATIONS_CONSENT_ROUTE
@@ -112,5 +113,11 @@ internal class AppNavigation @Inject constructor(
         navController.navigate(LOGIN_GRAPH_ROUTE) {
             popUpTo(0) { inclusive = true }
         }
+    }
+
+    fun onHomeTabReselected(
+        navController: NavController
+    ) {
+        navController.popBackStack(HOME_GRAPH_START_DESTINATION, inclusive = false)
     }
 }
