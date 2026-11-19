@@ -10,7 +10,7 @@ import uk.gov.govuk.dwp.data.local.AuthDataStore
 import uk.gov.govuk.dwp.remote.AuthApi
 
 @Singleton
-class AuthRepo @Inject internal constructor(
+class AuthLinkRepo @Inject internal constructor(
     private val api: AuthApi,
     private val authRepo: AuthRepo,
     private val authDataStore: AuthDataStore

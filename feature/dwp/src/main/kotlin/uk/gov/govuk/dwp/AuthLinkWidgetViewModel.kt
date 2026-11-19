@@ -5,12 +5,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
-import uk.gov.govuk.dwp.data.AuthRepo
+import uk.gov.govuk.dwp.data.AuthLinkRepo
 
 @HiltViewModel
 internal class AuthLinkWidgetViewModel @Inject constructor(
-    authRepo: AuthRepo,
+    authLinkRepo: AuthLinkRepo
 ) : ViewModel() {
-    val dwpState: Flow<ServiceLinkStatus> = authRepo.linkState
-
+    val dwpState: Flow<ServiceLinkStatus> = authLinkRepo.linkState
 }

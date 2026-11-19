@@ -17,16 +17,16 @@ import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.dwp.data.local.AuthDataStore
 import uk.gov.govuk.dwp.remote.AuthApi
 
-class AuthRepoTest {
+class AuthLinkRepoTest {
     private val api = mockk<AuthApi>()
     private val authRepo = mockk<AuthRepo>()
     private val dataStore = mockk<AuthDataStore>(relaxed = true)
-    private lateinit var repo: uk.gov.govuk.dwp.data.AuthRepo
+    private lateinit var repo: uk.gov.govuk.dwp.data.AuthLinkRepo
 
     @Before
     fun setup() {
         every { dataStore.linkState } returns flowOf(ServiceLinkStatus.UNLINKED)
-        repo = AuthRepo(api, authRepo, dataStore)
+        repo = AuthLinkRepo(api, authRepo, dataStore)
     }
 
     @Test

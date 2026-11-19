@@ -78,7 +78,7 @@ class AppViewModelTest {
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
-    private val dwpLinkRepository = mockk<uk.gov.govuk.dwp.data.AuthRepo>(relaxed = true)
+    private val dwpLinkRepository = mockk<uk.gov.govuk.dwp.data.AuthLinkRepo>(relaxed = true)
     private val identityRepo = mockk<IdentityRepo>(relaxed = true)
     private val messagesFeature = mockk<MessagesFeature>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)

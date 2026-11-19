@@ -27,6 +27,7 @@ import uk.gov.govuk.config.data.local.model.toAnalyticsItems
 import uk.gov.govuk.config.data.remote.model.QuarterlySurvey
 import uk.gov.govuk.data.AppRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.dwp.data.AuthLinkRepo
 import uk.gov.govuk.data.identity.IdentityRepo
 import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
@@ -61,7 +62,7 @@ internal class AppViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val dvlaRepo: DvlaRepo,
     private val identityRepo: IdentityRepo,
-    private val dwpLinkRepository: uk.gov.govuk.dwp.data.AuthRepo,
+    private val dwpLinkRepository: AuthLinkRepo,
     private val messagesFeature: MessagesFeature,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -429,6 +430,7 @@ internal class AppViewModel @Inject constructor(
 
     fun isDvlaLinkEnabled() = flagRepo.isDvlaLinkEnabled()
     fun isTravelAlertsEnabled() = flagRepo.isTravelAlertsEnabled()
+    fun isDwpLinkEnabled() = flagRepo.isDwpLinkEnabled()
 
     fun onSignOut() {
         notificationsRepo.logout()

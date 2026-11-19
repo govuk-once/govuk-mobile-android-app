@@ -14,7 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.gov.govuk.design.ui.component.AccountConnectionSuccessScreen
 import uk.gov.govuk.design.ui.component.BookendConnectingScreen
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.dwp.AuthViewModel
+import uk.gov.govuk.dwp.AuthLinkViewModel
 import uk.gov.govuk.dwp.R
 
 @Composable
@@ -22,19 +22,19 @@ internal fun DwpLinkingRoute(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: AuthViewModel = hiltViewModel()
+    val viewModel: AuthLinkViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     DwpLinkScreen(
         state = state,
         onClose = onClose,
-        onContinue = if (state is AuthViewModel.UiState.Error) viewModel::onRetryClicked else viewModel::onIntroContinueClicked,
+        onContinue = if (state is AuthLinkViewModel.UiState.Error) viewModel::onRetryClicked else viewModel::onIntroContinueClicked,
         modifier = modifier
     )
 }
 
 @Composable
 internal fun DwpLinkScreen(
-    state: AuthViewModel.UiState,
+    state: AuthLinkViewModel.UiState,
     onClose: () -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier
@@ -47,14 +47,14 @@ internal fun DwpLinkScreen(
             .safeDrawingPadding()
     ) {
         when (state) {
-            AuthViewModel.UiState.Default, is AuthViewModel.UiState.Error -> DwpLinkIntroScreen(
+            AuthLinkViewModel.UiState.Default, is AuthLinkViewModel.UiState.Error -> DwpLinkIntroScreen(
                 onClose = onClose,
                 onContinue = onContinue,
-                showError = state is AuthViewModel.UiState.Error
+                showError = state is AuthLinkViewModel.UiState.Error
             )
-            AuthViewModel.UiState.Loading.Auth,
-            AuthViewModel.UiState.Loading.Linking -> BookendConnectingScreen(title = stringResource(R.string.dwp_linking))
-            AuthViewModel.UiState.Success -> AccountConnectionSuccessScreen(
+            AuthLinkViewModel.UiState.Loading.Auth,
+            AuthLinkViewModel.UiState.Loading.Linking -> BookendConnectingScreen(title = stringResource(R.string.dwp_linking))
+            AuthLinkViewModel.UiState.Success -> AccountConnectionSuccessScreen(
                 title = stringResource(R.string.dwp_success_title),
                 buttonText = stringResource(R.string.dwp_continue),
                 onContinue = onClose

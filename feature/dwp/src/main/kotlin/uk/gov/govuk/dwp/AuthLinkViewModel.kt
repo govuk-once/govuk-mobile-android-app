@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dwp.data.AuthRepo
+import uk.gov.govuk.dwp.data.AuthLinkRepo
 import uk.gov.govuk.dwp.di.AuthModule.TEMPORARY_LINKING_TOKEN
 import uk.gov.govuk.dwp.linking.data.LinkingRepo
 
 @HiltViewModel
-internal class AuthViewModel @Inject constructor(
-    private val authRepo: AuthRepo,
+internal class AuthLinkViewModel @Inject constructor(
+    private val authLinkRepo: AuthLinkRepo,
     private val linkingRepo: LinkingRepo,
     @param:Named("dwp_auth_url") private val dwpAuthUrl: String
 ) : ViewModel() {
@@ -89,7 +89,7 @@ internal class AuthViewModel @Inject constructor(
     private suspend fun linkDwpAccount(
         token: String
     ) {
-        _uiState.value = when (authRepo.linkAccount(token)) {
+        _uiState.value = when (this@AuthLinkViewModel.authLinkRepo.linkAccount(token)) {
             is Result.Success -> UiState.Success
             is Result.DeviceOffline -> UiState.Error.Offline
             else -> UiState.Error.Other

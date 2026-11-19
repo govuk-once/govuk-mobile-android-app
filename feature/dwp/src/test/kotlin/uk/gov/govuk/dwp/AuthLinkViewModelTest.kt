@@ -24,16 +24,16 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dwp.data.AuthRepo
+import uk.gov.govuk.dwp.data.AuthLinkRepo
 import uk.gov.govuk.dwp.di.AuthModule.TEMPORARY_LINKING_TOKEN
 import uk.gov.govuk.dwp.linking.data.LinkingRepo
 import uk.gov.govuk.dwp.linking.remote.model.VerificationResponse
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthViewModelTest {
-    private val repository = mockk<AuthRepo>()
+class AuthLinkViewModelTest {
+    private val repository = mockk<AuthLinkRepo>()
     private val linkingRepo = mockk<LinkingRepo>()
-    private val dwpAuthUrl = "https://dwp-auth/sign-in"
+    private val dwpAuthUrl = "http://dwp-auth.localhost"
     private val dispatcher = StandardTestDispatcher()
 
     @Before
@@ -54,9 +54,9 @@ class AuthViewModelTest {
 
     @Test
     fun `Opening and dismissing the intro does not link`() = runTest(dispatcher) {
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Default, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Default, viewModel.uiState.value)
         coVerify(exactly = 0) { linkingRepo.getVerification() }
         coVerify(exactly = 0) { repository.linkAccount(any()) }
     }
@@ -68,17 +68,17 @@ class AuthViewModelTest {
             linking.await()
             Result.Success(Unit)
         }
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
 
         viewModel.onIntroContinueClicked()
         viewModel.onIntroContinueClicked()
         runCurrent()
-        assertEquals(AuthViewModel.UiState.Loading.Linking, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Loading.Linking, viewModel.uiState.value)
         viewModel.onIntroContinueClicked()
         linking.complete(Unit)
         advanceUntilIdle()
 
-        assertEquals(AuthViewModel.UiState.Success, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Success, viewModel.uiState.value)
         viewModel.onIntroContinueClicked()
         coVerify(exactly = 1) { repository.linkAccount(TEMPORARY_LINKING_TOKEN) }
     }
@@ -86,34 +86,34 @@ class AuthViewModelTest {
     @Test
     fun `A failed repository result can be retried`() = runTest(dispatcher) {
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.Error()
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Error.Other, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Error.Other, viewModel.uiState.value)
 
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.Success(Unit)
         viewModel.onRetryClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Success, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Success, viewModel.uiState.value)
     }
 
     @Test
     fun `Verification failure stops before sign-in and linking`() = runTest(dispatcher) {
         coEvery { linkingRepo.getVerification() } returns Result.Error()
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Error.Other, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Error.Other, viewModel.uiState.value)
         coVerify(exactly = 0) { repository.linkAccount(any()) }
     }
 
     @Test
     fun `Link API failure does not show success`() = runTest(dispatcher) {
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.ServiceNotResponding(500)
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Error.Other, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Error.Other, viewModel.uiState.value)
     }
 
     @Test
@@ -121,14 +121,14 @@ class AuthViewModelTest {
         val verification = CompletableDeferred<Result<VerificationResponse>>()
         coEvery { linkingRepo.getVerification() } coAnswers { verification.await() }
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.Success(Unit)
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         viewModel.onIntroContinueClicked()
         runCurrent()
-        assertEquals(AuthViewModel.UiState.Loading.Auth, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Loading.Auth, viewModel.uiState.value)
         verification.complete(Result.Success(VerificationResponse("verification")))
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Success, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Success, viewModel.uiState.value)
         coVerify(exactly = 1) { linkingRepo.getVerification() }
         coVerify(exactly = 1) { repository.linkAccount(TEMPORARY_LINKING_TOKEN) }
     }
@@ -136,31 +136,32 @@ class AuthViewModelTest {
     @Test
     fun `Empty verification token cannot proceed to sign-in`() = runTest(dispatcher) {
         coEvery { linkingRepo.getVerification() } returns Result.Success(VerificationResponse(""))
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Error.Other, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Error.Other, viewModel.uiState.value)
         coVerify(exactly = 0) { repository.linkAccount(any()) }
     }
 
     @Test
     fun `Verification completes before the simulated browser result is linked`() = runTest(dispatcher) {
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.Success(Unit)
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
         coVerifyOrder {
             linkingRepo.getVerification()
             repository.linkAccount(TEMPORARY_LINKING_TOKEN)
         }
-        assertEquals(AuthViewModel.UiState.Success, viewModel.uiState.value)
+        assertEquals("$dwpAuthUrl?token=verification", viewModel.authUrlToLaunch.value)
+        assertEquals(AuthLinkViewModel.UiState.Success, viewModel.uiState.value)
     }
 
     @Test
     fun `Given the linking screen closes while verifying, then cancel without linking`() = runTest(dispatcher) {
         val pending = CompletableDeferred<Result<VerificationResponse>>()
         coEvery { linkingRepo.getVerification() } coAnswers { pending.await() }
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         val store = ViewModelStore()
         store.put("dwp", viewModel)
         viewModel.onIntroContinueClicked()
@@ -174,23 +175,23 @@ class AuthViewModelTest {
     @Test
     fun `Given verification is offline, then show Offline error without linking`() = runTest(dispatcher) {
         coEvery { linkingRepo.getVerification() } returns Result.DeviceOffline()
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Error.Offline, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Error.Offline, viewModel.uiState.value)
         coVerify(exactly = 0) { repository.linkAccount(any()) }
     }
 
     @Test
     fun `Given linking is offline, when retried successfully, then show Success`() = runTest(dispatcher) {
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.DeviceOffline()
-        val viewModel = AuthViewModel(repository, linkingRepo, dwpAuthUrl)
+        val viewModel = AuthLinkViewModel(repository, linkingRepo, dwpAuthUrl)
         viewModel.onIntroContinueClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Error.Offline, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Error.Offline, viewModel.uiState.value)
         coEvery { repository.linkAccount(TEMPORARY_LINKING_TOKEN) } returns Result.Success(Unit)
         viewModel.onRetryClicked()
         advanceUntilIdle()
-        assertEquals(AuthViewModel.UiState.Success, viewModel.uiState.value)
+        assertEquals(AuthLinkViewModel.UiState.Success, viewModel.uiState.value)
     }
 }
