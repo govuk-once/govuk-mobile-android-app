@@ -154,4 +154,10 @@ class LicenceSummaryMapperTest {
         val licence = successLicence(status = LicenceStatus.VALID, type = LicenceType.UNKNOWN)
         assertNull(licence.notValidIdNote)
     }
+
+    @Test
+    fun `Given licence status is revoked for medical reasons, then result is RevokedMedicalLicence`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED_FOR_MEDICAL_REASONS), dvlaUrls)
+        assertTrue(result is LicenceSummaryUiState.RevokedMedicalLicence)
+    }
 }
