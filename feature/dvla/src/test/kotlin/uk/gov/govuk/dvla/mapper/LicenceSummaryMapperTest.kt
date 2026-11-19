@@ -119,6 +119,12 @@ class LicenceSummaryMapperTest {
     }
 
     @Test
+    fun `Given licence status is surrendered, then result is NoLicence`() {
+        val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.SURRENDERED), dvlaUrls)
+        assertEquals(LicenceSummaryUiState.NoLicence, result)
+    }
+
+    @Test
     fun `Given licence status is surrendered voluntarily, then result is NoLicence`() {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.SURRENDERED_VOLUNTARILY), dvlaUrls)
         assertEquals(LicenceSummaryUiState.NoLicence, result)
