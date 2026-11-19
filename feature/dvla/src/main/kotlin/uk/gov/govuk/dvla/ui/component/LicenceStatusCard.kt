@@ -1,5 +1,6 @@
 package uk.gov.govuk.dvla.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,6 +9,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -24,20 +26,25 @@ internal fun LicenceStatusCard(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
+    cardBackground: Color = GovUkTheme.colourScheme.surfaces.cardDefault,
+    titleBackground: Color = GovUkTheme.colourScheme.surfaces.cardDefault,
+    titleTextColor: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    titleDrawDivider: Boolean = true,
     linkText: String? = null,
     onLinkClick: (text: String) -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
+            containerColor = cardBackground
         )
     ) {
-        Spacer(Modifier.height(64.dp))
+        Spacer(Modifier.height(64.dp).background(titleBackground))
 
-        CardListItem(isFirst = true, isLast = false) {
+        CardListItem(isFirst = true, isLast = false, drawDivider = titleDrawDivider, background = titleBackground) {
             Title1BoldLabel(
                 text = title,
+                color = titleTextColor,
                 modifier = Modifier
                     .padding(GovUkTheme.spacing.medium)
                     .semantics { heading() }

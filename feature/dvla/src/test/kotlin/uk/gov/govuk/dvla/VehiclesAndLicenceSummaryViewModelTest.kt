@@ -616,4 +616,26 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         assertEquals(UiState.Hidden, viewModel.uiState.value)
     }
+
+    @Test
+    fun `Given mapper returns RevokedMedicalLicence, when viewModel initialised, then licence state becomes RevokedMedicalLicence`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+            val revokedState = LicenceSummaryUiState.RevokedMedicalLicence(UrlModel("test-url"))
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
+            every { licenceMapper.toUiModel(any(), any()) } returns revokedState
+            coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+            advanceUntilIdle()
+
+            val currentState = viewModel.uiState.value as UiState.Default
+            assertEquals(revokedState, currentState.licenceState)
+        }
 }
