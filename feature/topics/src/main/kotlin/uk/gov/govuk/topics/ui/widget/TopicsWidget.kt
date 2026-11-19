@@ -111,7 +111,9 @@ private fun Header(
                 altText = stringResource(R.string.edit_button_alt_text),
                 onClick = { onEditClick(editButtonText) }
             )
-        } else null
+        } else {
+            null
+        }
     )
 }
 

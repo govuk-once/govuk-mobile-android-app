@@ -12,6 +12,6 @@ internal data class RemoteTopic(
         @SerializedName("url") val url: String,
         @SerializedName("title") val title: String,
         @SerializedName("isStepByStep") val isStepByStep: Boolean,
-        @SerializedName("popular") val isPopular: Boolean,
+        @SerializedName("popular") val isPopular: Boolean
     )
 }
