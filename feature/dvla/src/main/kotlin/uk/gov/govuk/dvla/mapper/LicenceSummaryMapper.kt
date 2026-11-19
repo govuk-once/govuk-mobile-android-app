@@ -89,7 +89,7 @@ internal class LicenceSummaryMapper @Inject constructor(
 
     internal fun reapplyUrl(
         dvlaUrls: DvlaUrls?
-    ) = UrlModel(dvlaUrls?.reapplyMedicalLicence?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
+    ) = UrlModel(dvlaUrls?.reapplyForLicenceHealthCondition?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
     private fun getDrivingRecordUrl(
         status: LicenceStatus,
