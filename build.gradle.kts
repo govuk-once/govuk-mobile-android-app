@@ -31,7 +31,7 @@ val pendingModules = setOf(
     //":feature:messages",
     //":feature:search",
     //":feature:settings",
-    ":feature:topics",
+    //":feature:topics",
     ":feature:travelalerts",
     ":feature:visited",
     ":govkit",
