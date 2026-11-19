@@ -100,7 +100,6 @@ internal class LicenceSummaryMapper @Inject constructor(
         dvlaUrls: DvlaUrls?
     ) = UrlModel(dvlaUrls?.reapplyForLicenceHealthCondition?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
-
     private fun String?.asAddressLines() = this
         ?.split("\n")
         ?.filter { it.isNotBlank() }

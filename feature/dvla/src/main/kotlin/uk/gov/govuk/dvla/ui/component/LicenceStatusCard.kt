@@ -24,7 +24,6 @@ internal fun LicenceStatusCard(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
-    cardBackground: Color = GovUkTheme.colourScheme.surfaces.cardDefault,
     titleBackground: Color = GovUkTheme.colourScheme.surfaces.cardDefault,
     titleTextColor: Color = GovUkTheme.colourScheme.textAndIcons.primary,
     titleDrawDivider: Boolean = true,
@@ -34,7 +33,7 @@ internal fun LicenceStatusCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = cardBackground
+            containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
         )
     ) {
         CardListItem(
