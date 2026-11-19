@@ -1,5 +1,8 @@
 package uk.gov.govuk.chat.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import uk.gov.govuk.chat.data.local.ChatDataStore
@@ -15,9 +18,6 @@ import uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
 import uk.gov.govuk.chat.data.remote.safeChatApiCall
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.data.auth.AuthRepo
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 internal class ChatRepo @Inject constructor(
@@ -45,7 +45,9 @@ internal class ChatRepo @Inject constructor(
         }
     }
 
-    suspend fun askQuestion(question: String): ChatResult<AnsweredQuestion> {
+    suspend fun askQuestion(
+        question: String
+    ): ChatResult<AnsweredQuestion> {
         val conversationId = dataStore.conversationId()
         return if (conversationId != null) {
             updateConversation(
@@ -57,7 +59,9 @@ internal class ChatRepo @Inject constructor(
         }
     }
 
-    private suspend fun startConversation(question: String): ChatResult<AnsweredQuestion> {
+    private suspend fun startConversation(
+        question: String
+    ): ChatResult<AnsweredQuestion> {
         val requestBody = ConversationQuestionRequest(
             userQuestion = question
         )
@@ -72,7 +76,10 @@ internal class ChatRepo @Inject constructor(
         return result
     }
 
-    private suspend fun updateConversation(conversationId: String, question: String): ChatResult<AnsweredQuestion> {
+    private suspend fun updateConversation(
+        conversationId: String,
+        question: String
+    ): ChatResult<AnsweredQuestion> {
         val requestBody = ConversationQuestionRequest(
             userQuestion = question
         )
@@ -83,7 +90,11 @@ internal class ChatRepo @Inject constructor(
         )
     }
 
-    suspend fun giveFeedback(conversationId: String, answerId: String, reaction: String): ChatResult<Unit> {
+    suspend fun giveFeedback(
+        conversationId: String,
+        answerId: String,
+        reaction: String
+    ): ChatResult<Unit> {
         val requestBody = AnswerFeedbackRequest(
             reaction = reaction
         )
@@ -98,7 +109,7 @@ internal class ChatRepo @Inject constructor(
     suspend fun getAnswer(
         conversationId: String,
         questionId: String,
-        wait: Double? = null,
+        wait: Double? = null
     ): ChatResult<Answer> {
         val pollInterval = wait ?: configRepo.chatPollIntervalSeconds
 

@@ -55,7 +55,7 @@ class AnalyticsDataStoreTest {
 
         val datastore = AnalyticsDataStore(dataStore)
 
-        assertEquals(DISABLED, datastore.analyticsEnabledState )
+        assertEquals(DISABLED, datastore.analyticsEnabledState)
     }
 
     @Test

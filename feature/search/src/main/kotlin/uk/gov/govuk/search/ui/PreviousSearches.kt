@@ -119,7 +119,7 @@ private fun Header(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                top = GovUkTheme.spacing.small,
+                top = GovUkTheme.spacing.small
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -160,7 +160,7 @@ private fun Header(
                     .semantics {
                         contentDescription = context.getString(R.string.content_desc_delete_all)
                     },
-                color = textColor,
+                color = textColor
             )
         }
     }

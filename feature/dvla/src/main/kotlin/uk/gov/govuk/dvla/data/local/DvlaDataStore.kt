@@ -4,11 +4,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.flow.firstOrNull
-import uk.gov.govuk.dvla.ui.model.DrivingView
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.firstOrNull
+import uk.gov.govuk.dvla.ui.model.DrivingView
 
 @Singleton
 class DvlaDataStore @Inject constructor(
@@ -26,7 +26,9 @@ class DvlaDataStore @Inject constructor(
         return null
     }
 
-    internal suspend fun setSelectedDrivingView(drivingView: DrivingView) {
+    internal suspend fun setSelectedDrivingView(
+        drivingView: DrivingView
+    ) {
         dataStore.edit { preferences ->
             preferences[stringPreferencesKey(SELECTED_DRIVING_VIEW)] = drivingView.name
         }
