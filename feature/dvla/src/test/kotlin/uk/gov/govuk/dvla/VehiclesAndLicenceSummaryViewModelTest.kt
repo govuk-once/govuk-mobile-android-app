@@ -616,4 +616,95 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
         assertEquals(UiState.Hidden, viewModel.uiState.value)
     }
+
+    @Test
+    fun `Given mapper returns RevokedMedicalLicence, when viewModel initialised, then licence state becomes RevokedMedicalLicence`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+            val revokedState = LicenceSummaryUiState.RevokedMedicalLicence(UrlModel("test-url"))
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
+            every { licenceMapper.toUiModel(any(), any()) } returns revokedState
+            coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+            advanceUntilIdle()
+
+            val currentState = viewModel.uiState.value as UiState.Default
+            assertEquals(revokedState, currentState.licenceState)
+        }
+
+    @Test
+    fun `When revoked medical licence reapply link clicked, then analytics fires with link text and reapply url`() = runTest(dispatcher) {
+        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+
+        val viewModel = VehiclesAndLicenceSummaryViewModel(
+            dvlaRepo,
+            vehicleMapper,
+            licenceMapper,
+            analyticsClient,
+            configRepo
+        )
+
+        advanceUntilIdle()
+
+        viewModel.onExternalButtonClicked(
+            text = "Check if you can reapply",
+            url = "https://www.gov.uk/reapply-driving-licence-health-condition"
+        )
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            analyticsClient.buttonClick(
+                text = "Check if you can reapply",
+                url = "https://www.gov.uk/reapply-driving-licence-health-condition",
+                external = true,
+                section = "Driving"
+            )
+        }
+    }
+
+    @Test
+    fun `Given mapper returns RevokedMedicalLicence, when viewModel initialised, then onExternalButtonClicked fires correct analytics for reapply url`() =
+        runTest(dispatcher) {
+            val reapplyUrl = "https://www.gov.uk/reapply-driving-licence-health-condition"
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+            coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
+            coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
+            every { licenceMapper.toUiModel(any(), any()) } returns
+                LicenceSummaryUiState.RevokedMedicalLicence(UrlModel(reapplyUrl))
+            83
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+
+            advanceUntilIdle()
+
+            val currentState = viewModel.uiState.value as UiState.Default
+            val url = (currentState.licenceState as LicenceSummaryUiState.RevokedMedicalLicence).url
+
+            viewModel.onExternalButtonClicked(
+                text = "Check if you can reapply",
+                url = url.originalUrl
+            )
+            advanceUntilIdle()
+
+            verify(exactly = 1) {
+                analyticsClient.buttonClick(
+                    text = "Check if you can reapply",
+                    url = reapplyUrl,
+                    external = true,
+                    section = "Driving"
+                )
+            }
+        }
 }

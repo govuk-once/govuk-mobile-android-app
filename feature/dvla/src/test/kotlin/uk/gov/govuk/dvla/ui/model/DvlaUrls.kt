@@ -28,5 +28,6 @@ internal val dvlaUrls = DvlaUrls(
     reportNoMot = "https://www.gov.uk/report-no-mot",
     compareLicenceCategories = "https://www.gov.uk/compare-categories",
     vehicleWeightExplained = "https://www.gov.uk/vehicle-weigh-explained",
-    addLicenceCategories = "https://www.gov.uk/add-categories"
+    addLicenceCategories = "https://www.gov.uk/add-categories",
+    reapplyForLicenceHealthCondition = "https://www.gov.uk/reapply-driving-licence-health-condition"
 )

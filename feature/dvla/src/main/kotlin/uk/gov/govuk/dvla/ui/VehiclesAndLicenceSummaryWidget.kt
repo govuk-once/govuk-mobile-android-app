@@ -42,6 +42,7 @@ import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.NoLicenceCard
+import uk.gov.govuk.dvla.ui.component.RevokedMedicalLicenceCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -55,14 +56,31 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 
 @Composable
-fun VehiclesAndLicenceSummaryWidget(
+fun VehiclesAndLicenceSummaryWidgetRoute(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
     onDrivingCategoriesClick: () -> Unit,
     modifier: Modifier = Modifier,
     vehiclesFooter: @Composable () -> Unit = {}
 ) {
-    val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
+    VehiclesAndLicenceSummaryWidget(
+        launchBrowser = launchBrowser,
+        onVehicleDetailsClick = onVehicleDetailsClick,
+        onDrivingCategoriesClick = onDrivingCategoriesClick,
+        modifier = modifier,
+        vehiclesFooter = vehiclesFooter
+    )
+}
+
+@Composable
+internal fun VehiclesAndLicenceSummaryWidget(
+    launchBrowser: (String) -> Unit,
+    onVehicleDetailsClick: (vehicleId: Int) -> Unit,
+    onDrivingCategoriesClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    vehiclesFooter: @Composable () -> Unit = {},
+    viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
 
     Column(modifier = modifier) {
@@ -255,6 +273,11 @@ private fun LicenceViewContent(
         })
 
         is LicenceSummaryUiState.NotAvailable -> LicenceNotAvailableCard(
+            onClick = { text -> launchBrowser(text, licenceState.url) },
+            modifier = modifier
+        )
+
+        is LicenceSummaryUiState.RevokedMedicalLicence -> RevokedMedicalLicenceCard(
             onClick = { text -> launchBrowser(text, licenceState.url) },
             modifier = modifier
         )

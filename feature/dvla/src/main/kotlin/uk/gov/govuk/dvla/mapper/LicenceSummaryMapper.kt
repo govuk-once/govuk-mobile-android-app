@@ -49,6 +49,10 @@ internal class LicenceSummaryMapper @Inject constructor(
             return LicenceSummaryUiState.NoLicence
         }
 
+        if (details.licenceStatus == LicenceStatus.REVOKED_FOR_MEDICAL_REASONS) {
+            return LicenceSummaryUiState.RevokedMedicalLicence(reapplyUrl(dvlaUrls))
+        }
+
         if (details.licenceStatus != LicenceStatus.VALID && details.licenceStatus != LicenceStatus.EXPIRED) {
             return LicenceSummaryUiState.NotAvailable(notAvailableUrl(dvlaUrls))
         }
@@ -83,6 +87,10 @@ internal class LicenceSummaryMapper @Inject constructor(
     internal fun notAvailableUrl(
         dvlaUrls: DvlaUrls?
     ) = UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
+
+    internal fun reapplyUrl(
+        dvlaUrls: DvlaUrls?
+    ) = UrlModel(dvlaUrls?.reapplyForLicenceHealthCondition?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
     private fun getDrivingRecordUrl(
         status: LicenceStatus,
