@@ -43,7 +43,7 @@ fun NavGraphBuilder.topicSelectionGraph(
 fun NavGraphBuilder.topicsGraph(
     navController: NavController,
     launchBrowser: (url: String) -> Unit,
-    topicHeader: @Composable (topicRef: String?) -> Unit,
+    topicHeader: @Composable (topicRef: String?, onShowTopicContent: (Boolean) -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation(
@@ -75,7 +75,7 @@ fun NavGraphBuilder.topicsGraph(
                 onStepByStepSeeAll = { navController.navigate(TOPICS_ALL_STEP_BY_STEPS_ROUTE) },
                 onPopularPagesSeeAll = { navController.navigate(TOPICS_ALL_POPULAR_PAGES_ROUTE) },
                 onSubtopic = { ref -> navController.navigateToTopic(ref, true) },
-                headerContent = { topicHeader(topicRef) },
+                headerContent = { onShowTopicContent -> topicHeader(topicRef, onShowTopicContent) },
                 modifier = modifier
             )
         }

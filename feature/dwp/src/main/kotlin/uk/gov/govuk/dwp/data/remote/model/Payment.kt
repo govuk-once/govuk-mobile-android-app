@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 data class Payment(
     @SerializedName("status") val status: String,
     @SerializedName("statusCode") val statusCode: String,
-    @SerializedName("data") val data: PaymentData
+    @SerializedName("data") val data: List<PaymentData>
 )

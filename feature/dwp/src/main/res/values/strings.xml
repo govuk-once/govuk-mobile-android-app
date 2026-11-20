@@ -10,4 +10,12 @@
     <string name="dwp_success_title">Benefits payment information linked</string>
     <string name="dwp_link_error">We could not link your payment information. Please try again.</string>
     <string name="dwp_link_loading">Checking benefits account link</string>
+    <string name="dwp_payments_your_benefits">Your benefits</string>
+    <string name="dwp_payments_other_benefits">Other benefits</string>
+    <string name="dwp_payments_menu_info_not_avail">Payment information not available</string>
+    <string name="dwp_payments_menu_benefit_not_shown">My benefit is not showing</string>
+    <string name="dwp_payments_menu_chat">Chat</string>
+    <string name="dwp_payments_payment_history">Payment history</string>
+    <string name="dwp_payments_universal_credit_sign_in">Sign in to your Universal Credit account</string>
+    <string name="dwp_payments_universal_credit_info">We can\'t show this payment information in the app yet.</string>
 </resources>

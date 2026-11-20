@@ -11,6 +11,7 @@ data class PaymentData(
     @SerializedName("issueDate") val issueDate: String,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("deductionValue") val deductionValue: Double,
+    @SerializedName("amount") val amount: Double,
     @SerializedName("translatedDueDate") val translatedDueDate: String,
     @SerializedName("amountsPerBenefitCode") val amountsPerBenefitCode: List<AmountPerBenefitCode>
 )

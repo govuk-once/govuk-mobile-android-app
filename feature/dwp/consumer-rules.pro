@@ -11,7 +11,11 @@
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardBreakdown
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardData
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardDetailData
+-keep class uk.gov.govuk.dwp.data.remote.model.AwardDetailsResponse
 -keep class uk.gov.govuk.dwp.data.remote.model.BioData
+-keep class uk.gov.govuk.dwp.data.remote.model.CoreBioResponse
 -keep class uk.gov.govuk.dwp.data.remote.model.DeductionBreakdown
 -keep class uk.gov.govuk.dwp.data.remote.model.Payment
 -keep class uk.gov.govuk.dwp.data.remote.model.PaymentData
+-keep class uk.gov.govuk.dwp.data.remote.model.PaymentsQueryData
+-keep class uk.gov.govuk.dwp.data.remote.model.PaymentsQueryResponse

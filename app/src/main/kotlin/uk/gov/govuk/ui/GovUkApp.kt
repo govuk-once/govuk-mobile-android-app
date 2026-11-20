@@ -165,9 +165,11 @@ internal fun GovUkApp(
         uiState?.let {
             when (it) {
                 is AppUiState.Loading -> LoadingScreen()
+
                 is AppUiState.AppUnavailable -> AppUnavailableScreen(
                     onGoToGovUkClick = { launchUrl(Urls.GOV_UK_HOME) }
                 )
+
                 is AppUiState.DeviceOffline -> FullScreenWrapper {
                     DeviceOfflineScreen(
                         onTryAgain = { viewModel.onTryAgain() }
@@ -177,6 +179,7 @@ internal fun GovUkApp(
                 is AppUiState.ForcedUpdate -> ForcedUpdateScreen(
                     onUpdateClick = { launchUrl(Urls.PLAY_STORE) }
                 )
+
                 is AppUiState.Default -> {
                     if (it.shouldDisplayRecommendUpdate && !isRecommendUpdateSkipped) {
                         RecommendUpdateScreen(
@@ -261,6 +264,7 @@ private fun BottomNavScaffold(
             viewModel.timeOutEvent.collect {
                 when (it) {
                     AppViewModel.TimeoutEvent.WARNING -> showTimeoutWarningDialog = true
+
                     AppViewModel.TimeoutEvent.TIMEOUT -> {
                         showTimeoutWarningDialog = false
                         viewModel.onSignOut()
@@ -370,6 +374,7 @@ private fun HandleOnResumeNavigation(
                 }
                 viewModel.onResume(controller.currentDestination?.route)
             }
+
             else -> { /* Do nothing */ }
         }
     }
@@ -637,7 +642,7 @@ private fun GovUkNavHost(
                         showBrowserNotFoundAlert = true
                     }
                 },
-                topicHeader = { topicRef ->
+                topicHeader = { topicRef, onShowTopicContent ->
                     when {
                         topicRef.isDrivingTopic() && viewModel.isDvlaLinkEnabled() -> {
                             Column(
@@ -699,7 +704,8 @@ private fun GovUkNavHost(
                                 verticalArrangement = Arrangement.spacedBy(GovUkTheme.spacing.medium)
                             ) {
                                 DwpLinkHeader(
-                                    onActionClick = { navController.navigateToDwpLinkIntro() }
+                                    onActionClick = { navController.navigateToDwpLinkIntro() },
+                                    onShowTopicContent = onShowTopicContent
                                 )
                             }
                         }
@@ -728,7 +734,8 @@ private fun GovUkNavHost(
             )
 
             dwpGraph(
-                onClose = { navController.popBackStack(DWP_GRAPH_ROUTE, inclusive = true) }
+                onClose = { navController.popBackStack(DWP_GRAPH_ROUTE, inclusive = true) },
+                onLinkComplete = { navController.popBackStack(DWP_GRAPH_ROUTE, inclusive = true) }
             )
             dvlaGraph(
                 onBack = {
