@@ -1,8 +1,9 @@
 package uk.gov.govuk.govkit.date
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
 import java.time.Instant
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
 class InstantExtTest {
 
@@ -67,6 +68,12 @@ class InstantExtTest {
         assertEquals("yesterday", date.toRelativeDate(now, true))
     }
 
+    @Test
+    fun `toRelativeDate, uses current instant as default now`() {
+        val result = Instant.now().toRelativeDate()
+        assertTrue(result.startsWith("Today,"))
+    }
+
     // --- toRelativeDateTime ---
 
     @Test
@@ -85,5 +92,11 @@ class InstantExtTest {
     fun `toRelativeDateTime, older, returns formatted date with time`() {
         val date = Instant.parse("2026-07-29T09:00:00Z") // 10:00am BST
         assertEquals("29 July, 10:00am", date.toRelativeDateTime(now))
+    }
+
+    @Test
+    fun `toRelativeDateTime - uses current instant as default now`() {
+        val result = Instant.now().toRelativeDateTime()
+        assertTrue(result.startsWith("Today,"))
     }
 }

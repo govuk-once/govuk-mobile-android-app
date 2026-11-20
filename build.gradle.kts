@@ -34,7 +34,7 @@ val pendingModules = setOf(
     //":feature:topics",
     //":feature:travelalerts",
     //":feature:visited",
-    ":govkit",
+    //":govkit",
     ":notifications",
 
     // add / remove as modules become compliant
