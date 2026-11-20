@@ -1,7 +1,5 @@
 package uk.govuk.app.local.ui
 
-import android.content.Context
-import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,17 +14,14 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -43,6 +38,7 @@ import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
 import uk.gov.govuk.design.ui.extension.withAltText
 import uk.gov.govuk.design.ui.model.SectionHeadingLabelButton
 import uk.gov.govuk.design.ui.theme.GovUkTheme
+import uk.gov.govuk.govkit.accessibility.isTalkBackEnabled
 import uk.govuk.app.local.LocalWidgetUiState.LocalAuthoritySelected
 import uk.govuk.app.local.LocalWidgetUiState.NoLocalAuthority
 import uk.govuk.app.local.LocalWidgetViewModel
@@ -301,30 +297,6 @@ private fun RemoveConfirmationDialog(
         },
         containerColor = GovUkTheme.colourScheme.surfaces.alert
     )
-}
-
-@Composable
-private fun isTalkBackEnabled(): Boolean {
-    val context = LocalContext.current
-    val accessibilityManager =
-        context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-
-    var isEnabled by remember {
-        mutableStateOf(accessibilityManager.isTouchExplorationEnabled)
-    }
-
-    DisposableEffect(accessibilityManager) {
-        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled ->
-            isEnabled = enabled
-        }
-        accessibilityManager.addTouchExplorationStateChangeListener(listener)
-
-        onDispose {
-            accessibilityManager.removeTouchExplorationStateChangeListener(listener)
-        }
-    }
-
-    return isEnabled
 }
 
 @Composable
