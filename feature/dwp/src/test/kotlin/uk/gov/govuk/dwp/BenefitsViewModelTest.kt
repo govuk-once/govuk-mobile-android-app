@@ -2,17 +2,37 @@ package uk.gov.govuk.dwp
 
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.dwp.data.BenefitsRepo
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BenefitsViewModelTest {
     private val benefitsRepo = mockk<BenefitsRepo>(relaxed = true)
-    private lateinit var viewModel: BenefitsViewModel
+    private val dispatcher = StandardTestDispatcher()
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(dispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
-    fun `Init runs getBio`() = runTest {
-        viewModel = BenefitsViewModel(benefitsRepo)
+    fun `Init runs getBio`() = runTest(dispatcher) {
+        BenefitsViewModel(benefitsRepo)
+        advanceUntilIdle()
 
         coVerify(exactly = 1) {
             benefitsRepo.getCoreBio(any())
@@ -20,8 +40,9 @@ class BenefitsViewModelTest {
     }
 
     @Test
-    fun `Init runs getAwardDetails`() = runTest {
-        viewModel = BenefitsViewModel(benefitsRepo)
+    fun `Init runs getAwardDetails`() = runTest(dispatcher) {
+        BenefitsViewModel(benefitsRepo)
+        advanceUntilIdle()
 
         coVerify(exactly = 1) {
             benefitsRepo.getAwardDetails(any())
@@ -29,8 +50,9 @@ class BenefitsViewModelTest {
     }
 
     @Test
-    fun `Init runs getPaymentsQuery`() = runTest {
-        viewModel = BenefitsViewModel(benefitsRepo)
+    fun `Init runs getPaymentsQuery`() = runTest(dispatcher) {
+        BenefitsViewModel(benefitsRepo)
+        advanceUntilIdle()
 
         coVerify(exactly = 1) {
             benefitsRepo.getPaymentsQuery(any())

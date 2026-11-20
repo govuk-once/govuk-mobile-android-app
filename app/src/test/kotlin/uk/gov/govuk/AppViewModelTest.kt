@@ -49,6 +49,7 @@ import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dwp.data.DwpLinkRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -78,6 +79,7 @@ class AppViewModelTest {
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
+    private val dwpLinkRepository = mockk<DwpLinkRepo>(relaxed = true)
     private val identityRepo = mockk<IdentityRepo>(relaxed = true)
     private val messagesFeature = mockk<MessagesFeature>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)
@@ -118,6 +120,7 @@ class AppViewModelTest {
             notificationsRepo,
             dvlaRepo,
             identityRepo,
+            dwpLinkRepository,
             messagesFeature,
             context
         )
@@ -149,6 +152,7 @@ class AppViewModelTest {
             notificationsRepo,
             dvlaRepo,
             identityRepo,
+            dwpLinkRepository,
             messagesFeature,
             context
         )
@@ -180,6 +184,7 @@ class AppViewModelTest {
             notificationsRepo,
             dvlaRepo,
             identityRepo,
+            dwpLinkRepository,
             messagesFeature,
             context
         )
@@ -196,7 +201,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -220,7 +226,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -236,7 +243,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -252,7 +260,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -268,7 +277,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -284,7 +294,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -300,7 +311,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -316,7 +328,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -332,7 +345,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -348,7 +362,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -364,7 +379,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -383,7 +399,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -402,7 +419,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -423,7 +441,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -446,7 +465,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -462,7 +482,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -478,7 +499,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -617,7 +639,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -635,7 +658,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -654,7 +678,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -673,7 +698,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -700,7 +726,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -717,7 +744,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -735,7 +763,8 @@ class AppViewModelTest {
         val viewModel =
             AppViewModel(
                 timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature, localFeature,
-                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+                searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+                dwpLinkRepository, messagesFeature,
                 context
             )
 
@@ -769,6 +798,7 @@ class AppViewModelTest {
             analyticsClient.clear()
             configRepo.clearRemoteConfigValues()
             dvlaRepo.clear()
+            dwpLinkRepository.clear()
         }
 
         coVerify(exactly = 1) { identityRepo.getLinkedServices() }
@@ -799,6 +829,7 @@ class AppViewModelTest {
             chatFeature.clear()
             analyticsClient.clear()
             dvlaRepo.clear()
+            dwpLinkRepository.clear()
         }
 
         coVerify(exactly = 1) { identityRepo.getLinkedServices() }
@@ -883,7 +914,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -897,7 +929,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -940,7 +973,8 @@ class AppViewModelTest {
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
             localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo,
-            dvlaRepo, identityRepo, messagesFeature, context
+            dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature, context
         )
 
         runTest {
@@ -976,7 +1010,8 @@ class AppViewModelTest {
 
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
-            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo, messagesFeature,
+            localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo, dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature,
             context
         )
 
@@ -1026,6 +1061,7 @@ class AppViewModelTest {
             notificationsRepo,
             dvlaRepo,
             identityRepo,
+            dwpLinkRepository,
             messagesFeature,
             context
         )
@@ -1227,6 +1263,7 @@ class AppViewModelTest {
             notificationsRepo,
             dvlaRepo,
             identityRepo,
+            dwpLinkRepository,
             messagesFeature,
             context
         )
@@ -1258,7 +1295,8 @@ class AppViewModelTest {
         val viewModel = AppViewModel(
             timeoutManager, appRepo, loginRepo, termsRepo, configRepo, flagRepo, authRepo, topicsFeature,
             localFeature, searchFeature, visited, chatFeature, analyticsClient, notificationsRepo,
-            dvlaRepo, identityRepo, messagesFeature, context
+            dvlaRepo, identityRepo,
+            dwpLinkRepository, messagesFeature, context
         )
 
         viewModel.onBannerClick("http://url2")
@@ -1312,6 +1350,7 @@ class AppViewModelTest {
             notificationsRepo,
             dvlaRepo,
             identityRepo,
+            dwpLinkRepository,
             messagesFeature,
             context
         )

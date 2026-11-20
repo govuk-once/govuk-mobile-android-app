@@ -1,0 +1,13 @@
+<resources>
+    <string name="dwp_link_card_title">Add payment information</string>
+    <string name="dwp_link_card_description">Link your benefit and state pension payment information.</string>
+    <string name="dwp_intro_title">Add your benefits and state pension payment information</string>
+    <string name="dwp_intro_description">You can see information for:\n•  Attendance allowance\n•  DLA for adults\n•  ESA\n•  IS\n•  JSA\n•  Pension Credit\n•  PIP\n•  State pension payments.</string>
+    <string name="dwp_intro_description_accessible">You can see information for: Attendance allowance, Disability Living Allowance for adults, Employment and Support Allowance, Income Support, Jobseeker’s Allowance, Pension Credit, Personal Independence Payment, and State pension payments.</string>
+    <string name="dwp_intro_action">We’ll take you to your web browser to sign in.</string>
+    <string name="dwp_continue">Continue</string>
+    <string name="dwp_linking">Linking payment information</string>
+    <string name="dwp_success_title">Benefits payment information linked</string>
+    <string name="dwp_link_error">We could not link your payment information. Please try again.</string>
+    <string name="dwp_link_loading">Checking benefits account link</string>
+</resources>
