@@ -1,6 +1,5 @@
 package uk.gov.govuk.dvla.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,9 +37,14 @@ internal fun LicenceStatusCard(
             containerColor = cardBackground
         )
     ) {
-        Spacer(Modifier.height(64.dp).background(titleBackground))
+        CardListItem(
+            isFirst = true,
+            isLast = false,
+            drawDivider = titleDrawDivider,
+            background = titleBackground
+        ) {
+            Spacer(Modifier.height(64.dp))
 
-        CardListItem(isFirst = true, isLast = false, drawDivider = titleDrawDivider, background = titleBackground) {
             Title1BoldLabel(
                 text = title,
                 color = titleTextColor,
