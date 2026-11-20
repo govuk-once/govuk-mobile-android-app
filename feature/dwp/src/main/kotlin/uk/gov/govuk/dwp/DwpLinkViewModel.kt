@@ -77,19 +77,17 @@ internal class DwpLinkViewModel @Inject constructor(
             .toString()
     }
 
-    private fun handleAuthRedirect(
+    private suspend fun handleAuthRedirect(
         token: String
     ) {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading.Linking
-            linkDwpAccount(token)
-        }
+        _uiState.value = UiState.Loading.Linking
+        linkDwpAccount(token)
     }
 
     private suspend fun linkDwpAccount(
         token: String
     ) {
-        _uiState.value = when (this@DwpLinkViewModel.dwpLinkRepo.linkAccount(token)) {
+        _uiState.value = when (dwpLinkRepo.linkAccount(token)) {
             is Result.Success -> UiState.Success
             is Result.DeviceOffline -> UiState.Error.Offline
             else -> UiState.Error.Other

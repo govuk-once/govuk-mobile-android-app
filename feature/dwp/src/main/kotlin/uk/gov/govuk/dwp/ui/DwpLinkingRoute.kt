@@ -39,7 +39,7 @@ internal fun DwpLinkScreen(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // The linking operation is cancelled with the navigation entry's ViewModel when leaving.
+    // The linking operation is canceled with the navigation entry's ViewModel when leaving.
     BackHandler(onBack = onClose)
     Box(
         modifier = modifier.fillMaxSize()

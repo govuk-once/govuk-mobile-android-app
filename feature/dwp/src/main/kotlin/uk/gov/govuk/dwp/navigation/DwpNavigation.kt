@@ -1,6 +1,5 @@
 package uk.gov.govuk.dwp.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -13,12 +12,11 @@ internal const val DWP_LINK_ROUTE = "dwp_link_route"
 
 fun NavGraphBuilder.dwpGraph(
     onClose: () -> Unit,
-    modifier: Modifier = Modifier,
-    linkContent: @Composable (onClose: () -> Unit) -> Unit = { DwpLinkingRoute(onClose = it, modifier = modifier) }
+    modifier: Modifier = Modifier
 ) {
     navigation(route = DWP_GRAPH_ROUTE, startDestination = DWP_LINK_ROUTE) {
         composable(DWP_LINK_ROUTE) {
-            linkContent(onClose)
+            DwpLinkingRoute(onClose = onClose, modifier = modifier)
         }
     }
 }
