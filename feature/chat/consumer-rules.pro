@@ -8,5 +8,6 @@
 -keep class uk.gov.govuk.chat.data.remote.model.AnsweredQuestion
 -keep class uk.gov.govuk.chat.data.remote.model.Conversation
 -keep class uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest
+-keep class uk.gov.govuk.chat.data.remote.model.ConversationQuestionRequest$Serializer { <init>(); }
 -keep class uk.gov.govuk.chat.data.remote.model.Feedback
 -keep class uk.gov.govuk.chat.data.remote.model.Source

@@ -100,6 +100,45 @@ class ChatRepoTest {
     }
 
     @Test
+    fun `Ask question with suggestedPrompt creates a new conversation with suggestedPrompt`() = runTest {
+        coEvery { dataStore.conversationId() } returns null
+        coEvery { chatApi.startConversation(any()) } returns questionResponse
+        coEvery { questionResponse.isSuccessful } returns true
+        coEvery { questionResponse.body() } returns answeredQuestion
+        coEvery { answeredQuestion.conversationId } returns "123"
+
+        chatRepo.askQuestion("question", isSuggestedPrompt = true)
+
+        coVerify {
+            chatApi.startConversation(
+                ConversationQuestionRequest("question", isSuggestedPrompt = true)
+            )
+        }
+
+        coVerify(exactly = 0) {
+            chatApi.updateConversation(any(), any())
+        }
+    }
+
+    @Test
+    fun `Ask question with suggestedPrompt updates existing conversation with suggestedPrompt`() = runTest {
+        coEvery { dataStore.conversationId() } returns "123"
+
+        chatRepo.askQuestion("question", isSuggestedPrompt = true)
+
+        coVerify {
+            chatApi.updateConversation(
+                "123",
+                ConversationQuestionRequest("question", isSuggestedPrompt = true)
+            )
+        }
+
+        coVerify(exactly = 0) {
+            chatApi.startConversation(any())
+        }
+    }
+
+    @Test
     fun `Get answer retries and returns answer when api returns an answer`() = runTest {
         coEvery { chatApi.getAnswer(any(), any()) } returns answerResponse
         every { answerResponse.isSuccessful } returns true
