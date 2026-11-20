@@ -56,14 +56,31 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 
 @Composable
-fun VehiclesAndLicenceSummaryWidget(
+fun VehiclesAndLicenceSummaryWidgetRoute(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
     onDrivingCategoriesClick: () -> Unit,
     modifier: Modifier = Modifier,
     vehiclesFooter: @Composable () -> Unit = {}
 ) {
-    val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
+    VehiclesAndLicenceSummaryWidget(
+        launchBrowser = launchBrowser,
+        onVehicleDetailsClick = onVehicleDetailsClick,
+        onDrivingCategoriesClick = onDrivingCategoriesClick,
+        modifier = modifier,
+        vehiclesFooter = vehiclesFooter
+    )
+}
+
+@Composable
+internal fun VehiclesAndLicenceSummaryWidget(
+    launchBrowser: (String) -> Unit,
+    onVehicleDetailsClick: (vehicleId: Int) -> Unit,
+    onDrivingCategoriesClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    vehiclesFooter: @Composable () -> Unit = {},
+    viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
 
     Column(modifier = modifier) {

@@ -51,6 +51,12 @@ android {
         buildConfig = true
     }
 
+    packaging {
+        resources {
+            excludes += setOf("META-INF/LICENSE.md", "META-INF/LICENSE-notice.md")
+        }
+    }
+
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
@@ -83,6 +89,8 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mockk)
 
     screenshotTestImplementation(libs.screenshot.validation.api) {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")

@@ -77,7 +77,7 @@ import uk.gov.govuk.dvla.navigation.navigateToLicenceCategoryDetail
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
-import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidgetRoute
 import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
@@ -643,7 +643,7 @@ private fun GovUkNavHost(
                             )
 
                             // and vehicles/licence summary widget from DVLA module
-                            VehiclesAndLicenceSummaryWidget(
+                            VehiclesAndLicenceSummaryWidgetRoute(
                                 launchBrowser = { url ->
                                     externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
                                 },
