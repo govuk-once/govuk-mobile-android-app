@@ -5,6 +5,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
+import java.io.File
+import kotlin.io.path.createTempDirectory
+import kotlin.test.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -19,9 +22,6 @@ import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.login.data.local.LoginDataStore.Companion.REFRESH_TOKEN_EXPIRY_KEY
 import uk.gov.govuk.login.data.local.LoginDataStore.Companion.REFRESH_TOKEN_ISSUED_AT_DATE_KEY
-import java.io.File
-import kotlin.io.path.createTempDirectory
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginDataStoreTest {

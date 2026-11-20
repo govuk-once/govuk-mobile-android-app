@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -22,8 +21,8 @@ import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.util.toSpacedString
 
 enum class RegistrationPlateStyle {
-    FRONT,  // white plate
-    REAR    // yellow plate
+    FRONT, // white plate
+    REAR // yellow plate
 }
 
 @Composable
@@ -44,7 +43,6 @@ internal fun RegistrationPlate(
         RegistrationPlateStyle.REAR -> GovUkTheme.colourScheme.surfaces.registrationPlate
         RegistrationPlateStyle.FRONT -> GovUkTheme.colourScheme.surfaces.registrationPlateFront
     }
-
 
     Box(
         modifier = modifier

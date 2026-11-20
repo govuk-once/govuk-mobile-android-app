@@ -16,7 +16,9 @@ class FirebaseConfigDataSourceTest {
     private val firebaseRemoteConfig = mockk<FirebaseRemoteConfig>(relaxed = true)
     private val dataSource = FirebaseConfigDataSource(firebaseRemoteConfig)
 
-    private fun <T> mockSuccessTask(resultValue: T? = null): Task<T> {
+    private fun <T> mockSuccessTask(
+        resultValue: T? = null
+    ): Task<T> {
         val task = mockk<Task<T>>()
         every { task.isComplete } returns true
         every { task.isCanceled } returns false
@@ -25,7 +27,9 @@ class FirebaseConfigDataSourceTest {
         return task
     }
 
-    private fun <T> mockFailureTask(exception: Exception): Task<T> {
+    private fun <T> mockFailureTask(
+        exception: Exception
+    ): Task<T> {
         val task = mockk<Task<T>>()
         every { task.isComplete } returns true
         every { task.isCanceled } returns false
@@ -34,18 +38,17 @@ class FirebaseConfigDataSourceTest {
     }
 
     @Test
-    fun `Given reset succeeds, when clearRemoteValues is called, then reset and re-apply settings`() =
-        runTest {
-            every { firebaseRemoteConfig.reset() } returns mockSuccessTask(null)
+    fun `Given reset succeeds, when clearRemoteValues is called, then reset and re-apply settings`() = runTest {
+        every { firebaseRemoteConfig.reset() } returns mockSuccessTask(null)
 
-            dataSource.clearRemoteValues()
+        dataSource.clearRemoteValues()
 
-            verify(ordering = Ordering.ORDERED) {
-                firebaseRemoteConfig.reset()
-                firebaseRemoteConfig.setConfigSettingsAsync(any())
-                firebaseRemoteConfig.setDefaultsAsync(any<Int>())
-            }
+        verify(ordering = Ordering.ORDERED) {
+            firebaseRemoteConfig.reset()
+            firebaseRemoteConfig.setConfigSettingsAsync(any())
+            firebaseRemoteConfig.setDefaultsAsync(any<Int>())
         }
+    }
 
     @Test
     fun `Given reset fails, when clearRemoteValues is called, settings are still reapplied`() = runTest {
@@ -76,13 +79,12 @@ class FirebaseConfigDataSourceTest {
     }
 
     @Test
-    fun `Given fetch throws immediate exception, when fetch is called, then return false`() =
-        runTest {
-            every { firebaseRemoteConfig.fetch() } throws Exception("Exception")
+    fun `Given fetch throws immediate exception, when fetch is called, then return false`() = runTest {
+        every { firebaseRemoteConfig.fetch() } throws Exception("Exception")
 
-            val result = dataSource.fetch()
-            assertFalse(result)
-        }
+        val result = dataSource.fetch()
+        assertFalse(result)
+    }
 
     @Test
     fun `Given activate succeeds, when activate is called, then return true`() = runTest {

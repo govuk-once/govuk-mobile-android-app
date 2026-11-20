@@ -1,15 +1,12 @@
 package uk.gov.govuk.design.ui.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.gov.govuk.design.R
 
@@ -41,7 +38,7 @@ data class GovUkTypography(
 
 private val transport = FontFamily(
     Font(R.font.transport_bold, FontWeight.Bold),
-    Font(R.font.transport_light, FontWeight.Light),
+    Font(R.font.transport_light, FontWeight.Light)
 )
 
 private val dvlaVrm = FontFamily(

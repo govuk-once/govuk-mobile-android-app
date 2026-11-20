@@ -302,11 +302,11 @@ private fun RemoveConfirmationDialog(
 @Composable
 private fun NoLocalAuthorityCard(
     onClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         SectionHeadingLabel(
-            title3 = stringResource(R.string.local_widget_title),
+            title3 = stringResource(R.string.local_widget_title)
         )
 
         Row(
@@ -325,7 +325,7 @@ private fun NoLocalAuthorityCard(
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun NoLocalAuthorityPreview() {
     GovUkTheme {
@@ -335,7 +335,7 @@ internal fun NoLocalAuthorityPreview() {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun UnitaryLocalAuthorityPreview() {
     GovUkTheme {
@@ -354,7 +354,7 @@ internal fun UnitaryLocalAuthorityPreview() {
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun TwoTierLocalAuthorityPreview() {
     GovUkTheme {
