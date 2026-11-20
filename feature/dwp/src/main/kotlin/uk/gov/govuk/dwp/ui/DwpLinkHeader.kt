@@ -10,7 +10,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 import uk.gov.govuk.design.ui.component.NonTappableCard
 import uk.gov.govuk.design.ui.component.SmallVerticalSpacer
-import uk.gov.govuk.dwp.AuthLinkWidgetViewModel
+import uk.gov.govuk.dwp.DwpLinkWidgetViewModel
 import uk.gov.govuk.dwp.R
 import uk.gov.govuk.dwp.ui.component.DwpLinkCard
 
@@ -19,7 +19,7 @@ fun DwpLinkHeader(
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: AuthLinkWidgetViewModel = hiltViewModel()
+    val viewModel: DwpLinkWidgetViewModel = hiltViewModel()
     val state by viewModel.dwpState.collectAsState(initial = ServiceLinkStatus.CHECKING)
     DwpLinkHeaderContent(
         state = state,

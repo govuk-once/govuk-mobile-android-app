@@ -10,14 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import uk.gov.govuk.data.model.Result
-import uk.gov.govuk.dwp.data.AuthLinkRepo
-import uk.gov.govuk.dwp.di.AuthModule.TEMPORARY_LINKING_TOKEN
-import uk.gov.govuk.dwp.linking.data.LinkingRepo
+import uk.gov.govuk.dwp.data.DwpLinkRepo
+import uk.gov.govuk.dwp.di.DwpLinkModule.TEMPORARY_LINKING_TOKEN
 
 @HiltViewModel
-internal class AuthViewModel @Inject constructor(
-    private val authLinkRepo: AuthLinkRepo,
-    private val linkingRepo: LinkingRepo,
+internal class DwpLinkViewModel @Inject constructor(
+    private val dwpLinkRepo: DwpLinkRepo,
     @param:Named("dwp_auth_url") private val dwpAuthUrl: String
 ) : ViewModel() {
     sealed interface UiState {
@@ -52,7 +50,7 @@ internal class AuthViewModel @Inject constructor(
         _authUrlToLaunch.value = null
         _uiState.value = UiState.Loading.Auth
         viewModelScope.launch {
-            when (val result = linkingRepo.getVerification()) {
+            when (val result = dwpLinkRepo.getVerification()) {
                 is Result.Success -> {
                     if (result.value.token.isBlank()) {
                         _uiState.value = UiState.Error.Other
@@ -91,7 +89,7 @@ internal class AuthViewModel @Inject constructor(
     private suspend fun linkDwpAccount(
         token: String
     ) {
-        _uiState.value = when (this@AuthViewModel.authLinkRepo.linkAccount(token)) {
+        _uiState.value = when (this@DwpLinkViewModel.dwpLinkRepo.linkAccount(token)) {
             is Result.Success -> UiState.Success
             is Result.DeviceOffline -> UiState.Error.Offline
             else -> UiState.Error.Other

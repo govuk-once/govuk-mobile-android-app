@@ -5,7 +5,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 /** Provisional DVLA-shaped contract; confirm the path with DWP before wiring a real service. */
-internal fun interface AuthApi {
+internal fun interface DwpLinkApi {
     @POST("app/udp/v1/identity/dwp")
     suspend fun linkDwpIdentity(
         @Header("x-linking-token") token: String

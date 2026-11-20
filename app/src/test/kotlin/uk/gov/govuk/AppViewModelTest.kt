@@ -49,7 +49,7 @@ import uk.gov.govuk.data.model.Result.Error
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dwp.data.AuthLinkRepo
+import uk.gov.govuk.dwp.data.DwpLinkRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -79,7 +79,7 @@ class AppViewModelTest {
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
     private val dvlaRepo = mockk<DvlaRepo>(relaxed = true)
-    private val dwpLinkRepository = mockk<AuthLinkRepo>(relaxed = true)
+    private val dwpLinkRepository = mockk<DwpLinkRepo>(relaxed = true)
     private val identityRepo = mockk<IdentityRepo>(relaxed = true)
     private val messagesFeature = mockk<MessagesFeature>(relaxed = true)
     private val context = mockk<Context>(relaxed = true)

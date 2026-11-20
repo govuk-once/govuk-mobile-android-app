@@ -32,7 +32,7 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
-import uk.gov.govuk.dwp.data.AuthLinkRepo
+import uk.gov.govuk.dwp.data.DwpLinkRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -62,7 +62,7 @@ internal class AppViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val dvlaRepo: DvlaRepo,
     private val identityRepo: IdentityRepo,
-    private val dwpLinkRepository: AuthLinkRepo,
+    private val dwpLinkRepository: DwpLinkRepo,
     private val messagesFeature: MessagesFeature,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {

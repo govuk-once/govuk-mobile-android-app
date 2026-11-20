@@ -13,7 +13,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 
-class AuthDataStoreTest {
+class DwpDataStoreTest {
     @Test
     fun `Given an empty store, then status is unlinked`() = runTest {
         val directory = createTempDirectory().toFile()
@@ -22,7 +22,7 @@ class AuthDataStoreTest {
                 scope = backgroundScope,
                 produceFile = { File(directory, "dwp.preferences_pb") }
             )
-            assertEquals(ServiceLinkStatus.UNLINKED, AuthDataStore(preferences).linkState.first())
+            assertEquals(ServiceLinkStatus.UNLINKED, DwpDataStore(preferences).linkState.first())
         } finally {
             directory.deleteRecursively()
         }
@@ -36,7 +36,7 @@ class AuthDataStoreTest {
                 scope = backgroundScope,
                 produceFile = { File(directory, "dwp.preferences_pb") }
             )
-            val dataStore = AuthDataStore(preferences)
+            val dataStore = DwpDataStore(preferences)
             dataStore.markLinked()
             assertEquals(ServiceLinkStatus.LINKED, dataStore.linkState.first())
             dataStore.clear()
@@ -55,12 +55,12 @@ class AuthDataStoreTest {
         val secondScope = CoroutineScope(coroutineContext + Job())
         try {
             val firstStore = PreferenceDataStoreFactory.create(scope = firstScope, produceFile = { file })
-            AuthDataStore(firstStore).markLinked()
+            DwpDataStore(firstStore).markLinked()
             firstScope.coroutineContext[Job]!!.cancel()
             firstScope.coroutineContext[Job]!!.join()
 
             val reopened = PreferenceDataStoreFactory.create(scope = secondScope, produceFile = { file })
-            assertEquals(ServiceLinkStatus.LINKED, AuthDataStore(reopened).linkState.first())
+            assertEquals(ServiceLinkStatus.LINKED, DwpDataStore(reopened).linkState.first())
             assertEquals(setOf("dwp_linked"), reopened.data.first().asMap().keys.map { it.name }.toSet())
         } finally {
             firstScope.cancel()

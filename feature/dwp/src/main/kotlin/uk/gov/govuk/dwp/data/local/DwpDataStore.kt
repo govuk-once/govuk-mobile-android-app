@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import uk.gov.govuk.data.identity.model.ServiceLinkStatus
 
 @Singleton
-class AuthDataStore @Inject constructor(
+class DwpDataStore @Inject constructor(
     @param:Named("dwp_prefs") private val dataStore: DataStore<Preferences>
 ) {
     private val linkedKey = booleanPreferencesKey("dwp_linked")

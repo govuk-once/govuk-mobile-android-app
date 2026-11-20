@@ -33,7 +33,7 @@ class AuthLinkFlowTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     private var linkState by mutableStateOf(ServiceLinkStatus.UNLINKED)
-    private var screenState by mutableStateOf<AuthViewModel.UiState>(AuthViewModel.UiState.Default)
+    private var screenState by mutableStateOf<DwpLinkViewModel.UiState>(DwpLinkViewModel.UiState.Default)
     private var submissions = 0
 
     private lateinit var navController: NavHostController
@@ -60,7 +60,7 @@ class AuthLinkFlowTest {
                             onContinue = {
                                 submissions++
                                 linkState = ServiceLinkStatus.LINKED
-                                screenState = AuthViewModel.UiState.Success
+                                screenState = DwpLinkViewModel.UiState.Success
                             }
                         )
                     })

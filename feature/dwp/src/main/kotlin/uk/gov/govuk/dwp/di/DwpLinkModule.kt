@@ -16,17 +16,17 @@ import javax.inject.Named
 import javax.inject.Singleton
 import retrofit2.Response
 import uk.gov.govuk.dwp.BuildConfig
-import uk.gov.govuk.dwp.remote.AuthApi
+import uk.gov.govuk.dwp.remote.DwpLinkApi
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object AuthModule {
+internal object DwpLinkModule {
     const val TEMPORARY_LINKING_TOKEN = "temporary-dwp-linking-token"
 
     @Provides
     @Singleton
-    fun provideAuthApi(): AuthApi = AuthApi { _ ->
-        // TODO: Replace this local API binding with the authenticated Retrofit AuthApi,
+    fun provideAuthApi(): DwpLinkApi = DwpLinkApi { _ ->
+        // TODO: Replace this local API binding with the authenticated Retrofit DwpLinkApi,
         // as in DVLA's module, once the identity-linking endpoint is confirmed.
         Response.success(204, Unit)
     }
