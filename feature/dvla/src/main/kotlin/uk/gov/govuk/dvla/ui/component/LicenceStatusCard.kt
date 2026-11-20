@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
@@ -46,7 +47,10 @@ internal fun LicenceStatusCard(
         CardListItem(isFirst = false, isLast = linkText == null) {
             BodyRegularLabel(
                 text = description,
-                modifier = Modifier.padding(GovUkTheme.spacing.medium)
+                modifier = Modifier.padding(
+                    horizontal = GovUkTheme.spacing.medium,
+                    vertical = GovUkTheme.spacing.large
+                )
             )
         }
 
@@ -59,5 +63,28 @@ internal fun LicenceStatusCard(
                 style = ExternalLinkListItemStyle.Icon
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LicenceStatusCardPreview() {
+    GovUkTheme {
+        LicenceStatusCard(
+            title = "No licence",
+            description = "You do not hold a driving licence issued in England, Scotland or Wales",
+            linkText = "Visit GOV.UK"
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LicenceStatusCardWithoutLinkPreview() {
+    GovUkTheme {
+        LicenceStatusCard(
+            title = "No licence",
+            description = "You do not hold a driving licence issued in England, Scotland or Wales"
+        )
     }
 }
