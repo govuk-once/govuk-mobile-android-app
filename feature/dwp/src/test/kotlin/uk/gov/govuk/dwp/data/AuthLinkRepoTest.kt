@@ -21,7 +21,7 @@ class AuthLinkRepoTest {
     private val api = mockk<AuthApi>()
     private val authRepo = mockk<AuthRepo>()
     private val dataStore = mockk<AuthDataStore>(relaxed = true)
-    private lateinit var repo: uk.gov.govuk.dwp.data.AuthLinkRepo
+    private lateinit var repo: AuthLinkRepo
 
     @Before
     fun setup() {
