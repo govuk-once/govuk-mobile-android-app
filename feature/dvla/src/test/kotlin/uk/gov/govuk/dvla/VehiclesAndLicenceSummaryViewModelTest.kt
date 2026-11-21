@@ -357,13 +357,11 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `Given getLicenceDetails returns NotFound, when viewModel initialised, then licence state becomes NotAvailable`() =
+    fun `Given getLicenceDetails returns NotFound, when viewModel initialised, then licence state becomes NoLicence`() =
         runTest(dispatcher) {
-            val notAvailableUrl = UrlModel("https://driver-and-vehicles-account.service.gov.uk/driver_details")
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.NotFound
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
-            every { licenceMapper.notAvailableUrl(any()) } returns notAvailableUrl
 
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -376,7 +374,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             advanceUntilIdle()
 
             val currentState = viewModel.uiState.value as UiState.Default
-            assertEquals(LicenceSummaryUiState.NotAvailable(notAvailableUrl), currentState.licenceState)
+            assertEquals(LicenceSummaryUiState.NoLicence, currentState.licenceState)
         }
 
     @Test
