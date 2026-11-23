@@ -56,46 +56,46 @@ class LicenceSummaryMapperTest {
         ).licence
 
     @Test
-    fun `Given licence status is valid, then result is Success and drivingRecordUrl is populated from dvlaUrls`() {
+    fun `Given licence status is valid, then result is Success and offencesAndPointsUrl is populated from dvlaUrls`() {
         val licence = successLicence(status = LicenceStatus.VALID)
-        assertEquals(dvlaUrls.drivingRecord, licence.drivingRecordUrl)
+        assertEquals(dvlaUrls.endorsements, licence.offencesAndPoints)
     }
 
     @Test
-    fun `Given licence status is valid and expiring soon, then result is Success and drivingRecordUrl is still populated`() {
+    fun `Given licence status is valid and expiring soon, then result is Success and offencesAndPointsUrl is still populated`() {
         val licence = successLicence(status = LicenceStatus.VALID, expiryDate = LocalDate.now().plusDays(10))
-        assertEquals(dvlaUrls.drivingRecord, licence.drivingRecordUrl)
+        assertEquals(dvlaUrls.endorsements, licence.offencesAndPoints)
     }
 
     @Test
-    fun `Given licence status is valid and expiry date is in the past, then result is Success and drivingRecordUrl is still populated`() {
+    fun `Given licence status is valid and expiry date is in the past, then result is Success and offencesAndPointsUrl is still populated`() {
         val licence = successLicence(status = LicenceStatus.VALID, expiryDate = LocalDate.now().minusDays(10))
-        assertEquals(dvlaUrls.drivingRecord, licence.drivingRecordUrl)
+        assertEquals(dvlaUrls.endorsements, licence.offencesAndPoints)
     }
 
     @Test
-    fun `Given licence status is expired, then result is Success and drivingRecordUrl is null`() {
+    fun `Given licence status is expired, then result is Success and offencesAndPointsUrl is null`() {
         val licence = successLicence(status = LicenceStatus.EXPIRED)
-        assertNull(licence.drivingRecordUrl)
+        assertNull(licence.offencesAndPoints)
     }
 
     @Test
-    fun `Given dvlaUrls is null, then result is Success and drivingRecordUrl is null even when licence is valid`() {
+    fun `Given dvlaUrls is null, then result is Success and offencesAndPointsUrl is null even when licence is valid`() {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.VALID), dvlaUrls = null)
         assertTrue(result is LicenceSummaryUiState.Success)
-        assertNull((result as LicenceSummaryUiState.Success).licence.drivingRecordUrl)
+        assertNull((result as LicenceSummaryUiState.Success).licence.offencesAndPoints)
     }
 
     @Test
-    fun `Given dvlaUrls drivingRecord is blank, then result is Success and drivingRecordUrl is null even when licence is valid`() {
-        val blankUrls = dvlaUrls.copy(drivingRecord = "")
+    fun `Given dvlaUrls endorsements is blank, then result is Success and offencesAndPointsUrl is null even when licence is valid`() {
+        val blankUrls = dvlaUrls.copy(endorsements = "")
         val licence = (
             mapper.toUiModel(
                 makeLicenceDetails(status = LicenceStatus.VALID),
                 blankUrls
             ) as LicenceSummaryUiState.Success
             ).licence
-        assertNull(licence.drivingRecordUrl)
+        assertNull(licence.offencesAndPoints)
     }
 
     @Test

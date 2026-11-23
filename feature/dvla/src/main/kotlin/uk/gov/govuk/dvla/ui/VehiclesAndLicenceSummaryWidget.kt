@@ -420,12 +420,12 @@ private fun LicenceSummarySuccess(
             )
         }
 
-        licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
+        licenceSummary.offencesAndPoints?.let { offencesAndPointsUrl ->
             LargeVerticalSpacer()
 
             DrivingRecordSection(
                 onLinkClick = launchBrowser,
-                url = drivingRecordUrl,
+                url = offencesAndPointsUrl,
                 modifier = Modifier.fillMaxWidth()
             )
         }
