@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -77,6 +76,7 @@ import uk.gov.govuk.design.ui.component.InfoAlert
 import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
+import uk.gov.govuk.design.ui.component.rememberWidthAwareLazyListState
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 internal class AnalyticsEvents(
@@ -212,7 +212,7 @@ internal fun ChatScreen(
     isTalkBackActive: Boolean = isTalkBackEnabled(),
     isImeVisible: Boolean = WindowInsets.isImeVisible
 ) {
-    val listState = rememberLazyListState()
+    val listState = rememberWidthAwareLazyListState()
     val chatEntries = uiState.chatEntries.toList()
     val animationDelay = 500
     val coroutineScope = rememberCoroutineScope()
@@ -379,9 +379,16 @@ internal fun ChatScreen(
         )
     }
 
+    // Saveable so the auto scroll isn't repeated when the screen is recreated (e.g. on rotation)
+    var autoScrolledFor by rememberSaveable { mutableStateOf<String?>(null) }
+
     if (chatEntries.isNotEmpty()) {
-        val answer = chatEntries.last().second.answer
+        val (lastId, lastEntry) = chatEntries.last()
+        val answer = lastEntry.answer
         LaunchedEffect(answer) {
+            val autoScrollKey = "$lastId:${answer.isEmpty()}"
+            if (autoScrollKey == autoScrolledFor) return@LaunchedEffect
+
             if (answer.isEmpty()) {
                 // If the updated entry is the user's question then immediately scroll to the bottom
                 // wait for the loading text to fade in and then scroll to the bottom again if required
@@ -395,6 +402,7 @@ internal fun ChatScreen(
                 delay(ANIMATION_DURATION.toLong() * 2)
                 listState.animateScrollToItem(chatEntries.size + 1)
             }
+            autoScrolledFor = autoScrollKey
         }
     }
 }
