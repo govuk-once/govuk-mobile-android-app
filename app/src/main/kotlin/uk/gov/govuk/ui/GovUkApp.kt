@@ -67,6 +67,8 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.navigation.DVLA_GRAPH_ROUTE
 import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORIES_ROUTE
 import uk.gov.govuk.dvla.navigation.LICENCE_CATEGORY_DETAIL_ROUTE
+import uk.gov.govuk.dvla.navigation.VEHICLE_DETAILS_ROUTE
+import uk.gov.govuk.dvla.navigation.VEHICLE_SEARCH_RESULT_ROUTE
 import uk.gov.govuk.dvla.navigation.dvlaGraph
 import uk.gov.govuk.dvla.navigation.navigateToDrivingCategories
 import uk.gov.govuk.dvla.navigation.navigateToDvlaLink
@@ -86,12 +88,12 @@ import uk.gov.govuk.home.navigation.homeGraph
 import uk.gov.govuk.login.navigation.BIOMETRIC_SETTINGS_ROUTE
 import uk.gov.govuk.login.navigation.LOGIN_GRAPH_ROUTE
 import uk.gov.govuk.login.navigation.loginGraph
-import uk.gov.govuk.navigation.AppNavigation
-import uk.gov.govuk.navigation.TopLevelDestination
 import uk.gov.govuk.messages.navigation.MESSAGES_GRAPH_ROUTE
 import uk.gov.govuk.messages.navigation.MESSAGES_ROUTE
-import uk.gov.govuk.messages.navigation.navigateToMessages
 import uk.gov.govuk.messages.navigation.messagesGraph
+import uk.gov.govuk.messages.navigation.navigateToMessages
+import uk.gov.govuk.navigation.AppNavigation
+import uk.gov.govuk.navigation.TopLevelDestination
 import uk.gov.govuk.notifications.navigation.notificationsGraph
 import uk.gov.govuk.search.navigation.SEARCH_GRAPH_ROUTE
 import uk.gov.govuk.search.navigation.searchGraph
@@ -134,7 +136,10 @@ private val HIDE_BOTTOM_NAV_ROUTES = setOf(
 )
 
 @Composable
-internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
+internal fun GovUkApp(
+    intentFlow: Flow<Intent>,
+    appNavigation: AppNavigation
+) {
     val viewModel: AppViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val homeWidgets by viewModel.homeWidgets.collectAsState()
@@ -143,7 +148,9 @@ internal fun GovUkApp(intentFlow: Flow<Intent>, appNavigation: AppNavigation) {
     val externalLauncher = rememberBrowserLauncher(shouldShowExternalBrowser = true)
     var showBrowserNotFoundAlert by remember { mutableStateOf(false) }
 
-    fun launchUrl(url: String) {
+    fun launchUrl(
+        url: String
+    ) {
         externalLauncher.launch(url) { showBrowserNotFoundAlert = true }
     }
 
@@ -215,20 +222,30 @@ private fun BottomNavScaffold(
     val currentRoute = navBackStackEntry?.destination?.route
 
     // status & system nav bars flags
-    val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE
-            && currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
+    val isMessagesDetailRoute = currentNavParentRoute == MESSAGES_GRAPH_ROUTE &&
+        currentRoute != MESSAGES_ROUTE // Cleaner than trying to work around the Detail route having a path parameter, but still not ideal
     val isChatRoute = currentNavParentRoute == CHAT_GRAPH_ROUTE
     val isCountryListRoute = currentRoute == COUNTRY_LIST_ROUTE
     val isLicenceCategoriesRoute = currentRoute == LICENCE_CATEGORIES_ROUTE
     val isLicenceCategoryDetailRoute = currentRoute?.startsWith(LICENCE_CATEGORY_DETAIL_ROUTE) == true
+    val isVehicleDetailsRoute = currentRoute?.startsWith(VEHICLE_DETAILS_ROUTE) == true
+    val isVehicleSearchResultRoute = currentRoute?.startsWith(VEHICLE_SEARCH_RESULT_ROUTE) == true
 
     val hideStatusBarBackground = currentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
-            currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
-            isMessagesDetailRoute
+        currentNavParentRoute in TRANSPARENT_STATUS_BAR_ROUTES ||
+        isMessagesDetailRoute
     val hideBottomPadding = currentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES ||
-            currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
-    val useDarkIcons = (isChatRoute || isMessagesDetailRoute || isCountryListRoute ||
-            isLicenceCategoriesRoute || isLicenceCategoryDetailRoute) && !isSystemInDarkTheme()
+        currentNavParentRoute in EDGE_TO_EDGE_BOTTOM_ROUTES
+    val useDarkIcons = (
+        isChatRoute ||
+            isMessagesDetailRoute ||
+            isCountryListRoute ||
+            isLicenceCategoriesRoute ||
+            isLicenceCategoryDetailRoute ||
+            isVehicleDetailsRoute ||
+            isVehicleSearchResultRoute
+        ) &&
+        !isSystemInDarkTheme()
 
     var showTimeoutWarningDialog by remember { mutableStateOf(false) }
 
@@ -262,7 +279,11 @@ private fun BottomNavScaffold(
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         bottomBar = {
-            BottomNav(uiState.isChatEnabled, navController) { tabText ->
+            BottomNav(
+                uiState.isChatEnabled,
+                navController,
+                onHomeTabReselected = { appNavigation.onHomeTabReselected(navController) }
+            ) { tabText ->
                 viewModel.onTabClick(tabText)
             }
         },
@@ -289,7 +310,8 @@ private fun BottomNavScaffold(
             Column {
                 StatusBar(
                     hideBackground = hideStatusBarBackground,
-                    useDarkIcons = useDarkIcons)
+                    useDarkIcons = useDarkIcons
+                )
                 GovUkNavHost(
                     intentFlow = intentFlow,
                     viewModel = viewModel,
@@ -350,6 +372,7 @@ private fun HandleOnResumeNavigation(
 private fun BottomNav(
     isChatEnabled: Boolean,
     navController: NavHostController,
+    onHomeTabReselected: () -> Unit,
     onTabClick: (String) -> Unit
 ) {
     val topLevelDestinations = remember(isChatEnabled) {
@@ -363,9 +386,9 @@ private fun BottomNav(
     val selectedIndex = remember(topLevelDestinations, currentRoute, currentParentRoute) {
         topLevelDestinations.indexOfFirst { topLevelDestination ->
             topLevelDestination.route == currentParentRoute ||
-                    topLevelDestination.associatedRoutes.any {
-                        currentRoute?.startsWith(it) == true
-                    }
+                topLevelDestination.associatedRoutes.any {
+                    currentRoute?.startsWith(it) == true
+                }
         }
     }
 
@@ -385,22 +408,27 @@ private fun BottomNav(
             ) {
                 topLevelDestinations.forEachIndexed { index, destination ->
                     val tabText = stringResource(destination.stringResId)
+                    val isSelected = index == selectedIndex
 
                     NavigationBarItem(
-                        selected = index == selectedIndex,
+                        selected = isSelected,
                         onClick = {
                             onTabClick(tabText)
 
-                            navController.navigate(destination.route) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
-                                popUpTo(TopLevelDestination.Home.route) {
-                                    saveState = true
-                                }
+                            if (isSelected && destination is TopLevelDestination.Home) {
+                                onHomeTabReselected()
+                            } else {
+                                navController.navigate(destination.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    popUpTo(TopLevelDestination.Home.route) {
+                                        saveState = true
+                                    }
 
-                                launchSingleTop = true
-                                restoreState = true
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = {
@@ -419,7 +447,7 @@ private fun BottomNav(
                                 selectedTextColor = GovUkTheme.colourScheme.textAndIcons.link,
                                 indicatorColor = GovUkTheme.colourScheme.surfaces.primary,
                                 unselectedIconColor = GovUkTheme.colourScheme.textAndIcons.secondary,
-                                unselectedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary,
+                                unselectedTextColor = GovUkTheme.colourScheme.textAndIcons.secondary
                             )
                     )
                 }
@@ -585,14 +613,14 @@ private fun GovUkNavHost(
                         SearchWidget(
                             onClick = { text ->
                                 onWidgetClick(text, null)
-                                // TODO - Android A/A test 10-26 - remove when the test has finished
-                                viewModel.onSearchWidgetClick()
                                 navController.navigate(SEARCH_GRAPH_ROUTE)
                             },
                             modifier = modifier
                         )
                     }
-                } else null,
+                } else {
+                    null
+                },
                 transitionOverrideRoutes = listOf(SEARCH_GRAPH_ROUTE)
             )
             topicsGraph(
@@ -655,7 +683,8 @@ private fun GovUkNavHost(
             )
             searchGraph(
                 navController,
-                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } })
+                launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } }
+            )
             visitedGraph(
                 navController = navController,
                 launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
@@ -705,14 +734,15 @@ private fun GovUkNavHost(
                 navController = navController,
                 launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
                 appVersion = BuildConfig.VERSION_NAME_USER_FACING,
-                modifier = Modifier.padding(paddingValues),
+                modifier = Modifier.padding(paddingValues)
             )
         }
 
         messagesGraph(
             navController,
             launchBrowser = { url -> browserLauncher.launch(url) { showBrowserNotFoundAlert = true } },
-            modifier = Modifier.padding(paddingValues))
+            modifier = Modifier.padding(paddingValues)
+        )
         settingsGraph(
             navController = navController,
             onBiometricsClick = { navController.navigate(BIOMETRIC_SETTINGS_ROUTE) },
@@ -778,5 +808,3 @@ private fun BrowserNotFoundAlert(
         onDismiss = onDismiss
     )
 }
-
-

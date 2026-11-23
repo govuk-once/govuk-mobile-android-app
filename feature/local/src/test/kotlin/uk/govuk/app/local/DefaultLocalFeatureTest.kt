@@ -52,5 +52,4 @@ class DefaultLocalFeatureTest {
             coVerify { localRepo.clear() }
         }
     }
-
 }
