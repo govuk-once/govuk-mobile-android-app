@@ -49,7 +49,10 @@ internal fun ChatEntry(
 ) {
     Column(modifier = modifier) {
         MediumVerticalSpacer()
-        Question(question = chatEntry.question)
+        Question(
+            question = chatEntry.question,
+            onCopyText = onCopyText
+        )
         MediumVerticalSpacer()
         AnimatedChatEntry(
             chatEntry = chatEntry,

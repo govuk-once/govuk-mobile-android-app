@@ -3,6 +3,8 @@ package uk.gov.govuk.chat.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -218,6 +220,7 @@ internal fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val copiedText = stringResource(R.string.copied_text)
     val headerFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(uiState.isPiiError) {
@@ -302,6 +305,10 @@ internal fun ChatScreen(
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             val clip = ClipData.newPlainText("Markdown content", text)
                             clipboard.setPrimaryClip(clip)
+                            // Android 13+ shows its own clipboard confirmation
+                            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                                Toast.makeText(context, copiedText, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     )
 

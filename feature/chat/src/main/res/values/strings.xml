@@ -26,6 +26,7 @@
     <string name="bot_sources_list_description">GOV.UK pages used in this answer</string>
     <string name="sources_open_in_text">opens in web browser</string>
     <string name="copy_text">Copy</string>
+    <string name="copied_text">Copied</string>
     <string name="error_page_header">There’s a problem</string>
     <string name="error_page_sub_text">There’s a problem with GOV.UK Chat.</string>
     <string name="error_page_additional_text_intro">Try again later or return to the</string>
