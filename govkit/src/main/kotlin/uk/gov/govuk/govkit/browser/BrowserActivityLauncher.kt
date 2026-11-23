@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:filename")
-
 package uk.gov.govuk.govkit.browser
 
 import android.content.ActivityNotFoundException
