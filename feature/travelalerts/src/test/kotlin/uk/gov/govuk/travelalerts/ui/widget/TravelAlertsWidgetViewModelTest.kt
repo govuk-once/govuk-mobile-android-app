@@ -1,6 +1,7 @@
 package uk.gov.govuk.travelalerts.ui.widget
 
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -120,6 +121,17 @@ class TravelAlertsWidgetViewModelTest {
         viewModel.onPageView()
 
         assertTrue(viewModel.uiState.value.content is TravelAlertsWidgetViewModel.State.Error)
+    }
+
+    @Test
+    fun `Given page view, then both groups and countries are fetched`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+
+        viewModel.onPageView()
+
+        coVerify { travelAlertsRepo.getGroups() }
+        coVerify { travelAlertsRepo.getCountries() }
     }
 
     @Test

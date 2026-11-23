@@ -112,7 +112,9 @@ internal fun VisitedItemsPreview() {
     )
     GovUkTheme {
         VisitedItems(
-            items, {}, { _, _ -> }
+            items,
+            {},
+            { _, _ -> }
         )
     }
 }

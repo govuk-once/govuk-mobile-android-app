@@ -281,7 +281,11 @@ private fun BottomNavScaffold(
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         bottomBar = {
-            BottomNav(uiState.isChatEnabled, navController) { tabText ->
+            BottomNav(
+                uiState.isChatEnabled,
+                navController,
+                onHomeTabReselected = { appNavigation.onHomeTabReselected(navController) }
+            ) { tabText ->
                 viewModel.onTabClick(tabText)
             }
         },
@@ -370,6 +374,7 @@ private fun HandleOnResumeNavigation(
 private fun BottomNav(
     isChatEnabled: Boolean,
     navController: NavHostController,
+    onHomeTabReselected: () -> Unit,
     onTabClick: (String) -> Unit
 ) {
     val topLevelDestinations = remember(isChatEnabled) {
@@ -405,22 +410,27 @@ private fun BottomNav(
             ) {
                 topLevelDestinations.forEachIndexed { index, destination ->
                     val tabText = stringResource(destination.stringResId)
+                    val isSelected = index == selectedIndex
 
                     NavigationBarItem(
-                        selected = index == selectedIndex,
+                        selected = isSelected,
                         onClick = {
                             onTabClick(tabText)
 
-                            navController.navigate(destination.route) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
-                                popUpTo(TopLevelDestination.Home.route) {
-                                    saveState = true
-                                }
+                            if (isSelected && destination is TopLevelDestination.Home) {
+                                onHomeTabReselected()
+                            } else {
+                                navController.navigate(destination.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    popUpTo(TopLevelDestination.Home.route) {
+                                        saveState = true
+                                    }
 
-                                launchSingleTop = true
-                                restoreState = true
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = {

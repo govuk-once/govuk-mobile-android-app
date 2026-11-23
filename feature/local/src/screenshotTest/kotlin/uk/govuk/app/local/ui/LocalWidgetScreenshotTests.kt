@@ -25,4 +25,32 @@ internal class LocalWidgetScreenshotTests {
     fun TwoTierLocalAuthorityScreenshots() {
         TwoTierLocalAuthorityPreview()
     }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun EditMenuScreenshots() {
+        EditMenuPreview()
+    }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun EditMenuTalkBackScreenshots() {
+        EditMenuTalkBackPreview()
+    }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun UnitaryRemoveConfirmationDialogScreenshots() {
+        UnitaryRemoveConfirmationDialogPreview()
+    }
+
+    @PreviewTest
+    @PreviewLightDark
+    @Composable
+    fun TwoTierRemoveConfirmationDialogScreenshots() {
+        TwoTierRemoveConfirmationDialogPreview()
+    }
 }

@@ -1,7 +1,5 @@
 package uk.gov.govuk.dvla.ui.component
 
-import android.content.Context
-import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,14 +8,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -28,6 +24,7 @@ import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.ui.model.OverflowMenuItem
+import uk.gov.govuk.govkit.accessibility.isTalkBackEnabled
 
 @Composable
 internal fun OverflowMenu(
@@ -99,28 +96,4 @@ private fun OverflowMenuItemRow(
             textColor = GovUkTheme.colourScheme.textAndIcons.primary
         )
     )
-}
-
-@Composable
-private fun isTalkBackEnabled(): Boolean {
-    val context = LocalContext.current
-    val accessibilityManager =
-        context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-
-    var isEnabled by remember {
-        mutableStateOf(accessibilityManager.isTouchExplorationEnabled)
-    }
-
-    DisposableEffect(accessibilityManager) {
-        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled ->
-            isEnabled = enabled
-        }
-        accessibilityManager.addTouchExplorationStateChangeListener(listener)
-
-        onDispose {
-            accessibilityManager.removeTouchExplorationStateChangeListener(listener)
-        }
-    }
-
-    return isEnabled
 }
