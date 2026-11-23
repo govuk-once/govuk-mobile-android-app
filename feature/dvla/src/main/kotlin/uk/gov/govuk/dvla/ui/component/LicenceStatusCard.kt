@@ -17,7 +17,6 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
-import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -70,8 +69,7 @@ internal fun LicenceStatusCard(
                 title = text,
                 onClick = { onLinkClick(text) },
                 isFirst = false,
-                isLast = true,
-                style = ExternalLinkListItemStyle.Icon
+                isLast = true
             )
         }
     }
