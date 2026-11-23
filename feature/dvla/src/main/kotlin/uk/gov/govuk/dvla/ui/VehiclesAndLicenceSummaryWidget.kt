@@ -37,7 +37,6 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.VehiclesAndLicenceSummaryViewModel
 import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
-import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard

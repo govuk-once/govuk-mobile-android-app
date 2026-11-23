@@ -93,16 +93,16 @@ class FlagRepo @Inject constructor(
         )
 
     fun isMessagesEnabled(): Boolean = isEnabled(
-            debugEnabled = debugEnabled,
-            debugFlag = debugFlags.isMessagesEnabled,
-            remoteFlag = configRepo.isMessagesEnabled
-        )
+        debugEnabled = debugEnabled,
+        debugFlag = debugFlags.isMessagesEnabled,
+        remoteFlag = configRepo.isMessagesEnabled
+    )
 
     fun isTravelAlertsEnabled(): Boolean = isEnabled(
-            debugEnabled = debugEnabled,
-            debugFlag = debugFlags.isTravelAlertsEnabled,
-            remoteFlag = configRepo.isTravelAlertsEnabled
-        )
+        debugEnabled = debugEnabled,
+        debugFlag = debugFlags.isTravelAlertsEnabled,
+        remoteFlag = configRepo.isTravelAlertsEnabled
+    )
 
     fun isQuarterlySurveyEnabled(): Boolean = isEnabled(
         debugEnabled = debugEnabled,
