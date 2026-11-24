@@ -727,7 +727,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
 
             verify(exactly = 1) {
                 analyticsClient.screenView(
-                    screenClass = "RevokedMedicalLicenceScreen",
+                    screenClass = "LicenceRevokedForMedicalReasonsScreen",
                     screenName = "Revoked",
                     title = "Revoked"
                 )
