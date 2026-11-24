@@ -37,7 +37,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         private const val SECTION_DRIVER_ACCOUNT = "Driver account"
         private const val ACTION_COPY = "Copy"
         private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
-        private const val SCREEN_CLASS = "RevokedMedicalLicenceScreen"
+        private const val SCREEN_CLASS = "LicenceRevokedForMedicalReasonsScreen"
         private const val SCREEN_NAME = "Revoked"
         private const val SCREEN_TITLE = "Revoked"
     }
@@ -155,7 +155,7 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         )
     }
 
-    fun onRevokedMedicalLicencePageView() {
+    fun onLicenceRevokedForMedicalReasonsPageView() {
         analyticsClient.screenView(
             screenClass = SCREEN_CLASS,
             screenName = SCREEN_NAME,

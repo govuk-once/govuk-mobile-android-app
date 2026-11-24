@@ -210,7 +210,7 @@ internal fun VehiclesAndLicenceSummaryWidget(
                                 viewModel.onButtonClicked(text)
                                 onDrivingCategoriesClick()
                             },
-                            onPageView = { viewModel.onRevokedMedicalLicencePageView() },
+                            onPageView = { viewModel.onLicenceRevokedForMedicalReasonsPageView() },
                             modifier = modifier
                         )
                     }

@@ -200,7 +200,7 @@ class LicenceSummaryMapperTest {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED_FOR_MEDICAL_REASONS), dvlaUrls)
         assertEquals(
             dvlaUrls.reapplyForLicenceHealthCondition,
-            (result as LicenceSummaryUiState.RevokedMedicalLicence).url.originalUrl
+            (result as LicenceSummaryUiState.LicenceRevokedForMedicalReasons).url.originalUrl
         )
     }
 
@@ -209,7 +209,7 @@ class LicenceSummaryMapperTest {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED_FOR_MEDICAL_REASONS), dvlaUrls = null)
         assertEquals(
             Urls.GOV_UK_HOME,
-            (result as LicenceSummaryUiState.RevokedMedicalLicence).url.originalUrl
+            (result as LicenceSummaryUiState.LicenceRevokedForMedicalReasons).url.originalUrl
         )
     }
 
@@ -219,7 +219,7 @@ class LicenceSummaryMapperTest {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED_FOR_MEDICAL_REASONS), blankUrls)
         assertEquals(
             Urls.GOV_UK_HOME,
-            (result as LicenceSummaryUiState.RevokedMedicalLicence).url.originalUrl
+            (result as LicenceSummaryUiState.LicenceRevokedForMedicalReasons).url.originalUrl
         )
     }
 }

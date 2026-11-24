@@ -723,7 +723,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
             advanceUntilIdle()
 
-            viewModel.onRevokedMedicalLicencePageView()
+            viewModel.onLicenceRevokedForMedicalReasonsPageView()
             advanceUntilIdle()
 
             verify(exactly = 1) {
