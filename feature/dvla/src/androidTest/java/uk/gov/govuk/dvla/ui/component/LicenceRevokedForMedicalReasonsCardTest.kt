@@ -15,7 +15,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @RunWith(AndroidJUnit4::class)
-class RevokedMedicalLicenceCardTest {
+class LicenceRevokedForMedicalReasonsCardTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
