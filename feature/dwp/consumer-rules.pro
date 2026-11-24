@@ -10,9 +10,7 @@
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardBenefitData
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardBreakdown
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardData
--keep class uk.gov.govuk.dwp.data.remote.model.AwardDetail
 -keep class uk.gov.govuk.dwp.data.remote.model.AwardDetailData
--keep class uk.gov.govuk.dwp.data.remote.model.Bio
 -keep class uk.gov.govuk.dwp.data.remote.model.BioData
 -keep class uk.gov.govuk.dwp.data.remote.model.DeductionBreakdown
 -keep class uk.gov.govuk.dwp.data.remote.model.Payment

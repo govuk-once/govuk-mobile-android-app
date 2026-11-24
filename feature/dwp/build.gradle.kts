@@ -21,6 +21,7 @@ android {
 
         buildConfigField("String", "PAYMENTS_BASE_URL", "\"http://payment.localhost:8080/\"")
         buildConfigField("String", "PERSONAL_BASE_URL", "\"http://personal.localhost:8080/\"")
+        buildConfigField("String", "DWP_AUTH_URL", "\"http://dwp-auth.localhost\"")
     }
 
     buildTypes {
@@ -80,5 +81,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
     testImplementation(kotlin("test"))
 }

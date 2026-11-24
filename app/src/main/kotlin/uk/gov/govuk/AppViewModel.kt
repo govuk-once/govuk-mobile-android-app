@@ -32,6 +32,7 @@ import uk.gov.govuk.data.model.Result.DeviceOffline
 import uk.gov.govuk.data.model.Result.InvalidSignature
 import uk.gov.govuk.data.model.Result.Success
 import uk.gov.govuk.dvla.data.DvlaRepo
+import uk.gov.govuk.dwp.data.DwpLinkRepo
 import uk.gov.govuk.login.data.LoginRepo
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.notifications.data.NotificationsRepo
@@ -61,6 +62,7 @@ internal class AppViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val dvlaRepo: DvlaRepo,
     private val identityRepo: IdentityRepo,
+    private val dwpLinkRepository: DwpLinkRepo,
     private val messagesFeature: MessagesFeature,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -154,8 +156,11 @@ internal class AppViewModel @Inject constructor(
                     }.collect()
                 }
             }
+
             is InvalidSignature -> _uiState.value = AppUiState.ForcedUpdate
+
             is DeviceOffline -> _uiState.value = AppUiState.DeviceOffline
+
             else -> _uiState.value = AppUiState.AppUnavailable
         }
     }
@@ -202,6 +207,7 @@ internal class AppViewModel @Inject constructor(
                 analyticsClient.clear()
                 configRepo.clearRemoteConfigValues()
                 dvlaRepo.clear()
+                dwpLinkRepository.clear()
             }
 
             // check dvla link state after login
