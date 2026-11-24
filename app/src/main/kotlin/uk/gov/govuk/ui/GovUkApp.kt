@@ -78,6 +78,7 @@ import uk.gov.govuk.dvla.navigation.navigateToVehicleDetails
 import uk.gov.govuk.dvla.navigation.navigateToVehicleDetailsByRegistration
 import uk.gov.govuk.dvla.ui.DvlaLinkHeader
 import uk.gov.govuk.dvla.ui.VehiclesAndLicenceSummaryWidget
+import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
 import uk.gov.govuk.home.navigation.HOME_CONTAINER_ROUTE
@@ -649,17 +650,14 @@ private fun GovUkNavHost(
                                 onVehicleDetailsClick = { vehicleId ->
                                     navController.navigateToVehicleDetails(vehicleId)
                                 },
-                                onDrivingCategoriesClick = { navController.navigateToDrivingCategories() }
-
-                                // Commenting out for 1.11 DVLA private beta release
-
-//                                vehiclesFooter = {
-//                                    CheckVehicleWidget(
-//                                        onVehicleFound = { reg ->
-//                                            navController.navigateToVehicleDetailsByRegistration(reg)
-//                                        }
-//                                    )
-//                                }
+                                onDrivingCategoriesClick = { navController.navigateToDrivingCategories() },
+                                vehiclesFooter = {
+                                    CheckVehicleWidget(
+                                        onVehicleFound = { reg ->
+                                            navController.navigateToVehicleDetailsByRegistration(reg)
+                                        }
+                                    )
+                                }
                             )
                         }
                     } else if (topicRef.isTravelTopic() && viewModel.isTravelAlertsEnabled()) {
