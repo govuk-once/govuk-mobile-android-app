@@ -210,6 +210,7 @@ internal fun VehiclesAndLicenceSummaryWidget(
                                 viewModel.onButtonClicked(text)
                                 onDrivingCategoriesClick()
                             },
+                            onPageView = { viewModel.onRevokedMedicalLicencePageView() },
                             modifier = modifier
                         )
                     }
@@ -264,6 +265,7 @@ private fun LicenceViewContent(
     onMenuItemClick: (OverflowMenuItem) -> Unit,
     onLicenceNumberLongClick: (String) -> Unit,
     onCategoriesClick: (text: String) -> Unit,
+    onPageView: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (licenceState) {
@@ -279,6 +281,7 @@ private fun LicenceViewContent(
 
         is LicenceSummaryUiState.RevokedMedicalLicence -> RevokedMedicalLicenceCard(
             onClick = { text -> launchBrowser(text, licenceState.url) },
+            onPageView = onPageView,
             modifier = modifier
         )
 

@@ -707,4 +707,30 @@ class VehiclesAndLicenceSummaryViewModelTest {
                 )
             }
         }
+
+    @Test
+    fun `Given licence is revoked for medical reasons, when onRevokedMedicalLicencePageView is called, then screen view analytics event is fired`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
+            )
+            advanceUntilIdle()
+
+            viewModel.onRevokedMedicalLicencePageView()
+            advanceUntilIdle()
+
+            verify(exactly = 1) {
+                analyticsClient.screenView(
+                    screenClass = "RevokedMedicalLicenceScreen",
+                    screenName = "Revoked",
+                    title = "Revoked"
+                )
+            }
+        }
 }

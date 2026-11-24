@@ -37,6 +37,9 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
         private const val SECTION_DRIVER_ACCOUNT = "Driver account"
         private const val ACTION_COPY = "Copy"
         private const val ANALYTICS_EVENT_CLIPBOARD_COPY = "Copy to clipboard"
+        private const val SCREEN_CLASS = "RevokedMedicalLicenceScreen"
+        private const val SCREEN_NAME = "Revoked"
+        private const val SCREEN_TITLE = "Revoked"
     }
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Hidden)
@@ -149,6 +152,14 @@ internal class VehiclesAndLicenceSummaryViewModel @Inject constructor(
             text = ANALYTICS_EVENT_CLIPBOARD_COPY,
             section = SECTION_DRIVER_ACCOUNT,
             action = ACTION_COPY
+        )
+    }
+
+    fun onRevokedMedicalLicencePageView() {
+        analyticsClient.screenView(
+            screenClass = SCREEN_CLASS,
+            screenName = SCREEN_NAME,
+            title = SCREEN_TITLE
         )
     }
 
