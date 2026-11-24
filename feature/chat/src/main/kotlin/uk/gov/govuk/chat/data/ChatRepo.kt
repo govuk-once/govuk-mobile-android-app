@@ -51,7 +51,7 @@ internal class ChatRepo @Inject constructor(
     ): ChatResult<AnsweredQuestion> {
         val requestBody = ConversationQuestionRequest(
             userQuestion = question,
-            isSuggestedPrompt = isSuggestedPrompt
+            suggestedPrompt = if (isSuggestedPrompt) true else null
         )
         val conversationId = dataStore.conversationId()
         return if (conversationId != null) {

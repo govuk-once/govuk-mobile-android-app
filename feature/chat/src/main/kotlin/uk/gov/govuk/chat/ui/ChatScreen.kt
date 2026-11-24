@@ -92,7 +92,7 @@ internal class AnalyticsEvents(
 
 internal class UiEvents(
     val onQuestionUpdated: (String) -> Unit,
-    val onSubmit: (String, Boolean) -> Unit,
+    val onSubmit: (question: String, isSuggestedPrompt: Boolean) -> Unit,
     val onClear: () -> Unit,
     val onFeedbackGiven: (String, String, String) -> Unit,
     val onFeedbackClick: (String, String, String) -> Unit
@@ -169,7 +169,7 @@ internal fun ChatRoute(
                             viewModel.onQuestionUpdated(question)
                         },
                         onSubmit = { question, isSuggestedPrompt ->
-                            viewModel.onSubmit(question, isSuggestedPrompt)
+                            viewModel.onSubmit(question = question, isSuggestedPrompt = isSuggestedPrompt)
                         },
                         onClear = {
                             viewModel.clearConversation()

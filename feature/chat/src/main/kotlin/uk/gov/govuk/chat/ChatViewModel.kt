@@ -173,7 +173,7 @@ internal class ChatViewModel @Inject constructor(
 
     fun onSubmit(
         question: String,
-        isSuggestedPrompt: Boolean = false
+        isSuggestedPrompt: Boolean
     ) {
         if (askQuestionJob?.isActive == true) return
 
@@ -184,7 +184,11 @@ internal class ChatViewModel @Inject constructor(
             askQuestionJob = viewModelScope.launch {
                 _uiState.updateDefault { it.copy(isLoading = true) }
 
-                handleChatResult(chatRepo.askQuestion(question.trim(), isSuggestedPrompt)) { answeredQuestion ->
+                val result = chatRepo.askQuestion(
+                    question = question.trim(),
+                    isSuggestedPrompt = isSuggestedPrompt
+                )
+                handleChatResult(result) { answeredQuestion ->
                     addChatEntry(
                         questionId = answeredQuestion.id,
                         question = answeredQuestion.message,

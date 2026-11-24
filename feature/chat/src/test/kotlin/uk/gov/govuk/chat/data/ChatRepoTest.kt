@@ -111,7 +111,7 @@ class ChatRepoTest {
 
         coVerify {
             chatApi.startConversation(
-                ConversationQuestionRequest("question", isSuggestedPrompt = true)
+                ConversationQuestionRequest("question", suggestedPrompt = true)
             )
         }
 
@@ -129,7 +129,7 @@ class ChatRepoTest {
         coVerify {
             chatApi.updateConversation(
                 "123",
-                ConversationQuestionRequest("question", isSuggestedPrompt = true)
+                ConversationQuestionRequest("question", suggestedPrompt = true)
             )
         }
 
