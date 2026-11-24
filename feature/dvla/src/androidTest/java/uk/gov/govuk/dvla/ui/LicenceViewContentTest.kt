@@ -23,10 +23,6 @@ class LicenceViewContentTest {
 
     private val revokedTitle = getString(R.string.licence_revoked_medical_title)
     private val revokedLinkText = getString(R.string.licence_revoked_medical_link_text)
-    private val notAvailableTitle = getString(R.string.licence_not_available_title)
-    private val notAvailableLinkText = getString(R.string.licence_not_available_link_text)
-    private val noLicenceTitle = getString(R.string.licence_no_licence_title)
-    private val errorLinkText = getString(R.string.licence_summary_loading_error_link_text)
 
     @Test
     fun given_revoked_medical_licence_state_revoked_card_is_displayed() {
@@ -47,7 +43,6 @@ class LicenceViewContentTest {
 
         composeTestRule.onNodeWithText(revokedTitle).assertIsDisplayed()
     }
-
 
     @Test
     fun given_revoked_medical_state_when_link_clicked_launchBrowser_called_with_url() {
@@ -74,9 +69,7 @@ class LicenceViewContentTest {
         assertEquals(revokedUrl, launchedUrl)
     }
 
-    private fun getString(@StringRes id: Int): String =
-        InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
-
-
-
+    private fun getString(
+        @StringRes id: Int
+    ): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 }

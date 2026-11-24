@@ -74,9 +74,9 @@ class RevokedMedicalLicenceCardTest {
             GovUkTheme {
                 LicenceRevokedForMedicalReasonsCard(
                     onClick = { text ->
-                    clickedText =
-                        text
-                },
+                        clickedText =
+                            text
+                    },
                     onPageView = {}
                 )
             }

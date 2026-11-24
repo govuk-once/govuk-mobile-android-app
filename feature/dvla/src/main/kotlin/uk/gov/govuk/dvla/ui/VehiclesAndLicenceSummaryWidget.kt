@@ -40,9 +40,9 @@ import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
+import uk.gov.govuk.dvla.ui.component.LicenceRevokedForMedicalReasonsCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.NoLicenceCard
-import uk.gov.govuk.dvla.ui.component.LicenceRevokedForMedicalReasonsCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
