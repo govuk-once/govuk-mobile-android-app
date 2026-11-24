@@ -7,14 +7,18 @@ import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.visited.data.model.VisitedItem
 
 internal fun interface RealmVisitedReader {
-    suspend fun read(block: suspend (List<VisitedItem>) -> Unit)
+    suspend fun read(
+        block: suspend (List<VisitedItem>) -> Unit
+    )
 }
 
 internal class DefaultRealmVisitedReader(
     private val realmEncryptionHelper: RealmEncryptionHelper
 ) : RealmVisitedReader {
 
-    override suspend fun read(block: suspend (List<VisitedItem>) -> Unit) {
+    override suspend fun read(
+        block: suspend (List<VisitedItem>) -> Unit
+    ) {
         val config = RealmConfiguration.Builder(schema = setOf(VisitedItem::class))
             .name("visited")
             .schemaVersion(1)

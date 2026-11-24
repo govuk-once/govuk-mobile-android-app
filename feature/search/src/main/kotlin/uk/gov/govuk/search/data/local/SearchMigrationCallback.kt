@@ -10,7 +10,9 @@ internal class SearchMigrationCallback(
     private val analyticsClient: AnalyticsClient
 ) : RoomDatabase.Callback() {
 
-    override fun onOpen(db: SupportSQLiteDatabase) {
+    override fun onOpen(
+        db: SupportSQLiteDatabase
+    ) {
         try {
             runBlocking {
                 reader.read { items ->

@@ -3,7 +3,6 @@ package uk.gov.govuk.chat.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.view.accessibility.AccessibilityManager
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -63,7 +62,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import uk.gov.govuk.chat.BuildConfig
 import uk.gov.govuk.chat.ChatUiState
 import uk.gov.govuk.chat.ChatViewModel
 import uk.gov.govuk.chat.R
@@ -71,6 +69,7 @@ import uk.gov.govuk.chat.domain.Analytics
 import uk.gov.govuk.chat.ui.component.ChatEntry
 import uk.gov.govuk.chat.ui.component.ChatInput
 import uk.gov.govuk.chat.ui.component.IntroMessages
+import uk.gov.govuk.chat.ui.model.ChatEntry as ChatEntryModel
 import uk.gov.govuk.config.data.remote.model.ChatUrls
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.InfoAlert
@@ -78,7 +77,7 @@ import uk.gov.govuk.design.ui.component.RunOnceLaunchedEffect
 import uk.gov.govuk.design.ui.component.SmallHorizontalSpacer
 import uk.gov.govuk.design.ui.component.Title2BoldLabel
 import uk.gov.govuk.design.ui.theme.GovUkTheme
-import uk.gov.govuk.chat.ui.model.ChatEntry as ChatEntryModel
+import uk.gov.govuk.govkit.accessibility.isTalkBackEnabled
 
 internal class AnalyticsEvents(
     val onPageView: (String, String, String) -> Unit,
@@ -307,7 +306,7 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    if (item == chatEntries.last() && BuildConfig.ANIMATED_FEEDBACK_ENABLED) {
+                    if (item == chatEntries.last()) {
                         AnimatedFeedback(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
@@ -424,7 +423,7 @@ private fun AnimatedFeedback(
 
     // Set when the survey is tapped
     var surveyLinkClicked by rememberSaveable(chatEntry.id) {
-        mutableStateOf(false)
+        mutableStateOf(chatEntry.feedbackReaction != null)
     }
 
     val positiveReaction = stringResource(R.string.chat_feedback_api_post_reaction_positive)
@@ -496,19 +495,19 @@ private fun AnimatedFeedback(
     AnimatedVisibility(
         visible = showFeedback,
         enter =
-            fadeIn(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION),
-                initialAlpha = 0f
-            ) + slideInVertically(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION),
-                initialOffsetY = { 16 }
-            ),
+        fadeIn(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION),
+            initialAlpha = 0f
+        ) + slideInVertically(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION),
+            initialOffsetY = { 16 }
+        ),
         exit =
-            fadeOut(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION)
-            ) + slideOutVertically(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION)
-            ),
+        fadeOut(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
+        ) + slideOutVertically(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
+        ),
         modifier = modifier
     ) {
         when (feedbackSelection) {
@@ -643,7 +642,7 @@ private fun FeedbackLink(
         Icon(
             painter = painterResource(icon),
             contentDescription = contentDescription,
-            tint = GovUkTheme.colourScheme.textAndIcons.secondary,
+            tint = GovUkTheme.colourScheme.textAndIcons.secondary
         )
 
         SmallHorizontalSpacer()
@@ -692,34 +691,10 @@ private fun FeedbackThankYou(
     }
 }
 
-@Composable
-private fun isTalkBackEnabled(): Boolean {
-    val context = LocalContext.current
-    val accessibilityManager =
-        context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-
-    var isEnabled by remember {
-        mutableStateOf(accessibilityManager.isTouchExplorationEnabled)
-    }
-
-    DisposableEffect(accessibilityManager) {
-        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled ->
-            isEnabled = enabled
-        }
-        accessibilityManager.addTouchExplorationStateChangeListener(listener)
-
-        onDispose {
-            accessibilityManager.removeTouchExplorationStateChangeListener(listener)
-        }
-    }
-
-    return isEnabled
-}
-
 private fun analyticsEvents() = AnalyticsEvents(
     onPageView = { _, _, _ -> },
     onFunctionActionItemClicked = { _, _, _ -> },
-    onNavigationActionItemClicked = { _, _ ->  },
+    onNavigationActionItemClicked = { _, _ -> },
     onQuestionSubmit = { },
     onMarkdownLinkClicked = { _, _ -> },
     onSourcesExpanded = { },
@@ -750,4 +725,3 @@ internal fun ChatScreenPreview() {
         )
     }
 }
-

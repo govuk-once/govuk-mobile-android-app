@@ -96,7 +96,7 @@ class TopicsWidgetViewModelTest {
 
         val viewModel = TopicsWidgetViewModel(topicsRepo, analyticsClient)
 
-        assertEquals(expected, viewModel.uiState.first { it != null })  // stateIn has initial value of null
+        assertEquals(expected, viewModel.uiState.first { it != null }) // stateIn has initial value of null
     }
 
     @Test

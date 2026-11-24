@@ -23,7 +23,11 @@ class VisitedMigrationCallbackTest {
 
     @Test
     fun `Given items in realm, when db opened, then insert items into room`() {
-        val item = VisitedItem().apply { title = "GOV.UK"; url = "https://gov.uk"; lastVisited = 123L }
+        val item = VisitedItem().apply {
+            title = "GOV.UK"
+            url = "https://gov.uk"
+            lastVisited = 123L
+        }
         coEvery { reader.read(any()) } coAnswers {
             firstArg<suspend (List<VisitedItem>) -> Unit>().invoke(listOf(item))
         }

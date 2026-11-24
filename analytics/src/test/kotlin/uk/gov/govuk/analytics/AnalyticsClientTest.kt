@@ -6,6 +6,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.take
@@ -24,7 +25,6 @@ import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.ENABLED
 import uk.gov.govuk.analytics.data.local.AnalyticsEnabledState.NOT_SET
 import uk.gov.govuk.analytics.data.local.model.AbTestEvent
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
-import java.util.Locale
 
 class AnalyticsClientTest {
 
@@ -278,7 +278,7 @@ class AnalyticsClientTest {
                 "Chat",
                 mapOf(
                     "action" to "Ask Question",
-                    "type" to "typed",
+                    "type" to "typed"
                 )
             )
         }

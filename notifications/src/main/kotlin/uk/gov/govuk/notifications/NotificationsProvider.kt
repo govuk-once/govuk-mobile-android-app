@@ -7,13 +7,14 @@ interface NotificationsProvider {
     val context: Context
 
     fun initialise()
-    fun login(pushId: String)
+    fun login(
+        pushId: String
+    )
     fun logout()
     fun giveConsent()
     fun removeConsent()
     fun consentGiven(): Boolean
-    fun permissionGranted() =
-        NotificationManagerCompat.from(context).areNotificationsEnabled()
+    fun permissionGranted() = NotificationManagerCompat.from(context).areNotificationsEnabled()
     suspend fun requestPermission(): Boolean
     fun addClickListener()
 }

@@ -7,14 +7,18 @@ import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.topics.data.local.model.LocalTopicItem
 
 internal fun interface RealmTopicsReader {
-    suspend fun read(block: suspend (List<LocalTopicItem>) -> Unit)
+    suspend fun read(
+        block: suspend (List<LocalTopicItem>) -> Unit
+    )
 }
 
 internal class DefaultRealmTopicsReader(
     private val realmEncryptionHelper: RealmEncryptionHelper
 ) : RealmTopicsReader {
 
-    override suspend fun read(block: suspend (List<LocalTopicItem>) -> Unit) {
+    override suspend fun read(
+        block: suspend (List<LocalTopicItem>) -> Unit
+    ) {
         val config = RealmConfiguration.Builder(schema = setOf(LocalTopicItem::class))
             .name("topics")
             .schemaVersion(1)

@@ -3,6 +3,8 @@ package uk.gov.govuk.visited
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -10,8 +12,6 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.visited.data.VisitedRepo
 import uk.gov.govuk.visited.data.transformVisitedItems
 import uk.gov.govuk.visited.ui.model.VisitedUi
-import java.time.LocalDate
-import javax.inject.Inject
 
 internal data class VisitedUiState(
     val visited: Map<String, List<VisitedUi>>?,
@@ -59,14 +59,15 @@ internal class VisitedViewModel @Inject constructor(
         )
     }
 
-    fun onRemoveVisitedItem(title: String) {
+    fun onRemoveVisitedItem(
+        title: String
+    ) {
         analyticsClient.buttonFunction(
             text = title,
             section = SCREEN_NAME,
             action = REMOVE_ACTION
         )
     }
-
 
     fun onRemoveAllVisitedItems() {
         analyticsClient.buttonFunction(
@@ -84,14 +85,20 @@ internal class VisitedViewModel @Inject constructor(
         )
     }
 
-    fun onVisitedItemClicked(title: String, url: String) {
+    fun onVisitedItemClicked(
+        title: String,
+        url: String
+    ) {
         viewModelScope.launch {
             visited.visitableItemClick(title = title, url = url)
         }
         analyticsClient.visitedItemClick(text = title, url = url)
     }
 
-    fun onVisitedItemRemoveClicked(title: String, url: String) {
+    fun onVisitedItemRemoveClicked(
+        title: String,
+        url: String
+    ) {
         viewModelScope.launch {
             visitedRepo.remove(title, url)
             onRemoveVisitedItem(title)

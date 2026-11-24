@@ -1,14 +1,14 @@
 package uk.gov.govuk.topics.data.local
 
 import androidx.room.withTransaction
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import uk.gov.govuk.topics.data.local.model.LocalTopicItemEntity
 import uk.gov.govuk.topics.data.remote.model.RemoteTopicItem
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class TopicsLocalDataSource @Inject constructor(
@@ -52,17 +52,20 @@ internal class TopicsLocalDataSource @Inject constructor(
 
     suspend fun hasTopics(): Boolean = dao.count() > 0
 
-    suspend fun toggleSelection(ref: String, isSelected: Boolean) {
+    suspend fun toggleSelection(
+        ref: String,
+        isSelected: Boolean
+    ) {
         dao.toggleSelection(ref, isSelected)
     }
 
-    suspend fun selectAll(refs: List<String>) {
+    suspend fun selectAll(
+        refs: List<String>
+    ) {
         dao.selectAll(refs)
     }
 
-    internal suspend fun isTopicsCustomised(): Boolean {
-        return topicsDataStore.isTopicsCustomised()
-    }
+    internal suspend fun isTopicsCustomised(): Boolean = topicsDataStore.isTopicsCustomised()
 
     internal suspend fun topicsCustomised() {
         topicsDataStore.topicsCustomised()

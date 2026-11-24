@@ -23,7 +23,10 @@ class SearchMigrationCallbackTest {
 
     @Test
     fun `Given items in realm, when db opened, then insert items into room`() {
-        val item = LocalSearchItem().apply { searchTerm = "cat"; timestamp = 123L }
+        val item = LocalSearchItem().apply {
+            searchTerm = "cat"
+            timestamp = 123L
+        }
         coEvery { reader.read(any()) } coAnswers {
             firstArg<suspend (List<LocalSearchItem>) -> Unit>().invoke(listOf(item))
         }

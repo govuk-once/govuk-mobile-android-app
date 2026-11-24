@@ -29,7 +29,9 @@ class LocalDataSourceTest {
     @Test
     fun `Given a local authority in db, when get local authority, then emit the local authority`() {
         val entity = LocalAuthorityEntity(
-            name = "name", url = "url", slug = "slug",
+            name = "name",
+            url = "url",
+            slug = "slug",
             parent = LocalAuthorityParentEntity(name = "parentName", url = "parentUrl", slug = "parentSlug")
         )
         every { dao.getLocalAuthority() } returns flowOf(entity)
@@ -57,7 +59,9 @@ class LocalDataSourceTest {
     @Test
     fun `Given a local authority with parent, when insert or replace, then insert into db with parent fields`() {
         val localAuthority = LocalAuthority(
-            name = "name", url = "url", slug = "slug",
+            name = "name",
+            url = "url",
+            slug = "slug",
             parent = LocalAuthority(name = "parentName", url = "parentUrl", slug = "parentSlug")
         )
 
@@ -65,10 +69,16 @@ class LocalDataSourceTest {
             dataSource.insertOrReplace(localAuthority)
 
             coVerify {
-                dao.insertOrReplace(match {
-                    it.name == "name" && it.url == "url" && it.slug == "slug" &&
-                    it.parent?.name == "parentName" && it.parent?.url == "parentUrl" && it.parent?.slug == "parentSlug"
-                })
+                dao.insertOrReplace(
+                    match {
+                        it.name == "name" &&
+                            it.url == "url" &&
+                            it.slug == "slug" &&
+                            it.parent?.name == "parentName" &&
+                            it.parent?.url == "parentUrl" &&
+                            it.parent?.slug == "parentSlug"
+                    }
+                )
             }
         }
     }
@@ -81,9 +91,11 @@ class LocalDataSourceTest {
             dataSource.insertOrReplace(localAuthority)
 
             coVerify {
-                dao.insertOrReplace(match {
-                    it.name == "name" && it.parent == null
-                })
+                dao.insertOrReplace(
+                    match {
+                        it.name == "name" && it.parent == null
+                    }
+                )
             }
         }
     }

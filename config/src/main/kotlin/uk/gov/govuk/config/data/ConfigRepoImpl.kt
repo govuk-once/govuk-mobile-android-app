@@ -1,5 +1,7 @@
 package uk.gov.govuk.config.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import uk.gov.govuk.config.data.remote.model.ChatBanner
@@ -13,22 +15,20 @@ import uk.gov.govuk.config.data.remote.source.FirebaseConfigDataSource
 import uk.gov.govuk.config.data.remote.source.GovUkConfigDataSource
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.model.Result.Success
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class ConfigRepoImpl @Inject constructor(
     private val govUkDataSource: GovUkConfigDataSource,
     private val firebaseDataSource: FirebaseConfigDataSource
-): ConfigRepo {
+) : ConfigRepo {
 
     companion object {
         private const val CHAT_POLL_INTERVAL_FALLBACK = 3.0
     }
 
-    private var _config: Config? = null
+    private var _safeConfig: Config? = null
     private val safeConfig: Config
-        get() = checkNotNull(_config) { "You must init config successfully before use!!!" }
+        get() = checkNotNull(_safeConfig) { "You must init config successfully before use!!!" }
     override suspend fun initConfig(): Result<Unit> = coroutineScope {
         val firebaseConfigDeferred = async {
             firebaseDataSource.fetch()
@@ -39,7 +39,7 @@ class ConfigRepoImpl @Inject constructor(
         firebaseConfigDeferred.await()
 
         if (govUkConfigResult is Success) {
-            _config = govUkConfigResult.value
+            _safeConfig = govUkConfigResult.value
             Success(Unit)
         } else {
             @Suppress("UNCHECKED_CAST") // we know it's not a success
@@ -64,7 +64,6 @@ class ConfigRepoImpl @Inject constructor(
 
     override val recommendedVersion: String
         get() = safeConfig.recommendedVersion
-
 
     override val isSearchEnabled: Boolean
         get() = safeConfig.releaseFlags.search

@@ -13,10 +13,15 @@ internal interface VisitedDao {
     fun getVisitedItems(): Flow<List<VisitedItemEntity>>
 
     @Upsert
-    suspend fun upsert(item: VisitedItemEntity)
+    suspend fun upsert(
+        item: VisitedItemEntity
+    )
 
     @Query("DELETE FROM visited_items WHERE title = :title AND url = :url")
-    suspend fun delete(title: String, url: String)
+    suspend fun delete(
+        title: String,
+        url: String
+    )
 
     @Query("DELETE FROM visited_items")
     suspend fun deleteAll()

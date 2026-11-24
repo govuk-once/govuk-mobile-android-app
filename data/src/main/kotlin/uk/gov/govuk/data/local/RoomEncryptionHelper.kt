@@ -2,10 +2,10 @@ package uk.gov.govuk.data.local
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import uk.gov.govuk.data.crypto.CryptoProvider
 import java.security.SecureRandom
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.data.crypto.CryptoProvider
 
 @Singleton
 class RoomEncryptionHelper @Inject constructor(

@@ -25,18 +25,18 @@ import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.config.data.ConfigRepo
 import uk.gov.govuk.config.data.flags.FlagRepo
 import uk.gov.govuk.data.auth.AuthRepo
+import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.messages.MessagesFeature
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCESSIBILITY_STATEMENT_URL
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_EVENT
 import uk.gov.govuk.settings.BuildConfig.ACCOUNT_URL
-import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.settings.BuildConfig.HELP_AND_FEEDBACK_EVENT
+import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.NOTIFICATIONS_PERMISSION_EVENT
 import uk.gov.govuk.settings.BuildConfig.OPEN_SOURCE_LICENCE_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_EVENT
 import uk.gov.govuk.settings.BuildConfig.PRIVACY_POLICY_URL
-import uk.gov.govuk.settings.BuildConfig.MESSAGES_EVENT
 import uk.gov.govuk.settings.BuildConfig.SIGN_OUT_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_EVENT
 import uk.gov.govuk.settings.BuildConfig.TERMS_AND_CONDITIONS_URL
@@ -83,8 +83,13 @@ class SettingsViewModelTest {
     fun `Given analytics are disabled, When init, then return analytics disabled`() {
         coEvery { analyticsClient.isAnalyticsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo,
-            messagesFeature)
+        val viewModel = SettingsViewModel(
+            authRepo,
+            flagRepo,
+            analyticsClient,
+            configRepo,
+            messagesFeature
+        )
 
         runTest {
             val result = viewModel.uiState.first()
@@ -104,8 +109,13 @@ class SettingsViewModelTest {
     fun `Given notifications are disabled, When init, then return notifications disabled`() {
         coEvery { flagRepo.isNotificationsEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo,
-            messagesFeature)
+        val viewModel = SettingsViewModel(
+            authRepo,
+            flagRepo,
+            analyticsClient,
+            configRepo,
+            messagesFeature
+        )
 
         runTest {
             val result = viewModel.uiState.first()
@@ -125,8 +135,13 @@ class SettingsViewModelTest {
     fun `Given authentication is disabled, When init, then return authentication disabled`() {
         every { authRepo.isAuthenticationEnabled() } returns false
 
-        val viewModel = SettingsViewModel(authRepo, flagRepo, analyticsClient, configRepo,
-            messagesFeature)
+        val viewModel = SettingsViewModel(
+            authRepo,
+            flagRepo,
+            analyticsClient,
+            configRepo,
+            messagesFeature
+        )
 
         runTest {
             val result = viewModel.uiState.first()
@@ -362,7 +377,7 @@ class SettingsViewModelTest {
 
             advanceUntilIdle()
 
-            assertEquals(MessageRowState.Loaded(1), viewModel.uiState.value?.messageRowState, )
+            assertEquals(MessageRowState.Loaded(1), viewModel.uiState.value?.messageRowState)
         }
     }
 
@@ -376,7 +391,7 @@ class SettingsViewModelTest {
 
             advanceUntilIdle()
 
-            assertEquals(MessageRowState.Loaded(0), viewModel.uiState.value?.messageRowState, )
+            assertEquals(MessageRowState.Loaded(0), viewModel.uiState.value?.messageRowState)
         }
     }
 }

@@ -16,7 +16,9 @@ import uk.govuk.app.local.navigation.LOCAL_GRAPH_ROUTE
 import uk.govuk.app.local.navigation.LOCAL_LOOKUP_ROUTE
 import uk.govuk.app.local.ui.LocalWidget
 
-internal fun List<HomeWidget>?.contains(widget: HomeWidget) = this?.contains(widget) == true
+internal fun List<HomeWidget>?.contains(
+    widget: HomeWidget
+) = this?.contains(widget) == true
 
 internal fun homeWidgets(
     navController: NavHostController,
@@ -131,8 +133,7 @@ internal fun homeWidgets(
                         onLocalAuthorityClick = { text, url ->
                             onWidgetClick(text, url)
                         },
-                        onEditClick = { text ->
-                            onWidgetClick(text, null)
+                        onChangeClick = {
                             navController.navigate(LOCAL_LOOKUP_ROUTE)
                         },
                         launchBrowser = launchBrowser,

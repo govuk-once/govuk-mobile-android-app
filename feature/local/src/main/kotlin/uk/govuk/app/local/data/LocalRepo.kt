@@ -1,5 +1,7 @@
 package uk.govuk.app.local.data
 
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -12,8 +14,6 @@ import uk.govuk.app.local.data.remote.model.RemoteLocalAuthority
 import uk.govuk.app.local.data.remote.safeLocalApiCall
 import uk.govuk.app.local.domain.model.Address
 import uk.govuk.app.local.domain.model.LocalAuthority
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class LocalRepo @Inject constructor(
@@ -75,7 +75,9 @@ internal class LocalRepo @Inject constructor(
         _localAuthorities = localAuthorities.map { it.toLocalAuthority() }
     }
 
-    fun cacheLocalAuthority(slug: String) {
+    fun cacheLocalAuthority(
+        slug: String
+    ) {
         localAuthorities.find { it.slug == slug }?.let { localAuthority ->
             _cachedLocalAuthority = localAuthority
         }

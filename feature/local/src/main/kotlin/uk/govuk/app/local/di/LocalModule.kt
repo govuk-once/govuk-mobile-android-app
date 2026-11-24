@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,12 +18,11 @@ import uk.govuk.app.local.BuildConfig
 import uk.govuk.app.local.DefaultLocalFeature
 import uk.govuk.app.local.LocalFeature
 import uk.govuk.app.local.data.LocalRepo
+import uk.govuk.app.local.data.local.DefaultRealmLocalReader
 import uk.govuk.app.local.data.local.LocalDao
 import uk.govuk.app.local.data.local.LocalDatabase
-import uk.govuk.app.local.data.local.DefaultRealmLocalReader
 import uk.govuk.app.local.data.local.LocalMigrationCallback
 import uk.govuk.app.local.data.remote.LocalApi
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -47,21 +47,21 @@ internal class LocalModule {
 
     @Provides
     @Singleton
-    fun providesLocalDao(database: LocalDatabase): LocalDao = database.localDao()
+    fun providesLocalDao(
+        database: LocalDatabase
+    ): LocalDao = database.localDao()
 
     @Provides
     @Singleton
-    fun providesLocalFeature(localRepo: LocalRepo): LocalFeature {
-        return DefaultLocalFeature(localRepo)
-    }
+    fun providesLocalFeature(
+        localRepo: LocalRepo
+    ): LocalFeature = DefaultLocalFeature(localRepo)
 
     @Provides
     @Singleton
-    fun providesLocalApi(): LocalApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.LOCAL_SERVICES_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(LocalApi::class.java)
-    }
+    fun providesLocalApi(): LocalApi = Retrofit.Builder()
+        .baseUrl(BuildConfig.LOCAL_SERVICES_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(LocalApi::class.java)
 }

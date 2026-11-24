@@ -23,7 +23,12 @@ class TopicsMigrationCallbackTest {
 
     @Test
     fun `Given items in realm, when db opened, then insert items into room`() {
-        val item = LocalTopicItem().apply { ref = "ref1"; title = "Title"; description = "Desc"; isSelected = true }
+        val item = LocalTopicItem().apply {
+            ref = "ref1"
+            title = "Title"
+            description = "Desc"
+            isSelected = true
+        }
         coEvery { reader.read(any()) } coAnswers {
             firstArg<suspend (List<LocalTopicItem>) -> Unit>().invoke(listOf(item))
         }

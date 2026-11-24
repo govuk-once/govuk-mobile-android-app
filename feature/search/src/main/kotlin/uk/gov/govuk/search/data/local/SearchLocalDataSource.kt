@@ -1,20 +1,22 @@
 package uk.gov.govuk.search.data.local
 
-import kotlinx.coroutines.flow.Flow
-import uk.gov.govuk.search.data.local.model.LocalSearchItemEntity
-import uk.gov.govuk.search.domain.SearchConfig
 import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import uk.gov.govuk.search.data.local.model.LocalSearchItemEntity
+import uk.gov.govuk.search.domain.SearchConfig
 
 @Singleton
 internal class SearchLocalDataSource @Inject constructor(
-    private val dao: SearchDao,
+    private val dao: SearchDao
 ) {
 
     val previousSearches: Flow<List<LocalSearchItemEntity>> get() = dao.getPreviousSearches()
 
-    suspend fun insertOrUpdatePreviousSearch(searchTerm: String) {
+    suspend fun insertOrUpdatePreviousSearch(
+        searchTerm: String
+    ) {
         val now = Calendar.getInstance().timeInMillis
         dao.insertOrUpdate(LocalSearchItemEntity(searchTerm, now))
 
@@ -24,7 +26,9 @@ internal class SearchLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun removePreviousSearch(searchTerm: String) {
+    suspend fun removePreviousSearch(
+        searchTerm: String
+    ) {
         dao.delete(searchTerm)
     }
 

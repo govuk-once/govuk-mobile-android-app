@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -19,14 +20,13 @@ import uk.gov.govuk.data.local.RoomEncryptionHelper
 import uk.gov.govuk.search.DefaultSearchFeature
 import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.search.data.SearchRepo
+import uk.gov.govuk.search.data.local.DefaultRealmSearchReader
 import uk.gov.govuk.search.data.local.SearchDao
 import uk.gov.govuk.search.data.local.SearchDatabase
-import uk.gov.govuk.search.data.local.DefaultRealmSearchReader
 import uk.gov.govuk.search.data.local.SearchMigrationCallback
 import uk.gov.govuk.search.data.remote.AutocompleteApi
 import uk.gov.govuk.search.data.remote.SearchApi
 import uk.gov.govuk.search.domain.SearchConfig
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -51,17 +51,21 @@ internal class SearchModule {
 
     @Provides
     @Singleton
-    fun providesSearchDao(database: SearchDatabase): SearchDao = database.searchDao()
+    fun providesSearchDao(
+        database: SearchDatabase
+    ): SearchDao = database.searchDao()
 
     @Provides
     @Singleton
-    fun providesSearchFeature(searchRepo: SearchRepo): SearchFeature {
-        return DefaultSearchFeature(searchRepo)
-    }
+    fun providesSearchFeature(
+        searchRepo: SearchRepo
+    ): SearchFeature = DefaultSearchFeature(searchRepo)
 
     @Provides
     @Singleton
-    fun providesSearchApi(@ApplicationContext context: Context): SearchApi {
+    fun providesSearchApi(
+        @ApplicationContext context: Context
+    ): SearchApi {
         val httpClient = OkHttpClient.Builder()
             .addInterceptor(UserAgentInterceptor(context))
             .build()
@@ -76,7 +80,9 @@ internal class SearchModule {
 
     @Provides
     @Singleton
-    fun providesAutocompleteApi(@ApplicationContext context: Context): AutocompleteApi {
+    fun providesAutocompleteApi(
+        @ApplicationContext context: Context
+    ): AutocompleteApi {
         val httpClient = OkHttpClient.Builder()
             .addInterceptor(UserAgentInterceptor(context))
             .build()
@@ -89,16 +95,18 @@ internal class SearchModule {
             .create(AutocompleteApi::class.java)
     }
 
-    private class UserAgentInterceptor(@ApplicationContext context: Context): Interceptor {
+    private class UserAgentInterceptor(
+        @ApplicationContext context: Context
+    ) : Interceptor {
         private val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
         private val userAgent = "govuk_android/$appVersion"
 
-        override fun intercept(chain: Interceptor.Chain): Response {
-            return chain.proceed(
-                chain.request().newBuilder()
-                    .header("User-Agent", userAgent)
-                    .build()
-            )
-        }
+        override fun intercept(
+            chain: Interceptor.Chain
+        ): Response = chain.proceed(
+            chain.request().newBuilder()
+                .header("User-Agent", userAgent)
+                .build()
+        )
     }
 }

@@ -17,10 +17,14 @@ internal interface SearchDao {
     suspend fun getAllSortedByTimestamp(): List<LocalSearchItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrUpdate(item: LocalSearchItemEntity)
+    suspend fun insertOrUpdate(
+        item: LocalSearchItemEntity
+    )
 
     @Query("DELETE FROM local_search_items WHERE searchTerm = :searchTerm")
-    suspend fun delete(searchTerm: String)
+    suspend fun delete(
+        searchTerm: String
+    )
 
     @Query("DELETE FROM local_search_items")
     suspend fun deleteAll()

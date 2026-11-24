@@ -24,7 +24,11 @@ class LocalMigrationCallbackTest {
 
     @Test
     fun `Given authority without parent in realm, when db opened, then insert authority into room with null parent fields`() {
-        val authority = StoredLocalAuthority().apply { name = "Test Council"; url = "https://example.com"; slug = "test-council" }
+        val authority = StoredLocalAuthority().apply {
+            name = "Test Council"
+            url = "https://example.com"
+            slug = "test-council"
+        }
         coEvery { reader.read(any()) } coAnswers {
             firstArg<suspend (StoredLocalAuthority?) -> Unit>().invoke(authority)
         }
@@ -42,9 +46,15 @@ class LocalMigrationCallbackTest {
 
     @Test
     fun `Given authority with parent in realm, when db opened, then insert authority and parent fields into room`() {
-        val parent = StoredLocalAuthorityParent().apply { name = "Parent Council"; url = "https://parent.com"; slug = "parent-council" }
+        val parent = StoredLocalAuthorityParent().apply {
+            name = "Parent Council"
+            url = "https://parent.com"
+            slug = "parent-council"
+        }
         val authority = StoredLocalAuthority().apply {
-            name = "Child Council"; url = "https://child.com"; slug = "child-council"
+            name = "Child Council"
+            url = "https://child.com"
+            slug = "child-council"
             this.parent = parent
         }
         coEvery { reader.read(any()) } coAnswers {
@@ -56,7 +66,18 @@ class LocalMigrationCallbackTest {
         verify {
             db.execSQL(
                 "INSERT OR REPLACE INTO local_authority (id, name, url, slug, parent_name, parent_url, parent_slug) VALUES (1, ?, ?, ?, ?, ?, ?)",
-                match { it.contentEquals(arrayOf<Any?>("Child Council", "https://child.com", "child-council", "Parent Council", "https://parent.com", "parent-council")) }
+                match {
+                    it.contentEquals(
+                        arrayOf<Any?>(
+                            "Child Council",
+                            "https://child.com",
+                            "child-council",
+                            "Parent Council",
+                            "https://parent.com",
+                            "parent-council"
+                        )
+                    )
+                }
             )
         }
         verify { db.setTransactionSuccessful() }

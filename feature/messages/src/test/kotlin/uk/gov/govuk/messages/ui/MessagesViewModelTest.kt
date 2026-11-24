@@ -3,6 +3,8 @@ package uk.gov.govuk.messages.ui
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
+import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -23,8 +25,6 @@ import uk.gov.govuk.messages.MessagesUiState
 import uk.gov.govuk.messages.MessagesViewModel
 import uk.gov.govuk.messages.data.MessagesRepo
 import uk.gov.govuk.messages.fixtures.MessagesFixtures.Companion.mockMessages
-import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MessagesViewModelTest {
@@ -113,6 +113,7 @@ class MessagesViewModelTest {
             assertTrue(states.last() is MessagesUiState.NoInternet)
         }
     }
+
     @Test
     fun `Given view appears, when request fails, transitions to Error`() {
         runTest {
@@ -180,7 +181,6 @@ class MessagesViewModelTest {
             assertTrue(notifications.recent.contains(mockMessages[1]))
             assertTrue(notifications.older.size == 1)
             assertTrue(notifications.older.contains(mockMessages[2]))
-
         }
     }
 
@@ -208,11 +208,9 @@ class MessagesViewModelTest {
 
             val notifications = (lastState as MessagesUiState.Loaded).notifications
 
-            assertEquals(notifications.recent[0],mockMessages[0])
-            assertEquals(notifications.recent[1],mockMessages[1])
-            assertEquals(notifications.older[0],mockMessages[2])
-
-
+            assertEquals(notifications.recent[0], mockMessages[0])
+            assertEquals(notifications.recent[1], mockMessages[1])
+            assertEquals(notifications.older[0], mockMessages[2])
         }
     }
 }

@@ -3,6 +3,7 @@ package uk.gov.govuk.topics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -13,7 +14,6 @@ import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.topics.data.TopicsRepo
 import uk.gov.govuk.topics.extension.toTopicItemUi
 import uk.gov.govuk.topics.ui.model.TopicItemUi
-import javax.inject.Inject
 
 internal data class TopicsWidgetUiState(
     val allTopics: List<TopicItemUi>,
@@ -22,13 +22,14 @@ internal data class TopicsWidgetUiState(
 )
 
 internal enum class TopicsCategory {
-    YOUR, ALL
+    YOUR,
+    ALL
 }
 
 @HiltViewModel
 internal class TopicsWidgetViewModel @Inject constructor(
     private val topicsRepo: TopicsRepo,
-    private val analyticsClient: AnalyticsClient,
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
     val uiState: StateFlow<TopicsWidgetUiState?> = combine(
@@ -48,7 +49,9 @@ internal class TopicsWidgetViewModel @Inject constructor(
         initialValue = null
     )
 
-    fun onCategoryChange(category: TopicsCategory) {
+    fun onCategoryChange(
+        category: TopicsCategory
+    ) {
         viewModelScope.launch {
             topicsRepo.setSelectedCategory(category)
         }
@@ -70,11 +73,17 @@ internal class TopicsWidgetViewModel @Inject constructor(
         )
     }
 
-    fun onView(category: TopicsCategory, topics: List<TopicItemUi>) {
+    fun onView(
+        category: TopicsCategory,
+        topics: List<TopicItemUi>
+    ) {
         sendViewItemListEvent(category, topics)
     }
 
-    private fun sendViewItemListEvent(category: TopicsCategory, topics: List<TopicItemUi>) {
+    private fun sendViewItemListEvent(
+        category: TopicsCategory,
+        topics: List<TopicItemUi>
+    ) {
         val listCategory = mapCategory(category)
 
         val items = topics.map {
@@ -105,19 +114,24 @@ internal class TopicsWidgetViewModel @Inject constructor(
 
         analyticsClient.selectItemEvent(
             ecommerceEvent = EcommerceEvent(
-                itemListName = listCategory, itemListId = listCategory, items = listOf(
+                itemListName = listCategory,
+                itemListId = listCategory,
+                items = listOf(
                     EcommerceEvent.Item(
-                        itemName = title, locationId = ref
+                        itemName = title,
+                        locationId = ref
                     )
-                ), totalItemCount = topicCount
-            ), selectedItemIndex = selectedItemIndex
+                ),
+                totalItemCount = topicCount
+            ),
+            selectedItemIndex = selectedItemIndex
         )
     }
 
-    private fun mapCategory(category: TopicsCategory): String {
-        return when (category) {
-            TopicsCategory.YOUR -> "Your topics"
-            TopicsCategory.ALL -> "All topics"
-        }
+    private fun mapCategory(
+        category: TopicsCategory
+    ): String = when (category) {
+        TopicsCategory.YOUR -> "Your topics"
+        TopicsCategory.ALL -> "All topics"
     }
 }

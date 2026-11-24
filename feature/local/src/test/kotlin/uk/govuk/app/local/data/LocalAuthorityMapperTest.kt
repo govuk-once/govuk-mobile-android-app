@@ -22,7 +22,7 @@ class LocalAuthorityMapperTest {
                 name = "parent name",
                 homePageUrl = "parent url",
                 tier = "parent tier",
-                slug = "parent slug",
+                slug = "parent slug"
             )
         )
 
@@ -61,7 +61,9 @@ class LocalAuthorityMapperTest {
     @Test
     fun `Map from local authority entity with parent`() {
         val entity = LocalAuthorityEntity(
-            name = "name", url = "url", slug = "slug",
+            name = "name",
+            url = "url",
+            slug = "slug",
             parent = LocalAuthorityParentEntity(name = "parent name", url = "parent url", slug = "parent slug")
         )
 
@@ -82,7 +84,9 @@ class LocalAuthorityMapperTest {
     @Test
     fun `Map from local authority entity without parent`() {
         val entity = LocalAuthorityEntity(
-            name = "name", url = "url", slug = "slug",
+            name = "name",
+            url = "url",
+            slug = "slug",
             parent = null
         )
 
@@ -111,5 +115,4 @@ class LocalAuthorityMapperTest {
 
         assertEquals(expected, remoteAddress.toAddress())
     }
-
 }

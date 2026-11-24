@@ -16,25 +16,42 @@ internal interface TopicsDao {
     suspend fun getAllRefs(): List<String>
 
     @Insert
-    suspend fun insert(item: LocalTopicItemEntity)
+    suspend fun insert(
+        item: LocalTopicItemEntity
+    )
 
     @Query("UPDATE topic_items SET title = :title, description = :description WHERE ref = :ref")
-    suspend fun updateTitleAndDescription(ref: String, title: String, description: String)
+    suspend fun updateTitleAndDescription(
+        ref: String,
+        title: String,
+        description: String
+    )
 
     @Query("UPDATE topic_items SET title = :title, description = :description, isSelected = 0 WHERE ref = :ref")
-    suspend fun updateTitleDescriptionAndClearSelection(ref: String, title: String, description: String)
+    suspend fun updateTitleDescriptionAndClearSelection(
+        ref: String,
+        title: String,
+        description: String
+    )
 
     @Query("UPDATE topic_items SET isSelected = :isSelected WHERE ref = :ref")
-    suspend fun toggleSelection(ref: String, isSelected: Boolean)
+    suspend fun toggleSelection(
+        ref: String,
+        isSelected: Boolean
+    )
 
     @Query("UPDATE topic_items SET isSelected = 1 WHERE ref IN (:refs)")
-    suspend fun selectAll(refs: List<String>)
+    suspend fun selectAll(
+        refs: List<String>
+    )
 
     @Query("UPDATE topic_items SET isSelected = 0")
     suspend fun clearAllSelections()
 
     @Query("DELETE FROM topic_items WHERE ref = :ref")
-    suspend fun delete(ref: String)
+    suspend fun delete(
+        ref: String
+    )
 
     @Query("SELECT COUNT(*) FROM topic_items")
     suspend fun count(): Int

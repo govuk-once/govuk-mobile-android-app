@@ -5,9 +5,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
-import uk.gov.govuk.notifications.data.NotificationsRepo
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.notifications.data.NotificationsRepo
 
 @Singleton
 class NotificationsPermissionResolver @Inject constructor(

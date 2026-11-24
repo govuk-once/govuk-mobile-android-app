@@ -3,15 +3,15 @@ package uk.gov.govuk.dvla
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.dvla.data.DvlaRepo
 import uk.gov.govuk.data.model.Result
-import javax.inject.Inject
+import uk.gov.govuk.dvla.data.DvlaRepo
 
 internal sealed interface CheckVehicleSheetState {
     val regNumber: String
@@ -29,7 +29,9 @@ internal sealed interface CheckVehicleSheetState {
         val error: CheckVehicleError
     ) : CheckVehicleSheetState
 
-    data class Success(override val regNumber: String) : CheckVehicleSheetState
+    data class Success(
+        override val regNumber: String
+    ) : CheckVehicleSheetState
 }
 
 internal val CheckVehicleSheetState.canSubmit: Boolean
@@ -62,14 +64,18 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
 
     val sheetState = _sheetState.asStateFlow()
 
-    fun onSearchVehicleClicked(text: String) {
+    fun onSearchVehicleClicked(
+        text: String
+    ) {
         analyticsClient.buttonClick(
             text = text,
             section = SECTION
         )
     }
 
-    fun onRegistrationNumberChanged(value: String) {
+    fun onRegistrationNumberChanged(
+        value: String
+    ) {
         val sanitisedRegNumber = value
             .uppercase()
             .filter { it.isAllowedRegNumberChar() }
@@ -83,7 +89,9 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
-    fun onSubmitClicked(buttonText: String) {
+    fun onSubmitClicked(
+        buttonText: String
+    ) {
         val state = _sheetState.value
         if (!state.canSubmit) return
 
@@ -118,7 +126,9 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         }
     }
 
-    fun onCancelClicked(buttonText: String) {
+    fun onCancelClicked(
+        buttonText: String
+    ) {
         analyticsClient.widgetFunction(
             text = buttonText,
             section = SECTION,
@@ -132,19 +142,20 @@ internal class CheckVehicleWidgetViewModel @Inject constructor(
         _sheetState.value = CheckVehicleSheetState.Input()
     }
 
-    fun onResultUnavailable(regNumber: String) {
+    fun onResultUnavailable(
+        regNumber: String
+    ) {
         _sheetState.value = CheckVehicleSheetState.Error(
             regNumber = regNumber,
             error = CheckVehicleError.SEARCH_UNAVAILABLE
         )
     }
 
-    private fun showError(error: CheckVehicleError) {
+    private fun showError(
+        error: CheckVehicleError
+    ) {
         _sheetState.update { CheckVehicleSheetState.Error(it.regNumber, error) }
     }
 }
 
-private fun Char.isAllowedRegNumberChar(): Boolean =
-    this in 'A'..'Z' || this in '0'..'9' || this == ' '
-
-
+private fun Char.isAllowedRegNumberChar(): Boolean = this in 'A'..'Z' || this in '0'..'9' || this == ' '

@@ -1,11 +1,11 @@
 package uk.gov.govuk.visited.data.store
 
-import kotlinx.coroutines.flow.Flow
-import uk.gov.govuk.visited.data.model.VisitedItemEntity
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import uk.gov.govuk.visited.data.model.VisitedItemEntity
 
 @Singleton
 internal class VisitedLocalDataSource @Inject constructor(
@@ -14,12 +14,19 @@ internal class VisitedLocalDataSource @Inject constructor(
 
     val visitedItems: Flow<List<VisitedItemEntity>> get() = dao.getVisitedItems()
 
-    suspend fun insertOrUpdate(title: String, url: String, lastVisited: LocalDateTime = LocalDateTime.now()) {
+    suspend fun insertOrUpdate(
+        title: String,
+        url: String,
+        lastVisited: LocalDateTime = LocalDateTime.now()
+    ) {
         val timestamp = lastVisited.toEpochSecond(ZoneOffset.UTC)
         dao.upsert(VisitedItemEntity(title = title, url = url, lastVisited = timestamp))
     }
 
-    suspend fun remove(title: String, url: String) {
+    suspend fun remove(
+        title: String,
+        url: String
+    ) {
         dao.delete(title, url)
     }
 

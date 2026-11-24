@@ -13,6 +13,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
+import javax.inject.Singleton
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,13 +25,11 @@ import uk.gov.govuk.topics.BuildConfig
 import uk.gov.govuk.topics.DefaultTopicsFeature
 import uk.gov.govuk.topics.TopicsFeature
 import uk.gov.govuk.topics.data.TopicsRepo
+import uk.gov.govuk.topics.data.local.DefaultRealmTopicsReader
 import uk.gov.govuk.topics.data.local.TopicsDao
 import uk.gov.govuk.topics.data.local.TopicsDatabase
-import uk.gov.govuk.topics.data.local.DefaultRealmTopicsReader
 import uk.gov.govuk.topics.data.local.TopicsMigrationCallback
 import uk.gov.govuk.topics.data.remote.TopicsApi
-import javax.inject.Named
-import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -54,33 +54,33 @@ internal class TopicsModule {
 
     @Provides
     @Singleton
-    fun providesTopicsDao(database: TopicsDatabase): TopicsDao = database.topicsDao()
+    fun providesTopicsDao(
+        database: TopicsDatabase
+    ): TopicsDao = database.topicsDao()
 
     @Provides
     @Singleton
-    fun providesTopicsFeature(topicsRepo: TopicsRepo): TopicsFeature {
-        return DefaultTopicsFeature(topicsRepo)
-    }
+    fun providesTopicsFeature(
+        topicsRepo: TopicsRepo
+    ): TopicsFeature = DefaultTopicsFeature(topicsRepo)
 
     @Provides
     @Singleton
-    fun providesTopicsApi(): TopicsApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.TOPICS_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(TopicsApi::class.java)
-    }
+    fun providesTopicsApi(): TopicsApi = Retrofit.Builder()
+        .baseUrl(BuildConfig.TOPICS_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(TopicsApi::class.java)
 
     @Singleton
     @Provides
     @Named("topics_prefs")
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
-            produceFile = { context.preferencesDataStoreFile("topics_preferences") }
-        )
-    }
+    fun providePreferencesDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler(
+            produceNewData = { emptyPreferences() }
+        ),
+        produceFile = { context.preferencesDataStoreFile("topics_preferences") }
+    )
 }

@@ -1,26 +1,80 @@
 package uk.gov.govuk.dvla.mapper
 
+import java.time.LocalDate
+import javax.inject.Inject
 import uk.gov.govuk.config.data.remote.model.DvlaUrls
 import uk.gov.govuk.dvla.R
 import uk.gov.govuk.dvla.domain.Entitlement
 import uk.gov.govuk.dvla.domain.EntitlementType
 import uk.gov.govuk.dvla.ui.model.LicenceCategoriesUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryDetailUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryGroupUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryLinkUiModel
+import uk.gov.govuk.dvla.ui.model.LicenceCategoryRestrictionUiModel
 import uk.gov.govuk.dvla.ui.model.LicenceCategoryUiModel
 import uk.gov.govuk.dvla.util.StringProvider
-import javax.inject.Inject
+import uk.gov.govuk.dvla.util.isDateWithinDayRange
+import uk.gov.govuk.dvla.util.isInThePast
+import uk.gov.govuk.dvla.util.resolveDaysUntil
+import uk.gov.govuk.dvla.util.toSummaryDisplayFormat
 
 internal class LicenceCategoriesMapper @Inject constructor(
     private val stringProvider: StringProvider
 ) {
-    fun toUiModel(entitlements: List<Entitlement>, dvlaUrls: DvlaUrls?) = LicenceCategoriesUiModel(
+
+    private companion object {
+        const val EXPIRY_INDICATOR_DAYS = 60
+    }
+
+    fun toUiModel(
+        entitlements: List<Entitlement>,
+        dvlaUrls: DvlaUrls?
+    ) = LicenceCategoriesUiModel(
         canDrive = entitlements.toGroups(EntitlementType.FULL),
         provisionallyDrive = entitlements.toGroups(EntitlementType.PROVISIONAL),
         furtherInformationLinks = dvlaUrls?.toFurtherInformationLinks().orEmpty()
     )
 
-    private fun List<Entitlement>.toGroups(type: EntitlementType): List<LicenceCategoryGroupUiModel> {
+    fun toDetailUiModel(
+        entitlement: Entitlement
+    ): LicenceCategoryDetailUiModel? {
+        // api returns uppercase codes but we display some lowercase
+        val matchesCode: (LicenceCategoryUiModel) -> Boolean = {
+            it.code.equals(entitlement.categoryCode, ignoreCase = true)
+        }
+
+        // code comes from allCategoryGroups catalogue, this would only fail if the nav args are wrong
+        val group = allCategoryGroups.firstOrNull { it.categories.any(matchesCode) } ?: return null
+
+        return LicenceCategoryDetailUiModel(
+            title = group.title,
+            category = group.categories.first(matchesCode),
+            expiryIndicator = entitlement.expiryDate?.toExpiryIndicator(),
+            validFrom = entitlement.fromDate?.toSummaryDisplayFormat(),
+            validTo = entitlement.expiryDate?.toSummaryDisplayFormat(),
+            restrictions = entitlement.restrictions.map {
+                LicenceCategoryRestrictionUiModel(
+                    code = it.restrictionCode,
+                    description = it.restrictionLiteral
+                )
+            },
+            youCanDrive = entitlement.categoryLegalLiteral.takeIf { it.isNotBlank() }
+        )
+    }
+
+    private fun LocalDate.toExpiryIndicator(): String? {
+        if (isInThePast() || !isDateWithinDayRange(EXPIRY_INDICATOR_DAYS)) return null
+
+        return stringProvider.resolveDaysUntil(
+            this,
+            R.string.licence_category_detail_expires_today,
+            R.plurals.licence_category_detail_expires_in_days
+        )
+    }
+
+    private fun List<Entitlement>.toGroups(
+        type: EntitlementType
+    ): List<LicenceCategoryGroupUiModel> {
         // codes customer holds for this type
         val heldCodes = filter { it.categoryType == type }
             .map { it.categoryCode.uppercase() }

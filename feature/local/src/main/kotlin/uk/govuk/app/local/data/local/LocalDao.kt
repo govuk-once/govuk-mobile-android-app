@@ -14,7 +14,9 @@ internal interface LocalDao {
     fun getLocalAuthority(): Flow<LocalAuthorityEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplace(entity: LocalAuthorityEntity)
+    suspend fun insertOrReplace(
+        entity: LocalAuthorityEntity
+    )
 
     @Query("DELETE FROM local_authority")
     suspend fun deleteAll()

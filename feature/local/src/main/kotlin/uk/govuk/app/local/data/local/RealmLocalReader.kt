@@ -8,14 +8,18 @@ import uk.govuk.app.local.data.local.model.StoredLocalAuthority
 import uk.govuk.app.local.data.local.model.StoredLocalAuthorityParent
 
 internal fun interface RealmLocalReader {
-    suspend fun read(block: suspend (StoredLocalAuthority?) -> Unit)
+    suspend fun read(
+        block: suspend (StoredLocalAuthority?) -> Unit
+    )
 }
 
 internal class DefaultRealmLocalReader(
     private val realmEncryptionHelper: RealmEncryptionHelper
 ) : RealmLocalReader {
 
-    override suspend fun read(block: suspend (StoredLocalAuthority?) -> Unit) {
+    override suspend fun read(
+        block: suspend (StoredLocalAuthority?) -> Unit
+    ) {
         val config = RealmConfiguration.Builder(schema = setOf(StoredLocalAuthority::class, StoredLocalAuthorityParent::class))
             .name("local")
             .schemaVersion(1)
