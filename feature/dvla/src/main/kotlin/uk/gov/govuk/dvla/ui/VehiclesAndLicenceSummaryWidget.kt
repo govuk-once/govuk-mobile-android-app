@@ -42,7 +42,7 @@ import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.NoLicenceCard
-import uk.gov.govuk.dvla.ui.component.RevokedMedicalLicenceCard
+import uk.gov.govuk.dvla.ui.component.LicenceRevokedForMedicalReasonsCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -56,31 +56,14 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 
 @Composable
-fun VehiclesAndLicenceSummaryWidgetRoute(
+fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
     onDrivingCategoriesClick: () -> Unit,
     modifier: Modifier = Modifier,
     vehiclesFooter: @Composable () -> Unit = {}
 ) {
-    VehiclesAndLicenceSummaryWidget(
-        launchBrowser = launchBrowser,
-        onVehicleDetailsClick = onVehicleDetailsClick,
-        onDrivingCategoriesClick = onDrivingCategoriesClick,
-        modifier = modifier,
-        vehiclesFooter = vehiclesFooter
-    )
-}
-
-@Composable
-internal fun VehiclesAndLicenceSummaryWidget(
-    launchBrowser: (String) -> Unit,
-    onVehicleDetailsClick: (vehicleId: Int) -> Unit,
-    onDrivingCategoriesClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    vehiclesFooter: @Composable () -> Unit = {},
-    viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
-) {
+    val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
     Column(modifier = modifier) {
@@ -210,7 +193,7 @@ internal fun VehiclesAndLicenceSummaryWidget(
                                 viewModel.onButtonClicked(text)
                                 onDrivingCategoriesClick()
                             },
-                            onPageView = { viewModel.onRevokedMedicalLicencePageView() },
+                            onPageView = { viewModel.onLicenceRevokedForMedicalReasonsPageView() },
                             modifier = modifier
                         )
                     }
@@ -259,7 +242,7 @@ private fun VehiclesViewContent(
 }
 
 @Composable
-private fun LicenceViewContent(
+internal fun LicenceViewContent(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
@@ -279,7 +262,7 @@ private fun LicenceViewContent(
             modifier = modifier
         )
 
-        is LicenceSummaryUiState.RevokedMedicalLicence -> RevokedMedicalLicenceCard(
+        is LicenceSummaryUiState.LicenceRevokedForMedicalReasons -> LicenceRevokedForMedicalReasonsCard(
             onClick = { text -> launchBrowser(text, licenceState.url) },
             onPageView = onPageView,
             modifier = modifier

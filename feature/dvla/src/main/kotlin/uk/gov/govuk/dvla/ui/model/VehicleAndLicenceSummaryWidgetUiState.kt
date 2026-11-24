@@ -36,7 +36,7 @@ internal sealed interface LicenceSummaryUiState {
         val url: UrlModel
     ) : LicenceSummaryUiState
     data object NoLicence : LicenceSummaryUiState
-    data class RevokedMedicalLicence(
+    data class LicenceRevokedForMedicalReasons(
         val url: UrlModel
     ) : LicenceSummaryUiState
     data class Error(

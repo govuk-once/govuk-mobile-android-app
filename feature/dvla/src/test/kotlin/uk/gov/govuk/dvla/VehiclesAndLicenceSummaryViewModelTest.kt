@@ -621,7 +621,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     fun `Given mapper returns RevokedMedicalLicence, when viewModel initialised, then licence state becomes RevokedMedicalLicence`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
-            val revokedState = LicenceSummaryUiState.RevokedMedicalLicence(UrlModel("test-url"))
+            val revokedState = LicenceSummaryUiState.LicenceRevokedForMedicalReasons(UrlModel("test-url"))
             coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
             every { licenceMapper.toUiModel(any(), any()) } returns revokedState
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
@@ -677,7 +677,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             coEvery { dvlaRepo.getLicenceDetails() } returns LicenceDetailsResult.Success(mockk())
             coEvery { dvlaRepo.getCustomerVehicles() } returns Result.Error()
             every { licenceMapper.toUiModel(any(), any()) } returns
-                LicenceSummaryUiState.RevokedMedicalLicence(UrlModel(reapplyUrl))
+                LicenceSummaryUiState.LicenceRevokedForMedicalReasons(UrlModel(reapplyUrl))
             83
             val viewModel = VehiclesAndLicenceSummaryViewModel(
                 dvlaRepo,
@@ -690,7 +690,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             advanceUntilIdle()
 
             val currentState = viewModel.uiState.value as UiState.Default
-            val url = (currentState.licenceState as LicenceSummaryUiState.RevokedMedicalLicence).url
+            val url = (currentState.licenceState as LicenceSummaryUiState.LicenceRevokedForMedicalReasons).url
 
             viewModel.onExternalButtonClicked(
                 text = "Check if you can reapply",
@@ -722,7 +722,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
             )
             advanceUntilIdle()
 
-            viewModel.onRevokedMedicalLicencePageView()
+            viewModel.onLicenceRevokedForMedicalReasonsPageView()
             advanceUntilIdle()
 
             verify(exactly = 1) {

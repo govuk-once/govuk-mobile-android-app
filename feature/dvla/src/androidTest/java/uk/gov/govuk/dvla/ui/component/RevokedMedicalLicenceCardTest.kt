@@ -28,7 +28,10 @@ class RevokedMedicalLicenceCardTest {
     fun revoked_title_is_displayed() {
         composeTestRule.setContent {
             GovUkTheme {
-                RevokedMedicalLicenceCard(onClick = {})
+                LicenceRevokedForMedicalReasonsCard(
+                    onClick = {},
+                    onPageView = {}
+                )
             }
         }
 
@@ -39,7 +42,10 @@ class RevokedMedicalLicenceCardTest {
     fun revoked_description_is_displayed() {
         composeTestRule.setContent {
             GovUkTheme {
-                RevokedMedicalLicenceCard(onClick = {})
+                LicenceRevokedForMedicalReasonsCard(
+                    onClick = {},
+                    onPageView = {}
+                )
             }
         }
 
@@ -50,7 +56,10 @@ class RevokedMedicalLicenceCardTest {
     fun reapply_link_is_displayed() {
         composeTestRule.setContent {
             GovUkTheme {
-                RevokedMedicalLicenceCard(onClick = {})
+                LicenceRevokedForMedicalReasonsCard(
+                    onClick = {},
+                    onPageView = {}
+                )
             }
         }
 
@@ -63,10 +72,13 @@ class RevokedMedicalLicenceCardTest {
 
         composeTestRule.setContent {
             GovUkTheme {
-                RevokedMedicalLicenceCard(onClick = { text ->
+                LicenceRevokedForMedicalReasonsCard(
+                    onClick = { text ->
                     clickedText =
                         text
-                })
+                },
+                    onPageView = {}
+                )
             }
         }
 

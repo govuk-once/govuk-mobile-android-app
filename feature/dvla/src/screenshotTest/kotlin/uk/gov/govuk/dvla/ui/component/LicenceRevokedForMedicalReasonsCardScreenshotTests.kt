@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.android.tools.screenshot.PreviewTest
 
-internal class RevokedMedicalLicenceCardScreenshotTests {
+internal class LicenceRevokedForMedicalReasonsCardScreenshotTests {
     @PreviewTest
     @PreviewLightDark
     @Composable
-    fun RevokedMedicalLicenceCardScreenshots() {
-        RevokedMedicalLicenceCardPreview()
+    fun LicenceRevokedForMedicalReasonsCardScreenshots() {
+        LicenceRevokedForMedicalReasonsCardPreview()
     }
 }

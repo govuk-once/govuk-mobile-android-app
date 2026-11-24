@@ -50,7 +50,7 @@ internal class LicenceSummaryMapper @Inject constructor(
         }
 
         if (details.licenceStatus == LicenceStatus.REVOKED_FOR_MEDICAL_REASONS) {
-            return LicenceSummaryUiState.RevokedMedicalLicence(reapplyUrl(dvlaUrls))
+            return LicenceSummaryUiState.LicenceRevokedForMedicalReasons(reapplyUrl(dvlaUrls))
         }
 
         if (details.licenceStatus != LicenceStatus.VALID && details.licenceStatus != LicenceStatus.EXPIRED) {

@@ -9,7 +9,7 @@ import uk.gov.govuk.design.ui.theme.GovUkTheme
 import uk.gov.govuk.dvla.R
 
 @Composable
-internal fun RevokedMedicalLicenceCard(
+internal fun LicenceRevokedForMedicalReasonsCard(
     onClick: (text: String) -> Unit,
     onPageView: () -> Unit,
     modifier: Modifier = Modifier
@@ -33,8 +33,8 @@ internal fun RevokedMedicalLicenceCard(
 
 @PreviewLightDark
 @Composable
-internal fun RevokedMedicalLicenceCardPreview() {
+internal fun LicenceRevokedForMedicalReasonsCardPreview() {
     GovUkTheme {
-        RevokedMedicalLicenceCard(onClick = {}, onPageView = {})
+        LicenceRevokedForMedicalReasonsCard(onClick = {}, onPageView = {})
     }
 }
