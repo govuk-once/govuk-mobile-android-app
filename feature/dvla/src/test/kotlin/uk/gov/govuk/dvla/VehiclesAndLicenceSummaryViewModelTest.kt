@@ -618,7 +618,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     }
 
     @Test
-    fun `Given mapper returns RevokedMedicalLicence, when viewModel initialised, then licence state becomes RevokedMedicalLicence`() =
+    fun `Given mapper returns LicenceRevokedForMedicalReasons, when viewModel initialised, then licence state becomes LicenceRevokedForMedicalReasons`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
             val revokedState = LicenceSummaryUiState.LicenceRevokedForMedicalReasons(UrlModel("test-url"))
@@ -640,7 +640,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `When revoked medical licence reapply link clicked, then analytics fires with link text and reapply url`() = runTest(dispatcher) {
+    fun `When licence revoked for medical reasons reapply link clicked, then analytics fires with link text and reapply url`() = runTest(dispatcher) {
         every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
         val viewModel = VehiclesAndLicenceSummaryViewModel(
@@ -670,7 +670,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
     }
 
     @Test
-    fun `Given mapper returns RevokedMedicalLicence, when viewModel initialised, then onExternalButtonClicked fires correct analytics for reapply url`() =
+    fun `Given mapper returns LicenceRevokedForMedicalReasons, when viewModel initialised, then onExternalButtonClicked fires correct analytics for reapply url`() =
         runTest(dispatcher) {
             val reapplyUrl = "https://www.gov.uk/reapply-driving-licence-health-condition"
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
@@ -709,7 +709,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `Given licence is revoked for medical reasons, when onRevokedMedicalLicencePageView is called, then screen view analytics event is fired`() =
+    fun `Given licence is revoked for medical reasons, when onLicenceRevokedForMedicalReasonsPageView is called, then screen view analytics event is fired`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 

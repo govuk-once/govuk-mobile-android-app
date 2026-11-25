@@ -162,7 +162,7 @@ class LicenceSummaryMapperTest {
     }
 
     @Test
-    fun `Given licence status is revoked for medical reasons, then result is RevokedMedicalLicence`() {
+    fun `Given licence status is revoked for medical reasons, then result is LicenceRevokedForMedicalReasons`() {
         val result = mapper.toUiModel(makeLicenceDetails(status = LicenceStatus.REVOKED_FOR_MEDICAL_REASONS), dvlaUrls)
         assertTrue(result is LicenceSummaryUiState.LicenceRevokedForMedicalReasons)
     }
