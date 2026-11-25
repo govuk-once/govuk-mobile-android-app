@@ -710,7 +710,7 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `Given licence is revoked for medical reasons, when onRevokedMedicalLicencePageView is called, then screen view analytics event is fired`() =
+    fun `Given licence is revoked for medical reasons, when onLicenceRevokedForMedicalReasonsPageView is called, then screen view analytics event is fired`() =
         runTest(dispatcher) {
             every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
