@@ -640,34 +640,35 @@ class VehiclesAndLicenceSummaryViewModelTest {
         }
 
     @Test
-    fun `When licence revoked for medical reasons reapply link clicked, then analytics fires with link text and reapply url`() = runTest(dispatcher) {
-        every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
+    fun `When licence revoked for medical reasons reapply link clicked, then analytics fires with link text and reapply url`() =
+        runTest(dispatcher) {
+            every { dvlaRepo.linkState } returns MutableStateFlow(ServiceLinkStatus.LINKED)
 
-        val viewModel = VehiclesAndLicenceSummaryViewModel(
-            dvlaRepo,
-            vehicleMapper,
-            licenceMapper,
-            analyticsClient,
-            configRepo
-        )
-
-        advanceUntilIdle()
-
-        viewModel.onExternalButtonClicked(
-            text = "Check if you can reapply",
-            url = "https://www.gov.uk/reapply-driving-licence-health-condition"
-        )
-        advanceUntilIdle()
-
-        verify(exactly = 1) {
-            analyticsClient.buttonClick(
-                text = "Check if you can reapply",
-                url = "https://www.gov.uk/reapply-driving-licence-health-condition",
-                external = true,
-                section = "Driving"
+            val viewModel = VehiclesAndLicenceSummaryViewModel(
+                dvlaRepo,
+                vehicleMapper,
+                licenceMapper,
+                analyticsClient,
+                configRepo
             )
+
+            advanceUntilIdle()
+
+            viewModel.onExternalButtonClicked(
+                text = "Check if you can reapply",
+                url = "https://www.gov.uk/reapply-driving-licence-health-condition"
+            )
+            advanceUntilIdle()
+
+            verify(exactly = 1) {
+                analyticsClient.buttonClick(
+                    text = "Check if you can reapply",
+                    url = "https://www.gov.uk/reapply-driving-licence-health-condition",
+                    external = true,
+                    section = "Driving"
+                )
+            }
         }
-    }
 
     @Test
     fun `Given mapper returns LicenceRevokedForMedicalReasons, when viewModel initialised, then onExternalButtonClicked fires correct analytics for reapply url`() =
