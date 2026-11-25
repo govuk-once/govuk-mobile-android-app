@@ -84,6 +84,9 @@
     <string name="licence_not_available_title">Not available</string>
     <string name="licence_not_available_description">Check your account to see your licence status and restrictions that apply to you</string>
     <string name="licence_not_available_link_text">Your driver and vehicles account</string>
+    <string name="licence_no_licence_title">No licence</string>
+    <string name="licence_no_licence_description">You do not hold a driving licence issued in England, Scotland or Wales</string>
+
 
     <string name="menu_register_to_you">Register to you</string>
     <string name="menu_register_to_you_alt_text">Register vehicle to you</string>
