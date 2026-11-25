@@ -134,7 +134,7 @@ internal fun ChatRoute(
 
     uiState?.let {
         when (it) {
-            ChatUiState.Onboarding -> onShowOnboarding()
+            ChatUiState.Onboarding -> LaunchedEffect(Unit) { onShowOnboarding() }
             is ChatUiState.Error -> {
                 ErrorScreen(
                     canRetry = it.canRetry,
