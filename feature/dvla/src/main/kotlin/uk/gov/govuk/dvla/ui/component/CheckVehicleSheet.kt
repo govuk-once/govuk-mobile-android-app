@@ -197,7 +197,7 @@ private fun CheckVehicleSheetContent(
                 modifier = Modifier.weight(1f)
             )
 
-            if (state.regNumber.length >= 2) {
+            if (state.regNumber.trim().length >= 2) {
                 PrimaryButton(
                     text = stringResource(R.string.check_vehicle_submit),
                     onClick = onSubmit,
