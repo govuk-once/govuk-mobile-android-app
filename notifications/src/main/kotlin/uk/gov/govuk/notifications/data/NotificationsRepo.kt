@@ -40,6 +40,8 @@ class NotificationsRepo @Inject constructor(
 
     fun logout() {
         notificationsProvider.logout()
+        // Drop the signed-out user's push ID so it can never be used to log in the next user.
+        userRepo.clear()
     }
 
     suspend fun requestPermission(): Boolean = notificationsProvider.requestPermission()

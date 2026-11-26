@@ -66,6 +66,18 @@ class UserRepoTest {
     }
 
     @Test
+    fun `Given a user has been initialised, when clear is called, then the user is cleared`() = runTest {
+        coEvery { userApi.getUserInfo() } returns Response.success(
+            User(Notifications(ConsentStatus.ACCEPTED, "12345"))
+        )
+        userRepo.initUser()
+
+        userRepo.clear()
+
+        assertNull(userRepo.notifications)
+    }
+
+    @Test
     fun `Given update notifications is called, when consented, then update notifications is called on the api`() = runTest {
         userRepo.updateNotifications(ConsentStatus.ACCEPTED)
 
