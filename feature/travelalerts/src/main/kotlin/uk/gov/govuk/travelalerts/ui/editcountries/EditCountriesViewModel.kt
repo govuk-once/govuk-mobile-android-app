@@ -34,6 +34,8 @@ class EditCountriesViewModel @Inject constructor(
         private const val TITLE = "Edit countries"
         private const val SECTION = "Travel Abroad Notifications"
         private const val UNFOLLOW_ACTION = "Remove"
+        private const val NOTIFICATIONS_ON_ACTION = "On"
+        private const val NOTIFICATIONS_OFF_ACTION = "Off"
     }
 
     sealed class State {
@@ -98,10 +100,24 @@ class EditCountriesViewModel @Inject constructor(
         (_uiState.value as? State.Loaded)?.let { _uiState.value = it.block() }
     }
 
+    fun onFollowAnotherCountryClick(
+        text: String
+    ) {
+        analyticsClient.buttonClick(text = text, external = false, section = SECTION)
+    }
+
     fun toggleNotifications(
         slug: String,
         enabled: Boolean
     ) {
+        // Tracks the tap itself, before any hand-off to the notifications permission screen
+        followedCountryName(slug)?.let {
+            analyticsClient.toggleFunction(
+                text = it,
+                section = SECTION,
+                action = if (enabled) NOTIFICATIONS_ON_ACTION else NOTIFICATIONS_OFF_ACTION
+            )
+        }
         viewModelScope.launch {
             if (enabled && !notificationsRepo.permissionGranted()) {
                 selectedSlug = slug
@@ -134,8 +150,7 @@ class EditCountriesViewModel @Inject constructor(
     fun unfollowCountry(
         slug: String
     ) {
-        val countryName = (_uiState.value as? State.Loaded)?.countries?.find { it.slug == slug }?.name
-        countryName?.let {
+        followedCountryName(slug)?.let {
             analyticsClient.toggleFunction(text = it, section = SECTION, action = UNFOLLOW_ACTION)
         }
         viewModelScope.launch {
@@ -148,6 +163,10 @@ class EditCountriesViewModel @Inject constructor(
             }
         }
     }
+
+    private fun followedCountryName(
+        slug: String
+    ): String? = (_uiState.value as? State.Loaded)?.countries?.find { it.slug == slug }?.name
 
     fun onOptInResult(
         slug: String,

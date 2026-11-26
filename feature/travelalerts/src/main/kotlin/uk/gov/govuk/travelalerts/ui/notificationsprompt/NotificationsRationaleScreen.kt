@@ -147,7 +147,7 @@ fun NotificationsRationaleScreen(
             NotificationsRationaleScreenContent(
                 onNotNow = { viewModel.onNotNow(countrySlug, notNowText) },
                 onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus, agreeText) },
-                onPrivacyLinkClick = { viewModel.onPrivacyLinkClick(privacyText) },
+                onPrivacyLinkClick = { url -> viewModel.onPrivacyLinkClick(privacyText, url) },
                 launchBrowser = launchBrowser
             )
         }
@@ -157,7 +157,7 @@ fun NotificationsRationaleScreen(
             NotificationsRationaleScreenContent(
                 onNotNow = { viewModel.onNotNow(countrySlug, notNowText) },
                 onAgreeContinue = { viewModel.onAgreeToContinue(permissionStatus, agreeText) },
-                onPrivacyLinkClick = { viewModel.onPrivacyLinkClick(privacyText) },
+                onPrivacyLinkClick = { url -> viewModel.onPrivacyLinkClick(privacyText, url) },
                 launchBrowser = launchBrowser,
                 showSettingsAlert = true,
                 onSettingsAlertCancel = { viewModel.onSettingsAlertCancelClicked() },
@@ -175,7 +175,7 @@ private fun NotificationsRationaleScreenContent(
     modifier: Modifier = Modifier,
     onNotNow: () -> Unit,
     onAgreeContinue: () -> Unit,
-    onPrivacyLinkClick: () -> Unit,
+    onPrivacyLinkClick: (url: String) -> Unit,
     launchBrowser: (url: String) -> Unit,
     showSettingsAlert: Boolean = false,
     onSettingsAlertCancel: () -> Unit = {},
@@ -240,7 +240,7 @@ private fun NotificationsRationaleScreenContent(
             PrivacyPolicyLink(
                 text = stringResource(R.string.notifications_rationale_privacy_link),
                 onClick = { _, url ->
-                    onPrivacyLinkClick()
+                    onPrivacyLinkClick(url)
                     launchBrowser(url)
                 }
             )
@@ -283,7 +283,7 @@ internal fun NotificationsRationaleScreenContentPreview() {
         NotificationsRationaleScreenContent(
             onNotNow = {},
             onAgreeContinue = {},
-            onPrivacyLinkClick = {},
+            onPrivacyLinkClick = { _ -> },
             launchBrowser = {}
         )
     }

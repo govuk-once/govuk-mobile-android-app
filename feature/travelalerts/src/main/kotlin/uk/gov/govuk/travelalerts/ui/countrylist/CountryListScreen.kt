@@ -1,5 +1,6 @@
 package uk.gov.govuk.travelalerts.ui.countrylist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -117,6 +118,17 @@ fun CountryListScreen(
     val notNowText = stringResource(R.string.follow_country_notification_not_now)
     val getNotificationsText = stringResource(R.string.follow_country_notification_get)
     val footerLinkText = stringResource(R.string.country_list_footer_link_text)
+    val closeText = stringResource(uk.gov.govuk.design.R.string.content_desc_close)
+
+    // The user leaving the screen (X or system back). Not used when the screen closes after a follow.
+    val onUserClose = {
+        viewModel.onCloseClick(closeText)
+        onClose()
+    }
+
+    // The preference bottom sheet is a separate dialog window, so back while it's open is handled
+    // by the sheet and never reaches this handler.
+    BackHandler(onBack = onUserClose)
 
     Column(
         modifier
@@ -124,7 +136,7 @@ fun CountryListScreen(
             .background(GovUkTheme.colourScheme.surfaces.surfaceModal)
             .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.displayCutout))
     ) {
-        CountryListHeader(onClose = onClose)
+        CountryListHeader(onClose = onUserClose)
 
         when (val state = uiState) {
             is CountryListViewModel.State.Loading -> LoadingScreen()

@@ -62,6 +62,16 @@ class TravelAlertsWidgetViewModel @Inject constructor(
         )
     }
 
+    fun onEditCountriesClick(
+        text: String
+    ) {
+        analyticsClient.widgetClick(
+            text = text,
+            external = false,
+            section = SECTION
+        )
+    }
+
     fun onRowClick(
         row: LoadedRow
     ) {

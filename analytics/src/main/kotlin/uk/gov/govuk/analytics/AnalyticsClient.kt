@@ -250,9 +250,16 @@ class AnalyticsClient @Inject constructor(
 
     fun search(
         searchTerm: String,
-        section: String? = null
+        section: String? = null,
+        extraParams: Map<String, Any> = emptyMap()
     ) {
-        redactedEvent(name = "Search", type = "typed", inputString = searchTerm, section = section)
+        redactedEvent(
+            name = "Search",
+            type = "typed",
+            inputString = searchTerm,
+            section = section,
+            extraParams = extraParams
+        )
     }
 
     fun autocomplete(
@@ -373,6 +380,19 @@ class AnalyticsClient @Inject constructor(
         )
     }
 
+    fun notificationPermissionResult(
+        type: String,
+        granted: Boolean,
+        section: String
+    ) {
+        function(
+            text = "Notification permission",
+            type = type,
+            section = section,
+            action = if (granted) "Granted" else "Denied"
+        )
+    }
+
     fun topicsCustomised() {
         firebaseAnalyticsClient.setUserProperty("topics_customised", "true")
     }
@@ -419,13 +439,15 @@ class AnalyticsClient @Inject constructor(
         name: String,
         type: String,
         inputString: String,
-        section: String? = null
+        section: String? = null,
+        extraParams: Map<String, Any> = emptyMap()
     ) {
         val params = mutableMapOf<String, Any>(
             "type" to type,
             "text" to inputString.redactPii()
         )
         section?.let { params["section"] = it }
+        params.putAll(extraParams)
         logEvent(name, params)
     }
 

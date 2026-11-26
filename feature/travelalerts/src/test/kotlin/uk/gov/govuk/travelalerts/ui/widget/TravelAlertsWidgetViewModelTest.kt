@@ -192,6 +192,19 @@ class TravelAlertsWidgetViewModelTest {
     }
 
     @Test
+    fun `Given edit countries click, then analytics event is fired`() {
+        viewModel.onEditCountriesClick("Edit")
+
+        verify {
+            analyticsClient.widgetClick(
+                text = "Edit",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
     fun `Given row click, then analytics event is fired with correct parameters`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)

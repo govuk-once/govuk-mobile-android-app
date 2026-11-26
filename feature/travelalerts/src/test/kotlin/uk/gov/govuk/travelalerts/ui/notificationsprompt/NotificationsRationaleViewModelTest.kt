@@ -29,6 +29,11 @@ import uk.gov.govuk.travelalerts.data.TravelAlertsRepo
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPermissionsApi::class)
 class NotificationsRationaleViewModelTest {
+    companion object {
+        private const val PRIVACY_URL =
+            "https://www.gov.uk/government/publications/govuk-app-privacy-notice-how-we-use-your-data"
+    }
+
     private val dispatcher = UnconfinedTestDispatcher()
     private val travelAlertsRepo = mockk<TravelAlertsRepo>(relaxed = true)
     private val notificationsRepo = mockk<NotificationsRepo>(relaxed = true)
@@ -411,13 +416,145 @@ class NotificationsRationaleViewModelTest {
     }
 
     @Test
-    fun `Given privacy link tapped, then read privacy notice analytics event is fired`() {
-        viewModel.onPrivacyLinkClick("Read the privacy notice")
+    fun `Given privacy link tapped, then read privacy notice analytics event is fired as external with url`() {
+        viewModel.onPrivacyLinkClick("Read the privacy notice", PRIVACY_URL)
 
         verify {
             analyticsClient.buttonClick(
                 text = "Read the privacy notice",
-                external = false,
+                url = PRIVACY_URL,
+                external = true,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    // Notification permission result
+
+    @Test
+    fun `Given OS prompt granted, then System permission result Granted is tracked`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.OS_PROMPT
+        coEvery { permissionResolver.requestOsPermission() } returns true
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
+
+        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+
+        verify(exactly = 1) {
+            analyticsClient.notificationPermissionResult(
+                type = "System",
+                granted = true,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given OS prompt denied, then System permission result Denied is tracked`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.OS_PROMPT
+        coEvery { permissionResolver.requestOsPermission() } returns false
+        coEvery { travelAlertsRepo.toggleNotifications("france", enabled = false) } returns Result.Success(Unit)
+
+        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.EDIT)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+
+        verify(exactly = 1) {
+            analyticsClient.notificationPermissionResult(
+                type = "System",
+                granted = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given permission already granted, when Agree tapped, then no permission result is tracked`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.GRANTED
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
+
+        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+
+        verify(exactly = 0) { analyticsClient.notificationPermissionResult(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given Settings alert shown, when not yet continued, then no permission result is tracked`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+        coEvery { notificationsRepo.permissionGranted() } returns false
+
+        viewModel.onPageView("france")
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+        viewModel.onResume("france")
+
+        verify(exactly = 0) { analyticsClient.notificationPermissionResult(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given return from Settings with permission granted, then Settings permission result Granted is tracked`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+        coEvery { notificationsRepo.permissionGranted() } returns true
+        coEvery { travelAlertsRepo.followCountry("france", notificationsEnabled = true) } returns Result.Success(Unit)
+
+        viewModel.onPageView("france", NotificationsRationaleViewModel.Origin.FOLLOW)
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+        viewModel.onSettingsAlertContinue()
+        viewModel.onResume("france")
+
+        verify(exactly = 1) {
+            analyticsClient.notificationPermissionResult(
+                type = "Settings",
+                granted = true,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given return from Settings still denied, when resumed again, then Settings permission result Denied is tracked once`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+        coEvery { notificationsRepo.permissionGranted() } returns false
+
+        viewModel.onPageView("france")
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+        viewModel.onSettingsAlertContinue()
+        viewModel.onResume("france")
+        viewModel.onResume("france")
+        viewModel.onResume("france")
+
+        verify(exactly = 1) {
+            analyticsClient.notificationPermissionResult(
+                type = "Settings",
+                granted = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given a second trip to Settings, then Settings permission result is tracked for each trip`() = runTest {
+        val permissionStatus = mockk<PermissionStatus>()
+        coEvery { permissionResolver.resolve(permissionStatus, 33) } returns NotificationsPermissionResolver.PermissionPath.SETTINGS
+        coEvery { notificationsRepo.permissionGranted() } returns false
+
+        viewModel.onPageView("france")
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+        viewModel.onSettingsAlertContinue()
+        viewModel.onResume("france")
+        viewModel.onAgreeToContinue(permissionStatus, "Agree and continue", androidVersion = 33)
+        viewModel.onSettingsAlertContinue()
+        viewModel.onResume("france")
+
+        verify(exactly = 2) {
+            analyticsClient.notificationPermissionResult(
+                type = "Settings",
+                granted = false,
                 section = "Travel Abroad Notifications"
             )
         }
