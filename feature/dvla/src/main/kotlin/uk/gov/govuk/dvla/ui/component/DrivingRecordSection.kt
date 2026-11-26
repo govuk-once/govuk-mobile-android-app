@@ -20,7 +20,6 @@ internal fun DrivingRecordSection(
 
     TitledSection(
         title = stringResource(R.string.driving_record_title),
-        description = stringResource(R.string.driving_record_description),
         modifier = modifier
     ) {
         ExternalLinkListItem(

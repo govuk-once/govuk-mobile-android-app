@@ -115,9 +115,8 @@
     <string name="menu_replace_licence">Replace licence</string>
 
     <string name="driving_title">Driving</string>
-    <string name="driving_record_title">Driving record</string>
-    <string name="driving_record_description">Vehicles you can drive, offences and penalty points</string>
-    <string name="driving_record_link_text">Your driving record</string>
+    <string name="driving_record_title">Your driving record</string>
+    <string name="driving_record_link_text">Offences and points</string>
     <string name="driving_categories_title">You can drive</string>
     <string name="driving_categories_description">Vehicles you’re permitted to drive</string>
     <string name="driving_categories_button_text">Categories</string>

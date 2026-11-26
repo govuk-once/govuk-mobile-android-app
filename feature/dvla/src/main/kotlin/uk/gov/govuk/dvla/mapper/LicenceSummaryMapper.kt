@@ -72,7 +72,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                     LicenceType.FULL, LicenceType.PROVISIONAL -> stringProvider.getString(R.string.licence_id_footnote)
                     else -> null
                 },
-                drivingRecordUrl = getDrivingRecordUrl(
+                offencesAndPoints = getOffencesAndPointsUrl(
                     status = details.licenceStatus,
                     dvlaUrls = dvlaUrls
                 )
@@ -84,12 +84,12 @@ internal class LicenceSummaryMapper @Inject constructor(
         dvlaUrls: DvlaUrls?
     ) = UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
-    private fun getDrivingRecordUrl(
+    private fun getOffencesAndPointsUrl(
         status: LicenceStatus,
         dvlaUrls: DvlaUrls?
     ): String? {
         if (status != LicenceStatus.VALID) return null
-        return dvlaUrls?.drivingRecord?.takeIf { it.isNotBlank() }
+        return dvlaUrls?.endorsements?.takeIf { it.isNotBlank() }
     }
 
     private fun String?.asAddressLines() = this

@@ -423,22 +423,22 @@ private fun LicenceSummarySuccess(
             )
         }
 
+        licenceSummary.offencesAndPoints?.let { offencesAndPointsUrl ->
+            LargeVerticalSpacer()
+
+            DrivingRecordSection(
+                onLinkClick = launchBrowser,
+                url = offencesAndPointsUrl,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         LargeVerticalSpacer()
 
         DrivingCategoriesSection(
             onClick = onCategoriesClick,
             modifier = Modifier.fillMaxWidth()
         )
-
-        licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
-            LargeVerticalSpacer()
-
-            DrivingRecordSection(
-                onLinkClick = launchBrowser,
-                url = drivingRecordUrl,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
     }
 }
 
