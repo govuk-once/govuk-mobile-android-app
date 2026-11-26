@@ -241,7 +241,7 @@ private fun VehiclesViewContent(
 }
 
 @Composable
-private fun LicenceViewContent(
+internal fun LicenceViewContent(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
