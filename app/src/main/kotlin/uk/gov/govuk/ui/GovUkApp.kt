@@ -256,7 +256,9 @@ private fun BottomNavScaffold(
                     AppViewModel.TimeoutEvent.WARNING -> showTimeoutWarningDialog = true
                     AppViewModel.TimeoutEvent.TIMEOUT -> {
                         showTimeoutWarningDialog = false
-                        viewModel.onSignOut()
+                        // Deliberately no OneSignal logout here: an inactivity timeout only ends
+                        // the session, and the same person signs back in, so they should keep
+                        // getting their notifications. iOS behaves the same way.
                         appNavigation.onSignOut(navController)
                     }
                 }
@@ -553,7 +555,12 @@ private fun GovUkNavHost(
             onCompleted = {
                 viewModel.onNext()
             },
-            onSignOut = { appNavigation.onSignOut(navController) }
+            onSignOut = {
+                // Log out of OneSignal, otherwise this device keeps receiving the signed-out
+                // user's notifications (and the next user's if their login never succeeds).
+                viewModel.onSignOut()
+                appNavigation.onSignOut(navController)
+            }
         )
         analyticsGraph(
             analyticsConsentCompleted = {
@@ -759,6 +766,9 @@ private fun GovUkNavHost(
         signOutGraph(
             navController = navController,
             onSignOut = {
+                // Log out of OneSignal, otherwise this device keeps receiving the signed-out
+                // user's notifications (and the next user's if their login never succeeds).
+                viewModel.onSignOut()
                 appNavigation.onSignOut(navController)
             }
         )

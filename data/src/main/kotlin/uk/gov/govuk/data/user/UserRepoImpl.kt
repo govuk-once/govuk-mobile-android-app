@@ -32,6 +32,12 @@ class UserRepoImpl @Inject constructor(
         return result
     }
 
+    // Called on sign-out. This repo is a singleton, so without this the next user could be
+    // logged in to OneSignal with the previous user's push ID.
+    override fun clear() {
+        user = null
+    }
+
     override suspend fun updateNotifications(
         consentStatus: ConsentStatus
     ) = safeAuthApiCall(apiCall = {
