@@ -27,6 +27,7 @@ import uk.gov.govuk.dwp.util.latestUpcomingPayments
 fun DwpLinkHeader(
     onActionClick: () -> Unit,
     onShowTopicContent: (Boolean) -> Unit = {},
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: DwpLinkWidgetViewModel = hiltViewModel()
@@ -37,6 +38,7 @@ fun DwpLinkHeader(
             onActionClick()
         },
         onShowTopicContent = onShowTopicContent,
+        onClick = onClick,
         modifier = modifier
     )
 }
@@ -46,6 +48,7 @@ internal fun DwpLinkHeaderContent(
     state: ServiceLinkStatus,
     onActionClick: (String) -> Unit,
     onShowTopicContent: (Boolean) -> Unit = {},
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isLinked = state == ServiceLinkStatus.LINKED
@@ -64,7 +67,7 @@ internal fun DwpLinkHeaderContent(
                 )
 
                 if (selectedTab == 0) {
-                    BenefitsPaymentsContent()
+                    BenefitsPaymentsContent(onClick = onClick)
                 }
             }
 
@@ -78,6 +81,7 @@ internal fun DwpLinkHeaderContent(
 
 @Composable
 private fun BenefitsPaymentsContent(
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val latestUpcomingPayments = latestUpcomingPayments().data.upcoming
@@ -88,13 +92,15 @@ private fun BenefitsPaymentsContent(
             Row(modifier = Modifier.fillMaxWidth()) {
                 val benefitName = payment.amountsPerBenefitCode.first().benefitName
                 val frequency = benefitFrequency[benefitName] ?: ""
+                val benefitCode = payment.amountsPerBenefitCode.first().benefitShortName
 
                 PaymentCard(
-                    heading = benefitName,
+                    benefitName = benefitName,
                     frequency = frequency,
                     amount = payment.amount,
                     dueDate = LocalDate.parse(payment.dueDate),
-                    benefitCode = payment.amountsPerBenefitCode.first().benefitShortName
+                    benefitCode = benefitCode,
+                    onClick = onClick,
                 )
             }
             Spacer(Modifier.height(24.dp))

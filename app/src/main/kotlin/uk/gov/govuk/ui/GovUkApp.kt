@@ -82,6 +82,7 @@ import uk.gov.govuk.dvla.ui.component.CheckVehicleWidget
 import uk.gov.govuk.dwp.navigation.DWP_GRAPH_ROUTE
 import uk.gov.govuk.dwp.navigation.dwpGraph
 import uk.gov.govuk.dwp.navigation.navigateToDwpLinkIntro
+import uk.gov.govuk.dwp.navigation.navigateToHistoricalPayments
 import uk.gov.govuk.dwp.ui.DwpLinkHeader
 import uk.gov.govuk.govkit.browser.Urls
 import uk.gov.govuk.govkit.browser.rememberBrowserLauncher
@@ -705,7 +706,8 @@ private fun GovUkNavHost(
                             ) {
                                 DwpLinkHeader(
                                     onActionClick = { navController.navigateToDwpLinkIntro() },
-                                    onShowTopicContent = onShowTopicContent
+                                    onShowTopicContent = onShowTopicContent,
+                                    onClick = { benefitCode, benefitName, frequency -> navController.navigateToHistoricalPayments(benefitCode, benefitName, frequency) }
                                 )
                             }
                         }
@@ -734,6 +736,7 @@ private fun GovUkNavHost(
             )
 
             dwpGraph(
+                navController,
                 onClose = { navController.popBackStack(DWP_GRAPH_ROUTE, inclusive = true) },
                 onLinkComplete = { navController.popBackStack(DWP_GRAPH_ROUTE, inclusive = true) }
             )
