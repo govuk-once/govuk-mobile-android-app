@@ -80,7 +80,7 @@ class ExampleQuestionsFocusOrderTest {
     @Test
     fun tapping_an_example_question_submits_that_question_and_no_other() {
         var submittedQuestion: String? = null
-        setupChatScreen(onSubmit = { submittedQuestion = it })
+        setupChatScreen(onExampleQuestionSelected = { question, _ -> submittedQuestion = question })
         waitForExampleQuestionsToAppear()
 
         val tappedQuestion = questions[1]
@@ -99,7 +99,7 @@ class ExampleQuestionsFocusOrderTest {
     }
 
     private fun setupChatScreen(
-        onSubmit: (String) -> Unit = { }
+        onExampleQuestionSelected: (String, Int) -> Unit = { _, _ -> }
     ) {
         composeTestRule.setContent {
             GovUkTheme {
@@ -113,7 +113,7 @@ class ExampleQuestionsFocusOrderTest {
                         onMarkdownLinkClicked = { _, _ -> },
                         onSourcesExpanded = { },
                         onExampleQuestionsViewed = { },
-                        onExampleQuestionSelected = { _, _ -> }
+                        onExampleQuestionSelected = onExampleQuestionSelected
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = false,
@@ -122,7 +122,7 @@ class ExampleQuestionsFocusOrderTest {
                     isImeVisible = false,
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },
-                        onSubmit = onSubmit,
+                        onSubmit = { _ -> },
                         onClear = { },
                         onFeedbackClick = { _, _, _ -> },
                         onFeedbackGiven = { _, _, _ -> }
