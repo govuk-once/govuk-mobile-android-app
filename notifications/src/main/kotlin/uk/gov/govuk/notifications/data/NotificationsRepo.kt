@@ -2,6 +2,7 @@ package uk.gov.govuk.notifications.data
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.data.user.model.ConsentStatus
@@ -12,7 +13,8 @@ import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 class NotificationsRepo @Inject constructor(
     private val notificationsDataStore: NotificationsDataStore,
     private val notificationsProvider: NotificationsProvider,
-    private val userRepo: UserRepo
+    private val userRepo: UserRepo,
+    private val analyticsClient: AnalyticsClient
 ) {
     suspend fun login() {
         userRepo.notifications?.let { notifications ->
@@ -24,6 +26,47 @@ class NotificationsRepo @Inject constructor(
             }
              */
         }
+    }
+
+    /**
+     * Compares what the OneSignal SDK saved on this device with the signed-in user, and logs a
+     * non-fatal if they don't match.
+     *
+     * Call it on app start for a returning user, before [login]. Logging in again can repair the
+     * state, which would hide what the previous session left behind; that self-healing on the
+     * next cold boot is what has made these failures invisible so far. Don't call it after a
+     * fresh sign-in: that starts logged out of OneSignal, so a mismatch there is expected.
+     */
+    fun reportInconsistentState() {
+        val pushId = userRepo.notifications?.pushId ?: return
+        // Only users who have consented should be linked in OneSignal.
+        if (!consentGiven()) return
+
+        val state = try {
+            notificationsProvider.sdkState()
+        } catch (e: Exception) {
+            // OneSignal throws if it failed to initialise. A diagnostic check mustn't crash the
+            // app, and a failed initialisation is worth knowing about in its own right.
+            analyticsClient.logException(e)
+            return
+        }
+
+        // None of these depend on the OS permission: the SDK links the external ID and creates
+        // the push subscription whether or not notifications are allowed.
+        val externalIdMatches = state.externalId == pushId
+        val onesignalIdSet = state.onesignalId.isNotEmpty()
+        val pushSubscriptionIdSet = state.pushSubscriptionId.isNotEmpty()
+        if (externalIdMatches && onesignalIdSet && pushSubscriptionIdSet) return
+
+        analyticsClient.logException(
+            InconsistentOneSignalStateException(
+                externalIdSet = state.externalId.isNotEmpty(),
+                externalIdMatches = externalIdMatches,
+                onesignalIdSet = onesignalIdSet,
+                pushSubscriptionIdSet = pushSubscriptionIdSet,
+                pushOptedIn = state.pushOptedIn
+            )
+        )
     }
 
     private suspend fun sendExistingConsentWhenPreferenceUnknown(

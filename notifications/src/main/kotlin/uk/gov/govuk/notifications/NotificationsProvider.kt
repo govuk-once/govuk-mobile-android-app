@@ -17,4 +17,17 @@ interface NotificationsProvider {
     fun permissionGranted() = NotificationManagerCompat.from(context).areNotificationsEnabled()
     suspend fun requestPermission(): Boolean
     fun addClickListener()
+
+    /**
+     * What the OneSignal SDK has saved for this device. Only read it when the user has
+     * consented. Throws if the SDK failed to initialise.
+     */
+    fun sdkState(): NotificationsSdkState
 }
+
+data class NotificationsSdkState(
+    val externalId: String,
+    val onesignalId: String,
+    val pushSubscriptionId: String,
+    val pushOptedIn: Boolean
+)

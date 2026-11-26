@@ -45,6 +45,15 @@ class OneSignalClient @Inject constructor(
         return granted
     }
 
+    // The SDK returns "" for any ID it doesn't have, including a OneSignal ID or subscription ID
+    // that hasn't been created on OneSignal's server yet.
+    override fun sdkState() = NotificationsSdkState(
+        externalId = OneSignal.User.externalId,
+        onesignalId = OneSignal.User.onesignalId,
+        pushSubscriptionId = OneSignal.User.pushSubscription.id,
+        pushOptedIn = OneSignal.User.pushSubscription.optedIn
+    )
+
     override fun addClickListener() {
         OneSignal.Notifications.addClickListener(object : INotificationClickListener {
             override fun onClick(

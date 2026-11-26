@@ -3,6 +3,7 @@ package uk.gov.govuk.login
 import androidx.fragment.app.FragmentActivity
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -134,6 +135,40 @@ class LoginViewModelTest {
             coVerify(exactly = 1) { notificationsRepo.login() }
             assertTrue(isLoading.last() == true)
             assertTrue(events.first() is LoginEvent.BiometricLogin)
+        }
+    }
+
+    @Test
+    fun `Given a returning user signs in with biometrics, when the user state loads, then the OneSignal state is checked before login`() {
+        every { authRepo.isUserSignedIn() } returns true
+        coEvery { loginRepo.getRefreshTokenExpiryDate() } returns null
+        coEvery { loginRepo.getRefreshTokenIssuedAtDate() } returns null
+        coEvery { authRepo.refreshTokens(any(), any()) } returns flowOf(Loading, Success)
+        coEvery { userRepo.initUser() } returns Result.Success(user)
+        every { flagRepo.isFlexEnabled() } returns true
+
+        runTest {
+            viewModel.init(activity)
+
+            coVerifyOrder {
+                notificationsRepo.reportInconsistentState()
+                notificationsRepo.login()
+            }
+        }
+    }
+
+    @Test
+    fun `Given a fresh sign-in, when the user state loads, then the OneSignal state is not checked`() {
+        coEvery { authRepo.handleAuthResponse(any()) } returns true
+        every { authRepo.getIdTokenIssuedAtDate() } returns null
+        coEvery { userRepo.initUser() } returns Result.Success(user)
+        every { flagRepo.isFlexEnabled() } returns true
+
+        runTest {
+            viewModel.onAuthResponse(null)
+
+            verify(exactly = 0) { notificationsRepo.reportInconsistentState() }
+            coVerify(exactly = 1) { notificationsRepo.login() }
         }
     }
 

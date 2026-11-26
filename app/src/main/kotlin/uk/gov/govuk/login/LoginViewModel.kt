@@ -85,7 +85,7 @@ internal class LoginViewModel @Inject constructor(
                         }
 
                         AuthRepo.RefreshStatus.Success -> {
-                            attemptUserInitialisation()
+                            attemptUserInitialisation(isReturningUser = true)
                             _loginCompleted.emit(LoginEvent.BiometricLogin)
                         }
 
@@ -112,7 +112,7 @@ internal class LoginViewModel @Inject constructor(
             val result = authRepo.handleAuthResponse(data)
             if (result) {
                 saveRefreshTokenIssuedAtDate()
-                attemptUserInitialisation()
+                attemptUserInitialisation(isReturningUser = false)
                 termsRepo.termsAccepted()
                 _loginCompleted.emit(
                     LoginEvent.WebLogin(
@@ -126,7 +126,9 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun attemptUserInitialisation() {
+    private suspend fun attemptUserInitialisation(
+        isReturningUser: Boolean
+    ) {
         if (flagRepo.isFlexEnabled()) {
             when (val result = userRepo.initUser()) {
                 is Result.AuthError<*> -> logUserInitFailure("Auth error")
@@ -135,6 +137,12 @@ internal class LoginViewModel @Inject constructor(
                 is Result.InvalidSignature<*> -> { /* Ignore */ }
                 is Result.ServiceNotResponding<*> -> logUserInitFailure("Http error - ${result.code}")
                 is Success<*> -> {
+                    // Only for a returning user, and before login: logging in again can repair
+                    // the OneSignal state and hide what the previous session left behind. A
+                    // fresh sign-in starts logged out of OneSignal, so a mismatch is expected.
+                    if (isReturningUser) {
+                        notificationsRepo.reportInconsistentState()
+                    }
                     notificationsRepo.login()
                 }
             }

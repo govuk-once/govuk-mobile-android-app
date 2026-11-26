@@ -10,15 +10,18 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.data.user.model.ConsentStatus
 import uk.gov.govuk.notifications.NotificationsProvider
+import uk.gov.govuk.notifications.NotificationsSdkState
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
 
 class NotificationsRepoTest {
     private val notificationsDataStore = mockk<NotificationsDataStore>(relaxed = true)
     private val notificationsProvider = mockk<NotificationsProvider>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
+    private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
 
     private lateinit var notificationsRepo: NotificationsRepo
 
@@ -27,8 +30,107 @@ class NotificationsRepoTest {
         notificationsRepo = NotificationsRepo(
             notificationsDataStore,
             notificationsProvider,
-            userRepo
+            userRepo,
+            analyticsClient
         )
+    }
+
+    @Test
+    fun `Given report inconsistent state, when the SDK state matches the user, then nothing is logged`() {
+        every { userRepo.notifications?.pushId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns true
+        every { notificationsProvider.sdkState() } returns NotificationsSdkState(
+            externalId = "12345",
+            onesignalId = "onesignal-id",
+            pushSubscriptionId = "subscription-id",
+            pushOptedIn = false
+        )
+
+        notificationsRepo.reportInconsistentState()
+
+        verify(exactly = 0) { analyticsClient.logException(any()) }
+    }
+
+    @Test
+    fun `Given report inconsistent state, when the external ID is missing, then the flags are logged`() {
+        every { userRepo.notifications?.pushId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns true
+        every { notificationsProvider.sdkState() } returns NotificationsSdkState(
+            externalId = "",
+            onesignalId = "onesignal-id",
+            pushSubscriptionId = "subscription-id",
+            pushOptedIn = true
+        )
+
+        notificationsRepo.reportInconsistentState()
+
+        verify(exactly = 1) {
+            analyticsClient.logException(
+                match {
+                    it is InconsistentOneSignalStateException &&
+                        it.message == "OneSignal state inconsistent on app start: " +
+                        "externalIdSet=false, externalIdMatches=false, onesignalIdSet=true, " +
+                        "pushSubscriptionIdSet=true, pushOptedIn=true"
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Given report inconsistent state, when the user or subscription was never created on the server, then the flags are logged`() {
+        every { userRepo.notifications?.pushId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns true
+        every { notificationsProvider.sdkState() } returns NotificationsSdkState(
+            externalId = "12345",
+            onesignalId = "",
+            pushSubscriptionId = "",
+            pushOptedIn = true
+        )
+
+        notificationsRepo.reportInconsistentState()
+
+        verify(exactly = 1) {
+            analyticsClient.logException(
+                match {
+                    it is InconsistentOneSignalStateException &&
+                        it.message!!.contains("onesignalIdSet=false, pushSubscriptionIdSet=false")
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Given report inconsistent state, when consent has not been given, then the SDK is not read`() {
+        every { userRepo.notifications?.pushId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns false
+
+        notificationsRepo.reportInconsistentState()
+
+        verify(exactly = 0) { notificationsProvider.sdkState() }
+        verify(exactly = 0) { analyticsClient.logException(any()) }
+    }
+
+    @Test
+    fun `Given report inconsistent state, when there is no user state, then the SDK is not read`() {
+        every { userRepo.notifications } returns null
+        every { notificationsProvider.consentGiven() } returns true
+
+        notificationsRepo.reportInconsistentState()
+
+        verify(exactly = 0) { notificationsProvider.sdkState() }
+        verify(exactly = 0) { analyticsClient.logException(any()) }
+    }
+
+    @Test
+    fun `Given report inconsistent state, when the SDK throws, then the exception is logged`() {
+        val exception = IllegalStateException("Must call 'initWithContext' before use")
+        every { userRepo.notifications?.pushId } returns "12345"
+        every { notificationsProvider.consentGiven() } returns true
+        every { notificationsProvider.sdkState() } throws exception
+
+        notificationsRepo.reportInconsistentState()
+
+        verify(exactly = 1) { analyticsClient.logException(exception) }
     }
 
     @Test
