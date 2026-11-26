@@ -11,7 +11,7 @@ internal data class LicenceSummaryUiModel(
     private val addressLines: List<String>,
     val menuItems: List<OverflowMenuItem> = emptyList(),
     val notValidIdNote: String? = null,
-    val drivingRecordUrl: String? = null
+    val offencesAndPoints: String? = null
 ) {
     val formattedAddressLines: List<String>
         get() = addressLines

@@ -20,7 +20,6 @@ internal val dvlaUrls = DvlaUrls(
     checkMot = "https://www.check-mot.service.gov.uk/results?registration=[NUMBER PLATE]&checkRecalls=true",
     driverDetails = "https://driver-and-vehicles-account.service.gov.uk/driver_details",
     account = "https://driver-and-vehicles-account.service.gov.uk",
-    drivingRecord = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Entitlements",
     contact = "https://www.gov.uk/contact-the-dvla",
     buyingUsedCarChecks = "https://www.gov.uk/checks-when-buying-a-used-car",
     reportAbandonedVehicle = "https://www.gov.uk/report-abandoned-vehicle",
@@ -28,5 +27,6 @@ internal val dvlaUrls = DvlaUrls(
     reportNoMot = "https://www.gov.uk/report-no-mot",
     compareLicenceCategories = "https://www.gov.uk/compare-categories",
     vehicleWeightExplained = "https://www.gov.uk/vehicle-weigh-explained",
-    addLicenceCategories = "https://www.gov.uk/add-categories"
+    addLicenceCategories = "https://www.gov.uk/add-categories",
+    endorsements = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Endorsements"
 )

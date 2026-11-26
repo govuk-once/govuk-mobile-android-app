@@ -32,12 +32,23 @@ internal class LicenceSummaryMapper @Inject constructor(
 ) {
     private companion object {
         const val UPPER_RANGE_OF_EXPIRY_DAYS = 56
+
+        val NO_LICENCE_STATUSES = setOf(
+            LicenceStatus.SURRENDERED,
+            LicenceStatus.SURRENDERED_VOLUNTARILY,
+            LicenceStatus.SURRENDERED_FOR_MEDICAL_REASONS,
+            LicenceStatus.EXCHANGED
+        )
     }
 
     fun toUiModel(
         details: LicenceDetails,
         dvlaUrls: DvlaUrls?
     ): LicenceSummaryUiState {
+        if (details.licenceStatus in NO_LICENCE_STATUSES) {
+            return LicenceSummaryUiState.NoLicence
+        }
+
         if (details.licenceStatus != LicenceStatus.VALID && details.licenceStatus != LicenceStatus.EXPIRED) {
             return LicenceSummaryUiState.NotAvailable(notAvailableUrl(dvlaUrls))
         }
@@ -61,7 +72,7 @@ internal class LicenceSummaryMapper @Inject constructor(
                     LicenceType.FULL, LicenceType.PROVISIONAL -> stringProvider.getString(R.string.licence_id_footnote)
                     else -> null
                 },
-                drivingRecordUrl = getDrivingRecordUrl(
+                offencesAndPoints = getOffencesAndPointsUrl(
                     status = details.licenceStatus,
                     dvlaUrls = dvlaUrls
                 )
@@ -73,12 +84,12 @@ internal class LicenceSummaryMapper @Inject constructor(
         dvlaUrls: DvlaUrls?
     ) = UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
-    private fun getDrivingRecordUrl(
+    private fun getOffencesAndPointsUrl(
         status: LicenceStatus,
         dvlaUrls: DvlaUrls?
     ): String? {
         if (status != LicenceStatus.VALID) return null
-        return dvlaUrls?.drivingRecord?.takeIf { it.isNotBlank() }
+        return dvlaUrls?.endorsements?.takeIf { it.isNotBlank() }
     }
 
     private fun String?.asAddressLines() = this

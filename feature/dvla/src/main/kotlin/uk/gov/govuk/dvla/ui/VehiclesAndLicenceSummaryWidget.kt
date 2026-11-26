@@ -41,6 +41,7 @@ import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
+import uk.gov.govuk.dvla.ui.component.NoLicenceCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
 import uk.gov.govuk.dvla.ui.component.VehicleSummaryCard
 import uk.gov.govuk.dvla.ui.model.DrivingView
@@ -268,6 +269,8 @@ private fun LicenceViewContent(
                 modifier = modifier
             )
         }
+
+        LicenceSummaryUiState.NoLicence -> NoLicenceCard(modifier = modifier)
     }
 }
 
@@ -420,22 +423,22 @@ private fun LicenceSummarySuccess(
             )
         }
 
+        licenceSummary.offencesAndPoints?.let { offencesAndPointsUrl ->
+            LargeVerticalSpacer()
+
+            DrivingRecordSection(
+                onLinkClick = launchBrowser,
+                url = offencesAndPointsUrl,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         LargeVerticalSpacer()
 
         DrivingCategoriesSection(
             onClick = onCategoriesClick,
             modifier = Modifier.fillMaxWidth()
         )
-
-        licenceSummary.drivingRecordUrl?.let { drivingRecordUrl ->
-            LargeVerticalSpacer()
-
-            DrivingRecordSection(
-                onLinkClick = launchBrowser,
-                url = drivingRecordUrl,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
     }
 }
 
