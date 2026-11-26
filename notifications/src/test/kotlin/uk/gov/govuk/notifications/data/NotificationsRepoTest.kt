@@ -5,14 +5,20 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import uk.gov.govuk.analytics.AnalyticsClient
+import uk.gov.govuk.config.data.flags.FlagRepo
+import uk.gov.govuk.data.model.Result
 import uk.gov.govuk.data.user.UserRepo
 import uk.gov.govuk.data.user.model.ConsentStatus
+import uk.gov.govuk.data.user.model.Notifications
+import uk.gov.govuk.data.user.model.User
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.NotificationsSdkState
 import uk.gov.govuk.notifications.data.local.NotificationsDataStore
@@ -22,6 +28,10 @@ class NotificationsRepoTest {
     private val notificationsProvider = mockk<NotificationsProvider>(relaxed = true)
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val analyticsClient = mockk<AnalyticsClient>(relaxed = true)
+    private val flagRepo = mockk<FlagRepo>(relaxed = true)
+
+    // Runs launched work straight away, so background work has finished when a test checks it.
+    private val scope = CoroutineScope(UnconfinedTestDispatcher())
 
     private lateinit var notificationsRepo: NotificationsRepo
 
@@ -31,7 +41,9 @@ class NotificationsRepoTest {
             notificationsDataStore,
             notificationsProvider,
             userRepo,
-            analyticsClient
+            analyticsClient,
+            flagRepo,
+            scope
         )
     }
 
@@ -256,6 +268,54 @@ class NotificationsRepoTest {
                 notificationsProvider.giveConsent()
             }
         }
+    }
+
+    @Test
+    fun `Given give consent, when the user state is already loaded, then it is not loaded again`() {
+        every { userRepo.notifications } returns Notifications(ConsentStatus.ACCEPTED, "12345")
+        every { flagRepo.isFlexEnabled() } returns true
+
+        notificationsRepo.giveConsent()
+
+        coVerify(exactly = 0) { userRepo.initUser() }
+    }
+
+    @Test
+    fun `Given give consent, when the user state failed to load, then it is loaded and the user is logged in`() {
+        every { userRepo.notifications } returnsMany listOf(
+            null,
+            Notifications(ConsentStatus.ACCEPTED, "12345")
+        )
+        every { flagRepo.isFlexEnabled() } returns true
+        coEvery { userRepo.initUser() } returns Result.Success(mockk<User>(relaxed = true))
+
+        notificationsRepo.giveConsent()
+
+        verify(exactly = 1) { notificationsProvider.giveConsent() }
+        coVerify(exactly = 1) { userRepo.initUser() }
+        verify(exactly = 1) { notificationsProvider.login("12345") }
+    }
+
+    @Test
+    fun `Given give consent, when the user state failed to load and loading it again fails, then the user is not logged in`() {
+        every { userRepo.notifications } returns null
+        every { flagRepo.isFlexEnabled() } returns true
+        coEvery { userRepo.initUser() } returns Result.DeviceOffline()
+
+        notificationsRepo.giveConsent()
+
+        coVerify(exactly = 1) { userRepo.initUser() }
+        verify(exactly = 0) { notificationsProvider.login(any()) }
+    }
+
+    @Test
+    fun `Given give consent, when flex is not enabled, then the user state is not loaded`() {
+        every { userRepo.notifications } returns null
+        every { flagRepo.isFlexEnabled() } returns false
+
+        notificationsRepo.giveConsent()
+
+        coVerify(exactly = 0) { userRepo.initUser() }
     }
 
     @Test
