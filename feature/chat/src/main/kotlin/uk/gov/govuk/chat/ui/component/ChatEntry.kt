@@ -45,13 +45,14 @@ internal fun ChatEntry(
     onSourcesExpanded: () -> Unit,
     animationDelay: Int,
     modifier: Modifier = Modifier,
-    onCopyText: ((String) -> Unit)? = null
+    onCopyQuestion: ((String) -> Unit)? = null,
+    onCopyAnswer: ((String) -> Unit)? = null
 ) {
     Column(modifier = modifier) {
         MediumVerticalSpacer()
         Question(
             question = chatEntry.question,
-            onCopyText = onCopyText
+            onCopyText = onCopyQuestion
         )
         MediumVerticalSpacer()
         AnimatedChatEntry(
@@ -59,7 +60,7 @@ internal fun ChatEntry(
             onMarkdownLinkClicked = onMarkdownLinkClicked,
             animationDelay = animationDelay,
             onSourcesExpanded = onSourcesExpanded,
-            onCopyText = onCopyText
+            onCopyText = onCopyAnswer
         )
     }
 }

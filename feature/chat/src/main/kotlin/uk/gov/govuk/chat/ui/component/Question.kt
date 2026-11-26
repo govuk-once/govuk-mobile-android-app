@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -46,6 +48,7 @@ internal fun Question(
     var pressOffset by remember { mutableStateOf(Offset.Zero) }
     val interactionSource = remember { MutableInteractionSource() }
     val scope = rememberCoroutineScope()
+    val copyText = stringResource(R.string.copy_text)
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -73,6 +76,13 @@ internal fun Question(
                                     showContextMenu = true
                                 }
                             )
+                        }
+                        // Expose the long press to TalkBack as a named action
+                        .semantics(mergeDescendants = true) {
+                            onLongClick(label = copyText) {
+                                showContextMenu = true
+                                true
+                            }
                         }
                 } else {
                     Modifier
@@ -103,7 +113,7 @@ internal fun Question(
                     onDismissRequest = { showContextMenu = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.copy_text)) },
+                        text = { Text(copyText) },
                         onClick = {
                             showContextMenu = false
                             onCopyText?.invoke(question)

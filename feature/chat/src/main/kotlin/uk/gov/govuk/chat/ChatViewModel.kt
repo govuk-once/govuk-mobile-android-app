@@ -336,6 +336,22 @@ internal class ChatViewModel @Inject constructor(
         )
     }
 
+    fun onQuestionCopied() {
+        analyticsClient.menuItemFunction(
+            text = Analytics.COPY_TO_CLIPBOARD,
+            section = Analytics.QUESTION,
+            action = Analytics.COPY
+        )
+    }
+
+    fun onAnswerCopied() {
+        analyticsClient.menuItemFunction(
+            text = Analytics.COPY_TO_CLIPBOARD,
+            section = Analytics.RESPONSE,
+            action = Analytics.COPY
+        )
+    }
+
     fun onPrivacyPolicyView(
         text: String,
         url: String

@@ -167,7 +167,9 @@ class FeedbackFocusTest {
                     onMarkdownLinkClicked = { _, _ -> },
                     onSourcesExpanded = { },
                     onExampleQuestionsViewed = { },
-                    onExampleQuestionSelected = { _, _ -> }
+                    onExampleQuestionSelected = { _, _ -> },
+                    onQuestionCopied = { },
+                    onAnswerCopied = { }
                 ),
                 launchBrowser = { _ -> },
                 hasConversation = true,

@@ -27,4 +27,7 @@ object Analytics {
     const val RESPONSE_SOURCE_LINK_CLICKED = "Source Link Clicked"
     const val RESPONSE = "Response"
     const val RESPONSE_SOURCE_LINKS_OPENED = "Source Links Opened"
+    const val QUESTION = "Question"
+    const val COPY_TO_CLIPBOARD = "Copy to clipboard"
+    const val COPY = "Copy"
 }

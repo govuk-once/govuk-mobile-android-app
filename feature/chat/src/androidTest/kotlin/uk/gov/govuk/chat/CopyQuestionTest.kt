@@ -3,16 +3,23 @@ package uk.gov.govuk.chat
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,6 +35,7 @@ class CopyQuestionTest {
     private val question = "How do I renew my passport? It's £88.50 – \"urgent\" 🙏"
     private val questionAltText = "${getString(R.string.question_alt)} $question"
     private val copyText = getString(R.string.copy_text)
+    private val questionClipLabel = getString(R.string.clipboard_label_question)
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -54,6 +62,46 @@ class CopyQuestionTest {
         val copied = clipboard.primaryClip?.getItemAt(0)?.text?.toString()
 
         assertEquals(question, copied)
+        assertEquals(questionClipLabel, clipboard.primaryClipDescription?.label?.toString())
+    }
+
+    @Test
+    fun the_sent_question_exposes_a_copy_long_press_action_to_talkback() {
+        setupChatScreen()
+
+        composeTestRule.onNodeWithContentDescription(questionAltText)
+            .assert(
+                SemanticsMatcher("has copy long press action") {
+                    it.config.getOrNull(SemanticsActions.OnLongClick)?.label == copyText
+                }
+            )
+    }
+
+    @Test
+    fun the_talkback_long_press_action_shows_the_copy_option() {
+        setupChatScreen()
+
+        composeTestRule.onNodeWithContentDescription(questionAltText)
+            .performSemanticsAction(SemanticsActions.OnLongClick)
+
+        composeTestRule.onNodeWithText(copyText).assertIsDisplayed()
+    }
+
+    @Test
+    fun copying_a_sent_question_logs_analytics() {
+        var questionCopied = false
+        var answerCopied = false
+        setupChatScreen(
+            onQuestionCopied = { questionCopied = true },
+            onAnswerCopied = { answerCopied = true }
+        )
+
+        longPressQuestion()
+        composeTestRule.onNodeWithText(copyText).performClick()
+        composeTestRule.waitForIdle()
+
+        assertTrue(questionCopied)
+        assertFalse(answerCopied)
     }
 
     @Test
@@ -71,7 +119,10 @@ class CopyQuestionTest {
             .performTouchInput { longClick() }
     }
 
-    private fun setupChatScreen() {
+    private fun setupChatScreen(
+        onQuestionCopied: () -> Unit = { },
+        onAnswerCopied: () -> Unit = { }
+    ) {
         val chatEntry = ChatEntry(
             id = "questionId",
             question = question,
@@ -96,7 +147,9 @@ class CopyQuestionTest {
                         onMarkdownLinkClicked = { _, _ -> },
                         onSourcesExpanded = { },
                         onExampleQuestionsViewed = { },
-                        onExampleQuestionSelected = { _, _ -> }
+                        onExampleQuestionSelected = { _, _ -> },
+                        onQuestionCopied = onQuestionCopied,
+                        onAnswerCopied = onAnswerCopied
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = true,

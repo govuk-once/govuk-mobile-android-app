@@ -3,8 +3,6 @@ package uk.gov.govuk.chat.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -48,7 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -89,7 +90,9 @@ internal class AnalyticsEvents(
     val onMarkdownLinkClicked: (String, String) -> Unit,
     val onSourcesExpanded: () -> Unit,
     val onExampleQuestionsViewed: () -> Unit,
-    val onExampleQuestionSelected: (String, Int) -> Unit
+    val onExampleQuestionSelected: (String, Int) -> Unit,
+    val onQuestionCopied: () -> Unit,
+    val onAnswerCopied: () -> Unit
 )
 
 internal class UiEvents(
@@ -162,7 +165,9 @@ internal fun ChatRoute(
                         onExampleQuestionsViewed = { viewModel.onExampleQuestionsViewed() },
                         onExampleQuestionSelected = { question, index ->
                             viewModel.onExampleQuestionSelected(question, index)
-                        }
+                        },
+                        onQuestionCopied = { viewModel.onQuestionCopied() },
+                        onAnswerCopied = { viewModel.onAnswerCopied() }
                     ),
                     launchBrowser = launchBrowser,
                     hasConversation = it.chatEntries.isNotEmpty(),
@@ -220,7 +225,9 @@ internal fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val copiedText = stringResource(R.string.copied_text)
+    val hapticFeedback = LocalHapticFeedback.current
+    val questionClipLabel = stringResource(R.string.clipboard_label_question)
+    val answerClipLabel = stringResource(R.string.clipboard_label_answer)
     val headerFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(uiState.isPiiError) {
@@ -301,14 +308,13 @@ internal fun ChatScreen(
                                 listState.animateScrollBy(128f)
                             }
                         },
-                        onCopyText = { text ->
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("Markdown content", text)
-                            clipboard.setPrimaryClip(clip)
-                            // Android 13+ shows its own clipboard confirmation
-                            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                                Toast.makeText(context, copiedText, Toast.LENGTH_SHORT).show()
-                            }
+                        onCopyQuestion = { text ->
+                            text.copyToClipboard(context, questionClipLabel, hapticFeedback)
+                            analyticsEvents.onQuestionCopied()
+                        },
+                        onCopyAnswer = { text ->
+                            text.copyToClipboard(context, answerClipLabel, hapticFeedback)
+                            analyticsEvents.onAnswerCopied()
                         }
                     )
 
@@ -698,6 +704,18 @@ private fun FeedbackThankYou(
     }
 }
 
+private fun String.copyToClipboard(
+    context: Context,
+    label: String,
+    hapticFeedback: HapticFeedback
+) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(label, this)
+    clipboard.setPrimaryClip(clip)
+
+    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+}
+
 private fun analyticsEvents() = AnalyticsEvents(
     onPageView = { _, _, _ -> },
     onFunctionActionItemClicked = { _, _, _ -> },
@@ -706,7 +724,9 @@ private fun analyticsEvents() = AnalyticsEvents(
     onMarkdownLinkClicked = { _, _ -> },
     onSourcesExpanded = { },
     onExampleQuestionsViewed = { },
-    onExampleQuestionSelected = { _, _ -> }
+    onExampleQuestionSelected = { _, _ -> },
+    onQuestionCopied = { },
+    onAnswerCopied = { }
 )
 
 private fun clickEvents() = UiEvents(
