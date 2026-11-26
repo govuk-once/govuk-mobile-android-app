@@ -56,31 +56,14 @@ import uk.gov.govuk.dvla.ui.model.VehicleSummaryUiModel
 import uk.gov.govuk.dvla.ui.model.VehiclesSummaryUiState
 
 @Composable
-fun VehiclesAndLicenceSummaryWidgetRoute(
+fun VehiclesAndLicenceSummaryWidget(
     launchBrowser: (String) -> Unit,
     onVehicleDetailsClick: (vehicleId: Int) -> Unit,
     onDrivingCategoriesClick: () -> Unit,
     modifier: Modifier = Modifier,
     vehiclesFooter: @Composable () -> Unit = {}
 ) {
-    VehiclesAndLicenceSummaryWidget(
-        launchBrowser = launchBrowser,
-        onVehicleDetailsClick = onVehicleDetailsClick,
-        onDrivingCategoriesClick = onDrivingCategoriesClick,
-        modifier = modifier,
-        vehiclesFooter = vehiclesFooter
-    )
-}
-
-@Composable
-internal fun VehiclesAndLicenceSummaryWidget(
-    launchBrowser: (String) -> Unit,
-    onVehicleDetailsClick: (vehicleId: Int) -> Unit,
-    onDrivingCategoriesClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    vehiclesFooter: @Composable () -> Unit = {},
-    viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
-) {
+    val viewModel: VehiclesAndLicenceSummaryViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
 
     Column(modifier = modifier) {
@@ -258,7 +241,7 @@ private fun VehiclesViewContent(
 }
 
 @Composable
-internal fun LicenceViewContent(
+private fun LicenceViewContent(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,

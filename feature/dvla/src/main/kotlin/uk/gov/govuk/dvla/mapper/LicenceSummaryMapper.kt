@@ -88,17 +88,17 @@ internal class LicenceSummaryMapper @Inject constructor(
         dvlaUrls: DvlaUrls?
     ) = UrlModel(dvlaUrls?.driverDetails?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
-    private fun reapplyUrl(
-        dvlaUrls: DvlaUrls?
-    ) = UrlModel(dvlaUrls?.reapplyMedicalLicence?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
-
-    private fun getDrivingRecordUrl(
+    private fun getOffencesAndPointsUrl(
         status: LicenceStatus,
         dvlaUrls: DvlaUrls?
     ): String? {
         if (status != LicenceStatus.VALID) return null
-        return dvlaUrls?.drivingRecord?.takeIf { it.isNotBlank() }
+        return dvlaUrls?.endorsements?.takeIf { it.isNotBlank() }
     }
+
+    private fun reapplyUrl(
+        dvlaUrls: DvlaUrls?
+    ) = UrlModel(dvlaUrls?.reapplyForLicenceHealthCondition?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
     private fun String?.asAddressLines() = this
         ?.split("\n")
