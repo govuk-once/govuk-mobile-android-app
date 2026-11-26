@@ -252,7 +252,7 @@ class ChatViewModelTest {
 
     @Test
     fun `On Submit emits PII error`() = runTest {
-        viewModel.onSubmit("test@email.com")
+        viewModel.onSubmit("test@email.com", isSuggestedPrompt = false)
 
         val uiState = viewModel.uiState.value as ChatUiState.Default
 
@@ -293,7 +293,7 @@ class ChatViewModelTest {
             viewModel.uiState.toList(uiStates)
         }
 
-        viewModel.onSubmit("    First Question   ")
+        viewModel.onSubmit("    First Question   ", isSuggestedPrompt = false)
 
         coVerify { chatRepo.askQuestion("First Question") }
 
@@ -356,7 +356,7 @@ class ChatViewModelTest {
             viewModel.uiState.toList(uiStates)
         }
 
-        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("First Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
@@ -389,7 +389,7 @@ class ChatViewModelTest {
             viewModel.uiState.toList(uiStates)
         }
 
-        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("First Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
@@ -421,7 +421,7 @@ class ChatViewModelTest {
             viewModel.uiState.toList(uiStates)
         }
 
-        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("First Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
@@ -453,7 +453,7 @@ class ChatViewModelTest {
             }
         }
 
-        viewModel.onSubmit("Question")
+        viewModel.onSubmit("Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
@@ -474,7 +474,7 @@ class ChatViewModelTest {
             viewModel.uiState.toList(uiStates)
         }
 
-        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("First Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
@@ -504,11 +504,35 @@ class ChatViewModelTest {
             }
         }
 
-        viewModel.onSubmit("Question")
+        viewModel.onSubmit("Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
         assertTrue(authError)
+    }
+
+    @Test
+    fun `Submit with suggestedPrompt passes isSuggestedPrompt true to repo`() = runTest {
+        coEvery { chatRepo.askQuestion(any(), any()) } coAnswers {
+            delay(100)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("Question", isSuggestedPrompt = true)
+
+        coVerify { chatRepo.askQuestion("Question", isSuggestedPrompt = true) }
+    }
+
+    @Test
+    fun `Submit without suggestedPrompt passes isSuggestedPrompt false to repo`() = runTest {
+        coEvery { chatRepo.askQuestion(any(), any()) } coAnswers {
+            delay(100)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("Question", isSuggestedPrompt = false)
+
+        coVerify { chatRepo.askQuestion("Question", isSuggestedPrompt = false) }
     }
 
     @Test
@@ -565,21 +589,21 @@ class ChatViewModelTest {
 
     @Test
     fun `Question with spaces gets trimmed`() = runTest {
-        viewModel.onSubmit("  one two three  ")
+        viewModel.onSubmit("  one two three  ", isSuggestedPrompt = false)
 
         coVerify { chatRepo.askQuestion("one two three") }
     }
 
     @Test
     fun `Question with new lines gets trimmed`() = runTest {
-        viewModel.onSubmit("\n\none two three\n\n")
+        viewModel.onSubmit("\n\none two three\n\n", isSuggestedPrompt = false)
 
         coVerify { chatRepo.askQuestion("one two three") }
     }
 
     @Test
     fun `Question with spaces and new lines gets trimmed`() = runTest {
-        viewModel.onSubmit("\n\n  one two three\n\n  ")
+        viewModel.onSubmit("\n\n  one two three\n\n  ", isSuggestedPrompt = false)
 
         coVerify { chatRepo.askQuestion("one two three") }
     }
@@ -878,7 +902,7 @@ class ChatViewModelTest {
         viewModel.setChatIntroSeen()
         advanceUntilIdle()
 
-        viewModel.onSubmit("Test Question")
+        viewModel.onSubmit("Test Question", isSuggestedPrompt = false)
         viewModel.onPause()
 
         advanceUntilIdle()
@@ -962,8 +986,8 @@ class ChatViewModelTest {
             ChatResult.Success(question)
         }
 
-        viewModel.onSubmit("First Question")
-        viewModel.onSubmit("Second Question")
+        viewModel.onSubmit("First Question", isSuggestedPrompt = false)
+        viewModel.onSubmit("Second Question", isSuggestedPrompt = false)
 
         advanceUntilIdle()
 
@@ -992,10 +1016,10 @@ class ChatViewModelTest {
         coEvery { chatRepo.askQuestion("Second Question") } returns ChatResult.Success(secondQuestion)
         coEvery { chatRepo.getAnswer(any(), any()) } returns ChatResult.Success(Answer("", "", null, null, "", "", null))
 
-        viewModel.onSubmit("First Question")
+        viewModel.onSubmit("First Question", isSuggestedPrompt = false)
         advanceUntilIdle()
 
-        viewModel.onSubmit("Second Question")
+        viewModel.onSubmit("Second Question", isSuggestedPrompt = false)
         advanceUntilIdle()
 
         coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }

@@ -46,26 +46,27 @@ internal class ChatRepo @Inject constructor(
     }
 
     suspend fun askQuestion(
-        question: String
+        question: String,
+        isSuggestedPrompt: Boolean = false
     ): ChatResult<AnsweredQuestion> {
+        val requestBody = ConversationQuestionRequest(
+            userQuestion = question,
+            suggestedPrompt = if (isSuggestedPrompt) true else null
+        )
         val conversationId = dataStore.conversationId()
         return if (conversationId != null) {
             updateConversation(
                 conversationId = conversationId,
-                question = question
+                requestBody = requestBody
             )
         } else {
-            startConversation(question)
+            startConversation(requestBody)
         }
     }
 
     private suspend fun startConversation(
-        question: String
+        requestBody: ConversationQuestionRequest
     ): ChatResult<AnsweredQuestion> {
-        val requestBody = ConversationQuestionRequest(
-            userQuestion = question
-        )
-
         val result = safeChatApiCall(
             apiCall = { chatApi.startConversation(requestBody) },
             authRepo = authRepo
@@ -78,17 +79,11 @@ internal class ChatRepo @Inject constructor(
 
     private suspend fun updateConversation(
         conversationId: String,
-        question: String
-    ): ChatResult<AnsweredQuestion> {
-        val requestBody = ConversationQuestionRequest(
-            userQuestion = question
-        )
-
-        return safeChatApiCall(
-            apiCall = { chatApi.updateConversation(conversationId, requestBody) },
-            authRepo = authRepo
-        )
-    }
+        requestBody: ConversationQuestionRequest
+    ): ChatResult<AnsweredQuestion> = safeChatApiCall(
+        apiCall = { chatApi.updateConversation(conversationId, requestBody) },
+        authRepo = authRepo
+    )
 
     suspend fun giveFeedback(
         conversationId: String,
