@@ -20,6 +20,7 @@ import uk.gov.govuk.dwp.R
 @Composable
 internal fun DwpLinkingRoute(
     onClose: () -> Unit,
+    onLinkComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: DwpLinkViewModel = hiltViewModel()
@@ -27,6 +28,7 @@ internal fun DwpLinkingRoute(
     DwpLinkScreen(
         state = state,
         onClose = onClose,
+        onLinkComplete = onLinkComplete,
         onContinue = if (state is DwpLinkViewModel.UiState.Error) viewModel::onRetryClicked else viewModel::onIntroContinueClicked,
         modifier = modifier
     )
@@ -36,6 +38,7 @@ internal fun DwpLinkingRoute(
 internal fun DwpLinkScreen(
     state: DwpLinkViewModel.UiState,
     onClose: () -> Unit,
+    onLinkComplete: () -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,7 +62,7 @@ internal fun DwpLinkScreen(
             DwpLinkViewModel.UiState.Success -> AccountConnectionSuccessScreen(
                 title = stringResource(R.string.dwp_success_title),
                 buttonText = stringResource(R.string.dwp_continue),
-                onContinue = onClose
+                onContinue = onLinkComplete
             )
         }
     }

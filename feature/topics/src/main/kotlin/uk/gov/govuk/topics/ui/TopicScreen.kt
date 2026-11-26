@@ -17,7 +17,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -65,7 +68,7 @@ internal fun TopicRoute(
     onSubtopic: (ref: String) -> Unit,
     modifier: Modifier = Modifier,
     /** Generic slot for the app module to inject self-managed content into (for example DVLA linking) */
-    headerContent: @Composable () -> Unit = {}
+    headerContent: @Composable (onShowTopicContent: (Boolean) -> Unit) -> Unit = {}
 ) {
     val viewModel: TopicViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -177,7 +180,7 @@ private fun TopicScreen(
     onSubtopic: (text: String, ref: String, selectedItemIndex: Int, totalItemCount: Int) -> Unit,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    headerContent: @Composable () -> Unit = {}
+    headerContent: @Composable (onShowTopicContent: (Boolean) -> Unit) -> Unit = {}
 ) {
     val popularPagesIndex = 1
     val stepByStepsIndex = popularPagesIndex + topic.popularPages.size
@@ -224,6 +227,8 @@ private fun TopicScreen(
             icon = R.drawable.ic_topic_services_and_info
         )
 
+        var showTopicContent by rememberSaveable { mutableStateOf(true) }
+
         LazyColumn {
             item {
                 Title(
@@ -238,54 +243,56 @@ private fun TopicScreen(
             }
 
             item {
-                headerContent()
+                headerContent { showTopicContent = it }
             }
 
-            val showHorizontalScrollView = false
+            if (showTopicContent) {
+                val showHorizontalScrollView = false
 
-            if (showHorizontalScrollView) {
-                item {
-                    HorizontalScrollView(
-                        topic = topic,
+                if (showHorizontalScrollView) {
+                    item {
+                        HorizontalScrollView(
+                            topic = topic,
+                            startIndex = popularPagesIndex,
+                            onExternalLink = onExternalLinkClick,
+                            onPopularPagesSeeAll = onPopularPagesSeeAll,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                } else {
+                    contentItems(
                         startIndex = popularPagesIndex,
-                        onExternalLink = onExternalLinkClick,
-                        onPopularPagesSeeAll = onPopularPagesSeeAll,
-                        modifier = Modifier.fillMaxWidth()
+                        contentItems = topic.popularPages,
+                        section = popularPagesSection,
+                        onClick = onExternalLinkClick
                     )
                 }
-            } else {
+
                 contentItems(
-                    startIndex = popularPagesIndex,
-                    contentItems = topic.popularPages,
-                    section = popularPagesSection,
+                    startIndex = stepByStepsIndex,
+                    contentItems = topic.stepBySteps,
+                    section = stepByStepSection,
+                    onClick = onExternalLinkClick,
+                    displaySeeAll = topic.displayStepByStepSeeAll,
+                    onSeeAll = onStepByStepSeeAll
+                )
+
+                contentItems(
+                    startIndex = servicesIndex,
+                    contentItems = topic.services,
+                    section = servicesSection,
                     onClick = onExternalLinkClick
                 )
+
+                subtopics(
+                    startIndex = subtopicsIndex,
+                    subtopics = topic.subtopics,
+                    section = topic.subtopicsSection,
+                    onClick = { text, ref, selectedItemIndex ->
+                        onSubtopic(text, ref, selectedItemIndex, totalItemCount)
+                    }
+                )
             }
-
-            contentItems(
-                startIndex = stepByStepsIndex,
-                contentItems = topic.stepBySteps,
-                section = stepByStepSection,
-                onClick = onExternalLinkClick,
-                displaySeeAll = topic.displayStepByStepSeeAll,
-                onSeeAll = onStepByStepSeeAll
-            )
-
-            contentItems(
-                startIndex = servicesIndex,
-                contentItems = topic.services,
-                section = servicesSection,
-                onClick = onExternalLinkClick
-            )
-
-            subtopics(
-                startIndex = subtopicsIndex,
-                subtopics = topic.subtopics,
-                section = topic.subtopicsSection,
-                onClick = { text, ref, selectedItemIndex ->
-                    onSubtopic(text, ref, selectedItemIndex, totalItemCount)
-                }
-            )
         }
     }
 }
@@ -320,9 +327,13 @@ private fun HorizontalScrollView(
     val colourMapper = @Composable { cardColour: FocusableCardColours ->
         when (cardColour) {
             FocusableCardColours.Focussed.Background -> GovUkTheme.colourScheme.surfaces.focused
+
             FocusableCardColours.Focussed.Content -> GovUkTheme.colourScheme.textAndIcons.focused
+
             FocusableCardColours.UnFocussed.Background -> GovUkTheme.colourScheme.surfaces.cardCarousel
+
             FocusableCardColours.UnFocussed.Content -> GovUkTheme.colourScheme.textAndIcons.cardCarousel
+
             else -> {
                 Color.Transparent
             }
