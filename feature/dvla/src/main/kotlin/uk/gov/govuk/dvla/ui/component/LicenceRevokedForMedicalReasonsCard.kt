@@ -16,7 +16,6 @@ internal fun LicenceRevokedForMedicalReasonsCard(
         title = stringResource(R.string.licence_revoked_medical_title),
         description = stringResource(R.string.licence_revoked_medical_description),
         linkText = stringResource(R.string.licence_revoked_medical_link_text),
-        cardBackground = GovUkTheme.colourScheme.textAndIcons.primary,
         titleBackground = GovUkTheme.colourScheme.textAndIcons.primary,
         titleTextColor = GovUkTheme.colourScheme.surfaces.cardDefault,
         titleDrawDivider = false,

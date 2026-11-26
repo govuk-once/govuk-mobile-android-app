@@ -35,8 +35,7 @@ class LicenceViewContentTest {
                     ),
                     onMenuItemClick = {},
                     onLicenceNumberLongClick = {},
-                    onCategoriesClick = {},
-                    onPageView = {}
+                    onCategoriesClick = {}
                 )
             }
         }
@@ -58,8 +57,7 @@ class LicenceViewContentTest {
                     ),
                     onMenuItemClick = {},
                     onLicenceNumberLongClick = {},
-                    onCategoriesClick = {},
-                    onPageView = {}
+                    onCategoriesClick = {}
                 )
             }
         }

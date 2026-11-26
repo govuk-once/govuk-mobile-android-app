@@ -40,7 +40,8 @@ internal fun LicenceStatusCard(
             isFirst = true,
             isLast = false,
             drawDivider = titleDrawDivider,
-            background = titleBackground
+            background = titleBackground,
+            modifier = modifier.fillMaxWidth()
         ) {
             Spacer(Modifier.height(64.dp))
 

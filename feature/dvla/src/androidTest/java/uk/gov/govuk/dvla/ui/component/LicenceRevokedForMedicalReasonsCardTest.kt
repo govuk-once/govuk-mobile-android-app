@@ -29,8 +29,7 @@ class LicenceRevokedForMedicalReasonsCardTest {
         composeTestRule.setContent {
             GovUkTheme {
                 LicenceRevokedForMedicalReasonsCard(
-                    onClick = {},
-                    onPageView = {}
+                    onClick = {}
                 )
             }
         }
@@ -43,8 +42,7 @@ class LicenceRevokedForMedicalReasonsCardTest {
         composeTestRule.setContent {
             GovUkTheme {
                 LicenceRevokedForMedicalReasonsCard(
-                    onClick = {},
-                    onPageView = {}
+                    onClick = {}
                 )
             }
         }
@@ -57,8 +55,7 @@ class LicenceRevokedForMedicalReasonsCardTest {
         composeTestRule.setContent {
             GovUkTheme {
                 LicenceRevokedForMedicalReasonsCard(
-                    onClick = {},
-                    onPageView = {}
+                    onClick = {}
                 )
             }
         }
@@ -76,8 +73,7 @@ class LicenceRevokedForMedicalReasonsCardTest {
                     onClick = { text ->
                         clickedText =
                             text
-                    },
-                    onPageView = {}
+                    }
                 )
             }
         }
