@@ -9,7 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -179,7 +182,7 @@ class CountryListViewModelTest {
 
         viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
 
-        verify(exactly = 0) { analyticsClient.search(any(), any()) }
+        verify(exactly = 0) { analyticsClient.search(any(), any(), any()) }
     }
 
     // onSearchSubmitted — analytics
@@ -202,7 +205,7 @@ class CountryListViewModelTest {
 
         viewModel.onSearchSubmitted()
 
-        verify(exactly = 0) { analyticsClient.search(any(), any()) }
+        verify(exactly = 0) { analyticsClient.search(any(), any(), any()) }
     }
 
     // onCountrySelected — state
@@ -517,5 +520,213 @@ class CountryListViewModelTest {
 
         val state = viewModel.uiState.value as CountryListViewModel.State.Loaded
         assertEquals(listOf("France"), state.countries.map { it.name })
+    }
+
+    // onCloseClick — analytics
+
+    @Test
+    fun `Given close tapped, then close analytics event is fired`() {
+        viewModel.onCloseClick("Close")
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Close",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given country followed, when screen closes, then close analytics event is not fired`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
+        viewModel.onPageView()
+        val country = TravelAlertsFixtures.mockCountries.first()
+        viewModel.onCountrySelected(country)
+
+        viewModel.onNotNowNotifications(country, "Not now")
+
+        verify(exactly = 0) { analyticsClient.buttonClick(any(), any(), any(), any()) }
+    }
+
+    // onDismissPreferenceSheet — analytics
+
+    @Test
+    fun `Given preference sheet shown, when dismissed, then cancel analytics event is fired`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
+
+        viewModel.onDismissPreferenceSheet()
+
+        verify(exactly = 1) {
+            analyticsClient.widgetClick(
+                text = "Cancel",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given preference sheet not shown, when dismissed, then cancel analytics event is not fired`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        viewModel.onCountrySelected(TravelAlertsFixtures.mockCountries.first())
+        viewModel.onDismissPreferenceSheet()
+
+        viewModel.onDismissPreferenceSheet()
+
+        verify(exactly = 1) { analyticsClient.widgetClick(text = "Cancel", url = any(), external = any(), section = any()) }
+    }
+
+    @Test
+    fun `Given preference sheet shown, when Not now tapped, then cancel analytics event is not fired`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
+        viewModel.onPageView()
+        val country = TravelAlertsFixtures.mockCountries.first()
+        viewModel.onCountrySelected(country)
+
+        viewModel.onNotNowNotifications(country, "Not now")
+
+        verify(exactly = 0) { analyticsClient.widgetClick(text = "Cancel", url = any(), external = any(), section = any()) }
+    }
+
+    @Test
+    fun `Given preference sheet shown, when Get notifications tapped with permission, then cancel analytics event is not fired`() =
+        runTest {
+            coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+            coEvery { travelAlertsRepo.followCountry(any(), any()) } returns Result.Success(Unit)
+            coEvery { notificationsRepo.permissionGranted() } returns true
+            viewModel.onPageView()
+            val country = TravelAlertsFixtures.mockCountries.first()
+            viewModel.onCountrySelected(country)
+
+            viewModel.onGetNotificationsClick(country, "Get notifications")
+
+            verify(exactly = 0) { analyticsClient.widgetClick(text = "Cancel", url = any(), external = any(), section = any()) }
+        }
+
+    @Test
+    fun `Given preference sheet shown, when Get notifications tapped without permission, then cancel analytics event is not fired`() =
+        runTest {
+            coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+            coEvery { notificationsRepo.permissionGranted() } returns false
+            viewModel.onPageView()
+            val country = TravelAlertsFixtures.mockCountries.first()
+            viewModel.onCountrySelected(country)
+
+            viewModel.onGetNotificationsClick(country, "Get notifications")
+
+            verify(exactly = 0) { analyticsClient.widgetClick(text = "Cancel", url = any(), external = any(), section = any()) }
+        }
+
+    // onSearchQueryChange — no results analytics
+
+    @Test
+    fun `Given search query with no results, when query settles, then search event is fired with zero results`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("zzz")
+        advanceTimeBy(CountryListViewModel.NO_RESULTS_SEARCH_DEBOUNCE_MS - 1)
+
+        verify(exactly = 0) { analyticsClient.search(any(), any(), any()) }
+
+        advanceTimeBy(1)
+        runCurrent()
+
+        verify(exactly = 1) { analyticsClient.search("zzz", section = "country_search", extraParams = mapOf("results" to 0)) }
+    }
+
+    @Test
+    fun `Given search query with results, when query settles, then search event is not fired`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("fra")
+        advanceUntilIdle()
+
+        verify(exactly = 0) { analyticsClient.search(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given blank search query, when query settles, then search event is not fired`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("   ")
+        advanceUntilIdle()
+
+        verify(exactly = 0) { analyticsClient.search(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given user is still typing, when query settles with no results, then only the settled query is tracked`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("z")
+        advanceTimeBy(CountryListViewModel.NO_RESULTS_SEARCH_DEBOUNCE_MS - 100)
+        viewModel.onSearchQueryChange("zz")
+        advanceTimeBy(CountryListViewModel.NO_RESULTS_SEARCH_DEBOUNCE_MS - 100)
+        viewModel.onSearchQueryChange("zzz")
+        advanceUntilIdle()
+
+        verify(exactly = 1) { analyticsClient.search(any(), any(), any()) }
+        verify(exactly = 1) { analyticsClient.search("zzz", section = "country_search", extraParams = mapOf("results" to 0)) }
+    }
+
+    @Test
+    fun `Given no results query settles, when the same query settles again, then search event is not fired again`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange("zzz")
+        advanceUntilIdle()
+        viewModel.onSearchQueryChange("zzz ")
+        advanceUntilIdle()
+
+        verify(exactly = 1) { analyticsClient.search("zzz", section = "country_search", extraParams = mapOf("results" to 0)) }
+    }
+
+    @Test
+    fun `Given no results query settles, when a different query settles and then the first again, then search event is fired twice`() =
+        runTest {
+            coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+            viewModel.onPageView()
+
+            viewModel.onSearchQueryChange("zzz")
+            advanceUntilIdle()
+            viewModel.onSearchQueryChange("")
+            advanceUntilIdle()
+            viewModel.onSearchQueryChange("zzz")
+            advanceUntilIdle()
+
+            verify(exactly = 2) { analyticsClient.search("zzz", section = "country_search", extraParams = mapOf("results" to 0)) }
+        }
+
+    @Test
+    fun `Given search query with surrounding whitespace and no results, when query settles, then trimmed query is tracked`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+
+        viewModel.onSearchQueryChange(" zzz ")
+        advanceUntilIdle()
+
+        verify(exactly = 1) { analyticsClient.search("zzz", section = "country_search", extraParams = mapOf("results" to 0)) }
+    }
+
+    @Test
+    fun `Given no results query, when search is submitted, then submitted search event has no results count`() = runTest {
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        viewModel.onPageView()
+        viewModel.onSearchQueryChange("zzz")
+
+        viewModel.onSearchSubmitted()
+
+        verify(exactly = 1) { analyticsClient.search("zzz", section = "country_search") }
     }
 }

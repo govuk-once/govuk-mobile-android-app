@@ -34,10 +34,13 @@ class NotificationsRationaleViewModel @Inject constructor(
         private const val KEY_ORIGIN = "origin"
         private const val KEY_PENDING = "pending"
         private const val KEY_IS_COMPLETING = "isCompleting"
+        private const val KEY_SETTINGS_RESULT_TRACKED = "settingsResultTracked"
         private const val STATE_LOADING = "Loading"
         private const val STATE_DEFAULT = "Default"
         private const val STATE_ALERT = "Alert"
         private const val SECTION = "Travel Abroad Notifications"
+        private const val PERMISSION_RESULT_TYPE_SYSTEM = "System"
+        private const val PERMISSION_RESULT_TYPE_SETTINGS = "Settings"
     }
 
     sealed class State {
@@ -94,6 +97,12 @@ class NotificationsRationaleViewModel @Inject constructor(
     private var isCompleting: Boolean
         get() = savedStateHandle.get<Boolean>(KEY_IS_COMPLETING) ?: false
         set(value) = savedStateHandle.set(KEY_IS_COMPLETING, value)
+
+    // Ensures the permission state after returning from Settings is tracked once per trip there,
+    // as onResume also fires for rotation and app switching while the user is still denied.
+    private var settingsResultTracked: Boolean
+        get() = savedStateHandle.get<Boolean>(KEY_SETTINGS_RESULT_TRACKED) ?: false
+        set(value) = savedStateHandle.set(KEY_SETTINGS_RESULT_TRACKED, value)
 
     fun onPageView(
         countrySlug: String,
@@ -153,6 +162,11 @@ class NotificationsRationaleViewModel @Inject constructor(
                     pending = Pending.OS_PROMPT
                     val granted = permissionResolver.requestOsPermission()
                     pending = Pending.NONE
+                    analyticsClient.notificationPermissionResult(
+                        type = PERMISSION_RESULT_TYPE_SYSTEM,
+                        granted = granted,
+                        section = SECTION
+                    )
                     complete(granted)
                 }
                 NotificationsPermissionResolver.PermissionPath.SETTINGS -> {
@@ -170,6 +184,7 @@ class NotificationsRationaleViewModel @Inject constructor(
     fun onSettingsAlertContinue() {
         analyticsClient.notificationsRationaleSettingsContinue(origin.name)
         pending = Pending.SETTINGS
+        settingsResultTracked = false
         setUiState(State.Default)
     }
 
@@ -187,9 +202,15 @@ class NotificationsRationaleViewModel @Inject constructor(
     }
 
     fun onPrivacyLinkClick(
-        text: String
+        text: String,
+        url: String
     ) {
-        analyticsClient.buttonClick(text = text, external = false, section = SECTION)
+        analyticsClient.buttonClick(
+            text = text,
+            url = url,
+            external = true,
+            section = SECTION
+        )
     }
 
     fun onResume(
@@ -200,7 +221,16 @@ class NotificationsRationaleViewModel @Inject constructor(
         // Guard against the dialog case: if state is Alert, the user hasn't gone to Settings yet.
         if (pending != Pending.SETTINGS || _uiState.value == State.Alert) return
         viewModelScope.launch {
-            if (notificationsRepo.permissionGranted()) {
+            val granted = notificationsRepo.permissionGranted()
+            if (!settingsResultTracked) {
+                settingsResultTracked = true
+                analyticsClient.notificationPermissionResult(
+                    type = PERMISSION_RESULT_TYPE_SETTINGS,
+                    granted = granted,
+                    section = SECTION
+                )
+            }
+            if (granted) {
                 notificationsRepo.giveConsent()
                 complete(true)
             } else {

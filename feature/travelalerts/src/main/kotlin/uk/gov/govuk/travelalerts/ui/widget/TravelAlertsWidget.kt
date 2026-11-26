@@ -52,6 +52,7 @@ fun TravelAlertsWidget(
     }
 
     val emptyTitle = stringResource(R.string.empty_title)
+    val editText = stringResource(R.string.loaded_button_edit)
     when (val state = uiState.content) {
         TravelAlertsWidgetViewModel.State.Loading -> TravelAlertsLoading()
         TravelAlertsWidgetViewModel.State.Empty -> TravelAlertsEmpty {
@@ -60,7 +61,10 @@ fun TravelAlertsWidget(
         }
         is TravelAlertsWidgetViewModel.State.Loaded -> TravelAlertsLoaded(
             rows = state.rows,
-            onEditCountries = onEditCountries
+            onEditCountries = {
+                viewModel.onEditCountriesClick(editText)
+                onEditCountries()
+            }
         ) { row ->
             viewModel.onRowClick(row)
             launchBrowser(row.link)

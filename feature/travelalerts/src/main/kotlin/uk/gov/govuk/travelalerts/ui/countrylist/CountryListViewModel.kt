@@ -4,10 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.data.model.Result
@@ -29,6 +35,10 @@ class CountryListViewModel @Inject constructor(
         private const val TITLE = "Follow a country"
         private const val SECTION = "Travel Abroad Notifications"
         private const val SEARCH_SECTION = "country_search"
+        private const val CANCEL_TEXT = "Cancel"
+
+        // How long the search query must be unchanged before a "no results" search is tracked
+        internal const val NO_RESULTS_SEARCH_DEBOUNCE_MS = 500L
     }
 
     sealed class State {
@@ -59,6 +69,28 @@ class CountryListViewModel @Inject constructor(
     val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
 
     private var allCountries: List<Country> = emptyList()
+
+    private val searchQueryChanges = MutableStateFlow("")
+
+    init {
+        trackSearchesWithNoResults()
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun trackSearchesWithNoResults() {
+        viewModelScope.launch {
+            searchQueryChanges
+                .debounce(NO_RESULTS_SEARCH_DEBOUNCE_MS.milliseconds)
+                .map { it.trim() }
+                .distinctUntilChanged()
+                .filter { it.isNotEmpty() }
+                .collect { query ->
+                    if (_uiState.value is State.Loaded && filterCountries(query).isEmpty()) {
+                        analyticsClient.search(query, section = SEARCH_SECTION, extraParams = mapOf("results" to 0))
+                    }
+                }
+        }
+    }
 
     private fun updateLoaded(
         block: State.Loaded.() -> State.Loaded
@@ -114,8 +146,22 @@ class CountryListViewModel @Inject constructor(
         updateLoaded { copy(selectedCountry = country) }
     }
 
+    /**
+     * Called when the user closes the preference sheet without choosing an option (X, swipe,
+     * tapping outside or back). Not called when the sheet closes after Not now or Get notifications.
+     */
     fun onDismissPreferenceSheet() {
+        val currentState = _uiState.value
+        if (currentState is State.Loaded && currentState.selectedCountry != null) {
+            analyticsClient.widgetClick(text = CANCEL_TEXT, external = false, section = SECTION)
+        }
         updateLoaded { copy(selectedCountry = null) }
+    }
+
+    fun onCloseClick(
+        text: String
+    ) {
+        analyticsClient.buttonClick(text = text, external = false, section = SECTION)
     }
 
     fun onNotNowNotifications(
@@ -187,8 +233,15 @@ class CountryListViewModel @Inject constructor(
     fun onSearchQueryChange(
         query: String
     ) {
+        updateLoaded { copy(countries = filterCountries(query), searchQuery = query) }
+        searchQueryChanges.value = query
+    }
+
+    private fun filterCountries(
+        query: String
+    ): List<Country> {
         val q = query.lowercase().trim()
-        val filtered = if (q.isEmpty()) {
+        return if (q.isEmpty()) {
             allCountries
         } else {
             allCountries.filter { country ->
@@ -196,6 +249,5 @@ class CountryListViewModel @Inject constructor(
                     country.synonyms.any { it.lowercase().contains(q) }
             }
         }
-        updateLoaded { copy(countries = filtered, searchQuery = query) }
     }
 }

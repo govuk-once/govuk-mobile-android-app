@@ -274,6 +274,79 @@ class EditCountriesViewModelTest {
     }
 
     @Test
+    fun `Given follow another country tapped, then analytics event is fired`() {
+        viewModel.onFollowAnotherCountryClick("Follow another country")
+
+        verify {
+            analyticsClient.buttonClick(
+                text = "Follow another country",
+                external = false,
+                section = "Travel Abroad Notifications"
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications toggled on, then toggle analytics event is fired with On`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", true) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", true)
+
+        verify(exactly = 1) {
+            analyticsClient.toggleFunction(
+                text = "France",
+                section = "Travel Abroad Notifications",
+                action = "On"
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications toggled off, then toggle analytics event is fired with Off`() = runTest {
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { travelAlertsRepo.toggleNotifications("france", false) } returns Result.Success(Unit)
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", false)
+
+        verify(exactly = 1) {
+            analyticsClient.toggleFunction(
+                text = "France",
+                section = "Travel Abroad Notifications",
+                action = "Off"
+            )
+        }
+    }
+
+    @Test
+    fun `Given notifications toggled on without permission, then toggle analytics event is fired before opt in`() = runTest {
+        val events = mutableListOf<EditCountriesViewModel.NavigationEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.navigationEvent.collect { events.add(it) }
+        }
+        coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
+        coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)
+        coEvery { notificationsRepo.permissionGranted() } returns false
+        viewModel.onPageView()
+
+        viewModel.toggleNotifications("france", true)
+
+        verify(exactly = 1) {
+            analyticsClient.toggleFunction(
+                text = "France",
+                section = "Travel Abroad Notifications",
+                action = "On"
+            )
+        }
+        assertTrue(events.single() is EditCountriesViewModel.NavigationEvent.ToNotificationsOptIn)
+        coVerify(exactly = 0) { travelAlertsRepo.toggleNotifications(any(), any()) }
+    }
+
+    @Test
     fun `Given unfollow country tapped, then toggle analytics event is fired`() = runTest {
         coEvery { travelAlertsRepo.getGroups() } returns Result.Success(TravelAlertsFixtures.mockGroups)
         coEvery { travelAlertsRepo.getCountries() } returns Result.Success(TravelAlertsFixtures.mockCountries)

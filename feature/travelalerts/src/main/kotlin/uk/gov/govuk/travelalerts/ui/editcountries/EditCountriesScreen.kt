@@ -63,6 +63,7 @@ fun EditCountriesScreen(
     val viewModel: EditCountriesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val followAnotherText = stringResource(R.string.edit_countries_follow_another)
 
     LaunchedEffect(Unit) {
         viewModel.onPageView()
@@ -124,7 +125,10 @@ fun EditCountriesScreen(
             is EditCountriesViewModel.State.Loaded -> {
                 EditCountriesLoaded(
                     state = state,
-                    onFollowAnotherCountry = onFollowAnotherCountry,
+                    onFollowAnotherCountry = {
+                        viewModel.onFollowAnotherCountryClick(followAnotherText)
+                        onFollowAnotherCountry()
+                    },
                     onToggleNotifications = viewModel::toggleNotifications,
                     onUnfollowCountry = viewModel::unfollowCountry,
                     onClearToggleError = viewModel::clearToggleError,

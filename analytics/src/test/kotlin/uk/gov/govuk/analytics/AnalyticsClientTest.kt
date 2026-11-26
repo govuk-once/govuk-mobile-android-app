@@ -492,6 +492,40 @@ class AnalyticsClientTest {
     }
 
     @Test
+    fun `Given a search with a results count, then results is included in log event`() {
+        analyticsClient.search("narnia", section = "country_search", extraParams = mapOf("results" to 0))
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "Search",
+                mapOf(
+                    "type" to "typed",
+                    "text" to "narnia",
+                    "section" to "country_search",
+                    "results" to 0
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a search with a results count and postcode, then redact and log event with results`() {
+        analyticsClient.search("A1 1AA", section = "country_search", extraParams = mapOf("results" to 0))
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "Search",
+                mapOf(
+                    "type" to "typed",
+                    "text" to "[postcode]",
+                    "section" to "country_search",
+                    "results" to 0
+                )
+            )
+        }
+    }
+
+    @Test
     fun `Given an autocomplete, then log event`() {
         analyticsClient.autocomplete("input")
 
@@ -873,6 +907,50 @@ class AnalyticsClientTest {
                     "text" to "text",
                     "section" to "section",
                     "action" to "action"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a granted notification permission result, then log event`() {
+        analyticsClient.notificationPermissionResult(
+            type = "System",
+            granted = true,
+            section = "section"
+        )
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "Function",
+                mapOf(
+                    "type" to "System",
+                    "language" to Locale.getDefault().language,
+                    "text" to "Notification permission",
+                    "section" to "section",
+                    "action" to "Granted"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given a denied notification permission result, then log event`() {
+        analyticsClient.notificationPermissionResult(
+            type = "Settings",
+            granted = false,
+            section = "section"
+        )
+
+        verify {
+            analyticsCoordinator.logEvent(
+                "Function",
+                mapOf(
+                    "type" to "Settings",
+                    "language" to Locale.getDefault().language,
+                    "text" to "Notification permission",
+                    "section" to "section",
+                    "action" to "Denied"
                 )
             )
         }
