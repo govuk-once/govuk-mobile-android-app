@@ -302,6 +302,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
+        assertEquals("First Question", loadingState.pendingQuestion)
         assertEquals(0, loadingState.chatEntries.size)
 
         val finalState = uiStates.last() as ChatUiState.Default
@@ -363,6 +364,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
+        assertEquals("First Question", loadingState.pendingQuestion)
         assertEquals(0, loadingState.chatEntries.size)
 
         val finalState = uiStates.last() as ChatUiState.Default
@@ -396,6 +398,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
+        assertEquals("First Question", loadingState.pendingQuestion)
         assertEquals(0, loadingState.chatEntries.size)
 
         val finalState = uiStates.last() as ChatUiState.Default
@@ -428,6 +431,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
+        assertEquals("First Question", loadingState.pendingQuestion)
         assertEquals(0, loadingState.chatEntries.size)
 
         val finalState = uiStates.last()
@@ -481,6 +485,7 @@ class ChatViewModelTest {
         val loadingState = uiStates[1] as ChatUiState.Default
 
         assertTrue(loadingState.isLoading)
+        assertEquals("First Question", loadingState.pendingQuestion)
         assertEquals(0, loadingState.chatEntries.size)
 
         val finalState = uiStates.last()
@@ -509,6 +514,110 @@ class ChatViewModelTest {
         advanceUntilIdle()
 
         assertTrue(authError)
+    }
+
+    @Test
+    fun `Submit shows the question before the api responds`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("  First Question  ")
+
+        val uiState = viewModel.uiState.value as ChatUiState.Default
+
+        assertTrue(uiState.isLoading)
+        assertEquals("First Question", uiState.pendingQuestion)
+        assertTrue(uiState.chatEntries.isEmpty())
+    }
+
+    @Test
+    fun `Submit replaces the pending question once the api responds`() = runTest {
+        val question = AnsweredQuestion(
+            "abc",
+            Answer(
+                "",
+                "",
+                null,
+                null,
+                "",
+                "",
+                null
+            ),
+            "conversation",
+            "",
+            "First Question"
+        )
+
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(100)
+            ChatResult.Success(question)
+        }
+        coEvery { chatRepo.getAnswer(any(), any(), any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(Answer("", "", null, null, "Answer 1", "", null))
+        }
+
+        val uiStates = mutableListOf<ChatUiState?>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.toList(uiStates)
+        }
+
+        viewModel.onSubmit("First Question")
+
+        advanceUntilIdle()
+
+        // The question should be shown exactly once between the pending and real question
+        uiStates.drop(2).forEach { state ->
+            state as ChatUiState.Default
+            val shownCount = state.chatEntries.size + if (state.pendingQuestion != null) 1 else 0
+            assertEquals(1, shownCount)
+        }
+
+        val finalState = uiStates.last() as ChatUiState.Default
+        val chatEntry = finalState.chatEntries.values.single()
+
+        assertNull(finalState.pendingQuestion)
+        assertEquals("abc", chatEntry.id)
+        assertEquals("First Question", chatEntry.question)
+        assertEquals("conversation", chatEntry.conversationId)
+    }
+
+    @Test
+    fun `Submit clears the pending question on auth error`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(100)
+            ChatResult.AuthError()
+        }
+
+        viewModel.onSubmit("First Question")
+
+        advanceUntilIdle()
+
+        val finalState = viewModel.uiState.value as ChatUiState.Default
+
+        assertNull(finalState.pendingQuestion)
+        assertTrue(finalState.chatEntries.isEmpty())
+    }
+
+    @Test
+    fun `onPause clears the pending question`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onSubmit("First Question")
+        viewModel.onPause()
+
+        advanceUntilIdle()
+
+        val finalState = viewModel.uiState.value as ChatUiState.Default
+
+        assertFalse(finalState.isLoading)
+        assertNull(finalState.pendingQuestion)
+        assertTrue(finalState.chatEntries.isEmpty())
     }
 
     @Test
@@ -969,6 +1078,59 @@ class ChatViewModelTest {
 
         coVerify(exactly = 1) { chatRepo.askQuestion("First Question") }
         coVerify(exactly = 0) { chatRepo.askQuestion("Second Question") }
+    }
+
+    @Test
+    fun `When an example question is selected, then submit it and log analytics`() = runTest {
+        viewModel.onExampleQuestionSelected("Question", 0)
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Question") }
+        verify(exactly = 1) { analyticsClient.chat(type = "suggestion", section = "chat") }
+        verify(exactly = 1) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
+    fun `When the same example question is tapped multiple times, then only submit and log it once`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onExampleQuestionSelected("Question", 0)
+        viewModel.onExampleQuestionSelected("Question", 0)
+        viewModel.onExampleQuestionSelected("Question", 0)
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Question") }
+        verify(exactly = 1) { analyticsClient.chat(type = "suggestion", section = "chat") }
+        verify(exactly = 1) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
+    fun `When different example questions are tapped rapidly, then only submit the first`() = runTest {
+        coEvery { chatRepo.askQuestion(any()) } coAnswers {
+            delay(1000)
+            ChatResult.Success(question)
+        }
+
+        viewModel.onExampleQuestionSelected("Question one", 0)
+        viewModel.onExampleQuestionSelected("Question two", 1)
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { chatRepo.askQuestion("Question one") }
+        coVerify(exactly = 0) { chatRepo.askQuestion("Question two") }
+        verify(exactly = 1) { analyticsClient.selectItemEvent(any(), any()) }
+    }
+
+    @Test
+    fun `When an example question contains PII, then do not log select item analytics`() = runTest {
+        viewModel.onExampleQuestionSelected("test@email.com", 0)
+
+        coVerify(exactly = 0) { chatRepo.askQuestion(any()) }
+        verify(exactly = 0) { analyticsClient.chat(type = "suggestion", section = "chat") }
+        verify(exactly = 0) { analyticsClient.selectItemEvent(any(), any()) }
     }
 
     @Test

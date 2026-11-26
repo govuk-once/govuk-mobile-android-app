@@ -163,7 +163,7 @@ internal fun ChatRoute(
                         }
                     ),
                     launchBrowser = launchBrowser,
-                    hasConversation = it.chatEntries.isNotEmpty(),
+                    hasConversation = it.chatEntries.isNotEmpty() || it.pendingQuestion != null,
                     uiEvents = UiEvents(
                         onQuestionUpdated = { question ->
                             viewModel.onQuestionUpdated(question)
@@ -213,7 +213,23 @@ internal fun ChatScreen(
     isImeVisible: Boolean = WindowInsets.isImeVisible
 ) {
     val listState = rememberLazyListState()
-    val chatEntries = uiState.chatEntries.toList()
+    // A submitted question the api hasn't accepted yet, shown immediately so the user can see
+    // it's in flight. It has no server id until the api responds, so it's displayed under a
+    // local key and never shown feedback, as feedback would send that key to analytics and the
+    // api. Once the api responds it's replaced by the real entry in chatEntries.
+    val pendingChatEntry = remember(uiState.pendingQuestion) {
+        uiState.pendingQuestion?.let { question ->
+            PENDING_QUESTION_KEY to ChatEntryModel(
+                id = PENDING_QUESTION_KEY,
+                question = question,
+                answer = "",
+                sources = emptyList(),
+                conversationId = "",
+                answerId = ""
+            )
+        }
+    }
+    val chatEntries = uiState.chatEntries.toList() + listOfNotNull(pendingChatEntry)
     val animationDelay = 500
     val coroutineScope = rememberCoroutineScope()
     var showPiiErrorDialog by remember { mutableStateOf(false) }
@@ -273,7 +289,6 @@ internal fun ChatScreen(
                         isLoading = uiState.isLoading,
                         onExampleQuestionsViewed = analyticsEvents.onExampleQuestionsViewed,
                         onExampleQuestionClicked = { question, index ->
-                            uiEvents.onSubmit(question)
                             analyticsEvents.onExampleQuestionSelected(question, index)
                         },
                         chatExampleQuestions = chatExampleQuestions
@@ -306,7 +321,7 @@ internal fun ChatScreen(
                     )
 
                     // Feedback is part of the last answer - it scrolls when the answer scrolls
-                    if (item == chatEntries.last()) {
+                    if (item == chatEntries.last() && item.first != PENDING_QUESTION_KEY) {
                         AnimatedFeedback(
                             chatEntry = item.second,
                             animationDelay = animationDelay,
@@ -403,6 +418,7 @@ private enum class FeedbackSelection { Icons, Positive, Negative, ThankYou }
 
 private const val THANK_YOU_DELAY_MILLIS = 500L
 private const val ANIMATION_DURATION = 200
+private const val PENDING_QUESTION_KEY = "pending_question"
 
 @Composable
 private fun AnimatedFeedback(

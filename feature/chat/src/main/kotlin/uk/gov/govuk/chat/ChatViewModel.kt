@@ -42,6 +42,7 @@ internal sealed class ChatUiState {
     data class Default(
         val question: String = "",
         val chatEntries: LinkedHashMap<String, ChatEntry> = linkedMapOf(),
+        val pendingQuestion: String? = null,
         val isLoading: Boolean = false,
         val isPiiError: Boolean = false,
         val displayCharacterWarning: Boolean = false,
@@ -173,8 +174,8 @@ internal class ChatViewModel @Inject constructor(
 
     fun onSubmit(
         question: String
-    ) {
-        if (askQuestionJob?.isActive == true) return
+    ): Boolean {
+        if (askQuestionJob?.isActive == true) return false
 
         val isPiiError = StringCleaner.includesPII(question)
         _uiState.updateDefault { it.copy(isPiiError = isPiiError) }
@@ -183,21 +184,32 @@ internal class ChatViewModel @Inject constructor(
             askQuestionJob = viewModelScope.launch {
                 _uiState.updateDefault { it.copy(isLoading = true) }
 
-                handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
-                    addChatEntry(
-                        questionId = answeredQuestion.id,
-                        question = answeredQuestion.message,
-                        conversationId = answeredQuestion.conversationId,
-                        answerId = ""
-                    )
-                    onQuestionUpdated("")
-                    getAnswer(
-                        conversationId = answeredQuestion.conversationId,
-                        questionId = answeredQuestion.id
-                    )
+                // Show the question immediately so the user can see it's in flight.
+                // Held outside chatEntries so it never has an id that could be sent to the api
+                _uiState.updateDefault { it.copy(pendingQuestion = question.trim()) }
+
+                try {
+                    handleChatResult(chatRepo.askQuestion(question.trim())) { answeredQuestion ->
+                        addChatEntry(
+                            questionId = answeredQuestion.id,
+                            question = answeredQuestion.message,
+                            conversationId = answeredQuestion.conversationId,
+                            answerId = "",
+                            clearPendingQuestion = true
+                        )
+                        onQuestionUpdated("")
+                        getAnswer(
+                            conversationId = answeredQuestion.conversationId,
+                            questionId = answeredQuestion.id
+                        )
+                    }
+                } finally {
+                    _uiState.updateDefault { it.copy(pendingQuestion = null) }
                 }
             }
         }
+
+        return !isPiiError
     }
 
     fun onQuestionUpdated(
@@ -290,6 +302,9 @@ internal class ChatViewModel @Inject constructor(
         question: String,
         index: Int
     ) {
+        // Ignore repeated or rapid taps whilst a question is already being submitted
+        if (!onSubmit(question)) return
+
         analyticsClient.chat(type = "suggestion", section = "chat")
 
         analyticsClient.selectItemEvent(
@@ -407,10 +422,13 @@ internal class ChatViewModel @Inject constructor(
         questionId: String,
         question: String,
         conversationId: String,
-        answerId: String
+        answerId: String,
+        clearPendingQuestion: Boolean = false
     ) {
         _uiState.updateDefault {
             it.copy(
+                // Clear in the same update so the chat is never briefly empty
+                pendingQuestion = if (clearPendingQuestion) null else it.pendingQuestion,
                 chatEntries = LinkedHashMap(it.chatEntries).apply {
                     put(
                         questionId,
