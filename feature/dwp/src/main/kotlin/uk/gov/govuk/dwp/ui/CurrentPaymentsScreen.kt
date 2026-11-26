@@ -59,15 +59,18 @@ import uk.gov.govuk.dwp.util.toDistanceInWordsFormat
 
 @Composable
 internal fun CurrentPaymentsRoute(
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     CurrentPaymentsScreen(
+        onClick = onClick,
         modifier = modifier
     )
 }
 
 @Composable
 internal fun CurrentPaymentsScreen(
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -103,11 +106,12 @@ internal fun CurrentPaymentsScreen(
                             val frequency = benefitFrequency[benefitName] ?: ""
 
                             PaymentCard(
-                                heading = benefitName,
+                                benefitName = benefitName,
                                 frequency = frequency,
                                 amount = payment.amount,
                                 dueDate = LocalDate.parse(payment.dueDate), // Format: YYYY-MM-DD
-                                benefitCode = payment.amountsPerBenefitCode.first().benefitShortName
+                                benefitCode = payment.amountsPerBenefitCode.first().benefitShortName,
+                                onClick = onClick
                             )
                         }
                     }
@@ -205,11 +209,12 @@ internal fun BenefitsToggleSwitch(
 
 @Composable
 internal fun PaymentCard(
-    heading: String,
+    benefitName: String,
     frequency: String,
     amount: Double,
     dueDate: LocalDate,
     benefitCode: String,
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -218,11 +223,16 @@ internal fun PaymentCard(
             containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
         )
     ) {
-        PaymentHeader(text = heading)
+        PaymentHeader(text = benefitName)
         PaymentFrequency(text = frequency)
         PaymentAmount(amount = amount)
         PaymentDate(dueDate = dueDate)
-        PaymentHistory(benefitCode = benefitCode)
+        PaymentHistory(
+            onClick = onClick,
+            benefitCode = benefitCode,
+            benefitName = benefitName,
+            frequency = frequency
+        )
     }
 }
 
@@ -372,21 +382,28 @@ private fun PaymentDate(
 @Composable
 private fun PaymentHistory(
     benefitCode: String,
+    benefitName: String,
+    frequency: String,
+    onClick: (String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO: Add onclick to filtered query based on benefit code - see GOVUKAPP-4281
-
     ListDivider(
         modifier = modifier.fillMaxWidth().padding(horizontal = GovUkTheme.spacing.medium)
     )
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(
-            start = GovUkTheme.spacing.medium,
-            end = GovUkTheme.spacing.medium,
-            top = 12.dp,
-            bottom = 12.dp
-        ),
+        modifier = Modifier.fillMaxWidth()
+            .padding(
+                start = GovUkTheme.spacing.medium,
+                end = GovUkTheme.spacing.medium,
+                top = 12.dp,
+                bottom = 12.dp
+            )
+            .clickable(
+                onClick = {
+                    onClick(benefitCode, benefitName, frequency)
+                }
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -458,6 +475,7 @@ internal fun UniversalCreditCard(
 internal fun CurrentPaymentsScreenPreview() {
     GovUkTheme {
         CurrentPaymentsScreen(
+            onClick = { _, _, _ -> },
             modifier = Modifier.background(GovUkTheme.colourScheme.surfaces.background)
         )
     }
