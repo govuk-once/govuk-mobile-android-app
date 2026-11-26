@@ -83,6 +83,7 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
 
     screenshotTestImplementation(libs.screenshot.validation.api) {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")

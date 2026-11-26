@@ -28,5 +28,6 @@ internal val dvlaUrls = DvlaUrls(
     compareLicenceCategories = "https://www.gov.uk/compare-categories",
     vehicleWeightExplained = "https://www.gov.uk/vehicle-weigh-explained",
     addLicenceCategories = "https://www.gov.uk/add-categories",
-    endorsements = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Endorsements"
+    endorsements = "https://driver-and-vehicles-account.service.gov.uk/driver_details?locale=en#Endorsements",
+    reapplyForLicenceHealthCondition = "https://www.gov.uk/reapply-driving-licence-health-condition"
 )

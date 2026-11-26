@@ -40,6 +40,7 @@ import uk.gov.govuk.dvla.ui.component.AddVehicleListItem
 import uk.gov.govuk.dvla.ui.component.DrivingCategoriesSection
 import uk.gov.govuk.dvla.ui.component.DrivingRecordSection
 import uk.gov.govuk.dvla.ui.component.LicenceNotAvailableCard
+import uk.gov.govuk.dvla.ui.component.LicenceRevokedForMedicalReasonsCard
 import uk.gov.govuk.dvla.ui.component.LicenceSummaryCard
 import uk.gov.govuk.dvla.ui.component.NoLicenceCard
 import uk.gov.govuk.dvla.ui.component.SummaryErrorCard
@@ -240,7 +241,7 @@ private fun VehiclesViewContent(
 }
 
 @Composable
-private fun LicenceViewContent(
+internal fun LicenceViewContent(
     launchBrowser: (text: String, url: UrlModel) -> Unit,
     licenceState: LicenceSummaryUiState,
     onMenuItemClick: (OverflowMenuItem) -> Unit,
@@ -255,6 +256,11 @@ private fun LicenceViewContent(
         })
 
         is LicenceSummaryUiState.NotAvailable -> LicenceNotAvailableCard(
+            onClick = { text -> launchBrowser(text, licenceState.url) },
+            modifier = modifier
+        )
+
+        is LicenceSummaryUiState.LicenceRevokedForMedicalReasons -> LicenceRevokedForMedicalReasonsCard(
             onClick = { text -> launchBrowser(text, licenceState.url) },
             modifier = modifier
         )

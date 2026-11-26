@@ -28,5 +28,6 @@ data class DvlaUrls(
     @SerializedName("compareOldNewLicenceCategories") val compareLicenceCategories: String,
     @SerializedName("vehicleWeightExplained") val vehicleWeightExplained: String,
     @SerializedName("addCategoriesToLicence") val addLicenceCategories: String,
-    @SerializedName("endorsements") val endorsements: String
+    @SerializedName("endorsements") val endorsements: String,
+    @SerializedName("reapplyForLicenceHealthCondition") val reapplyForLicenceHealthCondition: String
 )

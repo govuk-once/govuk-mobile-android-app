@@ -49,6 +49,10 @@ internal class LicenceSummaryMapper @Inject constructor(
             return LicenceSummaryUiState.NoLicence
         }
 
+        if (details.licenceStatus == LicenceStatus.REVOKED_FOR_MEDICAL_REASONS) {
+            return LicenceSummaryUiState.LicenceRevokedForMedicalReasons(reapplyUrl(dvlaUrls))
+        }
+
         if (details.licenceStatus != LicenceStatus.VALID && details.licenceStatus != LicenceStatus.EXPIRED) {
             return LicenceSummaryUiState.NotAvailable(notAvailableUrl(dvlaUrls))
         }
@@ -91,6 +95,10 @@ internal class LicenceSummaryMapper @Inject constructor(
         if (status != LicenceStatus.VALID) return null
         return dvlaUrls?.endorsements?.takeIf { it.isNotBlank() }
     }
+
+    private fun reapplyUrl(
+        dvlaUrls: DvlaUrls?
+    ) = UrlModel(dvlaUrls?.reapplyForLicenceHealthCondition?.takeIf { it.isNotBlank() } ?: Urls.GOV_UK_HOME)
 
     private fun String?.asAddressLines() = this
         ?.split("\n")

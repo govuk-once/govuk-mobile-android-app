@@ -8,6 +8,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -16,7 +17,6 @@ import uk.gov.govuk.design.ui.component.BodyRegularLabel
 import uk.gov.govuk.design.ui.component.CardListItem
 import uk.gov.govuk.design.ui.component.ExternalLinkListItem
 import uk.gov.govuk.design.ui.component.Title1BoldLabel
-import uk.gov.govuk.design.ui.model.ExternalLinkListItemStyle
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
 @Composable
@@ -24,6 +24,9 @@ internal fun LicenceStatusCard(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
+    titleBackground: Color = GovUkTheme.colourScheme.surfaces.cardDefault,
+    titleTextColor: Color = GovUkTheme.colourScheme.textAndIcons.primary,
+    titleDrawDivider: Boolean = true,
     linkText: String? = null,
     onLinkClick: (text: String) -> Unit = {}
 ) {
@@ -33,11 +36,18 @@ internal fun LicenceStatusCard(
             containerColor = GovUkTheme.colourScheme.surfaces.cardDefault
         )
     ) {
-        Spacer(Modifier.height(64.dp))
+        CardListItem(
+            isFirst = true,
+            isLast = false,
+            drawDivider = titleDrawDivider,
+            background = titleBackground,
+            modifier = modifier.fillMaxWidth()
+        ) {
+            Spacer(Modifier.height(64.dp))
 
-        CardListItem(isFirst = true, isLast = false) {
             Title1BoldLabel(
                 text = title,
+                color = titleTextColor,
                 modifier = Modifier
                     .padding(GovUkTheme.spacing.medium)
                     .semantics { heading() }
@@ -59,8 +69,7 @@ internal fun LicenceStatusCard(
                 title = text,
                 onClick = { onLinkClick(text) },
                 isFirst = false,
-                isLast = true,
-                style = ExternalLinkListItemStyle.Icon
+                isLast = true
             )
         }
     }
