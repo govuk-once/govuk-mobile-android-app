@@ -53,11 +53,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/TopicsRealmProvider.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/TopicsDatabase.*,**/RealmTopicsReader.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/TopicsRealmProvider.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/TopicsDatabase.*,**/RealmTopicsReader.*"
         )
     }
 }
@@ -81,8 +81,13 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.realm.base)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.sqlite)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

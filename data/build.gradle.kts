@@ -82,6 +82,11 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.realm.base)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.sqlcipher.android)
+    implementation(libs.androidx.sqlite)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.openid)
 
     implementation(libs.gov.securestore) {

@@ -1,6 +1,6 @@
-package uk.govuk.app.local.domain
+package uk.govuk.app.local.data
 
-import uk.govuk.app.local.data.local.model.StoredLocalAuthority
+import uk.govuk.app.local.data.local.model.LocalAuthorityEntity
 import uk.govuk.app.local.data.remote.model.RemoteAddress
 import uk.govuk.app.local.data.remote.model.RemoteLocalAuthority
 import uk.govuk.app.local.domain.model.Address
@@ -19,15 +19,15 @@ internal fun RemoteLocalAuthority.toLocalAuthority(): LocalAuthority = LocalAuth
     }
 )
 
-internal fun StoredLocalAuthority.toLocalAuthority(): LocalAuthority = LocalAuthority(
+internal fun LocalAuthorityEntity.toLocalAuthority(): LocalAuthority = LocalAuthority(
     name = this.name,
     url = this.url,
     slug = this.slug,
-    parent = this.parent?.let { parent ->
+    parent = this.parent?.let {
         LocalAuthority(
-            name = parent.name,
-            url = parent.url,
-            slug = parent.slug
+            name = it.name,
+            url = it.url,
+            slug = it.slug
         )
     }
 )

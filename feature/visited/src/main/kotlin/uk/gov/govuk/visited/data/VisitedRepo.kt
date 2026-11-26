@@ -20,6 +20,13 @@ internal class VisitedRepo @Inject constructor(
         }
     }
 
+    suspend fun remove(
+        title: String,
+        url: String
+    ) {
+        localDataSource.remove(title, url)
+    }
+
     suspend fun clear() {
         localDataSource.clear()
     }

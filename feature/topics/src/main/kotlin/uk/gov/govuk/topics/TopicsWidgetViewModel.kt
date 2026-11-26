@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import uk.gov.govuk.analytics.AnalyticsClient
 import uk.gov.govuk.analytics.data.local.model.EcommerceEvent
 import uk.gov.govuk.topics.data.TopicsRepo
-import uk.gov.govuk.topics.data.local.TopicsDataStore
 import uk.gov.govuk.topics.extension.toTopicItemUi
 import uk.gov.govuk.topics.ui.model.TopicItemUi
 
@@ -30,13 +29,12 @@ internal enum class TopicsCategory {
 @HiltViewModel
 internal class TopicsWidgetViewModel @Inject constructor(
     private val topicsRepo: TopicsRepo,
-    private val analyticsClient: AnalyticsClient,
-    private val topicsDataStore: TopicsDataStore
+    private val analyticsClient: AnalyticsClient
 ) : ViewModel() {
 
     val uiState: StateFlow<TopicsWidgetUiState?> = combine(
         topicsRepo.topics,
-        topicsDataStore.selectedCategoryFlow
+        topicsRepo.selectedCategoryFlow
     ) { topics, category ->
         val mappedTopics = topics.map { it.toTopicItemUi() }
 
@@ -55,7 +53,7 @@ internal class TopicsWidgetViewModel @Inject constructor(
         category: TopicsCategory
     ) {
         viewModelScope.launch {
-            topicsDataStore.setSelectedCategory(category)
+            topicsRepo.setSelectedCategory(category)
         }
     }
 
