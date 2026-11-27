@@ -12,4 +12,5 @@ interface UserRepo {
     suspend fun updateNotifications(
         consentStatus: ConsentStatus
     ): Result<Unit>
+    fun clear()
 }

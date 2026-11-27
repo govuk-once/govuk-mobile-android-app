@@ -104,11 +104,12 @@ class NotificationsRepoTest {
     }
 
     @Test
-    fun `Given logout, then call logout`() {
+    fun `Given logout, then call logout and clear the user`() {
         runTest {
             notificationsRepo.logout()
             verify(exactly = 1) {
                 notificationsProvider.logout()
+                userRepo.clear()
             }
         }
     }
