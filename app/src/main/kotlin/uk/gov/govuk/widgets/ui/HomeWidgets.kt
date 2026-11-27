@@ -133,8 +133,7 @@ internal fun homeWidgets(
                         onLocalAuthorityClick = { text, url ->
                             onWidgetClick(text, url)
                         },
-                        onEditClick = { text ->
-                            onWidgetClick(text, null)
+                        onChangeClick = {
                             navController.navigate(LOCAL_LOOKUP_ROUTE)
                         },
                         launchBrowser = launchBrowser,

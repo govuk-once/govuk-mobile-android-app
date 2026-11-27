@@ -4,9 +4,9 @@ import android.content.Context
 import com.onesignal.OneSignal
 import com.onesignal.notifications.INotificationClickEvent
 import com.onesignal.notifications.INotificationClickListener
-import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
 import javax.inject.Inject
 import javax.inject.Singleton
+import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
 
 @Singleton
 class OneSignalClient @Inject constructor(
@@ -19,7 +19,9 @@ class OneSignalClient @Inject constructor(
         OneSignal.initWithContext(context, BuildConfig.ONE_SIGNAL_APP_ID)
     }
 
-    override fun login(pushId: String) {
+    override fun login(
+        pushId: String
+    ) {
         OneSignal.login(pushId)
     }
 
@@ -45,7 +47,9 @@ class OneSignalClient @Inject constructor(
 
     override fun addClickListener() {
         OneSignal.Notifications.addClickListener(object : INotificationClickListener {
-            override fun onClick(event: INotificationClickEvent) {
+            override fun onClick(
+                event: INotificationClickEvent
+            ) {
                 val uri = event.notification.additionalData?.optString(NotificationSchema.KEY_DEEP_LINK)
                 if (!uri.isNullOrEmpty()) {
                     launcher.launchDeepLink(uri)

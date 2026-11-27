@@ -12,8 +12,9 @@ import androidx.compose.ui.unit.dp
 import uk.gov.govuk.design.ui.model.AccessibleString
 import uk.gov.govuk.design.ui.theme.GovUkTheme
 
+// TODO: Current titled section, to be removed when Categories section updated to new TitledSection below
 @Composable
-fun TitledSection(
+fun TitledSectionLegacy(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
@@ -37,15 +38,53 @@ fun TitledSection(
     }
 }
 
+@Composable
+fun TitledSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        BodyBoldLabel(
+            text = title,
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .semantics { heading() }
+        )
+
+        MediumVerticalSpacer()
+
+        content()
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TitledSectionLegacyPreview() {
+    GovUkTheme {
+        TitledSectionLegacy(
+            title = "Title",
+            description = "Description",
+            modifier = Modifier.padding(GovUkTheme.spacing.medium)
+        ) {
+            InternalLinkListItem(
+                title = AccessibleString("This is an internal list item")
+            )
+        }
+    }
+}
+
 @PreviewLightDark
 @Composable
 private fun TitledSectionPreview() {
     GovUkTheme {
         TitledSection(
             title = "Title",
-            description = "Description"
+            modifier = Modifier.padding(GovUkTheme.spacing.medium)
         ) {
-            InternalLinkListItem(title = AccessibleString("This is an internal list item"))
+            InternalLinkListItem(
+                title = AccessibleString("This is an internal list item")
+            )
         }
     }
 }
