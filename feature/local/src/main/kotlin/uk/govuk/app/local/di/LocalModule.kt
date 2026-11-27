@@ -12,16 +12,13 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.data.local.RoomEncryptionHelper
 import uk.govuk.app.local.BuildConfig
 import uk.govuk.app.local.DefaultLocalFeature
 import uk.govuk.app.local.LocalFeature
 import uk.govuk.app.local.data.LocalRepo
-import uk.govuk.app.local.data.local.DefaultRealmLocalReader
 import uk.govuk.app.local.data.local.LocalDao
 import uk.govuk.app.local.data.local.LocalDatabase
-import uk.govuk.app.local.data.local.LocalMigrationCallback
 import uk.govuk.app.local.data.remote.LocalApi
 
 @InstallIn(SingletonComponent::class)
@@ -33,7 +30,6 @@ internal class LocalModule {
     fun providesLocalDatabase(
         @ApplicationContext context: Context,
         roomEncryptionHelper: RoomEncryptionHelper,
-        realmEncryptionHelper: RealmEncryptionHelper,
         analyticsClient: AnalyticsClient
     ): LocalDatabase {
         val key = roomEncryptionHelper.getKey()
@@ -41,7 +37,6 @@ internal class LocalModule {
         val factory = SupportOpenHelperFactory(key)
         return Room.databaseBuilder(context, LocalDatabase::class.java, "local.db")
             .openHelperFactory(factory)
-            .addCallback(LocalMigrationCallback(DefaultRealmLocalReader(realmEncryptionHelper), analyticsClient))
             .build()
     }
 

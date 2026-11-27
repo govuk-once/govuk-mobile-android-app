@@ -73,7 +73,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
-    implementation(libs.realm.base)
 
     ksp(libs.hilt.compiler)
 

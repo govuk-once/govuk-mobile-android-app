@@ -10,14 +10,11 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.data.local.RoomEncryptionHelper
 import uk.gov.govuk.visited.Visited
 import uk.gov.govuk.visited.VisitedClient
-import uk.gov.govuk.visited.data.store.DefaultRealmVisitedReader
 import uk.gov.govuk.visited.data.store.VisitedDao
 import uk.gov.govuk.visited.data.store.VisitedDatabase
-import uk.gov.govuk.visited.data.store.VisitedMigrationCallback
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -28,7 +25,6 @@ internal class VisitedModule {
     fun providesVisitedDatabase(
         @ApplicationContext context: Context,
         roomEncryptionHelper: RoomEncryptionHelper,
-        realmEncryptionHelper: RealmEncryptionHelper,
         analyticsClient: AnalyticsClient
     ): VisitedDatabase {
         val key = roomEncryptionHelper.getKey()
@@ -36,7 +32,6 @@ internal class VisitedModule {
         val factory = SupportOpenHelperFactory(key)
         return Room.databaseBuilder(context, VisitedDatabase::class.java, "visited.db")
             .openHelperFactory(factory)
-            .addCallback(VisitedMigrationCallback(DefaultRealmVisitedReader(realmEncryptionHelper), analyticsClient))
             .build()
     }
 

@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.realm)
     alias(libs.plugins.kover)
     alias(libs.plugins.screenshot)
 }
@@ -69,7 +68,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
-    implementation(libs.realm.base)
 
     implementation(libs.androidx.compose.animation)
 

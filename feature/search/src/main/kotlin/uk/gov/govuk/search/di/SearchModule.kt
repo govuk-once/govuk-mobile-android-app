@@ -15,15 +15,12 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uk.gov.govuk.analytics.AnalyticsClient
-import uk.gov.govuk.data.local.RealmEncryptionHelper
 import uk.gov.govuk.data.local.RoomEncryptionHelper
 import uk.gov.govuk.search.DefaultSearchFeature
 import uk.gov.govuk.search.SearchFeature
 import uk.gov.govuk.search.data.SearchRepo
-import uk.gov.govuk.search.data.local.DefaultRealmSearchReader
 import uk.gov.govuk.search.data.local.SearchDao
 import uk.gov.govuk.search.data.local.SearchDatabase
-import uk.gov.govuk.search.data.local.SearchMigrationCallback
 import uk.gov.govuk.search.data.remote.AutocompleteApi
 import uk.gov.govuk.search.data.remote.SearchApi
 import uk.gov.govuk.search.domain.SearchConfig
@@ -37,7 +34,6 @@ internal class SearchModule {
     fun providesSearchDatabase(
         @ApplicationContext context: Context,
         roomEncryptionHelper: RoomEncryptionHelper,
-        encryptionHelper: RealmEncryptionHelper,
         analyticsClient: AnalyticsClient
     ): SearchDatabase {
         val key = roomEncryptionHelper.getKey()
@@ -45,7 +41,6 @@ internal class SearchModule {
         val factory = SupportOpenHelperFactory(key)
         return Room.databaseBuilder(context, SearchDatabase::class.java, "search.db")
             .openHelperFactory(factory)
-            .addCallback(SearchMigrationCallback(DefaultRealmSearchReader(encryptionHelper), analyticsClient))
             .build()
     }
 

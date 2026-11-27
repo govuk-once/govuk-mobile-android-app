@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.realm)
     alias(libs.plugins.kover)
     alias(libs.plugins.screenshot)
 }
@@ -53,11 +52,11 @@ sonar {
     properties {
         property(
             "sonar.coverage.exclusions",
-            properties["sonar.coverage.exclusions"].toString() + ",**/LocalDatabase.*,**/RealmLocalReader.*"
+            properties["sonar.coverage.exclusions"].toString() + ",**/LocalDatabase.*"
         )
         property(
             "sonar.cpd.exclusions",
-            properties["sonar.cpd.exclusions"].toString() + ",**/LocalDatabase.*,**/RealmLocalReader.*"
+            properties["sonar.cpd.exclusions"].toString() + ",**/LocalDatabase.*"
         )
     }
 }
@@ -77,7 +76,6 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
-    implementation(libs.realm.base)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.sqlcipher.android)

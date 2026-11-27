@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.google.play.services) apply false
-    alias(libs.plugins.realm) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.firebaseAppDistribution) apply false
     alias(libs.plugins.firebasePerformance) apply false

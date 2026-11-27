@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.realm)
     alias(libs.plugins.kover)
 }
 
@@ -57,12 +56,12 @@ sonar {
         property(
             "sonar.coverage.exclusions",
             properties["sonar.coverage.exclusions"].toString() +
-                ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*"
+                ",**/TinkClient.*"
         )
         property(
             "sonar.cpd.exclusions",
             properties["sonar.cpd.exclusions"].toString() +
-                ",**/RealmEncryptionHelper.*,**/RealmProvider.*,**/RealmDataStore.*,**/TinkClient.*"
+                ",**/TinkClient.*"
         )
     }
 }
@@ -81,7 +80,6 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
-    implementation(libs.realm.base)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.sqlcipher.android)

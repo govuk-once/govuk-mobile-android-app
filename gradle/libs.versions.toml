@@ -29,7 +29,6 @@ retrofit = "3.0.0"
 
 firebaseBom = "34.6.0"
 
-realm = "3.0.0"
 room = "2.7.1"
 sqlcipher-android = "4.9.0"
 androidx-sqlite = "2.7.1"
@@ -92,7 +91,6 @@ one-signal = { module = "com.onesignal:OneSignal", version.ref = "oneSignal" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-realm-base = { group = "io.realm.kotlin", name = "library-base", version.ref = "realm"}
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -128,7 +126,6 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-play-services = { id = "com.google.gms.google-services", version.ref = "googlePlayServices" }
-realm = { id = "io.realm.kotlin", version.ref = "realm" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 firebaseAppDistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }
 firebasePerformance = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerformance" }
