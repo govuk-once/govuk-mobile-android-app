@@ -85,7 +85,7 @@ class FeedbackSurveyLinkTest {
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = true,
-                    chatUrls = ChatUrls("", "", "", ""),
+                    chatUrls = ChatUrls("", "", ""),
                     chatExampleQuestions = emptyList(),
                     isAnalyticsEnabled = true,
                     isImeVisible = false,

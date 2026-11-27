@@ -719,7 +719,7 @@ internal fun ChatScreenPreview() {
             analyticsEvents = analyticsEvents(),
             launchBrowser = { _ -> },
             hasConversation = false,
-            chatUrls = ChatUrls("", "", "", ""),
+            chatUrls = ChatUrls("", "", ""),
             chatExampleQuestions = emptyList(),
             uiEvents = clickEvents()
         )

@@ -14,7 +14,6 @@
     </plurals>
     <string name="action_about">About</string>
     <string name="action_privacy">Privacy notice</string>
-    <string name="action_feedback">Give feedback</string>
     <string name="action_clear">Clear chat</string>
     <string name="action_close">Close menu</string>
     <string name="action_alt">More options</string>

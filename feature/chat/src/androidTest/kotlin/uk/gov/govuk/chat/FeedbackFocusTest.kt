@@ -171,7 +171,7 @@ class FeedbackFocusTest {
                 ),
                 launchBrowser = { _ -> },
                 hasConversation = true,
-                chatUrls = ChatUrls("", "", "", ""),
+                chatUrls = ChatUrls("", "", ""),
                 chatExampleQuestions = emptyList(),
                 isAnalyticsEnabled = isAnalyticsEnabled,
                 isImeVisible = false,

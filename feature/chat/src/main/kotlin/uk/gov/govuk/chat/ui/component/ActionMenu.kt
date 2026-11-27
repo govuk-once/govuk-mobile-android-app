@@ -105,19 +105,6 @@ internal fun ActionMenu(
                     }
                 }
         ) {
-            val feedbackText = stringResource(R.string.action_feedback)
-            MenuItem(
-                onClick = {
-                    onNavigationItemClicked(feedbackText, chatUrls.feedback)
-                    expanded = false
-                },
-                buttonText = feedbackText,
-                icon = R.drawable.outline_feedback_24,
-                modifier = Modifier
-            )
-
-            HorizontalDivider()
-
             val aboutText = stringResource(R.string.action_about)
             MenuItem(
                 onClick = {
