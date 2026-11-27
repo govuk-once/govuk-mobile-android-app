@@ -5,14 +5,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,15 +25,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices.PHONE
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlinx.coroutines.delay
 import uk.gov.govuk.chat.R
 import uk.gov.govuk.design.ui.component.BodyRegularLabel
@@ -183,7 +191,6 @@ private fun ExampleQuestions(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .width(IntrinsicSize.Max)
                         .padding(start = 60.dp)
                         .semantics { isTraversalGroup = true },
                     horizontalAlignment = Alignment.End
@@ -222,16 +229,51 @@ private fun ExampleQuestion(
         borderColour = GovUkTheme.colourScheme.strokes.chatExampleQuestionCardBorder,
         shape = RoundedCornerShape(18.dp),
         padding = GovUkTheme.spacing.medium,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
     ) {
-        BodyRegularLabel(
+        ExampleQuestionText(
             text = text,
-            color = GovUkTheme.colourScheme.textAndIcons.chatExampleQuestionText,
-            modifier = Modifier
-                .fillMaxWidth()
-                .talkBackText("$prompt $text")
+            modifier = Modifier.talkBackText("$prompt $text")
         )
     }
+}
+
+@Composable
+private fun ExampleQuestionText(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    // don't hyphenate words and use paragraph line breaking so questions are easier to read
+    val style = GovUkTheme.typography.bodyRegular.copy(
+        hyphens = Hyphens.None,
+        lineBreak = LineBreak.Paragraph
+    )
+    val textMeasurer = rememberTextMeasurer()
+
+    Text(
+        text = text,
+        color = GovUkTheme.colourScheme.textAndIcons.chatExampleQuestionText,
+        style = style,
+        modifier = modifier.layout { measurable, constraints ->
+            // wrapped text fills the max width, so shrink to the widest line
+            // to remove the trailing white space from the chip
+            val placeable = measurable.measure(constraints)
+            val textLayout = textMeasurer.measure(
+                text = text,
+                style = style,
+                constraints = Constraints(maxWidth = constraints.maxWidth)
+            )
+            val lines = 0 until textLayout.lineCount
+            val lineLeft = lines.minOf { textLayout.getLineLeft(it) }
+            val lineRight = lines.maxOf { textLayout.getLineRight(it) }
+            val width = ceil(lineRight - lineLeft).toInt()
+                .coerceIn(constraints.minWidth, placeable.width)
+
+            layout(width, placeable.height) {
+                placeable.place(-floor(lineLeft).toInt(), 0)
+            }
+        }
+    )
 }
 
 @PreviewLightDark
@@ -240,4 +282,45 @@ internal fun MessagePreview() {
     GovUkTheme {
         Message()
     }
+}
+
+private val previewExampleQuestions = listOf(
+    "How do I renew my passport?",
+    "What do I need to do to register a death or a stillbirth in England?",
+    "How do I get a replacement birth certificate?",
+    "Can I get help with childcare costs?"
+)
+
+@Composable
+private fun ExampleQuestionsPreviewContent() {
+    GovUkTheme {
+        ExampleQuestions(
+            hasConversation = false,
+            question = "",
+            isImeVisible = false,
+            isLoading = false,
+            onViewed = {},
+            onClick = { _, _ -> },
+            chatExampleQuestions = previewExampleQuestions,
+            modifier = Modifier.background(GovUkTheme.colourScheme.surfaces.background)
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+internal fun ExampleQuestionsPreview() {
+    ExampleQuestionsPreviewContent()
+}
+
+@Preview(device = "$PHONE, orientation=landscape")
+@Composable
+internal fun ExampleQuestionsLandscapePreview() {
+    ExampleQuestionsPreviewContent()
+}
+
+@Preview(fontScale = 2f)
+@Composable
+internal fun ExampleQuestionsLargeFontPreview() {
+    ExampleQuestionsPreviewContent()
 }
