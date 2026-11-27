@@ -23,7 +23,6 @@ class ActionMenuTest {
     val moreOptionsText = getString(id = R.string.action_alt)
     val aboutText = getString(R.string.action_about)
     val privacyText = getString(R.string.action_privacy)
-    val feedbackText = getString(R.string.action_feedback)
     val clearText = getString(id = R.string.action_clear)
     val closeText = getString(R.string.action_close)
 
@@ -46,15 +45,6 @@ class ActionMenuTest {
         openMoreOptionsMenu()
 
         composeTestRule.onNodeWithText(privacyText).assertIsDisplayed()
-    }
-
-    @Test
-    fun the_give_feedback_menu_item_is_always_shown() {
-        setupChatScreen()
-
-        openMoreOptionsMenu()
-
-        composeTestRule.onNodeWithText(feedbackText).assertIsDisplayed()
     }
 
     @Test
@@ -113,7 +103,7 @@ class ActionMenuTest {
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = hasConversation,
-                    chatUrls = ChatUrls("", "", "", ""),
+                    chatUrls = ChatUrls("", "", ""),
                     chatExampleQuestions = emptyList(),
                     uiEvents = UiEvents(
                         onQuestionUpdated = { _ -> },

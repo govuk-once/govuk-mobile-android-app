@@ -117,7 +117,7 @@ class ExampleQuestionsFocusOrderTest {
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = false,
-                    chatUrls = ChatUrls("", "", "", ""),
+                    chatUrls = ChatUrls("", "", ""),
                     chatExampleQuestions = questions,
                     isImeVisible = false,
                     uiEvents = UiEvents(
