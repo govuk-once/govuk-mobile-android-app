@@ -13,10 +13,18 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import uk.gov.govuk.notifications.NotificationsProvider
 import uk.gov.govuk.notifications.OneSignalClient
 import uk.gov.govuk.notifications.navigation.DeepLinkLauncher
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+internal annotation class NotificationsScope
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -40,4 +48,11 @@ class NotificationsModule {
         @ApplicationContext context: Context,
         deepLinkLauncher: DeepLinkLauncher
     ): NotificationsProvider = OneSignalClient(context, deepLinkLauncher)
+
+    // Outlives any screen, so background work started from one (such as linking the device to
+    // the user after consent) isn't cancelled when the user navigates away.
+    @Singleton
+    @Provides
+    @NotificationsScope
+    fun provideCoroutineScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 }
