@@ -783,6 +783,32 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `Given a question is copied, then log analytics`() {
+        viewModel.onQuestionCopied()
+
+        verify {
+            analyticsClient.menuItemFunction(
+                text = Analytics.COPY_TO_CLIPBOARD,
+                section = Analytics.QUESTION,
+                action = Analytics.COPY
+            )
+        }
+    }
+
+    @Test
+    fun `Given an answer is copied, then log analytics`() {
+        viewModel.onAnswerCopied()
+
+        verify {
+            analyticsClient.menuItemFunction(
+                text = Analytics.COPY_TO_CLIPBOARD,
+                section = Analytics.RESPONSE,
+                action = Analytics.COPY
+            )
+        }
+    }
+
+    @Test
     fun `Given an onboarding screen privacy policy click, then log analytics`() {
         val text = "text"
         val url = "url"

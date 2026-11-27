@@ -109,7 +109,9 @@ class ActionMenuTest {
                         onMarkdownLinkClicked = { _, _ -> },
                         onSourcesExpanded = { },
                         onExampleQuestionsViewed = { },
-                        onExampleQuestionSelected = { _, _ -> }
+                        onExampleQuestionSelected = { _, _ -> },
+                        onQuestionCopied = { },
+                        onAnswerCopied = { }
                     ),
                     launchBrowser = { _ -> },
                     hasConversation = hasConversation,
